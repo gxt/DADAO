@@ -1,0 +1,57 @@
+#
+# Makefile for toolchain
+#
+
+DIR_DADAO_TCH		:= $(DIR_DADAO)/DADAO-tch
+DIR_BUILD_TCH		:= $(DIR_DADAO)/build-tch
+
+tch-help:
+	@echo	""
+	@echo	"Help for toolchain"
+	@echo	""
+
+tch-clean:
+	@rm -fr $(DIR_BUILD_TCH)
+
+GCC_0902_ORIGIN		:= /pub/GIT-ORIGIN/gcc.git
+GCC_0902_VERSION	:= gcc-9_2_0-release
+GCC_0902_BRANCH		:= dadao-0902
+GCC_0902_WORKING	:= $(DIR_BUILD_TCH)/gcc-0902
+GCC_0902_INSTALL	:= $(DIR_BUILD_TCH)/__gcc-0902
+GCC_0902_BUILDLOG	:= $(DIR_BUILD_TCH)/buildlog-gcc-0902
+
+gcc-0902-new:
+	@echo "Remove old gcc repo ..."
+	@test -d $(DIR_BUILD_TCH) || mkdir -p $(DIR_BUILD_TCH)
+	@rm -fr $(GCC_0902_WORKING)
+	@echo "Clone official repo"
+	@git clone $(GCC_0902_ORIGIN) -- $(GCC_0902_WORKING)
+	@cd $(GCC_0902_WORKING); git checkout -b $(GCC_0902_BRANCH) $(GCC_0902_VERSION)
+	@echo "Copy gcc/config/dadao dir"
+	@cp -a $(DIR_DADAO_TCH)/gcc/config/* $(GCC_0902_WORKING)/gcc/config/
+	@cd $(GCC_0902_WORKING); git add gcc/config/dadao; git commit -sm"DADAO: add gcc/config/dadao dir"
+
+BINUTILS_0233_ORIGIN	:= /pub/GIT-ORIGIN/binutils-gdb.git
+BINUTILS_0233_VERSION	:= binutils-2_33_1
+BINUTILS_0233_BRANCH	:= dadao-0233
+BINUTILS_0233_WORKING	:= $(DIR_BUILD_TCH)/binutils-gdb-0233
+BINUTILS_0233_INSTALL	:= $(DIR_BUILD_TCH)/__binutils-gdb-0233
+BINUTILS_0233_BUILDLOG	:= $(DIR_BUILD_TCH)/buildlog-binutils-gdb-0233
+
+binutils-gdb-0233-new:
+	@echo "Remove old binutils-gdb repo ..."
+	@test -d $(DIR_BUILD_TCH) || mkdir -p $(DIR_BUILD_TCH)
+	@rm -fr $(BINUTILS_0233_WORKING)
+	@echo "Clone official repo"
+	@git clone $(BINUTILS_0233_ORIGIN) -- $(BINUTILS_0233_WORKING)
+	@cd $(BINUTILS_0233_WORKING); git checkout -b $(BINUTILS_0233_BRANCH) $(BINUTILS_0233_VERSION)
+
+binutils-gdb-0233-make:
+	@echo "Configure binutils-gdb ..."
+	@cd $(BINUTILS_0233_WORKING) && ./configure			\
+		--target=dadao-elf					\
+		--prefix=$(BINUTILS_0233_INSTALL)	>> $(BINUTILS_0233_BUILDLOG) 2>&1
+	@echo "Make binutils and gdb ..."
+	@make -C $(BINUTILS_0233_WORKING) -j4		>> $(BINUTILS_0233_BUILDLOG) 2>&1
+	@make -C $(BINUTILS_0233_WORKING) install	>> $(BINUTILS_0233_BUILDLOG) 2>&1
+
