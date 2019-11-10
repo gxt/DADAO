@@ -1,0 +1,62 @@
+#
+# Makefile for run time environment
+#
+
+DIR_DADAO_ENV		:= $(DIR_DADAO)/DADAO-env
+DIR_BUILD_ENV		:= $(DIR_DADAO)/build-env
+
+env-help:
+	@echo	""
+	@echo	"Help for environment"
+	@echo	""
+
+env-clean:
+	@rm -fr $(DIR_BUILD_ENV)
+
+LINUX_0503_ORIGIN	:= /pub/GIT-ORIGIN/linux.git
+LINUX_0503_VERSION	:= v5.3
+LINUX_0503_ARCH		:= dadao
+LINUX_0503_BRANCH	:= dadao-0503
+LINUX_0503_DEFCONFIG	:= dadao_defconfig
+LINUX_0503_WORKING	:= $(DIR_BUILD_ENV)/linux-0503
+LINUX_0503_INSTALL	:= $(DIR_BUILD_ENV)/__linux-0503
+LINUX_0503_BUILDLOG	:= $(DIR_BUILD_ENV)/buildlog-linux-0503
+
+linux-0503-new:
+	@echo "Remove old linux repo ..."
+	@test -d $(DIR_BUILD_ENV) || mkdir -p $(DIR_BUILD_ENV)
+	@rm -fr $(LINUX_0503_WORKING)
+	@echo "Clone official repo"
+	@git clone $(LINUX_0503_ORIGIN) -- $(LINUX_0503_WORKING)
+	@cd $(LINUX_0503_WORKING);				\
+		git checkout -b $(LINUX_0503_BRANCH) $(LINUX_0503_VERSION)
+	@echo "Copy arch/dadao dir"
+	@cp -a $(DIR_DADAO_ENV)/dadao $(LINUX_0503_WORKING)/arch/
+	@cd $(LINUX_0503_WORKING);				\
+		git add arch/dadao;				\
+		git commit -sm"DADAO: add arch/dadao dir"
+
+linux-0503-make:
+	@echo "Make mrproper ..."
+	@make -C $(LINUX_0503_WORKING)				\
+		ARCH=$(LINUX_0503_ARCH)				\
+		mrproper			>> $(LINUX_0503_BUILDLOG) 2>&1
+	@echo "Make $(LINUX_0503_DEFCONFIG) ..."
+	@make -C $(LINUX_0503_WORKING)				\
+		ARCH=$(LINUX_0503_ARCH)				\
+		$(LINUX_0503_DEFCONFIG)		>> $(LINUX_0503_BUILDLOG) 2>&1
+	@echo "Making (in several minutes) ..."
+	@make -C $(LINUX_0503_WORKING)				\
+		ARCH=$(LINUX_0503_ARCH) -j4	>> $(LINUX_0503_BUILDLOG) 2>&1
+
+linux-0503-headers:
+	@echo "Headers check ..."
+	@make -C $(LINUX_0503_WORKING)				\
+		ARCH=$(LINUX_0503_ARCH)				\
+		headers_check			>> $(LINUX_0503_BUILDLOG) 2>&1
+	@echo "Headers install ..."
+	@make -C $(LINUX_0503_WORKING)				\
+		ARCH=$(LINUX_0503_ARCH)				\
+		INSTALL_HDR_PATH=$(LINUX_0503_INSTALL)		\
+		headers_install			>> $(LINUX_0503_BUILDLOG) 2>&1
+
