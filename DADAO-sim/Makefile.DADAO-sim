@@ -1,0 +1,51 @@
+#
+# Makefile for simulator
+#
+
+DIR_DADAO_SIM		:= $(DIR_DADAO)/DADAO-sim
+DIR_BUILD_SIM		:= $(DIR_DADAO)/build-sim
+
+sim-help:
+	@echo	""
+	@echo	"Help for simulator"
+	@echo	""
+
+sim-clean:
+	@rm -fr $(DIR_BUILD_SIM)
+
+QEMU_0401_ORIGIN	:= /pub/GIT-ORIGIN/qemu.git
+QEMU_0401_VERSION	:= v4.1.0
+QEMU_0401_BRANCH	:= dadao-0401
+QEMU_0401_TARGETS	:= dadao-softmmu
+QEMU_0401_WORKING	:= $(DIR_BUILD_SIM)/qemu-0401
+QEMU_0401_INSTALL	:= $(DIR_BUILD_SIM)/__qemu-0401
+QEMU_0401_BUILDLOG	:= $(DIR_BUILD_SIM)/buildlog-qemu-0401
+
+qemu-0401-new:
+	@echo "Remove old qemu repo ..."
+	@test -d $(DIR_BUILD_SIM) || mkdir -p $(DIR_BUILD_SIM)
+	@rm -fr $(QEMU_0401_WORKING)
+	@echo "Clone official repo"
+	@git clone $(QEMU_0401_ORIGIN) -- $(QEMU_0401_WORKING)
+	@cd $(QEMU_0401_WORKING); git checkout -b $(QEMU_0401_BRANCH) $(QEMU_0401_VERSION)
+	@echo "Copy target/dadao dir"
+	@cp -a $(DIR_DADAO_SIM)/target/* $(QEMU_0401_WORKING)/target/
+	@cd $(QEMU_0401_WORKING); git add target/dadao; git commit -sm"DADAO: add target/dadao dir"
+	@echo "Copy config file"
+	@cp -a $(DIR_DADAO_SIM)/default-configs/* $(QEMU_0401_WORKING)/default-configs/
+	@cd $(QEMU_0401_WORKING); git add default-configs; git commit -sm"DADAO: add dadao-softmmu.mak"
+
+qemu-0401-make:
+	@echo "Configure qemu ..."
+	@cd $(QEMU_0401_WORKING); ./configure					\
+		--target-list=$(QEMU_0401_TARGETS)				\
+		--enable-debug							\
+		--disable-sdl							\
+		--enable-curses							\
+		--prefix=$(QEMU_0401_INSTALL)		>> $(QEMU_0401_BUILDLOG) 2>&1
+	@echo "Make qemu and make install ..."
+	@make -C $(QEMU_0401_WORKING) -j4		>> $(QEMU_0401_BUILDLOG) 2>&1
+	@make -C $(QEMU_0401_WORKING) install		>> $(QEMU_0401_BUILDLOG) 2>&1
+	@echo "Softlinking necessary files ..."
+	@ln -sf $(QEMU_0401_INSTALL)/bin/qemu-system-dadao $(DIR_BUILD_SIM)
+
