@@ -1,0 +1,20 @@
+config DADAO
+	def_bool y
+
+config MMU
+	def_bool y
+
+menu "Kernel Features"
+
+source "kernel/Kconfig.hz"
+
+endmenu
+
+menu "Boot options"
+
+config CMDLINE
+	string "Default kernel command string"
+	default ""
+
+endmenu
+

@@ -1,0 +1,31 @@
+### General setup
+CONFIG_LOCALVERSION="-dadao"
+
+### Enable loadable module support
+CONFIG_MODULES=n
+CONFIG_MODULE_UNLOAD=y
+
+### Boot options
+CONFIG_CMDLINE="earlyprintk=ocd,keep ignore_loglevel"
+
+#	Graphics support
+CONFIG_FB=y
+#	Console display driver support
+CONFIG_VGA_CONSOLE=n
+CONFIG_FRAMEBUFFER_CONSOLE=y
+CONFIG_FONTS=y
+CONFIG_FONT_8x8=y
+CONFIG_FONT_8x16=y
+#	Bootup logo
+CONFIG_LOGO=n
+
+### File systems
+CONFIG_EXT2_FS=m
+CONFIG_EXT3_FS=y
+CONFIG_EXT4_FS=y
+CONFIG_FUSE_FS=m
+#	Pseudo filesystems
+CONFIG_PROC_FS=y
+CONFIG_SYSFS=y
+CONFIG_TMPFS=y
+
