@@ -31,7 +31,7 @@ linux-0503-new:
 	@cd $(LINUX_0503_WORKING);				\
 		git checkout -b $(LINUX_0503_BRANCH) $(LINUX_0503_VERSION)
 	@echo "Copy arch/dadao dir"
-	@cp -a $(DIR_DADAO_ENV)/dadao $(LINUX_0503_WORKING)/arch/
+	@cp -a $(DIR_DADAO_ENV)/arch/* $(LINUX_0503_WORKING)/arch/
 	@cd $(LINUX_0503_WORKING);				\
 		git add arch/dadao;				\
 		git commit -sm"DADAO: add arch/dadao dir"
