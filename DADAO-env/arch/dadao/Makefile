@@ -1,3 +1,3 @@
 #
-# arch/tao/Makefile
+# arch/dadao/Makefile
 #
