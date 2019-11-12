@@ -16,6 +16,7 @@ tch-clean:
 GCC_0902_ORIGIN		:= /pub/GIT-ORIGIN/gcc.git
 GCC_0902_VERSION	:= gcc-9_2_0-release
 GCC_0902_BRANCH		:= dadao-0902
+GCC_0902_TARGET		:= dadao-linux-elf
 GCC_0902_WORKING	:= $(DIR_BUILD_TCH)/gcc-0902
 GCC_0902_INSTALL	:= $(DIR_BUILD_TCH)/__gcc-0902
 GCC_0902_BUILDLOG	:= $(DIR_BUILD_TCH)/buildlog-gcc-0902
@@ -30,6 +31,26 @@ gcc-0902-new:
 	@echo "Copy gcc/config/dadao dir"
 	@cp -a $(DIR_DADAO_TCH)/gcc/config/* $(GCC_0902_WORKING)/gcc/config/
 	@cd $(GCC_0902_WORKING); git add gcc/config/dadao; git commit -sm"DADAO: add gcc/config/dadao dir"
+
+gcc-0902-make:
+	@echo "Remove old gcc buildlog ..."
+	@rm -fr $(GCC_0902_BUILDLOG)
+	@cd $(GCC_0902_WORKING); ./configure				\
+		--target=$(GCC_0902_TARGET)				\
+		--prefix=$(GCC_0902_INSTALL)				\
+		--disable-nls						\
+		--enable-languages=c					\
+		--without-headers
+	@echo "Make all-gcc ..."
+	@make -C $(GCC_0902_WORKING) all-gcc -j4
+	@echo "Make all-gcc complete."
+
+gcc-0902-install:
+	@echo "Remove old gcc install ..."
+	@rm -fr $(GCC_0902_INSTALL)
+	@echo "Install gcc ..."
+	@make -C $(GCC_0902_WORKING) install-gcc
+	@echo "Install gcc complete."
 
 BINUTILS_0233_ORIGIN	:= /pub/GIT-ORIGIN/binutils-gdb.git
 BINUTILS_0233_VERSION	:= binutils-2_33_1
