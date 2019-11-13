@@ -18,6 +18,9 @@ LINUX_0503_VERSION	:= v5.3
 LINUX_0503_ARCH		:= dadao
 LINUX_0503_BRANCH	:= dadao-0503
 LINUX_0503_DEFCONFIG	:= dadao_defconfig
+
+LINUX_0503_NEWFILES	:= $(DIR_DADAO_ENV)/linux-0503-newfiles
+
 LINUX_0503_WORKING	:= $(DIR_BUILD_ENV)/linux-0503
 LINUX_0503_INSTALL	:= $(DIR_BUILD_ENV)/__linux-0503
 LINUX_0503_BUILDLOG	:= $(DIR_BUILD_ENV)/buildlog-linux-0503
@@ -31,7 +34,7 @@ linux-0503-new:
 	@cd $(LINUX_0503_WORKING);				\
 		git checkout -b $(LINUX_0503_BRANCH) $(LINUX_0503_VERSION)
 	@echo "Copy arch/dadao dir"
-	@cp -a $(DIR_DADAO_ENV)/arch/* $(LINUX_0503_WORKING)/arch/
+	@cp -a $(LINUX_0503_NEWFILES)/arch/* $(LINUX_0503_WORKING)/arch/
 	@cd $(LINUX_0503_WORKING);				\
 		git add arch/dadao;				\
 		git commit -sm"DADAO: add arch/dadao dir"
