@@ -18,6 +18,7 @@ GCC_0902_VERSION	:= gcc-9_2_0-release
 GCC_0902_BRANCH		:= dadao-0902
 GCC_0902_TARGET		:= dadao-linux-elf
 
+GCC_0902_NEWFILES	:= $(DIR_DADAO_TCH)/gcc-0902-newfiles
 GCC_0902_PATCHES	:= $(DIR_DADAO_TCH)/gcc-0902-patches
 
 GCC_0902_WORKING	:= $(DIR_BUILD_TCH)/gcc-0902
@@ -32,8 +33,11 @@ gcc-0902-new:
 	@git clone $(GCC_0902_ORIGIN) -- $(GCC_0902_WORKING)
 	@cd $(GCC_0902_WORKING); git checkout -b $(GCC_0902_BRANCH) $(GCC_0902_VERSION)
 	@echo "Copy gcc/config/dadao dir"
-	@cp -a $(DIR_DADAO_TCH)/gcc/config/* $(GCC_0902_WORKING)/gcc/config/
-	@cd $(GCC_0902_WORKING); git add gcc/config/dadao; git commit -sm"DADAO: add gcc/config/dadao dir"
+	@cp -a $(GCC_0902_NEWFILES)/gcc/config/* $(GCC_0902_WORKING)/gcc/config/
+	@cd $(GCC_0902_WORKING);					\
+		git add gcc/config/dadao;				\
+		git commit -sm"DADAO: add gcc/config/dadao dir"
+	@echo "Apply gcc-0902-patches ..."
 	@cd $(GCC_0902_WORKING); git am $(GCC_0902_PATCHES)/*.patch
 
 gcc-0902-make:
