@@ -50,6 +50,7 @@ gcc-0902-conf:
 		--disable-nls						\
 		--enable-languages=c					\
 		--enable-checking					\
+		--enable-werror						\
 		--without-headers			>> $(GCC_0902_BUILDLOG) 2>&1
 
 gcc-0902-make:
