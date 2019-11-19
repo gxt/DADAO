@@ -4,6 +4,7 @@ Date: Wed, 13 Nov 2019 20:15:23 +0800
 Subject: [PATCH] DADAO: add config support
 
 Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+Signed-off-by: shiyining <1700012728@pku.edu.cn>
 ---
  config.sub   | 1 +
  configure    | 3 +++

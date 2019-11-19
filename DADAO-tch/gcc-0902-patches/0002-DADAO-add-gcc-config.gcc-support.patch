@@ -4,6 +4,7 @@ Date: Tue, 19 Nov 2019 09:09:53 +0800
 Subject: [PATCH] DADAO: add gcc/config.gcc support
 
 Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+Signed-off-by: shiyining <1700012728@pku.edu.cn>
 ---
  gcc/config.gcc | 9 +++++++++
  1 file changed, 9 insertions(+)
