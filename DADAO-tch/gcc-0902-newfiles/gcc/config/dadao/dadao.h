@@ -1,5 +1,4 @@
 /* Target Definitions for DADAO. */
-
 #ifndef GCC_DADAO_H
 #define GCC_DADAO_H
 
@@ -116,7 +115,23 @@ enum reg_class
   { 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0x00000001 }  /* ALL_REGS */	\
 }
 
-#define N_REG_CLASSES		(int)LIM_REG_CLASSES
-#define REGNO_REG_CLASS(R)	( ALL_REGS )
+#define N_REG_CLASSES			(int)LIM_REG_CLASSES
+#define REGNO_REG_CLASS(R)		( ALL_REGS )
+
+/* Assemble related */
+#define ASM_COMMENT_START		"#"
+#define ASM_APP_ON			" #APP\n"
+#define ASM_APP_OFF			" #NO_APP\n"
+
+#define GLOBAL_ASM_OP			"\t.global\t"
+
+#define TEXT_SECTION_ASM_OP		"\t.text"
+#define DATA_SECTION_ASM_OP		"\t.data"
+#define BSS_SECTION_ASM_OP		"\t.bss"
+#define READONLY_DATA_SECTION_ASM_OP	"\t.section\t.rodata"
+#define SBSS_SECTION_ASM_OP		"\t.section\t.sbss,\"aw\",@nobits"
+#define SDATA_SECTION_ASM_OP		"\t.section\t.sdata,\"aw\",@progbits"
+
+#define ASM_OUTPUT_ALIGN(STREAM,LOG)	fprintf (STREAM, "\t.align\t%d\n", (LOG))
 
 #endif /* GCC_DADAO_H */
