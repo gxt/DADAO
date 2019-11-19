@@ -3,14 +3,42 @@
 #ifndef GCC_DADAO_H
 #define GCC_DADAO_H
 
-#define BITS_BIG_ENDIAN		1
-#define BYTES_BIG_ENDIAN	1
-#define WORDS_BIG_ENDIAN	1
+#define BITS_BIG_ENDIAN			0
+#define BYTES_BIG_ENDIAN		1
+#define WORDS_BIG_ENDIAN		1
 
-#define UNITS_PER_WORD		8
+#define CHAR_TYPE_SIZE			8
+#define SHORT_TYPE_SIZE			16
+#define INT_TYPE_SIZE			32
+#define LONG_TYPE_SIZE			64
+#define LONG_LONG_TYPE_SIZE		64
+
+#define FLOAT_TYPE_SIZE			32
+#define DOUBLE_TYPE_SIZE		64
+
+#define BIGGEST_ALIGNMENT		64
+
+/* all instruction is 32 bits */
+#define FUNCTION_BOUNDARY		32
+/* stack aligned to 64 bits */
+#define STACK_BOUNDARY			64
+/* param aligned to 64 bits */
+#define PARM_BOUNDARY			64
+
+#define UNITS_PER_WORD			8
+#define MOVE_MAX			8
+
+#define PCC_BITFIELD_TYPE_MATTERS	1
+#define STRICT_ALIGNMENT		1
+#define SLOW_BYTE_ACCESS		1
+#define DEFAULT_SIGNED_CHAR		0
+
+#define FUNCTION_MODE			SImode
+#define CASE_VECTOR_MODE		DImode
+#define Pmode				DImode
 
 /* register desciption */
-#define FIRST_PSEUDO_REGISTER (64 * 2)
+#define FIRST_PSEUDO_REGISTER		(64 * 2)
 
 #define REGISTER_NAMES {						\
   /* reg-data */							\
@@ -35,6 +63,36 @@
   "ra00" /* SHOULD NEVER BE USED DIRECTLY */				\
 }
 
+#define FIXED_REGISTERS {						\
+  /* rd    4           8          12          16 */			\
+  1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,			\
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,			\
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,			\
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,			\
+  /* rp    4           8          12          16 */			\
+  1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,			\
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,			\
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,			\
+  0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,			\
+  /* others */								\
+  1									\
+}
+
+#define CALL_USED_REGISTERS {						\
+  /* rd    4           8          12          16 */			\
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,			\
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,			\
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,			\
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,			\
+  /* rp    4           8          12          16 */			\
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,			\
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,			\
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,			\
+  0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,			\
+  /* others */								\
+  1									\
+}
+
 enum reg_class
 {
   NO_REGS,				/* no registers in set */
@@ -44,6 +102,21 @@ enum reg_class
   LIM_REG_CLASSES			/* max value + 1 */
 }
  
+#define REG_CLASS_NAMES {		\
+  "NO_REGS",				\
+  "DATA_REGS",				\
+  "POINTER_REGS",			\
+  "ALL_REGS"				\
+}
+
+#define REG_CLASS_CONTENTS {								\
+  { 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000 }, /* NO_REGS */		\
+  { 0xffffffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000 }, /* DATA_REGS */	\
+  { 0x00000000, 0x00000000, 0xffffffff, 0xffffffff, 0x00000000 }, /* POINTER_REGS */	\
+  { 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0x00000001 }  /* ALL_REGS */	\
+}
+
 #define N_REG_CLASSES		(int)LIM_REG_CLASSES
+#define REGNO_REG_CLASS(R)	( ALL_REGS )
 
 #endif /* GCC_DADAO_H */
