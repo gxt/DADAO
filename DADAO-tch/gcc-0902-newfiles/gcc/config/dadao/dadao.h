@@ -31,4 +31,15 @@
   /* pseudo registers */						\
   "ra00" /* SHOULD NEVER BE USED DIRECTLY */				\
 }
+
+enum reg_class
+{
+  NO_REGS,				/* no registers in set */
+  DATA_REGS,				/* data registers */
+  POINTER_REGS,				/* pointer registers */
+  ALL_REGS,				/* all registers */
+  LIM_REG_CLASSES			/* max value + 1 */
+}
  
+#define N_REG_CLASSES		(int)LIM_REG_CLASSES
+
