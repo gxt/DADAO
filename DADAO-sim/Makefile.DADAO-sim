@@ -47,7 +47,7 @@ qemu-0401-make:
 		--enable-curses							\
 		--prefix=$(QEMU_0401_INSTALL)		>> $(QEMU_0401_BUILDLOG) 2>&1
 	@echo "Make qemu and make install ..."
-	@make -C $(QEMU_0401_WORKING) -j4		>> $(QEMU_0401_BUILDLOG) 2>&1
+	@make -C $(QEMU_0401_WORKING) -j8		>> $(QEMU_0401_BUILDLOG) 2>&1
 	@make -C $(QEMU_0401_WORKING) install		>> $(QEMU_0401_BUILDLOG) 2>&1
 	@echo "Softlinking necessary files ..."
 	@ln -sf $(QEMU_0401_INSTALL)/bin/qemu-system-dadao $(DIR_BUILD_SIM)

@@ -50,7 +50,7 @@ linux-0503-make:
 		$(LINUX_0503_DEFCONFIG)		>> $(LINUX_0503_BUILDLOG) 2>&1
 	@echo "Making (in several minutes) ..."
 	@make -C $(LINUX_0503_WORKING)				\
-		ARCH=$(LINUX_0503_ARCH) -j4	>> $(LINUX_0503_BUILDLOG) 2>&1
+		ARCH=$(LINUX_0503_ARCH) -j8	>> $(LINUX_0503_BUILDLOG) 2>&1
 
 linux-0503-headers:
 	@echo "Headers check ..."

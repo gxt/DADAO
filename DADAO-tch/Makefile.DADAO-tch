@@ -53,7 +53,7 @@ gcc-0902-conf:
 
 gcc-0902-make:
 	@echo "Make all-gcc ..."
-	@make -C $(GCC_0902_WORKING) all-gcc -j4	>> $(GCC_0902_BUILDLOG) 2>&1
+	@make -C $(GCC_0902_WORKING) all-gcc -j8	>> $(GCC_0902_BUILDLOG) 2>&1
 	@echo "Make all-gcc complete."
 
 gcc-0902-install:
@@ -84,6 +84,6 @@ binutils-gdb-0233-make:
 		--target=dadao-elf					\
 		--prefix=$(BINUTILS_0233_INSTALL)	>> $(BINUTILS_0233_BUILDLOG) 2>&1
 	@echo "Make binutils and gdb ..."
-	@make -C $(BINUTILS_0233_WORKING) -j4		>> $(BINUTILS_0233_BUILDLOG) 2>&1
+	@make -C $(BINUTILS_0233_WORKING) -j8		>> $(BINUTILS_0233_BUILDLOG) 2>&1
 	@make -C $(BINUTILS_0233_WORKING) install	>> $(BINUTILS_0233_BUILDLOG) 2>&1
 
