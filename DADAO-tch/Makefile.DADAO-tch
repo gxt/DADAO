@@ -49,6 +49,7 @@ gcc-0902-conf:
 		--prefix=$(GCC_0902_INSTALL)				\
 		--disable-nls						\
 		--enable-languages=c					\
+		--enable-checking					\
 		--without-headers			>> $(GCC_0902_BUILDLOG) 2>&1
 
 gcc-0902-make:
