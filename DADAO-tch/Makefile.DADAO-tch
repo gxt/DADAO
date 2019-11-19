@@ -40,17 +40,20 @@ gcc-0902-new:
 	@echo "Apply gcc-0902-patches ..."
 	@cd $(GCC_0902_WORKING); git am $(GCC_0902_PATCHES)/*.patch
 
-gcc-0902-make:
+gcc-0902-conf:
 	@echo "Remove old gcc buildlog ..."
 	@rm -fr $(GCC_0902_BUILDLOG)
+	@echo "Configure gcc ..."
 	@cd $(GCC_0902_WORKING); ./configure				\
 		--target=$(GCC_0902_TARGET)				\
 		--prefix=$(GCC_0902_INSTALL)				\
 		--disable-nls						\
 		--enable-languages=c					\
-		--without-headers
+		--without-headers			>> $(GCC_0902_BUILDLOG) 2>&1
+
+gcc-0902-make:
 	@echo "Make all-gcc ..."
-	@make -C $(GCC_0902_WORKING) all-gcc -j4
+	@make -C $(GCC_0902_WORKING) all-gcc -j4	>> $(GCC_0902_BUILDLOG) 2>&1
 	@echo "Make all-gcc complete."
 
 gcc-0902-install:
