@@ -1,5 +1,8 @@
 /* Target Definitions for DADAO. */
 
+#ifndef GCC_DADAO_H
+#define GCC_DADAO_H
+
 #define BITS_BIG_ENDIAN		1
 #define BYTES_BIG_ENDIAN	1
 #define WORDS_BIG_ENDIAN	1
@@ -43,3 +46,4 @@ enum reg_class
  
 #define N_REG_CLASSES		(int)LIM_REG_CLASSES
 
+#endif /* GCC_DADAO_H */
