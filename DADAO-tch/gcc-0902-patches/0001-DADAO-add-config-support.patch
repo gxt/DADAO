@@ -1,21 +1,36 @@
-From e4fde249c0bf8345cc077613d5a57d1979658734 Mon Sep 17 00:00:00 2001
+From b16f31f13468c3410dc3575cd6dc42a657c61249 Mon Sep 17 00:00:00 2001
 From: Guan Xuetao <gxt@pku.edu.cn>
 Date: Wed, 13 Nov 2019 20:15:23 +0800
 Subject: [PATCH] DADAO: add config support
 
 Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+
+DADAO: add port for addao
+
 Signed-off-by: shiyining <1700012728@pku.edu.cn>
 ---
- config.sub   | 1 +
- configure    | 3 +++
- configure.ac | 3 +++
- 3 files changed, 7 insertions(+)
+ config.sub     |  5 +++++
+ configure      |  3 +++
+ configure.ac   |  3 +++
+ gcc/config.gcc | 10 ++++++++++
+ 4 files changed, 21 insertions(+)
 
 diff --git a/config.sub b/config.sub
-index 75bb6a3135b..f0439d04c97 100755
+index 75bb6a3135b..e38237c0402 100755
 --- a/config.sub
 +++ b/config.sub
-@@ -1174,6 +1174,7 @@ case $cpu-$vendor in
+@@ -293,6 +293,10 @@ case $1 in
+ 				basic_machine=mips-dec
+ 				os=
+ 				;;
++			dadao)
++				basic_machine=dadao-unknown
++				os=dadao
++				;;
+ 			delta88)
+ 				basic_machine=m88k-motorola
+ 				os=sysv3
+@@ -1174,6 +1178,7 @@ case $cpu-$vendor in
  			| c[123]* | c30 | [cjt]90 | c4x \
  			| c8051 | clipper | craynv | csky | cydra \
  			| d10v | d30v | dlx | dsp16xx \
@@ -51,6 +66,34 @@ index 9db4fd14aa2..ac03d55a047 100644
    fr30-*-elf*)
      noconfigdirs="$noconfigdirs gdb"
      ;;
+diff --git a/gcc/config.gcc b/gcc/config.gcc
+index ddd3b8f4d9d..97ea2f0b5f3 100644
+--- a/gcc/config.gcc
++++ b/gcc/config.gcc
+@@ -363,6 +363,10 @@ bfin*-*)
+ crisv32-*)
+ 	cpu_type=cris
+ 	;;
++dadao*)
++	cpu_type=dadao
++	target_has_targetm_common=no
++	;;
+ frv*)	cpu_type=frv
+ 	extra_options="${extra_options} g.opt"
+ 	;;
+@@ -1377,6 +1381,12 @@ csky-*-*)
+ 		;;
+ 	esac
+ 	;;
++dadao-*-elf)
++	gas=yes
++	gnu_ld=yes
++	tmake_file="${tmake_file} dadao/t-dadao"
++	tm_file="dbxelf.h elfos.h newlib-stdint.h ${tm_file}"
++	;;
+ epiphany-*-elf | epiphany-*-rtems*)
+ 	tm_file="${tm_file} dbxelf.h elfos.h"
+ 	tmake_file="${tmake_file} epiphany/t-epiphany"
 -- 
 2.17.1
 
