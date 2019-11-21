@@ -49,18 +49,31 @@
   "rd40", "rd41", "rd42", "rd43", "rd44", "rd45", "rd46", "rd47",	\
   "rd48", "rd49", "rd50", "rd51", "rd52", "rd53", "rd54", "rd55",	\
   "rd56", "rd57", "rd58", "rd59", "rd60", "rd61", "rd62", "rd63",	\
-  /* reg-pointer */							\
-  "null", "rp01", "rp02", "rp03", "rp04", "rp05", "rp06", "rp07",	\
-  "rp08", "rp09", "rp10", "rp11", "rp12", "rp13", "rp14", "rp15",	\
-  "rp16", "rp17", "rp18", "rp19", "rp20", "rp21", "rp22", "rp23",	\
-  "rp24", "rp25", "rp26", "rp27", "rp28", "rp29", "rp30", "rp31",	\
-  "rp32", "rp33", "rp34", "rp35", "rp36", "rp37", "rp38", "rp39",	\
-  "rp40", "rp41", "rp42", "rp43", "rp44", "rp45", "rp46", "rp47",	\
-  "rp48", "rp49", "rp50", "rp51", "rp52", "rp53", "rp54", "rp55",	\
-  "rp56", "rp57", "rp58", "rp59", "rp60", "rp61", "rp62", "rp63",	\
+  /* reg-base */							\
+  "null", "rb01", "rb02", "rb03", "rb04", "rb05", "rb06", "rb07",	\
+  "rb08", "rb09", "rb10", "rb11", "rb12", "rb13", "rb14", "rb15",	\
+  "rb16", "rb17", "rb18", "rb19", "rb20", "rb21", "rb22", "rb23",	\
+  "rb24", "rb25", "rb26", "rb27", "rb28", "rb29", "rb30", "rb31",	\
+  "rb32", "rb33", "rb34", "rb35", "rb36", "rb37", "rb38", "rb39",	\
+  "rb40", "rb41", "rb42", "rb43", "rb44", "rb45", "rb46", "rb47",	\
+  "rb48", "rb49", "rb50", "rb51", "rb52", "rb53", "rb54", "rb55",	\
+  "rb56", "rb57", "rb58", "rb59", "rb60", "rb61", "rb62", "rb63",	\
+  /* reg-return address */						\
+  "ra00", /* SHOULD NEVER BE USED DIRECTLY */				\
   /* pseudo registers */						\
-  "ra00" /* SHOULD NEVER BE USED DIRECTLY */				\
+  "argp" /* ARG_POINTER_REGNUM */					\
 }
+
+#define DADAO_RDnn_ZERO			(0)
+#define DADAO_RDnn_V0			(1)
+#define DADAO_RDnn_V1			(2)
+#define DADAO_RBnn_NULL			(64)
+#define DADAO_RBnn_V0			(64 + 1)
+#define DADAO_RBnn_V1			(64 + 2)
+#define DADAO_RBnn_RSVD			(64 + 56)
+#define DADAO_RBnn_FP			(64 + 62)
+#define DADAO_RBnn_SP			(64 + 63)
+#define DADAO_PSEUDO_ARGP		(64 + 64 + 1)
 
 #define FIXED_REGISTERS {						\
   /* rd    4           8          12          16 */			\
@@ -68,13 +81,13 @@
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,			\
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,			\
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,			\
-  /* rp    4           8          12          16 */			\
+  /* rb    4           8          12          16 */			\
   1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,			\
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,			\
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,			\
   0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,			\
   /* others */								\
-  1									\
+  1, 1									\
 }
 
 #define CALL_USED_REGISTERS {						\
@@ -83,20 +96,20 @@
   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,			\
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,			\
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,			\
-  /* rp    4           8          12          16 */			\
+  /* rb    4           8          12          16 */			\
   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,			\
   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,			\
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,			\
   0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,			\
   /* others */								\
-  1									\
+  1, 1									\
 }
 
 enum reg_class
 {
   NO_REGS,				/* no registers in set */
   DATA_REGS,				/* data registers */
-  POINTER_REGS,				/* pointer registers */
+  BASE_REGS,				/* base registers */
   ALL_REGS,				/* all registers */
   LIM_REG_CLASSES			/* max value + 1 */
 }
@@ -104,19 +117,26 @@ enum reg_class
 #define REG_CLASS_NAMES {		\
   "NO_REGS",				\
   "DATA_REGS",				\
-  "POINTER_REGS",			\
+  "BASE_REGS",				\
   "ALL_REGS"				\
 }
 
 #define REG_CLASS_CONTENTS {								\
   { 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000 }, /* NO_REGS */		\
   { 0xffffffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000 }, /* DATA_REGS */	\
-  { 0x00000000, 0x00000000, 0xffffffff, 0xffffffff, 0x00000000 }, /* POINTER_REGS */	\
-  { 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0x00000001 }  /* ALL_REGS */	\
+  { 0x00000000, 0x00000000, 0xffffffff, 0xffffffff, 0x00000000 }, /* BASE_REGS */	\
+  { 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0x00000003 }  /* ALL_REGS */	\
 }
 
 #define N_REG_CLASSES			(int)LIM_REG_CLASSES
 #define REGNO_REG_CLASS(R)		( ALL_REGS )
+
+#define BASE_REG_CLASS			BASE_REGS
+#define INDEX_REG_CLASS			DATA_REGS
+#define MAX_REGS_PER_ADDRESS		2
+
+#define REGNO_OK_FOR_INDEX_P(NUM)	((NUM) < DADAO_RBnn_NULL && (NUM) >= DADAO_RDnn_V0)
+#define REGNO_OK_FOR_BASE_P(NUM)	((NUM) < DADAO_RBnn_RSVD && (NUM) >= DADAO_RBnn_V0)
 
 /* Assemble related */
 #define ASM_COMMENT_START		"#"
@@ -133,5 +153,48 @@ enum reg_class
 #define SDATA_SECTION_ASM_OP		"\t.section\t.sdata,\"aw\",@progbits"
 
 #define ASM_OUTPUT_ALIGN(STREAM,LOG)	fprintf (STREAM, "\t.align\t%d\n", (LOG))
+
+/* Function related */
+#define STACK_GROWS_DOWNWARD		1
+#define FRAME_GROWS_DOWNWARD		1
+
+#define STACK_POINTER_REGNUM		DADAO_RBnn_SP
+#define FRAME_POINTER_REGNUM		DADAO_RBnn_FP
+#define ARG_POINTER_REGNUM		DADAO_PSEUDO_ARGP
+
+#define ELIMINABLE_REGS {						\
+  { ARG_POINTER_REGNUM,			STACK_POINTER_REGNUM},		\
+  { ARG_POINTER_REGNUM,			FRAME_POINTER_REGNUM}}
+
+#define FUNCTION_ARG_REGNO_P(r)		dadao_function_arg_regno_p(r)
+
+#define CUMULATIVE_ARGS			unsigned int
+
+#define INITIAL_ELIMINATION_OFFSET(FROM, TO, OFFSET)			\
+  (OFFSET) = dadao_initial_elimination_offset ((FROM), (TO))
+
+#define INIT_CUMULATIVE_ARGS(CUM,FNTYPE,LIBNAME,FNDECL,N_NAMED_ARGS)	\
+  dadao_init_cumulative_args((CUM))
+
+#define ACCUMULATE_OUTGOING_ARGS			1
+#define REG_PARM_STACK_SPACE(FNDECL)			0
+#define OUTGOING_REG_PARM_STACK_SPACE(FNTYPE)		1
+#define FIRST_PARM_OFFSET(F)				0
+
+#define TRAMPOLINE_SIZE					64
+#define TRAMPOLINE_ALIGNMENT				64
+
+/* Profiling NOT support yet */
+#define FUNCTION_PROFILER(FILE,LABELNO)			(abort (), 0)
+
+#define EH_RETURN_DATA_REGNO(N)				INVALID_REGNUM
+#define EH_RETURN_HANDLER_RTX				gen_rtx_REG(DImode, DADAO_RBnn_RSVD)
+
+/* Run-time Target Specification */
+#define TARGET_CPU_CPP_BUILTINS() {			\
+  builtin_define_std ("dadao");				\
+  builtin_define_std ("DADAO");				\
+  builtin_define ("__DADAO_BIG_ENDIAN__");		\
+}
 
 #endif /* GCC_DADAO_H */
