@@ -14,15 +14,20 @@
 
 #define FLOAT_TYPE_SIZE			32
 #define DOUBLE_TYPE_SIZE		64
+#define LONG_DOUBLE_TYPE_SIZE		64
 
 #define BIGGEST_ALIGNMENT		64
 
 /* all instruction is 32 bits */
-#define FUNCTION_BOUNDARY		32
+#define FUNCTION_BOUNDARY		LONG_LONG_TYPE_SIZE
 /* stack aligned to 64 bits */
-#define STACK_BOUNDARY			64
+#define STACK_BOUNDARY			LONG_LONG_TYPE_SIZE
 /* param aligned to 64 bits */
-#define PARM_BOUNDARY			64
+#define PARM_BOUNDARY			LONG_LONG_TYPE_SIZE
+/* Alignment of field after `int : 0' in a structure.  */
+#define EMPTY_FIELD_BOUNDARY		LONG_LONG_TYPE_SIZE
+/* Every structures size must be a multiple of 8 bits.  */
+#define STRUCTURE_SIZE_BOUNDARY		LONG_LONG_TYPE_SIZE
 
 #define UNITS_PER_WORD			8
 #define MOVE_MAX			8
