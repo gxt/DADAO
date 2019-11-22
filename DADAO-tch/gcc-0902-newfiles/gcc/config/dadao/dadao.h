@@ -117,7 +117,7 @@ enum reg_class
   BASE_REGS,				/* base registers */
   ALL_REGS,				/* all registers */
   LIM_REG_CLASSES			/* max value + 1 */
-}
+};
  
 #define REG_CLASS_NAMES {		\
   "NO_REGS",				\
