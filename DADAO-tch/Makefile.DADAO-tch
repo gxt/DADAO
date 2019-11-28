@@ -62,8 +62,16 @@ gcc-0902-install:
 	@echo "Remove old gcc install ..."
 	@rm -fr $(GCC_0902_INSTALL)
 	@echo "Install gcc ..."
-	@make -C $(GCC_0902_WORKING) install-gcc
+	@make -C $(GCC_0902_WORKING) install-gcc	>> $(GCC_0902_BUILDLOG) 2>&1
 	@echo "Install gcc complete."
+
+gcc-0902-highfive:
+	@echo "BEGIN TO BUILD gcc-0902!"
+	@make gcc-0902-new
+	@make gcc-0902-conf
+	@make gcc-0902-make
+	@make gcc-0902-install
+	@echo "BUILD gcc-0902 DONE!"
 
 BINUTILS_0233_ORIGIN	:= /pub/GIT-ORIGIN/binutils-gdb.git
 BINUTILS_0233_VERSION	:= binutils-2_33_1
