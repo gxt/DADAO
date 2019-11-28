@@ -202,7 +202,7 @@ dadao_arg_partial_bytes (cumulative_args_t cum_v,
 void dadao_init_cumulative_args(CUMULATIVE_ARGS* cum)
 {
   cum->cnt_d = DADAO_RDnn_ARG_FIRST;
-  cum->cnt_a = DADAO_RBnn_ARG_FIRST;
+  cum->cnt_b = DADAO_RBnn_ARG_FIRST;
 }
 
 static rtx
@@ -212,8 +212,8 @@ dadao_function_arg (cumulative_args_t cum_v, machine_mode mode,
 	CUMULATIVE_ARGS cum = *get_cumulative_args (cum_v);
 	if (POINTER_TYPE_P(type))
 	{
-		if (cum.cnt_a >= DADAO_RBnn_ARG_FIRST && cum.cnt_a <= DADAO_RBnn_ARG_LAST)
-			return gen_rtx_REG (mode, cum.cnt_a);
+		if (cum.cnt_b >= DADAO_RBnn_ARG_FIRST && cum.cnt_b <= DADAO_RBnn_ARG_LAST)
+			return gen_rtx_REG (mode, cum.cnt_b);
 		else
 			return NULL_RTX;
 	} else {
@@ -233,7 +233,7 @@ dadao_function_arg_advance (cumulative_args_t cum_v, machine_mode mode,
 {
 	CUMULATIVE_ARGS *cum = get_cumulative_args (cum_v);
 	if (POINTER_TYPE_P(type))
-		cum->cnt_a = cum->cnt_a + 1;
+		cum->cnt_b = cum->cnt_b + 1;
 	else
 		cum->cnt_d = cum->cnt_d + 1;
 }

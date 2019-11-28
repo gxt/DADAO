@@ -188,7 +188,7 @@ enum reg_class
 #define FUNCTION_ARG_REGNO_P(r)		dadao_function_arg_regno_p(r)
 
 typedef  struct{
-  unsigned int cnt_d, cnt_a;
+  unsigned int cnt_d, cnt_b;
 } CUMULATIVE_ARGS;
 
 #define INITIAL_ELIMINATION_OFFSET(FROM, TO, OFFSET)			\
