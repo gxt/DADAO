@@ -23,14 +23,12 @@ GCC_0902_PATCHES	:= $(DIR_DADAO_TCH)/gcc-0902-patches
 
 GCC_0902_WORKING	:= $(DIR_BUILD_TCH)/gcc-0902
 GCC_0902_INSTALL	:= $(DIR_BUILD_TCH)/__gcc-0902
-GCC_0902_BUILDLOG	:= $(DIR_BUILD_TCH)/buildlog-gcc-0902
+GCC_0902_LOG_STDOUT	:= $(DIR_BUILD_TCH)/_log-stdout-gcc-0902
+GCC_0902_LOG_STDERR	:= $(DIR_BUILD_TCH)/_log-stderr-gcc-0902
 
 gcc-0902-clean:
 	@echo "Remove old gcc repo ..."
-	@test -d $(DIR_BUILD_TCH) || mkdir -p $(DIR_BUILD_TCH)
 	@rm -fr $(GCC_0902_WORKING)
-	@echo "Remove old gcc buildlog ..."
-	@rm -fr $(GCC_0902_BUILDLOG)
 	@echo "Remove old gcc install ..."
 	@rm -fr $(GCC_0902_INSTALL)
 
@@ -47,7 +45,6 @@ gcc-0902-new:
 	@cd $(GCC_0902_WORKING); git am $(GCC_0902_PATCHES)/*.patch
 
 gcc-0902-conf:
-	@echo "Configure gcc ..."
 	@cd $(GCC_0902_WORKING); ./configure				\
 		--target=$(GCC_0902_TARGET)				\
 		--prefix=$(GCC_0902_INSTALL)				\
@@ -55,25 +52,33 @@ gcc-0902-conf:
 		--enable-languages=c					\
 		--enable-checking					\
 		--enable-werror						\
-		--without-headers			>> $(GCC_0902_BUILDLOG) 2>&1
+		--without-headers
 
 gcc-0902-make:
-	@echo "Make all-gcc ..."
-	@make -C $(GCC_0902_WORKING) all-gcc -j8	>> $(GCC_0902_BUILDLOG) 2>&1
-	@echo "Make all-gcc complete."
+	@make -C $(GCC_0902_WORKING) all-gcc -j8
 
 gcc-0902-install:
-	@echo "Install gcc ..."
-	@make -C $(GCC_0902_WORKING) install-gcc	>> $(GCC_0902_BUILDLOG) 2>&1
-	@echo "Install gcc complete."
+	@make -C $(GCC_0902_WORKING) install-gcc
 
 gcc-0902-highfive:
 	@echo "BEGIN TO BUILD gcc-0902!"
-	@make gcc-0902-clean
-	@make gcc-0902-new
-	@make gcc-0902-conf
-	@make gcc-0902-make
-	@make gcc-0902-install
+	@echo "0. Check build-tch dir and remove old gcc logfiles"
+	@test -d $(DIR_BUILD_TCH) || mkdir -p $(DIR_BUILD_TCH)
+	@rm -fr $(GCC_0902_LOG_STDOUT) $(GCC_0902_LOG_STDERR)
+	@echo "1. Clean old gcc ..."
+	@make -s gcc-0902-clean				1>> $(GCC_0902_LOG_STDOUT) 2>> $(GCC_0902_LOG_STDERR)
+	@echo "2. Clone and patch new gcc ..."
+	@make -s gcc-0902-new				1>> $(GCC_0902_LOG_STDOUT) 2>> $(GCC_0902_LOG_STDERR)
+	@echo "2. Clone and patch new gcc complete."
+	@echo "3. Configure gcc ..."
+	@make -s gcc-0902-conf				1>> $(GCC_0902_LOG_STDOUT) 2>> $(GCC_0902_LOG_STDERR)
+	@echo "3. Configure gcc complete."
+	@echo "4. Make all-gcc ..."
+	@make -s gcc-0902-make				1>> $(GCC_0902_LOG_STDOUT) 2>> $(GCC_0902_LOG_STDERR)
+	@echo "4. Make all-gcc complete."
+	@echo "5. Install gcc ..."
+	@make -s gcc-0902-install			1>> $(GCC_0902_LOG_STDOUT) 2>> $(GCC_0902_LOG_STDERR)
+	@echo "5. Install gcc complete."
 	@echo "BUILD gcc-0902 DONE!"
 
 BINUTILS_0233_ORIGIN	:= /pub/GIT-ORIGIN/binutils-gdb.git
