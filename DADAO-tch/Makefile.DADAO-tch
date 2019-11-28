@@ -25,10 +25,16 @@ GCC_0902_WORKING	:= $(DIR_BUILD_TCH)/gcc-0902
 GCC_0902_INSTALL	:= $(DIR_BUILD_TCH)/__gcc-0902
 GCC_0902_BUILDLOG	:= $(DIR_BUILD_TCH)/buildlog-gcc-0902
 
-gcc-0902-new:
+gcc-0902-clean:
 	@echo "Remove old gcc repo ..."
 	@test -d $(DIR_BUILD_TCH) || mkdir -p $(DIR_BUILD_TCH)
 	@rm -fr $(GCC_0902_WORKING)
+	@echo "Remove old gcc buildlog ..."
+	@rm -fr $(GCC_0902_BUILDLOG)
+	@echo "Remove old gcc install ..."
+	@rm -fr $(GCC_0902_INSTALL)
+
+gcc-0902-new:
 	@echo "Clone official repo"
 	@git clone $(GCC_0902_ORIGIN) -- $(GCC_0902_WORKING)
 	@cd $(GCC_0902_WORKING); git checkout -b $(GCC_0902_BRANCH) $(GCC_0902_VERSION)
@@ -41,8 +47,6 @@ gcc-0902-new:
 	@cd $(GCC_0902_WORKING); git am $(GCC_0902_PATCHES)/*.patch
 
 gcc-0902-conf:
-	@echo "Remove old gcc buildlog ..."
-	@rm -fr $(GCC_0902_BUILDLOG)
 	@echo "Configure gcc ..."
 	@cd $(GCC_0902_WORKING); ./configure				\
 		--target=$(GCC_0902_TARGET)				\
@@ -59,14 +63,13 @@ gcc-0902-make:
 	@echo "Make all-gcc complete."
 
 gcc-0902-install:
-	@echo "Remove old gcc install ..."
-	@rm -fr $(GCC_0902_INSTALL)
 	@echo "Install gcc ..."
 	@make -C $(GCC_0902_WORKING) install-gcc	>> $(GCC_0902_BUILDLOG) 2>&1
 	@echo "Install gcc complete."
 
 gcc-0902-highfive:
 	@echo "BEGIN TO BUILD gcc-0902!"
+	@make gcc-0902-clean
 	@make gcc-0902-new
 	@make gcc-0902-conf
 	@make gcc-0902-make
