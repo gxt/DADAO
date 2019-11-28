@@ -1,4 +1,12 @@
-/* Target Definitions for DADAO. */
+/*
+ * Target Definitions for DADAO.
+ * Copyright (C) 2019-2033 Guan Xuetao (AT) Peking Univ.
+ *
+ * Contributed by:
+ *   2019:
+ *	Shi Yining <1700012728@pku.edu.cn>
+ *	Guan Xuetao <gxt@pku.edu.cn>
+ */
 #ifndef GCC_DADAO_H
 #define GCC_DADAO_H
 
@@ -37,12 +45,12 @@
 #define SLOW_BYTE_ACCESS		1
 #define DEFAULT_SIGNED_CHAR		0
 
-#define FUNCTION_MODE			SImode
+#define FUNCTION_MODE			DImode
 #define CASE_VECTOR_MODE		DImode
 #define Pmode				DImode
 
 /* register desciption */
-#define FIRST_PSEUDO_REGISTER		(64 * 2)
+#define FIRST_PSEUDO_REGISTER		(64 * 2 + 2)
 
 #define REGISTER_NAMES {						\
   /* reg-data */							\
@@ -72,9 +80,13 @@
 #define DADAO_RDnn_ZERO			(0)
 #define DADAO_RDnn_V0			(1)
 #define DADAO_RDnn_V1			(2)
+#define DADAO_RDnn_ARG_FIRST		(8)
+#define DADAO_RDnn_ARG_LAST		(31)
 #define DADAO_RBnn_NULL			(64)
 #define DADAO_RBnn_V0			(64 + 1)
 #define DADAO_RBnn_V1			(64 + 2)
+#define DADAO_RBnn_ARG_FIRST		(64 + 8)
+#define DADAO_RBnn_ARG_LAST		(64 + 31)
 #define DADAO_RBnn_RSVD			(64 + 56)
 #define DADAO_RBnn_FP			(64 + 62)
 #define DADAO_RBnn_SP			(64 + 63)
@@ -115,6 +127,7 @@ enum reg_class
   NO_REGS,				/* no registers in set */
   DATA_REGS,				/* data registers */
   BASE_REGS,				/* base registers */
+  GENERAL_REGS,				/* general registers */
   ALL_REGS,				/* all registers */
   LIM_REG_CLASSES			/* max value + 1 */
 };
@@ -123,6 +136,7 @@ enum reg_class
   "NO_REGS",				\
   "DATA_REGS",				\
   "BASE_REGS",				\
+  "GENERAL_REGS",			\
   "ALL_REGS"				\
 }
 
@@ -130,6 +144,7 @@ enum reg_class
   { 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000 }, /* NO_REGS */		\
   { 0xffffffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000 }, /* DATA_REGS */	\
   { 0x00000000, 0x00000000, 0xffffffff, 0xffffffff, 0x00000000 }, /* BASE_REGS */	\
+  { 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0x00000000 }, /* GENRAL_REGS */	\
   { 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0x00000003 }  /* ALL_REGS */	\
 }
 
@@ -168,19 +183,19 @@ enum reg_class
 #define ARG_POINTER_REGNUM		DADAO_PSEUDO_ARGP
 
 #define ELIMINABLE_REGS {						\
-  { ARG_POINTER_REGNUM,			STACK_POINTER_REGNUM},		\
   { ARG_POINTER_REGNUM,			FRAME_POINTER_REGNUM}}
 
 #define FUNCTION_ARG_REGNO_P(r)		dadao_function_arg_regno_p(r)
 
-#define CUMULATIVE_ARGS			unsigned int
+typedef  struct{
+  unsigned int cnt_d, cnt_a;
+} CUMULATIVE_ARGS;
 
 #define INITIAL_ELIMINATION_OFFSET(FROM, TO, OFFSET)			\
   (OFFSET) = dadao_initial_elimination_offset ((FROM), (TO))
 
 #define INIT_CUMULATIVE_ARGS(CUM,FNTYPE,LIBNAME,FNDECL,N_NAMED_ARGS)	\
-  dadao_init_cumulative_args((CUM))
-
+  (dadao_init_cumulative_args(&(CUM)))
 #define ACCUMULATE_OUTGOING_ARGS			1
 #define REG_PARM_STACK_SPACE(FNDECL)			0
 #define OUTGOING_REG_PARM_STACK_SPACE(FNTYPE)		1
