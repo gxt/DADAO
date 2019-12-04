@@ -32,6 +32,7 @@
 #include "expr.h"
 #include "builtins.h"
 
+
 /* This file should be included last.  */
 #include "target-def.h"
 
@@ -63,7 +64,7 @@ static bool dadao_valid_scale_p(rtx x)
 }
 
 /* Implement TARGET_LEGITIMATE_ADDRESS_P.  */
-static bool
+bool
 dadao_legitimate_address_p(machine_mode mode, rtx x, bool strict_p)
 {
 	int code = GET_CODE (x);
@@ -245,16 +246,6 @@ dadao_function_arg_advance (cumulative_args_t cum_v, machine_mode mode,
 #undef TARGET_FRAME_POINTER_REQUIRED
 #define TARGET_FRAME_POINTER_REQUIRED hook_bool_void_true
 
-int
-dadao_initial_elimination_offset (int from, int to)
-{
-	int dif;
-	if ((from) == ARG_POINTER_REGNUM && (to) == FRAME_POINTER_REGNUM)
-		dif = 0;
-	else abort();
-	return dif;
-}
-
 //asm output format
 static void
 dadao_print_operand (FILE *file, rtx x, int code)
@@ -327,31 +318,170 @@ dadao_trampoline_init (rtx m_tramp, tree fndecl, rtx chain_value)
 #undef TARGET_TRAMPOLINE_INIT
 #define TARGET_TRAMPOLINE_INIT dadao_trampoline_init
 
+/* Store function data.  */
+struct GTY(()) machine_function
+ {
+   /* Number of bytes saved on the stack for callee saved registers.  */
+   int callee_saved_reg_size;
+
+   /* Number of bytes saved on the stack for local variables.  */
+   int local_vars_size;
+
+   /* The sum of 2 sizes: locals vars and padding byte for saving the
+    * registers.  Used in expand_prologue () and expand_epilogue().  */
+   int size_for_adjusting_sp;
+ };
+
+/* Zero initialization is OK for all current fields.  */
+
+static struct machine_function *
+dadao_init_machine_status (void)
+{
+  return ggc_cleared_alloc<machine_function> ();
+}
+
+
+/* The TARGET_OPTION_OVERRIDE worker.  */
+static void
+dadao_option_override (void)
+{
+  /* Set the per-function-data initializer.  */
+  init_machine_status = dadao_init_machine_status;
+}
+
+#undef TARGET_OPTION_OVERRIDE
+#define TARGET_OPTION_OVERRIDE dadao_option_override
+
+
+/* Compute the size of the local area and the size to be adjusted by the
+ * prologue and epilogue.  */
+
+static void
+dadao_compute_frame (void)
+{
+  /* For aligning the local variables.  */
+  int stack_alignment = STACK_BOUNDARY / BITS_PER_UNIT;
+  int padding_locals;
+  int regno;
+
+  /* Padding needed for each element of the frame.  */
+  cfun->machine->local_vars_size = get_frame_size ();
+
+  /* Align to the stack alignment.  */
+  padding_locals = cfun->machine->local_vars_size % stack_alignment;
+  if (padding_locals > 0)
+    cfun->machine->local_vars_size += (stack_alignment-padding_locals);
+
+  cfun->machine->callee_saved_reg_size = 0;
+
+  /* Save callee-saved registers.  */
+  for (regno = 0; regno < FIRST_PSEUDO_REGISTER; regno++)
+    if (df_regs_ever_live_p (regno) && (! call_used_regs[regno]))
+      cfun->machine->callee_saved_reg_size += 8;
+
+  cfun->machine->size_for_adjusting_sp = 8 + //reserved for fp
+    crtl->args.pretend_args_size
+    + cfun->machine->local_vars_size
+    + cfun->machine->callee_saved_reg_size 
+      + (HOST_WIDE_INT) crtl->outgoing_args_size;
+}
 //	prologue and epilogue
 void dadao_expand_prologue()
 {
-	return;
+  int regno,offset = 0;
+  rtx insn;
+  dadao_compute_frame();
+  rtx regsp = gen_rtx_REG(Pmode,DADAO_RBnn_SP);
+  rtx regfp = gen_rtx_REG(Pmode,DADAO_RBnn_FP);
+
+  offset -= 8;
+  insn = emit_insn(gen_movdi(gen_rtx_MEM(Pmode,gen_rtx_PLUS(Pmode,regsp,GEN_INT(offset))),regfp)); 
+  RTX_FRAME_RELATED_P (insn) = 1;
+
+  insn = emit_insn(gen_movdi(regfp,regsp));
+  RTX_FRAME_RELATED_P (insn) = 1;
+  insn = emit_insn(gen_subdi3(regsp,regsp,GEN_INT(cfun->machine->size_for_adjusting_sp))); 
+  RTX_FRAME_RELATED_P (insn) = 1;
+  for (regno = 0;regno < FIRST_PSEUDO_REGISTER; regno++)
+    {
+      if (!call_used_regs[regno] && df_regs_ever_live_p(regno))
+        {
+          rtx reg_src = gen_rtx_REG(DImode,regno);
+	  offset -= 8;
+          rtx mem_tar = gen_rtx_MEM(Pmode,gen_rtx_PLUS(Pmode,regfp,GEN_INT(offset)));
+          insn = emit_insn(gen_movdi(mem_tar,reg_src));
+          RTX_FRAME_RELATED_P (insn) = 1;
+        }
+    }
+  return;
 }
+
 
 void dadao_expand_epilogue()
 {
-	return;
+  int regno,offset;
+  rtx insn;
+  rtx regsp = gen_rtx_REG(Pmode,DADAO_RBnn_SP);
+  rtx regfp = gen_rtx_REG(Pmode,DADAO_RBnn_FP);
+
+
+  for (regno = 0,offset = -8;regno < FIRST_PSEUDO_REGISTER;regno++)
+    {
+      if (!call_used_regs[regno] && df_regs_ever_live_p(regno))
+        {
+          rtx reg_tar = gen_rtx_REG(DImode,regno);
+	  offset -= 8;
+          rtx mem_src = gen_rtx_MEM(Pmode,gen_rtx_PLUS(Pmode,regfp,GEN_INT(offset)));
+          insn = emit_insn(gen_movdi(reg_tar,mem_src));
+          RTX_FRAME_RELATED_P (insn) = 1;
+        }
+    }
+  
+  insn = emit_insn(gen_movdi(regsp,regfp));
+  RTX_FRAME_RELATED_P (insn) = 1;
+
+  offset = -8;
+  insn = emit_insn(gen_movdi(regfp,gen_rtx_MEM(Pmode,gen_rtx_PLUS(Pmode,regsp,GEN_INT(offset))))); 
+  RTX_FRAME_RELATED_P (insn) = 1;
+
+  emit_jump_insn(gen_returner());
+  return;
 }
+
+
+int
+dadao_initial_elimination_offset (int from, int to)
+{
+  int dif;
+  if ((from) == ARG_POINTER_REGNUM && (to) == FRAME_POINTER_REGNUM)
+    dif = 0;
+  else if ((from) == ARG_POINTER_REGNUM && (to) == STACK_POINTER_REGNUM)
+    {
+      dadao_compute_frame();
+      return -cfun->machine->callee_saved_reg_size;
+    }
+  else abort();
+  return dif;
+}
+
 
 bool dadao_offset_address_p (rtx x)
 {
-	x = XEXP (x, 0);
+  x = XEXP (x, 0);
 
-	if (GET_CODE (x) == PLUS) {
-		x = XEXP (x, 1);
+  if (GET_CODE (x) == PLUS) {
+    x = XEXP (x, 1);
 
-		if (GET_CODE (x) == CONST_INT) {
-			unsigned int v = INTVAL (x) & 0xFFFF8000;
-			return (v == 0xFFFF8000 || v == 0x00000000);
-		}
-	}
-	return 0;
+    if (GET_CODE (x) == CONST_INT) {
+      unsigned int v = INTVAL (x) & 0xFFFF8000;
+      return (v == 0xFFFF8000 || v == 0x00000000);
+    }
+  }
+  return 0;
 }
 
 //initialization of targetm
 struct gcc_target targetm = TARGET_INITIALIZER;
+
+//used for machine-function
+#include "gt-dadao.h"

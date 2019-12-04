@@ -53,8 +53,8 @@
 }")
 
 (define_insn "*mov<mode>"
-  [(set (match_operand:GPR 0 "nonimmediate_operand" "=D,D,B,B,D,m,D")
-	(match_operand:GPR 1 "dadao_general_movsrc_operand" "D,B,D,B,m,D,i"))]
+  [(set (match_operand:GPR 0 "nonimmediate_operand" "=D,D,B,B,r,m,D")
+	(match_operand:GPR 1 "dadao_general_movsrc_operand" "D,B,D,B,m,r,i"))]
   "register_operand (operands[0], <MODE>mode) || register_operand (operands[1], <MODE>mode)"
   "@
   mov.dd \\t=%0, %1
@@ -191,6 +191,13 @@
   ior\\t=%0, %1, %2
   ior.rd\\t=%0, %2
   ior.rp\\t=%0, %2"
+)
+
+(define_insn "one_cmpldi2"
+  [(set (match_operand:DI 0 "register_operand" "=D")
+    (not:DI (match_operand:DI 1 "register_operand" "D")))]
+  ""
+  "not\\t=%0, %1"
 )
 
 ;; -------------------------------------------------------------------------
@@ -334,7 +341,7 @@
   (call (match_operand:DI 1 "memory_operand" "m")
         (match_operand 2 "general_operand" "")))]
   ""
-  "call\\t%0"
+  "call\\t%1"
 )
 
 ;; -------------------------------------------------------------------------
@@ -357,6 +364,7 @@
   "
 {
   dadao_expand_epilogue ();
+  DONE;
 }
 ")
 

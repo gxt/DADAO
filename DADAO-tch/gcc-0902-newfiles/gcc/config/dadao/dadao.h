@@ -70,7 +70,7 @@
   "rb32", "rb33", "rb34", "rb35", "rb36", "rb37", "rb38", "rb39",	\
   "rb40", "rb41", "rb42", "rb43", "rb44", "rb45", "rb46", "rb47",	\
   "rb48", "rb49", "rb50", "rb51", "rb52", "rb53", "rb54", "rb55",	\
-  "rb56", "rb57", "rb58", "rb59", "rb60", "rb61", "rb62", "rb63",	\
+  "rb56", "rb57", "rb58", "rb59", "rb60", "rb61", "fp"  , "sp"  ,		\
   /* reg-return address */						\
   "ra00", /* SHOULD NEVER BE USED DIRECTLY */				\
   /* pseudo registers */						\

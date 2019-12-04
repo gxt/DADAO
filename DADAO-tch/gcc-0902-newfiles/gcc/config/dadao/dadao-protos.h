@@ -16,3 +16,4 @@ extern void dadao_expand_conditional_branch(rtx_code,rtx,rtx,rtx);
 #endif
 extern bool dadao_debug_func(int);
 extern void dadao_init_cumulative_args(CUMULATIVE_ARGS*);
+extern bool dadao_legitimate_address_p(machine_mode mode, rtx x, bool strict_p);
