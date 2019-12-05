@@ -81,56 +81,56 @@ gcc-0902-highfive:
 	@echo "5. Install gcc complete."
 	@echo "BUILD gcc-0902 DONE!"
 
-BINUTILS_0233_ORIGIN		:= /pub/GIT-ORIGIN/binutils-gdb.git
-BINUTILS_0233_VERSION		:= binutils-2_33_1
-BINUTILS_0233_BRANCH		:= dadao-0233
-BINUTILS_0233_TARGET		:= dadao-elf
+BINUTILS_GDB_0233_ORIGIN		:= /pub/GIT-ORIGIN/binutils-gdb.git
+BINUTILS_GDB_0233_VERSION		:= binutils-2_33_1
+BINUTILS_GDB_0233_BRANCH		:= dadao-0233
+BINUTILS_GDB_0233_TARGET		:= dadao-elf
 
-BINUTILS_0233_WORKING		:= $(DIR_BUILD_TCH)/binutils-gdb-0233
-BINUTILS_0233_INSTALL		:= $(DIR_BUILD_TCH)/__binutils-gdb-0233
-BINUTILS_0233_LOG_STDOUT	:= $(DIR_BUILD_TCH)/_log-stdout-binutils-0233
-BINUTILS_0233_LOG_STDERR	:= $(DIR_BUILD_TCH)/_log-stderr-binutils-0233
+BINUTILS_GDB_0233_WORKING		:= $(DIR_BUILD_TCH)/binutils-gdb-0233
+BINUTILS_GDB_0233_INSTALL		:= $(DIR_BUILD_TCH)/__binutils-gdb-0233
+BINUTILS_GDB_0233_LOG_STDOUT		:= $(DIR_BUILD_TCH)/_log-stdout-binutils-gdb-0233
+BINUTILS_GDB_0233_LOG_STDERR		:= $(DIR_BUILD_TCH)/_log-stderr-binutils-gdb-0233
 
 binutils-gdb-0233-clean:
 	@echo "Remove old binutils-gdb repo ..."
-	@rm -fr $(BINUTILS_0233_WORKING)
+	@rm -fr $(BINUTILS_GDB_0233_WORKING)
 	@echo "Remove old binutils-gdb install ..."
-	@rm -fr $(BINUTILS_0233_INSTALL)
+	@rm -fr $(BINUTILS_GDB_0233_INSTALL)
 
 binutils-gdb-0233-new:
 	@echo "Clone official repo"
-	@git clone $(BINUTILS_0233_ORIGIN) -- $(BINUTILS_0233_WORKING)
-	@cd $(BINUTILS_0233_WORKING);					\
-		git checkout -b $(BINUTILS_0233_BRANCH) $(BINUTILS_0233_VERSION)
+	@git clone $(BINUTILS_GDB_0233_ORIGIN) -- $(BINUTILS_GDB_0233_WORKING)
+	@cd $(BINUTILS_GDB_0233_WORKING);				\
+		git checkout -b $(BINUTILS_GDB_0233_BRANCH) $(BINUTILS_GDB_0233_VERSION)
 
 binutils-gdb-0233-conf:
-	@cd $(BINUTILS_0233_WORKING) && ./configure			\
-		--target=$(BINUTILS_0233_TARGET)			\
-		--prefix=$(BINUTILS_0233_INSTALL)
+	@cd $(BINUTILS_GDB_0233_WORKING) && ./configure			\
+		--target=$(BINUTILS_GDB_0233_TARGET)			\
+		--prefix=$(BINUTILS_GDB_0233_INSTALL)
 
 binutils-gdb-0233-make:
-	@make -C $(BINUTILS_0233_WORKING) -j8
+	@make -C $(BINUTILS_GDB_0233_WORKING) -j8
 
 binutils-gdb-0233-install:
-	@make -C $(BINUTILS_0233_WORKING) install
+	@make -C $(BINUTILS_GDB_0233_WORKING) install
 
 binutils-gdb-0233-highfive:
 	@echo "BEGIN TO BUILD binutils-gdb-0233!"
 	@echo "0. Check build-tch dir and remove old binutils logfiles"
 	@test -d $(DIR_BUILD_TCH) || mkdir -p $(DIR_BUILD_TCH)
-	@rm -fr $(BINUTILS_0233_LOG_STDOUT) $(BINUTILS_0233_LOG_STDERR)
+	@rm -fr $(BINUTILS_GDB_0233_LOG_STDOUT) $(BINUTILS_GDB_0233_LOG_STDERR)
 	@echo "1. Clean old binutils-gdb ..."
-	@make -s binutils-gdb-0233-clean			1>> $(BINUTILS_0233_LOG_STDOUT) 2>> $(BINUTILS_0233_LOG_STDERR)
+	@make -s binutils-gdb-0233-clean			1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
 	@echo "2. Clone and patch new binutils-gdb ..."
-	@make -s binutils-gdb-0233-new				1>> $(BINUTILS_0233_LOG_STDOUT) 2>> $(BINUTILS_0233_LOG_STDERR)
+	@make -s binutils-gdb-0233-new				1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
 	@echo "2. Clone and patch new binutils-gdb complete."
 	@echo "3. Configure binutils-gdb ..."
-	@make -s binutils-gdb-0233-conf				1>> $(BINUTILS_0233_LOG_STDOUT) 2>> $(BINUTILS_0233_LOG_STDERR)
+	@make -s binutils-gdb-0233-conf				1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
 	@echo "3. Configure binutils-gdb complete."
 	@echo "4. Make binutils-gdb ..."
-	@make -s binutils-gdb-0233-make				1>> $(BINUTILS_0233_LOG_STDOUT) 2>> $(BINUTILS_0233_LOG_STDERR)
+	@make -s binutils-gdb-0233-make				1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
 	@echo "4. Make binutils-gdb complete."
 	@echo "5. Install binutils-gdb ..."
-	@make -s binutils-gdb-0233-install			1>> $(BINUTILS_0233_LOG_STDOUT) 2>> $(BINUTILS_0233_LOG_STDERR)
+	@make -s binutils-gdb-0233-install			1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
 	@echo "5. Install binutils-gdb complete."
 	@echo "BUILD binutils-gdb-0233 DONE!"
