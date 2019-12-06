@@ -84,7 +84,10 @@ gcc-0902-highfive:
 BINUTILS_GDB_0233_ORIGIN		:= /pub/GIT-ORIGIN/binutils-gdb.git
 BINUTILS_GDB_0233_VERSION		:= binutils-2_33_1
 BINUTILS_GDB_0233_BRANCH		:= dadao-0233
-BINUTILS_GDB_0233_TARGET		:= dadao-elf
+BINUTILS_GDB_0233_TARGET		:= dadao-linux-gnu
+
+BINUTILS_GDB_0233_NEWFILES		:= $(DIR_DADAO_TCH)/binutils-gdb-0233-newfiles
+BINUTILS_GDB_0233_PATCHES		:= $(DIR_DADAO_TCH)/binutils-gdb-0233-patches
 
 BINUTILS_GDB_0233_WORKING		:= $(DIR_BUILD_TCH)/binutils-gdb-0233
 BINUTILS_GDB_0233_INSTALL		:= $(DIR_BUILD_TCH)/__binutils-gdb-0233
@@ -102,6 +105,8 @@ binutils-gdb-0233-new:
 	@git clone $(BINUTILS_GDB_0233_ORIGIN) -- $(BINUTILS_GDB_0233_WORKING)
 	@cd $(BINUTILS_GDB_0233_WORKING);				\
 		git checkout -b $(BINUTILS_GDB_0233_BRANCH) $(BINUTILS_GDB_0233_VERSION)
+	@echo "Apply binutils-gdb-0233-patches ..."
+	@cd $(BINUTILS_GDB_0233_WORKING); git am $(BINUTILS_GDB_0233_PATCHES)/*.patch
 
 binutils-gdb-0233-conf:
 	@cd $(BINUTILS_GDB_0233_WORKING) && ./configure			\

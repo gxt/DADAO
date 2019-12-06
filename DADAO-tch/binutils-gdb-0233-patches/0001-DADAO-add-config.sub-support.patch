@@ -1,0 +1,37 @@
+From d339071298f46283673a080c445d072b9cdadcb1 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Fri, 6 Dec 2019 08:14:34 +0800
+Subject: [PATCH] DADAO: add config.sub support
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ config.sub | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/config.sub b/config.sub
+index 5b158ac41c..a865cf7d9f 100755
+--- a/config.sub
++++ b/config.sub
+@@ -688,6 +688,11 @@ case $basic_machine in
+ 		vendor=ibm
+ 		os=cnk
+ 		;;
++	dadao)
++		cpu=dadao
++		vendor=dadao
++		os=linux
++		;;
+ 	decsystem10* | dec10*)
+ 		cpu=pdp10
+ 		vendor=dec
+@@ -1176,6 +1181,7 @@ case $cpu-$vendor in
+ 			| c[123]* | c30 | [cjt]90 | c4x \
+ 			| c8051 | clipper | craynv | csky | cydra \
+ 			| d10v | d30v | dlx | dsp16xx \
++			| dadao \
+ 			| e2k | elxsi | epiphany \
+ 			| f30[01] | f700 | fido | fr30 | frv | ft32 | fx80 \
+ 			| h8300 | h8500 \
+-- 
+2.17.1
+
