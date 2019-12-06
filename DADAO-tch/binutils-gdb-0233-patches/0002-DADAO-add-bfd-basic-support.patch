@@ -1,0 +1,189 @@
+From dc4a27a945cd075b871f41a0b6ed97a429ba3864 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Fri, 6 Dec 2019 09:54:04 +0800
+Subject: [PATCH] DADAO: add bfd basic support
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ bfd/Makefile.am |  4 ++++
+ bfd/Makefile.in |  6 ++++++
+ bfd/archures.c  |  2 ++
+ bfd/config.bfd  | 10 ++++++++++
+ bfd/configure   |  1 +
+ bfd/targets.c   |  5 +++++
+ 6 files changed, 28 insertions(+)
+
+diff --git a/bfd/Makefile.am b/bfd/Makefile.am
+index 6a39ef5649..b15c5cccc6 100644
+--- a/bfd/Makefile.am
++++ b/bfd/Makefile.am
+@@ -104,6 +104,7 @@ ALL_MACHINES = \
+ 	cpu-csky.lo \
+ 	cpu-d10v.lo \
+ 	cpu-d30v.lo \
++	cpu-dadao.lo \
+ 	cpu-dlx.lo \
+ 	cpu-epiphany.lo \
+ 	cpu-fr30.lo \
+@@ -191,6 +192,7 @@ ALL_MACHINES_CFILES = \
+ 	cpu-csky.c \
+ 	cpu-d10v.c \
+ 	cpu-d30v.c \
++	cpu-dadao.c \
+ 	cpu-dlx.c \
+ 	cpu-epiphany.c \
+ 	cpu-fr30.c \
+@@ -557,6 +559,7 @@ BFD64_BACKENDS = \
+ 	elf32-score.lo \
+ 	elf32-score7.lo \
+ 	elf64-alpha.lo \
++	elf64-dadao.lo \
+ 	elf64-gen.lo \
+ 	elf64-hppa.lo \
+ 	elf64-ia64.lo \
+@@ -598,6 +601,7 @@ BFD64_BACKENDS_CFILES = \
+ 	elf32-score.c \
+ 	elf32-score7.c \
+ 	elf64-alpha.c \
++	elf64-dadao.c \
+ 	elf64-gen.c \
+ 	elf64-hppa.c \
+ 	elf64-ia64-vms.c \
+diff --git a/bfd/Makefile.in b/bfd/Makefile.in
+index 80499d69cf..dc7018d757 100644
+--- a/bfd/Makefile.in
++++ b/bfd/Makefile.in
+@@ -528,6 +528,7 @@ ALL_MACHINES = \
+ 	cpu-csky.lo \
+ 	cpu-d10v.lo \
+ 	cpu-d30v.lo \
++	cpu-dadao.lo \
+ 	cpu-dlx.lo \
+ 	cpu-epiphany.lo \
+ 	cpu-fr30.lo \
+@@ -615,6 +616,7 @@ ALL_MACHINES_CFILES = \
+ 	cpu-csky.c \
+ 	cpu-d10v.c \
+ 	cpu-d30v.c \
++	cpu-dadao.c \
+ 	cpu-dlx.c \
+ 	cpu-epiphany.c \
+ 	cpu-fr30.c \
+@@ -983,6 +985,7 @@ BFD64_BACKENDS = \
+ 	elf32-score.lo \
+ 	elf32-score7.lo \
+ 	elf64-alpha.lo \
++	elf64-dadao.lo \
+ 	elf64-gen.lo \
+ 	elf64-hppa.lo \
+ 	elf64-ia64.lo \
+@@ -1024,6 +1027,7 @@ BFD64_BACKENDS_CFILES = \
+ 	elf32-score.c \
+ 	elf32-score7.c \
+ 	elf64-alpha.c \
++	elf64-dadao.c \
+ 	elf64-gen.c \
+ 	elf64-hppa.c \
+ 	elf64-ia64-vms.c \
+@@ -1335,6 +1339,7 @@ distclean-compile:
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-csky.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-d10v.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-d30v.Plo@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-dadao.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-dlx.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-epiphany.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-fr30.Plo@am__quote@
+@@ -1491,6 +1496,7 @@ distclean-compile:
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf64-aarch64.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf64-alpha.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf64-bpf.Plo@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf64-dadao.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf64-gen.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf64-hppa.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elf64-ia64-vms.Plo@am__quote@
+diff --git a/bfd/archures.c b/bfd/archures.c
+index 3465406213..2caa0a6340 100644
+--- a/bfd/archures.c
++++ b/bfd/archures.c
+@@ -602,6 +602,7 @@ extern const bfd_arch_info_type bfd_crx_arch;
+ extern const bfd_arch_info_type bfd_csky_arch;
+ extern const bfd_arch_info_type bfd_d10v_arch;
+ extern const bfd_arch_info_type bfd_d30v_arch;
++extern const bfd_arch_info_type bfd_dadao_arch;
+ extern const bfd_arch_info_type bfd_dlx_arch;
+ extern const bfd_arch_info_type bfd_bpf_arch;
+ extern const bfd_arch_info_type bfd_epiphany_arch;
+@@ -694,6 +695,7 @@ static const bfd_arch_info_type * const bfd_archures_list[] =
+     &bfd_csky_arch,
+     &bfd_d10v_arch,
+     &bfd_d30v_arch,
++    &bfd_dadao_arch,
+     &bfd_dlx_arch,
+     &bfd_bpf_arch,
+     &bfd_epiphany_arch,
+diff --git a/bfd/config.bfd b/bfd/config.bfd
+index 13d678e1f8..f88b2dfea0 100644
+--- a/bfd/config.bfd
++++ b/bfd/config.bfd
+@@ -172,6 +172,7 @@ cr16*)		 targ_archs=bfd_cr16_arch ;;
+ crisv32)	 targ_archs=bfd_cris_arch ;;
+ crx*)		 targ_archs=bfd_crx_arch ;;
+ csky*)		 targ_archs=bfd_csky_arch ;;
++dadao*)		 targ_archs=bfd_dadao_arch ;;
+ dlx*)		 targ_archs=bfd_dlx_arch ;;
+ fido*)		 targ_archs=bfd_m68k_arch ;;
+ hppa*)		 targ_archs=bfd_hppa_arch ;;
+@@ -484,6 +485,15 @@ case "${targ}" in
+     ;;
+ #endif
+ 
++#ifdef BFD64
++  dadao-*-*)
++    targ_defvec=dadao_elf64_vec
++    targ_selvecs="dadao_elf64_vec"
++    targ_underscore=yes
++    want64=true
++    ;;
++#endif
++
+   epiphany-*-*)
+     targ_defvec=epiphany_elf32_vec
+     targ_underscore=yes
+diff --git a/bfd/configure b/bfd/configure
+index a292a2ed28..d11a15a09e 100755
+--- a/bfd/configure
++++ b/bfd/configure
+@@ -14731,6 +14731,7 @@ do
+     csky_elf32_le_vec)		 tb="$tb elf32-csky.lo elf32.lo $elf" ;;
+     d10v_elf32_vec)		 tb="$tb elf32-d10v.lo elf32.lo $elf" ;;
+     d30v_elf32_vec)		 tb="$tb elf32-d30v.lo elf32.lo $elf" ;;
++    dadao_elf64_vec)		 tb="$tb elf64-dadao.lo elf64.lo $elf"; target_size=64 ;;
+     dlx_elf32_be_vec)		 tb="$tb elf32-dlx.lo elf32.lo $elf" ;;
+     elf32_be_vec)		 tb="$tb elf32-gen.lo elf32.lo $elf" ;;
+     elf32_le_vec)		 tb="$tb elf32-gen.lo elf32.lo $elf" ;;
+diff --git a/bfd/targets.c b/bfd/targets.c
+index 6b85c62798..6f2b9db742 100644
+--- a/bfd/targets.c
++++ b/bfd/targets.c
+@@ -634,6 +634,7 @@ extern const bfd_target csky_elf32_be_vec;
+ extern const bfd_target csky_elf32_le_vec;
+ extern const bfd_target d10v_elf32_vec;
+ extern const bfd_target d30v_elf32_vec;
++extern const bfd_target dadao_elf64_vec;
+ extern const bfd_target dlx_elf32_be_vec;
+ extern const bfd_target elf32_be_vec;
+ extern const bfd_target elf32_le_vec;
+@@ -971,6 +972,10 @@ static const bfd_target * const _bfd_target_vector[] =
+ 	&d10v_elf32_vec,
+ 	&d30v_elf32_vec,
+ 
++#ifdef BFD64
++	&dadao_elf64_vec,
++#endif
++
+ 	&dlx_elf32_be_vec,
+ 
+ 	/* This, and other vectors, may not be used in any *.mt configuration.
+-- 
+2.17.1
+
