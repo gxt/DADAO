@@ -13,6 +13,49 @@
 #include "elf-bfd.h"
 #include "elf/dadao.h"
 
+static bfd_reloc_status_type
+elf64_dadao_reloc (bfd * abfd ATTRIBUTE_UNUSED,
+		 arelent * reloc_entry,
+		 asymbol * symbol,
+		 void *data ATTRIBUTE_UNUSED,
+		 asection * input_section,
+		 bfd * output_bfd,
+		 char **error_message ATTRIBUTE_UNUSED);
+
+/* We don't actually apply any relocations in this toolset
+   so we make them all do nothing, but at least display useful
+   names.
+   Most of these are mainly used by the DADAO toolchain to resolve things
+   before the final ELF file is created.  */
+static reloc_howto_type elf_dadao_howto_table[] =
+{
+  HOWTO (R_DADAO_NOTYPE,		/* Type.  */
+	 0,				/* Rightshift.  */
+	 3,				/* Size.  */
+	 0,				/* Bitsize.  */
+	 FALSE,				/* PC_relative.  */
+	 0,				/* Bitpos.  */
+	 complain_overflow_dont,	/* Complain_on_overflow.  */
+	 elf64_dadao_reloc,		/* Special_function.  */
+	 "R_DADAO_NOTYPE",		/* Name.  */
+	 FALSE,				/* Partial_inplace.  */
+	 0,				/* Src_mask.  */
+	 0,				/* Dst_mask.  */
+	 FALSE),			/* PCrel_offset.  */
+  HOWTO (R_DADAO_IMM12, 0, 3, 0, FALSE, 0,
+	 complain_overflow_dont, elf64_dadao_reloc,
+	 "R_DADAO_IMM12",
+	 FALSE, 0, 0, FALSE),
+  HOWTO (R_DADAO_IMM18, 0, 3, 0, FALSE, 0,
+	 complain_overflow_dont, elf64_dadao_reloc,
+	 "R_DADAO_IMM18",
+	 FALSE, 0, 0, FALSE),
+  HOWTO (R_DADAO_IMM24, 0, 3, 0, FALSE, 0,
+	 complain_overflow_dont, elf64_dadao_reloc,
+	 "R_DADAO_IMM24",
+	 FALSE, 0, 0, FALSE)
+};
+
 static bfd_boolean
 elf64_dadao_object_p (bfd * abfd)
 {
@@ -106,40 +149,6 @@ elf64_dadao_reloc_name_lookup (bfd * abfd ATTRIBUTE_UNUSED,
 {
   return NULL;
 }
-
-/* We don't actually apply any relocations in this toolset
-   so we make them all do nothing, but at least display useful
-   names.
-   Most of these are mainly used by the DADAO toolchain to resolve things
-   before the final ELF file is created.  */
-static reloc_howto_type elf_dadao_howto_table[] =
-{
-  HOWTO (R_DADAO_NOTYPE,		/* Type.  */
-	 0,				/* Rightshift.  */
-	 3,				/* Size.  */
-	 0,				/* Bitsize.  */
-	 FALSE,				/* PC_relative.  */
-	 0,				/* Bitpos.  */
-	 complain_overflow_dont,	/* Complain_on_overflow.  */
-	 elf64_dadao_reloc,		/* Special_function.  */
-	 "R_DADAO_NOTYPE",		/* Name.  */
-	 FALSE,				/* Partial_inplace.  */
-	 0,				/* Src_mask.  */
-	 0,				/* Dst_mask.  */
-	 FALSE),			/* PCrel_offset.  */
-  HOWTO (R_DADAO_IMM12, 0, 3, 0, FALSE, 0,
-	 complain_overflow_dont, elf64_dadao_reloc,
-	 "R_DADAO_IMM12",
-	 FALSE, 0, 0, FALSE),
-  HOWTO (R_DADAO_IMM18, 0, 3, 0, FALSE, 0,
-	 complain_overflow_dont, elf64_dadao_reloc,
-	 "R_DADAO_IMM18",
-	 FALSE, 0, 0, FALSE),
-  HOWTO (R_DADAO_IMM24, 0, 3, 0, FALSE, 0,
-	 complain_overflow_dont, elf64_dadao_reloc,
-	 "R_DADAO_IMM24",
-	 FALSE, 0, 0, FALSE)
-};
 
 #define ELF_ARCH				bfd_arch_dadao
 #define ELF_MACHINE_CODE			EM_DADAO

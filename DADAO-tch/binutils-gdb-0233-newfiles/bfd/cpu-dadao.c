@@ -36,15 +36,14 @@ bfd_dadao_compatible (const bfd_arch_info_type *a, const bfd_arch_info_type *b)
   bfd_dadao_compatible,						\
   bfd_default_scan,						\
   bfd_arch_default_fill,					\
-  NEXT,								\
-  0 /* Maximum offset of a reloc from the start of an insn.  */	\
+  NEXT								\
 }
 
 static const bfd_arch_info_type arch_info_struct[] =
 {
-  N (bfd_mach_wuqing, "DADAO-wuqing", FALSE, &arch_info_struct[1]),
-  N (bfd_mach_wuming, "DADAO-wuming", FALSE, NULL)
+  N (bfd_mach_dadao_wuqing, "DADAO-wuqing", FALSE, &arch_info_struct[1]),
+  N (bfd_mach_dadao_wuming, "DADAO-wuming", FALSE, NULL)
 };
 
 const bfd_arch_info_type bfd_dadao_arch =
-  N (bfd_mach_wuxing, "DADAO-wuxing", TRUE, &arch_info_struct[0]);
+  N (bfd_mach_dadao_wuxing, "DADAO-wuxing", TRUE, &arch_info_struct[0]);
