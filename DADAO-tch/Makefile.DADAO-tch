@@ -105,6 +105,16 @@ binutils-gdb-0233-new:
 	@git clone $(BINUTILS_GDB_0233_ORIGIN) -- $(BINUTILS_GDB_0233_WORKING)
 	@cd $(BINUTILS_GDB_0233_WORKING);				\
 		git checkout -b $(BINUTILS_GDB_0233_BRANCH) $(BINUTILS_GDB_0233_VERSION)
+	@echo "Copy bfd dir"
+	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/bfd/* $(BINUTILS_GDB_0233_WORKING)/bfd
+	@cd $(BINUTILS_GDB_0233_WORKING);				\
+		git add bfd;						\
+		git commit -sm"DADAO: add bfd related files"
+	@echo "Copy include dir"
+	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/include/* $(BINUTILS_GDB_0233_WORKING)/include
+	@cd $(BINUTILS_GDB_0233_WORKING);				\
+		git add include;					\
+		git commit -sm"DADAO: add header files"
 	@echo "Apply binutils-gdb-0233-patches ..."
 	@cd $(BINUTILS_GDB_0233_WORKING); git am $(BINUTILS_GDB_0233_PATCHES)/*.patch
 
