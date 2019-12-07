@@ -24,3 +24,10 @@ DADAO-qemu: user/softmmu
 DADAO-linux:
 busybox:
 
+## Specification For config
+	cpu-type:	dadao
+	vendor:		dadao (MAYBE changed lator)
+	machine:	wuxing/wuqing/wuming
+	kernel:		linux
+	os:		gnu
+	kernel-os:	linux-gnu
