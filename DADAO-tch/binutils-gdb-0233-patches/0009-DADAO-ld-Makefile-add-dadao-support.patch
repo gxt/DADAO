@@ -1,0 +1,62 @@
+From 62b23d7d14e55e794667f22d6cb890971aac80b6 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sun, 8 Dec 2019 21:54:46 +0800
+Subject: [PATCH] DADAO: ld/Makefile add dadao support
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ ld/Makefile.am | 2 ++
+ ld/Makefile.in | 3 +++
+ 2 files changed, 5 insertions(+)
+
+diff --git a/ld/Makefile.am b/ld/Makefile.am
+index 0509c2e50f..f33e995f3d 100644
+--- a/ld/Makefile.am
++++ b/ld/Makefile.am
+@@ -424,6 +424,7 @@ ALL_64_EMULATION_SOURCES = \
+ 	eelf32mipswindiss.c \
+ 	eelf64_aix.c \
+ 	eelf64bpf.c \
++	eelf64_dadao.c \
+ 	eelf64_ia64.c \
+ 	eelf64_ia64_fbsd.c \
+ 	eelf64_ia64_vms.c \
+@@ -909,6 +910,7 @@ $(ALL_EMULATION_SOURCES) $(ALL_64_EMULATION_SOURCES): $(GEN_DEPENDS)
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf32mipswindiss.Pc@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64_aix.Pc@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64bpf.Pc@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64_dadao.Pc@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64_ia64.Pc@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64_ia64_fbsd.Pc@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64_ia64_vms.Pc@am__quote@
+diff --git a/ld/Makefile.in b/ld/Makefile.in
+index 9898392a77..956b3d2def 100644
+--- a/ld/Makefile.in
++++ b/ld/Makefile.in
+@@ -910,6 +910,7 @@ ALL_64_EMULATION_SOURCES = \
+ 	eelf32mipswindiss.c \
+ 	eelf64_aix.c \
+ 	eelf64bpf.c \
++	eelf64_dadao.c \
+ 	eelf64_ia64.c \
+ 	eelf64_ia64_fbsd.c \
+ 	eelf64_ia64_vms.c \
+@@ -1349,6 +1350,7 @@ distclean-compile:
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf32xstormy16.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf32xtensa.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64_aix.Po@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64_dadao.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64_ia64.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64_ia64_fbsd.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64_ia64_vms.Po@am__quote@
+@@ -2510,6 +2512,7 @@ $(ALL_EMULATION_SOURCES) $(ALL_64_EMULATION_SOURCES): $(GEN_DEPENDS)
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf32mipswindiss.Pc@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64_aix.Pc@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64bpf.Pc@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64_dadao.Pc@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64_ia64.Pc@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64_ia64_fbsd.Pc@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64_ia64_vms.Pc@am__quote@
+-- 
+2.17.1
+
