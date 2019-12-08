@@ -10,18 +10,6 @@
 #include "bfd.h"
 #include "libbfd.h"
 
-static const bfd_arch_info_type *
-bfd_dadao_compatible (const bfd_arch_info_type *a, const bfd_arch_info_type *b)
-{
-  if (a->arch != b->arch)
-    return NULL;
-
-  if (a->mach != b->mach)
-    return NULL;
-
-  return a;
-}
-
 #define N(MACHINE, PRINT, DEFAULT, NEXT)			\
 {								\
   64,	/* Bits in a word.  */					\
@@ -33,7 +21,7 @@ bfd_dadao_compatible (const bfd_arch_info_type *a, const bfd_arch_info_type *b)
   PRINT,							\
   3,								\
   DEFAULT,							\
-  bfd_dadao_compatible,						\
+  bfd_default_compatible,					\
   bfd_default_scan,						\
   bfd_arch_default_fill,					\
   NEXT								\
