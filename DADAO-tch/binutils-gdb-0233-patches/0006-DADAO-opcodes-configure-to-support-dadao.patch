@@ -1,0 +1,25 @@
+From f28accb61afbd8d3cff61184e887e02c740d68b2 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sun, 8 Dec 2019 17:43:32 +0800
+Subject: [PATCH] DADAO: opcodes/configure to support dadao
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ opcodes/configure | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/opcodes/configure b/opcodes/configure
+index 7ad135041d..91bb012bd4 100755
+--- a/opcodes/configure
++++ b/opcodes/configure
+@@ -12876,6 +12876,7 @@ if test x${all_targets} = xfalse ; then
+ 	bfd_csky_arch)		ta="$ta csky-dis.lo" ;;
+ 	bfd_d10v_arch)		ta="$ta d10v-dis.lo d10v-opc.lo" ;;
+ 	bfd_d30v_arch)		ta="$ta d30v-dis.lo d30v-opc.lo" ;;
++	bfd_dadao_arch)		ta="$ta dadao-dis.lo dadao-opc.lo" ;;
+ 	bfd_dlx_arch)		ta="$ta dlx-dis.lo" ;;
+ 	bfd_fr30_arch)		ta="$ta fr30-asm.lo fr30-desc.lo fr30-dis.lo fr30-ibld.lo fr30-opc.lo" using_cgen=yes ;;
+ 	bfd_frv_arch)		ta="$ta frv-asm.lo frv-desc.lo frv-dis.lo frv-ibld.lo frv-opc.lo" using_cgen=yes ;;
+-- 
+2.17.1
+
