@@ -110,6 +110,11 @@ binutils-gdb-0233-new:
 	@cd $(BINUTILS_GDB_0233_WORKING);				\
 		git add bfd;						\
 		git commit -sm"DADAO: add bfd related files"
+	@echo "Copy gas/config dir"
+	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/gas/config/* $(BINUTILS_GDB_0233_WORKING)/gas/config/
+	@cd $(BINUTILS_GDB_0233_WORKING);				\
+		git add gas/config;					\
+		git commit -sm"DADAO: add gas/config related files"
 	@echo "Copy include dir"
 	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/include/* $(BINUTILS_GDB_0233_WORKING)/include
 	@cd $(BINUTILS_GDB_0233_WORKING);				\
