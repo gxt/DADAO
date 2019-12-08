@@ -120,6 +120,11 @@ binutils-gdb-0233-new:
 	@cd $(BINUTILS_GDB_0233_WORKING);				\
 		git add opcodes;					\
 		git commit -sm"DADAO: add opcodes related files"
+	@echo "Copy ld dir"
+	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/ld/* $(BINUTILS_GDB_0233_WORKING)/ld/
+	@cd $(BINUTILS_GDB_0233_WORKING);				\
+		git add ld;						\
+		git commit -sm"DADAO: add ld related files"
 	@echo "Copy include dir"
 	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/include/* $(BINUTILS_GDB_0233_WORKING)/include
 	@cd $(BINUTILS_GDB_0233_WORKING);				\
