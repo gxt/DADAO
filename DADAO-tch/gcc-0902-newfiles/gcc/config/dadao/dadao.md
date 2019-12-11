@@ -53,8 +53,8 @@
 }")
 
 (define_insn "*mov<mode>"
-  [(set (match_operand:GPR 0 "nonimmediate_operand" "=D,D,B,B,r,m,D")
-	(match_operand:GPR 1 "dadao_general_movsrc_operand" "D,B,D,B,m,r,i"))]
+  [(set (match_operand:GPR 0 "nonimmediate_operand" "=D,D,B,B,D,m,D")
+	(match_operand:GPR 1 "dadao_general_movsrc_operand" "D,B,D,B,m,D,i"))]
   "register_operand (operands[0], <MODE>mode) || register_operand (operands[1], <MODE>mode)"
   "@
   mov.dd \\t=%0, %1
@@ -257,7 +257,7 @@
   (pc)))]
   ""
 {
-  if (GET_CODE(operands[0]) != EQ && GET_CODE(operands[1]) != NE ) {
+  if (GET_CODE(operands[0]) != EQ && GET_CODE(operands[0]) != NE ) {
 	dadao_expand_conditional_branch(GET_CODE(operands[0]),operands[1],operands[2],operands[3]);
 	DONE;
   }

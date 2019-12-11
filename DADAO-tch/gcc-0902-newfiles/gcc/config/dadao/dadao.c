@@ -395,7 +395,9 @@ void dadao_expand_prologue()
   rtx regfp = gen_rtx_REG(Pmode,DADAO_RBnn_FP);
 
   offset -= 8;
-  insn = emit_insn(gen_movdi(gen_rtx_MEM(Pmode,gen_rtx_PLUS(Pmode,regsp,GEN_INT(offset))),regfp)); 
+  rtx temp = gen_rtx_REG(DImode,DADAO_RDnn_V0);
+  emit_insn(gen_movdi(temp,regfp));
+  insn = emit_insn(gen_movdi(gen_rtx_MEM(Pmode,gen_rtx_PLUS(Pmode,regsp,GEN_INT(offset))),temp)); 
   RTX_FRAME_RELATED_P (insn) = 1;
 
   insn = emit_insn(gen_movdi(regfp,regsp));
@@ -441,7 +443,9 @@ void dadao_expand_epilogue()
   RTX_FRAME_RELATED_P (insn) = 1;
 
   offset = -8;
-  insn = emit_insn(gen_movdi(regfp,gen_rtx_MEM(Pmode,gen_rtx_PLUS(Pmode,regsp,GEN_INT(offset))))); 
+  rtx temp = gen_rtx_REG(DImode,DADAO_RDnn_ARG_FIRST);
+  insn = emit_insn(gen_movdi(temp,gen_rtx_MEM(Pmode,gen_rtx_PLUS(Pmode,regsp,GEN_INT(offset))))); 
+  emit_insn(gen_movdi(regfp,temp));
   RTX_FRAME_RELATED_P (insn) = 1;
 
   emit_jump_insn(gen_returner());
