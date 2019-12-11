@@ -46,6 +46,8 @@ qemu-0401-new:
 	@cd $(QEMU_0401_WORKING);					\
 		git add default-configs;				\
 		git commit -sm"DADAO: add dadao-softmmu.mak"
+	@echo "Apply qemu-0401-patches ..."
+	@cd $(QEMU_0401_WORKING); git am $(QEMU_0401_PATCHES)/*.patch
 
 qemu-0401-conf:
 	@echo "Configure qemu ..."
