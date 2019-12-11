@@ -19,36 +19,68 @@ QEMU_0401_BRANCH	:= dadao-0401
 QEMU_0401_TARGETS	:= dadao-softmmu
 
 QEMU_0401_NEWFILES	:= $(DIR_DADAO_SIM)/qemu-0401-newfiles
+QEMU_0401_PATCHES	:= $(DIR_DADAO_SIM)/qemu-0401-patches
 
 QEMU_0401_WORKING	:= $(DIR_BUILD_SIM)/qemu-0401
 QEMU_0401_INSTALL	:= $(DIR_BUILD_SIM)/__qemu-0401
-QEMU_0401_BUILDLOG	:= $(DIR_BUILD_SIM)/buildlog-qemu-0401
+QEMU_0401_LOG_STDOUT	:= $(DIR_BUILD_SIM)/_log-stdout-qemu-0401
+QEMU_0401_LOG_STDERR	:= $(DIR_BUILD_SIM)/_log-stderr-qemu-0401
+
+qemu-0401-clean:
+	@echo "Remove old qemu repo ..."
+	@rm -fr $(QEMU_0401_WORKING)
+	@echo "Remove old qemu install ..."
+	@rm -fr $(QEMU_0401_INSTALL)
 
 qemu-0401-new:
-	@echo "Remove old qemu repo ..."
-	@test -d $(DIR_BUILD_SIM) || mkdir -p $(DIR_BUILD_SIM)
-	@rm -fr $(QEMU_0401_WORKING)
 	@echo "Clone official repo"
 	@git clone $(QEMU_0401_ORIGIN) -- $(QEMU_0401_WORKING)
 	@cd $(QEMU_0401_WORKING); git checkout -b $(QEMU_0401_BRANCH) $(QEMU_0401_VERSION)
 	@echo "Copy target/dadao dir"
 	@cp -a $(QEMU_0401_NEWFILES)/target/* $(QEMU_0401_WORKING)/target/
-	@cd $(QEMU_0401_WORKING); git add target/dadao; git commit -sm"DADAO: add target/dadao dir"
+	@cd $(QEMU_0401_WORKING);					\
+		git add target/dadao;					\
+		git commit -sm"DADAO: add target/dadao dir"
 	@echo "Copy config file"
 	@cp -a $(QEMU_0401_NEWFILES)/default-configs/* $(QEMU_0401_WORKING)/default-configs/
-	@cd $(QEMU_0401_WORKING); git add default-configs; git commit -sm"DADAO: add dadao-softmmu.mak"
+	@cd $(QEMU_0401_WORKING);					\
+		git add default-configs;				\
+		git commit -sm"DADAO: add dadao-softmmu.mak"
+
+qemu-0401-conf:
+	@echo "Configure qemu ..."
+	@cd $(QEMU_0401_WORKING); ./configure				\
+		--target-list=$(QEMU_0401_TARGETS)			\
+		--enable-debug						\
+		--disable-sdl						\
+		--enable-curses						\
+		--prefix=$(QEMU_0401_INSTALL)
 
 qemu-0401-make:
-	@echo "Configure qemu ..."
-	@cd $(QEMU_0401_WORKING); ./configure					\
-		--target-list=$(QEMU_0401_TARGETS)				\
-		--enable-debug							\
-		--disable-sdl							\
-		--enable-curses							\
-		--prefix=$(QEMU_0401_INSTALL)		>> $(QEMU_0401_BUILDLOG) 2>&1
-	@echo "Make qemu and make install ..."
-	@make -C $(QEMU_0401_WORKING) -j8		>> $(QEMU_0401_BUILDLOG) 2>&1
-	@make -C $(QEMU_0401_WORKING) install		>> $(QEMU_0401_BUILDLOG) 2>&1
-	@echo "Softlinking necessary files ..."
-	@ln -sf $(QEMU_0401_INSTALL)/bin/qemu-system-dadao $(DIR_BUILD_SIM)
+	@echo "Make qemu ..."
+	@make -C $(QEMU_0401_WORKING) -j8
 
+qemu-0401-install:
+	@echo "Make install ..."
+	@make -C $(QEMU_0401_WORKING) install
+
+qemu-0401-highfive:
+	@echo "BEGIN TO BUILD qemu-0401!"
+	@echo "0. Check build-tch dir and remove old qemu logfiles"
+	@test -d $(DIR_BUILD_SIM) || mkdir -p $(DIR_BUILD_SIM)
+	@rm -fr $(QEMU_0401_LOG_STDOUT) $(QEMU_0401_LOG_STDERR)
+	@echo "1. Clean old qemu ..."
+	@make -s qemu-0401-clean				1>> $(QEMU_0401_LOG_STDOUT) 2>> $(QEMU_0401_LOG_STDERR)
+	@echo "2. Clone and patch new qemu ..."
+	@make -s qemu-0401-new					1>> $(QEMU_0401_LOG_STDOUT) 2>> $(QEMU_0401_LOG_STDERR)
+	@echo "2. Clone and patch new qemu complete."
+	@echo "3. Configure qemu ..."
+	@make -s qemu-0401-conf					1>> $(QEMU_0401_LOG_STDOUT) 2>> $(QEMU_0401_LOG_STDERR)
+	@echo "3. Configure qemu complete."
+	@echo "4. Make all-qemu ..."
+	@make -s qemu-0401-make					1>> $(QEMU_0401_LOG_STDOUT) 2>> $(QEMU_0401_LOG_STDERR)
+	@echo "4. Make all-qemu complete."
+	@echo "5. Install qemu ..."
+	@make -s qemu-0401-install				1>> $(QEMU_0401_LOG_STDOUT) 2>> $(QEMU_0401_LOG_STDERR)
+	@echo "5. Install qemu complete."
+	@echo "BUILD qemu-0401 DONE!"
