@@ -16,7 +16,7 @@ sim-clean:
 QEMU_0401_ORIGIN	:= /pub/GIT-ORIGIN/qemu.git
 QEMU_0401_VERSION	:= v4.1.0
 QEMU_0401_BRANCH	:= dadao-0401
-QEMU_0401_TARGETS	:= dadao-softmmu
+QEMU_0401_TARGETS	:= dadao-softmmu,dadao-linux-user
 
 QEMU_0401_NEWFILES	:= $(DIR_DADAO_SIM)/qemu-0401-newfiles
 QEMU_0401_PATCHES	:= $(DIR_DADAO_SIM)/qemu-0401-patches
@@ -41,11 +41,16 @@ qemu-0401-new:
 	@cd $(QEMU_0401_WORKING);					\
 		git add target/dadao;					\
 		git commit -sm"DADAO: add target/dadao dir"
+	@echo "Copy linux-user/dadao dir"
+	@cp -a $(QEMU_0401_NEWFILES)/linux-user/* $(QEMU_0401_WORKING)/linux-user/
+	@cd $(QEMU_0401_WORKING);					\
+		git add linux-user/dadao;				\
+		git commit -sm"DADAO: add linux-user/dadao dir"
 	@echo "Copy config file"
 	@cp -a $(QEMU_0401_NEWFILES)/default-configs/* $(QEMU_0401_WORKING)/default-configs/
 	@cd $(QEMU_0401_WORKING);					\
 		git add default-configs;				\
-		git commit -sm"DADAO: add dadao-softmmu.mak"
+		git commit -sm"DADAO: add default-configs/dadao-*.mak"
 	@echo "Apply qemu-0401-patches ..."
 	@cd $(QEMU_0401_WORKING); git am $(QEMU_0401_PATCHES)/*.patch
 
