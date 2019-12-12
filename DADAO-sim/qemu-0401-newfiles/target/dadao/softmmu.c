@@ -52,13 +52,7 @@ void dadao_cpu_do_interrupt(CPUState *cs)
 {
     DADAOCPU *cpu = DADAO_CPU(cs);
     CPUDADAOState *env = &cpu->env;
-    uint32_t addr;
     int new_mode = 0;
-
-    /* High vectors.  */
-    if (env->cp0.c1_sys & (1 << 13)) {
-        addr = 0xffff0000;
-    }
 
     switch_mode(env, new_mode);
 }
