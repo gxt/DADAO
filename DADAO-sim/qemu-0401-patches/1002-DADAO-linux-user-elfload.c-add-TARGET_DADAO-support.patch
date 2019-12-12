@@ -1,0 +1,42 @@
+From 4542e319708890fe1b034700aded601075a8e90d Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Fri, 13 Dec 2019 03:28:53 +0800
+Subject: [PATCH 2/3] DADAO: linux-user/elfload.c add TARGET_DADAO support
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ linux-user/elfload.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/linux-user/elfload.c b/linux-user/elfload.c
+index bd43c4817d..77824477d5 100644
+--- a/linux-user/elfload.c
++++ b/linux-user/elfload.c
+@@ -1480,6 +1480,24 @@ static void elf_core_copy_regs(target_elf_gregset_t *regs,
+ 
+ #endif /* TARGET_XTENSA */
+ 
++#ifdef TARGET_DADAO
++
++#define ELF_START_MMAP 0x80000000
++#define ELF_ARCH  EM_DADAO
++
++#define ELF_CLASS ELFCLASS32
++
++static inline void init_thread(struct target_pt_regs *regs,
++                               struct image_info *infop)
++{
++    regs->pc = infop->entry;
++    regs->sp = infop->start_stack;
++}
++
++#define ELF_EXEC_PAGESIZE 4096
++
++#endif /* TARGET_DADAO */
++
+ #ifndef ELF_PLATFORM
+ #define ELF_PLATFORM (NULL)
+ #endif
+-- 
+2.17.1
+
