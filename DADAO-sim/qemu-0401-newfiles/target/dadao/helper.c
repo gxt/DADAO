@@ -220,8 +220,6 @@ void helper_cp1_putc(target_ulong x)
 bool dadao_cpu_exec_interrupt(CPUState *cs, int interrupt_request)
 {
     if (interrupt_request & CPU_INTERRUPT_HARD) {
-        DADAOCPU *cpu = DADAO_CPU(cs);
-        CPUDADAOState *env = &cpu->env;
 
         if (0) {
             cs->exception_index = DADAO_EXCP_INTR;

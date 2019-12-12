@@ -150,15 +150,6 @@ static void free_tmp(TCGv_i64 tmp)
     "Illegal DADAO instruction %x at line %d!", \
     insn, __LINE__)
 
-/* Entry of exception. */
-static void gen_exception(int excp)
-{
-    TCGv tmp = new_tmp();
-    tcg_gen_movi_i64(tmp, excp);
-    gen_helper_exception(cpu_env, tmp);
-    free_tmp(tmp);
-}
-
 static void do_arith_2op(CPUDADAOState *env, DisasContext *s, uint32_t insn)
 {
     uint32_t fd2 = DADAO_INSN_FD2(insn);
