@@ -55,6 +55,9 @@ qemu-0401-conf:
 		--target-list=$(QEMU_0401_TARGETS)			\
 		--enable-debug						\
 		--disable-sdl						\
+		--disable-capstone					\
+		--disable-slirp						\
+		--disable-fdt						\
 		--enable-curses						\
 		--prefix=$(QEMU_0401_INSTALL)
 
