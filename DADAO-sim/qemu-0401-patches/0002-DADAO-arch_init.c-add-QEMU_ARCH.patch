@@ -1,0 +1,26 @@
+From 16f2953510ace0d33e82bd4d4351a1ff58b726ba Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 12 Dec 2019 16:40:57 +0800
+Subject: [PATCH 1/2] DADAO: arch_init.c add QEMU_ARCH
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ arch_init.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch_init.c b/arch_init.c
+index 74b0708634..7ba1e5709f 100644
+--- a/arch_init.c
++++ b/arch_init.c
+@@ -51,6 +51,8 @@ int graphic_depth = 32;
+ #define QEMU_ARCH QEMU_ARCH_ARM
+ #elif defined(TARGET_CRIS)
+ #define QEMU_ARCH QEMU_ARCH_CRIS
++#elif defined(TARGET_DADAO)
++#define QEMU_ARCH QEMU_ARCH_DADAO
+ #elif defined(TARGET_HPPA)
+ #define QEMU_ARCH QEMU_ARCH_HPPA
+ #elif defined(TARGET_I386)
+-- 
+2.17.1
+
