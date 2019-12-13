@@ -76,7 +76,7 @@ qemu-0401-install:
 
 qemu-0401-highfive:
 	@echo "BEGIN TO BUILD qemu-0401!"
-	@echo "0. Check build-tch dir and remove old qemu logfiles"
+	@echo "0. Check build dir and remove old logfiles"
 	@test -d $(DIR_BUILD_SIM) || mkdir -p $(DIR_BUILD_SIM)
 	@rm -fr $(QEMU_0401_LOG_STDOUT) $(QEMU_0401_LOG_STDERR)
 	@echo "1. Clean old qemu ..."
