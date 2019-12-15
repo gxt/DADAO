@@ -20,15 +20,20 @@ LINUX_0503_BRANCH	:= dadao-0503
 LINUX_0503_DEFCONFIG	:= dadao_defconfig
 
 LINUX_0503_NEWFILES	:= $(DIR_DADAO_ENV)/linux-0503-newfiles
+LINUX_0503_PATCHES	:= $(DIR_DADAO_ENV)/linux-0503-patches
 
 LINUX_0503_WORKING	:= $(DIR_BUILD_ENV)/linux-0503
 LINUX_0503_INSTALL	:= $(DIR_BUILD_ENV)/__linux-0503
-LINUX_0503_BUILDLOG	:= $(DIR_BUILD_ENV)/buildlog-linux-0503
+LINUX_0503_LOG_STDOUT	:= $(DIR_BUILD_ENV)/_log-stdout-linux-0503
+LINUX_0503_LOG_STDERR	:= $(DIR_BUILD_ENV)/_log-stderr-linux-0503
+
+linux-0503-clean:
+	@echo "Remove old linux repo ..."
+	@rm -fr $(LINUX_0503_WORKING)
+	@echo "Remove old linux install ..."
+	@rm -fr $(LINUX_0503_INSTALL)
 
 linux-0503-new:
-	@echo "Remove old linux repo ..."
-	@test -d $(DIR_BUILD_ENV) || mkdir -p $(DIR_BUILD_ENV)
-	@rm -fr $(LINUX_0503_WORKING)
 	@echo "Clone official repo"
 	@git clone $(LINUX_0503_ORIGIN) -- $(LINUX_0503_WORKING)
 	@cd $(LINUX_0503_WORKING);				\
@@ -38,28 +43,66 @@ linux-0503-new:
 	@cd $(LINUX_0503_WORKING);				\
 		git add arch/dadao;				\
 		git commit -sm"DADAO: add arch/dadao dir"
+	@echo "Apply linux-0503-patches ..."
+	@cd $(LINUX_0503_PATCHES); git am $(LINUX_0503_PATCHES)/*.patch
 
-linux-0503-make:
+linux-0503-conf:
 	@echo "Make mrproper ..."
 	@make -C $(LINUX_0503_WORKING)				\
 		ARCH=$(LINUX_0503_ARCH)				\
-		mrproper			>> $(LINUX_0503_BUILDLOG) 2>&1
+		mrproper
 	@echo "Make $(LINUX_0503_DEFCONFIG) ..."
 	@make -C $(LINUX_0503_WORKING)				\
 		ARCH=$(LINUX_0503_ARCH)				\
-		$(LINUX_0503_DEFCONFIG)		>> $(LINUX_0503_BUILDLOG) 2>&1
+		$(LINUX_0503_DEFCONFIG)
+
+linux-0503-make:
 	@echo "Making (in several minutes) ..."
 	@make -C $(LINUX_0503_WORKING)				\
-		ARCH=$(LINUX_0503_ARCH) -j8	>> $(LINUX_0503_BUILDLOG) 2>&1
+		ARCH=$(LINUX_0503_ARCH) -j8
 
-linux-0503-headers:
+linux-0503-install:
+	@echo "Make install ..."
+	@make -C $(LINUX_0503_WORKING)				\
+		ARCH=$(LINUX_0503_ARCH)				\
+		INSTALL_PATH=$(LINUX_0503_INSTALL)		\
+		install
+
+linux-0503-headers-check:
 	@echo "Headers check ..."
 	@make -C $(LINUX_0503_WORKING)				\
 		ARCH=$(LINUX_0503_ARCH)				\
-		headers_check			>> $(LINUX_0503_BUILDLOG) 2>&1
+		headers_check
+
+linux-0503-headers-install:
 	@echo "Headers install ..."
 	@make -C $(LINUX_0503_WORKING)				\
 		ARCH=$(LINUX_0503_ARCH)				\
 		INSTALL_HDR_PATH=$(LINUX_0503_INSTALL)		\
-		headers_install			>> $(LINUX_0503_BUILDLOG) 2>&1
+		headers_install
+
+linux-0503-highfive:
+	@echo "BEGIN TO BUILD linux-0503!"
+	@echo "0. Check build dir and remove old logfiles"
+	@test -d $(DIR_BUILD_ENV) || mkdir -p $(DIR_BUILD_ENV)
+	@rm -fr $(LINUX_0503_LOG_STDOUT) $(LINUX_0503_LOG_STDERR)
+	@echo "1. Clean old linux ..."
+	@make -s linux-0503-clean				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
+	@echo "2. Clone and patch new linux ..."
+	@make -s linux-0503-new					1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
+	@echo "2. Clone and patch new linux complete."
+	@echo "3. Configure linux ..."
+	@make -s linux-0503-conf				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
+	@echo "3. Configure linux complete."
+	@echo "4. Check headers ..."
+	@make -s linux-0503-headers-check			1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
+	@echo "4. Check headers complete."
+	@echo "5. Make linux ..."
+	@make -s linux-0503-make				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
+	@echo "5. Make linux complete."
+	@echo "6. Install headers and images ..."
+	@make -s linux-0503-headers-install			1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
+	@make -s linux-0503-install				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
+	@echo "6. Install linux complete."
+	@echo "BUILD linux-0503 DONE!"
 
