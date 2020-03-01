@@ -3,7 +3,7 @@
 #
 
 DIR_DADAO		:= $(shell pwd)
-GIT_DADAO		:= /pub/GIT-DADAO/
+DIR_GIT_TAO		:= /pub/GIT-TAO/
 
 all:
 	@echo ""

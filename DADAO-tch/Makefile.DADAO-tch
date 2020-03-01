@@ -13,7 +13,7 @@ tch-help:
 tch-clean:
 	@rm -fr $(DIR_BUILD_TCH)
 
-GCC_0902_ORIGIN		:= $(GIT_DADAO)/gcc.git
+GCC_0902_ORIGIN		:= $(DIR_GIT_TAO)/gcc.git
 GCC_0902_VERSION	:= gcc-9_2_0-release
 GCC_0902_BRANCH		:= dadao-0902
 GCC_0902_TARGET		:= dadao-linux-elf
@@ -81,7 +81,7 @@ gcc-0902-highfive:
 	@echo "5. Install gcc complete."
 	@echo "BUILD gcc-0902 DONE!"
 
-BINUTILS_GDB_0233_ORIGIN		:= $(GIT_DADAO)/binutils-gdb.git
+BINUTILS_GDB_0233_ORIGIN		:= $(DIR_GIT_TAO)/binutils-gdb.git
 BINUTILS_GDB_0233_VERSION		:= binutils-2_33_1
 BINUTILS_GDB_0233_BRANCH		:= dadao-0233
 BINUTILS_GDB_0233_TARGET		:= dadao-linux-gnu
