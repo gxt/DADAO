@@ -13,7 +13,7 @@ sim-help:
 sim-clean:
 	@rm -fr $(DIR_BUILD_SIM)
 
-QEMU_0401_ORIGIN	:= /pub/GIT-ORIGIN/qemu.git
+QEMU_0401_ORIGIN	:= $(DIR_GIT_TAO)/qemu.git
 QEMU_0401_VERSION	:= v4.1.0
 QEMU_0401_BRANCH	:= dadao-0401
 QEMU_0401_TARGETS	:= dadao-softmmu,dadao-linux-user
