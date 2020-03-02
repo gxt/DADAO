@@ -4,6 +4,7 @@
 
 DIR_DADAO_TCH		:= $(DIR_DADAO)/DADAO-tch
 DIR_BUILD_TCH		:= $(DIR_DADAO)/build-tch
+DIR_INSTALL_TCH		:= $(DIR_DADAO)/build-tch/__install
 
 tch-help:
 	@echo	""
@@ -12,6 +13,14 @@ tch-help:
 
 tch-clean:
 	@rm -fr $(DIR_BUILD_TCH)
+
+tch-highfive:
+	@echo "=== BUILD Toolchain BEGIN ==="
+	@echo "Remove old building dir"
+	@rm -fr $(DIR_BUILD_TCH)
+	@BINUTILS_GDB_0233_INSTALL=$(DIR_INSTALL_TCH) make -s binutils-gdb-0233-highfive
+	@GCC_0902_INSTALL=$(DIR_INSTALL_TCH) make -s gcc-0902-highfive
+	@echo "=== BUILD Toolchain DONE! ==="
 
 GCC_0902_ORIGIN		:= $(DIR_GIT_TAO)/gcc.git
 GCC_0902_VERSION	:= gcc-9_2_0-release
@@ -22,7 +31,7 @@ GCC_0902_NEWFILES	:= $(DIR_DADAO_TCH)/gcc-0902-newfiles
 GCC_0902_PATCHES	:= $(DIR_DADAO_TCH)/gcc-0902-patches
 
 GCC_0902_WORKING	:= $(DIR_BUILD_TCH)/gcc-0902
-GCC_0902_INSTALL	:= $(DIR_BUILD_TCH)/__gcc-0902
+GCC_0902_INSTALL	?= $(DIR_BUILD_TCH)/__gcc-0902
 GCC_0902_LOG_STDOUT	:= $(DIR_BUILD_TCH)/_log-stdout-gcc-0902
 GCC_0902_LOG_STDERR	:= $(DIR_BUILD_TCH)/_log-stderr-gcc-0902
 
@@ -30,7 +39,9 @@ gcc-0902-clean:
 	@echo "Remove old gcc repo ..."
 	@rm -fr $(GCC_0902_WORKING)
 	@echo "Remove old gcc install ..."
+ifneq ($(GCC_0902_INSTALL), $(DIR_INSTALL_TCH))
 	@rm -fr $(GCC_0902_INSTALL)
+endif
 
 gcc-0902-new:
 	@echo "Clone official repo"
@@ -90,7 +101,7 @@ BINUTILS_GDB_0233_NEWFILES		:= $(DIR_DADAO_TCH)/binutils-gdb-0233-newfiles
 BINUTILS_GDB_0233_PATCHES		:= $(DIR_DADAO_TCH)/binutils-gdb-0233-patches
 
 BINUTILS_GDB_0233_WORKING		:= $(DIR_BUILD_TCH)/binutils-gdb-0233
-BINUTILS_GDB_0233_INSTALL		:= $(DIR_BUILD_TCH)/__binutils-gdb-0233
+BINUTILS_GDB_0233_INSTALL		?= $(DIR_BUILD_TCH)/__binutils-gdb-0233
 BINUTILS_GDB_0233_LOG_STDOUT		:= $(DIR_BUILD_TCH)/_log-stdout-binutils-gdb-0233
 BINUTILS_GDB_0233_LOG_STDERR		:= $(DIR_BUILD_TCH)/_log-stderr-binutils-gdb-0233
 
@@ -98,7 +109,9 @@ binutils-gdb-0233-clean:
 	@echo "Remove old binutils-gdb repo ..."
 	@rm -fr $(BINUTILS_GDB_0233_WORKING)
 	@echo "Remove old binutils-gdb install ..."
+ifneq ($(BINUTILS_GDB_0233_INSTALL),$(DIR_INSTALL_TCH))
 	@rm -fr $(BINUTILS_GDB_0233_INSTALL)
+endif
 
 binutils-gdb-0233-new:
 	@echo "Clone official repo"
