@@ -18,17 +18,15 @@ include DADAO-sim/Makefile.DADAO-sim
 include DADAO-env/Makefile.DADAO-env
 
 DADAO-highfive:
+	@make --silent DADAO-clean
 	@echo "BEGIN TO BUILD EVERYTHING!"
-	@echo "......"
+	@make --silent tch-highfive
 	@echo "BUILD EVERYTHING DONE!"
 
-DADAO-help:
-	@make --silent tch-help
-	@make --silent sim-help
-	@make --silent env-help
-
 DADAO-clean:
-	@make --silent tch-clean
-	@make --silent sim-clean
-	@make --silent env-clean
-
+	@echo "CLEAR EVERYTHING!"
+	@rm -fr $(DIR_DADAO_SOURCE)
+	@rm -fr $(DIR_DADAO_BUILD)
+	@rm -fr $(DIR_DADAO_INSTALL)
+	@rm -fr _log_std*
+	@echo "CLEAR EVERYTHING DONE!"

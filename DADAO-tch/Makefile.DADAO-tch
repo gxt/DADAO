@@ -1,25 +1,10 @@
 #
 # Makefile for toolchain
 #
-
-DIR_DADAO_TCH		:= $(DIR_DADAO)/DADAO-tch
-DIR_BUILD_TCH		:= $(DIR_DADAO)/build-tch
-DIR_INSTALL_TCH		:= $(DIR_DADAO)/build-tch/__install
-
-tch-help:
-	@echo	""
-	@echo	"Help for toolchain"
-	@echo	""
-
-tch-clean:
-	@rm -fr $(DIR_BUILD_TCH)
-
 tch-highfive:
 	@echo "=== BUILD Toolchain BEGIN ==="
-	@echo "Remove old building dir"
-	@rm -fr $(DIR_BUILD_TCH)
-	@BINUTILS_GDB_0233_INSTALL=$(DIR_INSTALL_TCH) make -s binutils-gdb-0233-highfive
-	@GCC_0902_INSTALL=$(DIR_INSTALL_TCH) make -s gcc-0902-highfive
+	@BINUTILS_GDB_0233_INSTALL=$(DIR_DADAO_INSTALL) make -s binutils-gdb-0233-highfive
+	@GCC_0902_INSTALL=$(DIR_DADAO_INSTALL) make -s gcc-0902-highfive
 	@echo "=== BUILD Toolchain DONE! ==="
 
 GCC_0902_ORIGIN		:= $(DIR_GIT_TAO)/gcc.git
@@ -27,8 +12,8 @@ GCC_0902_VERSION	:= gcc-9_2_0-release
 GCC_0902_BRANCH		:= dadao-0902
 GCC_0902_TARGET		:= dadao-linux-elf
 
-GCC_0902_NEWFILES	:= $(DIR_DADAO_TCH)/gcc-0902-newfiles
-GCC_0902_PATCHES	:= $(DIR_DADAO_TCH)/gcc-0902-patches
+GCC_0902_NEWFILES	:= $(DIR_DADAO)/DADAO-tch/gcc-0902-newfiles
+GCC_0902_PATCHES	:= $(DIR_DADAO)/DADAO-tch/gcc-0902-patches
 
 GCC_0902_SOURCE		:= $(DIR_DADAO_SOURCE)/gcc-0902
 GCC_0902_BUILD		:= $(DIR_DADAO_BUILD)/gcc-0902
@@ -103,8 +88,8 @@ BINUTILS_GDB_0233_VERSION		:= binutils-2_33_1
 BINUTILS_GDB_0233_BRANCH		:= dadao-0233
 BINUTILS_GDB_0233_TARGET		:= dadao-linux-elf
 
-BINUTILS_GDB_0233_NEWFILES		:= $(DIR_DADAO_TCH)/binutils-gdb-0233-newfiles
-BINUTILS_GDB_0233_PATCHES		:= $(DIR_DADAO_TCH)/binutils-gdb-0233-patches
+BINUTILS_GDB_0233_NEWFILES		:= $(DIR_DADAO)/DADAO-tch/binutils-gdb-0233-newfiles
+BINUTILS_GDB_0233_PATCHES		:= $(DIR_DADAO)/DADAO-tch/binutils-gdb-0233-patches
 
 BINUTILS_GDB_0233_SOURCE		:= $(DIR_DADAO_SOURCE)/binutils-gdb-0233
 BINUTILS_GDB_0233_BUILD			:= $(DIR_DADAO_BUILD)/binutils-gdb-0233
