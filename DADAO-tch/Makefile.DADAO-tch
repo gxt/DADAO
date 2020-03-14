@@ -100,7 +100,7 @@ BINUTILS_GDB_0233_TARGET		:= dadao-linux-elf
 BINUTILS_GDB_0233_NEWFILES		:= $(DIR_DADAO_TCH)/binutils-gdb-0233-newfiles
 BINUTILS_GDB_0233_PATCHES		:= $(DIR_DADAO_TCH)/binutils-gdb-0233-patches
 
-BINUTILS_GDB_0233_WORKING		:= $(DIR_BUILD_TCH)/binutils-gdb-0233
+BINUTILS_GDB_0233_SOURCE		:= $(DIR_DADAO_SOURCE)/binutils-gdb-0233
 BINUTILS_GDB_0233_BUILD			:= $(DIR_DADAO_BUILD)/binutils-gdb-0233
 BINUTILS_GDB_0233_INSTALL		?= $(DIR_BUILD_TCH)/__binutils-gdb-0233
 BINUTILS_GDB_0233_LOG_STDOUT		:= $(DIR_BUILD_TCH)/_log-stdout-binutils-gdb-0233
@@ -108,7 +108,7 @@ BINUTILS_GDB_0233_LOG_STDERR		:= $(DIR_BUILD_TCH)/_log-stderr-binutils-gdb-0233
 
 binutils-gdb-0233-clean:
 	@echo "Remove old binutils-gdb repo ..."
-	@rm -fr $(BINUTILS_GDB_0233_WORKING)
+	@rm -fr $(BINUTILS_GDB_0233_SOURCE)
 	@echo "Remove old binutils-gdb install ..."
 ifneq ($(BINUTILS_GDB_0233_INSTALL),$(DIR_INSTALL_TCH))
 	@rm -fr $(BINUTILS_GDB_0233_INSTALL)
@@ -116,43 +116,43 @@ endif
 
 binutils-gdb-0233-new:
 	@echo "Clone official repo"
-	@git clone $(BINUTILS_GDB_0233_ORIGIN) -- $(BINUTILS_GDB_0233_WORKING)
-	@cd $(BINUTILS_GDB_0233_WORKING);				\
+	@git clone $(BINUTILS_GDB_0233_ORIGIN) -- $(BINUTILS_GDB_0233_SOURCE)
+	@cd $(BINUTILS_GDB_0233_SOURCE);				\
 		git checkout -b $(BINUTILS_GDB_0233_BRANCH) $(BINUTILS_GDB_0233_VERSION)
 	@echo "Copy bfd dir"
-	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/bfd/* $(BINUTILS_GDB_0233_WORKING)/bfd
-	@cd $(BINUTILS_GDB_0233_WORKING);				\
+	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/bfd/* $(BINUTILS_GDB_0233_SOURCE)/bfd
+	@cd $(BINUTILS_GDB_0233_SOURCE);				\
 		git add bfd;						\
 		git commit -sm"DADAO: add bfd related files"
 	@echo "Copy gas/config dir"
-	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/gas/config/* $(BINUTILS_GDB_0233_WORKING)/gas/config/
-	@cd $(BINUTILS_GDB_0233_WORKING);				\
+	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/gas/config/* $(BINUTILS_GDB_0233_SOURCE)/gas/config/
+	@cd $(BINUTILS_GDB_0233_SOURCE);				\
 		git add gas/config;					\
 		git commit -sm"DADAO: add gas/config related files"
 	@echo "Copy opcodes dir"
-	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/opcodes/* $(BINUTILS_GDB_0233_WORKING)/opcodes/
-	@cd $(BINUTILS_GDB_0233_WORKING);				\
+	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/opcodes/* $(BINUTILS_GDB_0233_SOURCE)/opcodes/
+	@cd $(BINUTILS_GDB_0233_SOURCE);				\
 		git add opcodes;					\
 		git commit -sm"DADAO: add opcodes related files"
 	@echo "Copy ld dir"
-	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/ld/* $(BINUTILS_GDB_0233_WORKING)/ld/
-	@cd $(BINUTILS_GDB_0233_WORKING);				\
+	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/ld/* $(BINUTILS_GDB_0233_SOURCE)/ld/
+	@cd $(BINUTILS_GDB_0233_SOURCE);				\
 		git add ld;						\
 		git commit -sm"DADAO: add ld related files"
 	@echo "Copy include dir"
-	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/include/* $(BINUTILS_GDB_0233_WORKING)/include
-	@cd $(BINUTILS_GDB_0233_WORKING);				\
+	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/include/* $(BINUTILS_GDB_0233_SOURCE)/include
+	@cd $(BINUTILS_GDB_0233_SOURCE);				\
 		git add include;					\
 		git commit -sm"DADAO: add header files"
 	@echo "Apply binutils-gdb-0233-patches ..."
-	@cd $(BINUTILS_GDB_0233_WORKING); git am $(BINUTILS_GDB_0233_PATCHES)/*.patch
+	@cd $(BINUTILS_GDB_0233_SOURCE); git am $(BINUTILS_GDB_0233_PATCHES)/*.patch
 
 binutils-gdb-0233-conf:
 	@test -d $(BINUTILS_GDB_0233_BUILD) || mkdir -p $(BINUTILS_GDB_0233_BUILD)
 	@cd $(BINUTILS_GDB_0233_BUILD) &&				\
-		$(BINUTILS_GDB_0233_WORKING)/configure			\
+		$(BINUTILS_GDB_0233_SOURCE)/configure			\
 			--target=$(BINUTILS_GDB_0233_TARGET)		\
-			--srcdir=$(BINUTILS_GDB_0233_WORKING)		\
+			--srcdir=$(BINUTILS_GDB_0233_SOURCE)		\
 			--prefix=$(BINUTILS_GDB_0233_INSTALL)
 
 binutils-gdb-0233-make:
