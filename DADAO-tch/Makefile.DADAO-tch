@@ -30,51 +30,57 @@ GCC_0902_TARGET		:= dadao-linux-elf
 GCC_0902_NEWFILES	:= $(DIR_DADAO_TCH)/gcc-0902-newfiles
 GCC_0902_PATCHES	:= $(DIR_DADAO_TCH)/gcc-0902-patches
 
-GCC_0902_WORKING	:= $(DIR_BUILD_TCH)/gcc-0902
-GCC_0902_INSTALL	?= $(DIR_BUILD_TCH)/__gcc-0902
-GCC_0902_LOG_STDOUT	:= $(DIR_BUILD_TCH)/_log-stdout-gcc-0902
-GCC_0902_LOG_STDERR	:= $(DIR_BUILD_TCH)/_log-stderr-gcc-0902
+GCC_0902_SOURCE		:= $(DIR_DADAO_SOURCE)/gcc-0902
+GCC_0902_BUILD		:= $(DIR_DADAO_BUILD)/gcc-0902
+GCC_0902_INSTALL	?= $(DIR_DADAO_INSTALL)/gcc-0902
+GCC_0902_LOG_STDOUT	:= $(DIR_DADAO)/_log-stdout-gcc-0902
+GCC_0902_LOG_STDERR	:= $(DIR_DADAO)/_log-stderr-gcc-0902
 
 gcc-0902-clean:
-	@echo "Remove old gcc repo ..."
-	@rm -fr $(GCC_0902_WORKING)
-	@echo "Remove old gcc install ..."
-ifneq ($(GCC_0902_INSTALL), $(DIR_INSTALL_TCH))
+	@echo "Remove old gcc source dir ..."
+	@rm -fr $(GCC_0902_SOURCE)
+	@echo "Remove old gcc build dir ..."
+	@rm -fr $(GCC_0902_BUILD)
+ifneq ($(GCC_0902_INSTALL), $(DIR_DADAO_INSTALL))
+	@echo "Remove old gcc install dir ..."
 	@rm -fr $(GCC_0902_INSTALL)
 endif
 
 gcc-0902-new:
+	@test -d $(GCC_0902_SOURCE) || mkdir -p $(GCC_0902_SOURCE)
 	@echo "Clone official repo"
-	@git clone $(GCC_0902_ORIGIN) -- $(GCC_0902_WORKING)
-	@cd $(GCC_0902_WORKING); git checkout -b $(GCC_0902_BRANCH) $(GCC_0902_VERSION)
+	@git clone $(GCC_0902_ORIGIN) -- $(GCC_0902_SOURCE)
+	@cd $(GCC_0902_SOURCE); git checkout -b $(GCC_0902_BRANCH) $(GCC_0902_VERSION)
 	@echo "Copy gcc/config/dadao dir"
-	@cp -a $(GCC_0902_NEWFILES)/gcc/config/* $(GCC_0902_WORKING)/gcc/config/
-	@cd $(GCC_0902_WORKING);					\
+	@cp -a $(GCC_0902_NEWFILES)/gcc/config/* $(GCC_0902_SOURCE)/gcc/config/
+	@cd $(GCC_0902_SOURCE);						\
 		git add gcc/config/dadao;				\
 		git commit -sm"DADAO: add gcc/config/dadao dir"
 	@echo "Apply gcc-0902-patches ..."
-	@cd $(GCC_0902_WORKING); git am $(GCC_0902_PATCHES)/*.patch
+	@cd $(GCC_0902_SOURCE); git am $(GCC_0902_PATCHES)/*.patch
 
 gcc-0902-conf:
-	@cd $(GCC_0902_WORKING); ./configure				\
-		--target=$(GCC_0902_TARGET)				\
-		--prefix=$(GCC_0902_INSTALL)				\
-		--disable-nls						\
-		--enable-languages=c					\
-		--enable-checking					\
-		--enable-werror						\
-		--without-headers
+	@test -d $(GCC_0902_BUILD) || mkdir -p $(GCC_0902_BUILD)
+	@cd $(GCC_0902_BUILD) &&					\
+		$(GCC_0902_SOURCE)/configure				\
+			--target=$(GCC_0902_TARGET)			\
+			--srcdir=$(GCC_0902_SOURCE)			\
+			--prefix=$(GCC_0902_INSTALL)			\
+			--disable-nls					\
+			--enable-languages=c				\
+			--enable-checking				\
+			--enable-werror					\
+			--without-headers
 
 gcc-0902-make:
-	@make -C $(GCC_0902_WORKING) all-gcc -j8
+	@make -C $(GCC_0902_BUILD) all-gcc -j8
 
 gcc-0902-install:
-	@make -C $(GCC_0902_WORKING) install-gcc
+	@make -C $(GCC_0902_BUILD) install-gcc
 
 gcc-0902-highfive:
 	@echo "BEGIN TO BUILD gcc-0902!"
-	@echo "0. Check build-tch dir and remove old gcc logfiles"
-	@test -d $(DIR_BUILD_TCH) || mkdir -p $(DIR_BUILD_TCH)
+	@echo "0. Remove old gcc logfiles"
 	@rm -fr $(GCC_0902_LOG_STDOUT) $(GCC_0902_LOG_STDERR)
 	@echo "1. Clean old gcc ..."
 	@make -s gcc-0902-clean				1>> $(GCC_0902_LOG_STDOUT) 2>> $(GCC_0902_LOG_STDERR)
