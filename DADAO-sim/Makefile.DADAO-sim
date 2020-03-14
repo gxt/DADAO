@@ -3,7 +3,7 @@
 #
 sim-highfive:
 	@echo "=== BUILD Simulators BEGIN ==="
-	@SIM_0401_INSTALL=$(DIR_DADAO_INSTALL) make -s qemu-0401-highfive
+	@QEMU_0401_INSTALL=$(DIR_DADAO_INSTALL) make -s qemu-0401-highfive
 	@echo "=== BUILD Simulators DONE! ==="
 
 QEMU_0401_ORIGIN	:= $(DIR_GIT_TAO)/qemu.git
