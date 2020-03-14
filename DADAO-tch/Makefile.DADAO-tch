@@ -102,19 +102,22 @@ BINUTILS_GDB_0233_PATCHES		:= $(DIR_DADAO_TCH)/binutils-gdb-0233-patches
 
 BINUTILS_GDB_0233_SOURCE		:= $(DIR_DADAO_SOURCE)/binutils-gdb-0233
 BINUTILS_GDB_0233_BUILD			:= $(DIR_DADAO_BUILD)/binutils-gdb-0233
-BINUTILS_GDB_0233_INSTALL		?= $(DIR_BUILD_TCH)/__binutils-gdb-0233
-BINUTILS_GDB_0233_LOG_STDOUT		:= $(DIR_BUILD_TCH)/_log-stdout-binutils-gdb-0233
-BINUTILS_GDB_0233_LOG_STDERR		:= $(DIR_BUILD_TCH)/_log-stderr-binutils-gdb-0233
+BINUTILS_GDB_0233_INSTALL		?= $(DIR_DADAO_INSTALL)/binutils-gdb-0233
+BINUTILS_GDB_0233_LOG_STDOUT		:= $(DIR_DADAO)/_log-stdout-binutils-gdb-0233
+BINUTILS_GDB_0233_LOG_STDERR		:= $(DIR_DADAO)/_log-stderr-binutils-gdb-0233
 
 binutils-gdb-0233-clean:
-	@echo "Remove old binutils-gdb repo ..."
+	@echo "Remove old binutils-gdb source dir ..."
 	@rm -fr $(BINUTILS_GDB_0233_SOURCE)
-	@echo "Remove old binutils-gdb install ..."
-ifneq ($(BINUTILS_GDB_0233_INSTALL),$(DIR_INSTALL_TCH))
+	@echo "Remove old binutils-gdb build dir ..."
+	@rm -fr $(BINUTILS_GDB_0233_BUILD)
+ifneq ($(BINUTILS_GDB_0233_INSTALL), $(DIR_DADAO_INSTALL))
+	@echo "Remove old binutils-gdb install dir ..."
 	@rm -fr $(BINUTILS_GDB_0233_INSTALL)
 endif
 
 binutils-gdb-0233-new:
+	@test -d $(BINUTILS_GDB_0233_SOURCE) || mkdir -p $(BINUTILS_GDB_0233_SOURCE)
 	@echo "Clone official repo"
 	@git clone $(BINUTILS_GDB_0233_ORIGIN) -- $(BINUTILS_GDB_0233_SOURCE)
 	@cd $(BINUTILS_GDB_0233_SOURCE);				\
@@ -163,8 +166,7 @@ binutils-gdb-0233-install:
 
 binutils-gdb-0233-highfive:
 	@echo "BEGIN TO BUILD binutils-gdb-0233!"
-	@echo "0. Check build-tch dir and remove old binutils logfiles"
-	@test -d $(DIR_BUILD_TCH) || mkdir -p $(DIR_BUILD_TCH)
+	@echo "0. Remove old binutils logfiles"
 	@rm -fr $(BINUTILS_GDB_0233_LOG_STDOUT) $(BINUTILS_GDB_0233_LOG_STDERR)
 	@echo "1. Clean old binutils-gdb ..."
 	@make -s binutils-gdb-0233-clean			1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
