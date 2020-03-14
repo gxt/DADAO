@@ -1,6 +1,5 @@
 *.swp
 *.pyc
-build-*
 __source
 __build
 __install
