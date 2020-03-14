@@ -21,6 +21,7 @@ DADAO-highfive:
 	@make --silent DADAO-clean
 	@echo "BEGIN TO BUILD EVERYTHING!"
 	@make --silent tch-highfive
+	@make --silent sim-highfive
 	@echo "BUILD EVERYTHING DONE!"
 
 DADAO-clean:

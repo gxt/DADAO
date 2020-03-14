@@ -1,83 +1,81 @@
 #
 # Makefile for simulator
 #
-
-DIR_DADAO_SIM		:= $(DIR_DADAO)/DADAO-sim
-DIR_BUILD_SIM		:= $(DIR_DADAO)/build-sim
-
-sim-help:
-	@echo	""
-	@echo	"Help for simulator"
-	@echo	""
-
-sim-clean:
-	@rm -fr $(DIR_BUILD_SIM)
+sim-highfive:
+	@echo "=== BUILD Simulators BEGIN ==="
+	@SIM_0401_INSTALL=$(DIR_DADAO_INSTALL) make -s qemu-0401-highfive
+	@echo "=== BUILD Simulators DONE! ==="
 
 QEMU_0401_ORIGIN	:= $(DIR_GIT_TAO)/qemu.git
 QEMU_0401_VERSION	:= v4.1.0
 QEMU_0401_BRANCH	:= dadao-0401
 QEMU_0401_TARGETS	:= dadao-softmmu,dadao-linux-user
 
-QEMU_0401_NEWFILES	:= $(DIR_DADAO_SIM)/qemu-0401-newfiles
-QEMU_0401_PATCHES	:= $(DIR_DADAO_SIM)/qemu-0401-patches
+QEMU_0401_NEWFILES	:= $(DIR_DADAO)/DADAO-sim/qemu-0401-newfiles
+QEMU_0401_PATCHES	:= $(DIR_DADAO)/DADAO-sim/qemu-0401-patches
 
-QEMU_0401_WORKING	:= $(DIR_BUILD_SIM)/qemu-0401
-QEMU_0401_INSTALL	:= $(DIR_BUILD_SIM)/__qemu-0401
-QEMU_0401_LOG_STDOUT	:= $(DIR_BUILD_SIM)/_log-stdout-qemu-0401
-QEMU_0401_LOG_STDERR	:= $(DIR_BUILD_SIM)/_log-stderr-qemu-0401
+QEMU_0401_SOURCE	:= $(DIR_DADAO_SOURCE)/qemu-0401
+QEMU_0401_BUILD		:= $(DIR_DADAO_BUILD)/qemu-0401
+QEMU_0401_INSTALL	:= $(DIR_DADAO_BUILD)/__qemu-0401
+QEMU_0401_LOG_STDOUT	:= $(DIR_DADAO)/_log-stdout-qemu-0401
+QEMU_0401_LOG_STDERR	:= $(DIR_DADAO)/_log-stderr-qemu-0401
 
 qemu-0401-clean:
-	@echo "Remove old qemu repo ..."
-	@rm -fr $(QEMU_0401_WORKING)
-	@echo "Remove old qemu install ..."
+	@echo "Remove old qemu source dir ..."
+	@rm -fr $(QEMU_0401_SOURCE)
+	@echo "Remove old qemu build dir ..."
+	@rm -fr $(QEMU_0401_BUILD)
+ifneq ($(QEMU_0401_INSTALL), $(DIR_DADAO_INSTALL))
+	@echo "Remove old qemu install dir ..."
 	@rm -fr $(QEMU_0401_INSTALL)
+endif
 
 qemu-0401-new:
+	@test -d $(QEMU_0401_SOURCE) || mkdir -p $(QEMU_0401_SOURCE)
 	@echo "Clone official repo"
-	@git clone $(QEMU_0401_ORIGIN) -- $(QEMU_0401_WORKING)
-	@cd $(QEMU_0401_WORKING); git checkout -b $(QEMU_0401_BRANCH) $(QEMU_0401_VERSION)
+	@git clone $(QEMU_0401_ORIGIN) -- $(QEMU_0401_SOURCE)
+	@cd $(QEMU_0401_SOURCE); git checkout -b $(QEMU_0401_BRANCH) $(QEMU_0401_VERSION)
 	@echo "Copy target/dadao dir"
-	@cp -a $(QEMU_0401_NEWFILES)/target/* $(QEMU_0401_WORKING)/target/
-	@cd $(QEMU_0401_WORKING);					\
+	@cp -a $(QEMU_0401_NEWFILES)/target/* $(QEMU_0401_SOURCE)/target/
+	@cd $(QEMU_0401_SOURCE);					\
 		git add target/dadao;					\
 		git commit -sm"DADAO: add target/dadao dir"
 	@echo "Copy linux-user/dadao dir"
-	@cp -a $(QEMU_0401_NEWFILES)/linux-user/* $(QEMU_0401_WORKING)/linux-user/
-	@cd $(QEMU_0401_WORKING);					\
+	@cp -a $(QEMU_0401_NEWFILES)/linux-user/* $(QEMU_0401_SOURCE)/linux-user/
+	@cd $(QEMU_0401_SOURCE);					\
 		git add linux-user/dadao;				\
 		git commit -sm"DADAO: add linux-user/dadao dir"
 	@echo "Copy config file"
-	@cp -a $(QEMU_0401_NEWFILES)/default-configs/* $(QEMU_0401_WORKING)/default-configs/
-	@cd $(QEMU_0401_WORKING);					\
+	@cp -a $(QEMU_0401_NEWFILES)/default-configs/* $(QEMU_0401_SOURCE)/default-configs/
+	@cd $(QEMU_0401_SOURCE);					\
 		git add default-configs;				\
 		git commit -sm"DADAO: add default-configs/dadao-*.mak"
 	@echo "Apply qemu-0401-patches ..."
-	@cd $(QEMU_0401_WORKING); git am $(QEMU_0401_PATCHES)/*.patch
+	@cd $(QEMU_0401_SOURCE); git am $(QEMU_0401_PATCHES)/*.patch
 
 qemu-0401-conf:
-	@echo "Configure qemu ..."
-	@cd $(QEMU_0401_WORKING); ./configure				\
-		--target-list=$(QEMU_0401_TARGETS)			\
-		--enable-debug						\
-		--disable-sdl						\
-		--disable-capstone					\
-		--disable-slirp						\
-		--disable-fdt						\
-		--enable-curses						\
-		--prefix=$(QEMU_0401_INSTALL)
+	@test -d $(QEMU_0401_BUILD) || mkdir -p $(QEMU_0401_BUILD)
+	@cd $(QEMU_0401_BUILD) &&					\
+		$(QEMU_0401_SOURCE)/configure				\
+			--target-list=$(QEMU_0401_TARGETS)		\
+			--prefix=$(QEMU_0401_INSTALL)			\
+			--disable-sdl					\
+			--disable-capstone				\
+			--disable-slirp					\
+			--disable-fdt					\
+			--enable-debug					\
+			--enable-curses
 
 qemu-0401-make:
-	@echo "Make qemu ..."
-	@make -C $(QEMU_0401_WORKING) -j8
+	@make -C $(QEMU_0401_BUILD) -j8
 
 qemu-0401-install:
 	@echo "Make install ..."
-	@make -C $(QEMU_0401_WORKING) install
+	@make -C $(QEMU_0401_BUILD) install
 
 qemu-0401-highfive:
 	@echo "BEGIN TO BUILD qemu-0401!"
-	@echo "0. Check build dir and remove old logfiles"
-	@test -d $(DIR_BUILD_SIM) || mkdir -p $(DIR_BUILD_SIM)
+	@echo "0. Remove old logfiles"
 	@rm -fr $(QEMU_0401_LOG_STDOUT) $(QEMU_0401_LOG_STDERR)
 	@echo "1. Clean old qemu ..."
 	@make -s qemu-0401-clean				1>> $(QEMU_0401_LOG_STDOUT) 2>> $(QEMU_0401_LOG_STDERR)
