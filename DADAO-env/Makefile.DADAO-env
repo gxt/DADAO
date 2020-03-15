@@ -1,19 +1,12 @@
 #
 # Makefile for run time environment
 #
+env-highfive:
+	@echo "=== BUILD Run-Time Environment BEGIN ==="
+	@LINUX_0503_INSTALL=$(DIR_DADAO_INSTALL) make -s linux-0503-highfive
+	@echo "=== BUILD Run-Time Environment DONE! ==="
 
-DIR_DADAO_ENV		:= $(DIR_DADAO)/DADAO-env
-DIR_BUILD_ENV		:= $(DIR_DADAO)/build-env
-
-env-help:
-	@echo	""
-	@echo	"Help for environment"
-	@echo	""
-
-env-clean:
-	@rm -fr $(DIR_BUILD_ENV)
-
-LINUX_0503_ORIGIN	:= /pub/GIT-ORIGIN/linux.git
+LINUX_0503_ORIGIN	:= /pub/GIT-TAO/linux.git
 LINUX_0503_VERSION	:= v5.3
 LINUX_0503_ARCH		:= dadao
 LINUX_0503_BRANCH	:= dadao-0503
@@ -22,69 +15,73 @@ LINUX_0503_DEFCONFIG	:= dadao_defconfig
 LINUX_0503_NEWFILES	:= $(DIR_DADAO_ENV)/linux-0503-newfiles
 LINUX_0503_PATCHES	:= $(DIR_DADAO_ENV)/linux-0503-patches
 
-LINUX_0503_WORKING	:= $(DIR_BUILD_ENV)/linux-0503
-LINUX_0503_INSTALL	:= $(DIR_BUILD_ENV)/__linux-0503
-LINUX_0503_LOG_STDOUT	:= $(DIR_BUILD_ENV)/_log-stdout-linux-0503
-LINUX_0503_LOG_STDERR	:= $(DIR_BUILD_ENV)/_log-stderr-linux-0503
+LINUX_0503_SOURCE	:= $(DIR_DADAO_SOURCE)/linux-0503
+LINUX_0503_BUILD	:= $(DIR_DADAO_BUILD)/linux-0503
+LINUX_0503_INSTALL	?= $(DIR_DADAO_BUILD)/__linux-0503
+LINUX_0503_LOG_STDOUT	:= $(DIR_DADAO)/_log-stdout-linux-0503
+LINUX_0503_LOG_STDERR	:= $(DIR_DADAO)/_log-stderr-linux-0503
 
 linux-0503-clean:
-	@echo "Remove old linux repo ..."
-	@rm -fr $(LINUX_0503_WORKING)
-	@echo "Remove old linux install ..."
+	@echo "Remove old linux source dir ..."
+	@rm -fr $(LINUX_0503_SOURCE)
+	@echo "Remove old linux build dir ..."
+	@rm -fr $(LINUX_0503_BUILD)
+ifneq ($(LINUX_0503_INSTALL), $(DIR_DADAO_INSTALL))
+	@echo "Remove old linux install dir ..."
 	@rm -fr $(LINUX_0503_INSTALL)
+endif
 
 linux-0503-new:
+	@test -d $(LINUX_0503_SOURCE) || mkdir -p $(LINUX_0503_SOURCE)
 	@echo "Clone official repo"
-	@git clone $(LINUX_0503_ORIGIN) -- $(LINUX_0503_WORKING)
-	@cd $(LINUX_0503_WORKING);				\
+	@git clone $(LINUX_0503_ORIGIN) -- $(LINUX_0503_SOURCE)
+	@cd $(LINUX_0503_SOURCE);				\
 		git checkout -b $(LINUX_0503_BRANCH) $(LINUX_0503_VERSION)
 	@echo "Copy arch/dadao dir"
-	@cp -a $(LINUX_0503_NEWFILES)/arch/* $(LINUX_0503_WORKING)/arch/
-	@cd $(LINUX_0503_WORKING);				\
+	@cp -a $(LINUX_0503_NEWFILES)/arch/* $(LINUX_0503_SOURCE)/arch/
+	@cd $(LINUX_0503_SOURCE);				\
 		git add arch/dadao;				\
 		git commit -sm"DADAO: add arch/dadao dir"
-	@echo "Apply linux-0503-patches ..."
-	@cd $(LINUX_0503_PATCHES); git am $(LINUX_0503_PATCHES)/*.patch
+#	@echo "Apply linux-0503-patches ..."
+#	@cd $(LINUX_0503_PATCHES); git am $(LINUX_0503_PATCHES)/*.patch
 
 linux-0503-conf:
-	@echo "Make mrproper ..."
-	@make -C $(LINUX_0503_WORKING)				\
-		ARCH=$(LINUX_0503_ARCH)				\
-		mrproper
+	@echo "Remove old linux build dir ..."
+	@rm -fr $(LINUX_0503_BUILD)
 	@echo "Make $(LINUX_0503_DEFCONFIG) ..."
-	@make -C $(LINUX_0503_WORKING)				\
+	@make -C $(LINUX_0503_SOURCE)				\
+		O=$(LINUX_0503_BUILD)				\
 		ARCH=$(LINUX_0503_ARCH)				\
 		$(LINUX_0503_DEFCONFIG)
 
 linux-0503-make:
 	@echo "Making (in several minutes) ..."
-	@make -C $(LINUX_0503_WORKING)				\
+	@make -C $(LINUX_0503_BUILD)				\
 		ARCH=$(LINUX_0503_ARCH) -j8
 
 linux-0503-install:
 	@echo "Make install ..."
-	@make -C $(LINUX_0503_WORKING)				\
+	@make -C $(LINUX_0503_BUILD)				\
 		ARCH=$(LINUX_0503_ARCH)				\
 		INSTALL_PATH=$(LINUX_0503_INSTALL)		\
 		install
 
 linux-0503-headers-check:
 	@echo "Headers check ..."
-	@make -C $(LINUX_0503_WORKING)				\
+	@make -C $(LINUX_0503_BUILD)				\
 		ARCH=$(LINUX_0503_ARCH)				\
 		headers_check
 
 linux-0503-headers-install:
 	@echo "Headers install ..."
-	@make -C $(LINUX_0503_WORKING)				\
+	@make -C $(LINUX_0503_BUILD)				\
 		ARCH=$(LINUX_0503_ARCH)				\
 		INSTALL_HDR_PATH=$(LINUX_0503_INSTALL)		\
 		headers_install
 
 linux-0503-highfive:
 	@echo "BEGIN TO BUILD linux-0503!"
-	@echo "0. Check build dir and remove old logfiles"
-	@test -d $(DIR_BUILD_ENV) || mkdir -p $(DIR_BUILD_ENV)
+	@echo "0. Remove old logfiles"
 	@rm -fr $(LINUX_0503_LOG_STDOUT) $(LINUX_0503_LOG_STDERR)
 	@echo "1. Clean old linux ..."
 	@make -s linux-0503-clean				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
