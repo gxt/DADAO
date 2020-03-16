@@ -4,6 +4,7 @@
 env-highfive:
 	@echo "=== BUILD Run-Time Environment BEGIN ==="
 	@LINUX_0503_INSTALL=$(DIR_DADAO_INSTALL) make -s linux-0503-highfive
+	@LINUX_0503_INSTALL=$(DIR_DADAO_INSTALL) make -s linux-0503-headers-highfive
 	@echo "=== BUILD Run-Time Environment DONE! ==="
 
 LINUX_0503_ORIGIN	:= /pub/GIT-TAO/linux.git
@@ -66,6 +67,26 @@ linux-0503-install:
 		INSTALL_PATH=$(LINUX_0503_INSTALL)		\
 		install
 
+linux-0503-highfive:
+	@echo "BEGIN TO BUILD linux-0503!"
+	@echo "0. Remove old logfiles"
+	@rm -fr $(LINUX_0503_LOG_STDOUT) $(LINUX_0503_LOG_STDERR)
+	@echo "1. Clean old linux ..."
+	@make -s linux-0503-clean				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
+	@echo "2. Clone and patch new linux ..."
+	@make -s linux-0503-new					1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
+	@echo "2. Clone and patch new linux complete."
+	@echo "3. Configure linux ..."
+	@make -s linux-0503-conf				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
+	@echo "3. Configure linux complete."
+	@echo "4. Make linux ..."
+	@make -s linux-0503-make				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
+	@echo "4. Make linux complete."
+	@echo "5. Install linux images ..."
+	@make -s linux-0503-install				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
+	@echo "5. Install linux complete."
+	@echo "BUILD linux-0503 DONE!"
+
 linux-0503-headers-check:
 	@echo "Headers check ..."
 	@make -C $(LINUX_0503_BUILD)				\
@@ -79,27 +100,14 @@ linux-0503-headers-install:
 		INSTALL_HDR_PATH=$(LINUX_0503_INSTALL)		\
 		headers_install
 
-linux-0503-highfive:
-	@echo "BEGIN TO BUILD linux-0503!"
-	@echo "0. Remove old logfiles"
-	@rm -fr $(LINUX_0503_LOG_STDOUT) $(LINUX_0503_LOG_STDERR)
-	@echo "1. Clean old linux ..."
-	@make -s linux-0503-clean				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
-	@echo "2. Clone and patch new linux ..."
-	@make -s linux-0503-new					1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
-	@echo "2. Clone and patch new linux complete."
-	@echo "3. Configure linux ..."
-	@make -s linux-0503-conf				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
-	@echo "3. Configure linux complete."
-	@echo "4. Check headers ..."
+linux-0503-headers-highfive:
+	@echo "--- headers-highfive SHOULD AFTER linux-0503-highfive ---"
+	@echo "BEGIN TO BUILD linux-0503-headers!"
+	@echo "1. Check headers ..."
 	@make -s linux-0503-headers-check			1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
-	@echo "4. Check headers complete."
-	@echo "5. Make linux ..."
-	@make -s linux-0503-make				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
-	@echo "5. Make linux complete."
-	@echo "6. Install headers and images ..."
+	@echo "1. Check headers complete."
+	@echo "2. Install headers ..."
 	@make -s linux-0503-headers-install			1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
-	@make -s linux-0503-install				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
-	@echo "6. Install linux complete."
-	@echo "BUILD linux-0503 DONE!"
+	@echo "2. Install headers complete."
+	@echo "BUILD linux-0503-headers DONE!"
 
