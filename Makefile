@@ -20,8 +20,9 @@ include DADAO-env/Makefile.DADAO-env
 dadao-highfive:
 	@make --silent dadao-clean
 	@echo "BEGIN TO BUILD EVERYTHING!"
-	@make --silent tch-highfive
 	@make --silent sim-highfive
+	@make --silent tch-highfive
+	@make --silent env-highfive
 	@echo "BUILD EVERYTHING DONE!"
 
 dadao-clean:
