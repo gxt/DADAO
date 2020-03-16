@@ -80,10 +80,10 @@ linux-0503-highfive:
 	@make -s linux-0503-conf				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
 	@echo "3. Configure linux complete."
 	@echo "4. Make linux ..."
-	@make -s linux-0503-make				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
+#	@make -s linux-0503-make				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
 	@echo "4. Make linux complete."
 	@echo "5. Install linux images ..."
-	@make -s linux-0503-install				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
+#	@make -s linux-0503-install				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
 	@echo "5. Install linux complete."
 	@echo "BUILD linux-0503 DONE!"
 
