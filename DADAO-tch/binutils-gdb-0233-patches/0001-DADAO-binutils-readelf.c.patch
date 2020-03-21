@@ -1,0 +1,52 @@
+From b2f83981756a024a8372bcc113d26b7f007469b5 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sat, 21 Mar 2020 09:16:42 +0000
+Subject: [PATCH] DADAO-binutils: readelf.c
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ binutils/readelf.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/binutils/readelf.c b/binutils/readelf.c
+index 0962877ad8f..7c5e7b66b1f 100644
+--- a/binutils/readelf.c
++++ b/binutils/readelf.c
+@@ -102,6 +102,7 @@
+ #include "elf/csky.h"
+ #include "elf/d10v.h"
+ #include "elf/d30v.h"
++#include "elf/dadao.h"
+ #include "elf/dlx.h"
+ #include "elf/bpf.h"
+ #include "elf/epiphany.h"
+@@ -893,6 +894,7 @@ guess_is_rela (unsigned int e_machine)
+     case EM_STARCORE:
+     case EM_SVX:
+     case EM_TINYJ:
++    case EM_DADAO: /* FIXME */
+     default:
+       warn (_("Don't know about relocations on this machine architecture\n"));
+       return FALSE;
+@@ -1336,6 +1338,10 @@ dump_relocations (Filedata *          filedata,
+ 	  rtype = elf_d30v_reloc_type (type);
+ 	  break;
+ 
++	case EM_DADAO:
++	  rtype = elf_dadao_reloc_type (type);
++	  break;
++
+ 	case EM_DLX:
+ 	  rtype = elf_dlx_reloc_type (type);
+ 	  break;
+@@ -2524,6 +2530,7 @@ get_machine_name (unsigned e_machine)
+     case EM_MOXIE:              return "Moxie";
+     case EM_AMDGPU: 	 	return "AMD GPU";
+     case EM_RISCV: 	 	return "RISC-V";
++    case EM_DADAO: 	 	return "DADAO 64-bit processor";
+     case EM_LANAI:		return "Lanai 32-bit processor";
+     case EM_BPF:		return "Linux BPF";
+     case EM_NFP:		return "Netronome Flow Processor";
+-- 
+2.17.1
+
