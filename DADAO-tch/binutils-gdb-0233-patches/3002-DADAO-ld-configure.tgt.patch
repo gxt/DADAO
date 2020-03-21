@@ -1,7 +1,7 @@
-From 7f706705a3adce09c60e5cc60d5ea4ac54be9efe Mon Sep 17 00:00:00 2001
+From 9cf3ab472464a455b049d655f1e2b65b37ce92be Mon Sep 17 00:00:00 2001
 From: Guan Xuetao <gxt@pku.edu.cn>
-Date: Sun, 8 Dec 2019 20:15:02 +0800
-Subject: [PATCH] DADAO: ld/configure.tgt add dadao support
+Date: Sat, 21 Mar 2020 10:28:09 +0000
+Subject: [PATCH 3002/3002] DADAO-ld: configure.tgt
 
 Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
 ---
@@ -9,7 +9,7 @@ Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
  1 file changed, 2 insertions(+)
 
 diff --git a/ld/configure.tgt b/ld/configure.tgt
-index c81bc8a7d8..24d515547f 100644
+index c81bc8a7d84..24d515547f1 100644
 --- a/ld/configure.tgt
 +++ b/ld/configure.tgt
 @@ -206,6 +206,8 @@ d30v-*-*ext*)		targ_emul=d30v_e; targ_extra_emuls="d30velf d30v_o" ;;

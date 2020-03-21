@@ -1,0 +1,33 @@
+From e4e29aa99d66073c90b6a4e6ff17a02f8f2e8468 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sat, 21 Mar 2020 10:27:52 +0000
+Subject: [PATCH 3001/3002] DADAO-ld: Makefile.am
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ ld/Makefile.am | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/ld/Makefile.am b/ld/Makefile.am
+index 0509c2e50f1..f33e995f3d2 100644
+--- a/ld/Makefile.am
++++ b/ld/Makefile.am
+@@ -424,6 +424,7 @@ ALL_64_EMULATION_SOURCES = \
+ 	eelf32mipswindiss.c \
+ 	eelf64_aix.c \
+ 	eelf64bpf.c \
++	eelf64_dadao.c \
+ 	eelf64_ia64.c \
+ 	eelf64_ia64_fbsd.c \
+ 	eelf64_ia64_vms.c \
+@@ -909,6 +910,7 @@ $(ALL_EMULATION_SOURCES) $(ALL_64_EMULATION_SOURCES): $(GEN_DEPENDS)
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf32mipswindiss.Pc@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64_aix.Pc@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64bpf.Pc@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64_dadao.Pc@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64_ia64.Pc@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64_ia64_fbsd.Pc@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64_ia64_vms.Pc@am__quote@
+-- 
+2.17.1
+

@@ -149,6 +149,18 @@ binutils-gdb-0233-new:
 		autoreconf;						\
 		git add .;						\
 		git commit -sm"DADAO-gas: re-generate configure and Makefile.in"
+	@echo "LD: Copy ld dir"
+	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/ld/* $(BINUTILS_GDB_0233_SOURCE)/ld/
+	@cd $(BINUTILS_GDB_0233_SOURCE);				\
+		git add ld;						\
+		git commit -sm"DADAO-ld: add dadao support"
+	@echo "LD: Apply ld related patches ..."
+	@cd $(BINUTILS_GDB_0233_SOURCE); git am $(BINUTILS_GDB_0233_PATCHES)/3*.patch
+	@echo "LD: re-generate configure and Makefile.in"
+	@cd $(BINUTILS_GDB_0233_SOURCE)/ld;				\
+		autoreconf;						\
+		git add .;						\
+		git commit -sm"DADAO-ld: re-generate configure and Makefile.in"
 	@echo "OPCODES: Copy opcodes dir"
 	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/opcodes/* $(BINUTILS_GDB_0233_SOURCE)/opcodes/
 	@cd $(BINUTILS_GDB_0233_SOURCE);				\
@@ -161,11 +173,6 @@ binutils-gdb-0233-new:
 		autoreconf;						\
 		git add .;						\
 		git commit -sm"DADAO-opcodes: re-generate configure and Makefile.in"
-	@echo "Copy ld dir"
-	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/ld/* $(BINUTILS_GDB_0233_SOURCE)/ld/
-	@cd $(BINUTILS_GDB_0233_SOURCE);				\
-		git add ld;						\
-		git commit -sm"DADAO: add ld related files"
 	@echo "Apply binutils-gdb-0233-patches ..."
 	@cd $(BINUTILS_GDB_0233_SOURCE); git am $(BINUTILS_GDB_0233_PATCHES)/0*.patch
 
