@@ -1,0 +1,26 @@
+From 73a54b9fabedf96a2d5e4c5fef29652e35103fe3 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sat, 21 Mar 2020 09:59:40 +0000
+Subject: [PATCH 4001/4004] DADAO-opcodes: Makefile.am
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ opcodes/Makefile.am | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/opcodes/Makefile.am b/opcodes/Makefile.am
+index 20a8a8d2c0d..defaca0ddca 100644
+--- a/opcodes/Makefile.am
++++ b/opcodes/Makefile.am
+@@ -117,6 +117,8 @@ TARGET_LIBOPCODES_CFILES = \
+ 	d10v-opc.c \
+ 	d30v-dis.c \
+ 	d30v-opc.c \
++	dadao-dis.c \
++	dadao-opc.c \
+ 	dlx-dis.c \
+ 	bpf-asm.c \
+ 	bpf-desc.c \
+-- 
+2.17.1
+

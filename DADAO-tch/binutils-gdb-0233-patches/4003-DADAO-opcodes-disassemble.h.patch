@@ -1,0 +1,25 @@
+From 99ec8ce9ed2bec041135533ce39f1c87ca13144b Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sat, 21 Mar 2020 10:02:30 +0000
+Subject: [PATCH 4003/4004] DADAO-opcodes: disassemble.h
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ opcodes/disassemble.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/opcodes/disassemble.h b/opcodes/disassemble.h
+index ceb2814fe66..b94d98c14ac 100644
+--- a/opcodes/disassemble.h
++++ b/opcodes/disassemble.h
+@@ -35,6 +35,7 @@ extern int print_insn_crx               (bfd_vma, disassemble_info *);
+ extern int print_insn_csky		(bfd_vma, disassemble_info *);
+ extern int print_insn_d10v		(bfd_vma, disassemble_info *);
+ extern int print_insn_d30v		(bfd_vma, disassemble_info *);
++extern int print_insn_dadao		(bfd_vma, disassemble_info *);
+ extern int print_insn_dlx		(bfd_vma, disassemble_info *);
+ extern int print_insn_bpf		(bfd_vma, disassemble_info *);
+ extern int print_insn_epiphany		(bfd_vma, disassemble_info *);
+-- 
+2.17.1
+

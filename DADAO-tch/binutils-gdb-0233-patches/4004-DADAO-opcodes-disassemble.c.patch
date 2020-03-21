@@ -1,0 +1,37 @@
+From 50eeef3cfaf889b94e53ae84688ea5a900ee7d72 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sat, 21 Mar 2020 10:04:18 +0000
+Subject: [PATCH 4004/4004] DADAO-opcodes: disassemble.c
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ opcodes/disassemble.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/opcodes/disassemble.c b/opcodes/disassemble.c
+index aef2fd8644b..b8787630d04 100644
+--- a/opcodes/disassemble.c
++++ b/opcodes/disassemble.c
+@@ -36,6 +36,7 @@
+ #define ARCH_csky
+ #define ARCH_d10v
+ #define ARCH_d30v
++#define ARCH_dadao
+ #define ARCH_dlx
+ #define ARCH_bpf
+ #define ARCH_epiphany
+@@ -200,6 +201,11 @@ disassembler (enum bfd_architecture a,
+       disassemble = print_insn_d30v;
+       break;
+ #endif
++#ifdef ARCH_dadao
++    case bfd_arch_dadao:
++      disassemble = print_insn_dadao;
++      break;
++#endif
+ #ifdef ARCH_dlx
+     case bfd_arch_dlx:
+       /* As far as I know we only handle big-endian DLX objects.  */
+-- 
+2.17.1
+
