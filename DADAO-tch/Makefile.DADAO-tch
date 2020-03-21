@@ -175,6 +175,10 @@ binutils-gdb-0233-new:
 		autoreconf;						\
 		git add .;						\
 		git commit -sm"DADAO-opcodes: re-generate configure and Makefile.in"
+	@echo "BINUTILS: Apply binutils related patches ..."
+	@cd $(BINUTILS_GDB_0233_SOURCE); git am $(BINUTILS_GDB_0233_PATCHES)/8*.patch
+	@echo "CONFIG: Apply config related patches ..."
+	@cd $(BINUTILS_GDB_0233_SOURCE); git am $(BINUTILS_GDB_0233_PATCHES)/9*.patch
 
 binutils-gdb-0233-conf:
 	@rm -fr $(BINUTILS_GDB_0233_BUILD)
