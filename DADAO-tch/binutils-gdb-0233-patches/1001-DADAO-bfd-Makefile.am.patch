@@ -1,0 +1,49 @@
+From 199aeaba3d529df011b1229eb8396fde4009b9a5 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sat, 21 Mar 2020 07:19:15 +0000
+Subject: [PATCH 1001/1005] DADAO-bfd: Makefile.am
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ bfd/Makefile.am | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/bfd/Makefile.am b/bfd/Makefile.am
+index 6a39ef5649b..b15c5cccc63 100644
+--- a/bfd/Makefile.am
++++ b/bfd/Makefile.am
+@@ -104,6 +104,7 @@ ALL_MACHINES = \
+ 	cpu-csky.lo \
+ 	cpu-d10v.lo \
+ 	cpu-d30v.lo \
++	cpu-dadao.lo \
+ 	cpu-dlx.lo \
+ 	cpu-epiphany.lo \
+ 	cpu-fr30.lo \
+@@ -191,6 +192,7 @@ ALL_MACHINES_CFILES = \
+ 	cpu-csky.c \
+ 	cpu-d10v.c \
+ 	cpu-d30v.c \
++	cpu-dadao.c \
+ 	cpu-dlx.c \
+ 	cpu-epiphany.c \
+ 	cpu-fr30.c \
+@@ -557,6 +559,7 @@ BFD64_BACKENDS = \
+ 	elf32-score.lo \
+ 	elf32-score7.lo \
+ 	elf64-alpha.lo \
++	elf64-dadao.lo \
+ 	elf64-gen.lo \
+ 	elf64-hppa.lo \
+ 	elf64-ia64.lo \
+@@ -598,6 +601,7 @@ BFD64_BACKENDS_CFILES = \
+ 	elf32-score.c \
+ 	elf32-score7.c \
+ 	elf64-alpha.c \
++	elf64-dadao.c \
+ 	elf64-gen.c \
+ 	elf64-hppa.c \
+ 	elf64-ia64-vms.c \
+-- 
+2.17.1
+

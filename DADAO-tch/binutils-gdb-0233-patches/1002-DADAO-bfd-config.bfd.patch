@@ -1,0 +1,32 @@
+From ed38861345b1b6616dd9e78712919246e4e1523e Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sat, 21 Mar 2020 07:19:32 +0000
+Subject: [PATCH 1002/1005] DADAO-bfd: config.bfd
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ bfd/config.bfd | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/bfd/config.bfd b/bfd/config.bfd
+index 13d678e1f88..6fd091f35e9 100644
+--- a/bfd/config.bfd
++++ b/bfd/config.bfd
+@@ -476,6 +476,14 @@ case "${targ}" in
+     targ_defvec=d30v_elf32_vec
+     ;;
+ 
++#ifdef BFD64
++  dadao-*-*)
++    targ_defvec=dadao_elf64_vec
++    targ_selvecs=dadao_elf64_vec
++    want64=true
++    ;;
++#endif
++
+ #ifdef BFD64
+   bpf-*-none)
+     targ_defvec=bpf_elf64_le_vec
+-- 
+2.17.1
+

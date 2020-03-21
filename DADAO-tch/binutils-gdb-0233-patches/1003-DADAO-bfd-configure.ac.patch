@@ -1,0 +1,25 @@
+From 3c4effb2974f42f9ce1ebc86e34a9617cd952f66 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sat, 21 Mar 2020 07:19:47 +0000
+Subject: [PATCH 1003/1005] DADAO-bfd: configure.ac
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ bfd/configure.ac | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/bfd/configure.ac b/bfd/configure.ac
+index 39702ce1315..80f5ae612aa 100644
+--- a/bfd/configure.ac
++++ b/bfd/configure.ac
+@@ -467,6 +467,7 @@ do
+     csky_elf32_le_vec)		 tb="$tb elf32-csky.lo elf32.lo $elf" ;;
+     d10v_elf32_vec)		 tb="$tb elf32-d10v.lo elf32.lo $elf" ;;
+     d30v_elf32_vec)		 tb="$tb elf32-d30v.lo elf32.lo $elf" ;;
++    dadao_elf64_vec)		 tb="$tb elf64-dadao.lo elf64.lo $elf" target_size=64 ;;
+     dlx_elf32_be_vec)		 tb="$tb elf32-dlx.lo elf32.lo $elf" ;;
+     elf32_be_vec)		 tb="$tb elf32-gen.lo elf32.lo $elf" ;;
+     elf32_le_vec)		 tb="$tb elf32-gen.lo elf32.lo $elf" ;;
+-- 
+2.17.1
+

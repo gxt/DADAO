@@ -1,0 +1,36 @@
+From 5d324f433ae9aa22fc0764dba1da7781a9484d94 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sat, 21 Mar 2020 07:20:17 +0000
+Subject: [PATCH 1005/1005] DADAO-bfd: targets.c
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ bfd/targets.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/bfd/targets.c b/bfd/targets.c
+index 6b85c627980..6f2b9db7426 100644
+--- a/bfd/targets.c
++++ b/bfd/targets.c
+@@ -634,6 +634,7 @@ extern const bfd_target csky_elf32_be_vec;
+ extern const bfd_target csky_elf32_le_vec;
+ extern const bfd_target d10v_elf32_vec;
+ extern const bfd_target d30v_elf32_vec;
++extern const bfd_target dadao_elf64_vec;
+ extern const bfd_target dlx_elf32_be_vec;
+ extern const bfd_target elf32_be_vec;
+ extern const bfd_target elf32_le_vec;
+@@ -971,6 +972,10 @@ static const bfd_target * const _bfd_target_vector[] =
+ 	&d10v_elf32_vec,
+ 	&d30v_elf32_vec,
+ 
++#ifdef BFD64
++	&dadao_elf64_vec,
++#endif
++
+ 	&dlx_elf32_be_vec,
+ 
+ 	/* This, and other vectors, may not be used in any *.mt configuration.
+-- 
+2.17.1
+

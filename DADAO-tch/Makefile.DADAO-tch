@@ -117,7 +117,9 @@ binutils-gdb-0233-new:
 	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/bfd/* $(BINUTILS_GDB_0233_SOURCE)/bfd
 	@cd $(BINUTILS_GDB_0233_SOURCE);				\
 		git add bfd;						\
-		git commit -sm"DADAO: add bfd related files"
+		git commit -sm"DADAO-bfd: add dadao support"
+#	@echo "Apply bfd patches ..."
+#	@cd $(BINUTILS_GDB_0233_SOURCE); git am $(BINUTILS_GDB_0233_PATCHES)/1*.patch
 	@echo "Copy gas/config dir"
 	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/gas/config/* $(BINUTILS_GDB_0233_SOURCE)/gas/config/
 	@cd $(BINUTILS_GDB_0233_SOURCE);				\

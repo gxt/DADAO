@@ -1,0 +1,44 @@
+From 03f453af71b66dec2259c5f7173e042cc0d34f60 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sat, 21 Mar 2020 07:20:01 +0000
+Subject: [PATCH 1004/1005] DADAO-bfd: archures.c
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ bfd/archures.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/bfd/archures.c b/bfd/archures.c
+index 3465406213f..15a7bd08232 100644
+--- a/bfd/archures.c
++++ b/bfd/archures.c
+@@ -545,6 +545,10 @@ DESCRIPTION
+ .#define bfd_mach_ck803		5
+ .#define bfd_mach_ck807		6
+ .#define bfd_mach_ck810		7
++.  bfd_arch_dadao,      {* DADAO educational processor.  *}
++.#define bfd_mach_dadao_wuxing  0x0100
++.#define bfd_mach_dadao_wuqing  0x0200
++.#define bfd_mach_dadao_wuming  0x0400
+ .  bfd_arch_last
+ .  };
+ */
+@@ -602,6 +606,7 @@ extern const bfd_arch_info_type bfd_crx_arch;
+ extern const bfd_arch_info_type bfd_csky_arch;
+ extern const bfd_arch_info_type bfd_d10v_arch;
+ extern const bfd_arch_info_type bfd_d30v_arch;
++extern const bfd_arch_info_type bfd_dadao_arch;
+ extern const bfd_arch_info_type bfd_dlx_arch;
+ extern const bfd_arch_info_type bfd_bpf_arch;
+ extern const bfd_arch_info_type bfd_epiphany_arch;
+@@ -694,6 +699,7 @@ static const bfd_arch_info_type * const bfd_archures_list[] =
+     &bfd_csky_arch,
+     &bfd_d10v_arch,
+     &bfd_d30v_arch,
++    &bfd_dadao_arch,
+     &bfd_dlx_arch,
+     &bfd_bpf_arch,
+     &bfd_epiphany_arch,
+-- 
+2.17.1
+
