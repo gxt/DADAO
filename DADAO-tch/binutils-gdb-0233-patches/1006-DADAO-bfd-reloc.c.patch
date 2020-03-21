@@ -1,0 +1,29 @@
+From f73ee634416c13e5762e9a9c621d404667959f53 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sat, 21 Mar 2020 07:59:02 +0000
+Subject: [PATCH] DADAO-bfd: reloc.c
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ bfd/reloc.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/bfd/reloc.c b/bfd/reloc.c
+index 9ca68ca61da..ebe5cec7675 100644
+--- a/bfd/reloc.c
++++ b/bfd/reloc.c
+@@ -4936,6 +4936,11 @@ ENUMDOC
+   This relocation is an assertion that the expression is not allocated as
+   a global register.  It does not modify contents.
+ 
++ENUM
++  BFD_RELOC_DADAO_10_PCREL
++ENUMDOC
++  DADAO ELF relocations.
++
+ ENUM
+   BFD_RELOC_AVR_7_PCREL
+ ENUMDOC
+-- 
+2.17.1
+
