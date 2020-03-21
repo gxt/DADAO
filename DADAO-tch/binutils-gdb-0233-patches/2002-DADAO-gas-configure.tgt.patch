@@ -1,0 +1,25 @@
+From ec2d3d8f9db57afb460982c229929064ad4e582d Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sat, 21 Mar 2020 09:41:58 +0000
+Subject: [PATCH 2002/2002] DADAO-gas: configure.tgt
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ gas/configure.tgt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/gas/configure.tgt b/gas/configure.tgt
+index a4828c4cae3..7d9829ec27a 100644
+--- a/gas/configure.tgt
++++ b/gas/configure.tgt
+@@ -180,6 +180,7 @@ case ${generic_target} in
+ 
+   d10v-*-*)				fmt=elf ;;
+   d30v-*-*)				fmt=elf ;;
++  dadao-*-*)				fmt=elf ;;
+   dlx-*-*)				fmt=elf ;;
+ 
+   bpf-*-*)				fmt=elf ;;
+-- 
+2.17.1
+

@@ -132,11 +132,18 @@ binutils-gdb-0233-new:
 		make distclean;						\
 		git add .;						\
 		git commit -sm"DADAO-bfd: re-generate bfd-in2.h and libbfd.h"
-	@echo "Copy gas/config dir"
+	@echo "GAS: Copy gas/config dir"
 	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/gas/config/* $(BINUTILS_GDB_0233_SOURCE)/gas/config/
 	@cd $(BINUTILS_GDB_0233_SOURCE);				\
 		git add gas/config;					\
-		git commit -sm"DADAO: add gas/config related files"
+		git commit -sm"DADAO-gas: add dadao support"
+	@echo "GAS: Apply gas related patches ..."
+	@cd $(BINUTILS_GDB_0233_SOURCE); git am $(BINUTILS_GDB_0233_PATCHES)/2*.patch
+	@echo "GAS: re-generate configure and Makefile.in"
+	@cd $(BINUTILS_GDB_0233_SOURCE)/gas;				\
+		autoreconf;						\
+		git add .;						\
+		git commit -sm"DADAO-gas: re-generate configure and Makefile.in"
 	@echo "Copy opcodes dir"
 	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/opcodes/* $(BINUTILS_GDB_0233_SOURCE)/opcodes/
 	@cd $(BINUTILS_GDB_0233_SOURCE);				\

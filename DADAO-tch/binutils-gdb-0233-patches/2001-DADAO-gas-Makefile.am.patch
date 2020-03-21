@@ -1,0 +1,33 @@
+From 09643bf95ac727ef2417c3cfb4d71cb3023ecbcc Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sat, 21 Mar 2020 09:41:41 +0000
+Subject: [PATCH 2001/2002] DADAO-gas: Makefile.am
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ gas/Makefile.am | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/gas/Makefile.am b/gas/Makefile.am
+index 2e95409671a..dd935a3d942 100644
+--- a/gas/Makefile.am
++++ b/gas/Makefile.am
+@@ -141,6 +141,7 @@ TARGET_CPU_CFILES = \
+ 	config/tc-csky.c \
+ 	config/tc-d10v.c \
+ 	config/tc-d30v.c \
++	config/tc-dadao.c \
+ 	config/tc-dlx.c \
+ 	config/tc-epiphany.c \
+ 	config/tc-fr30.c \
+@@ -217,6 +218,7 @@ TARGET_CPU_HFILES = \
+ 	config/tc-csky.h \
+ 	config/tc-d10v.h \
+ 	config/tc-d30v.h \
++	config/tc-dadao.h \
+ 	config/tc-dlx.h \
+ 	config/tc-epiphany.h \
+ 	config/tc-fr30.h \
+-- 
+2.17.1
+
