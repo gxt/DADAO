@@ -113,13 +113,25 @@ binutils-gdb-0233-new:
 	@git clone $(BINUTILS_GDB_0233_ORIGIN) -- $(BINUTILS_GDB_0233_SOURCE)
 	@cd $(BINUTILS_GDB_0233_SOURCE);				\
 		git checkout -b $(BINUTILS_GDB_0233_BRANCH) $(BINUTILS_GDB_0233_VERSION)
-	@echo "Copy bfd dir"
+	@echo "BFD: Copy bfd dir"
 	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/bfd/* $(BINUTILS_GDB_0233_SOURCE)/bfd
 	@cd $(BINUTILS_GDB_0233_SOURCE);				\
 		git add bfd;						\
 		git commit -sm"DADAO-bfd: add dadao support"
-#	@echo "Apply bfd patches ..."
-#	@cd $(BINUTILS_GDB_0233_SOURCE); git am $(BINUTILS_GDB_0233_PATCHES)/1*.patch
+	@echo "BFD: Apply bfd related patches ..."
+	@cd $(BINUTILS_GDB_0233_SOURCE); git am $(BINUTILS_GDB_0233_PATCHES)/1*.patch
+	@echo "BFD: re-generate configure and Makefile.in"
+	@cd $(BINUTILS_GDB_0233_SOURCE)/bfd;				\
+		autoreconf;						\
+		git add .;						\
+		git commit -sm"DADAO-bfd: re-generate configure and Makefile.in"
+	@echo "BFD: re-generate bfd-in2.h and libbfd.h"
+	@cd $(BINUTILS_GDB_0233_SOURCE)/bfd;				\
+		./configure;						\
+		make headers;						\
+		make distclean;						\
+		git add .;						\
+		git commit -sm"DADAO-bfd: re-generate bfd-in2.h and libbfd.h"
 	@echo "Copy gas/config dir"
 	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/gas/config/* $(BINUTILS_GDB_0233_SOURCE)/gas/config/
 	@cd $(BINUTILS_GDB_0233_SOURCE);				\
@@ -141,10 +153,11 @@ binutils-gdb-0233-new:
 		git add include;					\
 		git commit -sm"DADAO: add header files"
 	@echo "Apply binutils-gdb-0233-patches ..."
-	@cd $(BINUTILS_GDB_0233_SOURCE); git am $(BINUTILS_GDB_0233_PATCHES)/*.patch
+	@cd $(BINUTILS_GDB_0233_SOURCE); git am $(BINUTILS_GDB_0233_PATCHES)/0*.patch
 
 binutils-gdb-0233-conf:
-	@test -d $(BINUTILS_GDB_0233_BUILD) || mkdir -p $(BINUTILS_GDB_0233_BUILD)
+	@rm -fr $(BINUTILS_GDB_0233_BUILD)
+	@mkdir -p $(BINUTILS_GDB_0233_BUILD)
 	@cd $(BINUTILS_GDB_0233_BUILD) &&				\
 		$(BINUTILS_GDB_0233_SOURCE)/configure			\
 			--target=$(BINUTILS_GDB_0233_TARGET)		\
