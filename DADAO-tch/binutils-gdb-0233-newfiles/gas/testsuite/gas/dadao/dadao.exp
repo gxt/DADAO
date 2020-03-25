@@ -1,0 +1,6 @@
+# DADAO assembler testsuite.
+
+if [istarget dadao-*-*] {
+	run_dump_tests [lsort [glob -nocomplain $srcdir/$subdir/*.d]]
+	run_list_test "movi" ""
+}

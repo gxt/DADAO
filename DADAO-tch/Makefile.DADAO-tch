@@ -143,7 +143,12 @@ binutils-gdb-0233-new:
 	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/gas/config/* $(BINUTILS_GDB_0233_SOURCE)/gas/config/
 	@cd $(BINUTILS_GDB_0233_SOURCE);				\
 		git add gas/config;					\
-		git commit -sm"DADAO-gas: add dadao support"
+		git commit -sm"DADAO-gas: add dadao config support"
+	@echo "GAS: Copy gas/testsuite dir"
+	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/gas/testsuite/* $(BINUTILS_GDB_0233_SOURCE)/gas/testsuite/
+	@cd $(BINUTILS_GDB_0233_SOURCE);				\
+		git add gas/testsuite;					\
+		git commit -sm"DADAO-gas: add dadao testsuite support"
 	@echo "GAS: Apply gas related patches ..."
 	@cd $(BINUTILS_GDB_0233_SOURCE); git am $(BINUTILS_GDB_0233_PATCHES)/2*.patch
 	@echo "GAS: re-generate configure and Makefile.in"
@@ -219,3 +224,6 @@ binutils-gdb-0233-highfive:
 	@make -s binutils-gdb-0233-install			1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
 	@echo "5. Install binutils-gdb complete."
 	@echo "BUILD binutils-gdb-0233 DONE!"
+
+binutils-gdb-0233-check:
+	@make -C $(BINUTILS_GDB_0233_BUILD) check-gas
