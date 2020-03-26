@@ -32,8 +32,9 @@ ifneq ($(LINUX_0503_INSTALL), $(DIR_DADAO_INSTALL))
 	@rm -fr $(LINUX_0503_INSTALL)
 endif
 
-linux-0503-new:
-	@test -d $(LINUX_0503_SOURCE) || mkdir -p $(LINUX_0503_SOURCE)
+linux-0503-new-source:
+	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
+	@rm -fr $(LINUX_0503_SOURCE)
 	@echo "Clone official repo"
 	@git clone $(LINUX_0503_ORIGIN) -- $(LINUX_0503_SOURCE)
 	@cd $(LINUX_0503_SOURCE);				\
@@ -46,16 +47,17 @@ linux-0503-new:
 #	@echo "Apply linux-0503-patches ..."
 #	@cd $(LINUX_0503_PATCHES); git am $(LINUX_0503_PATCHES)/*.patch
 
-linux-0503-conf:
+linux-0503-new-build:
 	@echo "Remove old linux build dir ..."
 	@rm -fr $(LINUX_0503_BUILD)
+	@mkdir -p $(LINUX_0503_BUILD)
 	@echo "Make $(LINUX_0503_DEFCONFIG) ..."
 	@make -C $(LINUX_0503_SOURCE)				\
 		O=$(LINUX_0503_BUILD)				\
 		ARCH=$(LINUX_0503_ARCH)				\
 		$(LINUX_0503_DEFCONFIG)
 
-linux-0503-make:
+linux-0503-build:
 	@echo "Making (in several minutes) ..."
 	@make -C $(LINUX_0503_BUILD)				\
 		ARCH=$(LINUX_0503_ARCH) -j8
@@ -74,13 +76,13 @@ linux-0503-highfive:
 	@echo "1. Clean old linux ..."
 	@make -s linux-0503-clean				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
 	@echo "2. Clone and patch new linux ..."
-	@make -s linux-0503-new					1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
+	@make -s linux-0503-new-source				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
 	@echo "2. Clone and patch new linux complete."
 	@echo "3. Configure linux ..."
-	@make -s linux-0503-conf				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
+	@make -s linux-0503-new-build				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
 	@echo "3. Configure linux complete."
 	@echo "4. Make linux ..."
-#	@make -s linux-0503-make				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
+#	@make -s linux-0503-build				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
 	@echo "4. Make linux complete."
 	@echo "5. Install linux images ..."
 #	@make -s linux-0503-install				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
