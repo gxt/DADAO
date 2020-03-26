@@ -31,8 +31,9 @@ ifneq ($(GCC_0902_INSTALL), $(DIR_DADAO_INSTALL))
 	@rm -fr $(GCC_0902_INSTALL)
 endif
 
-gcc-0902-new:
-	@test -d $(GCC_0902_SOURCE) || mkdir -p $(GCC_0902_SOURCE)
+gcc-0902-new-source:
+	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
+	@rm -fr $(GCC_0902_SOURCE)
 	@echo "Clone official repo"
 	@git clone $(GCC_0902_ORIGIN) -- $(GCC_0902_SOURCE)
 	@cd $(GCC_0902_SOURCE); git checkout -b $(GCC_0902_BRANCH) $(GCC_0902_VERSION)
@@ -44,8 +45,9 @@ gcc-0902-new:
 	@echo "Apply gcc-0902-patches ..."
 	@cd $(GCC_0902_SOURCE); git am $(GCC_0902_PATCHES)/*.patch
 
-gcc-0902-conf:
-	@test -d $(GCC_0902_BUILD) || mkdir -p $(GCC_0902_BUILD)
+gcc-0902-new-build:
+	@rm -fr $(GCC_0902_BUILD)
+	@mkdir -p $(GCC_0902_BUILD)
 	@cd $(GCC_0902_BUILD) &&					\
 		$(GCC_0902_SOURCE)/configure				\
 			--target=$(GCC_0902_TARGET)			\
@@ -57,7 +59,7 @@ gcc-0902-conf:
 			--enable-werror					\
 			--without-headers
 
-gcc-0902-make:
+gcc-0902-build:
 	@make -C $(GCC_0902_BUILD) all-gcc -j8
 
 gcc-0902-install:
@@ -70,13 +72,13 @@ gcc-0902-highfive:
 	@echo "1. Clean old gcc ..."
 	@make -s gcc-0902-clean				1>> $(GCC_0902_LOG_STDOUT) 2>> $(GCC_0902_LOG_STDERR)
 	@echo "2. Clone and patch new gcc ..."
-	@make -s gcc-0902-new				1>> $(GCC_0902_LOG_STDOUT) 2>> $(GCC_0902_LOG_STDERR)
+	@make -s gcc-0902-new-source			1>> $(GCC_0902_LOG_STDOUT) 2>> $(GCC_0902_LOG_STDERR)
 	@echo "2. Clone and patch new gcc complete."
 	@echo "3. Configure gcc ..."
-	@make -s gcc-0902-conf				1>> $(GCC_0902_LOG_STDOUT) 2>> $(GCC_0902_LOG_STDERR)
+	@make -s gcc-0902-new-build			1>> $(GCC_0902_LOG_STDOUT) 2>> $(GCC_0902_LOG_STDERR)
 	@echo "3. Configure gcc complete."
 	@echo "4. Make all-gcc ..."
-	@make -s gcc-0902-make				1>> $(GCC_0902_LOG_STDOUT) 2>> $(GCC_0902_LOG_STDERR)
+	@make -s gcc-0902-build				1>> $(GCC_0902_LOG_STDOUT) 2>> $(GCC_0902_LOG_STDERR)
 	@echo "4. Make all-gcc complete."
 	@echo "5. Install gcc ..."
 	@make -s gcc-0902-install			1>> $(GCC_0902_LOG_STDOUT) 2>> $(GCC_0902_LOG_STDERR)
