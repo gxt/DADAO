@@ -107,8 +107,9 @@ ifneq ($(BINUTILS_GDB_0233_INSTALL), $(DIR_DADAO_INSTALL))
 	@rm -fr $(BINUTILS_GDB_0233_INSTALL)
 endif
 
-binutils-gdb-0233-new:
-	@test -d $(BINUTILS_GDB_0233_SOURCE) || mkdir -p $(BINUTILS_GDB_0233_SOURCE)
+binutils-gdb-0233-new-source:
+	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
+	@rm -fr $(BINUTILS_GDB_0233_SOURCE)
 	@echo "Clone official repo"
 	@git clone $(BINUTILS_GDB_0233_ORIGIN) -- $(BINUTILS_GDB_0233_SOURCE)
 	@cd $(BINUTILS_GDB_0233_SOURCE);				\
@@ -190,7 +191,7 @@ binutils-gdb-0233-new:
 		git add .;						\
 		git commit -sm"DADAO: re-generate root configure"
 
-binutils-gdb-0233-conf:
+binutils-gdb-0233-new-build:
 	@rm -fr $(BINUTILS_GDB_0233_BUILD)
 	@mkdir -p $(BINUTILS_GDB_0233_BUILD)
 	@cd $(BINUTILS_GDB_0233_BUILD) &&				\
@@ -199,7 +200,7 @@ binutils-gdb-0233-conf:
 			--srcdir=$(BINUTILS_GDB_0233_SOURCE)		\
 			--prefix=$(BINUTILS_GDB_0233_INSTALL)
 
-binutils-gdb-0233-make:
+binutils-gdb-0233-build:
 	@make -C $(BINUTILS_GDB_0233_BUILD) -j8
 
 binutils-gdb-0233-install:
@@ -212,13 +213,13 @@ binutils-gdb-0233-highfive:
 	@echo "1. Clean old binutils-gdb ..."
 	@make -s binutils-gdb-0233-clean			1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
 	@echo "2. Clone and patch new binutils-gdb ..."
-	@make -s binutils-gdb-0233-new				1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
+	@make -s binutils-gdb-0233-new-source			1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
 	@echo "2. Clone and patch new binutils-gdb complete."
 	@echo "3. Configure binutils-gdb ..."
-	@make -s binutils-gdb-0233-conf				1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
+	@make -s binutils-gdb-0233-new-build			1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
 	@echo "3. Configure binutils-gdb complete."
 	@echo "4. Make binutils-gdb ..."
-	@make -s binutils-gdb-0233-make				1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
+	@make -s binutils-gdb-0233-build			1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
 	@echo "4. Make binutils-gdb complete."
 	@echo "5. Install binutils-gdb ..."
 	@make -s binutils-gdb-0233-install			1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
