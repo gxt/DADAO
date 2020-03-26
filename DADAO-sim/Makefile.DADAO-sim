@@ -30,8 +30,9 @@ ifneq ($(QEMU_0401_INSTALL), $(DIR_DADAO_INSTALL))
 	@rm -fr $(QEMU_0401_INSTALL)
 endif
 
-qemu-0401-new:
-	@test -d $(QEMU_0401_SOURCE) || mkdir -p $(QEMU_0401_SOURCE)
+qemu-0401-new-source:
+	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
+	@rm -fr $(QEMU_0401_SOURCE)
 	@echo "Clone official repo"
 	@git clone $(QEMU_0401_ORIGIN) -- $(QEMU_0401_SOURCE)
 	@cd $(QEMU_0401_SOURCE); git checkout -b $(QEMU_0401_BRANCH) $(QEMU_0401_VERSION)
@@ -53,8 +54,9 @@ qemu-0401-new:
 	@echo "Apply qemu-0401-patches ..."
 	@cd $(QEMU_0401_SOURCE); git am $(QEMU_0401_PATCHES)/*.patch
 
-qemu-0401-conf:
-	@test -d $(QEMU_0401_BUILD) || mkdir -p $(QEMU_0401_BUILD)
+qemu-0401-new-build:
+	@rm -fr $(QEMU_0401_BUILD)
+	@mkdir -p $(QEMU_0401_BUILD)
 	@cd $(QEMU_0401_BUILD) &&					\
 		$(QEMU_0401_SOURCE)/configure				\
 			--target-list=$(QEMU_0401_TARGETS)		\
@@ -66,7 +68,7 @@ qemu-0401-conf:
 			--enable-debug					\
 			--enable-curses
 
-qemu-0401-make:
+qemu-0401-build:
 	@make -C $(QEMU_0401_BUILD) -j8
 
 qemu-0401-install:
@@ -80,13 +82,13 @@ qemu-0401-highfive:
 	@echo "1. Clean old qemu ..."
 	@make -s qemu-0401-clean				1>> $(QEMU_0401_LOG_STDOUT) 2>> $(QEMU_0401_LOG_STDERR)
 	@echo "2. Clone and patch new qemu ..."
-	@make -s qemu-0401-new					1>> $(QEMU_0401_LOG_STDOUT) 2>> $(QEMU_0401_LOG_STDERR)
+	@make -s qemu-0401-new-source				1>> $(QEMU_0401_LOG_STDOUT) 2>> $(QEMU_0401_LOG_STDERR)
 	@echo "2. Clone and patch new qemu complete."
 	@echo "3. Configure qemu ..."
-	@make -s qemu-0401-conf					1>> $(QEMU_0401_LOG_STDOUT) 2>> $(QEMU_0401_LOG_STDERR)
+	@make -s qemu-0401-new-build				1>> $(QEMU_0401_LOG_STDOUT) 2>> $(QEMU_0401_LOG_STDERR)
 	@echo "3. Configure qemu complete."
 	@echo "4. Make all-qemu ..."
-	@make -s qemu-0401-make					1>> $(QEMU_0401_LOG_STDOUT) 2>> $(QEMU_0401_LOG_STDERR)
+	@make -s qemu-0401-build				1>> $(QEMU_0401_LOG_STDOUT) 2>> $(QEMU_0401_LOG_STDERR)
 	@echo "4. Make all-qemu complete."
 	@echo "5. Install qemu ..."
 	@make -s qemu-0401-install				1>> $(QEMU_0401_LOG_STDOUT) 2>> $(QEMU_0401_LOG_STDERR)
