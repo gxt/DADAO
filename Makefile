@@ -30,5 +30,5 @@ dadao-clean:
 	@rm -fr $(DIR_DADAO_SOURCE)
 	@rm -fr $(DIR_DADAO_BUILD)
 	@rm -fr $(DIR_DADAO_INSTALL)
-	@rm -fr _log-std*
+	@rm -fr _log-*.out _log-*.err
 	@echo "CLEAR EVERYTHING DONE!"

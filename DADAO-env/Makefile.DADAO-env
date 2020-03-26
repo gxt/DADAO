@@ -19,8 +19,8 @@ LINUX_0503_PATCHES	:= $(DIR_DADAO)/DADAO-env/linux-0503-patches
 LINUX_0503_SOURCE	:= $(DIR_DADAO_SOURCE)/linux-0503
 LINUX_0503_BUILD	:= $(DIR_DADAO_BUILD)/linux-0503
 LINUX_0503_INSTALL	?= $(DIR_DADAO_BUILD)/__linux-0503
-LINUX_0503_LOG_STDOUT	:= $(DIR_DADAO)/_log-stdout-linux-0503
-LINUX_0503_LOG_STDERR	:= $(DIR_DADAO)/_log-stderr-linux-0503
+LINUX_0503_LOG_STDOUT	:= $(DIR_DADAO)/_log-linux-0503.out
+LINUX_0503_LOG_STDERR	:= $(DIR_DADAO)/_log-linux-0503.err
 
 linux-0503-clean:
 	@echo "Remove old linux source dir ..."

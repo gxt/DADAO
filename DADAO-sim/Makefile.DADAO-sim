@@ -17,8 +17,8 @@ QEMU_0401_PATCHES	:= $(DIR_DADAO)/DADAO-sim/qemu-0401-patches
 QEMU_0401_SOURCE	:= $(DIR_DADAO_SOURCE)/qemu-0401
 QEMU_0401_BUILD		:= $(DIR_DADAO_BUILD)/qemu-0401
 QEMU_0401_INSTALL	?= $(DIR_DADAO_BUILD)/__qemu-0401
-QEMU_0401_LOG_STDOUT	:= $(DIR_DADAO)/_log-stdout-qemu-0401
-QEMU_0401_LOG_STDERR	:= $(DIR_DADAO)/_log-stderr-qemu-0401
+QEMU_0401_LOG_STDOUT	:= $(DIR_DADAO)/_log-qemu-0401.out
+QEMU_0401_LOG_STDERR	:= $(DIR_DADAO)/_log-qemu-0401.err
 
 qemu-0401-clean:
 	@echo "Remove old qemu source dir ..."

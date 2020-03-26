@@ -3,4 +3,5 @@
 __source
 __build
 __install
-_log-std*
+_log-*.out
+_log-*.err
