@@ -145,11 +145,21 @@ binutils-gdb-0233-highfive:
 	@echo "BUILD binutils-gdb-0233 DONE!"
 
 binutils-gdb-0233-check:
-	@make -C $(BINUTILS_GDB_0233_BUILD) check-gas
+	@make -C $(BINUTILS_GDB_0233_BUILD) check-gas		1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
 
 binutils-gdb-0233-TAGS:
-	@make -C $(BINUTILS_GDB_0233_BUILD) TAGS
+	@make -C $(BINUTILS_GDB_0233_BUILD) -j8 TAGS		1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
 	@etags -f $(BINUTILS_GDB_0233_SOURCE)/include/TAGS --recurse $(BINUTILS_GDB_0233_SOURCE)/include
 	@etags -f $(BINUTILS_GDB_0233_SOURCE)/TAGS --etags-include=$(BINUTILS_GDB_0233_SOURCE)/include/TAGS
 	@find $(BINUTILS_GDB_0233_BUILD) -name TAGS -exec		\
 		etags -f $(BINUTILS_GDB_0233_SOURCE)/TAGS --append --etags-include='{}' \;
+
+binutils-gdb-0233-tags:
+	@cd $(BINUTILS_GDB_0233_SOURCE) &&				\
+		ctags --recurse --languages=C,C++			\
+			./bfd ./binutils				\
+			./gas ./gprof					\
+			./include ./intl				\
+			./ld ./libctf					\
+			./opcodes					\
+			./zlib
