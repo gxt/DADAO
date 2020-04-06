@@ -10,28 +10,21 @@
 #include "bfd.h"
 #include "libbfd.h"
 
-#define N(MACHINE, PRINT, DEFAULT, NEXT)			\
-{								\
-  64,	/* Bits in a machine word.  */				\
-  64,	/* Bits in an address.  */				\
-  8,	/* Bits in a byte.  */					\
-  bfd_arch_dadao,						\
-  MACHINE,							\
-  "dadao",							\
-  PRINT,							\
-  3,	/* Section align power.  */				\
-  DEFAULT,							\
-  bfd_default_compatible,					\
-  bfd_default_scan,						\
-  bfd_arch_default_fill,					\
-  NEXT								\
-}
-
-static const bfd_arch_info_type arch_info_struct[] =
-{
-  N (bfd_mach_dadao_wuqing, "DADAO-wuqing", FALSE, &arch_info_struct[1]),
-  N (bfd_mach_dadao_wuming, "DADAO-wuming", FALSE, NULL)
+const bfd_arch_info_type
+bfd_dadao_arch =
+ {
+   64,				/* 64 bits in a machine word.  */
+   64,				/* 64 bits in an address.  */
+   8,				/* 8 bits in a byte.  */
+   bfd_arch_dadao,		/* Architecture.  */
+   0,				/* Machine number - 0 for now.  */
+   /* Sorry, these are by custom and creeping assumption lower-case.  */
+   "dadao",			/* Architecture name.  */
+   "DADAO",			/* Printable name.  */
+   3,				/* Section align power.  */
+   TRUE,			/* This is the default architecture.  */
+   bfd_default_compatible,	/* Architecture comparison function.  */
+   bfd_default_scan,		/* String to architecture conversion.  */
+   bfd_arch_default_fill,	/* Default fill.  */
+   NULL				/* Next in list.  */
 };
-
-const bfd_arch_info_type bfd_dadao_arch =
-  N (bfd_mach_dadao_wuxing, "DADAO-wuxing", TRUE, &arch_info_struct[0]);
