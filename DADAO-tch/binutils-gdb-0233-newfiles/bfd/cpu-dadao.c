@@ -12,14 +12,14 @@
 
 #define N(MACHINE, PRINT, DEFAULT, NEXT)			\
 {								\
-  64,	/* Bits in a word.  */					\
+  64,	/* Bits in a machine word.  */				\
   64,	/* Bits in an address.  */				\
   8,	/* Bits in a byte.  */					\
   bfd_arch_dadao,						\
   MACHINE,							\
   "dadao",							\
   PRINT,							\
-  3,								\
+  3,	/* Section align power.  */				\
   DEFAULT,							\
   bfd_default_compatible,					\
   bfd_default_scan,						\
