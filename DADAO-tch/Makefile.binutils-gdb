@@ -144,7 +144,8 @@ binutils-gdb-0233-highfive:
 	@echo "5. Install binutils-gdb complete."
 	@echo "BUILD binutils-gdb-0233 DONE!"
 
-binutils-gdb-0233-check:
+binutils-gdb-0233-check: # ln put before make because FAIL not solved
+	@ln --symbolic -t $(BINUTILS_GDB_0233_BUILD) $(BINUTILS_GDB_0233_BUILD)/gas/testsuite/gas.sum
 	@make -C $(BINUTILS_GDB_0233_BUILD) check-gas		1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
 
 binutils-gdb-0233-TAGS:
