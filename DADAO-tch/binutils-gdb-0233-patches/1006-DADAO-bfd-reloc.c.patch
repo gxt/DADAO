@@ -1,29 +1,98 @@
-From f73ee634416c13e5762e9a9c621d404667959f53 Mon Sep 17 00:00:00 2001
+From 30a1ff8fa6fab3378df593cf40fcd3d8ad5fb389 Mon Sep 17 00:00:00 2001
 From: Guan Xuetao <gxt@pku.edu.cn>
-Date: Sat, 21 Mar 2020 07:59:02 +0000
+Date: Mon, 6 Apr 2020 09:09:54 +0000
 Subject: [PATCH] DADAO-bfd: reloc.c
 
 Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
 ---
- bfd/reloc.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ bfd/reloc.c | 74 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 74 insertions(+)
 
 diff --git a/bfd/reloc.c b/bfd/reloc.c
-index 9ca68ca61da..ebe5cec7675 100644
+index 9ca68ca61da..1d7c0d42ad3 100644
 --- a/bfd/reloc.c
 +++ b/bfd/reloc.c
-@@ -4936,6 +4936,11 @@ ENUMDOC
-   This relocation is an assertion that the expression is not allocated as
-   a global register.  It does not modify contents.
+@@ -8150,6 +8150,80 @@ ENUM
+ ENUMDOC
+   S12Z relocations.
  
 +ENUM
-+  BFD_RELOC_DADAO_10_PCREL
++  BFD_RELOC_DADAO_GETA
++ENUMX
++  BFD_RELOC_DADAO_GETA_1
++ENUMX
++  BFD_RELOC_DADAO_GETA_2
++ENUMX
++  BFD_RELOC_DADAO_GETA_3
 +ENUMDOC
-+  DADAO ELF relocations.
++  These are relocations for the GETA instruction.
++ENUM
++  BFD_RELOC_DADAO_CBRANCH
++ENUMX
++  BFD_RELOC_DADAO_CBRANCH_J
++ENUMX
++  BFD_RELOC_DADAO_CBRANCH_1
++ENUMX
++  BFD_RELOC_DADAO_CBRANCH_2
++ENUMX
++  BFD_RELOC_DADAO_CBRANCH_3
++ENUMDOC
++  These are relocations for a conditional branch instruction.
++ENUM
++  BFD_RELOC_DADAO_PUSHJ
++ENUMX
++  BFD_RELOC_DADAO_PUSHJ_1
++ENUMX
++  BFD_RELOC_DADAO_PUSHJ_2
++ENUMX
++  BFD_RELOC_DADAO_PUSHJ_3
++ENUMX
++  BFD_RELOC_DADAO_PUSHJ_STUBBABLE
++ENUMDOC
++  These are relocations for the PUSHJ instruction.
++ENUM
++  BFD_RELOC_DADAO_JMP
++ENUMX
++  BFD_RELOC_DADAO_JMP_1
++ENUMX
++  BFD_RELOC_DADAO_JMP_2
++ENUMX
++  BFD_RELOC_DADAO_JMP_3
++ENUMDOC
++  These are relocations for the JMP instruction.
++ENUM
++  BFD_RELOC_DADAO_ADDR19
++ENUMDOC
++  This is a relocation for a relative address as in a GETA instruction or
++  a branch.
++ENUM
++  BFD_RELOC_DADAO_ADDR27
++ENUMDOC
++  This is a relocation for a relative address as in a JMP instruction.
++ENUM
++  BFD_RELOC_DADAO_REG_OR_BYTE
++ENUMDOC
++  This is a relocation for an instruction field that may be a general
++  register or a value 0..255.
++ENUM
++  BFD_RELOC_DADAO_REG
++ENUMDOC
++  This is a relocation for an instruction field that may be a general
++  register.
++ENUM
++  BFD_RELOC_DADAO_BASE_PLUS_OFFSET
++ENUMDOC
++  This is a relocation for two instruction fields holding a register and
++  an offset, the equivalent of the relocation.
++ENUM
++  BFD_RELOC_DADAO_LOCAL
++ENUMDOC
++  This relocation is an assertion that the expression is not allocated as
++  a global register.  It does not modify contents.
 +
- ENUM
-   BFD_RELOC_AVR_7_PCREL
- ENUMDOC
+ ENDSENUM
+   BFD_RELOC_UNUSED
+ CODE_FRAGMENT
 -- 
 2.17.1
 
