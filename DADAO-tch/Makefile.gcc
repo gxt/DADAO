@@ -25,7 +25,7 @@ ifneq ($(GCC_0902_INSTALL), $(DIR_DADAO_INSTALL))
 	@rm -fr $(GCC_0902_INSTALL)
 endif
 
-gcc-0902-new-source:
+gcc-0902-source:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@rm -fr $(GCC_0902_SOURCE)
 	@echo "Clone official repo"
@@ -66,7 +66,7 @@ gcc-0902-highfive:
 	@echo "1. Clean old gcc ..."
 	@make -s gcc-0902-clean				1>> $(GCC_0902_LOG_STDOUT) 2>> $(GCC_0902_LOG_STDERR)
 	@echo "2. Clone and patch new gcc ..."
-	@make -s gcc-0902-new-source			1>> $(GCC_0902_LOG_STDOUT) 2>> $(GCC_0902_LOG_STDERR)
+	@make -s gcc-0902-source			1>> $(GCC_0902_LOG_STDOUT) 2>> $(GCC_0902_LOG_STDERR)
 	@echo "2. Clone and patch new gcc complete."
 	@echo "3. Configure gcc ..."
 	@make -s gcc-0902-new-build			1>> $(GCC_0902_LOG_STDOUT) 2>> $(GCC_0902_LOG_STDERR)

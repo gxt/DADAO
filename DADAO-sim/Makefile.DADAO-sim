@@ -30,7 +30,7 @@ ifneq ($(QEMU_0401_INSTALL), $(DIR_DADAO_INSTALL))
 	@rm -fr $(QEMU_0401_INSTALL)
 endif
 
-qemu-0401-new-source:
+qemu-0401-source:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@rm -fr $(QEMU_0401_SOURCE)
 	@echo "Clone official repo"
@@ -82,7 +82,7 @@ qemu-0401-highfive:
 	@echo "1. Clean old qemu ..."
 	@make -s qemu-0401-clean				1>> $(QEMU_0401_LOG_STDOUT) 2>> $(QEMU_0401_LOG_STDERR)
 	@echo "2. Clone and patch new qemu ..."
-	@make -s qemu-0401-new-source				1>> $(QEMU_0401_LOG_STDOUT) 2>> $(QEMU_0401_LOG_STDERR)
+	@make -s qemu-0401-source				1>> $(QEMU_0401_LOG_STDOUT) 2>> $(QEMU_0401_LOG_STDERR)
 	@echo "2. Clone and patch new qemu complete."
 	@echo "3. Configure qemu ..."
 	@make -s qemu-0401-new-build				1>> $(QEMU_0401_LOG_STDOUT) 2>> $(QEMU_0401_LOG_STDERR)

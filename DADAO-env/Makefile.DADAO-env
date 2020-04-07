@@ -32,7 +32,7 @@ ifneq ($(LINUX_0503_INSTALL), $(DIR_DADAO_INSTALL))
 	@rm -fr $(LINUX_0503_INSTALL)
 endif
 
-linux-0503-new-source:
+linux-0503-source:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@rm -fr $(LINUX_0503_SOURCE)
 	@echo "Clone official repo"
@@ -76,7 +76,7 @@ linux-0503-highfive:
 	@echo "1. Clean old linux ..."
 	@make -s linux-0503-clean				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
 	@echo "2. Clone and patch new linux ..."
-	@make -s linux-0503-new-source				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
+	@make -s linux-0503-source				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
 	@echo "2. Clone and patch new linux complete."
 	@echo "3. Configure linux ..."
 	@make -s linux-0503-new-build				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
