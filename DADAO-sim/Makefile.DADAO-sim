@@ -54,7 +54,7 @@ qemu-0401-source:
 	@echo "Apply qemu-0401-patches ..."
 	@cd $(QEMU_0401_SOURCE); git am $(QEMU_0401_PATCHES)/*.patch
 
-qemu-0401-new-build:
+qemu-0401-build-new:
 	@rm -fr $(QEMU_0401_BUILD)
 	@mkdir -p $(QEMU_0401_BUILD)
 	@cd $(QEMU_0401_BUILD) &&					\
@@ -85,7 +85,7 @@ qemu-0401-highfive:
 	@make -s qemu-0401-source				1>> $(QEMU_0401_LOG_STDOUT) 2>> $(QEMU_0401_LOG_STDERR)
 	@echo "2. Clone and patch new qemu complete."
 	@echo "3. Configure qemu ..."
-	@make -s qemu-0401-new-build				1>> $(QEMU_0401_LOG_STDOUT) 2>> $(QEMU_0401_LOG_STDERR)
+	@make -s qemu-0401-build-new				1>> $(QEMU_0401_LOG_STDOUT) 2>> $(QEMU_0401_LOG_STDERR)
 	@echo "3. Configure qemu complete."
 	@echo "4. Make all-qemu ..."
 	@make -s qemu-0401-build				1>> $(QEMU_0401_LOG_STDOUT) 2>> $(QEMU_0401_LOG_STDERR)

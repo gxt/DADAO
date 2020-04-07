@@ -39,7 +39,7 @@ gcc-0902-source:
 	@echo "Apply gcc-0902-patches ..."
 	@cd $(GCC_0902_SOURCE); git am $(GCC_0902_PATCHES)/*.patch
 
-gcc-0902-new-build:
+gcc-0902-build-new:
 	@rm -fr $(GCC_0902_BUILD)
 	@mkdir -p $(GCC_0902_BUILD)
 	@cd $(GCC_0902_BUILD) &&					\
@@ -69,7 +69,7 @@ gcc-0902-highfive:
 	@make -s gcc-0902-source			1>> $(GCC_0902_LOG_STDOUT) 2>> $(GCC_0902_LOG_STDERR)
 	@echo "2. Clone and patch new gcc complete."
 	@echo "3. Configure gcc ..."
-	@make -s gcc-0902-new-build			1>> $(GCC_0902_LOG_STDOUT) 2>> $(GCC_0902_LOG_STDERR)
+	@make -s gcc-0902-build-new			1>> $(GCC_0902_LOG_STDOUT) 2>> $(GCC_0902_LOG_STDERR)
 	@echo "3. Configure gcc complete."
 	@echo "4. Make all-gcc ..."
 	@make -s gcc-0902-build				1>> $(GCC_0902_LOG_STDOUT) 2>> $(GCC_0902_LOG_STDERR)

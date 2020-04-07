@@ -47,7 +47,7 @@ linux-0503-source:
 #	@echo "Apply linux-0503-patches ..."
 #	@cd $(LINUX_0503_PATCHES); git am $(LINUX_0503_PATCHES)/*.patch
 
-linux-0503-new-build:
+linux-0503-build-new:
 	@echo "Remove old linux build dir ..."
 	@rm -fr $(LINUX_0503_BUILD)
 	@mkdir -p $(LINUX_0503_BUILD)
@@ -79,7 +79,7 @@ linux-0503-highfive:
 	@make -s linux-0503-source				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
 	@echo "2. Clone and patch new linux complete."
 	@echo "3. Configure linux ..."
-	@make -s linux-0503-new-build				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
+	@make -s linux-0503-build-new				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
 	@echo "3. Configure linux complete."
 	@echo "4. Make linux ..."
 #	@make -s linux-0503-build				1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)

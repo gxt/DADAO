@@ -109,7 +109,7 @@ binutils-gdb-0233-source:
 		git add .;						\
 		git commit -sm"DADAO: re-generate root configure"
 
-binutils-gdb-0233-new-build:
+binutils-gdb-0233-build-new:
 	@rm -fr $(BINUTILS_GDB_0233_BUILD)
 	@mkdir -p $(BINUTILS_GDB_0233_BUILD)
 	@cd $(BINUTILS_GDB_0233_BUILD) &&				\
@@ -134,7 +134,7 @@ binutils-gdb-0233-highfive:
 	@make -s binutils-gdb-0233-source			1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
 	@echo "2. Clone and patch new binutils-gdb complete."
 	@echo "3. Configure binutils-gdb ..."
-	@make -s binutils-gdb-0233-new-build			1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
+	@make -s binutils-gdb-0233-build-new			1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
 	@echo "3. Configure binutils-gdb complete."
 	@echo "4. Make binutils-gdb ..."
 	@make -s binutils-gdb-0233-build			1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
