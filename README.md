@@ -1,4 +1,5 @@
 # Da Dao Zhi Jian: The Greatest TAO is Simplest
+
 ## Qing Jing Jing
 * Lao jun yue:
 * Da dao wu xing, sheng yu tian di
@@ -14,20 +15,24 @@
 * Ren neng chang qing jing, tian di xi jie gui
 
 ## DADAO toolchain
-DADAO-gcc:
-DADAO-binutils:
+Two systems:
+* gcc
+* binutils-gdb
 
 ## DADAO simulator
-DADAO-qemu: user/softmmu
+One system:
+* qemu: user/softmmu
 
 ## DADAO environment
-DADAO-linux:
-busybox:
+Three systems:
+* linux
+* busybox & initramfs
+* LFS
 
-## Specification For config
-	cpu-type:	dadao
-	vendor:		dadao (MAYBE changed lator)
-	machine:	wuxing/wuqing/wuming
-	kernel:		linux
-	os:		gnu
-	kernel-os:	linux-gnu
+# Specification For config
+* cpu-type:	dadao
+* vendor:	tao
+* machine:	wuxing, wuqing, wuming
+* kernel:	linux
+* os:		elf
+* kernel-os:	linux-elf
