@@ -1,0 +1,4 @@
+# Copyright (C) 2020-2033 Guan Xuetao (AT) Peking Univ.
+
+MULTILIB_OPTIONS = mabi=gnu
+MULTILIB_DIRNAMES = gnuabi
