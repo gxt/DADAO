@@ -91,3 +91,5 @@ gcc-0903-highfive:
 	@echo "5. Install gcc complete."
 	@echo "BUILD gcc-0903 DONE!"
 
+gcc-0903-check:
+	@make -C $(GCC_0903_BUILD) check-gcc-c		1>> $(GCC_0903_LOG_STDOUT) 2>> $(GCC_0903_LOG_STDERR)
