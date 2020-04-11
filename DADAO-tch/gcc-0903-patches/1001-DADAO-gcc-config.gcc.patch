@@ -1,0 +1,28 @@
+From 0c86188cae4af367e7ef475d6ca74035da0746c7 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sat, 11 Apr 2020 01:10:59 +0000
+Subject: [PATCH] DADAO-gcc: config.gcc
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ gcc/config.gcc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/gcc/config.gcc b/gcc/config.gcc
+index b2282ecdf0b..88faeecfbf6 100644
+--- a/gcc/config.gcc
++++ b/gcc/config.gcc
+@@ -1377,6 +1377,10 @@ csky-*-*)
+ 		;;
+ 	esac
+ 	;;
++dadao-*-*)
++	tm_file="${tm_file} newlib-stdint.h"
++	use_gcc_stdint=wrap
++	;;
+ epiphany-*-elf | epiphany-*-rtems*)
+ 	tm_file="${tm_file} dbxelf.h elfos.h"
+ 	tmake_file="${tmake_file} epiphany/t-epiphany"
+-- 
+2.17.1
+
