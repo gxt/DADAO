@@ -96,7 +96,7 @@ struct GTY(()) machine_function
   %{!mset-program-start=*:\
     %{!mno-set-program-start:\
      %{!r:--defsym __.DADAO.start..text=0x100}}}\
-  %{!melf:%{!r:-m mmo}}%{melf|r:-m elf64dadao}"
+  %{melf|r:-m elf64_dadao}"
 
 /* FIXME: There's no provision for profiling here.  */
 #define STARTFILE_SPEC  \
