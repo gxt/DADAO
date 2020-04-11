@@ -43,6 +43,13 @@ gcc-0903-source:
 		git commit -sm"DADAO-gcc-common-config: add dadao support"
 	@echo "GCC-CONFIG: Apply gcc-config related patches ..."
 	@cd $(GCC_0903_SOURCE); git am $(GCC_0903_PATCHES)/1*.patch
+	@echo "LIBGCC-CONFIG: Copy libgcc/config/dadao dir"
+	@cp -a $(GCC_0903_NEWFILES)/libgcc/config/* $(GCC_0903_SOURCE)/libgcc/config/
+	@cd $(GCC_0903_SOURCE);						\
+		git add libgcc/config/dadao;				\
+		git commit -sm"DADAO-libgcc-config: add dadao support"
+	@echo "LIBGCC-CONFIG: Apply libgcc-config related patches ..."
+	@cd $(GCC_0903_SOURCE); git am $(GCC_0903_PATCHES)/2*.patch
 	@echo "CONFIG: Apply config related patches ..."
 	@cd $(GCC_0903_SOURCE); git am $(GCC_0903_PATCHES)/9*.patch
 	@echo "CONFIG: re-generate configure and Makefile.in in root dir"
