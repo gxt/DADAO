@@ -67,16 +67,19 @@ gcc-0903-build-new:
 			--srcdir=$(GCC_0903_SOURCE)			\
 			--prefix=$(GCC_0903_INSTALL)			\
 			--disable-nls					\
+			--disable-libssp				\
 			--enable-languages=c				\
 			--enable-checking				\
 			--enable-werror					\
 			--without-headers
 
 gcc-0903-build:
-	@make -C $(GCC_0903_BUILD) all-gcc -j8
+	@make -C $(GCC_0903_BUILD) -j8 all
+#	@make -C $(GCC_0903_BUILD) -j8 all-gcc		; if ONLY gcc required, no libgcc and others
 
 gcc-0903-install:
-	@make -C $(GCC_0903_BUILD) install-gcc
+	@make -C $(GCC_0903_BUILD) install
+#	@make -C $(GCC_0903_BUILD) install-gcc		; if ONLY gcc required, no libgcc and others
 
 gcc-0903-highfive:
 	@echo "BEGIN TO BUILD gcc-0903!"
