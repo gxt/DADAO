@@ -7,6 +7,7 @@ DIR_DADAO		:= $(shell pwd)
 DIR_DADAO_SOURCE	:= $(DIR_DADAO)/__source/
 DIR_DADAO_BUILD		:= $(DIR_DADAO)/__build/
 DIR_DADAO_INSTALL	:= $(DIR_DADAO)/__install/
+DIR_DADAO_LOG		:= $(DIR_DADAO)/__log/
 
 all:
 	@echo ""
@@ -51,5 +52,5 @@ dadao-clean:
 	@rm -fr $(DIR_DADAO_SOURCE)
 	@rm -fr $(DIR_DADAO_BUILD)
 	@rm -fr $(DIR_DADAO_INSTALL)
-	@rm -fr _log-*.out _log-*.err
+	@rm -fr $(DIR_DADAO_LOG)
 	@echo "CLEAR EVERYTHING DONE!"

@@ -13,8 +13,8 @@ QEMU_0401_SOURCE	:= $(DIR_DADAO_SOURCE)/qemu-0401
 QEMU_0401_BUILD		:= $(DIR_DADAO_BUILD)/qemu-0401
 QEMU_0401_INSTALL	?= $(DIR_DADAO_INSTALL)
 #QEMU_0401_INSTALL	?= $(DIR_DADAO_BUILD)/__qemu-0401
-QEMU_0401_LOG_STDOUT	:= $(DIR_DADAO)/_log-qemu-0401.out
-QEMU_0401_LOG_STDERR	:= $(DIR_DADAO)/_log-qemu-0401.err
+QEMU_0401_LOG_STDOUT	:= $(DIR_DADAO_LOG)/qemu-0401.out
+QEMU_0401_LOG_STDERR	:= $(DIR_DADAO_LOG)/qemu-0401.err
 
 qemu-0401-clean:
 	@echo "Remove old qemu source dir ..."
@@ -74,6 +74,7 @@ qemu-0401-install:
 qemu-0401-highfive:
 	@echo "BEGIN TO BUILD qemu-0401!"
 	@echo "0. Remove old logfiles"
+	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
 	@rm -fr $(QEMU_0401_LOG_STDOUT) $(QEMU_0401_LOG_STDERR)
 	@echo "1. Clean old qemu ..."
 	@make -s qemu-0401-clean				1>> $(QEMU_0401_LOG_STDOUT) 2>> $(QEMU_0401_LOG_STDERR)

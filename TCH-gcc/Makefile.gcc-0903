@@ -13,8 +13,8 @@ GCC_0903_SOURCE		:= $(DIR_DADAO_SOURCE)/gcc-0903
 GCC_0903_BUILD		:= $(DIR_DADAO_BUILD)/gcc-0903
 GCC_0903_INSTALL	?= $(DIR_DADAO_INSTALL)
 #GCC_0903_INSTALL	?= $(DIR_DADAO_BUILD)/__gcc-0903
-GCC_0903_LOG_STDOUT	:= $(DIR_DADAO)/_log-gcc-0903.out
-GCC_0903_LOG_STDERR	:= $(DIR_DADAO)/_log-gcc-0903.err
+GCC_0903_LOG_STDOUT	:= $(DIR_DADAO_LOG)/gcc-0903.out
+GCC_0903_LOG_STDERR	:= $(DIR_DADAO_LOG)/gcc-0903.err
 
 gcc-0903-clean:
 	@echo "Remove old gcc source dir ..."
@@ -85,6 +85,7 @@ gcc-0903-install:
 gcc-0903-highfive:
 	@echo "BEGIN TO BUILD gcc-0903!"
 	@echo "0. Remove old gcc logfiles"
+	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
 	@rm -fr $(GCC_0903_LOG_STDOUT) $(GCC_0903_LOG_STDERR)
 	@echo "1. Clean old gcc ..."
 	@make -s gcc-0903-clean				1>> $(GCC_0903_LOG_STDOUT) 2>> $(GCC_0903_LOG_STDERR)

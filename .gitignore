@@ -3,5 +3,4 @@
 __source
 __build
 __install
-_log-*.out
-_log-*.err
+__log

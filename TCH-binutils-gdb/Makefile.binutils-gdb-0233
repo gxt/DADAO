@@ -13,8 +13,8 @@ BINUTILS_GDB_0233_SOURCE		:= $(DIR_DADAO_SOURCE)/binutils-gdb-0233
 BINUTILS_GDB_0233_BUILD			:= $(DIR_DADAO_BUILD)/binutils-gdb-0233
 BINUTILS_GDB_0233_INSTALL		?= $(DIR_DADAO_INSTALL)
 #BINUTILS_GDB_0233_INSTALL		?= $(DIR_DADAO_BUILD)/__binutils-gdb-0233
-BINUTILS_GDB_0233_LOG_STDOUT		:= $(DIR_DADAO)/_log-binutils-gdb-0233.out
-BINUTILS_GDB_0233_LOG_STDERR		:= $(DIR_DADAO)/_log-binutils-gdb-0233.err
+BINUTILS_GDB_0233_LOG_STDOUT		:= $(DIR_DADAO_LOG)/binutils-gdb-0233.out
+BINUTILS_GDB_0233_LOG_STDERR		:= $(DIR_DADAO_LOG)/binutils-gdb-0233.err
 
 binutils-gdb-0233-clean:
 	@echo "Remove old binutils-gdb source dir ..."
@@ -128,6 +128,7 @@ binutils-gdb-0233-install:
 binutils-gdb-0233-highfive:
 	@echo "BEGIN TO BUILD binutils-gdb-0233!"
 	@echo "0. Remove old binutils logfiles"
+	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
 	@rm -fr $(BINUTILS_GDB_0233_LOG_STDOUT) $(BINUTILS_GDB_0233_LOG_STDERR)
 	@echo "1. Clean old binutils-gdb ..."
 	@make -s binutils-gdb-0233-clean			1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
