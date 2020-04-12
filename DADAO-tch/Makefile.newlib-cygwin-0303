@@ -1,0 +1,69 @@
+#
+# Makefile for newlib-cygwin in toolchain
+#
+NEWLIB_CYGWIN_0303_ORIGIN	:= $(DIR_GIT_TAO)/newlib-cygwin.git
+NEWLIB_CYGWIN_0303_VERSION	:= newlib-3.3.0
+NEWLIB_CYGWIN_0303_BRANCH	:= dadao-0303
+NEWLIB_CYGWIN_0303_TARGET	:= dadao-linux-elf
+
+NEWLIB_CYGWIN_0303_NEWFILES	:= $(DIR_DADAO)/DADAO-tch/newlib-cygwin-0303-newfiles
+NEWLIB_CYGWIN_0303_PATCHES	:= $(DIR_DADAO)/DADAO-tch/newlib-cygwin-0303-patches
+
+NEWLIB_CYGWIN_0303_SOURCE	:= $(DIR_DADAO_SOURCE)/newlib-cygwin-0303
+NEWLIB_CYGWIN_0303_BUILD	:= $(DIR_DADAO_BUILD)/newlib-cygwin-0303
+NEWLIB_CYGWIN_0303_INSTALL	?= $(DIR_DADAO_BUILD)/__newlib-cygwin-0303
+NEWLIB_CYGWIN_0303_LOG_STDOUT	:= $(DIR_DADAO)/_log-newlib-cygwin-0303.out
+NEWLIB_CYGWIN_0303_LOG_STDERR	:= $(DIR_DADAO)/_log-newlib-cygwin-0303.err
+
+newlib-cygwin-0303-clean:
+	@echo "Remove old newlib-cygwin source dir ..."
+	@rm -fr $(NEWLIB_CYGWIN_0303_SOURCE)
+	@echo "Remove old newlib-cygwin build dir ..."
+	@rm -fr $(NEWLIB_CYGWIN_0303_BUILD)
+ifneq ($(NEWLIB_CYGWIN_0303_INSTALL), $(DIR_DADAO_INSTALL))
+	@echo "Remove old newlib-cygwin install dir ..."
+	@rm -fr $(NEWLIB_CYGWIN_0303_INSTALL)
+endif
+
+newlib-cygwin-0303-source:
+	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
+	@rm -fr $(NEWLIB_CYGWIN_0303_SOURCE)
+	@echo "Clone official repo"
+	@git clone $(NEWLIB_CYGWIN_0303_ORIGIN) -- $(NEWLIB_CYGWIN_0303_SOURCE)
+	@cd $(NEWLIB_CYGWIN_0303_SOURCE); git checkout -b $(NEWLIB_CYGWIN_0303_BRANCH) $(NEWLIB_CYGWIN_0303_VERSION)
+
+newlib-cygwin-0303-build-new:
+	@rm -fr $(NEWLIB_CYGWIN_0303_BUILD)
+	@mkdir -p $(NEWLIB_CYGWIN_0303_BUILD)
+	@cd $(NEWLIB_CYGWIN_0303_BUILD) &&					\
+		$(NEWLIB_CYGWIN_0303_SOURCE)/configure				\
+			--target=$(NEWLIB_CYGWIN_0303_TARGET)			\
+			--srcdir=$(NEWLIB_CYGWIN_0303_SOURCE)			\
+			--prefix=$(NEWLIB_CYGWIN_0303_INSTALL)
+
+newlib-cygwin-0303-build:
+	@make -C $(NEWLIB_CYGWIN_0303_BUILD) -j8 all
+
+newlib-cygwin-0303-install:
+	@make -C $(NEWLIB_CYGWIN_0303_BUILD) install
+
+newlib-cygwin-0303-highfive:
+	@echo "BEGIN TO BUILD newlib-cygwin-0303!"
+	@echo "0. Remove old newlib-cygwin logfiles"
+	@rm -fr $(NEWLIB_CYGWIN_0303_LOG_STDOUT) $(NEWLIB_CYGWIN_0303_LOG_STDERR)
+	@echo "1. Clean old newlib-cygwin ..."
+	@make -s newlib-cygwin-0303-clean			1>> $(NEWLIB_CYGWIN_0303_LOG_STDOUT) 2>> $(NEWLIB_CYGWIN_0303_LOG_STDERR)
+	@echo "2. Clone and patch new newlib-cygwin ..."
+	@make -s newlib-cygwin-0303-source			1>> $(NEWLIB_CYGWIN_0303_LOG_STDOUT) 2>> $(NEWLIB_CYGWIN_0303_LOG_STDERR)
+	@echo "2. Clone and patch new newlib-cygwin complete."
+	@echo "3. Configure newlib-cygwin ..."
+	@make -s newlib-cygwin-0303-build-new			1>> $(NEWLIB_CYGWIN_0303_LOG_STDOUT) 2>> $(NEWLIB_CYGWIN_0303_LOG_STDERR)
+	@echo "3. Configure newlib-cygwin complete."
+	@echo "4. Make all-newlib-cygwin ..."
+	@make -s newlib-cygwin-0303-build			1>> $(NEWLIB_CYGWIN_0303_LOG_STDOUT) 2>> $(NEWLIB_CYGWIN_0303_LOG_STDERR)
+	@echo "4. Make all-newlib-cygwin complete."
+	@echo "5. Install newlib-cygwin ..."
+	@make -s newlib-cygwin-0303-install			1>> $(NEWLIB_CYGWIN_0303_LOG_STDOUT) 2>> $(NEWLIB_CYGWIN_0303_LOG_STDERR)
+	@echo "5. Install newlib-cygwin complete."
+	@echo "BUILD newlib-cygwin-0303 DONE!"
+
