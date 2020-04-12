@@ -23,8 +23,6 @@ include TCH-binutils-gdb/Makefile.binutils-gdb
 include TCH-gcc/Makefile.gcc-0903
 include TCH-newlib-cygwin/Makefile.newlib-cygwin-0303
 
-include DADAO-sim/Makefile.DADAO-sim
-
 env-highfive:
 	@echo "=== BUILD Run-Time Environment BEGIN ==="
 	@make -s linux-0503-highfive
@@ -32,6 +30,13 @@ env-highfive:
 	@echo "=== BUILD Run-Time Environment DONE! ==="
 
 include ENV-linux/Makefile.linux-0503
+
+sim-highfive:
+	@echo "=== BUILD Simulators BEGIN ==="
+	@make -s qemu-0401-highfive
+	@echo "=== BUILD Simulators DONE! ==="
+
+include SIM-qemu/Makefile.qemu-0401
 
 dadao-highfive:
 	@make --silent dadao-clean

@@ -1,18 +1,13 @@
 #
 # Makefile for simulator
 #
-sim-highfive:
-	@echo "=== BUILD Simulators BEGIN ==="
-	@make -s qemu-0401-highfive
-	@echo "=== BUILD Simulators DONE! ==="
-
 QEMU_0401_ORIGIN	:= $(DIR_GIT_TAO)/qemu.git
 QEMU_0401_VERSION	:= v4.1.0
 QEMU_0401_BRANCH	:= dadao-0401
 QEMU_0401_TARGETS	:= dadao-softmmu,dadao-linux-user
 
-QEMU_0401_NEWFILES	:= $(DIR_DADAO)/DADAO-sim/qemu-0401-newfiles
-QEMU_0401_PATCHES	:= $(DIR_DADAO)/DADAO-sim/qemu-0401-patches
+QEMU_0401_NEWFILES	:= $(DIR_DADAO)/SIM-qemu/qemu-0401-newfiles
+QEMU_0401_PATCHES	:= $(DIR_DADAO)/SIM-qemu/qemu-0401-patches
 
 QEMU_0401_SOURCE	:= $(DIR_DADAO_SOURCE)/qemu-0401
 QEMU_0401_BUILD		:= $(DIR_DADAO_BUILD)/qemu-0401
