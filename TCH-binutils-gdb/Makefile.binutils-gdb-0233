@@ -126,6 +126,7 @@ binutils-gdb-0233-install:
 	@make -C $(BINUTILS_GDB_0233_BUILD) install
 
 binutils-gdb-0233-highfive:
+	@echo "=== Time maybe: real 1m40s, user 3m30s, sys 0m50s ==="
 	@echo "BEGIN TO BUILD binutils-gdb-0233!"
 	@echo "0. Remove old binutils logfiles"
 	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
