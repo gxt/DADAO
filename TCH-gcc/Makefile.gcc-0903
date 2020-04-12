@@ -6,8 +6,8 @@ GCC_0903_VERSION	:= releases/gcc-9.3.0
 GCC_0903_BRANCH		:= dadao-0903
 GCC_0903_TARGET		:= dadao-linux-elf
 
-GCC_0903_NEWFILES	:= $(DIR_DADAO)/DADAO-tch/gcc-0903-newfiles
-GCC_0903_PATCHES	:= $(DIR_DADAO)/DADAO-tch/gcc-0903-patches
+GCC_0903_NEWFILES	:= $(DIR_DADAO)/TCH-gcc/gcc-0903-newfiles
+GCC_0903_PATCHES	:= $(DIR_DADAO)/TCH-gcc/gcc-0903-patches
 
 GCC_0903_SOURCE		:= $(DIR_DADAO_SOURCE)/gcc-0903
 GCC_0903_BUILD		:= $(DIR_DADAO_BUILD)/gcc-0903

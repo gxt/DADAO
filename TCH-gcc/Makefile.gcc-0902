@@ -6,8 +6,8 @@ GCC_0902_VERSION	:= releases/gcc-9.2.0
 GCC_0902_BRANCH		:= dadao-0902
 GCC_0902_TARGET		:= dadao-linux-elf
 
-GCC_0902_NEWFILES	:= $(DIR_DADAO)/DADAO-tch/gcc-0902-newfiles
-GCC_0902_PATCHES	:= $(DIR_DADAO)/DADAO-tch/gcc-0902-patches
+GCC_0902_NEWFILES	:= $(DIR_DADAO)/TCH-gcc/gcc-0902-newfiles
+GCC_0902_PATCHES	:= $(DIR_DADAO)/TCH-gcc/gcc-0902-patches
 
 GCC_0902_SOURCE		:= $(DIR_DADAO_SOURCE)/gcc-0902
 GCC_0902_BUILD		:= $(DIR_DADAO_BUILD)/gcc-0902
