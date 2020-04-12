@@ -9,4 +9,5 @@ tch-highfive:
 
 include DADAO-tch/Makefile.binutils-gdb
 include DADAO-tch/Makefile.gcc-0903
+include DADAO-tch/Makefile.newlib-cygwin-0303
 #include DADAO-tch/Makefile.gcc-0902
