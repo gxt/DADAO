@@ -24,7 +24,14 @@ include TCH-gcc/Makefile.gcc-0903
 include TCH-newlib-cygwin/Makefile.newlib-cygwin-0303
 
 include DADAO-sim/Makefile.DADAO-sim
-include DADAO-env/Makefile.DADAO-env
+
+env-highfive:
+	@echo "=== BUILD Run-Time Environment BEGIN ==="
+	@make -s linux-0503-highfive
+	@make -s linux-0503-headers-highfive
+	@echo "=== BUILD Run-Time Environment DONE! ==="
+
+include ENV-linux/Makefile.linux-0503
 
 dadao-highfive:
 	@make --silent dadao-clean

@@ -1,12 +1,6 @@
 #
-# Makefile for run time environment
+# Makefile for linux-0503
 #
-env-highfive:
-	@echo "=== BUILD Run-Time Environment BEGIN ==="
-	@make -s linux-0503-highfive
-	@make -s linux-0503-headers-highfive
-	@echo "=== BUILD Run-Time Environment DONE! ==="
-
 LINUX_0503_ORIGIN	:= /pub/GIT-TAO/linux.git
 LINUX_0503_VERSION	:= v5.3
 LINUX_0503_ARCH		:= dadao
