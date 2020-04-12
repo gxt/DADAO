@@ -3,7 +3,7 @@
 #
 sim-highfive:
 	@echo "=== BUILD Simulators BEGIN ==="
-	@QEMU_0401_INSTALL=$(DIR_DADAO_INSTALL) make -s qemu-0401-highfive
+	@make -s qemu-0401-highfive
 	@echo "=== BUILD Simulators DONE! ==="
 
 QEMU_0401_ORIGIN	:= $(DIR_GIT_TAO)/qemu.git
@@ -16,7 +16,8 @@ QEMU_0401_PATCHES	:= $(DIR_DADAO)/DADAO-sim/qemu-0401-patches
 
 QEMU_0401_SOURCE	:= $(DIR_DADAO_SOURCE)/qemu-0401
 QEMU_0401_BUILD		:= $(DIR_DADAO_BUILD)/qemu-0401
-QEMU_0401_INSTALL	?= $(DIR_DADAO_BUILD)/__qemu-0401
+QEMU_0401_INSTALL	?= $(DIR_DADAO_INSTALL)
+#QEMU_0401_INSTALL	?= $(DIR_DADAO_BUILD)/__qemu-0401
 QEMU_0401_LOG_STDOUT	:= $(DIR_DADAO)/_log-qemu-0401.out
 QEMU_0401_LOG_STDERR	:= $(DIR_DADAO)/_log-qemu-0401.err
 

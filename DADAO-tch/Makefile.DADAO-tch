@@ -3,8 +3,8 @@
 #
 tch-highfive:
 	@echo "=== BUILD Toolchain BEGIN ==="
-	@BINUTILS_GDB_0233_INSTALL=$(DIR_DADAO_INSTALL) make -s binutils-gdb-0233-highfive
-	@GCC_0903_INSTALL=$(DIR_DADAO_INSTALL) make -s gcc-0903-highfive
+	@make -s binutils-gdb-0233-highfive
+	@make -s gcc-0903-highfive
 	@echo "=== BUILD Toolchain DONE! ==="
 
 include DADAO-tch/Makefile.binutils-gdb
