@@ -13,7 +13,16 @@ all:
 	@echo "DA DAO ZHI JIAN!"
 	@echo ""
 
-include DADAO-tch/Makefile.DADAO-tch
+tch-highfive:
+	@echo "=== BUILD Toolchain BEGIN ==="
+	@make -s binutils-gdb-0233-highfive
+	@make -s gcc-0903-highfive
+	@echo "=== BUILD Toolchain DONE! ==="
+
+include TCH-binutils-gdb/Makefile.binutils-gdb
+include TCH-gcc/Makefile.gcc-0903
+include TCH-newlib-cygwin/Makefile.newlib-cygwin-0303
+
 include DADAO-sim/Makefile.DADAO-sim
 include DADAO-env/Makefile.DADAO-env
 

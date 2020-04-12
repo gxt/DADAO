@@ -6,8 +6,8 @@ NEWLIB_CYGWIN_0303_VERSION	:= newlib-3.3.0
 NEWLIB_CYGWIN_0303_BRANCH	:= dadao-0303
 NEWLIB_CYGWIN_0303_TARGET	:= dadao-linux-elf
 
-NEWLIB_CYGWIN_0303_NEWFILES	:= $(DIR_DADAO)/DADAO-tch/newlib-cygwin-0303-newfiles
-NEWLIB_CYGWIN_0303_PATCHES	:= $(DIR_DADAO)/DADAO-tch/newlib-cygwin-0303-patches
+NEWLIB_CYGWIN_0303_NEWFILES	:= $(DIR_DADAO)/TCH-newlib-cygwin/newlib-cygwin-0303-newfiles
+NEWLIB_CYGWIN_0303_PATCHES	:= $(DIR_DADAO)/TCH-newlib-cygwin/newlib-cygwin-0303-patches
 
 NEWLIB_CYGWIN_0303_SOURCE	:= $(DIR_DADAO_SOURCE)/newlib-cygwin-0303
 NEWLIB_CYGWIN_0303_BUILD	:= $(DIR_DADAO_BUILD)/newlib-cygwin-0303
