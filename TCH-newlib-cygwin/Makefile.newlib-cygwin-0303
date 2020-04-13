@@ -15,6 +15,9 @@ NEWLIB_CYGWIN_0303_INSTALL	?= $(DIR_DADAO_INSTALL)
 NEWLIB_CYGWIN_0303_LOG_STDOUT	:= $(DIR_DADAO_LOG)/newlib-cygwin-0303.out
 NEWLIB_CYGWIN_0303_LOG_STDERR	:= $(DIR_DADAO_LOG)/newlib-cygwin-0303.err
 
+# newlib need PATH to find target binaries, like as/gcc
+NEWLIB_CYGWIN_0303_PATH		:= $(addsuffix :$(DIR_DADAO_INSTALL)/bin/, $(PATH))
+
 newlib-cygwin-0303-clean:
 	@echo "Remove old newlib-cygwin source dir ..."
 	@rm -fr $(NEWLIB_CYGWIN_0303_SOURCE)
@@ -72,7 +75,7 @@ newlib-cygwin-0303-source:
 newlib-cygwin-0303-build-new:
 	@rm -fr $(NEWLIB_CYGWIN_0303_BUILD)
 	@mkdir -p $(NEWLIB_CYGWIN_0303_BUILD)
-	@cd $(NEWLIB_CYGWIN_0303_BUILD) &&					\
+	@cd $(NEWLIB_CYGWIN_0303_BUILD) && PATH=$(NEWLIB_CYGWIN_0303_PATH)	\
 		$(NEWLIB_CYGWIN_0303_SOURCE)/configure				\
 			--target=$(NEWLIB_CYGWIN_0303_TARGET)			\
 			--srcdir=$(NEWLIB_CYGWIN_0303_SOURCE)			\
@@ -80,7 +83,7 @@ newlib-cygwin-0303-build-new:
 			--with-build-time-tools=$(DIR_DADAO_INSTALL)/bin
 
 newlib-cygwin-0303-build:
-	@make -C $(NEWLIB_CYGWIN_0303_BUILD) -j8 all
+	@PATH=$(NEWLIB_CYGWIN_0303_PATH) make -C $(NEWLIB_CYGWIN_0303_BUILD) -j8 all
 
 newlib-cygwin-0303-install:
 	@make -C $(NEWLIB_CYGWIN_0303_BUILD) install
