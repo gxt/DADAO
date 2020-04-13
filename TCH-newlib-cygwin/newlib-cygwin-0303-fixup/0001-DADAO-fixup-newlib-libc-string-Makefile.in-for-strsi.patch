@@ -17,7 +17,7 @@ index eb8fafc6b..c1ea5a638 100644
  
  lib_a-strsignal.o: strsignal.c
 -	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-strsignal.o `test -f 'strsignal.c' || echo '$(srcdir)/'`strsignal.c
-+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -O1 -c -o lib_a-strsignal.o `test -f 'strsignal.c' || echo '$(srcdir)/'`strsignal.c
++	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -Os -c -o lib_a-strsignal.o `test -f 'strsignal.c' || echo '$(srcdir)/'`strsignal.c
  
  lib_a-strsignal.obj: strsignal.c
  	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-strsignal.obj `if test -f 'strsignal.c'; then $(CYGPATH_W) 'strsignal.c'; else $(CYGPATH_W) '$(srcdir)/strsignal.c'; fi`
