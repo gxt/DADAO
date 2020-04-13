@@ -76,13 +76,13 @@ Main	SETL	$255,32
 
 	PUSHJ	$2,_init
 
-#ifdef __MMIX_ABI_GNU__
+#ifdef __DADAO_ABI_GNU__
 % Copy argc and argv from their initial position to argument registers
 % where necessary.
 	SET	$231,$0
 	SET	$232,$1
 #else
-% For the mmixware ABI, we need to move arguments.  The return value will
+% For the dadao ABI, we need to move arguments.  The return value will
 % appear in $0.
 	SET	$2,$1
 	SET	$1,$0
@@ -107,7 +107,7 @@ _init:
 0H	IS	@
 
 % Register _fini to be executed as the last atexit function.
-#ifdef __MMIX_ABI_GNU__
+#ifdef __DADAO_ABI_GNU__
 	GETA	$231,_fini
 #else
 	GETA	$1,_fini
