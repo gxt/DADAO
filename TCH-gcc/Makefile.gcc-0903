@@ -83,7 +83,7 @@ gcc-0903-install:
 #	@make -C $(GCC_0903_BUILD) install-gcc		; if ONLY gcc required, no libgcc and others
 
 gcc-0903-highfive:
-	@echo "=== Time maybe: real 4m, user 16m30s, sys 1m50s ==="
+	@echo "=== gcc building time maybe: real 4m, user 16m30s, sys 1m50s ==="
 	@echo "BEGIN TO BUILD gcc-0903!"
 	@echo "0. Remove old gcc logfiles"
 	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
