@@ -100,7 +100,7 @@ newlib-cygwin-0303-build:
 	@PATH=$(NEWLIB_CYGWIN_0303_PATH) make -C $(NEWLIB_CYGWIN_0303_BUILD) -j8 all
 
 newlib-cygwin-0303-install:
-	@make -C $(NEWLIB_CYGWIN_0303_BUILD) install
+	@PATH=$(NEWLIB_CYGWIN_0303_PATH) make -C $(NEWLIB_CYGWIN_0303_BUILD) install
 
 newlib-cygwin-0303-highfive:
 	@echo "BEGIN TO BUILD newlib-cygwin-0303!"
