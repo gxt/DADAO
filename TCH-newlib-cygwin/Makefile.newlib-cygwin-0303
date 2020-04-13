@@ -49,11 +49,20 @@ newlib-cygwin-0303-source:
 	@cd $(NEWLIB_CYGWIN_0303_SOURCE);					\
 		git add newlib/libc/sys/dadao;					\
 		git commit -sm"DADAO-newlib-libc-sys-dadao: add dadao support"
-	@echo "NEWLIB-LIBC-SYS-DADAO: re-generate configure"
+	@echo "NEWLIB-LIBC-SYS-DADAO: configure (FIXME)"
 	@cd $(NEWLIB_CYGWIN_0303_SOURCE)/newlib/libc/sys/dadao;			\
-		autoconf2.64;							\
+		cp ../mmixware/configure .;					\
 		git add .;							\
-		git commit -sm"DADAO-newlib-libc-sys-dadao: re-generate configure"
+		git commit -sm"DADAO-newlib-libc-sys-dadao: copy a workable configure"
+	@echo "NEWLIB-LIBC-SYS-DADAO: Makefile.in (FIXME)"
+	@cd $(NEWLIB_CYGWIN_0303_SOURCE)/newlib/libc/sys/dadao;			\
+		cp ../mmixware/Makefile.in .;					\
+		git add .;							\
+		git commit -sm"DADAO-newlib-libc-sys-dadao: copy a workable Makefile.in"
+#	@cd $(NEWLIB_CYGWIN_0303_SOURCE)/newlib/libc/sys/dadao;			\
+#		autoconf2.64;							\
+#		git add .;							\
+#		git commit -sm"DADAO-newlib-libc-sys-dadao: re-generate configure"
 	# newlib/libc/sys
 	@echo "NEWLIB-LIBC-SYS: Apply config related patches ..."
 	@cd $(NEWLIB_CYGWIN_0303_SOURCE); git am $(NEWLIB_CYGWIN_0303_PATCHES)/1*.patch
@@ -65,11 +74,6 @@ newlib-cygwin-0303-source:
 	# newlib
 	@echo "NEWLIB: Apply config related patches ..."
 	@cd $(NEWLIB_CYGWIN_0303_SOURCE); git am $(NEWLIB_CYGWIN_0303_PATCHES)/2*.patch
-#	@echo "NEWLIB: re-generate configure and Makefile"
-#	@cd $(NEWLIB_CYGWIN_0303_SOURCE)/newlib/;				\
-#		AUTOMAKE=/usr/bin/automake-1.11 ACLOCAL=/usr/bin/aclocal-1.11 autoreconf2.64;							\
-#		git add .;							\
-#		git commit -sm"DADAO-newlib: re-generate configure and Makefile"
 	# root config
 	@echo "CONFIG: Apply config related patches ..."
 	@cd $(NEWLIB_CYGWIN_0303_SOURCE); git am $(NEWLIB_CYGWIN_0303_PATCHES)/9*.patch
