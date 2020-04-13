@@ -1,0 +1,26 @@
+From ca6cf06b7354a4e5f29941e6f261bf06c42522b3 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Mon, 13 Apr 2020 08:43:21 +0000
+Subject: [PATCH] DADAO-fixup: newlib/libc/time/Makefile.in for strftime.o
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ newlib/libc/time/Makefile.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/newlib/libc/time/Makefile.in b/newlib/libc/time/Makefile.in
+index a32333234..6c5f4a411 100644
+--- a/newlib/libc/time/Makefile.in
++++ b/newlib/libc/time/Makefile.in
+@@ -470,7 +470,7 @@ lib_a-month_lengths.obj: month_lengths.c
+ 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-month_lengths.obj `if test -f 'month_lengths.c'; then $(CYGPATH_W) 'month_lengths.c'; else $(CYGPATH_W) '$(srcdir)/month_lengths.c'; fi`
+ 
+ lib_a-strftime.o: strftime.c
+-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-strftime.o `test -f 'strftime.c' || echo '$(srcdir)/'`strftime.c
++	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -O1 -c -o lib_a-strftime.o `test -f 'strftime.c' || echo '$(srcdir)/'`strftime.c
+ 
+ lib_a-strftime.obj: strftime.c
+ 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-strftime.obj `if test -f 'strftime.c'; then $(CYGPATH_W) 'strftime.c'; else $(CYGPATH_W) '$(srcdir)/strftime.c'; fi`
+-- 
+2.17.1
+
