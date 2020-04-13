@@ -1,0 +1,28 @@
+From 76025bd1d0102b9bad3ace7a83a6f19e6f5082cb Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sun, 12 Apr 2020 10:06:09 +0000
+Subject: [PATCH 4/5] DADAO-newlib-libc-include: machine/ieeefp.h
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ newlib/libc/include/machine/ieeefp.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/newlib/libc/include/machine/ieeefp.h b/newlib/libc/include/machine/ieeefp.h
+index aa8a1903b..8b6d9d229 100644
+--- a/newlib/libc/include/machine/ieeefp.h
++++ b/newlib/libc/include/machine/ieeefp.h
+@@ -239,6 +239,10 @@
+ #define __IEEE_BIG_ENDIAN
+ #endif
+ 
++#ifdef __DADAO__
++#define __IEEE_BIG_ENDIAN
++#endif
++
+ #ifdef __D30V__
+ #define __IEEE_BIG_ENDIAN
+ #endif
+-- 
+2.17.1
+

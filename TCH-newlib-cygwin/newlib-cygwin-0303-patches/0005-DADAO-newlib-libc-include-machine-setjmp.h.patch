@@ -1,0 +1,30 @@
+From a291232a6422d97d7dedb0694248edd62c8316bf Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sun, 12 Apr 2020 10:06:22 +0000
+Subject: [PATCH 5/5] DADAO-newlib-libc-include: machine/setjmp.h
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ newlib/libc/include/machine/setjmp.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/newlib/libc/include/machine/setjmp.h b/newlib/libc/include/machine/setjmp.h
+index 55152b0d7..230a29942 100644
+--- a/newlib/libc/include/machine/setjmp.h
++++ b/newlib/libc/include/machine/setjmp.h
+@@ -278,6 +278,12 @@ _BEGIN_STD_C
+ #define _JBTYPE unsigned long
+ #endif
+ 
++#ifdef __DADAO__
++/* Using a layout compatible with GCC's built-in.  */
++#define _JBLEN 5
++#define _JBTYPE unsigned long
++#endif
++
+ #ifdef __mt__
+ #define _JBLEN 16
+ #endif
+-- 
+2.17.1
+

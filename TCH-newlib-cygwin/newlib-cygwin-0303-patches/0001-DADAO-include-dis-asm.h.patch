@@ -1,0 +1,25 @@
+From 2c855f3425d69e0d2f712eabf9ff02db8f9c8ba9 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sun, 12 Apr 2020 08:13:28 +0000
+Subject: [PATCH] DADAO-include: dis-asm.h
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ include/dis-asm.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/dis-asm.h b/include/dis-asm.h
+index 78e9fc01a..f14ce2377 100644
+--- a/include/dis-asm.h
++++ b/include/dis-asm.h
+@@ -234,6 +234,7 @@ extern int print_insn_cr16              (bfd_vma, disassemble_info *);
+ extern int print_insn_crx               (bfd_vma, disassemble_info *);
+ extern int print_insn_d10v		(bfd_vma, disassemble_info *);
+ extern int print_insn_d30v		(bfd_vma, disassemble_info *);
++extern int print_insn_dadao		(bfd_vma, disassemble_info *);
+ extern int print_insn_dlx 		(bfd_vma, disassemble_info *);
+ extern int print_insn_epiphany		(bfd_vma, disassemble_info *);
+ extern int print_insn_fr30		(bfd_vma, disassemble_info *);
+-- 
+2.17.1
+

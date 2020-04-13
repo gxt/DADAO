@@ -1,0 +1,48 @@
+From 30ce63135295671c739b94136eda7b78d59f63c8 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sun, 12 Apr 2020 08:41:34 +0000
+Subject: [PATCH 9001/9002] DADAO: configure.ac
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ configure.ac | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/configure.ac b/configure.ac
+index cf856e567..93e7dd839 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -732,6 +732,10 @@ fi
+ 
+ # Disable Fortran for some systems.
+ case "${target}" in
++  dadao-*-*)
++    # See <http://gcc.gnu.org/ml/gcc-patches/2004-11/msg00572.html>.
++    unsupported_languages="$unsupported_languages fortran"
++    ;;
+   mmix-*-*)
+     # See <http://gcc.gnu.org/ml/gcc-patches/2004-11/msg00572.html>.
+     unsupported_languages="$unsupported_languages fortran"
+@@ -844,6 +848,9 @@ case "${target}" in
+ 	noconfigdirs="$noconfigdirs target-libffi target-boehm-gc";;
+     esac
+     ;;
++  dadao-*-*)
++    noconfigdirs="$noconfigdirs target-libffi target-boehm-gc"
++    ;;
+   hppa*64*-*-linux*)
+     # In this case, it's because the hppa64-linux target is for
+     # the kernel only at this point and has no libc, and thus no
+@@ -1121,6 +1128,9 @@ case "${target}" in
+   d30v-*-*)
+     noconfigdirs="$noconfigdirs gdb"
+     ;;
++  dadao-*-*)
++    noconfigdirs="$noconfigdirs gdb"
++    ;;
+   fr30-*-elf*)
+     noconfigdirs="$noconfigdirs gdb"
+     ;;
+-- 
+2.17.1
+

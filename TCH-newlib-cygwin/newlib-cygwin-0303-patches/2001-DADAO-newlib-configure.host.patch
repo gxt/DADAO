@@ -1,0 +1,49 @@
+From f09a128369c377b4b78f2a6924a4bb7041521dfc Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sun, 12 Apr 2020 08:51:06 +0000
+Subject: [PATCH] DADAO-newlib: configure.host
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ newlib/configure.host | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/newlib/configure.host b/newlib/configure.host
+index a84c0c80a..56e9d7c0f 100644
+--- a/newlib/configure.host
++++ b/newlib/configure.host
+@@ -159,6 +159,8 @@ case "${host_cpu}" in
+   d30v*)
+ 	machine_dir=d30v
+ 	;;
++  dadao)
++	;;
+   epiphany)
+ 	machine_dir=epiphany
+ 	;;
+@@ -485,6 +487,9 @@ case "${host}" in
+   d30v*)
+ 	sys_dir=
+ 	;;
++  dadao-*-*)
++	sys_dir=dadao
++	;;
+   epiphany-*-*)
+ 	sys_dir=epiphany
+ 	# crt0 is provided by libgloss.
+@@ -730,6 +735,12 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
+ 	newlib_cflags="${newlib_cflags} -DABORT_MESSAGE -DSMALL_MEMORY -DMISSING_SYSCALL_NAMES"
+ 	syscall_dir=
+ 	;;
++  dadao-*)
++	syscall_dir=syscalls
++	# We need every symbol 32-bit aligned, so the invalid
++	# construct with attribute ((alias ("_ctype_b+127"))) breaks.
++	newlib_cflags="${newlib_cflags} -DCOMPACT_CTYPE"
++	;;
+   epiphany*)
+ 	syscall_dir=syscalls
+ 	newlib_cflags="${newlib_cflags} -DSIGNAL_PROVIDED"
+-- 
+2.17.1
+

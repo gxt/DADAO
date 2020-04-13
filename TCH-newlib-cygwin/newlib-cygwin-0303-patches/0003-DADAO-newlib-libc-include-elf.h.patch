@@ -1,0 +1,25 @@
+From 6736ea51e954eaa9c1c6467b89c69ac28cb614af Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sun, 12 Apr 2020 10:03:52 +0000
+Subject: [PATCH] DADAO-newlib-libc-include: elf.h
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ newlib/libc/include/elf.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/newlib/libc/include/elf.h b/newlib/libc/include/elf.h
+index 79d3b974b..206b131ea 100644
+--- a/newlib/libc/include/elf.h
++++ b/newlib/libc/include/elf.h
+@@ -337,6 +337,7 @@ typedef struct {
+ #define EM_FT32		222
+ #define EM_MOXIE	223
+ #define EM_AMDGPU	224
++#define EM_DADAO	234
+ #define EM_RISCV	243
+ #define EM_BPF		247
+ #define EM_NUM		248
+-- 
+2.17.1
+

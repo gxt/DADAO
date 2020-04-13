@@ -1,0 +1,25 @@
+From c8a92adf325de3ff41b7c2543166cc5a89eabdee Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sun, 12 Apr 2020 08:51:31 +0000
+Subject: [PATCH] DADAO-newlib-libc-sys: configure.in
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ newlib/libc/sys/configure.in | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/newlib/libc/sys/configure.in b/newlib/libc/sys/configure.in
+index a65d1e71f..e4dc7e6ea 100644
+--- a/newlib/libc/sys/configure.in
++++ b/newlib/libc/sys/configure.in
+@@ -26,6 +26,7 @@ if test -n "${sys_dir}"; then
+ 	amdgcn) AC_CONFIG_SUBDIRS(amdgcn) ;;
+ 	arm) AC_CONFIG_SUBDIRS(arm) ;;
+ 	d10v) AC_CONFIG_SUBDIRS(d10v) ;;
++	dadao) AC_CONFIG_SUBDIRS(dadao) ;;
+ 	decstation) AC_CONFIG_SUBDIRS(decstation) ;;
+ 	epiphany) AC_CONFIG_SUBDIRS(epiphany) ;;
+ 	h8300hms) AC_CONFIG_SUBDIRS(h8300hms) ;;
+-- 
+2.17.1
+

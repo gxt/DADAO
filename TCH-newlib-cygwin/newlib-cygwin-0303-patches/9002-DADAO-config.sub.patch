@@ -1,0 +1,25 @@
+From 1cc13ba7772fcc84cceeaaa0d14eef0a5f346db7 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sun, 12 Apr 2020 08:41:43 +0000
+Subject: [PATCH 9002/9002] DADAO: config.sub
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ config.sub | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/config.sub b/config.sub
+index 75bb6a313..0e92f211d 100755
+--- a/config.sub
++++ b/config.sub
+@@ -1174,6 +1174,7 @@ case $cpu-$vendor in
+ 			| c[123]* | c30 | [cjt]90 | c4x \
+ 			| c8051 | clipper | craynv | csky | cydra \
+ 			| d10v | d30v | dlx | dsp16xx \
++			| dadao \
+ 			| e2k | elxsi | epiphany \
+ 			| f30[01] | f700 | fido | fr30 | frv | ft32 | fx80 \
+ 			| h8300 | h8500 \
+-- 
+2.17.1
+

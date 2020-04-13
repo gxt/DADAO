@@ -11,7 +11,7 @@ NEWLIB_CYGWIN_0303_PATCHES	:= $(DIR_DADAO)/TCH-newlib-cygwin/newlib-cygwin-0303-
 
 NEWLIB_CYGWIN_0303_SOURCE	:= $(DIR_DADAO_SOURCE)/newlib-cygwin-0303
 NEWLIB_CYGWIN_0303_BUILD	:= $(DIR_DADAO_BUILD)/newlib-cygwin-0303
-NEWLIB_CYGWIN_0303_INSTALL	?= $(DIR_DADAO_BUILD)/__newlib-cygwin-0303
+NEWLIB_CYGWIN_0303_INSTALL	?= $(DIR_DADAO_INSTALL)
 NEWLIB_CYGWIN_0303_LOG_STDOUT	:= $(DIR_DADAO_LOG)/newlib-cygwin-0303.out
 NEWLIB_CYGWIN_0303_LOG_STDERR	:= $(DIR_DADAO_LOG)/newlib-cygwin-0303.err
 
@@ -31,6 +31,43 @@ newlib-cygwin-0303-source:
 	@echo "Clone official repo"
 	@git clone $(NEWLIB_CYGWIN_0303_ORIGIN) -- $(NEWLIB_CYGWIN_0303_SOURCE)
 	@cd $(NEWLIB_CYGWIN_0303_SOURCE); git checkout -b $(NEWLIB_CYGWIN_0303_BRANCH) $(NEWLIB_CYGWIN_0303_VERSION)
+	# include
+	@echo "INCLUDE: Copy include dir from binutils-gdb (elf/dadao.h and opcode/dadao.h)"
+	@cp -a $(DIR_DADAO)/TCH-binutils-gdb/binutils-gdb-0233-newfiles/include/* $(NEWLIB_CYGWIN_0303_SOURCE)/include
+	@cd $(NEWLIB_CYGWIN_0303_SOURCE);					\
+		git add include;						\
+		git commit -sm"DADAO-include: add header files"
+	@echo "INCLUDE: Apply include related patches ..."
+	@cd $(NEWLIB_CYGWIN_0303_SOURCE); git am $(NEWLIB_CYGWIN_0303_PATCHES)/0*.patch
+	# newlib/libc/sys
+	@echo "NEWLIB-LIBC-SYS: Copy newlib/libc/sys dir"
+	@cp -a $(NEWLIB_CYGWIN_0303_NEWFILES)/newlib/libc/sys/* $(NEWLIB_CYGWIN_0303_SOURCE)/newlib/libc/sys
+	@cd $(NEWLIB_CYGWIN_0303_SOURCE);					\
+		git add newlib/libc/sys;					\
+		git commit -sm"DADAO-newlib-libc-sys: add dadao support"
+	@echo "NEWLIB-LIBC-SYS: Apply config related patches ..."
+	@cd $(NEWLIB_CYGWIN_0303_SOURCE); git am $(NEWLIB_CYGWIN_0303_PATCHES)/1*.patch
+#	@echo "NEWLIB-LIBC-SYS: re-generate configure and Makefile"
+#	@cd $(NEWLIB_CYGWIN_0303_SOURCE)/newlib/libc/sys/dadao;			\
+#		AUTOMAKE=/usr/bin/automake-1.11 ACLOCAL=/usr/bin/aclocal-1.11 autoreconf2.64;							\
+#		git add .;							\
+#		git commit -sm"DADAO-newlib-libc-sys: re-generate configure and Makefile"
+	# newlib
+	@echo "NEWLIB: Apply config related patches ..."
+	@cd $(NEWLIB_CYGWIN_0303_SOURCE); git am $(NEWLIB_CYGWIN_0303_PATCHES)/2*.patch
+#	@echo "NEWLIB: re-generate configure and Makefile"
+#	@cd $(NEWLIB_CYGWIN_0303_SOURCE)/newlib/;				\
+#		AUTOMAKE=/usr/bin/automake-1.11 ACLOCAL=/usr/bin/aclocal-1.11 autoreconf2.64;							\
+#		git add .;							\
+#		git commit -sm"DADAO-newlib: re-generate configure and Makefile"
+	# root config
+	@echo "CONFIG: Apply config related patches ..."
+	@cd $(NEWLIB_CYGWIN_0303_SOURCE); git am $(NEWLIB_CYGWIN_0303_PATCHES)/9*.patch
+	@echo "CONFIG: re-generate configure in root dir (NOTE: require exactly autoconf 2.64)"
+	@cd $(NEWLIB_CYGWIN_0303_SOURCE);					\
+		autoreconf2.64;							\
+		git add .;							\
+		git commit -sm"DADAO: re-generate root configure"
 
 newlib-cygwin-0303-build-new:
 	@rm -fr $(NEWLIB_CYGWIN_0303_BUILD)
@@ -39,7 +76,8 @@ newlib-cygwin-0303-build-new:
 		$(NEWLIB_CYGWIN_0303_SOURCE)/configure				\
 			--target=$(NEWLIB_CYGWIN_0303_TARGET)			\
 			--srcdir=$(NEWLIB_CYGWIN_0303_SOURCE)			\
-			--prefix=$(NEWLIB_CYGWIN_0303_INSTALL)
+			--prefix=$(NEWLIB_CYGWIN_0303_INSTALL)			\
+			--with-build-time-tools=$(DIR_DADAO_INSTALL)/bin
 
 newlib-cygwin-0303-build:
 	@make -C $(NEWLIB_CYGWIN_0303_BUILD) -j8 all

@@ -1,0 +1,25 @@
+From 2756828acc18a595674ade584db68b18f997890f Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sun, 12 Apr 2020 10:01:18 +0000
+Subject: [PATCH] DADAO-include: elf/common.h
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ include/elf/common.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/elf/common.h b/include/elf/common.h
+index cd3bcdd2b..8ef5af2e2 100644
+--- a/include/elf/common.h
++++ b/include/elf/common.h
+@@ -301,6 +301,7 @@
+ #define EM_INTEL207	207	/* Reserved by Intel */
+ #define EM_INTEL208	208	/* Reserved by Intel */
+ #define EM_INTEL209	209	/* Reserved by Intel */
++#define EM_DADAO	234	/* DADAO */
+ 
+ /* If it is necessary to assign new unofficial EM_* values, please pick large
+    random numbers (0x8523, 0xa7f2, etc.) to minimize the chances of collision
+-- 
+2.17.1
+
