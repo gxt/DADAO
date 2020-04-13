@@ -8,6 +8,7 @@ NEWLIB_CYGWIN_0303_TARGET	:= dadao-linux-elf
 
 NEWLIB_CYGWIN_0303_NEWFILES	:= $(DIR_DADAO)/TCH-newlib-cygwin/newlib-cygwin-0303-newfiles
 NEWLIB_CYGWIN_0303_PATCHES	:= $(DIR_DADAO)/TCH-newlib-cygwin/newlib-cygwin-0303-patches
+NEWLIB_CYGWIN_0303_FIXUP	:= $(DIR_DADAO)/TCH-newlib-cygwin/newlib-cygwin-0303-fixup
 
 NEWLIB_CYGWIN_0303_SOURCE	:= $(DIR_DADAO_SOURCE)/newlib-cygwin-0303
 NEWLIB_CYGWIN_0303_BUILD	:= $(DIR_DADAO_BUILD)/newlib-cygwin-0303
@@ -71,6 +72,9 @@ newlib-cygwin-0303-source:
 		autoreconf2.64;							\
 		git add .;							\
 		git commit -sm"DADAO: re-generate root configure"
+	# fixups
+	@echo "FIXUP: Apply fixup ..."
+	@cd $(NEWLIB_CYGWIN_0303_SOURCE); git am $(NEWLIB_CYGWIN_0303_FIXUP)/*.patch
 
 newlib-cygwin-0303-build-new:
 	@rm -fr $(NEWLIB_CYGWIN_0303_BUILD)
