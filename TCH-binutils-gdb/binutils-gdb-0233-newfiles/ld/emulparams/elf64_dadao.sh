@@ -17,6 +17,7 @@ MAXPAGESIZE="CONSTANT (MAXPAGESIZE)"
 ARCH=dadao
 MACHINE=
 COMPILE_IN=yes
+EXTRA_EM_FILE=dadaoelf
 
 # The existence of a symbol __start (or _start) should overrule Main, so
 # it can be a user symbol without the associated dadaoal magic.  We
