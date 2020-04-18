@@ -91,3 +91,6 @@ qemu-0401-highfive:
 	@make -s qemu-0401-install				1>> $(QEMU_0401_LOG_STDOUT) 2>> $(QEMU_0401_LOG_STDERR)
 	@echo "5. Install qemu complete."
 	@echo "BUILD qemu-0401 DONE!"
+
+qemu-0401-tags:
+	@make -C $(QEMU_0401_SOURCE) ctags
