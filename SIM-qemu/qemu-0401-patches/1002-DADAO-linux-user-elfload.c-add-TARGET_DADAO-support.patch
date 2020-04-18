@@ -21,7 +21,7 @@ index bd43c4817d..77824477d5 100644
 +#define ELF_START_MMAP 0x80000000
 +#define ELF_ARCH  EM_DADAO
 +
-+#define ELF_CLASS ELFCLASS32
++#define ELF_CLASS ELFCLASS64
 +
 +static inline void init_thread(struct target_pt_regs *regs,
 +                               struct image_info *infop)
