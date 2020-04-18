@@ -87,7 +87,7 @@ struct GTY(()) machine_function
 #define ASM_SPEC "-no-predefined-syms -x"
 
 /* Pass on -mset-program-start=N and -mset-data-start=M to the linker.
-   Provide default program start 0x100 unless -mno-set-program-start.
+   Provide default program start 0x400000 unless -mno-set-program-start.
    Don't do this if linking relocatably, with -r.  For a final link,
    produce mmo, unless ELF is requested or when linking relocatably.  */
 #define LINK_SPEC \
@@ -95,7 +95,7 @@ struct GTY(()) machine_function
   %{mset-data-start=*:--defsym __.DADAO.start..data=%*}\
   %{!mset-program-start=*:\
     %{!mno-set-program-start:\
-     %{!r:--defsym __.DADAO.start..text=0x100}}}\
+     %{!r:--defsym __.DADAO.start..text=0x400000}}}\
   %{melf|r:-m elf64_dadao}"
 
 /* FIXME: There's no provision for profiling here.  */

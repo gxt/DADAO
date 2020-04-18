@@ -34,7 +34,7 @@ Prepend global symbols with \":\" (for use with PREFIX).
 
 mno-set-program-start
 Target Report RejectNegative
-Do not provide a default start-address 0x100 of the program.
+Do not provide a default start-address 0x400000 of the program.
 
 melf
 Target Report RejectNegative
