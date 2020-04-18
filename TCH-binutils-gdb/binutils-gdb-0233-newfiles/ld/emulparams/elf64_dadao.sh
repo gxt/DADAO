@@ -7,11 +7,11 @@ NO_REL_RELOCS=yes
 ENTRY=_start.
 
 # Default to 0
-TEXT_START_ADDR='DEFINED (__.DADAO.start..text) ? __.DADAO.start..text : 0'
+TEXT_START_ADDR='DEFINED (__.DADAO.start..text) ? __.DADAO.start..text : 0x400000'
 # Don't add SIZEOF_HEADERS.
 # Don't set EMBEDDED, that would be misleading; it's not that kind of system.
 TEXT_BASE_ADDRESS=$TEXT_START_ADDR
-DATA_ADDR='DEFINED (__.DADAO.start..data) ? __.DADAO.start..data : 0x2000000000000000'
+DATA_ADDR='DEFINED (__.DADAO.start..data) ? __.DADAO.start..data : 0x1000000'
 
 MAXPAGESIZE="CONSTANT (MAXPAGESIZE)"
 ARCH=dadao
@@ -58,4 +58,4 @@ OTHER_SECTIONS='
 # EXECUTABLE_SYMBOLS.
 # By default, put the high end of the stack where the register stack
 # begins.  They grow in opposite directions.  */
-OTHER_SYMBOLS="PROVIDE (__Stack_start = 0x6000000000000000);"
+OTHER_SYMBOLS="PROVIDE (__Stack_start = 0x8000000);"
