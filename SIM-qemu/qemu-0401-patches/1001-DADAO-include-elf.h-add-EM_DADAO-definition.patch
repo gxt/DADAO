@@ -16,7 +16,7 @@ index 3501e0c8d0..631917231e 100644
  #define EM_OPENRISC     92        /* OpenCores OpenRISC */
  
  #define EM_UNICORE32    110     /* UniCore32 */
-+#define EM_DADAO        234     /* DADAO */
++#define EM_DADAO        0xDADA     /* DADAO */
  
  #define EM_RISCV        243     /* RISC-V */
  
