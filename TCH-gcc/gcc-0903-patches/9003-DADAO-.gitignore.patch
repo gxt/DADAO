@@ -1,0 +1,33 @@
+From 701baf5c060d1b810a32a2a112464c8ed557b3b4 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sun, 19 Apr 2020 10:49:16 +0000
+Subject: [PATCH] DADAO: .gitignore
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ .gitignore | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/.gitignore b/.gitignore
+index b53f60db792..9ead6aaa505 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -15,6 +15,7 @@
+ *.o
+ *.pyc
+ *.tmp
++*.swp
+ 
+ .deps
+ .libs
+@@ -31,6 +32,7 @@ POTFILES
+ 
+ TAGS
+ TAGS.sub
++tags
+ 
+ .local.vimrc
+ .lvimrc
+-- 
+2.17.1
+
