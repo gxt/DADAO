@@ -160,7 +160,7 @@ binutils-gdb-0233-TAGS:
 
 binutils-gdb-0233-tags:
 	@cd $(BINUTILS_GDB_0233_SOURCE) &&				\
-		ctags --recurse --languages=C,C++			\
+		ctags --recurse --exclude=testsuite --languages=C,C++	\
 			./bfd ./binutils				\
 			./gas ./gprof					\
 			./include ./intl				\
