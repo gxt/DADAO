@@ -698,7 +698,7 @@ md_show_usage (FILE * stream)
   fprintf (stream, _("\
   -no-merge-gregs         Do not merge GREG definitions with nearby values.\n"));
   fprintf (stream, _("\
-  -linker-allocated-gregs If there's no suitable GREG definition for the\
+  -linker-allocated-gregs If there's no suitable GREG definition for the\n\
                           operands of an instruction, let the linker resolve.\n"));
   fprintf (stream, _("\
   -x                      Do not warn when an operand to GETA, a branch,\n\
