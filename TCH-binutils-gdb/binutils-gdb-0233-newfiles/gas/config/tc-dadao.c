@@ -1876,6 +1876,39 @@ md_assemble (char *str)
       /* All is done for PUSHJ already.  */
       break;
 
+    case dadao_operands_rrs6_ri12: /* "regd, rega, regb << shift6" or "regd, rega, imm12" */
+      if ((n_operands != 3)
+	  || (exp[0].X_op != O_register) || (exp[0].X_add_number > 63)
+	  || (exp[1].X_op != O_register) || (exp[1].X_add_number > 63))
+	{
+	  as_bad (_("invalid operands to opcode %s: `%s'"),
+		  instruction->name, operands);
+	  return;
+	}
+
+      opcodep[3] |= exp[0].X_add_number; /* regd */
+      opcodep[1] |= (exp[1].X_add_number) << 2; /* rega */
+
+      if (exp[2].X_op == O_register && exp[2].X_add_number <= 63)
+	{ /* regb */
+	  opcodep[1] |= (exp[2].X_add_number) >> 4;
+	  opcodep[2] |= ((exp[2].X_add_number) & 0xF) << 4;
+	}
+      else if (exp[2].X_op == O_constant && (exp[2].X_add_number < 0x1000 || exp[2].X_add_number >= 0))
+	{ /* fbc: imm12 */
+	  opcodep[1] |= (exp[2].X_add_number) >> 10;
+	  opcodep[2] |= ((exp[2].X_add_number) >> 2) & 0xFF;
+	  opcodep[3] |= ((exp[2].X_add_number) & 0x3) << 6;
+	  opcodep[0] |= IMM_OFFSET_BIT;
+	}
+      else
+	{
+	  as_bad (_("FIXME: dadao_operands_rrs6_ri12 MAYBE NEED fix_new_exp %s: `%s'"),
+		  instruction->name, operands);
+	  return;
+	}
+      break;
+
     default:
       BAD_CASE (instruction->operands);
     }

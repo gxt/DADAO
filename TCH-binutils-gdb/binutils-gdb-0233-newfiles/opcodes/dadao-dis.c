@@ -187,6 +187,7 @@ get_opcode (unsigned long insn)
 	case dadao_operands_save:
 	case dadao_operands_unsave:
 	case dadao_operands_xyz_opt:
+	case dadao_operands_rrs6_ri12:
 	  return opcodep;
 
 	  /* For a ROUND_MODE, the middle byte must be 0..4.  */
@@ -251,6 +252,7 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
   unsigned char buffer[4];
   unsigned long insn;
   unsigned int x, y, z;
+  unsigned int fa, fb, fc, fbc, fd;
   const struct dadao_opcode *opcodep;
   int status = (*info->read_memory_func) (memaddr, buffer, 4, info);
   struct dadao_dis_info *minfop;
@@ -270,6 +272,12 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
   x = buffer[1];
   y = buffer[2];
   z = buffer[3];
+
+  fa = buffer[1] >> 2;
+  fb = ((buffer[1] & 0x3) << 4) | (buffer[2] >> 4);
+  fc = ((buffer[2] & 0xf) << 2) | (buffer[3] >> 6);
+  fbc = (fb << 6) & fc;
+  fd = buffer[3] & 0x3f;
 
   insn = bfd_getb32 (buffer);
 
@@ -294,6 +302,7 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
     {
     case dadao_type_normal:
     case dadao_type_memaccess_block:
+    case dadao_type_fd_eq_fa_op_bc:
       info->insn_type = dis_nonbranch;
       break;
 
@@ -363,6 +372,19 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 			       get_reg_name (minfop, y),
 			       get_reg_name (minfop, z));
       break;
+
+    case dadao_operands_rrs6_ri12: /* The regular "rega, regb << shift6" or "rega, imm12" */
+      if (insn & INSN_IMMEDIATE_BIT)
+	(*info->fprintf_func) (info->stream, "%s,%s,%d",
+			       get_reg_name (minfop, fd),
+			       get_reg_name (minfop, fa), fbc);
+      else
+	(*info->fprintf_func) (info->stream, "%s,%s,%s",
+			       get_reg_name (minfop, fd),
+			       get_reg_name (minfop, fa),
+			       get_reg_name (minfop, fb));
+      break;
+
 
     case dadao_operands_jmp:
       /* Address; only JMP.  */

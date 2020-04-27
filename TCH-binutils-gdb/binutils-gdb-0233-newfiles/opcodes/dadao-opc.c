@@ -72,6 +72,7 @@ const struct dadao_spec_reg dadao_spec_regs[] =
 #define M dadao_type_memaccess_block
 #define J dadao_type_jsr
 #define P dadao_type_pseudo
+#define D_A_BC	dadao_type_fd_eq_fa_op_bc
 
 #define OP(y) XCONCAT2 (dadao_operands_,y)
 
@@ -113,20 +114,21 @@ const struct dadao_opcode dadao_opcodes[] =
    {"fint",	O (23),		OP (roundregs),		N},
    {"divu",	Z (30),		OP (regs_z),		N},
 
-   {"add",	Z (0x20),	OP (regs_z),		N},
+   {"add",	Z (0x20),	OP (rrs6_ri12),		D_A_BC},
+   {"addu",	Z (0x22),	OP (rrs6_ri12),		D_A_BC},
+   {"sub",	Z (0x24),	OP (rrs6_ri12),		D_A_BC},
+   {"subu",	Z (0x26),	OP (rrs6_ri12),		D_A_BC},
+
    {"2addu",	Z (0x28),	OP (regs_z),		N},
 
-   {"addu",	Z (0x22),	OP (regs_z),		N},
    /* Synonym for ADDU.  Put after ADDU, since we don't prefer it for
       disassembly.  It's supposed to be used for addresses, so we make it
       a memory block reference for purposes of assembly.  */
    {"lda",	Z (0x22),	OP (regs_z_opt),	M},
    {"4addu",	Z (0x2a),	OP (regs_z),		N},
 
-   {"sub",	Z (0x24),	OP (regs_z),		N},
    {"8addu",	Z (0x2c),	OP (regs_z),		N},
 
-   {"subu",	Z (0x26),	OP (regs_z),		N},
    {"16addu",	Z (0x2e),	OP (regs_z),		N},
 
    {"cmp",	Z (0x30),	OP (regs_z),		N},
