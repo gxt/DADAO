@@ -289,7 +289,7 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
       return 4;
     }
 
-  (*info->fprintf_func) (info->stream, "%s ", opcodep->name);
+  (*info->fprintf_func) (info->stream, "%s\t", opcodep->name);
 
   /* Present bytes in the order they are laid out in memory.  */
   info->display_endian = BFD_ENDIAN_BIG;
@@ -375,11 +375,11 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 
     case dadao_operands_rrs6_ri12: /* The regular "rega, regb << shift6" or "rega, imm12" */
       if (insn & INSN_IMMEDIATE_BIT)
-	(*info->fprintf_func) (info->stream, "%s,%s,%d",
+	(*info->fprintf_func) (info->stream, "%s, %s, %d",
 			       get_reg_name (minfop, fd),
 			       get_reg_name (minfop, fa), fbc);
       else
-	(*info->fprintf_func) (info->stream, "%s,%s,%s",
+	(*info->fprintf_func) (info->stream, "%s, %s, %s",
 			       get_reg_name (minfop, fd),
 			       get_reg_name (minfop, fa),
 			       get_reg_name (minfop, fb));
