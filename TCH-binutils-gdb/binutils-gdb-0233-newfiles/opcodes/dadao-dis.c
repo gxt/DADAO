@@ -276,7 +276,7 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
   fa = buffer[1] >> 2;
   fb = ((buffer[1] & 0x3) << 4) | (buffer[2] >> 4);
   fc = ((buffer[2] & 0xf) << 2) | (buffer[3] >> 6);
-  fbc = (fb << 6) & fc;
+  fbc = (fb << 6) | fc;
   fd = buffer[3] & 0x3f;
 
   insn = bfd_getb32 (buffer);
