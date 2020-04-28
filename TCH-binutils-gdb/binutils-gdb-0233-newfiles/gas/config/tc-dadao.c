@@ -810,6 +810,8 @@ md_assemble (char *str)
 
   expressionS exp[4];
   int n_operands = 0;
+  expressionS *exp_left;
+  expressionS *exp_right;
 
   /* Move to end of opcode.  */
   for (operands = str;
@@ -1889,22 +1891,60 @@ md_assemble (char *str)
       opcodep[3] |= exp[0].X_add_number; /* regd */
       opcodep[1] |= (exp[1].X_add_number) << 2; /* rega */
 
-      if (exp[2].X_op == O_register && exp[2].X_add_number <= 63)
-	{ /* regb */
-	  opcodep[1] |= (exp[2].X_add_number) >> 4;
-	  opcodep[2] |= ((exp[2].X_add_number) & 0xF) << 4;
-	}
-      else if (exp[2].X_op == O_constant && (exp[2].X_add_number < 0x1000 || exp[2].X_add_number >= 0))
-	{ /* fbc: imm12 */
-	  opcodep[1] |= (exp[2].X_add_number) >> 10;
-	  opcodep[2] |= ((exp[2].X_add_number) >> 2) & 0xFF;
-	  opcodep[3] |= ((exp[2].X_add_number) & 0x3) << 6;
-	  opcodep[0] |= IMM_OFFSET_BIT;
-	}
-      else
+      switch (exp[2].X_op)
 	{
-	  as_bad (_("FIXME: dadao_operands_rrs6_ri12 MAYBE NEED fix_new_exp %s: `%s'"),
+	case O_register: /* regb */
+	  if (exp[2].X_add_number <= 63)
+	    { /* regb */
+	      opcodep[1] |= (exp[2].X_add_number) >> 4;
+	      opcodep[2] |= ((exp[2].X_add_number) & 0xF) << 4;
+	    }
+	  else
+	    {
+	      as_bad (_("invalid operands to opcode %s: `%s'"),
 		  instruction->name, operands);
+	      return;
+	    }
+	  break;
+
+	case O_left_shift: /* regb << shift6 */
+	  exp_left = symbol_get_value_expression (exp[2].X_add_symbol);
+	  exp_right = symbol_get_value_expression (exp[2].X_op_symbol);
+	  if ((exp_left->X_op == O_register && exp_left->X_add_number <= 63)
+	      && (exp_right->X_op == O_constant && exp_right->X_add_number <=63 && exp_right->X_add_number >= 0))
+	    {
+	      opcodep[1] |= (exp_left->X_add_number) >> 4;
+	      opcodep[2] |= ((exp_left->X_add_number) & 0xF) << 4;
+	      opcodep[2] |= (exp_right->X_add_number) >> 2;
+	      opcodep[3] |= ((exp_right->X_add_number) & 0x3) << 6;
+	    }
+	  else
+	    {
+	      as_bad (_("invalid operands to opcode %s: `%s'"),
+		  instruction->name, operands);
+	      return;
+	    }
+	  break;
+
+	case O_constant: /* imm12 */
+	  if (exp[2].X_add_number < 0x1000 && exp[2].X_add_number >= 0)
+	    {
+	      opcodep[1] |= (exp[2].X_add_number) >> 10;
+	      opcodep[2] |= ((exp[2].X_add_number) >> 2) & 0xFF;
+	      opcodep[3] |= ((exp[2].X_add_number) & 0x3) << 6;
+	      opcodep[0] |= IMM_OFFSET_BIT;
+	    }
+	  else
+	    {
+	      as_bad (_("invalid operands to opcode %s: `%s'"),
+		  instruction->name, operands);
+	      return;
+	    }
+	  break;
+
+	default:
+	  as_bad (_("invalid operands to opcode %s: `%s'"),
+		instruction->name, operands);
 	  return;
 	}
       break;

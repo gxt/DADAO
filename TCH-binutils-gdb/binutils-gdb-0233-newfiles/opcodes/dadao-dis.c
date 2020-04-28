@@ -378,11 +378,16 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	(*info->fprintf_func) (info->stream, "%s, %s, %d",
 			       get_reg_name (minfop, fd),
 			       get_reg_name (minfop, fa), fbc);
+      else if (fc == 0)
+	  (*info->fprintf_func) (info->stream, "%s, %s, %s",
+				get_reg_name (minfop, fd),
+				get_reg_name (minfop, fa),
+				get_reg_name (minfop, fb));
       else
-	(*info->fprintf_func) (info->stream, "%s, %s, %s",
-			       get_reg_name (minfop, fd),
-			       get_reg_name (minfop, fa),
-			       get_reg_name (minfop, fb));
+	  (*info->fprintf_func) (info->stream, "%s, %s, %s << %d",
+				get_reg_name (minfop, fd),
+				get_reg_name (minfop, fa),
+				get_reg_name (minfop, fb), fc);
       break;
 
 
