@@ -119,17 +119,10 @@ const struct dadao_opcode dadao_opcodes[] =
    {"sub",	Z (0x24),	OP (rrs6_ri12),		D_A_BC},
    {"subu",	Z (0x26),	OP (rrs6_ri12),		D_A_BC},
 
-   {"2addu",	Z (0x28),	OP (regs_z),		N},
-
    /* Synonym for ADDU.  Put after ADDU, since we don't prefer it for
       disassembly.  It's supposed to be used for addresses, so we make it
       a memory block reference for purposes of assembly.  */
    {"lda",	Z (0x22),	OP (regs_z_opt),	M},
-   {"4addu",	Z (0x2a),	OP (regs_z),		N},
-
-   {"8addu",	Z (0x2c),	OP (regs_z),		N},
-
-   {"16addu",	Z (0x2e),	OP (regs_z),		N},
 
    {"cmp",	Z (0x30),	OP (regs_z),		N},
    {"sl",	Z (0x38),	OP (regs_z),		N},

@@ -1954,36 +1954,6 @@ md_assemble (char *str)
     }
 }
 
-/* For the benefit of insns that start with a digit, we assemble by way of
-   tc_unrecognized_line too, through this function.  */
-
-int
-dadao_assemble_return_nonzero (char *str)
-{
-  int last_error_count = had_errors ();
-  char *s2 = str;
-  char c;
-
-  /* Normal instruction handling downcases, so we must too.  */
-  while (ISALNUM (*s2))
-    {
-      if (ISUPPER ((unsigned char) *s2))
-	*s2 = TOLOWER (*s2);
-      s2++;
-    }
-
-  /* Cut the line for sake of the assembly.  */
-  for (s2 = str; *s2 && *s2 != '\n'; s2++)
-    ;
-
-  c = *s2;
-  *s2 = 0;
-  md_assemble (str);
-  *s2 = c;
-
-  return had_errors () == last_error_count;
-}
-
 /* The PREFIX pseudo.  */
 
 static void

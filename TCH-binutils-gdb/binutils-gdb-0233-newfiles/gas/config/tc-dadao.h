@@ -89,15 +89,6 @@ extern void dadao_fb_label (expressionS *);
     }									\
   while (0)
 
-/* Gas dislikes the 2ADD, 8ADD etc. insns, so we have to assemble them in
-   the error-recovery loop.  Hopefully there are no significant
-   differences.  Also, space on a line isn't gracefully handled.  */
-extern int dadao_assemble_return_nonzero (char *);
-#define tc_unrecognized_line(c)						\
- ((c) == ' '								\
-  || (((c) == '1' || (c) == '2' || (c) == '4' || (c) == '8')		\
-      && dadao_assemble_return_nonzero (input_line_pointer - 1)))
-
 #define md_number_to_chars number_to_chars_bigendian
 
 #define WORKING_DOT_WORD
