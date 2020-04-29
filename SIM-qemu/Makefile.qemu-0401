@@ -32,23 +32,32 @@ qemu-0401-source:
 	@echo "Clone official repo"
 	@git clone $(QEMU_0401_ORIGIN) -- $(QEMU_0401_SOURCE)
 	@cd $(QEMU_0401_SOURCE); git checkout -b $(QEMU_0401_BRANCH) $(QEMU_0401_VERSION)
-	@echo "Copy target/dadao dir"
-	@cp -a $(QEMU_0401_NEWFILES)/target/* $(QEMU_0401_SOURCE)/target/
-	@cd $(QEMU_0401_SOURCE);					\
-		git add target/dadao;					\
-		git commit -sm"DADAO-target: add dadao support"
-	@echo "Copy linux-user/dadao dir"
+	# include and arch-init
+	@echo "INCLUDE and arch-init patches"
+	@cd $(QEMU_0401_SOURCE); git am $(QEMU_0401_PATCHES)/0*.patch
+	# linux-user
+	@echo "LINUX-USER: Copy linux-user/dadao dir"
 	@cp -a $(QEMU_0401_NEWFILES)/linux-user/* $(QEMU_0401_SOURCE)/linux-user/
 	@cd $(QEMU_0401_SOURCE);					\
 		git add linux-user/dadao;				\
 		git commit -sm"DADAO-linux-user: add dadao support"
-	@echo "Copy config file"
+	@echo "LINUX-USER: apply patches"
+	@cd $(QEMU_0401_SOURCE); git am $(QEMU_0401_PATCHES)/1*.patch
+	# target
+	@echo "TARGET: Copy target/dadao dir"
+	@cp -a $(QEMU_0401_NEWFILES)/target/* $(QEMU_0401_SOURCE)/target/
+	@cd $(QEMU_0401_SOURCE);					\
+		git add target/dadao;					\
+		git commit -sm"DADAO-target: add dadao support"
+	# default-configs
+	@echo "DEFAULT-CONFIGS: Copy config files"
 	@cp -a $(QEMU_0401_NEWFILES)/default-configs/* $(QEMU_0401_SOURCE)/default-configs/
 	@cd $(QEMU_0401_SOURCE);					\
 		git add default-configs;				\
 		git commit -sm"DADAO-default-configs: add dadao support"
-	@echo "Apply qemu-0401-patches ..."
-	@cd $(QEMU_0401_SOURCE); git am $(QEMU_0401_PATCHES)/*.patch
+	# root config
+	@echo "CONFIG: Apply patches"
+	@cd $(QEMU_0401_SOURCE); git am $(QEMU_0401_PATCHES)/9*.patch
 
 qemu-0401-build-new:
 	@rm -fr $(QEMU_0401_BUILD)
