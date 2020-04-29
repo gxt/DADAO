@@ -32,25 +32,31 @@ gcc-0903-source:
 	@echo "Clone official repo"
 	@git clone $(GCC_0903_ORIGIN) -- $(GCC_0903_SOURCE)
 	@cd $(GCC_0903_SOURCE); git checkout -b $(GCC_0903_BRANCH) $(GCC_0903_VERSION)
+	# gcc/config
 	@echo "GCC-CONFIG: Copy gcc/config/dadao dir"
 	@cp -a $(GCC_0903_NEWFILES)/gcc/config/* $(GCC_0903_SOURCE)/gcc/config/
 	@cd $(GCC_0903_SOURCE);						\
 		git add gcc/config/dadao;				\
 		git commit -sm"DADAO-gcc-config: add dadao support"
+	# gcc/common/config
 	@echo "GCC-COMMON: Copy gcc/common/config/dadao dir"
 	@cp -a $(GCC_0903_NEWFILES)/gcc/common/config/* $(GCC_0903_SOURCE)/gcc/common/config/
 	@cd $(GCC_0903_SOURCE);						\
 		git add gcc/common/config/dadao;			\
 		git commit -sm"DADAO-gcc-common-config: add dadao support"
+	# gcc config
 	@echo "GCC-CONFIG: Apply gcc-config related patches ..."
 	@cd $(GCC_0903_SOURCE); git am $(GCC_0903_PATCHES)/1*.patch
+	# libgcc/config
 	@echo "LIBGCC-CONFIG: Copy libgcc/config/dadao dir"
 	@cp -a $(GCC_0903_NEWFILES)/libgcc/config/* $(GCC_0903_SOURCE)/libgcc/config/
 	@cd $(GCC_0903_SOURCE);						\
 		git add libgcc/config/dadao;				\
 		git commit -sm"DADAO-libgcc-config: add dadao support"
+	# libgcc config
 	@echo "LIBGCC-CONFIG: Apply libgcc-config related patches ..."
 	@cd $(GCC_0903_SOURCE); git am $(GCC_0903_PATCHES)/2*.patch
+	# root config
 	@echo "CONFIG: Apply config related patches ..."
 	@cd $(GCC_0903_SOURCE); git am $(GCC_0903_PATCHES)/9*.patch
 	@echo "CONFIG: re-generate configure and Makefile.in in root dir"
