@@ -1879,75 +1879,43 @@ md_assemble (char *str)
       break;
 
     case dadao_operands_rrs6_ri12: /* "regd, rega, regb << shift6" or "regd, rega, imm12" */
-      if ((n_operands != 3)
-	  || (exp[0].X_op != O_register) || (exp[0].X_add_number > 63)
-	  || (exp[1].X_op != O_register) || (exp[1].X_add_number > 63))
-	{
-	  as_bad (_("invalid operands to opcode %s: `%s'"),
-		  instruction->name, operands);
-	  return;
-	}
+	if (n_operands != 3)
+		as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 
-      opcodep[3] |= exp[0].X_add_number; /* regd */
-      opcodep[1] |= (exp[1].X_add_number) << 2; /* rega */
+	DDOP_EXP_MUST_BE_REG(exp[0]);
+	DDOP_EXP_MUST_BE_REG(exp[1]);
 
-      switch (exp[2].X_op)
-	{
+	DDOP_SET_FD(opcodep, exp[0].X_add_number);
+	DDOP_SET_FA(opcodep, exp[1].X_add_number);
+
+	switch (exp[2].X_op) {
 	case O_register: /* regb */
-	  if (exp[2].X_add_number <= 63)
-	    { /* regb */
-	      opcodep[1] |= (exp[2].X_add_number) >> 4;
-	      opcodep[2] |= ((exp[2].X_add_number) & 0xF) << 4;
-	    }
-	  else
-	    {
-	      as_bad (_("invalid operands to opcode %s: `%s'"),
-		  instruction->name, operands);
-	      return;
-	    }
-	  break;
+		DDOP_CHECK_6_BIT(exp[2].X_add_number);
+		DDOP_SET_FB(opcodep, exp[2].X_add_number);
+		break;
 
 	case O_left_shift: /* regb << shift6 */
-	  exp_left = symbol_get_value_expression (exp[2].X_add_symbol);
-	  exp_right = symbol_get_value_expression (exp[2].X_op_symbol);
-	  if ((exp_left->X_op == O_register && exp_left->X_add_number <= 63)
-	      && (exp_right->X_op == O_constant && exp_right->X_add_number <=63 && exp_right->X_add_number >= 0))
-	    {
-	      opcodep[1] |= (exp_left->X_add_number) >> 4;
-	      opcodep[2] |= ((exp_left->X_add_number) & 0xF) << 4;
-	      opcodep[2] |= (exp_right->X_add_number) >> 2;
-	      opcodep[3] |= ((exp_right->X_add_number) & 0x3) << 6;
-	    }
-	  else
-	    {
-	      as_bad (_("invalid operands to opcode %s: `%s'"),
-		  instruction->name, operands);
-	      return;
-	    }
-	  break;
+		exp_left = symbol_get_value_expression (exp[2].X_add_symbol);
+		exp_right = symbol_get_value_expression (exp[2].X_op_symbol);
+
+		DDOP_EXP_MUST_BE_REG(exp_left[0]);
+		DDOP_EXP_MUST_BE_UIMM6(exp_right[0]);
+
+		DDOP_SET_FB(opcodep, exp_left->X_add_number);
+		DDOP_SET_FC(opcodep, exp_right->X_add_number);
+		break;
 
 	case O_constant: /* imm12 */
-	  if (exp[2].X_add_number < 0x1000 && exp[2].X_add_number >= 0)
-	    {
-	      opcodep[1] |= (exp[2].X_add_number) >> 10;
-	      opcodep[2] |= ((exp[2].X_add_number) >> 2) & 0xFF;
-	      opcodep[3] |= ((exp[2].X_add_number) & 0x3) << 6;
-	      opcodep[0] |= IMM_OFFSET_BIT;
-	    }
-	  else
-	    {
-	      as_bad (_("invalid operands to opcode %s: `%s'"),
-		  instruction->name, operands);
-	      return;
-	    }
-	  break;
+		DDOP_EXP_MUST_BE_UIMM12(exp[2]);
+		DDOP_SET_FB_FC(opcodep, exp[2].X_add_number);
+
+		opcodep[0] |= IMM_OFFSET_BIT;
+		break;
 
 	default:
-	  as_bad (_("invalid operands to opcode %s: `%s'"),
-		instruction->name, operands);
-	  return;
+		as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 	}
-      break;
+	break;
 
     default:
       BAD_CASE (instruction->operands);

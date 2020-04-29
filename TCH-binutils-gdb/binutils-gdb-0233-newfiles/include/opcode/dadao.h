@@ -174,6 +174,83 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 #define SWYM_INSN_BYTE 0xfd
 #define JMP_INSN_BYTE 0xf0
 
+/* Dadao bit-field definition:
+ *   OP: 8-bit, [31..24]
+ *   FA: 6-bit, [23..18]
+ *   FB: 6-bit, [17..12]
+ *   FC: 6-bit, [11..6]
+ *   FD: 6-bit, [5..0]
+ */
+#define DDOP_CHECK_6_BIT(ddop_fx)								\
+	do {											\
+		if ((ddop_fx) < 0)								\
+			as_fatal(_("%s(%d): negative"), __func__, __LINE__);			\
+		if ((ddop_fx) > 0xFF)								\
+			as_fatal(_("%s(%d): bigger than 255"), __func__, __LINE__);		\
+		if ((ddop_fx) > 0x3F)								\
+			as_warn (_("%s(%d): bigger than 63, FIXME!"), __func__, __LINE__);	\
+	} while (0)
+
+#define DDOP_EXP_MUST_BE_REG(ddop_exp)								\
+	do {											\
+		if (ddop_exp.X_op != O_register)						\
+			as_fatal(_("%s(%d): Exp should be register"), __func__, __LINE__);	\
+		DDOP_CHECK_6_BIT(ddop_exp.X_add_number);					\
+	} while (0)
+
+#define DDOP_EXP_MUST_BE_UIMM6(ddop_exp)							\
+	do {											\
+		if (ddop_exp.X_op != O_constant)						\
+			as_fatal(_("%s(%d): Exp should be 6-bit const"), __func__, __LINE__);	\
+		DDOP_CHECK_6_BIT(ddop_exp.X_add_number);					\
+	} while (0)
+
+#define DDOP_EXP_MUST_BE_UIMM12(ddop_exp)							\
+	do {											\
+		if (ddop_exp.X_op != O_constant)						\
+			as_fatal(_("%s(%d): Exp should be 12-bit const"), __func__, __LINE__);	\
+		if ((ddop_exp.X_add_number) < 0)						\
+			as_fatal(_("%s(%d): negative"), __func__, __LINE__);			\
+		if ((ddop_exp.X_add_number) > 0xFFF)						\
+			as_fatal(_("%s(%d): bigger than 12-bit"), __func__, __LINE__);		\
+	} while (0)
+
+#define DDOP_SET_FA(ddop_insn_p, ddop_fa)							\
+	do {											\
+		char *ddop_insn_char_p = (char *)ddop_insn_p;					\
+		DDOP_CHECK_6_BIT(ddop_fa);							\
+		ddop_insn_char_p[1] |= (((ddop_fa) & 0x3F) << 2);				\
+	} while (0)
+
+#define DDOP_SET_FB(ddop_insn_p, ddop_fb)							\
+	do {											\
+		char *ddop_insn_char_p = (char *)ddop_insn_p;					\
+		DDOP_CHECK_6_BIT(ddop_fb);							\
+		ddop_insn_char_p[1] |= (((ddop_fb) & 0x3F) >> 4);				\
+		ddop_insn_char_p[2] |= (((ddop_fb) & 0xF) << 4);				\
+	} while (0)
+
+#define DDOP_SET_FC(ddop_insn_p, ddop_fc)							\
+	do {											\
+		char *ddop_insn_char_p = (char *)ddop_insn_p;					\
+		DDOP_CHECK_6_BIT(ddop_fc);							\
+		ddop_insn_char_p[2] |= (((ddop_fc) & 0x3F) >> 2);				\
+		ddop_insn_char_p[3] |= (((ddop_fc) & 0x3) << 6);				\
+	} while (0)
+
+#define DDOP_SET_FD(ddop_insn_p, ddop_fd)							\
+	do {											\
+		char *ddop_insn_char_p = (char *)ddop_insn_p;					\
+		DDOP_CHECK_6_BIT(ddop_fd);							\
+		ddop_insn_char_p[3] |= ((ddop_fd) & 0x3F);					\
+	} while (0)
+
+#define DDOP_SET_FB_FC(ddop_insn_p, ddop_fb_fc)							\
+	do {											\
+		DDOP_SET_FB(ddop_insn_p, ((ddop_fb_fc) >> 6));					\
+		DDOP_SET_FC(ddop_insn_p, ((ddop_fb_fc) & 0x3F));				\
+	} while (0)
+
 /* We can have 256 - 32 (local registers) - 1 ($255 is not allocatable)
    global registers.  */
 #define MAX_GREGS 223
