@@ -1,0 +1,16 @@
+# Dadao list testsuite
+
+if { ! [istarget "dadao-*"] } {
+    return
+}
+
+proc run_dadao_list_tests { } {
+    global srcdir subdir runtests
+    foreach test_name [lsort [find ${srcdir}/${subdir} *.l]] {
+	# Keep basename.
+	regsub -all ".*/\(\[^\.\]*\)\.l$" $test_name "\\1" test_name
+	run_list_test $test_name "-a -x"
+    }
+}
+
+run_dadao_list_tests

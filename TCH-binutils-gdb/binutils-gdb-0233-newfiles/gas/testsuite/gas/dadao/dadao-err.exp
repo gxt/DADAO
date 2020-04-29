@@ -1,0 +1,16 @@
+# Dadao err testsuite
+
+if { ! [istarget "dadao-*"] } {
+    return
+}
+
+proc run_dadao_err_tests { } {
+    global srcdir subdir runtests
+
+    load_lib gas-dg.exp
+    dg-init
+    dg-runtest [lsort [glob -nocomplain $srcdir/$subdir/err-*.s]] "" ""
+    dg-finish
+}
+
+run_dadao_err_tests
