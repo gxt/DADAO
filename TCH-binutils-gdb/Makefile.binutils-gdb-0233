@@ -33,6 +33,7 @@ binutils-gdb-0233-source:
 	@git clone $(BINUTILS_GDB_0233_ORIGIN) -- $(BINUTILS_GDB_0233_SOURCE)
 	@cd $(BINUTILS_GDB_0233_SOURCE);				\
 		git checkout -b $(BINUTILS_GDB_0233_BRANCH) $(BINUTILS_GDB_0233_VERSION)
+	# include
 	@echo "INCLUDE: Copy include dir"
 	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/include/* $(BINUTILS_GDB_0233_SOURCE)/include
 	@cd $(BINUTILS_GDB_0233_SOURCE);				\
@@ -40,6 +41,7 @@ binutils-gdb-0233-source:
 		git commit -sm"DADAO-include: add header files"
 	@echo "INCLUDE: Apply include related patches ..."
 	@cd $(BINUTILS_GDB_0233_SOURCE); git am $(BINUTILS_GDB_0233_PATCHES)/0*.patch
+	# bfd
 	@echo "BFD: Copy bfd dir"
 	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/bfd/* $(BINUTILS_GDB_0233_SOURCE)/bfd
 	@cd $(BINUTILS_GDB_0233_SOURCE);				\
@@ -59,6 +61,7 @@ binutils-gdb-0233-source:
 		make distclean;						\
 		git add .;						\
 		git commit -sm"DADAO-bfd: re-generate bfd-in2.h and libbfd.h"
+	# gas
 	@echo "GAS: Copy gas/config dir"
 	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/gas/config/* $(BINUTILS_GDB_0233_SOURCE)/gas/config/
 	@cd $(BINUTILS_GDB_0233_SOURCE);				\
@@ -76,6 +79,7 @@ binutils-gdb-0233-source:
 		autoreconf;						\
 		git add .;						\
 		git commit -sm"DADAO-gas: re-generate configure and Makefile.in"
+	# ld
 	@echo "LD: Copy ld dir"
 	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/ld/* $(BINUTILS_GDB_0233_SOURCE)/ld/
 	@cd $(BINUTILS_GDB_0233_SOURCE);				\
@@ -88,6 +92,7 @@ binutils-gdb-0233-source:
 		autoreconf;						\
 		git add .;						\
 		git commit -sm"DADAO-ld: re-generate configure and Makefile.in"
+	# opcodes
 	@echo "OPCODES: Copy opcodes dir"
 	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/opcodes/* $(BINUTILS_GDB_0233_SOURCE)/opcodes/
 	@cd $(BINUTILS_GDB_0233_SOURCE);				\
@@ -100,8 +105,10 @@ binutils-gdb-0233-source:
 		autoreconf;						\
 		git add .;						\
 		git commit -sm"DADAO-opcodes: re-generate configure and Makefile.in"
+	# binutils
 	@echo "BINUTILS: Apply binutils related patches ..."
 	@cd $(BINUTILS_GDB_0233_SOURCE); git am $(BINUTILS_GDB_0233_PATCHES)/8*.patch
+	# root config
 	@echo "CONFIG: Apply config related patches ..."
 	@cd $(BINUTILS_GDB_0233_SOURCE); git am $(BINUTILS_GDB_0233_PATCHES)/9*.patch
 	@echo "CONFIG: re-generate configure and Makefile.in in root dir"
