@@ -1,7 +1,7 @@
-From eadd7f734d8a0a3402fb636ad85caa551dccf05c Mon Sep 17 00:00:00 2001
+From 23c9e93816ad5ffa2bbbaed0d925ddaa36d07d0e Mon Sep 17 00:00:00 2001
 From: Guan Xuetao <gxt@pku.edu.cn>
 Date: Fri, 13 Dec 2019 03:29:45 +0800
-Subject: [PATCH 3/3] DADAO: linux-user/syscall_defs.h add TARGET_DADAO support
+Subject: [PATCH 1002/1002] DADAO-linux-user: syscall_defs.h
 
 Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
 ---

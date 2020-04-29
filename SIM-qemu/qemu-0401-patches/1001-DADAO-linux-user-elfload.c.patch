@@ -1,7 +1,7 @@
-From 4542e319708890fe1b034700aded601075a8e90d Mon Sep 17 00:00:00 2001
+From 9065c4c100c51c7fd04d5db260bb85f77919a47e Mon Sep 17 00:00:00 2001
 From: Guan Xuetao <gxt@pku.edu.cn>
 Date: Fri, 13 Dec 2019 03:28:53 +0800
-Subject: [PATCH 2/3] DADAO: linux-user/elfload.c add TARGET_DADAO support
+Subject: [PATCH 1001/1002] DADAO-linux-user: elfload.c
 
 Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
 ---
@@ -9,7 +9,7 @@ Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
  1 file changed, 18 insertions(+)
 
 diff --git a/linux-user/elfload.c b/linux-user/elfload.c
-index bd43c4817d..77824477d5 100644
+index bd43c4817d..e01ce44d2a 100644
 --- a/linux-user/elfload.c
 +++ b/linux-user/elfload.c
 @@ -1480,6 +1480,24 @@ static void elf_core_copy_regs(target_elf_gregset_t *regs,
