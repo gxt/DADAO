@@ -36,17 +36,17 @@ qemu-0401-source:
 	@cp -a $(QEMU_0401_NEWFILES)/target/* $(QEMU_0401_SOURCE)/target/
 	@cd $(QEMU_0401_SOURCE);					\
 		git add target/dadao;					\
-		git commit -sm"DADAO: add target/dadao dir"
+		git commit -sm"DADAO-target: add dadao support"
 	@echo "Copy linux-user/dadao dir"
 	@cp -a $(QEMU_0401_NEWFILES)/linux-user/* $(QEMU_0401_SOURCE)/linux-user/
 	@cd $(QEMU_0401_SOURCE);					\
 		git add linux-user/dadao;				\
-		git commit -sm"DADAO: add linux-user/dadao dir"
+		git commit -sm"DADAO-linux-user: add dadao support"
 	@echo "Copy config file"
 	@cp -a $(QEMU_0401_NEWFILES)/default-configs/* $(QEMU_0401_SOURCE)/default-configs/
 	@cd $(QEMU_0401_SOURCE);					\
 		git add default-configs;				\
-		git commit -sm"DADAO: add default-configs/dadao-*.mak"
+		git commit -sm"DADAO-default-configs: add dadao support"
 	@echo "Apply qemu-0401-patches ..."
 	@cd $(QEMU_0401_SOURCE); git am $(QEMU_0401_PATCHES)/*.patch
 
