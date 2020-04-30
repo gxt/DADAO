@@ -184,35 +184,35 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 #define DDOP_CHECK_6_BIT(ddop_fx)								\
 	do {											\
 		if ((ddop_fx) < 0)								\
-			as_fatal(_("%s(%d): negative"), __func__, __LINE__);			\
+			as_fatal("%s(%d): negative", __func__, __LINE__);			\
 		if ((ddop_fx) > 0xFF)								\
-			as_fatal(_("%s(%d): bigger than 255"), __func__, __LINE__);		\
+			as_fatal("%s(%d): bigger than 255", __func__, __LINE__);		\
 		if ((ddop_fx) > 0x3F)								\
-			as_warn (_("%s(%d): bigger than 63, FIXME!"), __func__, __LINE__);	\
+			as_warn ("%s(%d): bigger than 63, FIXME!", __func__, __LINE__);		\
 	} while (0)
 
 #define DDOP_EXP_MUST_BE_REG(ddop_exp)								\
 	do {											\
 		if (ddop_exp.X_op != O_register)						\
-			as_fatal(_("%s(%d): Exp should be register"), __func__, __LINE__);	\
+			as_fatal("%s(%d): Exp should be register", __func__, __LINE__);		\
 		DDOP_CHECK_6_BIT(ddop_exp.X_add_number);					\
 	} while (0)
 
 #define DDOP_EXP_MUST_BE_UIMM6(ddop_exp)							\
 	do {											\
 		if (ddop_exp.X_op != O_constant)						\
-			as_fatal(_("%s(%d): Exp should be 6-bit const"), __func__, __LINE__);	\
+			as_fatal("%s(%d): Exp should be 6-bit const", __func__, __LINE__);	\
 		DDOP_CHECK_6_BIT(ddop_exp.X_add_number);					\
 	} while (0)
 
 #define DDOP_EXP_MUST_BE_UIMM12(ddop_exp)							\
 	do {											\
 		if (ddop_exp.X_op != O_constant)						\
-			as_fatal(_("%s(%d): Exp should be 12-bit const"), __func__, __LINE__);	\
+			as_fatal("%s(%d): Exp should be 12-bit const", __func__, __LINE__);	\
 		if ((ddop_exp.X_add_number) < 0)						\
-			as_fatal(_("%s(%d): negative"), __func__, __LINE__);			\
+			as_fatal("%s(%d): negative", __func__, __LINE__);			\
 		if ((ddop_exp.X_add_number) > 0xFFF)						\
-			as_fatal(_("%s(%d): bigger than 12-bit"), __func__, __LINE__);		\
+			as_fatal("%s(%d): bigger than 12-bit", __func__, __LINE__);		\
 	} while (0)
 
 #define DDOP_SET_FA(ddop_insn_p, ddop_fa)							\
