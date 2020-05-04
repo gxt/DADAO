@@ -1214,7 +1214,7 @@ dadao_register_move_cost (machine_mode mode ATTRIBUTE_UNUSED,
 const char *
 dadao_data_section_asm_op (void)
 {
-  return "\t.data ! dadaoal:= 8H LOC 9B";
+  return "\t.data";
 }
 
 static void
@@ -1273,9 +1273,9 @@ dadao_strip_name_encoding (const char *name)
 static void
 dadao_file_start (void)
 {
-  default_file_start ();
+  fputs ("# Da Dao Zhi Jian\n", asm_out_file);
 
-  fputs ("! dadaoal:= 8H LOC Data_Section\n", asm_out_file);
+  default_file_start ();
 
   /* Make sure each file starts with the text section.  */
   switch_to_section (text_section);
@@ -1454,7 +1454,7 @@ dadao_asm_output_aligned_common (FILE *stream,
      express this in a dadaoal-compatible way.  */
   fprintf (stream, "\t.comm\t");
   assemble_name (stream, name);
-  fprintf (stream, ",%u,%u ! dadaoal-incompatible COMMON\n",
+  fprintf (stream, ",%u,%u\n",
 	   size, align / BITS_PER_UNIT);
 }
 
@@ -1511,7 +1511,7 @@ dadao_asm_weaken_label (FILE *stream ATTRIBUTE_UNUSED,
 {
   fprintf (stream, "\t.weak ");
   assemble_name (stream, name);
-  fprintf (stream, " ! dadaoal-incompatible\n");
+  fputc ('\n', stream);
 }
 
 /* MAKE_DECL_ONE_ONLY.  */

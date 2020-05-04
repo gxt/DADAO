@@ -568,7 +568,7 @@ typedef struct { int regs; int lib; } CUMULATIVE_ARGS;
 
 /* This must be a constant string, since it's used in crtstuff.c.  */
 #define TEXT_SECTION_ASM_OP \
- "\t.text ! dadaoal:= 9H LOC 8B"
+ "\t.text"
 
 /* FIXME: Not documented.  */
 #define DATA_SECTION_ASM_OP \
@@ -581,17 +581,11 @@ typedef struct { int regs; int lib; } CUMULATIVE_ARGS;
 
 
 /* Node: File Framework */
-
-/* While any other punctuation character but ";" would do, we prefer "%"
-   or "!"; "!" is an unary operator and so will not be mistakenly included
-   in correctly formed expressions.  The hash character adds mass; catches
-   the eye.  We can't have it as a comment char by itself, since it's a
-   hex-number prefix.  */
-#define ASM_COMMENT_START "!#"
+#define ASM_COMMENT_START "#"
 
 /* These aren't currently functional.  We just keep them as markers.  */
-#define ASM_APP_ON "%APP\n"
-#define ASM_APP_OFF "%NO_APP\n"
+#define ASM_APP_ON "#APP\n"
+#define ASM_APP_OFF "#NO_APP\n"
 
 #define OUTPUT_QUOTED_STRING(STREAM, STRING) \
  dadao_output_quoted_string (STREAM, STRING, strlen (STRING))
@@ -652,9 +646,9 @@ typedef struct { int regs; int lib; } CUMULATIVE_ARGS;
    that GCC depend on are there.  */
 
 /* These must be constant strings, since they're used in crtstuff.c.  */
-#define INIT_SECTION_ASM_OP "\t.section .init,\"ax\" ! dadaoal-incompatible"
+#define INIT_SECTION_ASM_OP "\t.section .init,\"ax\""
 
-#define FINI_SECTION_ASM_OP "\t.section .fini,\"ax\" ! dadaoal-incompatible"
+#define FINI_SECTION_ASM_OP "\t.section .fini,\"ax\""
 
 #define OBJECT_FORMAT_ELF
 
