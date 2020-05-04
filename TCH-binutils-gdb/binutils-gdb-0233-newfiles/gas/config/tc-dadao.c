@@ -362,7 +362,8 @@ const pseudo_typeS md_pseudo_table[] =
    {NULL, 0, 0}
  };
 
-const char dadao_comment_chars[] = "%!";
+const char comment_chars[] = "";
+const char line_comment_chars[] = "#";
 
 /* A ':' is a valid symbol character in dadaoal.  It's the prefix
    delimiter, but other than that, it works like a symbol character,
@@ -371,7 +372,6 @@ const char dadao_comment_chars[] = "%!";
    be stripped.  */
 const char dadao_symbol_chars[] = ":@";
 
-const char line_comment_chars[] = "*#";
 
 const char line_separator_chars[] = ";";
 

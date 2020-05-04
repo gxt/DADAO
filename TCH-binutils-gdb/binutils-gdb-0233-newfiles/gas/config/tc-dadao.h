@@ -14,9 +14,6 @@
 #define TARGET_ARCH bfd_arch_dadao
 #define TARGET_BYTES_BIG_ENDIAN 1
 
-extern const char dadao_comment_chars[];
-#define tc_comment_chars dadao_comment_chars
-
 extern const char dadao_symbol_chars[];
 #define tc_symbol_chars dadao_symbol_chars
 
