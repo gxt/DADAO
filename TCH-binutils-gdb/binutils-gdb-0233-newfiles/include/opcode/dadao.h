@@ -135,12 +135,6 @@ enum dadao_operands_type
 
    /* LOCAL.  */
    dadao_operands_local,
-
-   /* BSPEC.  */
-   dadao_operands_bspec,
-
-   /* ESPEC.  */
-   dadao_operands_espec,
  };
 
 struct dadao_opcode

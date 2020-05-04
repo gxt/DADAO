@@ -31,8 +31,6 @@ static int get_putget_operands (struct dadao_opcode *, char *, expressionS *);
 static void s_prefix (int);
 static void s_greg (int);
 static void s_loc (int);
-static void s_bspec (int);
-static void s_espec (int);
 static void dadao_s_local (int);
 static void dadao_greg_internal (char *);
 static void dadao_set_geta_branch_offset (char *, offsetT);
@@ -163,11 +161,6 @@ int pushj_stubs = 1;
 /* Do we know that the next semicolon is at the end of the operands field
    (in dadaoal mode; constant 1 in GNU mode)?  */
 int dadao_next_semicolon_is_eoln = 1;
-
-/* Do we have a BSPEC in progress?  */
-static int doing_bspec = 0;
-static const char *bspec_file;
-static unsigned int bspec_line;
 
 struct option md_longopts[] =
  {
@@ -349,12 +342,6 @@ const pseudo_typeS md_pseudo_table[] =
  {
    /* Support " .greg sym,expr" syntax.  */
    {"greg", s_greg, 0},
-
-   /* Support " .bspec expr" syntax.  */
-   {"bspec", s_bspec, 1},
-
-   /* Support " .espec" syntax.  */
-   {"espec", s_espec, 1},
 
    /* Support " .local $45" syntax.  */
    {"local", dadao_s_local, 1},
@@ -855,8 +842,6 @@ md_assemble (char *str)
 	case dadao_operands_byte:
 	case dadao_operands_prefix:
 	case dadao_operands_local:
-	case dadao_operands_bspec:
-	case dadao_operands_espec:
 	  if (current_fb_label >= 0)
 	    colon (fb_label_name (current_fb_label, 1));
 	  else if (pending_label != NULL)
@@ -907,16 +892,6 @@ md_assemble (char *str)
 	case dadao_operands_local:
 	  /* LOCAL */
 	  dadao_s_local (0);
-	  break;
-
-	case dadao_operands_bspec:
-	  /* BSPEC */
-	  s_bspec (0);
-	  break;
-
-	case dadao_operands_espec:
-	  /* ESPEC */
-	  s_espec (0);
 	  break;
 
 	default:
@@ -2070,92 +2045,6 @@ s_greg (int unused ATTRIBUTE_UNUSED)
     }
   else
     dadao_greg_internal (NULL);
-}
-
-/* The "BSPEC expr" worker.  */
-
-static void
-s_bspec (int unused ATTRIBUTE_UNUSED)
-{
-  asection *expsec;
-  asection *sec;
-  char secname[sizeof (DADAO_OTHER_SPEC_SECTION_PREFIX) + 20]
-    = DADAO_OTHER_SPEC_SECTION_PREFIX;
-  expressionS exp;
-  int n;
-
-  /* Get a constant expression which we can evaluate *now*.  Supporting
-     more complex (though assembly-time computable) expressions is
-     feasible but Too Much Work for something of unknown usefulness like
-     BSPEC-ESPEC.  */
-  expsec = expression (&exp);
-  dadao_handle_rest_of_empty_line ();
-
-  /* Check that we don't have another BSPEC in progress.  */
-  if (doing_bspec)
-    {
-      as_bad (_("BSPEC already active.  Nesting is not supported."));
-      return;
-    }
-
-  if (exp.X_op != O_constant
-      || expsec != absolute_section
-      || exp.X_add_number < 0
-      || exp.X_add_number > 65535)
-    {
-      as_bad (_("invalid BSPEC expression"));
-      exp.X_add_number = 0;
-    }
-
-  n = (int) exp.X_add_number;
-
-  sprintf (secname + strlen (DADAO_OTHER_SPEC_SECTION_PREFIX), "%d", n);
-  sec = bfd_get_section_by_name (stdoutput, secname);
-  if (sec == NULL)
-    {
-      /* We need a non-volatile name as it will be stored in the section
-         struct.  */
-      char *newsecname = xstrdup (secname);
-      sec = bfd_make_section (stdoutput, newsecname);
-
-      if (sec == NULL)
-	as_fatal (_("can't create section %s"), newsecname);
-
-      if (!bfd_set_section_flags (stdoutput, sec,
-				  bfd_get_section_flags (stdoutput, sec)
-				  | SEC_READONLY))
-	as_fatal (_("can't set section flags for section %s"), newsecname);
-    }
-
-  /* Tell ELF about the pending section change.  */
-  obj_elf_section_change_hook ();
-  subseg_set (sec, 0);
-
-  /* Save position for missing ESPEC.  */
-  bspec_file = as_where (&bspec_line);
-
-  doing_bspec = 1;
-}
-
-/* The "ESPEC" worker.  */
-
-static void
-s_espec (int unused ATTRIBUTE_UNUSED)
-{
-  /* First, check that we *do* have a BSPEC in progress.  */
-  if (! doing_bspec)
-    {
-      as_bad (_("ESPEC without preceding BSPEC"));
-      return;
-    }
-
-  dadao_handle_rest_of_empty_line ();
-  doing_bspec = 0;
-
-  /* When we told ELF about the section change in s_bspec, it stored the
-     previous section for us so we can get at it with the equivalent of a
-     .previous pseudo.  */
-  obj_elf_previous (0);
 }
 
 /* The " .local expr" and " local expr" worker.  We make a BFD_DADAO_LOCAL
@@ -3484,9 +3373,6 @@ dadao_md_end (void)
      canonicalized.  */
   dadao_current_prefix = NULL;
 
-  if (doing_bspec)
-    as_bad_where (bspec_file, bspec_line, _("BSPEC without ESPEC."));
-
   /* Emit the low LOC setting of .text.  */
   if (text_has_contents && lowest_text_loc != (bfd_vma) -1)
     {
@@ -3905,16 +3791,11 @@ dadao_parse_predefined_name (char *name, expressionS *expP)
   return 1;
 }
 
-/* Just check that we don't have a BSPEC/ESPEC pair active when changing
-   sections "normally", and get knowledge about alignment from the new
-   section.  */
+/* Just get knowledge about alignment from the new section.  */
 
 void
 dadao_md_elf_section_change_hook (void)
 {
-  if (doing_bspec)
-    as_bad (_("section change from within a BSPEC/ESPEC pair is not supported"));
-
   last_alignment = bfd_get_section_alignment (now_seg->owner, now_seg);
   want_unaligned = 0;
 }
@@ -3930,13 +3811,6 @@ s_loc (int ignore ATTRIBUTE_UNUSED)
   char *p;
   symbolS *sym;
   offsetT off;
-
-  /* Must not have a BSPEC in progress.  */
-  if (doing_bspec)
-    {
-      as_bad (_("directive LOC from within a BSPEC/ESPEC pair is not supported"));
-      return;
-    }
 
   section = expression (&exp);
 

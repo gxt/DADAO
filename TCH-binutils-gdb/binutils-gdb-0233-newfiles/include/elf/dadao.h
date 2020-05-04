@@ -113,11 +113,6 @@ END_RELOC_NUMBERS (R_DADAO_max)
    in an object file.  */
 #define DADAO_REG_SECTION_NAME "*REG*"
 
-/* Appended with a number N=0..65535, this is a representation of the
-   dadaoal "BSPEC N" ... "ESPEC" directive pair; the contents go into an
-   ELF section by name ".DADAO.spec_data.N".  */
-#define DADAO_OTHER_SPEC_SECTION_PREFIX ".DADAO.spec_data."
-
 /* A section SECNAME is noted to start at "__.DADAO.start.SECNAME" by the
    presence of this symbol.  Currently only implemented for ".text"
    through the symbol "__.DADAO.start..text".  */

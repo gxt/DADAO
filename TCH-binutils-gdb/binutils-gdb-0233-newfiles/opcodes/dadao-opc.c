@@ -323,8 +323,6 @@ const struct dadao_opcode dadao_opcodes[] =
    {"tetra",	~0, ~0,		OP (tetra),		P},
    {"octa",	~0, ~0,		OP (octa),		P},
    {"local",	~0, ~0,		OP (local),		P},
-   {"bspec",	~0, ~0,		OP (bspec),		P},
-   {"espec",	~0, ~0,		OP (espec),		P},
 
    {NULL, ~0, ~0, OP (none), N}
  };
