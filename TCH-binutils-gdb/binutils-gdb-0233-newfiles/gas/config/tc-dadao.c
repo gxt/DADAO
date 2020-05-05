@@ -38,12 +38,6 @@ static int cmp_greg_val_greg_symbol_fixes (const void *, const void *);
 static void dadao_handle_rest_of_empty_line (void);
 static void dadao_discard_rest_of_line (void);
 
-/* Continue the tradition of symbols.c; use control characters to enforce
-   magic.  These are used when replacing e.g. 8F and 8B so we can handle
-   such labels correctly with the common parser hooks.  */
-#define MAGIC_FB_BACKWARD_CHAR '\003'
-#define MAGIC_FB_FORWARD_CHAR '\004'
-
 /* Copy the location of a frag to a fix.  */
 #define COPY_FR_WHERE_TO_FX(FRAG, FIX)		\
  do						\
@@ -54,8 +48,6 @@ static void dadao_discard_rest_of_line (void);
  while (0)
 
 const char *md_shortopts = "x";
-static int current_fb_label = -1;
-static char *pending_label = NULL;
 
 static bfd_vma lowest_text_loc = (bfd_vma) -1;
 static int text_has_contents = 0;
@@ -779,8 +771,6 @@ md_assemble (char *str)
     {
       as_bad (_("unknown opcode: `%s'"), str);
 
-      /* Avoid "unhandled label" errors.  */
-      pending_label = NULL;
       return;
     }
 
@@ -793,27 +783,6 @@ md_assemble (char *str)
   /* Is this a dadaoal pseudodirective?  */
   if (instruction->type == dadao_type_pseudo)
     {
-      /* For dadaoal compatibility, a label for an instruction (and
-	 emitting pseudo) refers to the _aligned_ address.  We emit the
-	 label here for the pseudos that don't handle it themselves.  When
-	 having an fb-label, emit it here, and increment the counter after
-	 the pseudo.  */
-      switch (instruction->operands)
-	{
-	case dadao_operands_loc:
-	  if (current_fb_label >= 0)
-	    colon (fb_label_name (current_fb_label, 1));
-	  else if (pending_label != NULL)
-	    {
-	      colon (pending_label);
-	      pending_label = NULL;
-	    }
-	  break;
-
-	default:
-	  break;
-	}
-
       /* Some of the pseudos emit contents, others don't.  Set a
 	 contents-emitted flag when we emit something into .text   */
       switch (instruction->operands)
@@ -831,14 +800,6 @@ md_assemble (char *str)
 	 in that they step over the end-of-line marker at the end of the
 	 line.  We don't want that here.  */
       input_line_pointer--;
-
-      /* Step up the fb-label counter if there was a definition on this
-	 line.  */
-      if (current_fb_label >= 0)
-	{
-	  fb_label_instance_inc (current_fb_label);
-	  current_fb_label = -1;
-	}
 
       /* Reset any don't-align-next-datum request, unless this was a LOC
          directive.  */
@@ -893,15 +854,6 @@ md_assemble (char *str)
     /* Reset any don't-align-next-datum request.  */
     want_unaligned = 0;
 
-  /* For dadaoal compatibility, a label for an instruction (and emitting
-     pseudo) refers to the _aligned_ address.  So we have to emit the
-     label here.  */
-  if (pending_label != NULL)
-    {
-      colon (pending_label);
-      pending_label = NULL;
-    }
-
   /* We assume that dadao_opcodes keeps having unique mnemonics for each
      opcode, so we don't have to iterate over more than one opcode; if the
      syntax does not match, then there's a syntax error.  */
@@ -942,16 +894,6 @@ md_assemble (char *str)
     n_operands = get_putget_operands (instruction, operands, exp);
   else
     n_operands = get_operands (max_operands, operands, exp);
-
-  /* If there's a fb-label on the current line, set that label.  This must
-     be done *after* evaluating expressions of operands, since neither a
-     "1B" nor a "1F" refers to "1H" on the same line.  */
-  if (current_fb_label >= 0)
-    {
-      fb_label_instance_inc (current_fb_label);
-      colon (fb_label_name (current_fb_label, 0));
-      current_fb_label = -1;
-    }
 
   /* We also assume that the length of the instruction is at least 4, the
      size of an unexpanded instruction.  We need a self-contained frag
@@ -2599,54 +2541,8 @@ dadao_handle_dadaoal (void)
   char *label = NULL;
   char c;
 
-  if (pending_label != NULL)
-    as_fatal (_("internal: unhandled label %s"), pending_label);
-
   if (dadao_gnu_syntax)
     return;
-
-  /* If we're on a line with a label, check if it's a dadaoal fb-label.
-     Save an indicator and skip the label; it must be set only after all
-     fb-labels of expressions are evaluated.  */
-  if (ISDIGIT (s[0]) && s[1] == 'H' && ISSPACE (s[2]))
-    {
-      current_fb_label = s[0] - '0';
-
-      /* We have to skip the label, but also preserve the newlineness of
-	 the previous character, since the caller checks that.  It's a
-	 mess we blame on the caller.  */
-      s[1] = s[-1];
-      s += 2;
-      input_line_pointer = s;
-
-      while (*s && ISSPACE (*s) && ! is_end_of_line[(unsigned int) *s])
-	s++;
-
-      /* For errors emitted here, the book-keeping is off by one; the
-	 caller is about to bump the counters.  Adjust the error messages.  */
-      if (is_end_of_line[(unsigned int) *s])
-	{
-	  unsigned int line;
-	  const char * name = as_where (&line);
-	  as_bad_where (name, line + 1,
-			_("[0-9]H labels may not appear alone on a line"));
-	  current_fb_label = -1;
-	}
-      if (*s == '.')
-	{
-	  unsigned int line;
-	  const char * name  = as_where (&line);
-	  as_bad_where (name, line + 1,
-			_("[0-9]H labels do not mix with dot-pseudos"));
-	  current_fb_label = -1;
-	}
-
-      /* Back off to the last space before the opcode so we don't handle
-	 the opcode as a label.  */
-      s--;
-    }
-  else
-    current_fb_label = -1;
 
   if (*s == '.')
     {
@@ -2681,25 +2577,6 @@ dadao_handle_dadaoal (void)
   if (*insn == '.')
     return;
 
-  /* Find local labels of operands.  Look for "[0-9][FB]" where the
-     characters before and after are not part of words.  Break if a single
-     or double quote is seen anywhere.  It means we can't have local
-     labels as part of list with mixed quoted and unquoted members for
-     dadaoal compatibility but we can't have it all.  For the moment.
-     Replace the '<N>B' or '<N>F' with MAGIC_FB_BACKWARD_CHAR<N> and
-     MAGIC_FB_FORWARD_CHAR<N> respectively.  */
-
-  /* First make sure we don't have any of the magic characters on the line
-     appearing as input.  */
-  while (*s)
-    {
-      c = *s++;
-      if (is_end_of_line[(unsigned int) c])
-	break;
-      if (c == MAGIC_FB_BACKWARD_CHAR || c == MAGIC_FB_FORWARD_CHAR)
-	as_bad (_("invalid characters in input"));
-    }
-
   /* Scan again, this time looking for ';' after operands.  */
   s = insn;
 
@@ -2717,8 +2594,6 @@ dadao_handle_dadaoal (void)
 	 && ! is_end_of_line[(unsigned int) *s])
     s++;
 
-  /* Skip the operands.  While doing this, replace [0-9][BF] with
-     (MAGIC_FB_BACKWARD_CHAR|MAGIC_FB_FORWARD_CHAR)[0-9].  */
   while ((c = *s) != 0
 	 && ! ISSPACE (c)
 	 && c != ';'
@@ -2747,8 +2622,6 @@ dadao_handle_dadaoal (void)
 	    s++;
 	  else
 	    {
-	      s[0] = (s[1] == 'B'
-		      ? MAGIC_FB_BACKWARD_CHAR : MAGIC_FB_FORWARD_CHAR);
 	      s[1] = c;
 	    }
 	}
@@ -2785,24 +2658,6 @@ dadao_handle_dadaoal (void)
 	 they aren't bumped afterwards.  */
       bump_line_counters ();
 
-      /* A fb-label is valid as an IS-label.  */
-      if (current_fb_label >= 0)
-	{
-	  char *fb_name;
-
-	  fb_name = fb_label_name (current_fb_label, 1);
-	  fb_label_instance_inc (current_fb_label);
-	  current_fb_label = -1;
-	}
-      else
-	{
-	  if (pending_label == NULL)
-	    as_bad (_("empty label field for IS"));
-	  else
-	    equals (pending_label, 0);
-	  pending_label = NULL;
-	}
-
       /* For dadaoal, we can have comments without a comment-start
 	 character.   */
       dadao_handle_rest_of_empty_line ();
@@ -2823,86 +2678,10 @@ dadao_handle_dadaoal (void)
 	 they aren't bumped afterwards.  */
       bump_line_counters ();
 
-      /* A fb-label is valid as a GREG-label.  */
-      if (current_fb_label >= 0)
-	{
-	  char *fb_name;
-
-	  fb_name = fb_label_name (current_fb_label, 1);
-
-	  /* Make sure we save the canonical name and don't get bitten by
-             prefixes.  */
-	  fb_label_instance_inc (current_fb_label);
-	  current_fb_label = -1;
-	}
-      else
-	dadao_greg_internal (pending_label);
-
       /* Back up before the end-of-line marker that was skipped in
 	 dadao_greg_internal.  */
       input_line_pointer--;
       input_line_pointer[-1] = ' ';
-
-      pending_label = NULL;
-    }
-  else if (pending_label != NULL)
-    {
-      input_line_pointer += strlen (pending_label);
-
-      /* See comment above about getting line numbers bumped.  */
-      input_line_pointer[-1] = '\n';
-    }
-}
-
-/* Give the value of an fb-label rewritten as in dadao_handle_dadaoal, when
-   parsing an expression.
-
-   On valid calls, input_line_pointer points at a MAGIC_FB_BACKWARD_CHAR
-   or MAGIC_FB_BACKWARD_CHAR, followed by an ascii digit for the label.
-   We fill in the label as an expression.  */
-
-void
-dadao_fb_label (expressionS *expP)
-{
-  symbolS *sym;
-  char *fb_internal_name;
-
-  /* This doesn't happen when not using dadaoal syntax.  */
-  if (dadao_gnu_syntax
-      || (input_line_pointer[0] != MAGIC_FB_BACKWARD_CHAR
-	  && input_line_pointer[0] != MAGIC_FB_FORWARD_CHAR))
-    return;
-
-  /* The current backward reference has augmentation 0.  A forward
-     reference has augmentation 1, unless it's the same as a fb-label on
-     _this_ line, in which case we add one more so we don't refer to it.
-     This is the semantics of dadaoal; it differs to that of common
-     fb-labels which refer to a here-label on the current line as a
-     backward reference.  */
-  fb_internal_name
-    = fb_label_name (input_line_pointer[1] - '0',
-		     (input_line_pointer[0] == MAGIC_FB_FORWARD_CHAR ? 1 : 0)
-		     + ((input_line_pointer[1] - '0' == current_fb_label
-			 && input_line_pointer[0] == MAGIC_FB_FORWARD_CHAR)
-			? 1 : 0));
-
-  input_line_pointer += 2;
-  sym = symbol_find_or_make (fb_internal_name);
-
-  /* We don't have to clean up unrelated fields here; we just do what the
-     expr machinery does, but *not* just what it does for [0-9][fb], since
-     we need to treat those as ordinary symbols sometimes; see testcases
-     err-byte2.s and fb-2.s.  */
-  if (S_GET_SEGMENT (sym) == absolute_section)
-    {
-      expP->X_op = O_constant;
-      expP->X_add_number = S_GET_VALUE (sym);
-    }
-  else
-    {
-      expP->X_op = O_symbol;
-      expP->X_add_symbol = sym;
-      expP->X_add_number = 0;
     }
 }
 

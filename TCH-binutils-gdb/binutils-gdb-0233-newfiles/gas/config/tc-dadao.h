@@ -34,8 +34,6 @@ extern int dadao_gnu_syntax;
 
 #define md_undefined_symbol(x) NULL
 
-extern void dadao_fb_label (expressionS *);
-
 /* Since integer_constant is local to expr.c, we have to make this a
    macro.  FIXME: Do it cleaner.  */
 #define md_operand(exp)							\
@@ -49,8 +47,6 @@ extern void dadao_fb_label (expressionS *);
       else if (input_line_pointer[0] == '&'				\
 	       && input_line_pointer[1] != '&')				\
 	as_bad (_("`&' serial number operator is not supported"));	\
-      else								\
-	dadao_fb_label (exp);						\
     }									\
   while (0)
 
