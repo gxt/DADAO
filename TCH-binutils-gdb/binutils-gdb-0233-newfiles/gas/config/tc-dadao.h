@@ -30,16 +30,7 @@ extern void dadao_md_begin (void);
 extern void dadao_md_end (void);
 #define md_end dadao_md_end
 
-extern char *dadao_current_prefix;
-
 extern int dadao_gnu_syntax;
-
-extern char *dadao_prefix_name (char *);
-
-/* We implement when *creating* a symbol, we also need to strip a ':' or
-   prepend a prefix.  */
-#define tc_canonicalize_symbol_name(x) \
- (dadao_current_prefix == NULL && (x)[0] != ':' ? (x) : dadao_prefix_name (x))
 
 #define md_undefined_symbol(x) NULL
 

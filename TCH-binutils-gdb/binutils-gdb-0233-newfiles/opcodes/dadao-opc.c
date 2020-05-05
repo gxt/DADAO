@@ -317,7 +317,6 @@ const struct dadao_opcode dadao_opcodes[] =
       Note that IS and GREG are handled fully by md_start_line_hook, so
       they're not here.  */
    {"loc",	~0, ~0,		OP (loc),		P},
-   {"prefix",	~0, ~0,		OP (prefix),		P},
    {"local",	~0, ~0,		OP (local),		P},
 
    {NULL, ~0, ~0, OP (none), N}

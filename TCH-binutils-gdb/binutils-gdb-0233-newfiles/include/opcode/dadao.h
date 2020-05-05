@@ -118,9 +118,6 @@ enum dadao_operands_type
    /* LOC.  */
    dadao_operands_loc,
 
-   /* PREFIX.  */
-   dadao_operands_prefix,
-
    /* LOCAL.  */
    dadao_operands_local,
  };

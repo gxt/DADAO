@@ -13,7 +13,6 @@
 #include "opcode/dadao.h"
 #include "safe-ctype.h"
 #include "dwarf2dbg.h"
-#include "obstack.h"
 
 /* Something to describe what we need to do with a fixup before output,
    for example assert something of what it became or make a relocation.  */
@@ -28,7 +27,6 @@ enum dadao_fixup_action
 static int get_spec_regno (char *);
 static int get_operands (int, char *, expressionS *);
 static int get_putget_operands (struct dadao_opcode *, char *, expressionS *);
-static void s_prefix (int);
 static void s_greg (int);
 static void s_loc (int);
 static void dadao_s_local (int);
@@ -189,11 +187,6 @@ struct option md_longopts[] =
 size_t md_longopts_size = sizeof (md_longopts);
 
 static struct hash_control *dadao_opcode_hash;
-
-/* We use these when implementing the PREFIX pseudo.  */
-char *dadao_current_prefix;
-struct obstack dadao_sym_obstack;
-
 
 /* For DADAO, we encode the relax_substateT:s (in e.g. fr_substate) as one
    bit length, and the relax-type shifted on top of that.  There seems to
@@ -709,9 +702,6 @@ dadao_md_begin (void)
   int i;
   const struct dadao_opcode *opcode;
 
-  /* We assume nobody will use this, so don't allocate any room.  */
-  obstack_begin (&dadao_sym_obstack, 0);
-
   dadao_opcode_hash = hash_new ();
 
   real_reg_section
@@ -815,7 +805,6 @@ md_assemble (char *str)
       switch (instruction->operands)
 	{
 	case dadao_operands_loc:
-	case dadao_operands_prefix:
 	case dadao_operands_local:
 	  if (current_fb_label >= 0)
 	    colon (fb_label_name (current_fb_label, 1));
@@ -837,11 +826,6 @@ md_assemble (char *str)
 	case dadao_operands_loc:
 	  /* LOC */
 	  s_loc (0);
-	  break;
-
-	case dadao_operands_prefix:
-	  /* PREFIX */
-	  s_prefix (0);
 	  break;
 
 	case dadao_operands_local:
@@ -1852,71 +1836,10 @@ md_assemble (char *str)
     }
 }
 
-/* The PREFIX pseudo.  */
-
-static void
-s_prefix (int unused ATTRIBUTE_UNUSED)
-{
-  char *p;
-  int c;
-
-  SKIP_WHITESPACE ();
-
-  c = get_symbol_name (&p);
-  
-  /* Resetting prefix?  */
-  if (*p == ':' && p[1] == 0)
-    dadao_current_prefix = NULL;
-  else
-    {
-      /* Put this prefix on the dadao symbols obstack.  We could malloc and
-	 free it separately, but then we'd have to worry about that.
-	 People using up memory on prefixes have other problems.  */
-      obstack_grow (&dadao_sym_obstack, p, strlen (p) + 1);
-      p = obstack_finish (&dadao_sym_obstack);
-
-      /* Accumulate prefixes, and strip a leading ':'.  */
-      if (dadao_current_prefix != NULL || *p == ':')
-	p = dadao_prefix_name (p);
-
-      dadao_current_prefix = p;
-    }
-
-  (void) restore_line_pointer (c);
-
-  dadao_handle_rest_of_empty_line ();
-}
-
-/* We implement prefixes by using the tc_canonicalize_symbol_name hook,
-   and store each prefixed name on a (separate) obstack.  This means that
-   the name is on the "notes" obstack in non-prefixed form and on the
-   dadao_sym_obstack in prefixed form, but currently it is not worth
-   rewriting the whole GAS symbol handling to improve "hooking" to avoid
-   that.  (It might be worth a rewrite for other reasons, though).  */
-
-char *
-dadao_prefix_name (char *shortname)
-{
-  if (*shortname == ':')
-    return shortname + 1;
-
-  if (dadao_current_prefix == NULL)
-    as_fatal (_("internal: dadao_prefix_name but empty prefix"));
-
-  if (*shortname == '$')
-    return shortname;
-
-  obstack_grow (&dadao_sym_obstack, dadao_current_prefix,
-		strlen (dadao_current_prefix));
-  obstack_grow (&dadao_sym_obstack, shortname, strlen (shortname) + 1);
-  return obstack_finish (&dadao_sym_obstack);
-}
-
 /* The GREG pseudo.  At LABEL, we have the name of a symbol that we
    want to make a register symbol, and which should be initialized with
    the value in the expression at INPUT_LINE_POINTER (defaulting to 0).
-   Either and (perhaps less meaningful) both may be missing.  LABEL must
-   be persistent, perhaps allocated on an obstack.  */
+   Either and (perhaps less meaningful) both may be missing. */
 
 static void
 dadao_greg_internal (char *label)
@@ -1958,10 +1881,7 @@ dadao_greg_internal (char *label)
 	}
     }
 
-  /* We must handle prefixes here, as we save the labels and expressions
-     to be output later.  */
-  dadao_raw_gregs[n_of_raw_gregs].label
-    = dadao_current_prefix == NULL ? label : dadao_prefix_name (label);
+  dadao_raw_gregs[n_of_raw_gregs].label =label;
 
   if (n_of_raw_gregs == MAX_GREGS - 1)
     as_bad (_("too many GREG registers allocated (max %d)"), MAX_GREGS);
@@ -1991,15 +1911,7 @@ s_greg (int unused ATTRIBUTE_UNUSED)
   if (! is_end_of_line[(unsigned char) c])
     input_line_pointer++;
 
-  if (*p)
-    {
-      /* The label must be persistent; it's not used until after all input
-	 has been seen.  */
-      obstack_grow (&dadao_sym_obstack, p, strlen (p) + 1);
-      dadao_greg_internal (obstack_finish (&dadao_sym_obstack));
-    }
-  else
-    dadao_greg_internal (NULL);
+  dadao_greg_internal (NULL);
 }
 
 /* The " .local expr" and " local expr" worker.  We make a BFD_DADAO_LOCAL
@@ -2938,13 +2850,7 @@ dadao_handle_dadaoal (void)
 	{
 	  char *fb_name;
 
-	  /* We need to save this name on our symbol obstack, since the
-	     string we got in fb_label_name is volatile and will change
-	     with every call to fb_label_name, like those resulting from
-	     parsing the IS-operand.  */
 	  fb_name = fb_label_name (current_fb_label, 1);
-	  obstack_grow (&dadao_sym_obstack, fb_name, strlen (fb_name) + 1);
-	  equals (obstack_finish (&dadao_sym_obstack), 0);
 	  fb_label_instance_inc (current_fb_label);
 	  current_fb_label = -1;
 	}
@@ -2982,17 +2888,10 @@ dadao_handle_dadaoal (void)
 	{
 	  char *fb_name;
 
-	  /* We need to save this name on our symbol obstack, since the
-	     string we got in fb_label_name is volatile and will change
-	     with every call to fb_label_name, like those resulting from
-	     parsing the IS-operand.  */
 	  fb_name = fb_label_name (current_fb_label, 1);
 
 	  /* Make sure we save the canonical name and don't get bitten by
              prefixes.  */
-	  obstack_1grow (&dadao_sym_obstack, ':');
-	  obstack_grow (&dadao_sym_obstack, fb_name, strlen (fb_name) + 1);
-	  dadao_greg_internal (obstack_finish (&dadao_sym_obstack));
 	  fb_label_instance_inc (current_fb_label);
 	  current_fb_label = -1;
 	}
@@ -3295,10 +3194,6 @@ dadao_md_end (void)
 
   /* The first frag of GREG:s going into the register contents section.  */
   fragS *dadao_reg_contents_frags = NULL;
-
-  /* Reset prefix.  All labels reachable at this point must be
-     canonicalized.  */
-  dadao_current_prefix = NULL;
 
   /* Emit the low LOC setting of .text.  */
   if (text_has_contents && lowest_text_loc != (bfd_vma) -1)
