@@ -338,8 +338,12 @@ const relax_typeS dadao_relax_table[] =
    {0, 0,	PUSHJ_MAX_LEN, 		0}
 };
 
-const pseudo_typeS md_pseudo_table[] =
- {
+const pseudo_typeS md_pseudo_table[] = {
+	{"dd.byte", cons, 1},
+	{"dd.wyde", cons, 2},
+	{"dd.tetra", cons, 4},
+	{"dd.octa", cons, 8},
+
    /* Support " .greg sym,expr" syntax.  */
    {"greg", s_greg, 0},
 
