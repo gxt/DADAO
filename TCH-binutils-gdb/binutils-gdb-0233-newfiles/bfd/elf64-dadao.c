@@ -2160,34 +2160,6 @@ dadao_elf_add_symbol_hook (bfd *abfd,
   return TRUE;
 }
 
-/* We consider symbols matching "L.*:[0-9]+" to be local symbols.  */
-
-static bfd_boolean
-dadao_elf_is_local_label_name (bfd *abfd, const char *name)
-{
-  const char *colpos;
-  int digits;
-
-  /* Also include the default local-label definition.  */
-  if (_bfd_elf_is_local_label_name (abfd, name))
-    return TRUE;
-
-  if (*name != 'L')
-    return FALSE;
-
-  /* If there's no ":", or more than one, it's not a local symbol.  */
-  colpos = strchr (name, ':');
-  if (colpos == NULL || strchr (colpos + 1, ':') != NULL)
-    return FALSE;
-
-  /* Check that there are remaining characters and that they are digits.  */
-  if (colpos[1] == 0)
-    return FALSE;
-
-  digits = strspn (colpos + 1, "0123456789");
-  return digits != 0 && colpos[1 + digits] == 0;
-}
-
 /* We get rid of the register section here.  */
 
 bfd_boolean
@@ -2887,9 +2859,6 @@ dadao_elf_relax_section (bfd *abfd,
 
 #define bfd_elf64_bfd_copy_link_hash_symbol_type \
   _bfd_generic_copy_link_hash_symbol_type
-
-#define bfd_elf64_bfd_is_local_label_name \
-	dadao_elf_is_local_label_name
 
 #define elf_backend_may_use_rel_p	0
 #define elf_backend_may_use_rela_p	1

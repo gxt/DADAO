@@ -14,12 +14,6 @@
 #define TARGET_ARCH bfd_arch_dadao
 #define TARGET_BYTES_BIG_ENDIAN 1
 
-extern const char dadao_symbol_chars[];
-#define tc_symbol_chars dadao_symbol_chars
-
-/* "@" is a synonym for ".".  */
-#define LEX_AT (LEX_BEGIN_NAME)
-
 extern int dadao_label_without_colon_this_line (void);
 #define LABELS_WITHOUT_COLONS dadao_label_without_colon_this_line ()
 
@@ -36,26 +30,9 @@ extern void dadao_md_begin (void);
 extern void dadao_md_end (void);
 #define md_end dadao_md_end
 
-extern int dadao_current_location \
-  (void (*fn) (expressionS *), expressionS *);
-extern int dadao_parse_predefined_name (char *, expressionS *);
-
 extern char *dadao_current_prefix;
 
-/* A bit ugly, since we "know" that there's a static function
-   current_location that does what we want.  We also strip off a leading
-   ':' in another ugly way.
-
-   The [DVWIOUZX]_Handler symbols are provided when-used.  */
-
 extern int dadao_gnu_syntax;
-#define md_parse_name(name, exp, mode, cpos)			\
- (! dadao_gnu_syntax						\
-  && (name[0] == '@'						\
-      ? (! is_part_of_name (name[1])				\
-	 && dadao_current_location (current_location, exp))	\
-      : ((name[0] == ':' || ISUPPER (name[0]))			\
-	 && dadao_parse_predefined_name (name, exp))))
 
 extern char *dadao_prefix_name (char *);
 

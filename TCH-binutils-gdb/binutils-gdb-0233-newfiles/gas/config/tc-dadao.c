@@ -351,15 +351,6 @@ const pseudo_typeS md_pseudo_table[] =
 
 const char comment_chars[] = "";
 const char line_comment_chars[] = "#";
-
-/* A ':' is a valid symbol character in dadaoal.  It's the prefix
-   delimiter, but other than that, it works like a symbol character,
-   except that we strip one off at the beginning of symbols.  An '@' is a
-   symbol by itself (for the current location); space around it must not
-   be stripped.  */
-const char dadao_symbol_chars[] = ":@";
-
-
 const char line_separator_chars[] = ";";
 
 const char EXP_CHARS[] = "eE";
@@ -406,16 +397,6 @@ dadao_fill_nops (char *opcodep, int n)
 
   for (i = 0; i < n; i++)
     md_number_to_chars (opcodep + i * 4, SWYM_INSN_BYTE << 24, 4);
-}
-
-/* See macro md_parse_name in tc-dadao.h.  */
-
-int
-dadao_current_location (void (*fn) (expressionS *), expressionS *exp)
-{
-  (*fn) (exp);
-
-  return 1;
 }
 
 /* Get up to three operands, filling them into the exp array.
@@ -494,9 +475,6 @@ get_spec_regno (char *name)
 
   if (name == NULL)
     return -1;
-
-  if (*name == ':')
-    name++;
 
   /* Well, it's a short array and we'll most often just match the first
      entry, rJ.  */
@@ -731,10 +709,6 @@ dadao_md_begin (void)
 
   /* We assume nobody will use this, so don't allocate any room.  */
   obstack_begin (&dadao_sym_obstack, 0);
-
-  /* This will break the day the "lex" thingy changes.  For now, it's the
-     only way to make ':' part of a name, and a name beginner.  */
-  lex_type[':'] = (LEX_NAME | LEX_BEGIN_NAME);
 
   dadao_opcode_hash = hash_new ();
 
@@ -2869,34 +2843,6 @@ dadao_handle_dadaoal (void)
     /* Empty */
     ;
 
-  /* Remove a trailing ":" off labels, as they'd otherwise be considered
-     part of the name.  But don't do this for local labels.  */
-  if (s != input_line_pointer && s[-1] == ':'
-      && (s - 2 != input_line_pointer
-	  || ! ISDIGIT (s[-2])))
-    s[-1] = ' ';
-  else if (label != NULL
-	   /* For a lone label on a line, we don't attach it to the next
-	      instruction or DADAOAL-pseudo (getting its alignment).  Thus
-	      is acts like a "normal" :-ended label.  Ditto if it's
-	      followed by a non-DADAOAL pseudo.  */
-	   && !is_end_of_line[(unsigned int) *insn]
-	   && *insn != '.')
-    {
-      /* For labels that don't end in ":", we save it so we can later give
-	 it the same alignment and address as the associated instruction.  */
-
-      /* Make room for the label including the ending nul.  */
-      size_t len_0 = s - label + 1;
-
-      /* Save this label on the DADAO symbol obstack.  Saving it on an
-	 obstack is needless for "IS"-pseudos, but it's harmless and we
-	 avoid a little code-cluttering.  */
-      obstack_grow (&dadao_sym_obstack, label, len_0);
-      pending_label = obstack_finish (&dadao_sym_obstack);
-      pending_label[len_0 - 1] = 0;
-    }
-
   /* If we have a non-DADAOAL pseudo, we have not business with the rest of
      the line.  */
   if (*insn == '.')
@@ -3678,117 +3624,6 @@ dadao_frob_file (void)
       --stdoutput->section_count;
     }
 
-}
-
-/* Provide an expression for a built-in name provided when-used.
-   Either a symbol that is a handler; living in 0x10*[1..8] and having
-   name [DVWIOUZX]_Handler, or a dadaoal built-in symbol.
-
-   If the name isn't a built-in name and parsed into *EXPP, return zero.  */
-
-int
-dadao_parse_predefined_name (char *name, expressionS *expP)
-{
-  char *canon_name;
-  const char *handler_charp;
-  const char handler_chars[] = "DVWIOUZX";
-  symbolS *symp;
-
-  if (! predefined_syms)
-    return 0;
-
-  canon_name = tc_canonicalize_symbol_name (name);
-
-  if (canon_name[1] == '_'
-      && strcmp (canon_name + 2, "Handler") == 0
-      && (handler_charp = strchr (handler_chars, *canon_name)) != NULL)
-    {
-      /* If the symbol doesn't exist, provide one relative to the .text
-	 section.
-
-	 FIXME: We should provide separate sections, mapped in the linker
-	 script.  */
-      symp = symbol_find (name);
-      if (symp == NULL)
-	symp = symbol_new (name, text_section,
-			   0x10 * (handler_charp + 1 - handler_chars),
-			   &zero_address_frag);
-    }
-  else
-    {
-      /* These symbols appear when referenced; needed for
-         dadaoal-compatible programs.  */
-      unsigned int i;
-
-      static const struct
-      {
-	const char *name;
-	valueT val;
-      } predefined_abs_syms[] =
-	{
-	  {"Data_Segment", (valueT) 0x20 << 56},
-	  {"Pool_Segment", (valueT) 0x40 << 56},
-	  {"Stack_Segment", (valueT) 0x60 << 56},
-	  {"StdIn", 0},
-	  {"StdOut", 1},
-	  {"StdErr", 2},
-	  {"TextRead", 0},
-	  {"TextWrite", 1},
-	  {"BinaryRead", 2},
-	  {"BinaryWrite", 3},
-	  {"BinaryReadWrite", 4},
-	  {"Halt", 0},
-	  {"Fopen", 1},
-	  {"Fclose", 2},
-	  {"Fread", 3},
-	  {"Fgets", 4},
-	  {"Fgetws", 5},
-	  {"Fwrite", 6},
-	  {"Fputs", 7},
-	  {"Fputws", 8},
-	  {"Fseek", 9},
-	  {"Ftell", 10},
-	  {"D_BIT", 0x80},
-	  {"V_BIT", 0x40},
-	  {"W_BIT", 0x20},
-	  {"I_BIT", 0x10},
-	  {"O_BIT", 0x08},
-	  {"U_BIT", 0x04},
-	  {"Z_BIT", 0x02},
-	  {"X_BIT", 0x01},
-	  {"Inf", 0x7ff00000}
-	};
-
-      /* If it's already in the symbol table, we shouldn't do anything.  */
-      symp = symbol_find (name);
-      if (symp != NULL)
-	return 0;
-
-      for (i = 0;
-	   i < sizeof (predefined_abs_syms) / sizeof (predefined_abs_syms[0]);
-	   i++)
-	if (strcmp (canon_name, predefined_abs_syms[i].name) == 0)
-	  {
-	    symbol_table_insert (symbol_new (predefined_abs_syms[i].name,
-					     absolute_section,
-					     predefined_abs_syms[i].val,
-					     &zero_address_frag));
-
-	    /* Let gas find the symbol we just created, through its
-               ordinary lookup.  */
-	    return 0;
-	  }
-
-      /* Not one of those symbols.  Let gas handle it.  */
-      return 0;
-    }
-
-  expP->X_op = O_symbol;
-  expP->X_add_number = 0;
-  expP->X_add_symbol = symp;
-  expP->X_op_symbol = NULL;
-
-  return 1;
 }
 
 /* Just get knowledge about alignment from the new section.  */
