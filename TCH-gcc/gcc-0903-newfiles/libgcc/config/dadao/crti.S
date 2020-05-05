@@ -30,8 +30,8 @@ crtsdat	OCTA dstart
 # "Main" is the magic symbol the simulator jumps to.  We want to go
 # on to "main".
 # We need to set rG explicitly to avoid hard-to-debug situations.
-Main	SETL	$255,32
-	PUT	rG,$255
+Main	SETL	$63,32
+	PUT	rG,$63
 
 # Make sure we have valid memory for addresses in .text and .data (and
 # .bss, but we include this in .data), for the benefit of mmo-using
@@ -49,38 +49,38 @@ Main	SETL	$255,32
 # happens after that, we'll need to distinguish between
 # access-for-execution and read/write access.
 
-	GETA	$255,crtstxt
-	LDOU	$2,$255,0
+	GETA	$63,crtstxt
+	LDOU	$2,$63,0
 	ANDNL	$2,#7ff
-	LDOU	$3,$255,8
+	LDOU	$3,$63,8
 	SETL	$4,2048
 0H	PRELD	0,$2,0
 	ADDU	$2,$2,$4
-	CMP	$255,$2,$3
-	BN	$255,0B
+	CMP	$63,$2,$3
+	BN	$63,0B
 
-	GETA	$255,crtsdat
-	LDOU	$2,$255,0
+	GETA	$63,crtsdat
+	LDOU	$2,$63,0
 	ANDNL	$2,#7ff
-	LDOU	$3,$255,8
+	LDOU	$3,$63,8
 0H	PRELD	0,$2,0
 	ADDU	$2,$2,$4
-	CMP	$255,$2,$3
-	BN	$255,0B
+	CMP	$63,$2,$3
+	BN	$63,0B
 
 # Initialize the stack pointer.  It is supposedly made a global
 # zero-initialized (allowed to change) register in crtn.S; we use the
 # explicit number.
-	GETA	$255,stackpp
-	LDOU	$254,$255,0
+	GETA	$63,stackpp
+	LDOU	$62,$63,0
 
 	PUSHJ	$2,_init
 
 #ifdef __DADAO_ABI_GNU__
 # Copy argc and argv from their initial position to argument registers
 # where necessary.
-	SET	$231,$0
-	SET	$232,$1
+	SET	$39,$0
+	SET	$40,$1
 #else
 # For the dadao ABI, we need to move arguments.  The return value will
 # appear in $0.
@@ -102,13 +102,13 @@ Main	SETL	$255,32
 _init:
 	GET	$0,rJ
 	PUSHJ	$1,0F
-	SETL	$255,255
+	SETL	$63,63
 	TRAP	0,0,0
 0H	TRAP	0,0,0
 
 # Register _fini to be executed as the last atexit function.
 #ifdef __DADAO_ABI_GNU__
-	GETA	$231,_fini
+	GETA	$39,_fini
 #else
 	GETA	$1,_fini
 #endif
@@ -119,6 +119,6 @@ _init:
 _fini:
 	GET	$0,rJ
 	PUSHJ	$1,0F
-	SETL	$255,255
+	SETL	$63,63
 	TRAP	0,0,0
 0H	TRAP	0,0,0

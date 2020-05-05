@@ -55,15 +55,15 @@ gnu_parm_reg_1 GREG
 # like in gcc/crtstuff.c.
 
 	.section .init,"ax",@progbits
-	GETA	$255,0F
-	PUT	rJ,$255
+	GETA	$63,0F
+	PUT	rJ,$63
 	POP	0,0
 0H	PUT	rJ,$0
 	POP	0,0
 	
 	.section .fini,"ax",@progbits
-	GETA	$255,0F
-	PUT	rJ,$255
+	GETA	$63,0F
+	PUT	rJ,$63
 	POP	0,0
 0H	PUT	rJ,$0
 	POP	0,0
