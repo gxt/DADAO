@@ -13,7 +13,6 @@ extern int dadao_reversible_cc_mode (machine_mode);
 extern const char *dadao_text_section_asm_op (void);
 extern const char *dadao_data_section_asm_op (void);
 extern void dadao_output_quoted_string (FILE *, const char *, int);
-extern void dadao_asm_output_ascii (FILE *, const char *, int);
 extern void dadao_asm_output_label (FILE *, const char *);
 extern void dadao_asm_output_internal_label (FILE *, const char *);
 extern void dadao_asm_weaken_label (FILE *, const char *);

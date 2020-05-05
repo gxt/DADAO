@@ -592,11 +592,6 @@ typedef struct { int regs; int lib; } CUMULATIVE_ARGS;
 
 #define TARGET_ASM_NAMED_SECTION default_elf_asm_named_section
 
-/* Node: Data Output */
-
-#define ASM_OUTPUT_ASCII(STREAM, PTR, LEN) \
- dadao_asm_output_ascii (STREAM, PTR, LEN)
-
 /* Node: Uninitialized Data */
 
 #define ASM_OUTPUT_ALIGNED_COMMON(ST, N, S, A) \

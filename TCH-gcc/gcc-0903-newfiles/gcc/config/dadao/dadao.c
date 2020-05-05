@@ -965,8 +965,8 @@ dadao_asm_trampoline_template (FILE *stream)
   fprintf (stream, "LDOU %s,$255,0\n\t", reg_names[DADAO_STATIC_CHAIN_REGNUM]);
   fprintf (stream, "LDOU $255,$255,8\n\t");
   fprintf (stream, "GO $255,$255,0\n");
-  fprintf (stream, "1H\tOCTA 0\n\t");
-  fprintf (stream, "OCTA 0\n");
+  fprintf (stream, "1:\t.dd.octa 0\n\t");
+  fprintf (stream, ".dd.octa 0\n");
 }
 
 /* TARGET_TRAMPOLINE_INIT.  */
@@ -1361,7 +1361,7 @@ dadao_assemble_integer (rtx x, unsigned int size, int aligned_p)
 	    assemble_integer_with_op ("\t.byte\t", x);
 	    return true;
 	  }
-	fputs ("\tBYTE\t", asm_out_file);
+	fputs ("\t.dd.byte\t", asm_out_file);
 	dadao_print_operand (asm_out_file, x, 'B');
 	fputc ('\n', asm_out_file);
 	return true;
@@ -1372,7 +1372,7 @@ dadao_assemble_integer (rtx x, unsigned int size, int aligned_p)
 	    aligned_p = 0;
 	    break;
 	  }
-	fputs ("\tWYDE\t", asm_out_file);
+	fputs ("\t.dd.wyde\t", asm_out_file);
 	dadao_print_operand (asm_out_file, x, 'W');
 	fputc ('\n', asm_out_file);
 	return true;
@@ -1383,7 +1383,7 @@ dadao_assemble_integer (rtx x, unsigned int size, int aligned_p)
 	    aligned_p = 0;
 	    break;
 	  }
-	fputs ("\tTETRA\t", asm_out_file);
+	fputs ("\t.dd.tetra\t", asm_out_file);
 	dadao_print_operand (asm_out_file, x, 'L');
 	fputc ('\n', asm_out_file);
 	return true;
@@ -1393,26 +1393,10 @@ dadao_assemble_integer (rtx x, unsigned int size, int aligned_p)
 	   isn't expressed as CONST_DOUBLE, and DFmode is handled
 	   elsewhere.  */
 	gcc_assert (GET_CODE (x) != CONST_DOUBLE);
-	assemble_integer_with_op ("\tOCTA\t", x);
+	assemble_integer_with_op ("\t.dd.octa\t", x);
 	return true;
       }
   return default_assemble_integer (x, size, aligned_p);
-}
-
-/* ASM_OUTPUT_ASCII.  */
-
-void
-dadao_asm_output_ascii (FILE *stream, const char *string, int length)
-{
-  while (length > 0)
-    {
-      int chunk_size = length > 60 ? 60 : length;
-      fprintf (stream, "\tBYTE ");
-      dadao_output_quoted_string (stream, string, chunk_size);
-      string += chunk_size;
-      length -= chunk_size;
-      fprintf (stream, "\n");
-    }
 }
 
 /* ASM_OUTPUT_ALIGNED_COMMON.  */
@@ -1828,7 +1812,7 @@ dadao_asm_output_addr_diff_elt (FILE *stream,
 			       int value,
 			       int rel)
 {
-  fprintf (stream, "\tTETRA L%d-L%d\n", value, rel);
+  fprintf (stream, "\t.dd.tetra L%d-L%d\n", value, rel);
 }
 
 /* ASM_OUTPUT_ADDR_VEC_ELT.  */
@@ -1836,7 +1820,7 @@ dadao_asm_output_addr_diff_elt (FILE *stream,
 void
 dadao_asm_output_addr_vec_elt (FILE *stream, int value)
 {
-  fprintf (stream, "\tOCTA L:%d\n", value);
+  fprintf (stream, "\t.dd.octa L%d\n", value);
 }
 
 /* ASM_OUTPUT_SKIP.  */
@@ -2517,7 +2501,7 @@ static void
 dadao_output_octa (FILE *stream, int64_t value, int do_begin_end)
 {
   if (do_begin_end)
-    fprintf (stream, "\tOCTA ");
+    fprintf (stream, "\t.dd.octa ");
 
   /* Provide a few alternative output formats depending on the number, to
      improve legibility of assembler output.  */

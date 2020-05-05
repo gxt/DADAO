@@ -14,18 +14,18 @@
 
 	.data
 	.p2align 3
-dstart	OCTA 2009
+dstart	.dd.octa 2009
 
 	.text
 	.global Main
 
 # The __Stack_start symbol is provided by the link script.
-stackpp	OCTA __Stack_start
-crtstxt	OCTA _init
-	OCTA __etext
+stackpp	.dd.octa __Stack_start
+crtstxt	.dd.octa _init
+	.dd.octa __etext
 
-crtsdat	OCTA dstart
-	OCTA _end
+crtsdat	.dd.octa dstart
+	.dd.octa _end
 
 # "Main" is the magic symbol the simulator jumps to.  We want to go
 # on to "main".
