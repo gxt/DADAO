@@ -121,18 +121,6 @@ enum dadao_operands_type
    /* PREFIX.  */
    dadao_operands_prefix,
 
-   /* BYTE.  */
-   dadao_operands_byte,
-
-   /* WYDE.  */
-   dadao_operands_wyde,
-
-   /* TETRA.  */
-   dadao_operands_tetra,
-
-   /* OCTA.  */
-   dadao_operands_octa,
-
    /* LOCAL.  */
    dadao_operands_local,
  };

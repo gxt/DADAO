@@ -318,10 +318,6 @@ const struct dadao_opcode dadao_opcodes[] =
       they're not here.  */
    {"loc",	~0, ~0,		OP (loc),		P},
    {"prefix",	~0, ~0,		OP (prefix),		P},
-   {"byte",	~0, ~0,		OP (byte),		P},
-   {"wyde",	~0, ~0,		OP (wyde),		P},
-   {"tetra",	~0, ~0,		OP (tetra),		P},
-   {"octa",	~0, ~0,		OP (octa),		P},
    {"local",	~0, ~0,		OP (local),		P},
 
    {NULL, ~0, ~0, OP (none), N}

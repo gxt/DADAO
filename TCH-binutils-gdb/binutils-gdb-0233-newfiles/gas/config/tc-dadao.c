@@ -40,8 +40,6 @@ static int cmp_greg_symbol_fixes (const void *, const void *);
 static int cmp_greg_val_greg_symbol_fixes (const void *, const void *);
 static void dadao_handle_rest_of_empty_line (void);
 static void dadao_discard_rest_of_line (void);
-static void dadao_byte (void);
-static void dadao_cons (int);
 
 /* Continue the tradition of symbols.c; use control characters to enforce
    magic.  These are used when replacing e.g. 8F and 8B so we can handle
@@ -817,7 +815,6 @@ md_assemble (char *str)
       switch (instruction->operands)
 	{
 	case dadao_operands_loc:
-	case dadao_operands_byte:
 	case dadao_operands_prefix:
 	case dadao_operands_local:
 	  if (current_fb_label >= 0)
@@ -840,26 +837,6 @@ md_assemble (char *str)
 	case dadao_operands_loc:
 	  /* LOC */
 	  s_loc (0);
-	  break;
-
-	case dadao_operands_byte:
-	  /* BYTE */
-	  dadao_byte ();
-	  break;
-
-	case dadao_operands_wyde:
-	  /* WYDE */
-	  dadao_cons (2);
-	  break;
-
-	case dadao_operands_tetra:
-	  /* TETRA */
-	  dadao_cons (4);
-	  break;
-
-	case dadao_operands_octa:
-	  /* OCTA */
-	  dadao_cons (8);
 	  break;
 
 	case dadao_operands_prefix:
@@ -3805,220 +3782,6 @@ s_loc (int ignore ATTRIBUTE_UNUSED)
     }
 
   dadao_handle_rest_of_empty_line ();
-}
-
-/* The BYTE worker.  We have to support sequences of mixed "strings",
-   numbers and other constant "first-pass" reducible expressions separated
-   by comma.  */
-
-static void
-dadao_byte (void)
-{
-  unsigned int c;
-
-  if (now_seg == text_section)
-    text_has_contents = 1;
-  else if (now_seg == data_section)
-    data_has_contents = 1;
-
-  do
-    {
-      SKIP_WHITESPACE ();
-      switch (*input_line_pointer)
-	{
-	case '\"':
-	  ++input_line_pointer;
-	  while (is_a_char (c = next_char_of_string ()))
-	    {
-	      FRAG_APPEND_1_CHAR (c);
-	    }
-
-	  if (input_line_pointer[-1] != '\"')
-	    {
-	      /* We will only get here in rare cases involving #NO_APP,
-		 where the unterminated string is not recognized by the
-		 preformatting pass.  */
-	      as_bad (_("unterminated string"));
-	      dadao_discard_rest_of_line ();
-	      return;
-	    }
-	  break;
-
-	default:
-	  {
-	    expressionS exp;
-	    segT expseg = expression (&exp);
-
-	    /* We have to allow special register names as constant numbers.  */
-	    if ((expseg != absolute_section && expseg != reg_section)
-		|| (exp.X_op != O_constant
-		    && (exp.X_op != O_register
-			|| exp.X_add_number <= 255)))
-	      {
-		as_bad (_("BYTE expression not a pure number"));
-		dadao_discard_rest_of_line ();
-		return;
-	      }
-	    else if ((exp.X_add_number > 255 && exp.X_op != O_register)
-		     || exp.X_add_number < 0)
-	      {
-		/* Note that dadaoal does not allow negative numbers in
-		   BYTE sequences, so neither should we.  */
-		as_bad (_("BYTE expression not in the range 0..255"));
-		dadao_discard_rest_of_line ();
-		return;
-	      }
-
-	    FRAG_APPEND_1_CHAR (exp.X_add_number);
-	  }
-	  break;
-	}
-
-      SKIP_WHITESPACE ();
-      c = *input_line_pointer++;
-    }
-  while (c == ',');
-
-  input_line_pointer--;
-
-  if (dadao_gnu_syntax)
-    demand_empty_rest_of_line ();
-  else
-    {
-      dadao_discard_rest_of_line ();
-      /* Do like demand_empty_rest_of_line and step over the end-of-line
-         boundary.  */
-      input_line_pointer++;
-    }
-
-  /* Make sure we align for the next instruction.  */
-  last_alignment = 0;
-}
-
-/* Like cons_worker, but we have to ignore "naked comments", not barf on
-   them.  Implements WYDE, TETRA and OCTA.  We're a little bit more
-   lenient than dadao_byte but FIXME: they should eventually merge.  */
-
-static void
-dadao_cons (int nbytes)
-{
-  expressionS exp;
-
-  /* If we don't have any contents, then it's ok to have a specified start
-     address that is not a multiple of the max data size.  We will then
-     align it as necessary when we get here.  Otherwise, it's a fatal sin.  */
-  if (now_seg == text_section)
-    {
-      if (lowest_text_loc != (bfd_vma) -1
-	  && (lowest_text_loc & (nbytes - 1)) != 0)
-	{
-	  if (text_has_contents)
-	    as_bad (_("data item with alignment larger than location"));
-	  else if (want_unaligned)
-	    as_bad (_("unaligned data at an absolute location is not supported"));
-
-	  lowest_text_loc &= ~((bfd_vma) nbytes - 1);
-	  lowest_text_loc += (bfd_vma) nbytes;
-	}
-
-      text_has_contents = 1;
-    }
-  else if (now_seg == data_section)
-    {
-      if (lowest_data_loc != (bfd_vma) -1
-	  && (lowest_data_loc & (nbytes - 1)) != 0)
-	{
-	  if (data_has_contents)
-	    as_bad (_("data item with alignment larger than location"));
-	  else if (want_unaligned)
-	    as_bad (_("unaligned data at an absolute location is not supported"));
-
-	  lowest_data_loc &= ~((bfd_vma) nbytes - 1);
-	  lowest_data_loc += (bfd_vma) nbytes;
-	}
-
-      data_has_contents = 1;
-    }
-
-  /* Always align these unless asked not to (valid for the current pseudo).  */
-  if (! want_unaligned)
-    {
-      last_alignment = nbytes == 2 ? 1 : (nbytes == 4 ? 2 : 3);
-      frag_align (last_alignment, 0, 0);
-      record_alignment (now_seg, last_alignment);
-    }
-
-  /* For dadaoal compatibility, a label for an instruction (and emitting
-     pseudo) refers to the _aligned_ address.  So we have to emit the
-     label here.  */
-  if (current_fb_label >= 0)
-    colon (fb_label_name (current_fb_label, 1));
-  else if (pending_label != NULL)
-    {
-      colon (pending_label);
-      pending_label = NULL;
-    }
-
-  SKIP_WHITESPACE ();
-
-  if (is_end_of_line[(unsigned int) *input_line_pointer])
-    {
-      /* Default to zero if the expression was absent.  */
-
-      exp.X_op = O_constant;
-      exp.X_add_number = 0;
-      exp.X_unsigned = 0;
-      exp.X_add_symbol = NULL;
-      exp.X_op_symbol = NULL;
-      emit_expr (&exp, (unsigned int) nbytes);
-    }
-  else
-    do
-      {
-	unsigned int c;
-
-	switch (*input_line_pointer)
-	  {
-	    /* We support strings here too; each character takes up nbytes
-	       bytes.  */
-	  case '\"':
-	    ++input_line_pointer;
-	    while (is_a_char (c = next_char_of_string ()))
-	      {
-		exp.X_op = O_constant;
-		exp.X_add_number = c;
-		exp.X_unsigned = 1;
-		emit_expr (&exp, (unsigned int) nbytes);
-	      }
-
-	    if (input_line_pointer[-1] != '\"')
-	      {
-		/* We will only get here in rare cases involving #NO_APP,
-		   where the unterminated string is not recognized by the
-		   preformatting pass.  */
-		as_bad (_("unterminated string"));
-		dadao_discard_rest_of_line ();
-		return;
-	      }
-	    break;
-
-	  default:
-	    {
-	      expression (&exp);
-	      emit_expr (&exp, (unsigned int) nbytes);
-	      SKIP_WHITESPACE ();
-	    }
-	    break;
-	  }
-      }
-    while (*input_line_pointer++ == ',');
-
-  input_line_pointer--;		/* Put terminator back into stream.  */
-
-  dadao_handle_rest_of_empty_line ();
-
-  /* We don't need to step up the counter for the current_fb_label here;
-     that's handled by the caller.  */
 }
 
 /* The md_do_align worker.  At present, we just record an alignment to
