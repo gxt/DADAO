@@ -38,7 +38,7 @@ extern unsigned char _DADAO_allocated_filehandle[N_DADAO_FILEHANDLES];
 #define TRAP1i(FUN, ARG1)			\
  ({ long ret_;					\
     __asm__ __volatile__			\
-      ("TRAP 0,%1,%2\n\tSET %0,$255"		\
+      ("TRAP 0,%1,%2\n\tSET %0,$63"		\
        : "=r" (ret_) : "i" (FUN), "i" (ARG1)	\
        : "memory");				\
     ret_;					\
@@ -53,7 +53,7 @@ extern unsigned char _DADAO_allocated_filehandle[N_DADAO_FILEHANDLES];
 #define I3f(FUN, ARG1, N, ARGS)				\
  if (ARG1 == N)						\
    __asm__ __volatile__					\
-     ("SET $255,%3\n\tTRAP 0,%1,%2\n\tSET %0,$255"	\
+     ("SET $63,%3\n\tTRAP 0,%1,%2\n\tSET %0,$63"	\
       : "=r" (ret_) : "i" (FUN), "i" (N), "r" (ARGS)	\
       : "memory")
 
