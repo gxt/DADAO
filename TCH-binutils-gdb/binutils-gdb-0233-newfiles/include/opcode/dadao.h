@@ -117,9 +117,6 @@ enum dadao_operands_type
 
    /* LOC.  */
    dadao_operands_loc,
-
-   /* LOCAL.  */
-   dadao_operands_local,
  };
 
 struct dadao_opcode

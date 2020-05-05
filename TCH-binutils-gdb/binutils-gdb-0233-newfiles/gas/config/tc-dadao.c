@@ -29,7 +29,6 @@ static int get_operands (int, char *, expressionS *);
 static int get_putget_operands (struct dadao_opcode *, char *, expressionS *);
 static void s_greg (int);
 static void s_loc (int);
-static void dadao_s_local (int);
 static void dadao_greg_internal (char *);
 static void dadao_set_geta_branch_offset (char *, offsetT);
 static void dadao_set_jmp_offset (char *, offsetT);
@@ -337,9 +336,6 @@ const pseudo_typeS md_pseudo_table[] = {
 
    /* Support " .greg sym,expr" syntax.  */
    {"greg", s_greg, 0},
-
-   /* Support " .local $45" syntax.  */
-   {"local", dadao_s_local, 1},
 
    {NULL, 0, 0}
  };
@@ -805,7 +801,6 @@ md_assemble (char *str)
       switch (instruction->operands)
 	{
 	case dadao_operands_loc:
-	case dadao_operands_local:
 	  if (current_fb_label >= 0)
 	    colon (fb_label_name (current_fb_label, 1));
 	  else if (pending_label != NULL)
@@ -826,11 +821,6 @@ md_assemble (char *str)
 	case dadao_operands_loc:
 	  /* LOC */
 	  s_loc (0);
-	  break;
-
-	case dadao_operands_local:
-	  /* LOCAL */
-	  dadao_s_local (0);
 	  break;
 
 	default:
@@ -1914,36 +1904,6 @@ s_greg (int unused ATTRIBUTE_UNUSED)
   dadao_greg_internal (NULL);
 }
 
-/* The " .local expr" and " local expr" worker.  We make a BFD_DADAO_LOCAL
-   relocation against the current position against the expression.
-   Implementing this by means of contents in a section lost.  */
-
-static void
-dadao_s_local (int unused ATTRIBUTE_UNUSED)
-{
-  expressionS exp;
-
-  /* Don't set the section to register contents section before the
-     expression has been parsed; it may refer to the current position in
-     some contorted way.  */
-  expression (&exp);
-
-  if (exp.X_op == O_absent)
-    {
-      as_bad (_("missing local expression"));
-      return;
-    }
-  else if (exp.X_op == O_register)
-    {
-      /* fix_new_exp doesn't like O_register.  Should be configurable.
-	 We're fine with a constant here, though.  */
-      exp.X_op = O_constant;
-    }
-
-  fix_new_exp (frag_now, 0, 0, &exp, 0, BFD_RELOC_DADAO_LOCAL);
-  dadao_handle_rest_of_empty_line ();
-}
-
 /* Set fragP->fr_var to the initial guess of the size of a relaxable insn
    and return it.  Sizes of other instructions are not known.  This
    function may be called multiple times.  */
@@ -2192,8 +2152,7 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
       fixP->fx_done = 0;
       return;
     }
-  else if (fixP->fx_r_type == BFD_RELOC_DADAO_LOCAL
-	   || fixP->fx_r_type == BFD_RELOC_VTABLE_INHERIT
+  else if (fixP->fx_r_type == BFD_RELOC_VTABLE_INHERIT
 	   || fixP->fx_r_type == BFD_RELOC_VTABLE_ENTRY)
     {
       /* These are never "fixed".  */
@@ -2376,24 +2335,6 @@ tc_gen_reloc (asection *section ATTRIBUTE_UNUSED, fixS *fixP)
     = val - (baddsy == NULL || S_IS_COMMON (addsy) || S_IS_WEAK (addsy)
 	     ? 0 : bfd_asymbol_value (baddsy));
 
-  /* A single " LOCAL expression" in the wrong section will not work when
-     linking to MMO; relocations for zero-content sections are then
-     ignored.  Normally, relocations would modify section contents, and
-     you'd never think or be able to do something like that.  The
-     relocation resulting from a LOCAL directive doesn't have an obvious
-     and mandatory location.  I can't figure out a way to do this better
-     than just helping the user around this limitation here; hopefully the
-     code using the local expression is around.  Putting the LOCAL
-     semantics in a relocation still seems right; a section didn't do.  */
-  if (bfd_section_size (section->owner, section) == 0)
-    as_bad_where
-      (fixP->fx_file, fixP->fx_line,
-       fixP->fx_r_type == BFD_RELOC_DADAO_LOCAL
-       /* The BFD_RELOC_DADAO_LOCAL-specific message is supposed to be
-	  user-friendly, though a little bit non-substantial.  */
-       ? _("directive LOCAL must be placed in code or data")
-       : _("internal confusion: relocation in a section without contents"));
-
   /* FIXME: Range tests for all these.  */
   switch (fixP->fx_r_type)
     {
@@ -2423,7 +2364,6 @@ tc_gen_reloc (asection *section ATTRIBUTE_UNUSED, fixS *fixP)
     case BFD_RELOC_24_PCREL:
     case BFD_RELOC_16_PCREL:
     case BFD_RELOC_8_PCREL:
-    case BFD_RELOC_DADAO_LOCAL:
     case BFD_RELOC_VTABLE_INHERIT:
     case BFD_RELOC_VTABLE_ENTRY:
     case BFD_RELOC_DADAO_GETA:
@@ -2973,8 +2913,7 @@ dadao_fb_label (expressionS *expP)
 int
 dadao_force_relocation (fixS *fixP)
 {
-  if (fixP->fx_r_type == BFD_RELOC_DADAO_LOCAL
-      || fixP->fx_r_type == BFD_RELOC_DADAO_BASE_PLUS_OFFSET)
+  if (fixP->fx_r_type == BFD_RELOC_DADAO_BASE_PLUS_OFFSET)
     return 1;
 
   if (linkrelax)

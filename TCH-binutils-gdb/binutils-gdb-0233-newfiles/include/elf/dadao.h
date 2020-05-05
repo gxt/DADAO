@@ -76,11 +76,8 @@ START_RELOC_NUMBERS (elf_dadao_reloc_type)
      an instruction.  */
   RELOC_NUMBER (R_DADAO_BASE_PLUS_OFFSET, 34)
 
-  /* A LOCAL assertion.  */
-  RELOC_NUMBER (R_DADAO_LOCAL, 35)
-
   /* A PUSHJ instruction, generating a stub if it does not reach.  */
-  RELOC_NUMBER (R_DADAO_PUSHJ_STUBBABLE, 36)
+  RELOC_NUMBER (R_DADAO_PUSHJ_STUBBABLE, 35)
 END_RELOC_NUMBERS (R_DADAO_max)
 
 

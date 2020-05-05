@@ -700,25 +700,6 @@ static reloc_howto_type elf_dadao_howto_table[] =
 	 0xffff,		/* dst_mask */
 	 FALSE),		/* pcrel_offset */
 
-  /* A "magic" relocation for a LOCAL expression, asserting that the
-     expression is less than the number of global registers.  No actual
-     modification of the contents is done.  Implementing this as a
-     relocation was less intrusive than e.g. putting such expressions in a
-     section to discard *after* relocation.  */
-  HOWTO (R_DADAO_LOCAL,		/* type */
-	 0,			/* rightshift */
-	 0,			/* size (0 = byte, 1 = short, 2 = long) */
-	 0,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont, /* complain_on_overflow */
-	 dadao_elf_reloc,	/* special_function */
-	 "R_DADAO_LOCAL",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0,			/* src_mask */
-	 0,			/* dst_mask */
-	 FALSE),		/* pcrel_offset */
-
   HOWTO (R_DADAO_PUSHJ_STUBBABLE, /* type */
 	 2,			/* rightshift */
 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
@@ -768,7 +749,6 @@ static const struct dadao_reloc_map dadao_reloc_map[] =
     {BFD_RELOC_DADAO_REG_OR_BYTE, R_DADAO_REG_OR_BYTE},
     {BFD_RELOC_DADAO_REG, R_DADAO_REG},
     {BFD_RELOC_DADAO_BASE_PLUS_OFFSET, R_DADAO_BASE_PLUS_OFFSET},
-    {BFD_RELOC_DADAO_LOCAL, R_DADAO_LOCAL},
     {BFD_RELOC_DADAO_PUSHJ_STUBBABLE, R_DADAO_PUSHJ_STUBBABLE}
   };
 
@@ -1665,71 +1645,6 @@ dadao_final_link_relocate (reloc_howto_type *howto, asection *input_section,
       contents += r_offset;
       r = dadao_elf_perform_relocation (input_section, howto, contents,
 				       addr, srel, error_message);
-      break;
-
-    case R_DADAO_LOCAL:
-      /* This isn't a real relocation, it's just an assertion that the
-	 final relocation value corresponds to a local register.  We
-	 ignore the actual relocation; nothing is changed.  */
-      {
-	asection *regsec
-	  = bfd_get_section_by_name (input_section->output_section->owner,
-				     DADAO_REG_CONTENTS_SECTION_NAME);
-	bfd_vma first_global;
-
-	/* Check that this is an absolute value, or a reference to the
-	   register contents section or the register (symbol) section.
-	   Absolute numbers can get here as undefined section.  Undefined
-	   symbols are signalled elsewhere, so there's no conflict in us
-	   accidentally handling it.  */
-	if (!bfd_is_abs_section (symsec)
-	    && !bfd_is_und_section (symsec)
-	    && strcmp (bfd_get_section_name (symsec->owner, symsec),
-		       DADAO_REG_CONTENTS_SECTION_NAME) != 0
-	    && strcmp (bfd_get_section_name (symsec->owner, symsec),
-		       DADAO_REG_SECTION_NAME) != 0)
-	{
-	  _bfd_error_handler
-	    (_("%pB: directive LOCAL valid only with a register or absolute value"),
-	     input_section->owner);
-
-	  return bfd_reloc_overflow;
-	}
-
-      /* If we don't have a register contents section, then $255 is the
-	 first global register.  */
-      if (regsec == NULL)
-	first_global = 255;
-      else
-	{
-	  first_global
-	    = bfd_get_section_vma (input_section->output_section->owner,
-				   regsec) / 8;
-	  if (strcmp (bfd_get_section_name (symsec->owner, symsec),
-		      DADAO_REG_CONTENTS_SECTION_NAME) == 0)
-	    {
-	      if ((srel & 7) != 0 || srel < 32*8 || srel > 255*8)
-		/* The bfd_reloc_outofrange return value, though
-		   intuitively a better value, will not get us an error.  */
-		return bfd_reloc_overflow;
-	      srel /= 8;
-	    }
-	}
-
-	if ((bfd_vma) srel >= first_global)
-	  {
-	    /* FIXME: Better error message.  */
-	    _bfd_error_handler
-	      /* xgettext:c-format */
-	      (_("%pB: LOCAL directive: "
-		 "register $%" PRId64 " is not a local register;"
-		 " first global register is $%" PRId64),
-	       input_section->owner, (int64_t) srel, (int64_t) first_global);
-
-	    return bfd_reloc_overflow;
-	  }
-      }
-      r = bfd_reloc_ok;
       break;
 
     default:

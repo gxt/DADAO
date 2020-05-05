@@ -69,8 +69,7 @@ extern long dadao_md_relax_frag (segT, fragS *, long);
  (((FIX)->fx_addsy == NULL					\
    || S_GET_SEGMENT ((FIX)->fx_addsy) != reg_section)		\
   && (FIX)->fx_r_type != BFD_RELOC_VTABLE_INHERIT		\
-  && (FIX)->fx_r_type != BFD_RELOC_VTABLE_ENTRY			\
-  && (FIX)->fx_r_type != BFD_RELOC_DADAO_LOCAL)
+  && (FIX)->fx_r_type != BFD_RELOC_VTABLE_ENTRY)
 
 /* Adjust symbols which are registers.  */
 #define tc_adjust_symtab() dadao_adjust_symtab ()
