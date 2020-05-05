@@ -100,11 +100,11 @@ Main	SETL	$255,32
 	.section .init,"ax",@progbits
 	.global	_init
 _init:
-	GET	$0,:rJ
+	GET	$0,rJ
 	PUSHJ	$1,0F
 	SETL	$255,255
 	TRAP	0,0,0
-0H	IS	@
+0H	TRAP	0,0,0
 
 # Register _fini to be executed as the last atexit function.
 #ifdef __DADAO_ABI_GNU__
@@ -117,8 +117,8 @@ _init:
 	.section .fini,"ax",@progbits
 	.global	_fini
 _fini:
-	GET	$0,:rJ
+	GET	$0,rJ
 	PUSHJ	$1,0F
 	SETL	$255,255
 	TRAP	0,0,0
-0H	IS	@
+0H	TRAP	0,0,0

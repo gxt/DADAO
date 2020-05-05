@@ -353,7 +353,7 @@ DIVU %0,%1,%2\;NEGU %1,0,%0\;CSN %0,$255,%1")
   "@
    SETL %0,0
    NEGU %0,0,%2\;CSN %2,%2,%0\;NEGU $255,0,%1\;CSN %1,%1,$255\;\
-DIVU %1,%1,%2\;GET %0,:rR\;NEGU %2,0,%0\;CSNN %0,$255,%2")
+DIVU %1,%1,%2\;GET %0,rR\;NEGU %2,0,%0\;CSNN %0,$255,%2")
 
 (define_insn "ashldi3"
   [(set (match_operand:DI 0 "register_operand" "=r")

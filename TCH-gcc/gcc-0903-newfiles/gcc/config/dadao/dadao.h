@@ -628,15 +628,8 @@ typedef struct { int regs; int lib; } CUMULATIVE_ARGS;
 #define ASM_OUTPUT_LABELREF(STREAM, NAME) \
  dadao_asm_output_labelref (STREAM, NAME)
 
-/* We insert a ":" to disambiguate against user symbols like L5.  */
 #define ASM_GENERATE_INTERNAL_LABEL(LABEL, PREFIX, NUM) \
- sprintf (LABEL, "*%s:%ld", PREFIX, (long)(NUM))
-
-/* Insert "::"; these are rarer than internal labels.  FIXME: Make sure no
-   ":" is seen in the object file; we don't really want that dadaoal
-   feature visible there.  We don't want the default, which uses a dot;
-   that'd be incompatible with dadaoal.  */
-#define ASM_PN_FORMAT "%s::%lu"
+ sprintf (LABEL, "*%s%ld", PREFIX, (long)(NUM))
 
 #define ASM_OUTPUT_DEF(STREAM, NAME, VALUE) \
  dadao_asm_output_def (STREAM, NAME, VALUE)
@@ -655,9 +648,6 @@ typedef struct { int regs; int lib; } CUMULATIVE_ARGS;
 
 /* Node: Instruction Output */
 
-/* The non-$ register names must be prefixed with ":", since they're
-   affected by PREFIX.  We provide the non-colon names as additional
-   names.  */
 #define REGISTER_NAMES							\
  {"$0", "$1", "$2", "$3", "$4", "$5", "$6", "$7",			\
   "$8", "$9", "$10", "$11", "$12", "$13", "$14", "$15",			\
@@ -691,10 +681,10 @@ typedef struct { int regs; int lib; } CUMULATIVE_ARGS;
   "$232", "$233", "$234", "$235", "$236", "$237", "$238", "$239",	\
   "$240", "$241", "$242", "$243", "$244", "$245", "$246", "$247",	\
   "$248", "$249", "$250", "$251", "$252", "$253", "$254", "$255",	\
-  ":rD",  ":rE",  ":rH",  ":rJ",  ":rR",  "ap_!BAD!", ":rO"}
+  "rD",  "rE",  "rH",  "rJ",  "rR",  "ap_!BAD!", "rO"}
 
 #define ADDITIONAL_REGISTER_NAMES			\
- {{"sp", 254}, {":sp", 254}, {"rD", 256}, {"rE", 257},	\
+ {{"sp", 254}, {"rD", 256}, {"rE", 257},	\
   {"rH", 258}, {"rJ", DADAO_rJ_REGNUM}, {"rO", DADAO_rO_REGNUM}}
 
 #define ASM_OUTPUT_REG_PUSH(STREAM, REGNO) \

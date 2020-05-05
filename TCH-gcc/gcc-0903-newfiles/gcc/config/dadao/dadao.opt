@@ -28,10 +28,6 @@ mknuthdiv
 Target Report Mask(KNUTH_DIVISION)
 Generate divide results with reminder having the same sign as the divisor (not the dividend).
 
-mtoplevel-symbols
-Target Report Mask(TOPLEVEL_SYMBOLS)
-Prepend global symbols with \":\" (for use with PREFIX).
-
 mno-set-program-start
 Target Report RejectNegative
 Do not provide a default start-address 0x400000 of the program.

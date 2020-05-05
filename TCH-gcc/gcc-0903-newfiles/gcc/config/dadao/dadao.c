@@ -193,8 +193,6 @@ static HOST_WIDE_INT dadao_starting_frame_offset (void);
 
 #undef TARGET_ENCODE_SECTION_INFO
 #define TARGET_ENCODE_SECTION_INFO  dadao_encode_section_info
-#undef TARGET_STRIP_NAME_ENCODING
-#define TARGET_STRIP_NAME_ENCODING  dadao_strip_name_encoding
 
 #undef TARGET_ASM_OUTPUT_MI_THUNK
 #define TARGET_ASM_OUTPUT_MI_THUNK dadao_asm_output_mi_thunk
@@ -400,12 +398,6 @@ dadao_conditional_register_usage (void)
 	   i++)
 	fixed_regs[i] = 0;
     }
-
-  /* Step over the ":" in special register names.  */
-  if (! TARGET_TOPLEVEL_SYMBOLS)
-    for (i = 0; i < FIRST_PSEUDO_REGISTER; i++)
-      if (reg_names[i][0] == ':')
-	reg_names[i]++;
 }
 
 /* INCOMING_REGNO and OUTGOING_REGNO worker function.
@@ -1227,20 +1219,10 @@ dadao_encode_section_info (tree decl, rtx rtl, int first)
     ;
   else if (first && DECL_P (decl))
     {
-      /* For non-visible declarations, add a "@" prefix, which we skip
-	 when the label is output.  If the label does not have this
-	 prefix, a ":" is output if -mtoplevel-symbols.
-
-	 Note that this does not work for data that is declared extern and
-	 later defined as static.  If there's code in between, that code
-	 will refer to the extern declaration, and vice versa.  This just
-	 means that when -mtoplevel-symbols is in use, we can just handle
-	 well-behaved ISO-compliant code.  */
-
       const char *str = XSTR (XEXP (rtl, 0), 0);
       int len = strlen (str);
       char *newstr = XALLOCAVEC (char, len + 2);
-      newstr[0] = '@';
+      newstr[0] = '.';
       strcpy (newstr + 1, str);
       XSTR (XEXP (rtl, 0), 0) = ggc_alloc_string (newstr, len + 1);
     }
@@ -1256,15 +1238,6 @@ dadao_encode_section_info (tree decl, rtx rtl, int first)
 	  && (!DECL_INITIAL (decl)
 	      || TREE_CONSTANT (DECL_INITIAL (decl)))))
     SYMBOL_REF_FLAG (XEXP (rtl, 0)) = 1;
-}
-
-static const char *
-dadao_strip_name_encoding (const char *name)
-{
-  for (; (*name == '@' || *name == '*'); name++)
-    ;
-
-  return name;
 }
 
 /* TARGET_ASM_FILE_START.
@@ -1470,7 +1443,7 @@ dadao_asm_output_aligned_local (FILE *stream,
 
   ASM_OUTPUT_ALIGN (stream, exact_log2 (align/BITS_PER_UNIT));
   assemble_name (stream, name);
-  fprintf (stream, "\tLOC @+%d\n", size);
+  fprintf (stream, "\t= .+%d\n", size);
 }
 
 /* ASM_OUTPUT_LABEL.  */
@@ -1479,7 +1452,7 @@ void
 dadao_asm_output_label (FILE *stream, const char *name)
 {
   assemble_name (stream, name);
-  fprintf (stream, "\tIS @\n");
+  fprintf (stream, ":\n");
 }
 
 /* ASM_OUTPUT_INTERNAL_LABEL.  */
@@ -1488,7 +1461,7 @@ void
 dadao_asm_output_internal_label (FILE *stream, const char *name)
 {
   assemble_name_raw (stream, name);
-  fprintf (stream, "\tIS @\n");
+  fprintf (stream, ":\n");
 }
 
 /* ASM_DECLARE_REGISTER_GLOBAL.  */
@@ -1522,21 +1495,12 @@ dadao_make_decl_one_only (tree decl)
   DECL_WEAK (decl) = 1;
 }
 
-/* ASM_OUTPUT_LABELREF.
-   Strip GCC's '*' and our own '@'.  No order is assumed.  */
+/* ASM_OUTPUT_LABELREF. */
 
 void
 dadao_asm_output_labelref (FILE *stream, const char *name)
 {
-  int is_extern = 1;
-
-  for (; (*name == '@' || *name == '*'); name++)
-    if (*name == '@')
-      is_extern = 0;
-
-  asm_fprintf (stream, "%s%U%s",
-	       is_extern && TARGET_TOPLEVEL_SYMBOLS ? ":" : "",
-	       name);
+  asm_fprintf (stream, "%U%s", name);
 }
 
 /* ASM_OUTPUT_DEF.  */
@@ -1545,7 +1509,7 @@ void
 dadao_asm_output_def (FILE *stream, const char *name, const char *value)
 {
   assemble_name (stream, name);
-  fprintf (stream, "\tIS ");
+  fprintf (stream, ":\t");
   assemble_name (stream, value);
   fputc ('\n', stream);
 }
@@ -1880,7 +1844,7 @@ dadao_asm_output_addr_vec_elt (FILE *stream, int value)
 void
 dadao_asm_output_skip (FILE *stream, int nbytes)
 {
-  fprintf (stream, "\tLOC @+%d\n", nbytes);
+  fprintf (stream, "\t. = .+%d\n", nbytes);
 }
 
 /* ASM_OUTPUT_ALIGN.  */
@@ -1891,11 +1855,8 @@ dadao_asm_output_align (FILE *stream, int power)
   /* We need to record the needed alignment of this section in the object,
      so we have to output an alignment directive.  Use a .p2align (not
      .align) so people will never have to wonder about whether the
-     argument is in number of bytes or the log2 thereof.  We do it in
-     addition to the LOC directive, so nothing needs tweaking when
-     copy-pasting assembly into dadaoal.  */
+     argument is in number of bytes or the log2 thereof.  */
  fprintf (stream, "\t.p2align %d\n", power);
- fprintf (stream, "\tLOC @+(%d-@)&%d\n", 1 << power, (1 << power) - 1);
 }
 
 /* DBX_REGISTER_NUMBER.  */
