@@ -130,9 +130,6 @@ static int predefined_syms = 1;
    (e.g. equated symbols)?  */
 static int equated_spec_regs = 1;
 
-/* Do we require standard GNU syntax?  */
-int dadao_gnu_syntax = 0;
-
 /* Do we globalize all symbols?  */
 int dadao_globalize_symbols = 0;
 
@@ -146,8 +143,7 @@ struct option md_longopts[] =
 #define OPTION_NOEXPAND  (OPTION_RELAX + 1)
 #define OPTION_NOMERGEGREG  (OPTION_NOEXPAND + 1)
 #define OPTION_NOSYMS  (OPTION_NOMERGEGREG + 1)
-#define OPTION_GNU_SYNTAX  (OPTION_NOSYMS + 1)
-#define OPTION_GLOBALIZE_SYMBOLS  (OPTION_GNU_SYNTAX + 1)
+#define OPTION_GLOBALIZE_SYMBOLS  (OPTION_NOSYMS + 1)
 #define OPTION_FIXED_SPEC_REGS  (OPTION_GLOBALIZE_SYMBOLS + 1)
 #define OPTION_LINKER_ALLOCATED_GREGS  (OPTION_FIXED_SPEC_REGS + 1)
 #define OPTION_NOPUSHJSTUBS  (OPTION_LINKER_ALLOCATED_GREGS + 1)
@@ -155,7 +151,6 @@ struct option md_longopts[] =
    {"no-expand", no_argument, NULL, OPTION_NOEXPAND},
    {"no-merge-gregs", no_argument, NULL, OPTION_NOMERGEGREG},
    {"no-predefined-syms", no_argument, NULL, OPTION_NOSYMS},
-   {"gnu-syntax", no_argument, NULL, OPTION_GNU_SYNTAX},
    {"globalize-symbols", no_argument, NULL, OPTION_GLOBALIZE_SYMBOLS},
    {"fixed-special-register-names", no_argument, NULL,
     OPTION_FIXED_SPEC_REGS},
@@ -584,10 +579,6 @@ md_parse_option (int c, const char *arg ATTRIBUTE_UNUSED)
       equated_spec_regs = 0;
       break;
 
-    case OPTION_GNU_SYNTAX:
-      dadao_gnu_syntax = 1;
-      break;
-
     case OPTION_GLOBALIZE_SYMBOLS:
       dadao_globalize_symbols = 1;
       break;
@@ -623,8 +614,6 @@ md_show_usage (FILE * stream)
   fprintf (stream, _("\
   -globalize-symbols      Make all symbols global.\n"));
   fprintf (stream, _("\
-  -gnu-syntax             Turn off dadaoal syntax compatibility.\n"));
-  fprintf (stream, _("\
   -relax                  Create linker relaxable code.\n"));
   fprintf (stream, _("\
   -no-predefined-syms     Do not provide dadaoal built-in constants.\n\
@@ -651,8 +640,7 @@ md_show_usage (FILE * stream)
 static void
 dadao_handle_rest_of_empty_line (void)
 {
-  if (dadao_gnu_syntax)
-    demand_empty_rest_of_line ();
+  demand_empty_rest_of_line ();
 }
 
 /* Initialize GAS DADAO specifics.  */
@@ -886,11 +874,6 @@ md_assemble (char *str)
   switch (instruction->operands)
     {
     case dadao_operands_jmp:
-      if (n_operands == 0 && ! dadao_gnu_syntax)
-	/* Zeros are in place - nothing needs to be done when we have no
-	   operands.  */
-	break;
-
       /* Add a frag for a JMP relaxation; we need room for max four
 	 extra instructions.  We don't do any work around here to check if
 	 we can determine the offset right away.  */
@@ -1043,8 +1026,6 @@ md_assemble (char *str)
       break;
 
     case dadao_operands_pop:
-      if ((n_operands == 0 || n_operands == 1) && ! dadao_gnu_syntax)
-	break;
       /* FALLTHROUGH.  */
     case dadao_operands_x_regs_z:
       if (n_operands < 1
@@ -1119,8 +1100,7 @@ md_assemble (char *str)
 	  || (exp[1].X_op == O_register && exp[1].X_add_number > 255)
 	  || (n_operands == 3
 	      && ((exp[2].X_op == O_register
-		   && exp[2].X_add_number > 255
-		   && dadao_gnu_syntax)
+		   && exp[2].X_add_number > 255)
 		  || (exp[2].X_op == O_constant
 		      && (exp[2].X_add_number > 255
 			  || exp[2].X_add_number < 0)))))
@@ -1213,11 +1193,6 @@ md_assemble (char *str)
       break;
 
     case dadao_operands_pop:
-      /* POP, one eight and one 16-bit operand.  */
-      if (n_operands == 0 && ! dadao_gnu_syntax)
-	break;
-      if (n_operands == 1 && ! dadao_gnu_syntax)
-	goto a_single_24_bit_number_operand;
       /* FALLTHROUGH.  */
     case dadao_operands_reg_yz:
       /* A register and a 16-bit unsigned number.  */
@@ -1309,7 +1284,6 @@ md_assemble (char *str)
       }
 
     case dadao_operands_sync:
-    a_single_24_bit_number_operand:
       if (n_operands != 1
 	  || exp[0].X_op == O_register
 	  || (exp[0].X_op == O_constant
@@ -1449,19 +1423,6 @@ md_assemble (char *str)
       break;
 
     case dadao_operands_unsave:
-      if (n_operands < 2 && ! dadao_gnu_syntax)
-	{
-	  if (n_operands == 1)
-	    {
-	      if (exp[0].X_op == O_register)
-		opcodep[3] = exp[0].X_add_number;
-	      else
-		fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 3,
-			     1, exp, 0, BFD_RELOC_DADAO_REG);
-	    }
-	  break;
-	}
-
       /* "0,$Z"; UNSAVE.  */
       if (n_operands != 2
 	  || exp[0].X_op != O_constant
@@ -1487,13 +1448,7 @@ md_assemble (char *str)
 	 unspecified whether operands are registers or constants, but
 	 when we find register syntax, we require operands to be literal and
 	 within 0..255.  */
-      if (n_operands == 0 && ! dadao_gnu_syntax)
-	/* Zeros are in place - nothing needs to be done for zero
-	   operands.  We don't allow this in GNU syntax mode, because it
-	   was believed that the risk of missing to supply an operand is
-	   higher than the benefit of not having to specify a zero.  */
-	;
-      else if (n_operands == 1 && exp[0].X_op != O_register)
+      if (n_operands == 1 && exp[0].X_op != O_register)
 	{
 	  if (exp[0].X_op == O_constant)
 	    {
@@ -1672,9 +1627,6 @@ md_assemble (char *str)
       break;
 
     case dadao_operands_resume:
-      if (n_operands == 0 && ! dadao_gnu_syntax)
-	break;
-
       if (n_operands != 1
 	  || exp[0].X_op == O_register
 	  || (exp[0].X_op == O_constant
@@ -2705,7 +2657,6 @@ void
 dadao_md_end (void)
 {
   fragS *fragP;
-  symbolS *mainsym;
   asection *regsec;
   struct loc_assert_s *loc_assert;
   int i;
@@ -2744,18 +2695,6 @@ dadao_md_end (void)
 	= symbol_new (locsymbol, absolute_section, lowest_data_loc,
 		      &zero_address_frag);
       S_SET_EXTERNAL (symbolP);
-    }
-
-  /* Unless GNU syntax mode, set "Main" to be a function, so the
-     disassembler doesn't get confused when we write truly
-     dadaoal-compatible code (and don't use .type).  Similarly set it
-     global (regardless of -globalize-symbols), so the linker sees it as
-     the start symbol in ELF mode.  */
-  mainsym = symbol_find (DADAO_START_SYMBOL_NAME);
-  if (mainsym != NULL && ! dadao_gnu_syntax)
-    {
-      symbol_get_bfdsym (mainsym)->flags |= BSF_FUNCTION;
-      S_SET_EXTERNAL (mainsym);
     }
 
   /* Check that we didn't LOC into the unknown, or rather that when it
