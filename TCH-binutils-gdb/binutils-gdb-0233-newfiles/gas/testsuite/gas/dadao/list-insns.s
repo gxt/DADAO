@@ -2,7 +2,7 @@
 # Somewhat complete instruction set and operand type check.  No
 # relocations or deferred register definitions here.
 #
-Main tetra 3
+Main:
 	# add/addu/sub/subu
 	add	$12, $23, $5
 	add	$12, $23, $8 << 2
