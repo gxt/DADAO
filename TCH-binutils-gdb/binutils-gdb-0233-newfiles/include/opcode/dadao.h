@@ -19,7 +19,6 @@ struct dadao_spec_reg
 /* General indication of the type of instruction.  */
 enum dadao_insn_type
  {
-   dadao_type_pseudo,
    dadao_type_normal,
    dadao_type_fd_eq_fa_op_bc,
    dadao_type_branch,
@@ -110,13 +109,6 @@ enum dadao_operands_type
    /* Just "Z", like RESUME.  Unless GNU syntax, the operand can be omitted
       and will then be assumed zero.  */
    dadao_operands_resume,
-
-   /* These are specials to handle that pseudo-directives are specified
-      like ordinary insns when being dadaoal-compatible.  They signify the
-      specific pseudo-directive rather than the operands type.  */
-
-   /* LOC.  */
-   dadao_operands_loc,
  };
 
 struct dadao_opcode

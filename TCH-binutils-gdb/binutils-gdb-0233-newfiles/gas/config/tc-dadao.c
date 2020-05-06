@@ -28,7 +28,6 @@ static int get_spec_regno (char *);
 static int get_operands (int, char *, expressionS *);
 static int get_putget_operands (struct dadao_opcode *, char *, expressionS *);
 static void s_greg (int);
-static void s_loc (int);
 static void dadao_greg_internal (char *);
 static void dadao_set_geta_branch_offset (char *, offsetT);
 static void dadao_set_jmp_offset (char *, offsetT);
@@ -53,7 +52,6 @@ static int text_has_contents = 0;
 /* The alignment of the previous instruction, and a boolean for whether we
    want to avoid aligning the next WYDE, TETRA, OCTA or insn.  */
 static int last_alignment = 0;
-static int want_unaligned = 0;
 
 static bfd_vma lowest_data_loc = (bfd_vma) -1;
 static int data_has_contents = 0;
@@ -719,44 +717,12 @@ md_assemble (char *str)
 
   input_line_pointer = operands;
 
-  /* Is this a dadaoal pseudodirective?  */
-  if (instruction->type == dadao_type_pseudo)
-    {
-      /* Some of the pseudos emit contents, others don't.  Set a
-	 contents-emitted flag when we emit something into .text   */
-      switch (instruction->operands)
-	{
-	case dadao_operands_loc:
-	  /* LOC */
-	  s_loc (0);
-	  break;
-
-	default:
-	  BAD_CASE (instruction->operands);
-	}
-
-      /* These are all working like the pseudo functions in read.c:s_...,
-	 in that they step over the end-of-line marker at the end of the
-	 line.  We don't want that here.  */
-      input_line_pointer--;
-
-      /* Reset any don't-align-next-datum request, unless this was a LOC
-         directive.  */
-      if (instruction->operands != dadao_operands_loc)
-	want_unaligned = 0;
-
-      return;
-    }
-
-  /* Not a pseudo; we *will* emit contents.  */
   if (now_seg == data_section)
     {
       if (lowest_data_loc != (bfd_vma) -1 && (lowest_data_loc & 3) != 0)
 	{
 	  if (data_has_contents)
 	    as_bad (_("specified location wasn't TETRA-aligned"));
-	  else if (want_unaligned)
-	    as_bad (_("unaligned data at an absolute location is not supported"));
 
 	  lowest_data_loc &= ~(bfd_vma) 3;
 	  lowest_data_loc += 4;
@@ -770,8 +736,6 @@ md_assemble (char *str)
 	{
 	  if (text_has_contents)
 	    as_bad (_("specified location wasn't TETRA-aligned"));
-	  else if (want_unaligned)
-	    as_bad (_("unaligned data at an absolute location is not supported"));
 
 	  lowest_text_loc &= ~(bfd_vma) 3;
 	  lowest_text_loc += 4;
@@ -783,15 +747,12 @@ md_assemble (char *str)
   /* After a sequence of BYTEs or WYDEs, we need to get to instruction
      alignment.  For other pseudos, a ".p2align 2" is supposed to be
      inserted by the user.  */
-  if (last_alignment < 2 && ! want_unaligned)
+  if (last_alignment < 2)
     {
       frag_align (2, 0, 0);
       record_alignment (now_seg, 2);
       last_alignment = 2;
     }
-  else
-    /* Reset any don't-align-next-datum request.  */
-    want_unaligned = 0;
 
   /* We assume that dadao_opcodes keeps having unique mnemonics for each
      opcode, so we don't have to iterate over more than one opcode; if the
@@ -2943,175 +2904,6 @@ void
 dadao_md_elf_section_change_hook (void)
 {
   last_alignment = bfd_get_section_alignment (now_seg->owner, now_seg);
-  want_unaligned = 0;
-}
-
-/* The LOC worker.  This is like s_org, but we have to support changing
-   section too.   */
-
-static void
-s_loc (int ignore ATTRIBUTE_UNUSED)
-{
-  segT section;
-  expressionS exp;
-  char *p;
-  symbolS *sym;
-  offsetT off;
-
-  section = expression (&exp);
-
-  if (exp.X_op == O_illegal
-      || exp.X_op == O_absent
-      || exp.X_op == O_big)
-    {
-      as_bad (_("invalid LOC expression"));
-      return;
-    }
-
-  if (section == undefined_section)
-    {
-      /* This is an error or a LOC with an expression involving
-	 forward references.  For the expression to be correctly
-	 evaluated, we need to force a proper symbol; gas loses track
-	 of the segment for "local symbols".  */
-      if (exp.X_op == O_add)
-	{
-	  symbol_get_value_expression (exp.X_op_symbol);
-	  symbol_get_value_expression (exp.X_add_symbol);
-	}
-      else
-	{
-	  gas_assert (exp.X_op == O_symbol);
-	  symbol_get_value_expression (exp.X_add_symbol);
-	}
-    }
-
-  if (section == absolute_section)
-    {
-      /* Translate a constant into a suitable section.  */
-
-      if (exp.X_add_number < ((offsetT) 0x20 << 56))
-	{
-	  /* Lower than Data_Segment or in the reserved area (the
-	     segment number is >= 0x80, appearing negative) - assume
-	     it's .text.  */
-	  section = text_section;
-
-	  /* Save the lowest seen location, so we can pass on this
-	     information to the linker.  We don't actually org to this
-	     location here, we just pass on information to the linker so
-	     it can put the code there for us.  */
-
-	  /* If there was already a loc (that has to be set lower than
-	     this one), we org at (this - lower).  There's an implicit
-	     "LOC 0" before any entered code.  FIXME: handled by spurious
-	     settings of text_has_contents.  */
-	  if (lowest_text_loc != (bfd_vma) -1
-	      && (bfd_vma) exp.X_add_number < lowest_text_loc)
-	    {
-	      as_bad (_("LOC expression stepping backwards is not supported"));
-	      exp.X_op = O_absent;
-	    }
-	  else
-	    {
-	      if (text_has_contents && lowest_text_loc == (bfd_vma) -1)
-		lowest_text_loc = 0;
-
-	      if (lowest_text_loc == (bfd_vma) -1)
-		{
-		  lowest_text_loc = exp.X_add_number;
-
-		  /* We want only to change the section, not set an offset.  */
-		  exp.X_op = O_absent;
-		}
-	      else
-		exp.X_add_number -= lowest_text_loc;
-	    }
-	}
-      else
-	{
-	  /* Do the same for the .data section, except we don't have
-	     to worry about exp.X_add_number carrying a sign.  */
-	  section = data_section;
-
-	  if (exp.X_add_number < (offsetT) lowest_data_loc)
-	    {
-	      as_bad (_("LOC expression stepping backwards is not supported"));
-	      exp.X_op = O_absent;
-	    }
-	  else
-	    {
-	      if (data_has_contents && lowest_data_loc == (bfd_vma) -1)
-		lowest_data_loc = (bfd_vma) 0x20 << 56;
-
-	      if (lowest_data_loc == (bfd_vma) -1)
-		{
-		  lowest_data_loc = exp.X_add_number;
-
-		  /* We want only to change the section, not set an offset.  */
-		  exp.X_op = O_absent;
-		}
-	      else
-		exp.X_add_number -= lowest_data_loc;
-	    }
-	}
-    }
-
-  /* If we can't deduce the section, it must be the current one.
-     Below, we arrange to assert this.  */
-  if (section != now_seg && section != undefined_section)
-    {
-      obj_elf_section_change_hook ();
-      subseg_set (section, 0);
-
-      /* Call our section change hooks using the official hook.  */
-      md_elf_section_change_hook ();
-    }
-
-  if (exp.X_op != O_absent)
-    {
-      symbolS *esym = NULL;
-
-      if (exp.X_op != O_constant && exp.X_op != O_symbol)
-	{
-	  /* Handle complex expressions.  */
-	  esym = sym = make_expr_symbol (&exp);
-	  off = 0;
-	}
-      else
-	{
-	  sym = exp.X_add_symbol;
-	  off = exp.X_add_number;
-
-	  if (section == undefined_section)
-	    {
-	      /* We need an expr_symbol when tracking sections.  In
-		 order to make this an expr_symbol with file and line
-		 tracked, we have to make the exp non-trivial; not an
-		 O_symbol with .X_add_number == 0.  The constant part
-		 is unused.  */
-	      exp.X_add_number = 1;
-	      esym = make_expr_symbol (&exp);
-	    }
-	}
-
-      /* Track the LOC's where we couldn't deduce the section: assert
-	 that we weren't supposed to change section.  */
-      if (section == undefined_section)
-	{
-	  struct loc_assert_s *next = loc_asserts;
-	  loc_asserts = XNEW (struct loc_assert_s);
-	  loc_asserts->next = next;
-	  loc_asserts->old_seg = now_seg;
-	  loc_asserts->loc_sym = esym;
-	  loc_asserts->frag = frag_now;
-	}
-
-      p = frag_var (rs_org, 1, 1, (relax_substateT) 0, sym, off, (char *) 0);
-      *p = 0;
-    }
-
-  demand_empty_rest_of_line ();
 }
 
 /* The md_do_align worker.  At present, we just record an alignment to
@@ -3124,5 +2916,4 @@ dadao_md_do_align (int n, char *fill ATTRIBUTE_UNUSED,
 		  int len ATTRIBUTE_UNUSED, int max ATTRIBUTE_UNUSED)
 {
   last_alignment = n;
-  want_unaligned = n == 0;
 }

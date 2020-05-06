@@ -71,7 +71,6 @@ const struct dadao_spec_reg dadao_spec_regs[] =
 #define MO dadao_type_memaccess_octa
 #define M dadao_type_memaccess_block
 #define J dadao_type_jsr
-#define P dadao_type_pseudo
 #define D_A_BC	dadao_type_fd_eq_fa_op_bc
 
 #define OP(y) XCONCAT2 (dadao_operands_,y)
@@ -309,14 +308,6 @@ const struct dadao_opcode dadao_opcodes[] =
    {"put", Z (0xf6) | 0xff00,	OP (put),		N},
    {"get", O (0xfe) | 0xffe0,	OP (get),		N},
    {"trip",	O (0xff),	OP (xyz_opt),		J},
-
-   /* We have dadaoal pseudos in the ordinary instruction table so we can
-      avoid the "set" vs. ".set" ambiguity that would be the effect if we
-      had pseudos handled "normally" and defined NO_PSEUDO_DOT.
-
-      Note that IS and GREG are handled fully by md_start_line_hook, so
-      they're not here.  */
-   {"loc",	~0, ~0,		OP (loc),		P},
 
    {NULL, ~0, ~0, OP (none), N}
  };
