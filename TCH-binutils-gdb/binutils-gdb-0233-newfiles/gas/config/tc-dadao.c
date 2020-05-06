@@ -36,7 +36,6 @@ static void dadao_fill_nops (char *, int);
 static int cmp_greg_symbol_fixes (const void *, const void *);
 static int cmp_greg_val_greg_symbol_fixes (const void *, const void *);
 static void dadao_handle_rest_of_empty_line (void);
-static void dadao_discard_rest_of_line (void);
 
 /* Copy the location of a frag to a fix.  */
 #define COPY_FR_WHERE_TO_FX(FRAG, FIX)		\
@@ -109,10 +108,6 @@ struct dadao_symbol_gregs
    } greg_fixes[MAX_GREGS];
  };
 
-/* Should read insert a colon on something that starts in column 0 on
-   this line?  */
-static int label_without_colon_this_line = 1;
-
 /* Should we automatically expand instructions into multiple insns in
    order to generate working code?  */
 static int expand_op = 1;
@@ -144,10 +139,6 @@ int dadao_globalize_symbols = 0;
 /* When expanding insns, do we want to expand PUSHJ as a call to a stub
    (or else as a series of insns)?  */
 int pushj_stubs = 1;
-
-/* Do we know that the next semicolon is at the end of the operands field
-   (in dadaoal mode; constant 1 in GNU mode)?  */
-int dadao_next_semicolon_is_eoln = 1;
 
 struct option md_longopts[] =
  {
@@ -408,7 +399,6 @@ get_operands (int max_operands, char *s, expressionS *exp)
 	  /* This seems more sane than saying "too many operands".  We'll
 	     get here only if the trailing trash starts with a comma.  */
 	  as_bad (_("invalid operands"));
-	  dadao_discard_rest_of_line ();
 	  return 0;
 	}
 
@@ -596,7 +586,6 @@ md_parse_option (int c, const char *arg ATTRIBUTE_UNUSED)
 
     case OPTION_GNU_SYNTAX:
       dadao_gnu_syntax = 1;
-      label_without_colon_this_line = 0;
       break;
 
     case OPTION_GLOBALIZE_SYMBOLS:
@@ -655,17 +644,6 @@ md_show_usage (FILE * stream)
                           -linker-allocated-gregs."));
 }
 
-/* Step to end of line, but don't step over the end of the line.  */
-
-static void
-dadao_discard_rest_of_line (void)
-{
-  while (*input_line_pointer
-	 && (! is_end_of_line[(unsigned char) *input_line_pointer]
-	     || TC_EOL_IN_INSN (input_line_pointer)))
-    input_line_pointer++;
-}
-
 /* Act as demand_empty_rest_of_line if we're in strict GNU syntax mode,
    otherwise just ignore the rest of the line (and skip the end-of-line
    delimiter).  */
@@ -675,11 +653,6 @@ dadao_handle_rest_of_empty_line (void)
 {
   if (dadao_gnu_syntax)
     demand_empty_rest_of_line ();
-  else
-    {
-      dadao_discard_rest_of_line ();
-      input_line_pointer++;
-    }
 }
 
 /* Initialize GAS DADAO specifics.  */
@@ -2529,162 +2502,6 @@ tc_gen_reloc (asection *section ATTRIBUTE_UNUSED, fixS *fixP)
   return relP;
 }
 
-/* Do some reformatting of a line.  FIXME: We could transform a dadaoal
-   line into traditional (GNU?) format, unless #NO_APP, and get rid of all
-   ugly labels_without_colons etc.  */
-
-void
-dadao_handle_dadaoal (void)
-{
-  char *insn;
-  char *s = input_line_pointer;
-  char *label = NULL;
-  char c;
-
-  if (dadao_gnu_syntax)
-    return;
-
-  if (*s == '.')
-    {
-      /* If the first character is a '.', then it's a pseudodirective, not a
-	 label.  Make GAS not handle label-without-colon on this line.  We
-	 also don't do dadaoal-specific stuff on this line.  */
-      label_without_colon_this_line = 0;
-      return;
-    }
-
-  if (*s == 0 || is_end_of_line[(unsigned int) *s])
-    /* We avoid handling empty lines here.  */
-    return;
-
-  if (is_name_beginner (*s))
-    label = s;
-
-  /* If there is a label, skip over it.  */
-  while (*s && is_part_of_name (*s))
-    s++;
-
-  /* Find the start of the instruction or pseudo following the label,
-     if there is one.  */
-  for (insn = s;
-       *insn && ISSPACE (*insn) && ! is_end_of_line[(unsigned int) *insn];
-       insn++)
-    /* Empty */
-    ;
-
-  /* If we have a non-DADAOAL pseudo, we have not business with the rest of
-     the line.  */
-  if (*insn == '.')
-    return;
-
-  /* Scan again, this time looking for ';' after operands.  */
-  s = insn;
-
-  /* Skip the insn.  */
-  while (*s
-	 && ! ISSPACE (*s)
-	 && *s != ';'
-	 && ! is_end_of_line[(unsigned int) *s])
-    s++;
-
-  /* Skip the spaces after the insn.  */
-  while (*s
-	 && ISSPACE (*s)
-	 && *s != ';'
-	 && ! is_end_of_line[(unsigned int) *s])
-    s++;
-
-  while ((c = *s) != 0
-	 && ! ISSPACE (c)
-	 && c != ';'
-	 && ! is_end_of_line[(unsigned int) c])
-    {
-      if (c == '"')
-	{
-	  s++;
-
-	  /* FIXME: Test-case for semi-colon in string.  */
-	  while (*s
-		 && *s != '"'
-		 && (! is_end_of_line[(unsigned int) *s] || *s == ';'))
-	    s++;
-
-	  if (*s == '"')
-	    s++;
-	}
-      else if (ISDIGIT (c))
-	{
-	  if ((s[1] != 'B' && s[1] != 'F')
-	      || is_part_of_name (s[-1])
-	      || is_part_of_name (s[2])
-	      /* Don't treat e.g. #1F as a local-label reference.  */
-	      || (s != input_line_pointer && s[-1] == '#'))
-	    s++;
-	  else
-	    {
-	      s[1] = c;
-	    }
-	}
-      else
-	s++;
-    }
-
-  /* Skip any spaces after the operands.  */
-  while (*s
-	 && ISSPACE (*s)
-	 && *s != ';'
-	 && !is_end_of_line[(unsigned int) *s])
-    s++;
-
-  /* If we're now looking at a semi-colon, then it's an end-of-line
-     delimiter.  */
-  dadao_next_semicolon_is_eoln = (*s == ';');
-
-  /* Make IS into an EQU by replacing it with "= ".  Only match upper-case
-     though; let lower-case be a syntax error.  */
-  s = insn;
-  if (s[0] == 'I' && s[1] == 'S' && ISSPACE (s[2]))
-    {
-      *s = '=';
-      s[1] = ' ';
-
-      /* Since labels can start without ":", we have to handle "X IS 42"
-	 in full here, or "X" will be parsed as a label to be set at ".".  */
-      input_line_pointer = s;
-
-      /* Right after this function ends, line numbers will be bumped if
-	 input_line_pointer[-1] = '\n'.  We want accurate line numbers for
-	 the equals call, so we bump them before the call, and make sure
-	 they aren't bumped afterwards.  */
-      bump_line_counters ();
-
-      /* For dadaoal, we can have comments without a comment-start
-	 character.   */
-      dadao_handle_rest_of_empty_line ();
-      input_line_pointer--;
-
-      input_line_pointer[-1] = ' ';
-    }
-  else if (s[0] == 'G'
-	   && s[1] == 'R'
-	   && strncmp (s, "GREG", 4) == 0
-	   && (ISSPACE (s[4]) || is_end_of_line[(unsigned char) s[4]]))
-    {
-      input_line_pointer = s + 4;
-
-      /* Right after this function ends, line numbers will be bumped if
-	 input_line_pointer[-1] = '\n'.  We want accurate line numbers for
-	 the s_greg call, so we bump them before the call, and make sure
-	 they aren't bumped afterwards.  */
-      bump_line_counters ();
-
-      /* Back up before the end-of-line marker that was skipped in
-	 dadao_greg_internal.  */
-      input_line_pointer--;
-      input_line_pointer[-1] = ' ';
-    }
-}
-
 /* See whether we need to force a relocation into the output file.
    This is used to force out switch and PC relative relocations when
    relaxing.  */
@@ -2751,23 +2568,6 @@ dadao_adjust_symtab (void)
 	     $0..$255.  */
 	  S_SET_SEGMENT (sym, real_reg_section);
       }
-}
-
-/* This is the expansion of LABELS_WITHOUT_COLONS.
-   We let md_start_line_hook tweak label_without_colon_this_line, and then
-   this function returns the tweaked value, and sets it to 1 for the next
-   line.  FIXME: Very, very brittle.  Not sure it works the way I
-   thought at the time I first wrote this.  */
-
-int
-dadao_label_without_colon_this_line (void)
-{
-  int retval = label_without_colon_this_line;
-
-  if (! dadao_gnu_syntax)
-    label_without_colon_this_line = 1;
-
-  return retval;
 }
 
 /* This is the expansion of md_relax_frag.  We go through the ordinary

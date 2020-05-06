@@ -14,16 +14,6 @@
 #define TARGET_ARCH bfd_arch_dadao
 #define TARGET_BYTES_BIG_ENDIAN 1
 
-extern int dadao_label_without_colon_this_line (void);
-#define LABELS_WITHOUT_COLONS dadao_label_without_colon_this_line ()
-
-extern int dadao_next_semicolon_is_eoln;
-#define TC_EOL_IN_INSN(p) (*(p) == ';' && ! dadao_next_semicolon_is_eoln)
-
-/* This is one direction we can get dadaoal compatibility.  */
-extern void dadao_handle_dadaoal (void);
-#define md_start_line_hook dadao_handle_dadaoal
-
 extern void dadao_md_begin (void);
 #define md_begin dadao_md_begin
 
