@@ -64,7 +64,6 @@ extern void dadao_adjust_symtab (void);
 /* Here's where we make all symbols global, when so requested.
    We must avoid doing that for expression symbols or section symbols,
    though.  */
-extern int dadao_globalize_symbols;
 #define tc_frob_symbol(sym, punt)				\
   do								\
     {								\
@@ -73,17 +72,9 @@ extern int dadao_globalize_symbols;
 	  if (S_GET_NAME (sym)[0] != '$'			\
 	      && S_GET_VALUE (sym) < 256)			\
 	    {							\
-	      if (dadao_globalize_symbols)			\
-		S_SET_EXTERNAL (sym);				\
-	      else						\
 		symbol_mark_used_in_reloc (sym);		\
 	    }							\
 	}							\
-      else if (dadao_globalize_symbols				\
-	       && ! symbol_section_p (sym)			\
-	       && sym != section_symbol (absolute_section)	\
-	       && ! S_IS_LOCAL (sym))				\
-	S_SET_EXTERNAL (sym);					\
     }								\
   while (0)
 

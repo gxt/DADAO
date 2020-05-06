@@ -129,9 +129,6 @@ static int predefined_syms = 1;
    (e.g. equated symbols)?  */
 static int equated_spec_regs = 1;
 
-/* Do we globalize all symbols?  */
-int dadao_globalize_symbols = 0;
-
 /* When expanding insns, do we want to expand PUSHJ as a call to a stub
    (or else as a series of insns)?  */
 int pushj_stubs = 1;
@@ -142,15 +139,13 @@ struct option md_longopts[] =
 #define OPTION_NOEXPAND  (OPTION_RELAX + 1)
 #define OPTION_NOMERGEGREG  (OPTION_NOEXPAND + 1)
 #define OPTION_NOSYMS  (OPTION_NOMERGEGREG + 1)
-#define OPTION_GLOBALIZE_SYMBOLS  (OPTION_NOSYMS + 1)
-#define OPTION_FIXED_SPEC_REGS  (OPTION_GLOBALIZE_SYMBOLS + 1)
+#define OPTION_FIXED_SPEC_REGS  (OPTION_NOSYMS + 1)
 #define OPTION_LINKER_ALLOCATED_GREGS  (OPTION_FIXED_SPEC_REGS + 1)
 #define OPTION_NOPUSHJSTUBS  (OPTION_LINKER_ALLOCATED_GREGS + 1)
    {"linkrelax", no_argument, NULL, OPTION_RELAX},
    {"no-expand", no_argument, NULL, OPTION_NOEXPAND},
    {"no-merge-gregs", no_argument, NULL, OPTION_NOMERGEGREG},
    {"no-predefined-syms", no_argument, NULL, OPTION_NOSYMS},
-   {"globalize-symbols", no_argument, NULL, OPTION_GLOBALIZE_SYMBOLS},
    {"fixed-special-register-names", no_argument, NULL,
     OPTION_FIXED_SPEC_REGS},
    {"linker-allocated-gregs", no_argument, NULL,
@@ -578,10 +573,6 @@ md_parse_option (int c, const char *arg ATTRIBUTE_UNUSED)
       equated_spec_regs = 0;
       break;
 
-    case OPTION_GLOBALIZE_SYMBOLS:
-      dadao_globalize_symbols = 1;
-      break;
-
     case OPTION_FIXED_SPEC_REGS:
       equated_spec_regs = 0;
       break;
@@ -610,8 +601,6 @@ md_show_usage (FILE * stream)
   fprintf (stream, _("\
   -fixed-special-register-names\n\
                           Allow only the original special register names.\n"));
-  fprintf (stream, _("\
-  -globalize-symbols      Make all symbols global.\n"));
   fprintf (stream, _("\
   -relax                  Create linker relaxable code.\n"));
   fprintf (stream, _("\
