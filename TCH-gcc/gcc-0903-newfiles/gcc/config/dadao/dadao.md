@@ -443,7 +443,8 @@ DIVU %1,%1,%2\;GET %0,rR\;NEGU %2,0,%0\;CSNN %0,$255,%2")
   ;; FIXME: Can we fold any other way?
   "REG_P (operands[0]) && REG_P (operands[1])
    && REGNO (operands[1]) == REGNO (operands[0])"
-  "%% folded: cmp %0,%1,0")
+  ;; DADAO FIXME: remove folded label and %% prefix
+  "cmp %0,%1,0")
 
 (define_insn "*cmps"
   [(set (match_operand:CC 0 "register_operand" "=r")
