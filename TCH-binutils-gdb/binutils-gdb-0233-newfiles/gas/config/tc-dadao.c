@@ -35,7 +35,6 @@ static void dadao_set_jmp_offset (char *, offsetT);
 static void dadao_fill_nops (char *, int);
 static int cmp_greg_symbol_fixes (const void *, const void *);
 static int cmp_greg_val_greg_symbol_fixes (const void *, const void *);
-static void dadao_handle_rest_of_empty_line (void);
 
 /* Copy the location of a frag to a fix.  */
 #define COPY_FR_WHERE_TO_FX(FRAG, FIX)		\
@@ -423,7 +422,7 @@ get_operands (int max_operands, char *s, expressionS *exp)
   /* If we allow "naked" comments, ignore the rest of the line.  */
   if (nextchar != ',')
     {
-      dadao_handle_rest_of_empty_line ();
+      demand_empty_rest_of_line ();
       input_line_pointer--;
     }
 
@@ -631,16 +630,6 @@ md_show_usage (FILE * stream)
                           PUSHJ or JUMP is not known to be within range.\n\
                           The linker will catch any errors.  Implies\n\
                           -linker-allocated-gregs."));
-}
-
-/* Act as demand_empty_rest_of_line if we're in strict GNU syntax mode,
-   otherwise just ignore the rest of the line (and skip the end-of-line
-   delimiter).  */
-
-static void
-dadao_handle_rest_of_empty_line (void)
-{
-  demand_empty_rest_of_line ();
 }
 
 /* Initialize GAS DADAO specifics.  */
@@ -1745,7 +1734,7 @@ dadao_greg_internal (char *label)
   else
     n_of_raw_gregs++;
 
-  dadao_handle_rest_of_empty_line ();
+  demand_empty_rest_of_line ();
 }
 
 /* The ".greg label,expr" worker.  */
@@ -3133,7 +3122,7 @@ s_loc (int ignore ATTRIBUTE_UNUSED)
       *p = 0;
     }
 
-  dadao_handle_rest_of_empty_line ();
+  demand_empty_rest_of_line ();
 }
 
 /* The md_do_align worker.  At present, we just record an alignment to
