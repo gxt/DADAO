@@ -1,0 +1,26 @@
+From 2ec8bf9e2a88040f131f26deb51e24f00c9ff4ee Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Wed, 6 May 2020 07:53:54 +0000
+Subject: [PATCH] DADAO-fixup: newlib/libc/time/Makefile.in for wcsftime.c
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ newlib/libc/time/Makefile.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/newlib/libc/time/Makefile.in b/newlib/libc/time/Makefile.in
+index 6c5f4a411..3cf3e1481 100644
+--- a/newlib/libc/time/Makefile.in
++++ b/newlib/libc/time/Makefile.in
+@@ -518,7 +518,7 @@ lib_a-tzvars.obj: tzvars.c
+ 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-tzvars.obj `if test -f 'tzvars.c'; then $(CYGPATH_W) 'tzvars.c'; else $(CYGPATH_W) '$(srcdir)/tzvars.c'; fi`
+ 
+ lib_a-wcsftime.o: wcsftime.c
+-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-wcsftime.o `test -f 'wcsftime.c' || echo '$(srcdir)/'`wcsftime.c
++	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -Os -c -o lib_a-wcsftime.o `test -f 'wcsftime.c' || echo '$(srcdir)/'`wcsftime.c
+ 
+ lib_a-wcsftime.obj: wcsftime.c
+ 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-wcsftime.obj `if test -f 'wcsftime.c'; then $(CYGPATH_W) 'wcsftime.c'; else $(CYGPATH_W) '$(srcdir)/wcsftime.c'; fi`
+-- 
+2.17.1
+
