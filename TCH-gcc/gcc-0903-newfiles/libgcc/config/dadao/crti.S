@@ -14,23 +14,27 @@
 
 	.data
 	.p2align 3
-dstart	.dd.octa 2009
+dstart:
+	.dd.octa 2009
 
 	.text
 	.global Main
 
 # The __Stack_start symbol is provided by the link script.
-stackpp	.dd.octa __Stack_start
-crtstxt	.dd.octa _init
+stackpp:
+	.dd.octa __Stack_start
+crtstxt:
+	.dd.octa _init
 	.dd.octa __etext
 
-crtsdat	.dd.octa dstart
+crtsdat:
+	.dd.octa dstart
 	.dd.octa _end
 
 # "Main" is the magic symbol the simulator jumps to.  We want to go
 # on to "main".
 # We need to set rG explicitly to avoid hard-to-debug situations.
-Main	SETL	$63,32
+Main:	SETL	$63,32
 	PUT	rG,$63
 
 # Make sure we have valid memory for addresses in .text and .data (and
@@ -54,19 +58,19 @@ Main	SETL	$63,32
 	ANDNL	$2,#7ff
 	LDOU	$3,$63,8
 	SETL	$4,2048
-0H	PRELD	0,$2,0
+0:	PRELD	0,$2,0
 	ADDU	$2,$2,$4
 	CMP	$63,$2,$3
-	BN	$63,0B
+	BN	$63,0b
 
 	GETA	$63,crtsdat
 	LDOU	$2,$63,0
 	ANDNL	$2,#7ff
 	LDOU	$3,$63,8
-0H	PRELD	0,$2,0
+0:	PRELD	0,$2,0
 	ADDU	$2,$2,$4
 	CMP	$63,$2,$3
-	BN	$63,0B
+	BN	$63,0b
 
 # Initialize the stack pointer.  It is supposedly made a global
 # zero-initialized (allowed to change) register in crtn.S; we use the
@@ -101,10 +105,10 @@ Main	SETL	$63,32
 	.global	_init
 _init:
 	GET	$0,rJ
-	PUSHJ	$1,0F
+	PUSHJ	$1,0f
 	SETL	$63,63
 	TRAP	0,0,0
-0H	TRAP	0,0,0
+0:	TRAP	0,0,0
 
 # Register _fini to be executed as the last atexit function.
 #ifdef __DADAO_ABI_GNU__
@@ -118,7 +122,7 @@ _init:
 	.global	_fini
 _fini:
 	GET	$0,rJ
-	PUSHJ	$1,0F
+	PUSHJ	$1,0f
 	SETL	$63,63
 	TRAP	0,0,0
-0H	TRAP	0,0,0
+0:	TRAP	0,0,0
