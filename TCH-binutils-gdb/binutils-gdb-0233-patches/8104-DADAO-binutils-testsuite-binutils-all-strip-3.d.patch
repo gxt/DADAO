@@ -1,0 +1,26 @@
+From 8487e081a6b043fdd02673bb25edb26da438ee56 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 7 May 2020 09:25:53 +0000
+Subject: [PATCH 8104/8104] DADAO-binutils: testsuite/binutils-all/strip-3.d
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ binutils/testsuite/binutils-all/strip-3.d | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/binutils/testsuite/binutils-all/strip-3.d b/binutils/testsuite/binutils-all/strip-3.d
+index 2a886d2dcc6..4491128e8d7 100644
+--- a/binutils/testsuite/binutils-all/strip-3.d
++++ b/binutils/testsuite/binutils-all/strip-3.d
+@@ -3,7 +3,7 @@
+ #strip: -R .text -R .data -R .bss -R .ARM.attributes -R .reginfo -R .gnu.attributes -R .MIPS.abiflags -R .pdr -R .xtensa.info -R .ARC.attributes -R .note.gnu.property -R .riscv.attributes
+ #readelf: -S --wide
+ #name: strip empty file
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-linux-*
+ 
+ #...
+   \[[ 0]+\][ \t]+NULL[ \t]+.*
+-- 
+2.17.1
+

@@ -1,0 +1,26 @@
+From 0294595c12f3616def1cb89c448e5ef4fa3be4ac Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 7 May 2020 09:25:35 +0000
+Subject: [PATCH 8103/8104] DADAO-binutils: testsuite/binutils-all/objcopy.exp
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ binutils/testsuite/binutils-all/objcopy.exp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/binutils/testsuite/binutils-all/objcopy.exp b/binutils/testsuite/binutils-all/objcopy.exp
+index e12a8286a59..bc5778079ad 100644
+--- a/binutils/testsuite/binutils-all/objcopy.exp
++++ b/binutils/testsuite/binutils-all/objcopy.exp
+@@ -627,7 +627,7 @@ proc copy_setup { } {
+ 	set add_libs ""
+     }
+ 
+-    if { [istarget *-*-linux*]
++    if { [istarget *-*-linux*] || [istarget *-linux-*]
+ 	 || [istarget *-*-gnu*] } {
+ 	foreach i $gcc_gas_flag {
+ 	    set flags "additional_flags=$i $flags"
+-- 
+2.17.1
+
