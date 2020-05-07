@@ -1,0 +1,26 @@
+From b07ffe8006c11000206b299f075f7a8522727f26 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 7 May 2020 08:48:17 +0000
+Subject: [PATCH 8102/8102] DADAO-binutils: testsuite/binutils-all/elfedit-3.d
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ binutils/testsuite/binutils-all/elfedit-3.d | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/binutils/testsuite/binutils-all/elfedit-3.d b/binutils/testsuite/binutils-all/elfedit-3.d
+index df5ee9727d1..f6a7013c34a 100644
+--- a/binutils/testsuite/binutils-all/elfedit-3.d
++++ b/binutils/testsuite/binutils-all/elfedit-3.d
+@@ -3,7 +3,7 @@
+ #source: empty.s
+ #readelf: -h
+ #name: Update ELF header 3
+-#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi
++#target: *-*-linux* *-*-gnu* arm*-*-uclinuxfdpiceabi *-linux-*
+ 
+ #...
+ ELF Header:
+-- 
+2.17.1
+
