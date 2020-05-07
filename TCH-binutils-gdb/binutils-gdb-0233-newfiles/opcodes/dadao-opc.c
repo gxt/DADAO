@@ -309,5 +309,7 @@ const struct dadao_opcode dadao_opcodes[] =
    {"get", O (0xfe) | 0xffe0,	OP (get),		N},
    {"trip",	O (0xff),	OP (xyz_opt),		J},
 
+	{"nop",	O (SWYM_INSN_BYTE),	OP (none),	N},
+
    {NULL, ~0, ~0, OP (none), N}
  };

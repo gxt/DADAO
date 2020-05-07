@@ -780,6 +780,9 @@ md_assemble (char *str)
       max_operands = 1;
       break;
 
+    case dadao_operands_none:
+      max_operands = 0;
+
       /* The original 3 is fine for the rest.  */
     default:
       break;
@@ -1625,6 +1628,15 @@ md_assemble (char *str)
 	default:
 		as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 	}
+	break;
+
+    case dadao_operands_none: /* nop */
+	if (n_operands != 0)
+		as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+	DDOP_SET_FA(opcodep, 0);
+	DDOP_SET_FB(opcodep, 0);
+	DDOP_SET_FC(opcodep, 0);
+	DDOP_SET_FD(opcodep, 0);
 	break;
 
     default:
