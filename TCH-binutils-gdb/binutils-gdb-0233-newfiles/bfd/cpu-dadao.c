@@ -20,7 +20,7 @@ bfd_dadao_arch =
    0,				/* Machine number - 0 for now.  */
    /* Sorry, these are by custom and creeping assumption lower-case.  */
    "dadao",			/* Architecture name.  */
-   "DADAO",			/* Printable name.  */
+   "dadao",			/* Printable name.  */
    3,				/* Section align power.  */
    TRUE,			/* This is the default architecture.  */
    bfd_default_compatible,	/* Architecture comparison function.  */
