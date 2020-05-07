@@ -155,8 +155,12 @@ binutils-gdb-0233-highfive:
 	@echo "BUILD binutils-gdb-0233 DONE!"
 
 binutils-gdb-0233-check-gas:
+	@echo "=== binutils-gdb check-gas time maybe: real 5s, user 3s, sys 2s ==="
+	@echo "=== gas Summary on (2020/05/07): 204 of expected passes, 2 of unsupported tests ==="
 	@make -C $(BINUTILS_GDB_0233_BUILD) check-gas		1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
-	@ln --symbolic --force -t $(BINUTILS_GDB_0233_BUILD) $(BINUTILS_GDB_0233_BUILD)/gas/testsuite/gas.sum
+	@echo "=== head/tail of gas.sum ==="
+	@head -n 6 $(BINUTILS_GDB_0233_BUILD)/gas/testsuite/gas.sum
+	@tail -n 6 $(BINUTILS_GDB_0233_BUILD)/gas/testsuite/gas.sum
 
 binutils-gdb-0233-check-ld:
 	@make -C $(BINUTILS_GDB_0233_BUILD) check-binutils	1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
