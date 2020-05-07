@@ -163,8 +163,12 @@ binutils-gdb-0233-check-gas:
 	@tail -n 6 $(BINUTILS_GDB_0233_BUILD)/gas/testsuite/gas.sum
 
 binutils-gdb-0233-check-binutils:
+	@echo "=== binutils-gdb check-binutils time maybe: real 54s, user 58s, sys 12s ==="
+	@echo "=== binutils Summary on (2020/05/07): 204 of expected passes, 8 of unsupported tests ==="
 	@make -C $(BINUTILS_GDB_0233_BUILD) check-binutils	1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
-	@ln --symbolic --force -t $(BINUTILS_GDB_0233_BUILD) $(BINUTILS_GDB_0233_BUILD)/binutils/binutils.sum
+	@echo "=== head/tail of gas.sum ==="
+	@head -n 6 $(BINUTILS_GDB_0233_BUILD)/binutils/binutils.sum
+	@tail -n 5 $(BINUTILS_GDB_0233_BUILD)/binutils/binutils.sum
 
 binutils-gdb-0233-check-ld:
 	@make -C $(BINUTILS_GDB_0233_BUILD) check-ld		1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
