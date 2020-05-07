@@ -12,23 +12,7 @@ diff --git a/gas/testsuite/gas/all/gas.exp b/gas/testsuite/gas/all/gas.exp
 index 4f0e98029cf..d109ecba379 100644
 --- a/gas/testsuite/gas/all/gas.exp
 +++ b/gas/testsuite/gas/all/gas.exp
-@@ -112,6 +112,7 @@ if { ![is_aout_format] } {
- 	}
- 	{ alpha-*-*linux*ecoff } { }
- 	{ alpha-*-osf* } { }
-+	{ dadao-*-* } { }
- 	{ hppa*-*-hpux* } { }
- 	{ mep-*-* } { }
- 	{ mmix-*-* } { }
-@@ -282,6 +283,7 @@ case $target_triplet in {
- 
- # '<' and '>' appear to have special meanings on the excluded targets
- case $target_triplet in {
-+    { dadao-*-* } { }
-     { frv-*-* } { }
-     { hppa*-*-* } { }
-     { m32r-*-* } { }
-@@ -430,6 +432,9 @@ case $target_triplet in {
+@@ -428,6 +430,9 @@ case $target_triplet in {
      { "bpf-*-*" } {
          set nop_type 6
      }
