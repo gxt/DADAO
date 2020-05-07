@@ -1,15 +1,15 @@
-From 81319a4f608d650e7fffbf924614ca76713cfe32 Mon Sep 17 00:00:00 2001
+From 34b65ae1518131d855b7b07fbcc0dab83551e407 Mon Sep 17 00:00:00 2001
 From: Guan Xuetao <gxt@pku.edu.cn>
-Date: Thu, 7 May 2020 01:02:32 +0000
+Date: Thu, 7 May 2020 03:22:17 +0000
 Subject: [PATCH] DADAO-binutils: readelf.c
 
 Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
 ---
- binutils/readelf.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ binutils/readelf.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
 diff --git a/binutils/readelf.c b/binutils/readelf.c
-index 0962877ad8f..4114cea7688 100644
+index 0962877ad8f..9614941e0c4 100644
 --- a/binutils/readelf.c
 +++ b/binutils/readelf.c
 @@ -102,6 +102,7 @@
@@ -56,6 +56,15 @@ index 0962877ad8f..4114cea7688 100644
      case EM_MMIX:
        return reloc_type == 4; /* R_MMIX_32.  */
      case EM_CYGNUS_MN10200:
+@@ -12850,6 +12859,8 @@ is_64bit_abs_reloc (Filedata * filedata, unsigned int reloc_type)
+       return reloc_type == 1; /* R_TILEGX_64.  */
+     case EM_MIPS:
+       return reloc_type == 18;	/* R_MIPS_64.  */
++    case EM_DADAO:
++      return reloc_type == 5;  /* R_DADAO_64.  */
+     default:
+       return FALSE;
+     }
 -- 
 2.17.1
 
