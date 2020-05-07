@@ -149,15 +149,25 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
  *   FC: 6-bit, [11..6]
  *   FD: 6-bit, [5..0]
  */
-#define DDOP_CHECK_6_BIT(ddop_fx)								\
+#define DDOP_CHECK_8_BIT(ddop_fx)								\
 	do {											\
 		if ((ddop_fx) < 0)								\
 			as_bad_where(__FILE__, __LINE__, "negative");				\
 		if ((ddop_fx) > 0xFF)								\
 			as_bad_where(__FILE__, __LINE__, "bigger than 255");			\
-		if ((ddop_fx) > 0x3F)								\
-			as_warn_where(__FILE__, __LINE__, "bigger than 63, FIXME!");		\
 	} while (0)
+
+/* FIXME: after gcc works */
+#define DDOP_CHECK_6_BIT(x) DDOP_CHECK_8_BIT(x)
+#if 0
+#define DDOP_CHECK_6_BIT(ddop_fx)								\
+	do {											\
+		if ((ddop_fx) < 0)								\
+			as_bad_where(__FILE__, __LINE__, "negative");				\
+		if ((ddop_fx) > 0x3F)								\
+			as_bad_where(__FILE__, __LINE__, "bigger than 63, FIXME!");		\
+	} while (0)
+#endif
 
 #define DDOP_EXP_MUST_BE_REG(ddop_exp)								\
 	do {											\
