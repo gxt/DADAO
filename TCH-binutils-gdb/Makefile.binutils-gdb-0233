@@ -162,11 +162,11 @@ binutils-gdb-0233-check-gas:
 	@head -n 6 $(BINUTILS_GDB_0233_BUILD)/gas/testsuite/gas.sum
 	@tail -n 6 $(BINUTILS_GDB_0233_BUILD)/gas/testsuite/gas.sum
 
-binutils-gdb-0233-check-ld:
+binutils-gdb-0233-check-binutils:
 	@make -C $(BINUTILS_GDB_0233_BUILD) check-binutils	1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
 	@ln --symbolic --force -t $(BINUTILS_GDB_0233_BUILD) $(BINUTILS_GDB_0233_BUILD)/binutils/binutils.sum
 
-binutils-gdb-0233-check-binutils:
+binutils-gdb-0233-check-ld:
 	@make -C $(BINUTILS_GDB_0233_BUILD) check-ld		1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
 	@ln --symbolic --force -t $(BINUTILS_GDB_0233_BUILD) $(BINUTILS_GDB_0233_BUILD)/ld/ld.sum
 
