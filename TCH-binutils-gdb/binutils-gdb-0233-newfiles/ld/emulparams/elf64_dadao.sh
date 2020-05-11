@@ -19,16 +19,6 @@ MACHINE=
 COMPILE_IN=yes
 EXTRA_EM_FILE=dadaoelf
 
-OTHER_SECTIONS='
- .DADAO.reg_contents :
- {
-   /* Note that this section always has a fixed VMA - that of its
-      first register * 8.  */
-   *(.DADAO.reg_contents.linker_allocated);
-   *(.DADAO.reg_contents);
- }
-'
-
 # FIXME: Also bit by the PROVIDE bug?  If not, this could be
 # EXECUTABLE_SYMBOLS.
 # By default, put the high end of the stack where the register stack
