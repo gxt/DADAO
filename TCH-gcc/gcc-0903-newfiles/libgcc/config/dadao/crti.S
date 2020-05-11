@@ -18,7 +18,7 @@ dstart:
 	.dd.octa 2009
 
 	.text
-	.global Main
+	.global _start
 
 # The __Stack_start symbol is provided by the link script.
 stackpp:
@@ -31,10 +31,7 @@ crtsdat:
 	.dd.octa dstart
 	.dd.octa _end
 
-# "Main" is the magic symbol the simulator jumps to.  We want to go
-# on to "main".
-# We need to set rG explicitly to avoid hard-to-debug situations.
-Main:	SETL	$63,32
+_start:	SETL	$63,32
 	PUT	rG,$63
 
 # Make sure we have valid memory for addresses in .text and .data (and
