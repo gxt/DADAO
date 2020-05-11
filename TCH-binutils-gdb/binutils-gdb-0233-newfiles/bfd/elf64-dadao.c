@@ -2742,19 +2742,7 @@ dadao_elf_relax_section (bfd *abfd,
 #define ELF_ARCH		bfd_arch_dadao
 #define ELF_MACHINE_CODE	EM_DADAO
 
-/* According to dadao-doc page 36 (paragraph 45), this should be (1LL << 48LL).
-   However, that's too much for something somewhere in the linker part of
-   BFD; perhaps the start-address has to be a non-zero multiple of this
-   number, or larger than this number.  The symptom is that the linker
-   complains: "warning: allocated section `.text' not in segment".  We
-   settle for 64k; the page-size used in examples is 8k.
-   #define ELF_MAXPAGESIZE 0x10000
-
-   Unfortunately, this causes excessive padding in the supposedly small
-   for-education programs that are the expected usage (where people would
-   inspect output).  We stick to 256 bytes just to have *some* default
-   alignment.  */
-#define ELF_MAXPAGESIZE 0x100
+#define ELF_MAXPAGESIZE		0x1000
 
 #define TARGET_BIG_SYM		dadao_elf64_vec
 #define TARGET_BIG_NAME		"elf64-dadao"
