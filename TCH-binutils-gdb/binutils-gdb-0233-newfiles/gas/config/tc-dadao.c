@@ -620,9 +620,7 @@ md_show_usage (FILE * stream)
 }
 
 /* Initialize GAS DADAO specifics.  */
-
-void
-dadao_md_begin (void)
+void dadao_md_begin (void)
 {
   int i;
   const struct dadao_opcode *opcode;
@@ -672,9 +670,7 @@ dadao_md_begin (void)
 }
 
 /* Assemble one insn in STR.  */
-
-void
-md_assemble (char *str)
+void dadao_md_assemble (char *str)
 {
   char *operands = str;
   char modified_char = 0;
@@ -2477,9 +2473,7 @@ dadao_adjust_symtab (void)
    relax table function except when the frag is for a GREG.  Then we have
    to check whether there's another GREG by the same value that we can
    join with.  */
-
-long
-dadao_md_relax_frag (segT seg, fragS *fragP, long stretch)
+long dadao_md_relax_frag (segT seg, fragS *fragP, long stretch)
 {
   switch (fragP->fr_subtype)
     {
@@ -2603,9 +2597,7 @@ dadao_md_relax_frag (segT seg, fragS *fragP, long stretch)
 }
 
 /* Various things we punt until all input is seen.  */
-
-void
-dadao_md_end (void)
+void dadao_md_end (void)
 {
   fragS *fragP;
   asection *regsec;
@@ -2911,9 +2903,7 @@ dadao_frob_file (void)
 }
 
 /* Just get knowledge about alignment from the new section.  */
-
-void
-dadao_md_elf_section_change_hook (void)
+void dadao_md_elf_section_change_hook (void)
 {
   last_alignment = bfd_get_section_alignment (now_seg->owner, now_seg);
 }
@@ -2922,9 +2912,7 @@ dadao_md_elf_section_change_hook (void)
    nullify the automatic alignment we do for WYDE, TETRA and OCTA, as gcc
    does not use the unaligned macros when attribute packed is used.
    Arguably this is a GCC bug.  */
-
-void
-dadao_md_do_align (int n, char *fill ATTRIBUTE_UNUSED,
+void dadao_md_do_align (int n, char *fill ATTRIBUTE_UNUSED,
 		  int len ATTRIBUTE_UNUSED, int max ATTRIBUTE_UNUSED)
 {
   last_alignment = n;

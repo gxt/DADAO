@@ -10,17 +10,25 @@
 #define TC_DADAO
 
 /* See gas/doc/internals.texi for explanation of these macros.  */
-#define TARGET_FORMAT "elf64-dadao"
-#define TARGET_ARCH bfd_arch_dadao
-#define TARGET_BYTES_BIG_ENDIAN 1
+#define TARGET_FORMAT			"elf64-dadao"
+#define TARGET_ARCH			bfd_arch_dadao
+#define TARGET_BYTES_BIG_ENDIAN		1
 
+extern void dadao_md_assemble (char *);
 extern void dadao_md_begin (void);
-#define md_begin dadao_md_begin
-
 extern void dadao_md_end (void);
-#define md_end dadao_md_end
+/* We use the relax table for everything except the GREG frags and PUSHJ.  */
+extern long dadao_md_relax_frag (segT, fragS *, long);
+extern void dadao_md_elf_section_change_hook (void);
 
-extern int dadao_gnu_syntax;
+#define md_assemble			dadao_md_assemble
+#define md_begin			dadao_md_begin
+#define md_end				dadao_md_end
+#define md_relax_frag			dadao_md_relax_frag
+#define md_elf_section_change_hook	dadao_md_elf_section_change_hook
+
+extern void dadao_md_do_align (int, char *, int, int);
+#define md_do_align(n, fill, len, max, label)	dadao_md_do_align (n, fill, len, max)
 
 #define md_undefined_symbol(x) NULL
 
@@ -46,10 +54,6 @@ extern int dadao_gnu_syntax;
 
 extern const struct relax_type dadao_relax_table[];
 #define TC_GENERIC_RELAX_TABLE dadao_relax_table
-
-/* We use the relax table for everything except the GREG frags and PUSHJ.  */
-extern long dadao_md_relax_frag (segT, fragS *, long);
-#define md_relax_frag dadao_md_relax_frag
 
 #define tc_fix_adjustable(FIX)					\
  (((FIX)->fx_addsy == NULL					\
@@ -135,13 +139,6 @@ struct dadao_segment_info_type
  };
 #define TC_SEGMENT_INFO_TYPE struct dadao_segment_info_type
 
-extern void dadao_md_elf_section_change_hook (void);
-#define md_elf_section_change_hook dadao_md_elf_section_change_hook
-
-extern void dadao_md_do_align (int, char *, int, int);
-#define md_do_align(n, fill, len, max, label) \
- dadao_md_do_align (n, fill, len, max)
-
 /* Each insn is a tetrabyte (4 bytes) long, but if there are BYTE
    sequences sprinkled in, we can get unaligned DWARF2 offsets, so let's
    explicitly say one byte.  */
@@ -152,8 +149,5 @@ extern void dadao_md_do_align (int, char *, int, int);
 
 /* DADAO has global register symbols.  */
 #define TC_GLOBAL_REGISTER_SYMBOL_OK
-#ifndef TARGET_BYTES_BIG_ENDIAN
-#define TARGET_BYTES_BIG_ENDIAN			1
-#endif
 
 #endif /* TC_DADAO */
