@@ -119,14 +119,6 @@ dadao_before_parse (void)
   link_info.check_relocs_after_open_input = TRUE;
   gld${EMULATION_NAME}_before_parse ();
 
-  /* Make sure we don't create a demand-paged executable.  Unfortunately
-     this isn't changeable with a command-line option.  It makes no
-     difference to mmo, but the sections in elf64dadao will be aligned to a
-     page in the linked file, which is non-intuitive.  If there's ever a
-     full system with shared libraries and demand paging, you will want to
-     exclude this file.  */
-  config.magic_demand_paged = FALSE;
-
   config.separate_code = `if test "x${SEPARATE_CODE}" = xyes ; then echo TRUE ; else echo FALSE ; fi`;
 }
 EOF
