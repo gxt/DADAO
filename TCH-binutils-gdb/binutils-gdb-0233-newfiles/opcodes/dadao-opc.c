@@ -99,24 +99,24 @@ const struct dadao_opcode dadao_opcodes[] =
 
    {"fmul",	O (16),		OP (regs),		N},
    {"fcmpe",	O (17),		OP (regs),		N},
-   {"mul",	Z (24),		OP (regs_z),		N},
 
    {"fune",	O (18),		OP (regs),		N},
    {"feqle",	O (19),		OP (regs),		N},
-   {"mulu",	Z (26),		OP (regs_z),		N},
 
    {"fdiv",	O (20),		OP (regs),		N},
    {"fsqrt",	O (21),		OP (roundregs),		N},
-   {"div",	Z (28),		OP (regs_z),		N},
 
    {"frem",	O (22),		OP (regs),		N},
    {"fint",	O (23),		OP (roundregs),		N},
-   {"divu",	Z (30),		OP (regs_z),		N},
 
-   {"add",	Z (0x20),	OP (rrs6_ri12),		D_A_BC},
-   {"addu",	Z (0x22),	OP (rrs6_ri12),		D_A_BC},
-   {"sub",	Z (0x24),	OP (rrs6_ri12),		D_A_BC},
-   {"subu",	Z (0x26),	OP (rrs6_ri12),		D_A_BC},
+	{"add",		Z (0x20),	OP (rrs6_ri12),		D_A_BC},
+	{"addu",	Z (0x22),	OP (rrs6_ri12),		D_A_BC},
+	{"sub",		Z (0x24),	OP (rrs6_ri12),		D_A_BC},
+	{"subu",	Z (0x26),	OP (rrs6_ri12),		D_A_BC},
+	{"mul",		Z (0x28),	OP (rrs6_ri12),		D_A_BC},
+	{"mulu",	Z (0x2A),	OP (rrs6_ri12),		D_A_BC},
+	{"div",		Z (0x2C),	OP (rrs6_ri12),		D_A_BC},
+	{"divu",	Z (0x2E),	OP (rrs6_ri12),		D_A_BC},
 
    /* Synonym for ADDU.  Put after ADDU, since we don't prefer it for
       disassembly.  It's supposed to be used for addresses, so we make it
