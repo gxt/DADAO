@@ -57,7 +57,7 @@ _start:	SETL	$63,32
 	SETL	$4,2048
 0:	PRELD	0,$2,0
 	addu	$2, $2, $4
-	CMP	$63,$2,$3
+	cmp	$63, $2, $3
 	BN	$63,0b
 
 	GETA	$63,crtsdat
@@ -66,7 +66,7 @@ _start:	SETL	$63,32
 	LDOU	$3,$63,8
 0:	PRELD	0,$2,0
 	addu	$2, $2, $4
-	CMP	$63,$2,$3
+	cmp	$63, $2, $3
 	BN	$63,0b
 
 # Initialize the stack pointer.  It is supposedly made a global

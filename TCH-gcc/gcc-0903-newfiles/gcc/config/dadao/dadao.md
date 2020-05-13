@@ -442,7 +442,7 @@
   "REG_P (operands[0]) && REG_P (operands[1])
    && REGNO (operands[1]) == REGNO (operands[0])"
   ;; DADAO FIXME: remove folded label and %% prefix
-  "cmp %0,%1,0")
+	"cmp	%0, %1, 0")
 
 (define_insn "*cmps"
   [(set (match_operand:CC 0 "register_operand" "=r")
@@ -450,7 +450,7 @@
 	 (match_operand:DI 1 "register_operand" "r")
 	 (match_operand:DI 2 "dadao_reg_or_8bit_operand" "rI")))]
   ""
-  "CMP %0,%1,%2")
+	"cmp	%0, %1, %2")
 
 (define_insn "*cmpu"
   [(set (match_operand:CC_UNS 0 "register_operand" "=r")
@@ -458,7 +458,7 @@
 	 (match_operand:DI 1 "register_operand" "r")
 	 (match_operand:DI 2 "dadao_reg_or_8bit_operand" "rI")))]
   ""
-  "CMPU %0,%1,%2")
+	"cmpu	%0, %1, %2")
 
 (define_insn "*fcmp"
   [(set (match_operand:CC_FP 0 "register_operand" "=r")
@@ -1137,7 +1137,9 @@
   rtx my_operands[3];
   const char *my_template
     = "GETA $255,0f\;PUT rJ,$255\;LDOU $255,%a0\n\
-0:\;GET %1,rO\;CMPU %1,%1,$255\;BNP %1,1f\;POP 0,0\n1:";
+0:\;GET %1,rO\;\
+	cmpu	%1, %1, $63	\;\
+BNP %1,1f\;POP 0,0\n1:";
 
   my_operands[1] = operands[0];
   my_operands[2] = GEN_INT (-DADAO_fp_rO_OFFSET);
