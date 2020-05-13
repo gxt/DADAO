@@ -56,7 +56,7 @@ longjmp:
 	LDOU $255,$251,24
 0:
 	GET  $252,rO
-	CMPU $252,$252,$255
+	cmpu	$60, $60, $63
 	BNP  $252,1f
 	LDOU outret,$251,32
 	POP  popval,0
