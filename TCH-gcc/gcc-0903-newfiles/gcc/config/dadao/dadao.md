@@ -747,8 +747,8 @@
   "@
 	cs%d2	%0, %3, %1
 	cs%D2	%0, %3, %4
-   ZS%d2 %0,%3,%1
-   ZS%D2 %0,%3,%4")
+	xor	%0, %0, %0	\;\	cs%d2	%0, %3, %1
+	xor	%0, %0, %0	\;\	cs%D2	%0, %3, %4")
 
 (define_insn "*movdicc_real_reversible"
   [(set
@@ -764,8 +764,8 @@
   "@
 	cs%d2	%0, %3, %1
 	cs%D2	%0, %3, %4
-   ZS%d2 %0,%3,%1
-   ZS%D2 %0,%3,%4")
+	xor	%0, %0, %0	\;\	cs%d2	%0, %3, %1
+	xor	%0, %0, %0	\;\	cs%D2	%0, %3, %4")
 
 (define_insn "*movdicc_real_nonreversible"
   [(set
@@ -780,7 +780,7 @@
   "!REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
 	cs%d2	%0, %3, %1
-   ZS%d2 %0,%3,%1")
+	xor	%0, %0, %0	\;\	cs%d2	%0, %3, %1")
 
 (define_insn "*movdfcc_real_foldable"
   [(set
@@ -796,8 +796,8 @@
   "@
 	cs%d2	%0, %3, %1
 	cs%D2	%0, %3, %4
-   ZS%d2 %0,%3,%1
-   ZS%D2 %0,%3,%4")
+	xor	%0, %0, %0	\;\	cs%d2	%0, %3, %1
+	xor	%0, %0, %0	\;\	cs%D2	%0, %3, %4")
 
 (define_insn "*movdfcc_real_reversible"
   [(set
@@ -813,8 +813,8 @@
   "@
 	cs%d2	%0, %3, %1
 	cs%D2	%0, %3, %4
-   ZS%d2 %0,%3,%1
-   ZS%D2 %0,%3,%4")
+	xor	%0, %0, %0	\;\	cs%d2	%0, %3, %1
+	xor	%0, %0, %0	\;\	cs%D2	%0, %3, %4")
 
 (define_insn "*movdfcc_real_nonreversible"
   [(set
@@ -829,7 +829,7 @@
   "!REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
 	cs%d2	%0, %3, %1
-   ZS%d2 %0,%3,%1")
+	xor	%0, %0, %0	\;\	cs%d2	%0, %3, %1")
 
 ;; FIXME: scc insns will probably help, I just skip them
 ;; right now.  Revisit.
