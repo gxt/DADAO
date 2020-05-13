@@ -778,6 +778,11 @@ void dadao_md_assemble (char *str)
 
     case dadao_operands_none:
       max_operands = 0;
+      break;
+
+	case dadao_operands_rrs6_ri12:
+		max_operands = 3;
+		break;
 
       /* The original 3 is fine for the rest.  */
     default:
@@ -904,14 +909,15 @@ void dadao_md_assemble (char *str)
 	  return;
 	}
       /* FALLTHROUGH.  */
-    case dadao_operands_regs_z:
-      if (n_operands != 3)
-	{
-	  as_bad (_("invalid operands to opcode %s: `%s'"),
-		  instruction->name, operands);
-	  return;
-	}
-      /* FALLTHROUGH.  */
+
+	case dadao_operands_regs_z:
+	case dadao_operands_rrs6_ri12:
+		if (n_operands != 3) {
+			as_bad (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+			return;
+		}
+		/* FALLTHROUGH.  */
+
     case dadao_operands_reg_yz:
     case dadao_operands_roundregs_z:
     case dadao_operands_roundregs:
@@ -1587,53 +1593,54 @@ void dadao_md_assemble (char *str)
       /* All is done for PUSHJ already.  */
       break;
 
-    case dadao_operands_rrs6_ri12: /* "regd, rega, regb << shift6" or "regd, rega, imm12" */
-	if (n_operands != 3)
-		as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+	case dadao_operands_rrs6_ri12: /* "regd, rega, regb << shift6" or "regd, rega, imm12" */
+		if (n_operands != 3)
+			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 
-	DDOP_EXP_MUST_BE_REG(exp[0]);
-	DDOP_EXP_MUST_BE_REG(exp[1]);
+		DDOP_EXP_MUST_BE_REG(exp[0]);
+		DDOP_EXP_MUST_BE_REG(exp[1]);
 
-	DDOP_SET_FD(opcodep, exp[0].X_add_number);
-	DDOP_SET_FA(opcodep, exp[1].X_add_number);
+		DDOP_SET_FD(opcodep, exp[0].X_add_number);
+		DDOP_SET_FA(opcodep, exp[1].X_add_number);
 
-	switch (exp[2].X_op) {
-	case O_register: /* regb */
-		DDOP_CHECK_6_BIT(exp[2].X_add_number);
-		DDOP_SET_FB(opcodep, exp[2].X_add_number);
+		switch (exp[2].X_op) {
+		case O_register: /* regb */
+			DDOP_CHECK_6_BIT(exp[2].X_add_number);
+			DDOP_SET_FB(opcodep, exp[2].X_add_number);
+			break;
+
+		case O_left_shift: /* regb << shift6 */
+			exp_left = symbol_get_value_expression (exp[2].X_add_symbol);
+			exp_right = symbol_get_value_expression (exp[2].X_op_symbol);
+
+			DDOP_EXP_MUST_BE_REG(exp_left[0]);
+			DDOP_EXP_MUST_BE_UIMM6(exp_right[0]);
+
+			DDOP_SET_FB(opcodep, exp_left->X_add_number);
+			DDOP_SET_FC(opcodep, exp_right->X_add_number);
+			break;
+
+		case O_constant: /* imm12 */
+			DDOP_EXP_MUST_BE_UIMM12(exp[2]);
+			DDOP_SET_FB_FC(opcodep, exp[2].X_add_number);
+
+			opcodep[0] |= IMM_OFFSET_BIT;
+			break;
+
+		default:
+			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+		}
 		break;
 
-	case O_left_shift: /* regb << shift6 */
-		exp_left = symbol_get_value_expression (exp[2].X_add_symbol);
-		exp_right = symbol_get_value_expression (exp[2].X_op_symbol);
+	case dadao_operands_none: /* nop */
+		if (n_operands != 0)
+			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 
-		DDOP_EXP_MUST_BE_REG(exp_left[0]);
-		DDOP_EXP_MUST_BE_UIMM6(exp_right[0]);
-
-		DDOP_SET_FB(opcodep, exp_left->X_add_number);
-		DDOP_SET_FC(opcodep, exp_right->X_add_number);
+		DDOP_SET_FA(opcodep, 0);
+		DDOP_SET_FB(opcodep, 0);
+		DDOP_SET_FC(opcodep, 0);
+		DDOP_SET_FD(opcodep, 0);
 		break;
-
-	case O_constant: /* imm12 */
-		DDOP_EXP_MUST_BE_UIMM12(exp[2]);
-		DDOP_SET_FB_FC(opcodep, exp[2].X_add_number);
-
-		opcodep[0] |= IMM_OFFSET_BIT;
-		break;
-
-	default:
-		as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
-	}
-	break;
-
-    case dadao_operands_none: /* nop */
-	if (n_operands != 0)
-		as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
-	DDOP_SET_FA(opcodep, 0);
-	DDOP_SET_FB(opcodep, 0);
-	DDOP_SET_FC(opcodep, 0);
-	DDOP_SET_FD(opcodep, 0);
-	break;
 
     default:
       BAD_CASE (instruction->operands);
