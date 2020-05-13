@@ -170,18 +170,6 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"csod",	Z (0x66),	OP (rrs6_ri12),		D_A_BC},
 	{"csev",	Z (0x6e),	OP (rrs6_ri12),		D_A_BC},
 
-   {"zsn",	Z (0x70),	OP (regs_z),		N},
-   {"zsnn",	Z (0x78),	OP (regs_z),		N},
-
-   {"zsz",	Z (0x72),	OP (regs_z),		N},
-   {"zsnz",	Z (0x7a),	OP (regs_z),		N},
-
-   {"zsp",	Z (0x74),	OP (regs_z),		N},
-   {"zsnp",	Z (0x7c),	OP (regs_z),		N},
-
-   {"zsod",	Z (0x76),	OP (regs_z),		N},
-   {"zsev",	Z (0x7e),	OP (regs_z),		N},
-
    {"ldb",	Z (0x80),	OP (regs_z_opt),	MB},
    {"ldt",	Z (0x88),	OP (regs_z_opt),	MT},
 
