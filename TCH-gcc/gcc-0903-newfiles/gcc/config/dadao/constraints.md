@@ -24,11 +24,6 @@
   (and (match_code "const_int")
        (match_test "IN_RANGE (ival, 0, 65535)")))
 
-(define_constraint "K"
-  "An integer between -255 and 0."
-  (and (match_code "const_int")
-       (match_test "IN_RANGE (ival, -255, 0)")))
-
 (define_constraint "L"
   "@internal"
   (and (match_code "const_int")
@@ -56,6 +51,11 @@
   "A 12-bit unsigned integer"
   (and (match_code "const_int")
        (match_test "IN_RANGE (ival, 0, 4095)")))
+
+(define_constraint "Pnn"
+  "An integer between -4095 and 0."
+  (and (match_code "const_int")
+       (match_test "IN_RANGE (ival, -4095, 0)")))
 
 ;; FIXME: M (or G) is redundant.
 

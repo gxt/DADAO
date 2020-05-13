@@ -32,7 +32,7 @@
 ;; be synthesized ok?
 (define_insn "movqi"
   [(set (match_operand:QI 0 "nonimmediate_operand" "=r,r ,r,x ,r,r,m,??r")
-	(match_operand:QI 1 "general_operand"	    "r,LS,K,rI,x,m,r,n"))]
+	(match_operand:QI 1 "general_operand"	    "r,LS,Pnn,rI,x,m,r,n"))]
   ""
   "@
    SET %0,%1
@@ -46,7 +46,7 @@
 
 (define_insn "movhi"
   [(set (match_operand:HI 0 "nonimmediate_operand" "=r,r ,r ,x,r,r,m,??r")
-	(match_operand:HI 1 "general_operand"	    "r,LS,K,r,x,m,r,n"))]
+	(match_operand:HI 1 "general_operand"	    "r,LS,Pnn,r,x,m,r,n"))]
   ""
   "@
    SET %0,%1
@@ -61,7 +61,7 @@
 ;; gcc.c-torture/compile/920428-2.c fails if there's no "n".
 (define_insn "movsi"
   [(set (match_operand:SI 0 "nonimmediate_operand" "=r,r ,r,x,r,r,m,??r")
-	(match_operand:SI 1 "general_operand"	    "r,LS,K,r,x,m,r,n"))]
+	(match_operand:SI 1 "general_operand"	    "r,LS,Pnn,r,x,m,r,n"))]
   ""
   "@
    SET %0,%1
@@ -76,7 +76,7 @@
 ;; We assume all "s" are addresses.  Does that hold?
 (define_insn "movdi"
   [(set (match_operand:DI 0 "nonimmediate_operand" "=r,r ,r,x,r,m,r,m,r,r,??r")
-	(match_operand:DI 1 "general_operand"	    "r,LS,K,r,x,I,m,r,R,s,n"))]
+	(match_operand:DI 1 "general_operand"	    "r,LS,Pnn,r,x,I,m,r,R,s,n"))]
   ""
   "@
    SET %0,%1
@@ -172,7 +172,7 @@
   [(set (match_operand:DI 0 "register_operand"	"=r,r,r")
 	(plus:DI
 	 (match_operand:DI 1 "register_operand" "%r,r,0")
-	 (match_operand:DI 2 "dadao_reg_or_constant_operand" "rI,K,LS")))]
+	 (match_operand:DI 2 "dadao_reg_or_constant_operand" "rI,Pnn,LS")))]
   ""
   "@
 	addu	%0, %1, %2
