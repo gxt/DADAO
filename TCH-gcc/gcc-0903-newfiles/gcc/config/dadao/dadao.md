@@ -322,12 +322,12 @@
    SETL %0,1
    XOR $255,%1,%2\;\
 	subu	%0, $0, %2	\;\
-CSN %2,%2,%0\;\
+	csn	%2, %2, %0	\;\
 	subu	%0, $0, %1	\;\
-CSN %1,%1,%0\;\
+	csn	%1, %1, %0	\;\
 	divu	%0, %1, %2	\;\
 	subu	%1, $0, %0	\;\
-CSN %0,$255,%1")
+	csn	%0, $63, %1")
 
 (define_expand "moddi3"
   [(parallel
@@ -353,13 +353,13 @@ CSN %0,$255,%1")
   "@
    SETL %0,0
 	subu	%0, $0, %2	\;\
-CSN %2,%2,%0\;\
+	csn	%2, %2, %0	\;\
 	subu	$63, $0, %1	\;\
-CSN %1,%1,$255\;\
+	csn	%1, %1, $63	\;\
 	divu	%1, %1, %2	\;\
    GET %0,rR\;\
 	subu	%2, $0, %0	\;\
-CSNN %0,$255,%2")
+	csnn	%0, $63, %2")
 
 (define_insn "ashldi3"
   [(set (match_operand:DI 0 "register_operand" "=r")
@@ -745,8 +745,8 @@ CSNN %0,$255,%2")
 	 (match_operand:DI 4 "dadao_reg_or_8bit_operand" "0 ,rI,GM,rI")))]
   ""
   "@
-   CS%d2 %0,%3,%1
-   CS%D2 %0,%3,%4
+	cs%d2	%0, %3, %1
+	cs%D2	%0, %3, %4
    ZS%d2 %0,%3,%1
    ZS%D2 %0,%3,%4")
 
@@ -762,8 +762,8 @@ CSNN %0,$255,%2")
      (match_operand:DI 4 "dadao_reg_or_8bit_operand" "0 ,rI,GM,rI")))]
   "REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
-   CS%d2 %0,%3,%1
-   CS%D2 %0,%3,%4
+	cs%d2	%0, %3, %1
+	cs%D2	%0, %3, %4
    ZS%d2 %0,%3,%1
    ZS%D2 %0,%3,%4")
 
@@ -779,7 +779,7 @@ CSNN %0,$255,%2")
      (match_operand:DI 4 "dadao_reg_or_0_operand" "0 ,GM")))]
   "!REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
-   CS%d2 %0,%3,%1
+	cs%d2	%0, %3, %1
    ZS%d2 %0,%3,%1")
 
 (define_insn "*movdfcc_real_foldable"
@@ -794,8 +794,8 @@ CSNN %0,$255,%2")
      (match_operand:DF 4 "dadao_reg_or_0_operand" "0  ,rGM,GM ,rGM")))]
   ""
   "@
-   CS%d2 %0,%3,%1
-   CS%D2 %0,%3,%4
+	cs%d2	%0, %3, %1
+	cs%D2	%0, %3, %4
    ZS%d2 %0,%3,%1
    ZS%D2 %0,%3,%4")
 
@@ -811,8 +811,8 @@ CSNN %0,$255,%2")
      (match_operand:DF 4 "dadao_reg_or_0_operand" "0  ,rGM,GM ,rGM")))]
   "REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
-   CS%d2 %0,%3,%1
-   CS%D2 %0,%3,%4
+	cs%d2	%0, %3, %1
+	cs%D2	%0, %3, %4
    ZS%d2 %0,%3,%1
    ZS%D2 %0,%3,%4")
 
@@ -828,7 +828,7 @@ CSNN %0,$255,%2")
      (match_operand:DF 4 "dadao_reg_or_0_operand" "0  ,GM")))]
   "!REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
-   CS%d2 %0,%3,%1
+	cs%d2	%0, %3, %1
    ZS%d2 %0,%3,%1")
 
 ;; FIXME: scc insns will probably help, I just skip them
