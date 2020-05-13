@@ -37,7 +37,7 @@
   "@
    SET %0,%1
    %s1 %0,%v1
-   NEGU %0,0,%n1
+	subu	%0, $0, %n1
    PUT %0,%1
    GET %0,%1
    LDB%U0 %0,%1
@@ -51,7 +51,7 @@
   "@
    SET %0,%1
    %s1 %0,%v1
-   NEGU %0,0,%n1
+	subu	%0, $0, %n1
    PUT %0,%1
    GET %0,%1
    LDW%U0 %0,%1
@@ -66,7 +66,7 @@
   "@
    SET %0,%1
    %s1 %0,%v1
-   NEGU %0,0,%n1
+	subu	%0, $0, %n1
    PUT %0,%1
    GET %0,%1
    LDT%U0 %0,%1
@@ -81,7 +81,7 @@
   "@
    SET %0,%1
    %s1 %0,%v1
-   NEGU %0,0,%n1
+	subu	%0, $0, %n1
    PUT %0,%1
    GET %0,%1
    STCO %1,%0
@@ -189,13 +189,11 @@
 ;; Insn canonicalization *should* have removed the need for an integer
 ;; in operand 2.
 (define_insn "subdi3"
-  [(set (match_operand:DI 0 "register_operand" "=r,r")
-	(minus:DI (match_operand:DI 1 "dadao_reg_or_8bit_operand" "r,I")
-		  (match_operand:DI 2 "register_operand" "r,r")))]
+  [(set (match_operand:DI 0 "register_operand" "=r")
+	(minus:DI (match_operand:DI 1 "register_operand" "r")
+		  (match_operand:DI 2 "register_operand" "r")))]
   ""
-  "@
-	subu	%0, %1, %2
-   NEGU %0,%1,%2")
+  "subu	%0, %1, %2")
 
 (define_insn "subdf3"
   [(set (match_operand:DF 0 "register_operand" "=r")
@@ -322,9 +320,14 @@
   "! TARGET_KNUTH_DIVISION"
   "@
    SETL %0,1
-   XOR $255,%1,%2\;NEGU %0,0,%2\;CSN %2,%2,%0\;NEGU %0,0,%1\;CSN %1,%1,%0\;\
+   XOR $255,%1,%2\;\
+	subu	%0, $0, %2	\;\
+CSN %2,%2,%0\;\
+	subu	%0, $0, %1	\;\
+CSN %1,%1,%0\;\
 	divu	%0, %1, %2	\;\
-   NEGU %1,0,%0\;CSN %0,$255,%1")
+	subu	%1, $0, %0	\;\
+CSN %0,$255,%1")
 
 (define_expand "moddi3"
   [(parallel
@@ -349,9 +352,14 @@
   "! TARGET_KNUTH_DIVISION"
   "@
    SETL %0,0
-   NEGU %0,0,%2\;CSN %2,%2,%0\;NEGU $255,0,%1\;CSN %1,%1,$255\;\
+	subu	%0, $0, %2	\;\
+CSN %2,%2,%0\;\
+	subu	$63, $0, %1	\;\
+CSN %1,%1,$255\;\
 	divu	%1, %1, %2	\;\
-   GET %0,rR\;NEGU %2,0,%0\;CSNN %0,$255,%2")
+   GET %0,rR\;\
+	subu	%2, $0, %0	\;\
+CSNN %0,$255,%2")
 
 (define_insn "ashldi3"
   [(set (match_operand:DI 0 "register_operand" "=r")
@@ -381,7 +389,7 @@
   [(set (match_operand:DI 0 "register_operand" "=r")
 	(neg:DI (match_operand:DI 1 "register_operand" "r")))]
   ""
-  "NEGU %0,0,%1")
+	"subu	%0, $0, %1")
 
 (define_expand "negdf2"
   [(parallel [(set (match_operand:DF 0 "register_operand" "=r")
