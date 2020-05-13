@@ -204,10 +204,6 @@
   ""
   "FSUB %0,%1,%2")
 
-;; FIXME: Should we define_expand and match 2, 4, 8 (etc) with shift (or
-;; %{something}2ADDU %0,%1,0)?  Hopefully GCC should still handle it, so
-;; we don't have to taint the machine description.  If results are bad
-;; enough, we may have to do it anyway.
 (define_insn "muldi3"
   [(set (match_operand:DI 0 "register_operand" "=r,r")
 	(mult:DI (match_operand:DI 1 "register_operand" "%r,r")
@@ -215,7 +211,7 @@
    (clobber (match_scratch:DI 3 "=X,z"))]
   ""
   "@
-   %m2ADDU %0,%1,%1
+   %m	addu	%0, %1, %1 << 1
 	mulu	%0, %1, %2")
 
 (define_insn "muldf3"
@@ -1173,18 +1169,6 @@
   output_asm_insn (my_template, my_operands);
   return "";
 })
-
-(define_insn "*Naddu"
-  [(set (match_operand:DI 0 "register_operand" "=r")
-	(plus:DI (mult:DI (match_operand:DI 1 "register_operand" "r")
-			  (match_operand:DI 2 "const_int_operand" "n"))
-		 (match_operand:DI 3 "dadao_reg_or_8bit_operand" "rI")))]
-  "GET_CODE (operands[2]) == CONST_INT
-   && (INTVAL (operands[2]) == 2
-       || INTVAL (operands[2]) == 4
-       || INTVAL (operands[2]) == 8
-       || INTVAL (operands[2]) == 16)"
-  "%2ADDU %0,%1,%3")
 
 (define_insn "*andn"
   [(set (match_operand:DI 0 "register_operand" "=r")
