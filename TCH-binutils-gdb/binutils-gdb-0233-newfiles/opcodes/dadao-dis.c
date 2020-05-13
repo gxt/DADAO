@@ -179,7 +179,6 @@ get_opcode (unsigned long insn)
 	case dadao_operands_pop:
 	case dadao_operands_sync:
 	case dadao_operands_x_regs_z:
-	case dadao_operands_neg:
 	case dadao_operands_pushj:
 	case dadao_operands_regaddr:
 	case dadao_operands_get:
@@ -464,17 +463,6 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
       else
 	(*info->fprintf_func) (info->stream, "%d,%s,%s",
 			       x, get_reg_name (minfop, y),
-			       get_reg_name (minfop, z));
-      break;
-
-    case dadao_operands_neg:
-      /* Like NEG and NEGU - "$X,Y,$Z|Z".  */
-      if (insn & INSN_IMMEDIATE_BIT)
-	(*info->fprintf_func) (info->stream, "%s,%d,%d",
-			       get_reg_name (minfop, x), y, z);
-      else
-	(*info->fprintf_func) (info->stream, "%s,%d,%s",
-			       get_reg_name (minfop, x), y,
 			       get_reg_name (minfop, z));
       break;
 

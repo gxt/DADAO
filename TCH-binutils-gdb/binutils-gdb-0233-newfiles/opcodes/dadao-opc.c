@@ -130,10 +130,8 @@ const struct dadao_opcode dadao_opcodes[] =
 
    {"slu",	Z (0x3a),	OP (regs_z),		N},
 
-   {"neg",	Z (0x34),	OP (neg),		N},
    {"sr",	Z (0x3c),	OP (regs_z),		N},
 
-   {"negu",	Z (0x36),	OP (neg),		N},
    {"sru",	Z (0x3e),	OP (regs_z),		N},
 
    {"bn",	Z (0x40),	OP (regaddr),		C},

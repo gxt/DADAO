@@ -922,7 +922,6 @@ void dadao_md_assemble (char *str)
     case dadao_operands_roundregs_z:
     case dadao_operands_roundregs:
     case dadao_operands_regs_z_opt:
-    case dadao_operands_neg:
     case dadao_operands_regaddr:
     case dadao_operands_get:
     case dadao_operands_set:
@@ -1248,57 +1247,6 @@ void dadao_md_assemble (char *str)
 	/* FIXME: This doesn't bring us unsignedness checking.  */
 	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 1,
 		     3, exp + 0, 0, BFD_RELOC_24);
-      break;
-
-    case dadao_operands_neg:
-      /* Operands "$X,Y,$Z|Z"; NEG or NEGU.  Y is optional, 0 is default.  */
-
-      if ((n_operands != 3 && n_operands != 2)
-	  || (n_operands == 3 && exp[1].X_op == O_register)
-	  || ((exp[1].X_op == O_constant || exp[1].X_op == O_register)
-	      && (exp[1].X_add_number > 255 || exp[1].X_add_number < 0))
-	  || (n_operands == 3
-	      && ((exp[2].X_op == O_register && exp[2].X_add_number > 255)
-		  || (exp[2].X_op == O_constant
-		      && (exp[2].X_add_number > 255
-			  || exp[2].X_add_number < 0)))))
-	{
-	  as_bad (_("invalid operands to opcode %s: `%s'"),
-		  instruction->name, operands);
-	  return;
-	}
-
-      if (n_operands == 2)
-	{
-	  if (exp[1].X_op == O_register)
-	    opcodep[3] = exp[1].X_add_number;
-	  else if (exp[1].X_op == O_constant)
-	    {
-	      opcodep[3] = exp[1].X_add_number;
-	      opcodep[0] |= IMM_OFFSET_BIT;
-	    }
-	  else
-	    fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 3,
-			 1, exp + 1, 0, BFD_RELOC_DADAO_REG_OR_BYTE);
-	  break;
-	}
-
-      if (exp[1].X_op == O_constant)
-	opcodep[2] = exp[1].X_add_number;
-      else
-	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 2,
-		     1, exp + 1, 0, BFD_RELOC_8);
-
-      if (exp[2].X_op == O_register)
-	opcodep[3] = exp[2].X_add_number;
-      else if (exp[2].X_op == O_constant)
-	{
-	  opcodep[3] = exp[2].X_add_number;
-	  opcodep[0] |= IMM_OFFSET_BIT;
-	}
-      else
-	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 3,
-		     1, exp + 2, 0, BFD_RELOC_DADAO_REG_OR_BYTE);
       break;
 
     case dadao_operands_regaddr:

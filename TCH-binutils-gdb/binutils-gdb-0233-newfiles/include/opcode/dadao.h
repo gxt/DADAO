@@ -78,9 +78,6 @@ enum dadao_operands_type
    /* "X,$Y,$Z|Z", like SYNCD.  */
    dadao_operands_x_regs_z,
 
-   /* "$X,Y,$Z|Z", like NEG and NEGU.  The Y field is optional, default 0.  */
-   dadao_operands_neg,
-
    /* "$X,Address, like GETA or branches.  */
    dadao_operands_regaddr,
 
