@@ -175,8 +175,8 @@
 	 (match_operand:DI 2 "dadao_reg_or_constant_operand" "rI,K,LS")))]
   ""
   "@
-   ADDU %0,%1,%2
-   SUBU %0,%1,%n2
+	addu	%0, %1, %2
+	subu	%0, %1, %n2
    %i2 %0,%v2")
 
 (define_insn "adddf3"
@@ -194,7 +194,7 @@
 		  (match_operand:DI 2 "register_operand" "r,r")))]
   ""
   "@
-   SUBU %0,%1,%2
+	subu	%0, %1, %2
    NEGU %0,%1,%2")
 
 (define_insn "subdf3"
@@ -216,7 +216,7 @@
   ""
   "@
    %m2ADDU %0,%1,%1
-   MULU %0,%1,%2")
+	mulu	%0, %1, %2")
 
 (define_insn "muldf3"
   [(set (match_operand:DF 0 "register_operand" "=r")
@@ -292,7 +292,7 @@
 	(mod:DI (match_dup 1) (match_dup 2)))]
   ;; Do the library stuff later.
   "TARGET_KNUTH_DIVISION"
-  "DIV %0,%1,%2")
+	"div	%0, %1, %2")
 
 (define_insn "udivmoddi4"
   [(set (match_operand:DI 0 "register_operand" "=r")
@@ -301,7 +301,7 @@
    (set (match_operand:DI 3 "register_operand" "=y")
 	(umod:DI (match_dup 1) (match_dup 2)))]
   ""
-  "DIVU %0,%1,%2")
+	"divu	%0, %1, %2")
 
 (define_expand "divdi3"
   [(parallel
@@ -327,7 +327,8 @@
   "@
    SETL %0,1
    XOR $255,%1,%2\;NEGU %0,0,%2\;CSN %2,%2,%0\;NEGU %0,0,%1\;CSN %1,%1,%0\;\
-DIVU %0,%1,%2\;NEGU %1,0,%0\;CSN %0,$255,%1")
+	divu	%0, %1, %2	\;\
+   NEGU %1,0,%0\;CSN %0,$255,%1")
 
 (define_expand "moddi3"
   [(parallel
@@ -353,7 +354,8 @@ DIVU %0,%1,%2\;NEGU %1,0,%0\;CSN %0,$255,%1")
   "@
    SETL %0,0
    NEGU %0,0,%2\;CSN %2,%2,%0\;NEGU $255,0,%1\;CSN %1,%1,$255\;\
-DIVU %1,%1,%2\;GET %0,rR\;NEGU %2,0,%0\;CSNN %0,$255,%2")
+	divu	%1, %1, %2	\;\
+   GET %0,rR\;NEGU %2,0,%0\;CSNN %0,$255,%2")
 
 (define_insn "ashldi3"
   [(set (match_operand:DI 0 "register_operand" "=r")

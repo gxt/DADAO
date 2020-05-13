@@ -56,7 +56,7 @@ _start:	SETL	$63,32
 	LDOU	$3,$63,8
 	SETL	$4,2048
 0:	PRELD	0,$2,0
-	ADDU	$2,$2,$4
+	addu	$2, $2, $4
 	CMP	$63,$2,$3
 	BN	$63,0b
 
@@ -65,7 +65,7 @@ _start:	SETL	$63,32
 	ANDNL	$2,#7ff
 	LDOU	$3,$63,8
 0:	PRELD	0,$2,0
-	ADDU	$2,$2,$4
+	addu	$2, $2, $4
 	CMP	$63,$2,$3
 	BN	$63,0b
 
