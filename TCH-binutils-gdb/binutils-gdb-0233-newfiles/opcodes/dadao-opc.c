@@ -64,13 +64,13 @@ const struct dadao_spec_reg dadao_spec_regs[] =
 /* For easier overview of the table.  */
 #define N dadao_type_normal
 #define B dadao_type_branch
-#define C dadao_type_condbranch
 #define MB dadao_type_memaccess_byte
 #define MW dadao_type_memaccess_wyde
 #define MT dadao_type_memaccess_tetra
 #define MO dadao_type_memaccess_octa
 #define M dadao_type_memaccess_block
 #define J dadao_type_jsr
+#define COND_BR	dadao_type_condbranch
 #define D_A_BC	dadao_type_fd_eq_fa_op_bc
 #define D_B_C	dadao_type_fd_eq_fb_op_fc
 
@@ -110,51 +110,48 @@ const struct dadao_opcode dadao_opcodes[] =
    {"frem",	O (22),		0,	OP (regs),		N},
    {"fint",	O (23),		0,	OP (roundregs),		N},
 
-	{"add",		Z (0x20),	0,	OP (rrs6_ri12),		D_A_BC},
-	{"addu",	Z (0x22),	0,	OP (rrs6_ri12),		D_A_BC},
-	{"sub",		Z (0x24),	0,	OP (rrs6_ri12),		D_A_BC},
-	{"subu",	Z (0x26),	0,	OP (rrs6_ri12),		D_A_BC},
-	{"mul",		Z (0x28),	0,	OP (rrs6_ri12),		D_A_BC},
-	{"mulu",	Z (0x2A),	0,	OP (rrs6_ri12),		D_A_BC},
-	{"div",		Z (0x2C),	0,	OP (rrs6_ri12),		D_A_BC},
-	{"divu",	Z (0x2E),	0,	OP (rrs6_ri12),		D_A_BC},
+	{"add",		Z (0x20),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
+	{"addu",	Z (0x22),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
+	{"sub",		Z (0x24),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
+	{"subu",	Z (0x26),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
+	{"mul",		Z (0x28),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
+	{"mulu",	Z (0x2A),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
+	{"div",		Z (0x2C),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
+	{"divu",	Z (0x2E),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
 
-	{"cmp",		Z (0x30),	0,	OP (rrs6_ri12),		D_A_BC},
-	{"cmpu",	Z (0x32),	0,	OP (rrs6_ri12),		D_A_BC},
+	{"cmp",		Z (0x30),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
+	{"cmpu",	Z (0x32),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
 
    /* Synonym for ADDU.  Put after ADDU, since we don't prefer it for
       disassembly.  It's supposed to be used for addresses, so we make it
       a memory block reference for purposes of assembly.  */
    {"lda",	Z (0x22),	0,	OP (regs_z_opt),	M},
 
-	{"slu",		Z (0x3E),	1,	OP (rr_ri6),		D_B_C},
-	{"sr",		Z (0x3E),	2,	OP (rr_ri6),		D_B_C},
-	{"sru",		Z (0x3E),	3,	OP (rr_ri6),		D_B_C},
-	{"not",		Z (0x3E),	4,	OP (rr_ri6),		D_B_C},
+	{"slu",		Z (0x3E),	1,	OP (fa_op_fdfb_reg_fc_i6),	D_B_C},
+	{"sr",		Z (0x3E),	2,	OP (fa_op_fdfb_reg_fc_i6),	D_B_C},
+	{"sru",		Z (0x3E),	3,	OP (fa_op_fdfb_reg_fc_i6),	D_B_C},
+	{"not",		Z (0x3E),	4,	OP (fa_op_fdfb_reg_fc_i6),	D_B_C},
 
-   {"bn",	Z (0x40),	0,	OP (regaddr),		C},
-   {"bnn",	Z (0x48),	0,	OP (regaddr),		C},
+	{"bn",		Z (0x40),	0,	OP (fd_reg_fabc_i18),		COND_BR},
+	{"bnn",		Z (0x48),	0,	OP (fd_reg_fabc_i18),		COND_BR},
+	{"bz",		Z (0x42),	0,	OP (fd_reg_fabc_i18),		COND_BR},
+	{"bnz",		Z (0x4a),	0,	OP (fd_reg_fabc_i18),		COND_BR},
+	{"bp",		Z (0x44),	0,	OP (fd_reg_fabc_i18),		COND_BR},
+	{"bnp",		Z (0x4c),	0,	OP (fd_reg_fabc_i18),		COND_BR},
+	{"bod",		Z (0x46),	0,	OP (fd_reg_fabc_i18),		COND_BR},
+	{"bev",		Z (0x4e),	0,	OP (fd_reg_fabc_i18),		COND_BR},
 
-   {"bz",	Z (0x42),	0,	OP (regaddr),		C},
-   {"bnz",	Z (0x4a),	0,	OP (regaddr),		C},
+	{"csn",		Z (0x60),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
+	{"csnn",	Z (0x68),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
 
-   {"bp",	Z (0x44),	0,	OP (regaddr),		C},
-   {"bnp",	Z (0x4c),	0,	OP (regaddr),		C},
+	{"csz",		Z (0x62),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
+	{"csnz",	Z (0x6a),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
 
-   {"bod",	Z (0x46),	0,	OP (regaddr),		C},
-   {"bev",	Z (0x4e),	0,	OP (regaddr),		C},
+	{"csp",		Z (0x64),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
+	{"csnp",	Z (0x6c),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
 
-	{"csn",		Z (0x60),	0,	OP (rrs6_ri12),		D_A_BC},
-	{"csnn",	Z (0x68),	0,	OP (rrs6_ri12),		D_A_BC},
-
-	{"csz",		Z (0x62),	0,	OP (rrs6_ri12),		D_A_BC},
-	{"csnz",	Z (0x6a),	0,	OP (rrs6_ri12),		D_A_BC},
-
-	{"csp",		Z (0x64),	0,	OP (rrs6_ri12),		D_A_BC},
-	{"csnp",	Z (0x6c),	0,	OP (rrs6_ri12),		D_A_BC},
-
-	{"csod",	Z (0x66),	0,	OP (rrs6_ri12),		D_A_BC},
-	{"csev",	Z (0x6e),	0,	OP (rrs6_ri12),		D_A_BC},
+	{"csod",	Z (0x66),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
+	{"csev",	Z (0x6e),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
 
    {"ldb",	Z (0x80),	0,	OP (regs_z_opt),	MB},
    {"ldt",	Z (0x88),	0,	OP (regs_z_opt),	MT},
@@ -207,9 +204,9 @@ const struct dadao_opcode dadao_opcodes[] =
    {"set",	O (0xc1)
 		  | 0xff,	0,	OP (set),		N},
 
-	{"or",		Z (0xC0),	0,	OP (rrs6_ri12),		D_A_BC},
-	{"and",		Z (0xC2),	0,	OP (rrs6_ri12),		D_A_BC},
-	{"xor",		Z (0xC4),	0,	OP (rrs6_ri12),		D_A_BC},
+	{"or",		Z (0xC0),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
+	{"and",		Z (0xC2),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
+	{"xor",		Z (0xC4),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
 
    {"seth",	O (0xe0),	0,	OP (reg_yz),		N},
    {"setmh",	O (0xe1),	0,	OP (reg_yz),		N},
@@ -240,7 +237,8 @@ const struct dadao_opcode dadao_opcodes[] =
 
    {"pushj",	Z (0xf2),	0,	OP (pushj),		J},
 
-   {"geta",	Z (0xf4),	0,	OP (regaddr),		N},
+	{"geta",	Z (0xf4),	0,	OP (fd_reg_fabc_i18),	N},
+
    {"sync",	O (0xfc),	0,	OP (sync),		N},
    {"swym",	O (SWYM_INSN_BYTE),
 				0,	OP (xyz_opt),		N},

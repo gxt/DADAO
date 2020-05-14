@@ -200,12 +200,12 @@ get_opcode_found:
 	case dadao_operands_sync:
 	case dadao_operands_x_regs_z:
 	case dadao_operands_pushj:
-	case dadao_operands_regaddr:
 	case dadao_operands_get:
 	case dadao_operands_set:
 	case dadao_operands_xyz_opt:
-	case dadao_operands_rr_ri6:
-	case dadao_operands_rrs6_ri12:
+	case dadao_operands_fa_op_fdfb_reg_fc_i6:
+	case dadao_operands_fdfa_reg_fbc_rs6_i12:
+	case dadao_operands_fd_reg_fabc_i18:
 	  return opcodep;
 
 	  /* For a ROUND_MODE, the middle byte must be 0..4.  */
@@ -387,7 +387,7 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 			       get_reg_name (minfop, z));
       break;
 
-    case dadao_operands_rrs6_ri12: /* The regular "rega, regb << shift6" or "rega, imm12" */
+    case dadao_operands_fdfa_reg_fbc_rs6_i12: /* The regular "rega, regb << shift6" or "rega, imm12" */
       if (insn & INSN_IMMEDIATE_BIT)
 	(*info->fprintf_func) (info->stream, "%s, %s, %d",
 			       get_reg_name (minfop, fd),
@@ -404,7 +404,7 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 				get_reg_name (minfop, fb), fc);
       break;
 
-    case dadao_operands_rr_ri6: /* The regular "regb, regc" or "regb, imm6" */
+    case dadao_operands_fa_op_fdfb_reg_fc_i6: /* The regular "regb, regc" or "regb, imm6" */
       if (insn & INSN_IMMEDIATE_BIT)
 	(*info->fprintf_func) (info->stream, "%s, %s, %d",
 			       get_reg_name (minfop, fd),
@@ -493,7 +493,7 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
       break;
 
     case dadao_operands_pushj:
-    case dadao_operands_regaddr:
+    case dadao_operands_fd_reg_fabc_i18:
       /* Like GETA or branches - "$X,Address".  */
       {
 	bfd_signed_vma offset = (y * 256 + z) * 4;

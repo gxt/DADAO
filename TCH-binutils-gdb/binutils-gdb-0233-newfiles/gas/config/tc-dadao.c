@@ -760,7 +760,6 @@ void dadao_md_assemble (char *str)
     {
     case dadao_operands_reg_yz:
     case dadao_operands_pop:
-    case dadao_operands_regaddr:
     case dadao_operands_pushj:
     case dadao_operands_get:
     case dadao_operands_put:
@@ -777,11 +776,15 @@ void dadao_md_assemble (char *str)
       max_operands = 0;
       break;
 
-	case dadao_operands_rr_ri6:
+	case dadao_operands_fd_reg_fabc_i18:
+		max_operands = 2;
+		break;
+
+	case dadao_operands_fa_op_fdfb_reg_fc_i6:
 		max_operands = 3;
 		break;
 
-	case dadao_operands_rrs6_ri12:
+	case dadao_operands_fdfa_reg_fbc_rs6_i12:
 		max_operands = 3;
 		break;
 
@@ -867,33 +870,6 @@ void dadao_md_assemble (char *str)
 		     exp + 1, 1, BFD_RELOC_DADAO_ADDR19);
       break;
 
-    case dadao_operands_regaddr:
-      /* GETA/branch: Add a frag for relaxation.  We don't do any work
-	 around here to check if we can determine the offset right away.  */
-      if (n_operands != 2 || exp[1].X_op == O_register)
-	{
-	  as_bad (_("invalid operands to opcode %s: `%s'"),
-		  instruction->name, operands);
-	  return;
-	}
-
-      if (! expand_op)
-	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4,
-		     exp + 1, 1, BFD_RELOC_DADAO_ADDR19);
-      else if (instruction->type == dadao_type_condbranch)
-	frag_var (rs_machine_dependent, BCC_MAX_LEN - 4, 0,
-		  ENCODE_RELAX (STATE_BCC, STATE_UNDF),
-		  exp[1].X_add_symbol,
-		  exp[1].X_add_number,
-		  opcodep);
-      else
-	frag_var (rs_machine_dependent, GETA_MAX_LEN - 4, 0,
-		  ENCODE_RELAX (STATE_GETA, STATE_UNDF),
-		  exp[1].X_add_symbol,
-		  exp[1].X_add_number,
-		  opcodep);
-      break;
-
     default:
       break;
     }
@@ -912,7 +888,7 @@ void dadao_md_assemble (char *str)
       /* FALLTHROUGH.  */
 
 	case dadao_operands_regs_z:
-	case dadao_operands_rrs6_ri12:
+	case dadao_operands_fdfa_reg_fbc_rs6_i12:
 		if (n_operands != 3) {
 			as_bad (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 			return;
@@ -923,7 +899,6 @@ void dadao_md_assemble (char *str)
     case dadao_operands_roundregs_z:
     case dadao_operands_roundregs:
     case dadao_operands_regs_z_opt:
-    case dadao_operands_regaddr:
     case dadao_operands_get:
     case dadao_operands_set:
       if (n_operands < 1
@@ -1249,10 +1224,6 @@ void dadao_md_assemble (char *str)
 		     3, exp + 0, 0, BFD_RELOC_24);
       break;
 
-    case dadao_operands_regaddr:
-      /* A GETA/branch-type.  */
-      break;
-
     case dadao_operands_get:
       /* "$X,spec_reg"; GET.
 	 Like with rounding modes, we demand that the special register or
@@ -1489,7 +1460,7 @@ void dadao_md_assemble (char *str)
       /* All is done for PUSHJ already.  */
       break;
 
-	case dadao_operands_rr_ri6: /* "regd, regb, regc" or "regd, regb, imm6" */
+	case dadao_operands_fa_op_fdfb_reg_fc_i6: /* "regd, regb, regc" or "regd, regb, imm6" */
 		if (n_operands != 3)
 			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 
@@ -1518,7 +1489,7 @@ void dadao_md_assemble (char *str)
 		}
 		break;
 
-	case dadao_operands_rrs6_ri12: /* "regd, rega, regb << shift6" or "regd, rega, imm12" */
+	case dadao_operands_fdfa_reg_fbc_rs6_i12: /* "regd, rega, regb << shift6" or "regd, rega, imm12" */
 		if (n_operands != 3)
 			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 
@@ -1555,6 +1526,25 @@ void dadao_md_assemble (char *str)
 		default:
 			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 		}
+		break;
+
+	case dadao_operands_fd_reg_fabc_i18: /* "regd, imm18" */
+		/* GETA/branch: Add a frag for relaxation.  We don't do any work
+		   around here to check if we can determine the offset right away.  */
+		if ((n_operands != 2) || (exp[1].X_op == O_register))
+			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+
+		DDOP_EXP_MUST_BE_REG(exp[0]);
+		DDOP_SET_FD(opcodep, exp[0].X_add_number);
+
+		if (! expand_op)
+			fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ADDR19);
+		else if (instruction->type == dadao_type_condbranch)
+			frag_var (rs_machine_dependent, BCC_MAX_LEN - 4, 0, ENCODE_RELAX (STATE_BCC, STATE_UNDF),
+				exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
+		else
+			frag_var (rs_machine_dependent, GETA_MAX_LEN - 4, 0, ENCODE_RELAX (STATE_GETA, STATE_UNDF),
+				exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
 		break;
 
 	case dadao_operands_none: /* nop */

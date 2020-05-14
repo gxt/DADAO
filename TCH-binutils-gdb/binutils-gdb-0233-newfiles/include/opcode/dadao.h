@@ -52,11 +52,14 @@ enum dadao_operands_type
    /* The regular "$X,$Y,$Z|Z".  */
    dadao_operands_regs_z,
 
-   /* The regular "rega, regb << shift6" or "rega, imm12" */
-   dadao_operands_rrs6_ri12,
+	/* The regular "regd, imm18" */
+	dadao_operands_fd_reg_fabc_i18,
 
-   /* The regular "regb, regc", or "regb, imm6" */
-   dadao_operands_rr_ri6,
+	/* The regular "regd, rega, regb << shift6" or "regd, rega, imm12" */
+	dadao_operands_fdfa_reg_fbc_rs6_i12,
+
+	/* The regular "regd, regb, regc", or "regd, regb, imm6" */
+	dadao_operands_fa_op_fdfb_reg_fc_i6,
 
    /* "Address"; only JMP.  Zero operands allowed unless GNU syntax.  */
    dadao_operands_jmp,
@@ -81,9 +84,6 @@ enum dadao_operands_type
 
    /* "X,$Y,$Z|Z", like SYNCD.  */
    dadao_operands_x_regs_z,
-
-   /* "$X,Address, like GETA or branches.  */
-   dadao_operands_regaddr,
 
    /* "$X|X,Address, like PUSHJ.  */
    dadao_operands_pushj,
