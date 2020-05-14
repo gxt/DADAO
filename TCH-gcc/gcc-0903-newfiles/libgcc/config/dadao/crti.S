@@ -34,28 +34,12 @@ crtsdat:
 _start:	SETL	$63,32
 	PUT	rG,$63
 
-# Make sure we have valid memory for addresses in .text and .data (and
-# .bss, but we include this in .data), for the benefit of mmo-using
-# simulators that require validation of addresses for which contents
-# is not present.  Due to its implicit-zero nature, zeros in contents
-# may be left out in the mmo format, but we don't know the boundaries
-# of those zero-chunks; for mmo files from binutils, they correspond
-# to the beginning and end of sections in objects before linking.  We
-# validate the contents by executing PRELD (0; one byte) on each
-# 2048-byte-boundary of our .text .data, and we assume this size
-# matches the magic lowest-denominator chunk-size for all
-# validation-requiring simulators.  The effect of the PRELD (any size)
-# is assumed to be the same as initial loading of the contents, as
-# long as the PRELD happens before the first PUSHJ/PUSHGO.  If it
-# happens after that, we'll need to distinguish between
-# access-for-execution and read/write access.
-
 	GETA	$63,crtstxt
 	LDOU	$2,$63,0
 	ANDNL	$2,#7ff
 	LDOU	$3,$63,8
 	SETL	$4,2048
-0:	PRELD	0,$2,0
+0:
 	addu	$2, $2, $4
 	cmp	$63, $2, $3
 	BN	$63,0b
@@ -64,7 +48,7 @@ _start:	SETL	$63,32
 	LDOU	$2,$63,0
 	ANDNL	$2,#7ff
 	LDOU	$3,$63,8
-0:	PRELD	0,$2,0
+0:
 	addu	$2, $2, $4
 	cmp	$63, $2, $3
 	BN	$63,0b
