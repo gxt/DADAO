@@ -113,6 +113,7 @@ struct dadao_opcode
    const char *name;
    unsigned long match;
    unsigned long lose;
+	unsigned char fa_as_opcode;	/* Some insns use fa as op code */
    enum dadao_operands_type operands;
 
    /* This is used by the disassembly function.  */
