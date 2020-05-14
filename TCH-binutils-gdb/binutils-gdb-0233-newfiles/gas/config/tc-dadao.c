@@ -770,7 +770,6 @@ void dadao_md_assemble (char *str)
 
     case dadao_operands_sync:
     case dadao_operands_jmp:
-    case dadao_operands_resume:
       max_operands = 1;
       break;
 
@@ -1484,25 +1483,6 @@ void dadao_md_assemble (char *str)
 	      opcodep[3] = exp[0].X_add_number;
 	    }
 	}
-      break;
-
-    case dadao_operands_resume:
-      if (n_operands != 1
-	  || exp[0].X_op == O_register
-	  || (exp[0].X_op == O_constant
-	      && (exp[0].X_add_number < 0
-		  || exp[0].X_add_number > 255)))
-	{
-	  as_bad (_("invalid operands to opcode %s: `%s'"),
-		  instruction->name, operands);
-	  return;
-	}
-
-      if (exp[0].X_op == O_constant)
-	opcodep[3] = exp[0].X_add_number;
-      else
-	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 3,
-		     1, exp + 0, 0, BFD_RELOC_8);
       break;
 
     case dadao_operands_pushj:

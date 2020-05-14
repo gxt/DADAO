@@ -100,10 +100,6 @@ enum dadao_operands_type
    /* "X,Y,Z"; like SWYM or TRAP.  Zero (or 1 if GNU syntax) to three
       operands, interpreted as 0; XYZ; X, YZ and X, Y, Z.  */
    dadao_operands_xyz_opt,
-
-   /* Just "Z", like RESUME.  Unless GNU syntax, the operand can be omitted
-      and will then be assumed zero.  */
-   dadao_operands_resume,
  };
 
 struct dadao_opcode

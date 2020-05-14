@@ -227,12 +227,6 @@ get_opcode_found:
 	    return opcodep;
 	  break;
 
-	case dadao_operands_resume:
-	  /* Middle bytes must be zero.  */
-	  if ((insn & 0x00ffff00) == 0)
-	    return opcodep;
-	  break;
-
 	default:
 	  BAD_CASE (opcodep->operands);
 	}
@@ -542,11 +536,6 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
     case dadao_operands_xyz_opt:
       /* Like SWYM or TRAP - "X,Y,Z".  */
       (*info->fprintf_func) (info->stream, "%d,%d,%d", x, y, z);
-      break;
-
-    case dadao_operands_resume:
-      /* Just "Z", like RESUME.  */
-      (*info->fprintf_func) (info->stream, "%d", z);
       break;
 
     default:

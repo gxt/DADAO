@@ -249,8 +249,6 @@ const struct dadao_opcode dadao_opcodes[] =
 
    {"jmp",	Z (0xf0),	0,	OP (jmp),		B},
    {"pop",	O (0xf8),	0,	OP (pop),		B},
-   {"resume",	O (0xf9)
-		  | 0xffff00,	0,	OP (resume),		B},
 
    {"pushj",	Z (0xf2),	0,	OP (pushj),		J},
 
