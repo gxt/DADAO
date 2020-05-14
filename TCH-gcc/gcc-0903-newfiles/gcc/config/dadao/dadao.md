@@ -367,7 +367,7 @@
 	 (match_operand:DI 1 "register_operand" "r")
 	 (match_operand:DI 2 "dadao_reg_or_8bit_operand" "rI")))]
   ""
-  "SLU %0,%1,%2")
+	"slu	%0, %1, %2")
 
 (define_insn "ashrdi3"
   [(set (match_operand:DI 0 "register_operand" "=r")
@@ -375,7 +375,7 @@
 	 (match_operand:DI 1 "register_operand" "r")
 	 (match_operand:DI 2 "dadao_reg_or_8bit_operand" "rI")))]
   ""
-  "SR %0,%1,%2")
+	"sr	%0, %1, %2")
 
 (define_insn "lshrdi3"
   [(set (match_operand:DI 0 "register_operand" "=r")
@@ -383,7 +383,7 @@
 	 (match_operand:DI 1 "register_operand" "r")
 	 (match_operand:DI 2 "dadao_reg_or_8bit_operand" "rI")))]
   ""
-  "SRU %0,%1,%2")
+	"sru	%0, %1, %2")
 
 (define_insn "negdi2"
   [(set (match_operand:DI 0 "register_operand" "=r")
