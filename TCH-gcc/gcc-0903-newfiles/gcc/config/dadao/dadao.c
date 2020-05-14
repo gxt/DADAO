@@ -1512,17 +1512,6 @@ dadao_print_operand (FILE *stream, rtx x, int code)
     {
       /* Unrelated codes are in alphabetic order.  */
 
-    case '+':
-      /* For conditional branches, output "P" for a probable branch.  */
-      if (TARGET_BRANCH_PREDICT)
-	{
-	  x = find_reg_note (current_output_insn, REG_BR_PROB, 0);
-	  if (x && profile_probability::from_reg_br_prob_note (XINT (x, 0))
-	      > profile_probability::even ())
-	    putc ('P', stream);
-	}
-      return;
-
     case '.':
       /* For the %d in POP %d,0.  */
       fprintf (stream, "%d", DADAO_POP_ARGUMENT ());

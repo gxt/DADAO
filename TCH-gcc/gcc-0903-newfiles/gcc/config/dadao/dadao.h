@@ -119,8 +119,7 @@ struct GTY(()) machine_function
     }								\
   while (0)
 
-#define TARGET_DEFAULT \
- (MASK_BRANCH_PREDICT | MASK_BASE_ADDRESSES | MASK_USE_RETURN_INSN)
+#define TARGET_DEFAULT (MASK_BASE_ADDRESSES | MASK_USE_RETURN_INSN)
 
 
 /* Node: Per-Function Data */
