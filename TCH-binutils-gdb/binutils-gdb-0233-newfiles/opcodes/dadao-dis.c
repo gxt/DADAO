@@ -131,14 +131,32 @@ initialize_dadao_dis_info (struct disassemble_info *info)
    "further entry" will just show that there was no other match.  */
 
 static const struct dadao_opcode *
-get_opcode (unsigned long insn)
+get_opcode (unsigned long insn, unsigned int fop, unsigned int fa)
 {
   static const struct dadao_opcode **opcodes = NULL;
+  static const struct dadao_opcode **opcodes_3E = NULL;
   const struct dadao_opcode *opcodep = dadao_opcodes;
   unsigned int opcode_part = (insn >> 24) & 255;
 
-  if (opcodes == NULL)
+  if (opcodes == NULL) {
     opcodes = xcalloc (256, sizeof (struct dadao_opcode *));
+    opcodes_3E = xcalloc (64, sizeof (struct dadao_opcode *));
+  }
+
+	/* FIXME: too ugly */
+	if ((fop == 0x3E) || (fop == 0x3F)) {
+		opcodep = opcodes_3E[fa];
+		if (opcodep == NULL) {
+			/* Search through the table.  */
+			for (opcodep = dadao_opcodes; opcodep->name != NULL; opcodep++) {
+				if ((opcodep->match == 0x3E000000) && (opcodep->fa_as_opcode == fa)) {
+					opcodes_3E[fa] = opcodep;
+					break;
+				}
+			}
+		}
+		goto get_opcode_found;
+	}
 
   opcodep = opcodes[opcode_part];
   if (opcodep == NULL
@@ -158,6 +176,8 @@ get_opcode (unsigned long insn)
 	    break;
 	}
     }
+
+get_opcode_found:
 
   if (opcodep->name == NULL)
     return NULL;
@@ -186,6 +206,7 @@ get_opcode (unsigned long insn)
 	case dadao_operands_save:
 	case dadao_operands_unsave:
 	case dadao_operands_xyz_opt:
+	case dadao_operands_rr_ri6:
 	case dadao_operands_rrs6_ri12:
 	  return opcodep;
 
@@ -251,7 +272,7 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
   unsigned char buffer[4];
   unsigned long insn;
   unsigned int x, y, z;
-  unsigned int fa, fb, fc, fbc, fd;
+  unsigned int fop, fa, fb, fc, fbc, fd;
   const struct dadao_opcode *opcodep;
   int status = (*info->read_memory_func) (memaddr, buffer, 4, info);
   struct dadao_dis_info *minfop;
@@ -272,6 +293,7 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
   y = buffer[2];
   z = buffer[3];
 
+  fop = buffer[0];
   fa = buffer[1] >> 2;
   fb = ((buffer[1] & 0x3) << 4) | (buffer[2] >> 4);
   fc = ((buffer[2] & 0xf) << 2) | (buffer[3] >> 6);
@@ -280,7 +302,7 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 
   insn = bfd_getb32 (buffer);
 
-  opcodep = get_opcode (insn);
+  opcodep = get_opcode (insn, fop, fa);
 
   if (opcodep == NULL)
     {
@@ -301,6 +323,7 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
     {
     case dadao_type_normal:
     case dadao_type_memaccess_block:
+    case dadao_type_fd_eq_fb_op_fc:
     case dadao_type_fd_eq_fa_op_bc:
       info->insn_type = dis_nonbranch;
       break;
@@ -389,6 +412,17 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 				get_reg_name (minfop, fb), fc);
       break;
 
+    case dadao_operands_rr_ri6: /* The regular "regb, regc" or "regb, imm6" */
+      if (insn & INSN_IMMEDIATE_BIT)
+	(*info->fprintf_func) (info->stream, "%s, %s, %d",
+			       get_reg_name (minfop, fd),
+			       get_reg_name (minfop, fb), fc);
+      else
+	  (*info->fprintf_func) (info->stream, "%s, %s, %s",
+				get_reg_name (minfop, fd),
+				get_reg_name (minfop, fb),
+				get_reg_name (minfop, fc));
+      break;
 
     case dadao_operands_jmp:
       /* Address; only JMP.  */

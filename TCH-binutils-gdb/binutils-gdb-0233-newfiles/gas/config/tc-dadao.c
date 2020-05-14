@@ -780,6 +780,10 @@ void dadao_md_assemble (char *str)
       max_operands = 0;
       break;
 
+	case dadao_operands_rr_ri6:
+		max_operands = 3;
+		break;
+
 	case dadao_operands_rrs6_ri12:
 		max_operands = 3;
 		break;
@@ -1540,6 +1544,35 @@ void dadao_md_assemble (char *str)
     case dadao_operands_pushj:
       /* All is done for PUSHJ already.  */
       break;
+
+	case dadao_operands_rr_ri6: /* "regd, regb, regc" or "regd, regb, imm6" */
+		if (n_operands != 3)
+			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+
+		DDOP_EXP_MUST_BE_REG(exp[0]);
+		DDOP_EXP_MUST_BE_REG(exp[1]);
+
+		DDOP_SET_FD(opcodep, exp[0].X_add_number);
+		DDOP_SET_FA(opcodep, instruction->fa_as_opcode);
+		DDOP_SET_FB(opcodep, exp[1].X_add_number);
+
+		switch (exp[2].X_op) {
+		case O_register: /* regc */
+			DDOP_CHECK_6_BIT(exp[2].X_add_number);
+			DDOP_SET_FC(opcodep, exp[2].X_add_number);
+			break;
+
+		case O_constant: /* imm6 */
+			DDOP_CHECK_6_BIT(exp[2].X_add_number);
+			DDOP_SET_FC(opcodep, exp[2].X_add_number);
+
+			opcodep[0] |= IMM_OFFSET_BIT;
+			break;
+
+		default:
+			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+		}
+		break;
 
 	case dadao_operands_rrs6_ri12: /* "regd, rega, regb << shift6" or "regd, rega, imm12" */
 		if (n_operands != 3)

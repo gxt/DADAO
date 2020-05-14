@@ -21,6 +21,7 @@ enum dadao_insn_type
  {
    dadao_type_normal,
    dadao_type_fd_eq_fa_op_bc,
+   dadao_type_fd_eq_fb_op_fc,
    dadao_type_branch,
    dadao_type_condbranch,
    dadao_type_memaccess_octa,
@@ -53,6 +54,9 @@ enum dadao_operands_type
 
    /* The regular "rega, regb << shift6" or "rega, imm12" */
    dadao_operands_rrs6_ri12,
+
+   /* The regular "regb, regc", or "regb, imm6" */
+   dadao_operands_rr_ri6,
 
    /* "Address"; only JMP.  Zero operands allowed unless GNU syntax.  */
    dadao_operands_jmp,

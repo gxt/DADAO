@@ -72,6 +72,7 @@ const struct dadao_spec_reg dadao_spec_regs[] =
 #define M dadao_type_memaccess_block
 #define J dadao_type_jsr
 #define D_A_BC	dadao_type_fd_eq_fa_op_bc
+#define D_B_C	dadao_type_fd_eq_fb_op_fc
 
 #define OP(y) XCONCAT2 (dadao_operands_,y)
 
@@ -126,13 +127,9 @@ const struct dadao_opcode dadao_opcodes[] =
       a memory block reference for purposes of assembly.  */
    {"lda",	Z (0x22),	0,	OP (regs_z_opt),	M},
 
-   {"sl",	Z (0x38),	0,	OP (regs_z),		N},
-
-   {"slu",	Z (0x3a),	0,	OP (regs_z),		N},
-
-   {"sr",	Z (0x3c),	0,	OP (regs_z),		N},
-
-   {"sru",	Z (0x3e),	0,	OP (regs_z),		N},
+	{"slu",		Z (0x3E),	1,	OP (rr_ri6),		D_B_C},
+	{"sr",		Z (0x3E),	2,	OP (rr_ri6),		D_B_C},
+	{"sru",		Z (0x3E),	3,	OP (rr_ri6),		D_B_C},
 
    {"bn",	Z (0x40),	0,	OP (regaddr),		C},
    {"bnn",	Z (0x48),	0,	OP (regaddr),		C},
