@@ -97,12 +97,6 @@ enum dadao_operands_type
    /* Two registers, "$X,$Y".  */
    dadao_operands_set,
 
-   /* "$X,0"; SAVE.  */
-   dadao_operands_save,
-
-   /* "0,$Z"; UNSAVE. */
-   dadao_operands_unsave,
-
    /* "X,Y,Z"; like SWYM or TRAP.  Zero (or 1 if GNU syntax) to three
       operands, interpreted as 0; XYZ; X, YZ and X, Y, Z.  */
    dadao_operands_xyz_opt,

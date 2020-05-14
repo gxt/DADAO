@@ -765,8 +765,6 @@ void dadao_md_assemble (char *str)
     case dadao_operands_get:
     case dadao_operands_put:
     case dadao_operands_set:
-    case dadao_operands_save:
-    case dadao_operands_unsave:
       max_operands = 2;
       break;
 
@@ -929,7 +927,6 @@ void dadao_md_assemble (char *str)
     case dadao_operands_regaddr:
     case dadao_operands_get:
     case dadao_operands_set:
-    case dadao_operands_save:
       if (n_operands < 1
 	  || (exp[0].X_op == O_register && exp[0].X_add_number > 255))
 	{
@@ -1304,39 +1301,6 @@ void dadao_md_assemble (char *str)
       else
 	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 3,
 		     1, exp + 1, 0, BFD_RELOC_DADAO_REG_OR_BYTE);
-      break;
-
-    case dadao_operands_save:
-      /* "$X,0"; SAVE.  */
-      if (n_operands != 2
-	  || exp[1].X_op != O_constant
-	  || exp[1].X_add_number != 0)
-	{
-	  as_bad (_("invalid operands to opcode %s: `%s'"),
-		  instruction->name, operands);
-	  return;
-	}
-      break;
-
-    case dadao_operands_unsave:
-      /* "0,$Z"; UNSAVE.  */
-      if (n_operands != 2
-	  || exp[0].X_op != O_constant
-	  || exp[0].X_add_number != 0
-	  || exp[1].X_op == O_constant
-	  || (exp[1].X_op == O_register
-	      && exp[1].X_add_number > 255))
-	{
-	  as_bad (_("invalid operands to opcode %s: `%s'"),
-		  instruction->name, operands);
-	  return;
-	}
-
-      if (exp[1].X_op == O_register)
-	opcodep[3] = exp[1].X_add_number;
-      else
-	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 3,
-		     1, exp + 1, 0, BFD_RELOC_DADAO_REG);
       break;
 
     case dadao_operands_xyz_opt:

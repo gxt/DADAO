@@ -203,8 +203,6 @@ get_opcode_found:
 	case dadao_operands_regaddr:
 	case dadao_operands_get:
 	case dadao_operands_set:
-	case dadao_operands_save:
-	case dadao_operands_unsave:
 	case dadao_operands_xyz_opt:
 	case dadao_operands_rr_ri6:
 	case dadao_operands_rrs6_ri12:
@@ -539,16 +537,6 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
       (*info->fprintf_func) (info->stream, "%s,%s",
 			     get_reg_name (minfop, x),
 			     get_reg_name (minfop, y));
-      break;
-
-    case dadao_operands_save:
-      /* SAVE - "$X,0".  */
-      (*info->fprintf_func) (info->stream, "%s,0", minfop->reg_name[x]);
-      break;
-
-    case dadao_operands_unsave:
-      /* UNSAVE - "0,$Z".  */
-      (*info->fprintf_func) (info->stream, "0,%s", minfop->reg_name[z]);
       break;
 
     case dadao_operands_xyz_opt:

@@ -260,10 +260,6 @@ const struct dadao_opcode dadao_opcodes[] =
 		  | 0xffff00,	0,	OP (resume),		B},
 
    {"pushj",	Z (0xf2),	0,	OP (pushj),		J},
-   {"save",	O (0xfa)
-		  | 0xffff,	0,	OP (save),		M},
-   {"unsave",	O (0xfb)
-		  | 0xffff00,	0,	OP (unsave),		M},
 
    {"geta",	Z (0xf4),	0,	OP (regaddr),		N},
    {"sync",	O (0xfc),	0,	OP (sync),		N},
