@@ -193,7 +193,6 @@ const struct dadao_opcode dadao_opcodes[] =
    {"cswap",	Z (0x94),	0,	OP (regs_z_opt),	MO},
    {"prego",	Z (0x9c),	0,	OP (x_regs_z),		N},
 
-   {"ldunc",	Z (0x96),	0,	OP (regs_z_opt),	MO},
    {"go",	Z (GO_INSN_BYTE),
 				0,	OP (regs_z_opt),	B},
 
@@ -218,7 +217,6 @@ const struct dadao_opcode dadao_opcodes[] =
    {"stco",	Z (0xb4),	0,	OP (x_regs_z),		MO},
    {"syncid",	Z (0xbc),	0,	OP (x_regs_z),		M},
 
-   {"stunc",	Z (0xb6),	0,	OP (regs_z_opt),	MO},
    {"pushgo",	Z (PUSHGO_INSN_BYTE),
 				0,	OP (pushgo),		J},
 
