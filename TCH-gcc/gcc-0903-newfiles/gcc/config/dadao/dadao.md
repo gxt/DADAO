@@ -1180,22 +1180,6 @@ BNP %1,1f\;POP 0,0\n1:";
   return "";
 })
 
-(define_insn "*andn"
-  [(set (match_operand:DI 0 "register_operand" "=r")
-	(and:DI
-	 (not:DI (match_operand:DI 1 "dadao_reg_or_8bit_operand" "rI"))
-	 (match_operand:DI 2 "register_operand" "r")))]
-  ""
-  "ANDN %0,%2,%1")
-
-(define_insn "*nand"
-  [(set (match_operand:DI 0 "register_operand" "=r")
-	(ior:DI
-	 (not:DI (match_operand:DI 1 "register_operand" "%r"))
-	 (not:DI (match_operand:DI 2 "dadao_reg_or_8bit_operand" "rI"))))]
-  ""
-  "NAND %0,%1,%2")
-
 (define_insn "*nor"
   [(set (match_operand:DI 0 "register_operand" "=r")
 	(and:DI
@@ -1203,14 +1187,6 @@ BNP %1,1f\;POP 0,0\n1:";
 	 (not:DI (match_operand:DI 2 "dadao_reg_or_8bit_operand" "rI"))))]
   ""
 	"or	%0, %1, %2	\;\	not	%0, %0, 0")
-
-(define_insn "*nxor"
-  [(set (match_operand:DI 0 "register_operand" "=r")
-	(not:DI
-	 (xor:DI (match_operand:DI 1 "register_operand" "%r")
-		 (match_operand:DI 2 "dadao_reg_or_8bit_operand" "rI"))))]
-  ""
-  "NXOR %0,%1,%2")
 
 (define_insn "sync_icache"
   [(unspec_volatile [(match_operand:DI 0 "memory_operand" "m")
