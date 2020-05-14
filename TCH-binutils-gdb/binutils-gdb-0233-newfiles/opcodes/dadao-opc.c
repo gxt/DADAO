@@ -226,16 +226,14 @@ const struct dadao_opcode dadao_opcodes[] =
    {"set",	O (0xc1)
 		  | 0xff,	0,	OP (set),		N},
 
-   {"or",	Z (0xc0),	0,	OP (regs_z),		N},
-   {"and",	Z (0xc8),	0,	OP (regs_z),		N},
+	{"or",		Z (0xC0),	0,	OP (rrs6_ri12),		D_A_BC},
+	{"and",		Z (0xC2),	0,	OP (rrs6_ri12),		D_A_BC},
+	{"xor",		Z (0xC4),	0,	OP (rrs6_ri12),		D_A_BC},
 
-   {"orn",	Z (0xc2),	0,	OP (regs_z),		N},
    {"andn",	Z (0xca),	0,	OP (regs_z),		N},
 
-   {"nor",	Z (0xc4),	0,	OP (regs_z),		N},
    {"nand",	Z (0xcc),	0,	OP (regs_z),		N},
 
-   {"xor",	Z (0xc6),	0,	OP (regs_z),		N},
    {"nxor",	Z (0xce),	0,	OP (regs_z),		N},
 
    {"seth",	O (0xe0),	0,	OP (reg_yz),		N},
