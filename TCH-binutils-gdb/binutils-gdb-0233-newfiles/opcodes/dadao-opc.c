@@ -144,18 +144,6 @@ const struct dadao_opcode dadao_opcodes[] =
    {"bod",	Z (0x46),	0,	OP (regaddr),		C},
    {"bev",	Z (0x4e),	0,	OP (regaddr),		C},
 
-   {"pbn",	Z (0x50),	0,	OP (regaddr),		C},
-   {"pbnn",	Z (0x58),	0,	OP (regaddr),		C},
-
-   {"pbz",	Z (0x52),	0,	OP (regaddr),		C},
-   {"pbnz",	Z (0x5a),	0,	OP (regaddr),		C},
-
-   {"pbp",	Z (0x54),	0,	OP (regaddr),		C},
-   {"pbnp",	Z (0x5c),	0,	OP (regaddr),		C},
-
-   {"pbod",	Z (0x56),	0,	OP (regaddr),		C},
-   {"pbev",	Z (0x5e),	0,	OP (regaddr),		C},
-
 	{"csn",		Z (0x60),	0,	OP (rrs6_ri12),		D_A_BC},
 	{"csnn",	Z (0x68),	0,	OP (rrs6_ri12),		D_A_BC},
 
