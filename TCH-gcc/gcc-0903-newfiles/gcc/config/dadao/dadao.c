@@ -2319,7 +2319,7 @@ dadao_output_register_setting (FILE *stream,
 					  value);
       fprintf (stream, " %s,", reg_names[regno]);
       dadao_output_shifted_value (stream, ~(uint64_t) value);
-      fprintf (stream, "\n\tNOR %s,%s,0", reg_names[regno],
+      fprintf (stream, "\n\tnot	%s, %s, 0", reg_names[regno],
 	       reg_names[regno]);
     }
   else

@@ -246,7 +246,7 @@
 	 (match_operand:DI 2 "dadao_reg_or_constant_operand" "rI,NT")))]
   ""
   "@
-   AND %0,%1,%2
+	and	%0, %1, %2
    %A2 %0,%V2")
 
 (define_insn "iordi3"
@@ -255,7 +255,7 @@
 		(match_operand:DI 2 "dadao_reg_or_constant_operand" "rI,LS")))]
   ""
   "@
-   OR %0,%1,%2
+	or	%0, %1, %2
    %o2 %0,%v2")
 
 (define_insn "xordi3"
@@ -263,7 +263,7 @@
 	(xor:DI (match_operand:DI 1 "register_operand" "%r")
 		(match_operand:DI 2 "dadao_reg_or_8bit_operand" "rI")))]
   ""
-  "XOR %0,%1,%2")
+	"xor	%0, %1, %2")
 
 ;; FIXME:  When TImode works for other reasons (like cross-compiling from
 ;; a 32-bit host), add back umulditi3 and umuldi3_highpart here.
@@ -320,7 +320,7 @@
   "! TARGET_KNUTH_DIVISION"
   "@
    SETL %0,1
-   XOR $255,%1,%2\;\
+	xor	$63, %1, %2	\;\
 	subu	%0, $0, %2	\;\
 	csn	%2, %2, %0	\;\
 	subu	%0, $0, %1	\;\
@@ -406,7 +406,7 @@
         (neg:DF (match_operand:DF 1 "register_operand" "r")))
    (use (match_operand:DI 2 "register_operand" "r"))]
   ""
-  "XOR %0,%1,%2")
+	"xor	%0, %1, %2")
 
 ;; FIXME: define_expand for absdi2?
 
@@ -428,7 +428,7 @@
   [(set (match_operand:DI 0 "register_operand" "=r")
 	(not:DI (match_operand:DI 1 "register_operand" "r")))]
   ""
-  "NOR %0,%1,0")
+	"not	%0, %1, 0")
 
 ;; When the user-patterns expand, the resulting insns will match the
 ;; patterns below.
@@ -1202,7 +1202,7 @@ BNP %1,1f\;POP 0,0\n1:";
 	 (not:DI (match_operand:DI 1 "register_operand" "%r"))
 	 (not:DI (match_operand:DI 2 "dadao_reg_or_8bit_operand" "rI"))))]
   ""
-  "NOR %0,%1,%2")
+	"or	%0, %1, %2	\;\	not	%0, %0, 0")
 
 (define_insn "*nxor"
   [(set (match_operand:DI 0 "register_operand" "=r")
