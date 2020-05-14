@@ -230,12 +230,6 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"and",		Z (0xC2),	0,	OP (rrs6_ri12),		D_A_BC},
 	{"xor",		Z (0xC4),	0,	OP (rrs6_ri12),		D_A_BC},
 
-   {"andn",	Z (0xca),	0,	OP (regs_z),		N},
-
-   {"nand",	Z (0xcc),	0,	OP (regs_z),		N},
-
-   {"nxor",	Z (0xce),	0,	OP (regs_z),		N},
-
    {"seth",	O (0xe0),	0,	OP (reg_yz),		N},
    {"setmh",	O (0xe1),	0,	OP (reg_yz),		N},
    {"orh",	O (0xe8),	0,	OP (reg_yz),		N},
