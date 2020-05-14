@@ -26,22 +26,6 @@ _sbrk (size_t incr)
 
   prev_heap_end = _Sbrk_high;
 
-  /* A simulator that requires explicit memory allocation is expected
-     to hook that to the PRELD data prefetch insn, which is otherwise
-     typically a nop.  */
-  if ((long) incr > 0)
-    {
-      size_t n = incr;
-      char *p = prev_heap_end;
-#define A(N) __asm__ ("preld " #N ",%0,0" : : "r" (p))
-#define PRELDOWNTO(N) while (n >= N + 1) { A(N); n -= N + 1; p += N + 1; }
-
-      PRELDOWNTO (255);
-      PRELDOWNTO (31);
-      PRELDOWNTO (3);
-      PRELDOWNTO (0);
-    }
-
   _Sbrk_high += incr;
   return (caddr_t) prev_heap_end;
 }
