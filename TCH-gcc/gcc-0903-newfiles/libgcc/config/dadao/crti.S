@@ -34,20 +34,20 @@ crtsdat:
 _start:	SETL	$63,32
 	PUT	rG,$63
 
-	GETA	$63,crtstxt
-	LDOU	$2,$63,0
+	geta	$63, crtstxt
+	ldo	$2, $63, 0
 	ANDNL	$2,#7ff
-	LDOU	$3,$63,8
+	ldo	$3, $63, 8
 	SETL	$4,2048
 0:
 	addu	$2, $2, $4
 	cmp	$63, $2, $3
 	BN	$63,0b
 
-	GETA	$63,crtsdat
-	LDOU	$2,$63,0
+	geta	$63, crtsdat
+	ldo	$2, $63, 0
 	ANDNL	$2,#7ff
-	LDOU	$3,$63,8
+	ldo	$3, $63, 8
 0:
 	addu	$2, $2, $4
 	cmp	$63, $2, $3
@@ -56,8 +56,8 @@ _start:	SETL	$63,32
 # Initialize the stack pointer.  It is supposedly made a global
 # zero-initialized (allowed to change) register in crtn.S; we use the
 # explicit number.
-	GETA	$63,stackpp
-	LDOU	$62,$63,0
+	geta	$63, stackpp
+	ldo	$62, $63, 0
 
 	PUSHJ	$2,_init
 
@@ -93,9 +93,9 @@ _init:
 
 # Register _fini to be executed as the last atexit function.
 #ifdef __DADAO_ABI_GNU__
-	GETA	$39,_fini
+	geta	$39, _fini
 #else
-	GETA	$1,_fini
+	geta	$1, _fini
 #endif
 	PUSHJ	$0,atexit
 

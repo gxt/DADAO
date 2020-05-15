@@ -961,9 +961,9 @@ dadao_asm_trampoline_template (FILE *stream)
      static chain is stored at offset 16, and the function address is
      stored at offset 24.  */
 
-  fprintf (stream, "\tGETA $255,1F\n\t");
-  fprintf (stream, "LDOU %s,$255,0\n\t", reg_names[DADAO_STATIC_CHAIN_REGNUM]);
-  fprintf (stream, "LDOU $255,$255,8\n\t");
+  fprintf (stream, "\tgeta	$63, 1F\n\t");
+  fprintf (stream, "ldo	%s, $63, 0\n\t", reg_names[DADAO_STATIC_CHAIN_REGNUM]);
+  fprintf (stream, "ldo	$63, $63, 8\n\t");
   fprintf (stream, "GO $255,$255,0\n");
   fprintf (stream, "1:\t.dd.octa 0\n\t");
   fprintf (stream, ".dd.octa 0\n");
@@ -1775,7 +1775,7 @@ dadao_print_operand_address (FILE *stream, machine_mode /*mode*/, rtx x)
 void
 dadao_asm_output_reg_push (FILE *stream, int regno)
 {
-  fprintf (stream, "\tSUBU %s,%s,8\n\tSTOU %s,%s,0\n",
+  fprintf (stream, "\tsubu %s, %s, 8\n\tsto %s, %s, 0\n",
 	   reg_names[DADAO_STACK_POINTER_REGNUM],
 	   reg_names[DADAO_STACK_POINTER_REGNUM],
 	   reg_names[DADAO_OUTPUT_REGNO (regno)],
@@ -1787,7 +1787,7 @@ dadao_asm_output_reg_push (FILE *stream, int regno)
 void
 dadao_asm_output_reg_pop (FILE *stream, int regno)
 {
-  fprintf (stream, "\tLDOU %s,%s,0\n\tINCL %s,8\n",
+  fprintf (stream, "\tldo %s, %s, 0\n\tINCL %s,8\n",
 	   reg_names[DADAO_OUTPUT_REGNO (regno)],
 	   reg_names[DADAO_STACK_POINTER_REGNUM],
 	   reg_names[DADAO_STACK_POINTER_REGNUM]);

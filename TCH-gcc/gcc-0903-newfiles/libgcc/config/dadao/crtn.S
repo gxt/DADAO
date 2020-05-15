@@ -11,14 +11,14 @@
 # like in gcc/crtstuff.c.
 
 	.section .init,"ax",@progbits
-	GETA	$63,0f
+	geta	$63, 0f
 	PUT	rJ,$63
 	POP	0,0
 0:	PUT	rJ,$0
 	POP	0,0
 	
 	.section .fini,"ax",@progbits
-	GETA	$63,0f
+	geta	$63, 0f
 	PUT	rJ,$63
 	POP	0,0
 0:	PUT	rJ,$0

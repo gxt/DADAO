@@ -40,8 +40,8 @@
 	subu	%0, $0, %n1
    PUT %0,%1
    GET %0,%1
-   LDB%U0 %0,%1
-   STBU %1,%0
+	ldb%U0	%0, %1
+	stb	%1, %0
    %r0%I1")
 
 (define_insn "movhi"
@@ -54,8 +54,8 @@
 	subu	%0, $0, %n1
    PUT %0,%1
    GET %0,%1
-   LDW%U0 %0,%1
-   STWU %1,%0
+	ldw%U0	%0, %1
+	stw	%1, %0
    %r0%I1")
 
 ;; gcc.c-torture/compile/920428-2.c fails if there's no "n".
@@ -69,8 +69,8 @@
 	subu	%0, $0, %n1
    PUT %0,%1
    GET %0,%1
-   LDT%U0 %0,%1
-   STTU %1,%0
+	ldt%U0	%0, %1
+	stt	%1, %0
    %r0%I1")
 
 ;; We assume all "s" are addresses.  Does that hold?
@@ -85,9 +85,9 @@
    PUT %0,%1
    GET %0,%1
    STCO %1,%0
-   LDO %0,%1
-   STOU %1,%0
-   GETA %0,%1
+	ldo	%0, %1
+	sto	%1, %0
+	geta	%0, %1
    LDA %0,%1
    %r0%I1")
 
@@ -102,8 +102,8 @@
    SETL %0,0
    PUT %0,%1
    GET %0,%1
-   LDT %0,%1
-   STTU %1,%0
+	ldt	%0, %1
+	stt	%1, %0
    %r0%I1")
 
 (define_insn "movdf"
@@ -115,8 +115,8 @@
    SETL %0,0
    PUT %0,%1
    GET %0,%1
-   LDO %0,%1
-   STOU %1,%0
+	ldo	%0, %1
+	sto	%1, %0
    %r0%I1")
 
 ;; We need to be able to move around the values used as condition codes.
@@ -135,8 +135,8 @@
    SET %0,%1
    PUT %0,%1
    GET %0,%1
-   LDT %0,%1
-   STT %1,%0")
+	ldt	%0, %1
+	stt	%1, %0")
 
 (define_expand "movcc"
   [(set (match_operand:CC 0 "nonimmediate_operand" "")
@@ -1144,7 +1144,9 @@
 {
   rtx my_operands[3];
   const char *my_template
-    = "GETA $255,0f\;PUT rJ,$255\;LDOU $255,%a0\n\
+    = "	geta	$63, 0f\;\
+PUT rJ,$255\;\
+	ldou	$63, %a0, 0\n\
 0:\;GET %1,rO\;\
 	cmpu	%1, %1, $63	\;\
 BNP %1,1f\;POP 0,0\n1:";
