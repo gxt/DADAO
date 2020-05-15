@@ -88,8 +88,8 @@ _init:
 	GET	$0,rJ
 	PUSHJ	$1,0f
 	SETL	$63,63
-	TRAP	0,0,0
-0:	TRAP	0,0,0
+	trap	0
+0:	trap	0
 
 # Register _fini to be executed as the last atexit function.
 #ifdef __DADAO_ABI_GNU__
@@ -105,5 +105,5 @@ _fini:
 	GET	$0,rJ
 	PUSHJ	$1,0f
 	SETL	$63,63
-	TRAP	0,0,0
-0:	TRAP	0,0,0
+	trap	0
+0:	trap	0

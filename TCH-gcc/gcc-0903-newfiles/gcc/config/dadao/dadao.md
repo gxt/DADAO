@@ -1082,7 +1082,7 @@
 (define_insn "nop"
   [(const_int 0)]
   ""
-  "SWYM 0,0,0")
+	"nop")
 
 (define_insn "jump"
   [(set (pc) (label_ref (match_operand 0 "" "")))]
