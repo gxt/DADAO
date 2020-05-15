@@ -19,19 +19,19 @@ setjmp:
 # structure-return registers as temporary register, since we need to keep
 # the jmp_buf (parameter 1) and the return address across a "POP".
 	SET  $251,arg1
-	STOU $253,$251,0
+	sto	$61, $59, 0
 	GET  $252,rJ
-	STOU $252,$251,8
-	STOU $254,$251,16
+	sto	$60, $59, 8
+	sto	$62, $59, 16
 	SETL outret,0
 
 # Jump through hoops to get the value of rO *before* the setjmp call.
-	GETA $255,0f
+	geta	$63, 0f
 	PUT  rJ,$255
 	POP  popval,0
 0:
 	GET  $255,rO
-	STOU $255,$251,24
+	sto	$63, $59, 24
 	GO   $255,$252,0
 	.size setjmp,.-setjmp
 
@@ -41,7 +41,7 @@ longjmp:
 # Reset arg2 to 1 if it is 0 (see longjmp(2)) and store it in jmp_buf.
 # Save arg1 in a global register, since it will be destroyed by the POPs
 	csz	arg2, arg2, 1
-	STOU arg2,arg1,32
+	sto	arg2, arg1, 32
 	SET  $251,arg1
 
 # Loop and "POP 0,0" until rO is the expected value, like
@@ -51,18 +51,18 @@ longjmp:
 # GNU ABI, it is unnecessary to do this in the loop and perhaps the memory
 # access can be hoisted outside the loop, but this is safe and simple and
 # I see no need to optimize longjmps.
-	GETA $255,0f
+	geta	$63, 0f
 	PUT  rJ,$255
-	LDOU $255,$251,24
+	ldo	$63, $59, 24
 0:
 	GET  $252,rO
 	cmpu	$60, $60, $63
 	BNP  $252,1f
-	LDOU outret,$251,32
+	ldo	outret, $59, 32
 	POP  popval,0
 1:
-	LDOU $253,$251,0
-	LDOU $255,$251,8
-	LDOU $254,$251,16
+	ldo	$61, $59, 0
+	ldo	$63, $59, 8
+	ldo	$62, $59, 16
 	GO   $255,$255,0
  	.size longjmp,.-longjmp
