@@ -74,7 +74,7 @@ _start:	SETL	$63,32
 #endif
 
 	PUSHJ	$0,main
-	JMP	exit
+	jmp	$0, exit
 
 # Provide the first part of _init and _fini.  Save the return address on the
 # register stack.  We eventually ignore the return address of these

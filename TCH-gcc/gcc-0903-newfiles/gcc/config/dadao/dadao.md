@@ -1087,7 +1087,7 @@
 (define_insn "jump"
   [(set (pc) (label_ref (match_operand 0 "" "")))]
   ""
-  "JMP %0")
+	"jmp	$0, %0")
 
 (define_insn "indirect_jump"
   [(set (pc) (match_operand 0 "address_operand" "p"))]
