@@ -768,7 +768,6 @@ void dadao_md_assemble (char *str)
       break;
 
     case dadao_operands_sync:
-    case dadao_operands_jmp:
       max_operands = 1;
       break;
 
@@ -776,7 +775,7 @@ void dadao_md_assemble (char *str)
       max_operands = 0;
       break;
 
-	case dadao_operands_fd_reg_fabc_i18:
+	case dadao_operands_fa_reg_fbcd_i18:
 		max_operands = 2;
 		break;
 
@@ -824,28 +823,6 @@ void dadao_md_assemble (char *str)
 
   switch (instruction->operands)
     {
-    case dadao_operands_jmp:
-      /* Add a frag for a JMP relaxation; we need room for max four
-	 extra instructions.  We don't do any work around here to check if
-	 we can determine the offset right away.  */
-      if (n_operands != 1 || exp[0].X_op == O_register)
-	{
-	  as_bad (_("invalid operand to opcode %s: `%s'"),
-		  instruction->name, operands);
-	  return;
-	}
-
-      if (expand_op)
-	frag_var (rs_machine_dependent, 4 * 4, 0,
-		  ENCODE_RELAX (STATE_JMP, STATE_UNDF),
-		  exp[0].X_add_symbol,
-		  exp[0].X_add_number,
-		  opcodep);
-      else
-	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4,
-		     exp + 0, 1, BFD_RELOC_DADAO_ADDR27);
-      break;
-
     case dadao_operands_pushj:
       /* We take care of PUSHJ in full here.  */
       if (n_operands != 2
@@ -1139,10 +1116,6 @@ void dadao_md_assemble (char *str)
 		     2, exp + 1, 0, BFD_RELOC_16);
       break;
 
-    case dadao_operands_jmp:
-      /* A JMP.  Everything is already done.  */
-      break;
-
     case dadao_operands_roundregs:
       /* Two registers with optional rounding mode or constant in between.  */
       if ((n_operands == 3 && exp[2].X_op == O_constant)
@@ -1361,23 +1334,49 @@ void dadao_md_assemble (char *str)
 		}
 		break;
 
-	case dadao_operands_fd_reg_fabc_i18: /* "regd, imm18" */
+	case dadao_operands_fa_reg_fbcd_i18: /* "rega, imm18" */
 		/* GETA/branch: Add a frag for relaxation.  We don't do any work
 		   around here to check if we can determine the offset right away.  */
 		if ((n_operands != 2) || (exp[1].X_op == O_register))
 			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 
 		DDOP_EXP_MUST_BE_REG(exp[0]);
-		DDOP_SET_FD(opcodep, exp[0].X_add_number);
+		DDOP_SET_FA(opcodep, exp[0].X_add_number);
 
-		if (! expand_op)
-			fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ADDR19);
-		else if (instruction->type == dadao_type_condbranch)
-			frag_var (rs_machine_dependent, BCC_MAX_LEN - 4, 0, ENCODE_RELAX (STATE_BCC, STATE_UNDF),
-				exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
-		else
-			frag_var (rs_machine_dependent, GETA_MAX_LEN - 4, 0, ENCODE_RELAX (STATE_GETA, STATE_UNDF),
-				exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
+		switch (instruction->type) {
+		case dadao_type_condbranch:
+			if (! expand_op)
+				fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ADDR19);
+			else
+				frag_var (rs_machine_dependent, BCC_MAX_LEN - 4, 0, ENCODE_RELAX (STATE_BCC, STATE_UNDF),
+					exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
+			break;
+
+		case dadao_type_jmp:
+			if (exp[0].X_add_number != 0)
+				as_fatal (_("non-zero reg operand NOT supported now: %s"), instruction->name);
+
+			/* Add a frag for a JMP relaxation; we need room for max four extra instructions.
+			   We don't do any work around here to check if we can determine the offset right away.  */
+			if (! expand_op)
+				fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ADDR19);
+			else
+				frag_var (rs_machine_dependent, 4 * 4, 0, ENCODE_RELAX (STATE_JMP, STATE_UNDF),
+					exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
+			break;
+
+		case dadao_type_geta:
+			if (! expand_op)
+				fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ADDR19);
+			else
+				frag_var (rs_machine_dependent, GETA_MAX_LEN - 4, 0, ENCODE_RELAX (STATE_GETA, STATE_UNDF),
+					exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
+			break;
+
+		default:
+			as_fatal (_("FIXME: SHOULD NOT BE HERE: %s"), instruction->name);
+		}
+
 		break;
 
 	case dadao_operands_none: /* nop */

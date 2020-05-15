@@ -210,7 +210,6 @@ get_opcode_found:
 	case dadao_operands_reg_yz:
 	case dadao_operands_regs_z_opt:
 	case dadao_operands_regs_z:
-	case dadao_operands_jmp:
 	case dadao_operands_pushgo:
 	case dadao_operands_pop:
 	case dadao_operands_sync:
@@ -221,7 +220,7 @@ get_opcode_found:
 	case dadao_operands_fa_op_fbcd_i18:
 	case dadao_operands_fa_op_fdfb_reg_fc_i6:
 	case dadao_operands_fdfa_reg_fbc_rs6_i12:
-	case dadao_operands_fd_reg_fabc_i18:
+	case dadao_operands_fa_reg_fbcd_i18:
 	case dadao_operands_none:
 	  return opcodep;
 
@@ -334,9 +333,11 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
     case dadao_type_memaccess_block:
     case dadao_type_fd_eq_fb_op_fc:
     case dadao_type_fd_eq_fa_op_bc:
+    case dadao_type_geta:
       info->insn_type = dis_nonbranch;
       break;
 
+    case dadao_type_jmp:
     case dadao_type_branch:
       info->insn_type = dis_branch;
       break;
@@ -433,19 +434,6 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 				get_reg_name (minfop, fc));
       break;
 
-    case dadao_operands_jmp:
-      /* Address; only JMP.  */
-      {
-	bfd_signed_vma offset = (x * 65536 + y * 256 + z) * 4;
-
-	if (insn & INSN_BACKWARD_OFFSET_BIT)
-	  offset -= (256 * 65536) * 4;
-
-	info->target = memaddr + offset;
-	(*info->print_address_func) (memaddr + offset, info);
-      }
-      break;
-
     case dadao_operands_roundregs_z:
       /* Two registers, like FLOT, possibly with rounding: "$X,$Z|Z"
 	 "$X,ROUND_MODE,$Z|Z".  */
@@ -510,8 +498,8 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
       break;
 
     case dadao_operands_pushj:
-    case dadao_operands_fd_reg_fabc_i18:
-      /* Like GETA or branches - "$X,Address".  */
+    case dadao_operands_fa_reg_fbcd_i18:
+      /* Like jmp, GETA or branches - "$X,Address".  */
       {
 	bfd_signed_vma offset = (y * 256 + z) * 4;
 

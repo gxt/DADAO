@@ -24,6 +24,8 @@ enum dadao_insn_type
    dadao_type_fd_eq_fb_op_fc,
    dadao_type_branch,
    dadao_type_condbranch,
+   dadao_type_jmp,
+   dadao_type_geta,
    dadao_type_memaccess_octa,
    dadao_type_memaccess_tetra,
    dadao_type_memaccess_wyde,
@@ -52,8 +54,8 @@ enum dadao_operands_type
    /* The regular "$X,$Y,$Z|Z".  */
    dadao_operands_regs_z,
 
-	/* The regular "regd, imm18" */
-	dadao_operands_fd_reg_fabc_i18,
+	/* The regular "rega, imm18" */
+	dadao_operands_fa_reg_fbcd_i18,
 
 	/* The regular "regd, rega, regb << shift6" or "regd, rega, imm12" */
 	dadao_operands_fdfa_reg_fbc_rs6_i12,
@@ -63,9 +65,6 @@ enum dadao_operands_type
 
 	/* ONLY "imm18" accepted, for swym/trip/trap/nop */
 	dadao_operands_fa_op_fbcd_i18,
-
-   /* "Address"; only JMP.  Zero operands allowed unless GNU syntax.  */
-   dadao_operands_jmp,
 
    /* "$X|X,$Y,$Z|Z": PUSHGO; like "3", but X can be expressed as an
       integer.  */
