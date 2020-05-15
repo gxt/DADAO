@@ -319,7 +319,7 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
       return 4;
     }
 
-  (*info->fprintf_func) (info->stream, "%s\t", opcodep->name);
+  (*info->fprintf_func) (info->stream, "%s", opcodep->name);
 
   /* Present bytes in the order they are laid out in memory.  */
   info->display_endian = BFD_ENDIAN_BIG;
@@ -379,7 +379,7 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
     {
     case dadao_operands_regs:
       /*  All registers: "$X,$Y,$Z".  */
-      (*info->fprintf_func) (info->stream, "%s,%s,%s",
+      (*info->fprintf_func) (info->stream, "\t%s,%s,%s",
 			     get_reg_name (minfop, x),
 			     get_reg_name (minfop, y),
 			     get_reg_name (minfop, z));
@@ -387,7 +387,7 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 
     case dadao_operands_reg_yz:
       /* Like SETH - "$X,YZ".  */
-      (*info->fprintf_func) (info->stream, "%s,0x%x",
+      (*info->fprintf_func) (info->stream, "\t%s,0x%x",
 			     get_reg_name (minfop, x), y * 256 + z);
       break;
 
@@ -396,11 +396,11 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
     case dadao_operands_pushgo:
       /* The regular "$X,$Y,$Z|Z".  */
       if (insn & INSN_IMMEDIATE_BIT)
-	(*info->fprintf_func) (info->stream, "%s,%s,%d",
+	(*info->fprintf_func) (info->stream, "\t%s,%s,%d",
 			       get_reg_name (minfop, x),
 			       get_reg_name (minfop, y), z);
       else
-	(*info->fprintf_func) (info->stream, "%s,%s,%s",
+	(*info->fprintf_func) (info->stream, "\t%s,%s,%s",
 			       get_reg_name (minfop, x),
 			       get_reg_name (minfop, y),
 			       get_reg_name (minfop, z));
@@ -409,16 +409,16 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
     case dadao_operands_fdfa_reg_fbc_rs6_i12: /* The regular "rega, regb << shift6" or "rega, imm12" */
     case dadao_operands_fdfa_reg_fbc_rs6_i12_or_sym: /* The regular "rega, regb << shift6" or "rega, imm12" */
       if (insn & INSN_IMMEDIATE_BIT)
-	(*info->fprintf_func) (info->stream, "%s, %s, %d",
+	(*info->fprintf_func) (info->stream, "\t%s, %s, %d",
 			       get_reg_name (minfop, fd),
 			       get_reg_name (minfop, fa), fbc);
       else if (fc == 0)
-	  (*info->fprintf_func) (info->stream, "%s, %s, %s",
+	  (*info->fprintf_func) (info->stream, "\t%s, %s, %s",
 				get_reg_name (minfop, fd),
 				get_reg_name (minfop, fa),
 				get_reg_name (minfop, fb));
       else
-	  (*info->fprintf_func) (info->stream, "%s, %s, %s << %d",
+	  (*info->fprintf_func) (info->stream, "\t%s, %s, %s << %d",
 				get_reg_name (minfop, fd),
 				get_reg_name (minfop, fa),
 				get_reg_name (minfop, fb), fc);
@@ -426,11 +426,11 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 
     case dadao_operands_fa_op_fdfb_reg_fc_i6: /* The regular "regb, regc" or "regb, imm6" */
       if (insn & INSN_IMMEDIATE_BIT)
-	(*info->fprintf_func) (info->stream, "%s, %s, %d",
+	(*info->fprintf_func) (info->stream, "\t%s, %s, %d",
 			       get_reg_name (minfop, fd),
 			       get_reg_name (minfop, fb), fc);
       else
-	  (*info->fprintf_func) (info->stream, "%s, %s, %s",
+	  (*info->fprintf_func) (info->stream, "\t%s, %s, %s",
 				get_reg_name (minfop, fd),
 				get_reg_name (minfop, fb),
 				get_reg_name (minfop, fc));
@@ -442,11 +442,11 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
       if (y != 0)
 	{
 	  if (insn & INSN_IMMEDIATE_BIT)
-	    (*info->fprintf_func) (info->stream, "%s,%s,%d",
+	    (*info->fprintf_func) (info->stream, "\t%s,%s,%d",
 				   get_reg_name (minfop, x),
 				   ROUND_MODE (y), z);
 	  else
-	    (*info->fprintf_func) (info->stream, "%s,%s,%s",
+	    (*info->fprintf_func) (info->stream, "\t%s,%s,%s",
 				   get_reg_name (minfop, x),
 				   ROUND_MODE (y),
 				   get_reg_name (minfop, z));
@@ -454,10 +454,10 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
       else
 	{
 	  if (insn & INSN_IMMEDIATE_BIT)
-	    (*info->fprintf_func) (info->stream, "%s,%d",
+	    (*info->fprintf_func) (info->stream, "\t%s,%d",
 				   get_reg_name (minfop, x), z);
 	  else
-	    (*info->fprintf_func) (info->stream, "%s,%s",
+	    (*info->fprintf_func) (info->stream, "\t%s,%s",
 				   get_reg_name (minfop, x),
 				   get_reg_name (minfop, z));
 	}
@@ -465,36 +465,36 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 
     case dadao_operands_pop:
       /* Like POP - "X,YZ".  */
-      (*info->fprintf_func) (info->stream, "%d,%d", x, y*256 + z);
+      (*info->fprintf_func) (info->stream, "\t%d,%d", x, y*256 + z);
       break;
 
     case dadao_operands_roundregs:
       /* Two registers, possibly with rounding: "$X,$Z" or
 	 "$X,ROUND_MODE,$Z".  */
       if (y != 0)
-	(*info->fprintf_func) (info->stream, "%s,%s,%s",
+	(*info->fprintf_func) (info->stream, "\t%s,%s,%s",
 			       get_reg_name (minfop, x),
 			       ROUND_MODE (y),
 			       get_reg_name (minfop, z));
       else
-	(*info->fprintf_func) (info->stream, "%s,%s",
+	(*info->fprintf_func) (info->stream, "\t%s,%s",
 			       get_reg_name (minfop, x),
 			       get_reg_name (minfop, z));
       break;
 
     case dadao_operands_sync:
 	/* Like SYNC - "XYZ".  */
-      (*info->fprintf_func) (info->stream, "%u",
+      (*info->fprintf_func) (info->stream, "\t%u",
 			     x * 65536 + y * 256 + z);
       break;
 
     case dadao_operands_x_regs_z:
       /* Like SYNCD - "X,$Y,$Z|Z".  */
       if (insn & INSN_IMMEDIATE_BIT)
-	(*info->fprintf_func) (info->stream, "%d,%s,%d",
+	(*info->fprintf_func) (info->stream, "\t%d,%s,%d",
 			       x, get_reg_name (minfop, y), z);
       else
-	(*info->fprintf_func) (info->stream, "%d,%s,%s",
+	(*info->fprintf_func) (info->stream, "\t%d,%s,%s",
 			       x, get_reg_name (minfop, y),
 			       get_reg_name (minfop, z));
       break;
@@ -510,14 +510,14 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 
 	info->target = memaddr + offset;
 
-	(*info->fprintf_func) (info->stream, "%s,", get_reg_name (minfop, x));
+	(*info->fprintf_func) (info->stream, "\t%s,", get_reg_name (minfop, x));
 	(*info->print_address_func) (memaddr + offset, info);
       }
       break;
 
     case dadao_operands_get:
       /* GET - "X,spec_reg".  */
-      (*info->fprintf_func) (info->stream, "%s,%s",
+      (*info->fprintf_func) (info->stream, "\t%s,%s",
 			     get_reg_name (minfop, x),
 			     get_spec_reg_name (minfop, z));
       break;
@@ -525,23 +525,23 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
     case dadao_operands_put:
       /* PUT - "spec_reg,$Z|Z".  */
       if (insn & INSN_IMMEDIATE_BIT)
-	(*info->fprintf_func) (info->stream, "%s,%d",
+	(*info->fprintf_func) (info->stream, "\t%s,%d",
 			       get_spec_reg_name (minfop, x), z);
       else
-	(*info->fprintf_func) (info->stream, "%s,%s",
+	(*info->fprintf_func) (info->stream, "\t%s,%s",
 			       get_spec_reg_name (minfop, x),
 			       get_reg_name (minfop, z));
       break;
 
     case dadao_operands_set:
       /*  Two registers, "$X,$Y".  */
-      (*info->fprintf_func) (info->stream, "%s,%s",
+      (*info->fprintf_func) (info->stream, "\t%s,%s",
 			     get_reg_name (minfop, x),
 			     get_reg_name (minfop, y));
       break;
 
 	case dadao_operands_fa_op_fbcd_i18: /* Like SWYM or TRAP - "imm18".  */
-		(*info->fprintf_func) (info->stream, "%d", (fb << 12) | (fc << 6) | fd);
+		(*info->fprintf_func) (info->stream, "\t%d", (fb << 12) | (fc << 6) | fd);
 		break;
 
 	case dadao_operands_none: /* nop  */
