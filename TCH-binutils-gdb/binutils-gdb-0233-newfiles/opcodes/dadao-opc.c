@@ -152,46 +152,31 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"csod",	Z (0x66),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
 	{"csev",	Z (0x6e),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
 
-   {"ldb",	Z (0x80),	0,	OP (regs_z_opt),	MB},
-   {"ldt",	Z (0x88),	0,	OP (regs_z_opt),	MT},
+	{"ldb",		Z (0x80),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MB},
+	{"ldbu",	Z (0x82),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MB},
+	{"ldw",		Z (0x84),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MW},
+	{"ldwu",	Z (0x86),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MW},
+	{"ldt",		Z (0x88),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MT},
+	{"ldtu",	Z (0x8A),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MT},
+	{"ldo",		Z (0x8C),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MO},
 
-   {"ldbu",	Z (0x82),	0,	OP (regs_z_opt),	MB},
-   {"ldtu",	Z (0x8a),	0,	OP (regs_z_opt),	MT},
-
-   {"ldw",	Z (0x84),	0,	OP (regs_z_opt),	MW},
-   {"ldo",	Z (0x8c),	0,	OP (regs_z_opt),	MO},
-
-   {"ldwu",	Z (0x86),	0,	OP (regs_z_opt),	MW},
-   {"ldou",	Z (0x8e),	0,	OP (regs_z_opt),	MO},
+	{"stb",		Z (0xA0),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MB},
+	{"stw",		Z (0xA2),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MW},
+	{"stt",		Z (0xA4),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MT},
+	{"sto",		Z (0xA6),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MO},
 
    {"ldsf",	Z (0x90),	0,	OP (regs_z_opt),	MT},
 
    /* This doesn't seem to access memory, just the TLB.  */
    {"ldvts",	Z (0x98),	0,	OP (regs_z_opt),	M},
 
-   {"ldht",	Z (0x92),	0,	OP (regs_z_opt),	MT},
-
    {"cswap",	Z (0x94),	0,	OP (regs_z_opt),	MO},
 
    {"go",	Z (GO_INSN_BYTE),
 				0,	OP (regs_z_opt),	B},
 
-   {"stb",	Z (0xa0),	0,	OP (regs_z_opt),	MB},
-   {"stt",	Z (0xa8),	0,	OP (regs_z_opt),	MT},
-
-   {"stbu",	Z (0xa2),	0,	OP (regs_z_opt),	MB},
-   {"sttu",	Z (0xaa),	0,	OP (regs_z_opt),	MT},
-
-   {"stw",	Z (0xa4),	0,	OP (regs_z_opt),	MW},
-   {"sto",	Z (0xac),	0,	OP (regs_z_opt),	MO},
-
-   {"stwu",	Z (0xa6),	0,	OP (regs_z_opt),	MW},
-   {"stou",	Z (0xae),	0,	OP (regs_z_opt),	MO},
-
    {"stsf",	Z (0xb0),	0,	OP (regs_z_opt),	MT},
    {"syncd",	Z (0xb8),	0,	OP (x_regs_z),		M},
-
-   {"stht",	Z (0xb2),	0,	OP (regs_z_opt),	MT},
 
    {"stco",	Z (0xb4),	0,	OP (x_regs_z),		MO},
    {"syncid",	Z (0xbc),	0,	OP (x_regs_z),		M},

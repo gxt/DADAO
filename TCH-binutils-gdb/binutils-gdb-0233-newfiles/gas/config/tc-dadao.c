@@ -784,6 +784,7 @@ void dadao_md_assemble (char *str)
 		break;
 
 	case dadao_operands_fdfa_reg_fbc_rs6_i12:
+	case dadao_operands_fdfa_reg_fbc_rs6_i12_or_sym:
 		max_operands = 3;
 		break;
 
@@ -869,7 +870,6 @@ void dadao_md_assemble (char *str)
       /* FALLTHROUGH.  */
 
 	case dadao_operands_regs_z:
-	case dadao_operands_fdfa_reg_fbc_rs6_i12:
 		if (n_operands != 3) {
 			as_bad (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 			return;
@@ -1294,6 +1294,41 @@ void dadao_md_assemble (char *str)
 			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 		}
 		break;
+
+	case dadao_operands_fdfa_reg_fbc_rs6_i12_or_sym: /* "regd, rega, regb << shift6" or "regd, rega, imm12" */
+		if (n_operands == 2) {
+			symbolS *sym;
+			/* The last operand is immediate whenever we see just two operands.  */
+			opcodep[0] |= IMM_OFFSET_BIT;
+
+			/* Now, we could either have an implied "0" as the fbc operand, or
+			   it could be the constant of a "base address plus offset".  It
+			   depends on whether it is allowed; only memory operations, as
+			   signified by instruction->type and "T" and "X" operand types,
+			   and it depends on whether we find a register in the second
+			   operand, exp[1].  */
+			DDOP_EXP_MUST_BE_REG(exp[0]);
+
+			if (exp[1].X_op == O_register)
+				as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+
+			/* To avoid getting a NULL add_symbol for constants and then
+			   catching a SEGV in write_relocs since it doesn't handle
+			   constants well for relocs other than PC-relative, we need to
+			   pass expressions as symbols and use fix_new, not fix_new_exp.  */
+			sym = make_expr_symbol (exp + 1);
+
+			/* Mark the symbol as being OK for a reloc.  */
+			symbol_get_bfdsym (sym)->flags |= BSF_KEEP;
+
+			/* Now we know it can be a "base address plus offset".  Add
+			   proper fixup types so we can handle this later, when we've
+			   parsed everything.  */
+			fix_new (opc_fragP, opcodep - opc_fragP->fr_literal + 2,
+				8, sym, 0, 0, BFD_RELOC_DADAO_BASE_PLUS_OFFSET);
+			break;
+		}
+		/* FALLTHROUGH.  */
 
 	case dadao_operands_fdfa_reg_fbc_rs6_i12: /* "regd, rega, regb << shift6" or "regd, rega, imm12" */
 		if (n_operands != 3)

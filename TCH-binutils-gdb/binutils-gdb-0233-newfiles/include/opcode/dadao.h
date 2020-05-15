@@ -60,6 +60,9 @@ enum dadao_operands_type
 	/* The regular "regd, rega, regb << shift6" or "regd, rega, imm12" */
 	dadao_operands_fdfa_reg_fbc_rs6_i12,
 
+	/* The regular "regd, rega, regb << shift6" or "regd, rega, imm12" or "regd, sym */
+	dadao_operands_fdfa_reg_fbc_rs6_i12_or_sym,
+
 	/* The regular "regd, regb, regc", or "regd, regb, imm6" */
 	dadao_operands_fa_op_fdfb_reg_fc_i6,
 
