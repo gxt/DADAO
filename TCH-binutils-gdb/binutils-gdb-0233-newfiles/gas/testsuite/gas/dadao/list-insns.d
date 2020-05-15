@@ -29,5 +29,5 @@ Disassembly of section .text:
   54:	2e5c800c 	divu	\$12, \$23, \$8
   58:	2e5c808c 	divu	\$12, \$23, \$8 << 2
   5c:	2f5fe80c 	divu	\$12, \$23, 4000
-  60:	fd000000 	swym	0,0,0
-  64:	fd000000 	swym	0,0,0
+  60:	da000000 	swym	0
+  64:	dadadada 	nop

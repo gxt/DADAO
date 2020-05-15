@@ -82,7 +82,6 @@ const struct dadao_spec_reg dadao_spec_regs[] =
 
 const struct dadao_opcode dadao_opcodes[] =
  {
-   {"trap",	O (0),		0,	OP (xyz_opt),		J},
    {"fcmp",	O (1),		0,	OP (regs),		N},
    {"flot",	Z (8),		0,	OP (roundregs_z),	N},
 
@@ -208,6 +207,11 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"and",		Z (0xC2),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
 	{"xor",		Z (0xC4),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
 
+	{"swym",	O (0xDA),	0,	OP (fa_op_fbcd_i18),		N},
+	{"trip",	O (0xDA),	0x04,	OP (fa_op_fbcd_i18),		N},
+	{"trap",	O (0xDA),	0x20,	OP (fa_op_fbcd_i18),		N},
+	{"nop",		O (0xDA),	0x36,	OP (none),			N},
+
    {"seth",	O (0xe0),	0,	OP (reg_yz),		N},
    {"setmh",	O (0xe1),	0,	OP (reg_yz),		N},
    {"orh",	O (0xe8),	0,	OP (reg_yz),		N},
@@ -240,14 +244,10 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"geta",	Z (0xf4),	0,	OP (fd_reg_fabc_i18),	N},
 
    {"sync",	O (0xfc),	0,	OP (sync),		N},
-   {"swym",	O (SWYM_INSN_BYTE),
-				0,	OP (xyz_opt),		N},
 
    {"put", Z (0xf6) | 0xff00,	0,	OP (put),		N},
    {"get", O (0xfe) | 0xffe0,	0,	OP (get),		N},
-   {"trip",	O (0xff),	0,	OP (xyz_opt),		J},
 
-	{"nop",	O (SWYM_INSN_BYTE),	0,	OP (none),	N},
 
 	{NULL,	~0,	~0,	0,	OP (none),		N}
  };

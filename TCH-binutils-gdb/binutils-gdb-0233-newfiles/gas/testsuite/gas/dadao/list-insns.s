@@ -29,6 +29,6 @@ _start:
 	divu	$12, $23, $8 << 2
 	divu	$12, $23, 4000
 	# swym
-	swym	0, 0, 0
+	swym	0
 	# nop
 	nop

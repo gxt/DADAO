@@ -61,6 +61,9 @@ enum dadao_operands_type
 	/* The regular "regd, regb, regc", or "regd, regb, imm6" */
 	dadao_operands_fa_op_fdfb_reg_fc_i6,
 
+	/* ONLY "imm18" accepted, for swym/trip/trap/nop */
+	dadao_operands_fa_op_fbcd_i18,
+
    /* "Address"; only JMP.  Zero operands allowed unless GNU syntax.  */
    dadao_operands_jmp,
 
@@ -96,10 +99,6 @@ enum dadao_operands_type
 
    /* Two registers, "$X,$Y".  */
    dadao_operands_set,
-
-   /* "X,Y,Z"; like SWYM or TRAP.  Zero (or 1 if GNU syntax) to three
-      operands, interpreted as 0; XYZ; X, YZ and X, Y, Z.  */
-   dadao_operands_xyz_opt,
  };
 
 struct dadao_opcode
@@ -131,7 +130,6 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 #define INCML_INSN_BYTE 0xe6
 #define INCMH_INSN_BYTE 0xe5
 #define INCH_INSN_BYTE 0xe4
-#define SWYM_INSN_BYTE 0xfd
 #define JMP_INSN_BYTE 0xf0
 
 /* Dadao bit-field definition:
@@ -147,6 +145,14 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 			as_bad_where(__FILE__, __LINE__, "negative");				\
 		if ((ddop_fx) > 0xFF)								\
 			as_bad_where(__FILE__, __LINE__, "bigger than 255");			\
+	} while (0)
+
+#define DDOP_CHECK_18_BIT(ddop_fx)								\
+	do {											\
+		if ((ddop_fx) < 0)								\
+			as_bad_where(__FILE__, __LINE__, "negative");				\
+		if ((ddop_fx) > 0x3FFFF)								\
+			as_bad_where(__FILE__, __LINE__, "bigger than 18-bit uint");			\
 	} while (0)
 
 /* FIXME: after gcc works */

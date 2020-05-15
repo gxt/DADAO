@@ -32,9 +32,9 @@ GAS for DADAO .*/list-insns.s 			page 1
   29 0058 2E5C808C 		divu	\$12, \$23, \$8 << 2
   30 005c 2F5FE80C 		divu	\$12, \$23, 4000
   31              		# swym
-  32 0060 FD000000 		swym	0, 0, 0
+  32 0060 DA000000 		swym	0
   33              		# nop
-  34 0064 FD000000 		nop
+  34 0064 DADADADA 		nop
 GAS for DADAO .*/list-insns.s 			page 2
 
 

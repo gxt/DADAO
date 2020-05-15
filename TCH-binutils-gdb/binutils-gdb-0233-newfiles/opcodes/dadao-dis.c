@@ -135,12 +135,14 @@ get_opcode (unsigned long insn, unsigned int fop, unsigned int fa)
 {
   static const struct dadao_opcode **opcodes = NULL;
   static const struct dadao_opcode **opcodes_3E = NULL;
+  static const struct dadao_opcode **opcodes_DA = NULL;
   const struct dadao_opcode *opcodep = dadao_opcodes;
   unsigned int opcode_part = (insn >> 24) & 255;
 
   if (opcodes == NULL) {
     opcodes = xcalloc (256, sizeof (struct dadao_opcode *));
     opcodes_3E = xcalloc (64, sizeof (struct dadao_opcode *));
+    opcodes_DA = xcalloc (64, sizeof (struct dadao_opcode *));
   }
 
 	/* FIXME: too ugly */
@@ -151,6 +153,20 @@ get_opcode (unsigned long insn, unsigned int fop, unsigned int fa)
 			for (opcodep = dadao_opcodes; opcodep->name != NULL; opcodep++) {
 				if ((opcodep->match == 0x3E000000) && (opcodep->fa_as_opcode == fa)) {
 					opcodes_3E[fa] = opcodep;
+					break;
+				}
+			}
+		}
+		goto get_opcode_found;
+	}
+
+	if (fop == 0xDA) {
+		opcodep = opcodes_DA[fa];
+		if (opcodep == NULL) {
+			/* Search through the table.  */
+			for (opcodep = dadao_opcodes; opcodep->name != NULL; opcodep++) {
+				if ((opcodep->match == 0xDA000000) && (opcodep->fa_as_opcode == fa)) {
+					opcodes_DA[fa] = opcodep;
 					break;
 				}
 			}
@@ -202,10 +218,11 @@ get_opcode_found:
 	case dadao_operands_pushj:
 	case dadao_operands_get:
 	case dadao_operands_set:
-	case dadao_operands_xyz_opt:
+	case dadao_operands_fa_op_fbcd_i18:
 	case dadao_operands_fa_op_fdfb_reg_fc_i6:
 	case dadao_operands_fdfa_reg_fbc_rs6_i12:
 	case dadao_operands_fd_reg_fabc_i18:
+	case dadao_operands_none:
 	  return opcodep;
 
 	  /* For a ROUND_MODE, the middle byte must be 0..4.  */
@@ -533,10 +550,12 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 			     get_reg_name (minfop, y));
       break;
 
-    case dadao_operands_xyz_opt:
-      /* Like SWYM or TRAP - "X,Y,Z".  */
-      (*info->fprintf_func) (info->stream, "%d,%d,%d", x, y, z);
-      break;
+	case dadao_operands_fa_op_fbcd_i18: /* Like SWYM or TRAP - "imm18".  */
+		(*info->fprintf_func) (info->stream, "%d", (fb << 12) | (fc << 6) | fd);
+		break;
+
+	case dadao_operands_none: /* nop  */
+		break;
 
     default:
       (*info->fprintf_func) (info->stream, _("*unknown operands type: %d*"),

@@ -357,7 +357,7 @@ dadao_fill_nops (char *opcodep, int n)
   int i;
 
   for (i = 0; i < n; i++)
-    md_number_to_chars (opcodep + i * 4, SWYM_INSN_BYTE << 24, 4);
+    md_number_to_chars (opcodep + i * 4, 0xDADADADA, 4);
 }
 
 /* Get up to three operands, filling them into the exp array.
@@ -786,6 +786,10 @@ void dadao_md_assemble (char *str)
 
 	case dadao_operands_fdfa_reg_fbc_rs6_i12:
 		max_operands = 3;
+		break;
+
+	case dadao_operands_fa_op_fbcd_i18:
+		max_operands = 1;
 		break;
 
       /* The original 3 is fine for the rest.  */
@@ -1273,192 +1277,21 @@ void dadao_md_assemble (char *str)
 		     1, exp + 1, 0, BFD_RELOC_DADAO_REG_OR_BYTE);
       break;
 
-    case dadao_operands_xyz_opt:
-      /* SWYM, TRIP, TRAP: zero, one, two or three operands.  It's
-	 unspecified whether operands are registers or constants, but
-	 when we find register syntax, we require operands to be literal and
-	 within 0..255.  */
-      if (n_operands == 1 && exp[0].X_op != O_register)
-	{
-	  if (exp[0].X_op == O_constant)
-	    {
-	      if (exp[0].X_add_number > 255*256*256
-		  || exp[0].X_add_number < 0)
-		{
-		  as_bad (_("invalid operands to opcode %s: `%s'"),
-			  instruction->name, operands);
-		  return;
-		}
-	      else
-		{
-		  opcodep[1] = (exp[0].X_add_number >> 16) & 255;
-		  opcodep[2] = (exp[0].X_add_number >> 8) & 255;
-		  opcodep[3] = exp[0].X_add_number & 255;
-		}
-	    }
-	  else
-	    fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 1,
-			 3, exp, 0, BFD_RELOC_24);
-	}
-      else if (n_operands == 2
-	       && exp[0].X_op != O_register
-	       && exp[1].X_op != O_register)
-	{
-	  /* Two operands.  */
-
-	  if (exp[0].X_op == O_constant)
-	    {
-	      if (exp[0].X_add_number > 255
-		  || exp[0].X_add_number < 0)
-		{
-		  as_bad (_("invalid operands to opcode %s: `%s'"),
-			  instruction->name, operands);
-		  return;
-		}
-	      else
-		opcodep[1] = exp[0].X_add_number & 255;
-	    }
-	  else
-	    fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 1,
-			 1, exp, 0, BFD_RELOC_8);
-
-	  if (exp[1].X_op == O_constant)
-	    {
-	      if (exp[1].X_add_number > 255*256
-		  || exp[1].X_add_number < 0)
-		{
-		  as_bad (_("invalid operands to opcode %s: `%s'"),
-			  instruction->name, operands);
-		  return;
-		}
-	      else
-		{
-		  opcodep[2] = (exp[1].X_add_number >> 8) & 255;
-		  opcodep[3] = exp[1].X_add_number & 255;
-		}
-	    }
-	  else
-	    fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 2,
-			 2, exp + 1, 0, BFD_RELOC_16);
-	}
-      else if (n_operands == 3
-	       && exp[0].X_op != O_register
-	       && exp[1].X_op != O_register
-	       && exp[2].X_op != O_register)
-	{
-	  /* Three operands.  */
-
-	  if (exp[0].X_op == O_constant)
-	    {
-	      if (exp[0].X_add_number > 255
-		  || exp[0].X_add_number < 0)
-		{
-		  as_bad (_("invalid operands to opcode %s: `%s'"),
-			  instruction->name, operands);
-		  return;
-		}
-	      else
-		opcodep[1] = exp[0].X_add_number & 255;
-	    }
-	  else
-	    fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 1,
-			 1, exp, 0, BFD_RELOC_8);
-
-	  if (exp[1].X_op == O_constant)
-	    {
-	      if (exp[1].X_add_number > 255
-		  || exp[1].X_add_number < 0)
-		{
-		  as_bad (_("invalid operands to opcode %s: `%s'"),
-			  instruction->name, operands);
-		  return;
-		}
-	      else
-		opcodep[2] = exp[1].X_add_number & 255;
-	    }
-	  else
-	    fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 2,
-			 1, exp + 1, 0, BFD_RELOC_8);
-
-	  if (exp[2].X_op == O_constant)
-	    {
-	      if (exp[2].X_add_number > 255
-		  || exp[2].X_add_number < 0)
-		{
-		  as_bad (_("invalid operands to opcode %s: `%s'"),
-			  instruction->name, operands);
-		  return;
-		}
-	      else
-		opcodep[3] = exp[2].X_add_number & 255;
-	    }
-	  else
-	    fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 3,
-			 1, exp + 2, 0, BFD_RELOC_8);
-	}
-      else
-	{
-	  /* We can't get here for other cases.  */
-	  gas_assert (n_operands <= 3);
-
-	  /* The meaning of operands to TRIP and TRAP is not defined (and
-	     SWYM operands aren't enforced in dadaoal, so let's avoid
-	     that).  We add combinations not handled above here as we find
-	     them and as they're reported.  */
-	  if (n_operands == 3)
-	    {
-	      /* Don't require non-register operands.  Always generate
-		 fixups, so we don't have to copy lots of code and create
-		 maintenance problems.  TRIP is supposed to be a rare
-		 instruction, so the overhead should not matter.  We
-		 aren't allowed to fix_new_exp for an expression which is
-		 an O_register at this point, however.
-
-		 Don't use BFD_RELOC_DADAO_REG_OR_BYTE as that modifies
-		 the insn for a register in the Z field and we want
-		 consistency.  */
-	      if (exp[0].X_op == O_register)
-		opcodep[1] = exp[0].X_add_number;
-	      else
-		fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 1,
-			     1, exp, 0, BFD_RELOC_8);
-	      if (exp[1].X_op == O_register)
-		opcodep[2] = exp[1].X_add_number;
-	      else
-		fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 2,
-			     1, exp + 1, 0, BFD_RELOC_8);
-	      if (exp[2].X_op == O_register)
-		opcodep[3] = exp[2].X_add_number;
-	      else
-		fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 3,
-			     1, exp + 2, 0, BFD_RELOC_8);
-	    }
-	  else if (n_operands == 2)
-	    {
-	      if (exp[0].X_op == O_register)
-		opcodep[1] = exp[0].X_add_number;
-	      else
-		fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 1,
-			     1, exp, 0, BFD_RELOC_8);
-	      if (exp[1].X_op == O_register)
-		opcodep[3] = exp[1].X_add_number;
-	      else
-		fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 2,
-			     2, exp + 1, 0, BFD_RELOC_16);
-	    }
-	  else
-	    {
-	      /* We can't get here for other cases.  */
-	      gas_assert (n_operands == 1 && exp[0].X_op == O_register);
-
-	      opcodep[3] = exp[0].X_add_number;
-	    }
-	}
-      break;
-
     case dadao_operands_pushj:
       /* All is done for PUSHJ already.  */
       break;
+
+	case dadao_operands_fa_op_fbcd_i18: /* SWYM, TRIP, TRAP: one operands  */
+		if ((n_operands != 1) || (exp[0].X_op != O_constant))
+			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+
+		DDOP_CHECK_18_BIT(exp[0].X_add_number);
+		DDOP_SET_FA(opcodep, instruction->fa_as_opcode);
+		DDOP_SET_FB(opcodep, (exp[0].X_add_number >> 12) & 63);
+		DDOP_SET_FC(opcodep, (exp[0].X_add_number >> 6) & 63);
+		DDOP_SET_FD(opcodep, (exp[0].X_add_number) & 63);
+
+		break;
 
 	case dadao_operands_fa_op_fdfb_reg_fc_i6: /* "regd, regb, regc" or "regd, regb, imm6" */
 		if (n_operands != 3)
@@ -1551,10 +1384,11 @@ void dadao_md_assemble (char *str)
 		if (n_operands != 0)
 			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 
-		DDOP_SET_FA(opcodep, 0);
-		DDOP_SET_FB(opcodep, 0);
-		DDOP_SET_FC(opcodep, 0);
-		DDOP_SET_FD(opcodep, 0);
+		/* ONLY for nop: 0xDADADADA */
+		DDOP_SET_FA(opcodep, ((0xDADADA) >> 18) & 63);	/* FA is 0x36 */
+		DDOP_SET_FB(opcodep, ((0xDADADA) >> 12) & 63);
+		DDOP_SET_FC(opcodep, ((0xDADADA) >> 6) & 63);
+		DDOP_SET_FD(opcodep, (0xDADADA) & 63);
 		break;
 
     default:
