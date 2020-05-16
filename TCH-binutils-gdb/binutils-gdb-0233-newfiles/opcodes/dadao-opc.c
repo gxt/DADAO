@@ -109,6 +109,9 @@ const struct dadao_opcode dadao_opcodes[] =
    {"frem",	O (22),		0,	OP (regs),		N},
    {"fint",	O (23),		0,	OP (roundregs),		N},
 
+   {"ldsf",	Z (0x90),	0,	OP (regs_z_opt),	MT},
+   {"stsf",	Z (0xb0),	0,	OP (regs_z_opt),	MT},
+
 	{"add",		Z (0x20),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
 	{"addu",	Z (0x22),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
 	{"sub",		Z (0x24),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
@@ -163,17 +166,11 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"stt",		Z (0xA4),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MT},
 	{"sto",		Z (0xA6),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MO},
 
-   {"ldsf",	Z (0x90),	0,	OP (regs_z_opt),	MT},
-
-   /* This doesn't seem to access memory, just the TLB.  */
-   {"ldvts",	Z (0x98),	0,	OP (regs_z_opt),	M},
-
    {"cswap",	Z (0x94),	0,	OP (regs_z_opt),	MO},
 
    {"go",	Z (GO_INSN_BYTE),
 				0,	OP (regs_z_opt),	B},
 
-   {"stsf",	Z (0xb0),	0,	OP (regs_z_opt),	MT},
    {"syncd",	Z (0xb8),	0,	OP (x_regs_z),		M},
 
    {"stco",	Z (0xb4),	0,	OP (x_regs_z),		MO},
