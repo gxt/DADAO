@@ -88,7 +88,7 @@
 	ldo	%0, %1
 	sto	%1, %0
 	geta	%0, %1
-   LDA %0,%1
+	lda	%0, %1
    %r0%I1")
 
 ;; Note that we move around the float as a collection of bits; no
