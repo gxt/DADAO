@@ -82,28 +82,6 @@ const struct dadao_spec_reg dadao_spec_regs[] =
 
 const struct dadao_opcode dadao_opcodes[] =
  {
-	{"fcmp",	O (0xDB),	1,	OP (fa_op_fbcd_reg),		N},
-	{"fun",		O (0xDB),	2,	OP (fa_op_fbcd_reg),		N},
-	{"feql",	O (0xDB),	3,	OP (fa_op_fbcd_reg),		N},
-	{"fadd",	O (0xDB),	4,	OP (fa_op_fbcd_reg),		N},
-	{"fsub",	O (0xDB),	6,	OP (fa_op_fbcd_reg),		N},
-	{"fmul",	O (0xDB),	16,	OP (fa_op_fbcd_reg),		N},
-	{"fcmpe",	O (0xDB),	17,	OP (fa_op_fbcd_reg),		N},
-	{"fune",	O (0xDB),	18,	OP (fa_op_fbcd_reg),		N},
-	{"feqle",	O (0xDB),	19,	OP (fa_op_fbcd_reg),		N},
-	{"fdiv",	O (0xDB),	20,	OP (fa_op_fbcd_reg),		N},
-	{"frem",	O (0xDB),	22,	OP (fa_op_fbcd_reg),		N},
-
-	{"fix",		O (0xDB),	5,	OP (fa_op_fdfb_reg_fc_i6),	N},
-	{"fixu",	O (0xDB),	7,	OP (fa_op_fdfb_reg_fc_i6),	N},
-	{"fsqrt",	O (0xDB),	21,	OP (fa_op_fdfb_reg_fc_i6),	N},
-	{"fint",	O (0xDB),	23,	OP (fa_op_fdfb_reg_fc_i6),	N},
-
-	{"flot",	O (0xDB),	8,	OP (fa_op_fdfb_reg_fc_i6),	N},
-	{"flotu",	O (0xDB),	10,	OP (fa_op_fdfb_reg_fc_i6),	N},
-	{"sflot",	O (0xDB),	12,	OP (fa_op_fdfb_reg_fc_i6),	N},
-	{"sflotu",	O (0xDB),	14,	OP (fa_op_fdfb_reg_fc_i6),	N},
-
 	{"add",		Z (0x20),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
 	{"addu",	Z (0x22),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
 	{"sub",		Z (0x24),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
@@ -184,6 +162,28 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"trip",	O (0xDA),	0x04,	OP (fa_op_fbcd_i18),		N},
 	{"trap",	O (0xDA),	0x20,	OP (fa_op_fbcd_i18),		N},
 	{"nop",		O (0xDA),	0x36,	OP (none),			N},
+
+	{"fcmp",	O (0xDB),	1,	OP (fa_op_fbcd_reg),		N},
+	{"fun",		O (0xDB),	2,	OP (fa_op_fbcd_reg),		N},
+	{"feql",	O (0xDB),	3,	OP (fa_op_fbcd_reg),		N},
+	{"fadd",	O (0xDB),	4,	OP (fa_op_fbcd_reg),		N},
+	{"fsub",	O (0xDB),	6,	OP (fa_op_fbcd_reg),		N},
+	{"fmul",	O (0xDB),	16,	OP (fa_op_fbcd_reg),		N},
+	{"fcmpe",	O (0xDB),	17,	OP (fa_op_fbcd_reg),		N},
+	{"fune",	O (0xDB),	18,	OP (fa_op_fbcd_reg),		N},
+	{"feqle",	O (0xDB),	19,	OP (fa_op_fbcd_reg),		N},
+	{"fdiv",	O (0xDB),	20,	OP (fa_op_fbcd_reg),		N},
+	{"frem",	O (0xDB),	22,	OP (fa_op_fbcd_reg),		N},
+
+	{"fix",		O (0xDB),	5,	OP (fa_op_fdfb_reg_fc_i6),	N},
+	{"fixu",	O (0xDB),	7,	OP (fa_op_fdfb_reg_fc_i6),	N},
+	{"fsqrt",	O (0xDB),	21,	OP (fa_op_fdfb_reg_fc_i6),	N},
+	{"fint",	O (0xDB),	23,	OP (fa_op_fdfb_reg_fc_i6),	N},
+
+	{"flot",	O (0xDB),	8,	OP (fa_op_fdfb_reg_fc_i6),	N},
+	{"flotu",	O (0xDB),	10,	OP (fa_op_fdfb_reg_fc_i6),	N},
+	{"sflot",	O (0xDB),	12,	OP (fa_op_fdfb_reg_fc_i6),	N},
+	{"sflotu",	O (0xDB),	14,	OP (fa_op_fdfb_reg_fc_i6),	N},
 
    {"seth",	O (0xe0),	0,	OP (reg_yz),		N},
    {"setmh",	O (0xe1),	0,	OP (reg_yz),		N},
