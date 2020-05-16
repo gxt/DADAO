@@ -420,7 +420,7 @@
   [(set (match_operand:DF 0 "register_operand" "=r")
 	(sqrt:DF (match_operand:DF 1 "register_operand" "r")))]
   ""
-  "FSQRT %0,%1")
+	"fsqrt	%0, %1, 0")
 
 ;; FIXME: define_expand for ffssi2? (not ffsdi2 since int is SImode).
 
@@ -590,7 +590,7 @@
 	(fix:DF (match_operand:DF 1 "register_operand" "r")))]
   ""
   ;; ROUND_OFF
-  "FINT %0,1,%1")
+	"fint	%0, %1, 1")
 
 ;; Note that this will (somewhat unexpectedly) create an inexact
 ;; exception if rounding is necessary - has to be masked off in crt0?
@@ -599,7 +599,7 @@
 	(fix:DI (fix:DF (match_operand:DF 1 "register_operand" "r"))))]
   ""
   ;; ROUND_OFF
-  "FIX %0,1,%1")
+	"fix	%0, %1, 1")
 
 (define_insn "fixuns_truncdfdi2"
   [(set (match_operand:DI 0 "register_operand" "=r")
@@ -607,7 +607,7 @@
 	 (fix:DF (match_operand:DF 1 "register_operand" "r"))))]
   ""
   ;; ROUND_OFF
-  "FIXU %0,1,%1")
+	"fixu	%0, %1, 1")
 
 ;; It doesn't seem like it's possible to have memory_operand as a
 ;; predicate here (testcase: libgcc2 floathisf).  FIXME:  Shouldn't it be
