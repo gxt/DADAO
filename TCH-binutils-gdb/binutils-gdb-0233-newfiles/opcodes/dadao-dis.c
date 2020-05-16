@@ -243,7 +243,6 @@ get_opcode_found:
 
 	  /* For a ROUND_MODE, the middle byte must be 0..4.  */
 	case dadao_operands_roundregs_z:
-	case dadao_operands_roundregs:
 	  {
 	    int midbyte = (insn >> 8) & 255;
 
@@ -481,20 +480,6 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
     case dadao_operands_pop:
       /* Like POP - "X,YZ".  */
       (*info->fprintf_func) (info->stream, "\t%d,%d", x, y*256 + z);
-      break;
-
-    case dadao_operands_roundregs:
-      /* Two registers, possibly with rounding: "$X,$Z" or
-	 "$X,ROUND_MODE,$Z".  */
-      if (y != 0)
-	(*info->fprintf_func) (info->stream, "\t%s,%s,%s",
-			       get_reg_name (minfop, x),
-			       ROUND_MODE (y),
-			       get_reg_name (minfop, z));
-      else
-	(*info->fprintf_func) (info->stream, "\t%s,%s",
-			       get_reg_name (minfop, x),
-			       get_reg_name (minfop, z));
       break;
 
     case dadao_operands_sync:

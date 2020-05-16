@@ -86,15 +86,10 @@ const struct dadao_opcode dadao_opcodes[] =
 
    {"flotu",	Z (10),		0,	OP (roundregs_z),	N},
 
-   {"fix",	O (5),		0,	OP (roundregs),		N},
    {"sflot",	Z (12),		0,	OP (roundregs_z),	N},
 
-   {"fixu",	O (7),		0,	OP (roundregs),		N},
    {"sflotu",	Z (14),		0,	OP (roundregs_z),	N},
 
-   {"fsqrt",	O (21),		0,	OP (roundregs),		N},
-
-   {"fint",	O (23),		0,	OP (roundregs),		N},
 
    {"ldsf",	Z (0x90),	0,	OP (regs_z_opt),	MT},
    {"stsf",	Z (0xb0),	0,	OP (regs_z_opt),	MT},
@@ -110,6 +105,11 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"feqle",	O (0xDB),	19,	OP (fa_op_fbcd_reg),		N},
 	{"fdiv",	O (0xDB),	20,	OP (fa_op_fbcd_reg),		N},
 	{"frem",	O (0xDB),	22,	OP (fa_op_fbcd_reg),		N},
+
+	{"fix",		O (0xDB),	5,	OP (fa_op_fdfb_reg_fc_i6),	N},
+	{"fixu",	O (0xDB),	7,	OP (fa_op_fdfb_reg_fc_i6),	N},
+	{"fsqrt",	O (0xDB),	21,	OP (fa_op_fdfb_reg_fc_i6),	N},
+	{"fint",	O (0xDB),	23,	OP (fa_op_fdfb_reg_fc_i6),	N},
 
 	{"add",		Z (0x20),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
 	{"addu",	Z (0x22),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},

@@ -868,7 +868,6 @@ void dadao_md_assemble (char *str)
 
     case dadao_operands_reg_yz:
     case dadao_operands_roundregs_z:
-    case dadao_operands_roundregs:
     case dadao_operands_regs_z_opt:
     case dadao_operands_get:
     case dadao_operands_set:
@@ -1102,16 +1101,6 @@ void dadao_md_assemble (char *str)
 		     2, exp + 1, 0, BFD_RELOC_16);
       break;
 
-    case dadao_operands_roundregs:
-      /* Two registers with optional rounding mode or constant in between.  */
-      if ((n_operands == 3 && exp[2].X_op == O_constant)
-	  || (n_operands == 2 && exp[1].X_op == O_constant))
-	{
-	  as_bad (_("invalid operands to opcode %s: `%s'"),
-		  instruction->name, operands);
-	  return;
-	}
-      /* FALLTHROUGH.  */
     case dadao_operands_roundregs_z:
       /* Like FLOT, "$X,ROUND_MODE,$Z|Z", but the rounding mode is
 	 optional and can be the corresponding constant.  */
@@ -1158,9 +1147,7 @@ void dadao_md_assemble (char *str)
 	else
 	  fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 3,
 		       1, exp + op2no, 0,
-		       instruction->operands == dadao_operands_roundregs
-		       ? BFD_RELOC_DADAO_REG
-		       : BFD_RELOC_DADAO_REG_OR_BYTE);
+		       BFD_RELOC_DADAO_REG_OR_BYTE);
 	break;
       }
 
