@@ -530,10 +530,11 @@
 (define_insn "*floatdisf2_real"
   [(set (match_operand:SF 0 "memory_operand" "=m")
 	(float:SF
-	 (match_operand:DI 1 "dadao_reg_or_8bit_operand" "rI")))
+	 (match_operand:DI 1 "register_operand" "r")))
    (clobber (match_scratch:DI 2 "=&r"))]
   ""
-  "SFLOT %2,%1\;STSF %2,%0")
+	"sflot	%2, %1, 0\;\
+STSF %2,%0")
 
 (define_expand "floatunsdisf2"
   [(parallel [(set (match_operand:SF 0 "nonimmediate_operand" "=rm")
@@ -564,26 +565,27 @@
 (define_insn "*floatunsdisf2_real"
   [(set (match_operand:SF 0 "memory_operand" "=m")
 	(unsigned_float:SF
-	 (match_operand:DI 1 "dadao_reg_or_8bit_operand" "rI")))
+	 (match_operand:DI 1 "register_operand" "r")))
    (clobber (match_scratch:DI 2 "=&r"))]
   ""
-  "SFLOTU %2,%1\;STSF %2,%0")
+	"sflotu	%2, %1, 0\;\
+STSF %2,%0")
 
 ;; Note that this will (somewhat unexpectedly) create an inexact
 ;; exception if rounding is necessary - has to be masked off in crt0?
 (define_insn "floatdidf2"
   [(set (match_operand:DF 0 "register_operand" "=r")
 	(float:DF
-	 (match_operand:DI 1 "dadao_reg_or_8bit_operand" "rI")))]
+	 (match_operand:DI 1 "register_operand" "r")))]
   ""
-  "FLOT %0,%1")
+	"flot	%0, %1, 0")
 
 (define_insn "floatunsdidf2"
   [(set (match_operand:DF 0 "register_operand" "=r")
 	(unsigned_float:DF
-	 (match_operand:DI 1 "dadao_reg_or_8bit_operand" "rI")))]
+	 (match_operand:DI 1 "register_operand" "r")))]
   ""
-  "FLOTU %0,%1")
+	"flotu	%0, %1, 0")
 
 (define_insn "ftruncdf2"
   [(set (match_operand:DF 0 "register_operand" "=r")
