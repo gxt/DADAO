@@ -75,8 +75,8 @@
 
 ;; We assume all "s" are addresses.  Does that hold?
 (define_insn "movdi"
-  [(set (match_operand:DI 0 "nonimmediate_operand" "=r,r ,r,x,r,m,r,m,r,r,??r")
-	(match_operand:DI 1 "general_operand"	    "r,LS,Pnn,r,x,I,m,r,R,s,n"))]
+  [(set (match_operand:DI 0 "nonimmediate_operand" "=r,r ,r,x,r,r,m,r,r,??r")
+	(match_operand:DI 1 "general_operand"	    "r,LS,Pnn,r,x,m,r,R,s,n"))]
   ""
   "@
    SET %0,%1
@@ -84,7 +84,6 @@
 	subu	%0, $0, %n1
    PUT %0,%1
    GET %0,%1
-   STCO %1,%0
 	ldo	%0, %1
 	sto	%1, %0
 	geta	%0, %1
