@@ -121,10 +121,8 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"cmp",		Z (0x30),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
 	{"cmpu",	Z (0x32),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
 
-   /* Synonym for ADDU.  Put after ADDU, since we don't prefer it for
-      disassembly.  It's supposed to be used for addresses, so we make it
-      a memory block reference for purposes of assembly.  */
-   {"lda",	Z (0x22),	0,	OP (regs_z_opt),	M},
+	/* Synonym for ADDU.  Put after ADDU, since we don't prefer it for disassembly. */
+	{"lda",		Z (0x22),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	D_A_BC},
 
 	{"slu",		Z (0x3E),	1,	OP (fa_op_fdfb_reg_fc_i6),	D_B_C},
 	{"sr",		Z (0x3E),	2,	OP (fa_op_fdfb_reg_fc_i6),	D_B_C},
