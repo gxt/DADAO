@@ -241,16 +241,6 @@ get_opcode_found:
 	case dadao_operands_none:
 	  return opcodep;
 
-	  /* For a ROUND_MODE, the middle byte must be 0..4.  */
-	case dadao_operands_roundregs_z:
-	  {
-	    int midbyte = (insn >> 8) & 255;
-
-	    if (midbyte <= 4)
-	      return opcodep;
-	  }
-	break;
-
 	case dadao_operands_put:
 	  /* A "PUT".  If it is "immediate", then no restrictions,
 	     otherwise we have to make sure the register number is < 32.  */
@@ -448,33 +438,6 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 				get_reg_name (minfop, fd),
 				get_reg_name (minfop, fb),
 				get_reg_name (minfop, fc));
-      break;
-
-    case dadao_operands_roundregs_z:
-      /* Two registers, like FLOT, possibly with rounding: "$X,$Z|Z"
-	 "$X,ROUND_MODE,$Z|Z".  */
-      if (y != 0)
-	{
-	  if (insn & INSN_IMMEDIATE_BIT)
-	    (*info->fprintf_func) (info->stream, "\t%s,%s,%d",
-				   get_reg_name (minfop, x),
-				   ROUND_MODE (y), z);
-	  else
-	    (*info->fprintf_func) (info->stream, "\t%s,%s,%s",
-				   get_reg_name (minfop, x),
-				   ROUND_MODE (y),
-				   get_reg_name (minfop, z));
-	}
-      else
-	{
-	  if (insn & INSN_IMMEDIATE_BIT)
-	    (*info->fprintf_func) (info->stream, "\t%s,%d",
-				   get_reg_name (minfop, x), z);
-	  else
-	    (*info->fprintf_func) (info->stream, "\t%s,%s",
-				   get_reg_name (minfop, x),
-				   get_reg_name (minfop, z));
-	}
       break;
 
     case dadao_operands_pop:

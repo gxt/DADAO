@@ -73,10 +73,6 @@ enum dadao_operands_type
       integer.  */
    dadao_operands_pushgo,
 
-   /* Two registers or a register and a byte, like FLOT, possibly with
-      rounding: "$X,$Z|Z" or "$X,ROUND_MODE,$Z|Z".  */
-   dadao_operands_roundregs_z,
-
    /* "X,YZ", POP.  Unless GNU syntax, zero or one operand is allowed.  */
    dadao_operands_pop,
 

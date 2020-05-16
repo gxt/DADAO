@@ -867,7 +867,6 @@ void dadao_md_assemble (char *str)
 		/* FALLTHROUGH.  */
 
     case dadao_operands_reg_yz:
-    case dadao_operands_roundregs_z:
     case dadao_operands_regs_z_opt:
     case dadao_operands_get:
     case dadao_operands_set:
@@ -1100,56 +1099,6 @@ void dadao_md_assemble (char *str)
 	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 2,
 		     2, exp + 1, 0, BFD_RELOC_16);
       break;
-
-    case dadao_operands_roundregs_z:
-      /* Like FLOT, "$X,ROUND_MODE,$Z|Z", but the rounding mode is
-	 optional and can be the corresponding constant.  */
-      {
-	/* Which exp index holds the second operand (not the rounding
-	   mode).  */
-	int op2no = n_operands - 1;
-
-	if ((n_operands != 2 && n_operands != 3)
-	    || ((exp[op2no].X_op == O_register
-		 && exp[op2no].X_add_number > 255)
-		|| (exp[op2no].X_op == O_constant
-		    && (exp[op2no].X_add_number > 255
-			|| exp[op2no].X_add_number < 0)))
-	    || (n_operands == 3
-		/* We don't allow for the rounding mode to be deferred; it
-		   must be determined in the "first pass".  It cannot be a
-		   symbol equated to a rounding mode, but defined after
-		   the first use.  */
-		&& ((exp[1].X_op == O_register
-		     && exp[1].X_add_number < 512)
-		    || (exp[1].X_op == O_constant
-			&& (exp[1].X_add_number < 0
-			    || exp[1].X_add_number > 4))
-		    || (exp[1].X_op != O_register
-			&& exp[1].X_op != O_constant))))
-	  {
-	    as_bad (_("invalid operands to opcode %s: `%s'"),
-		    instruction->name, operands);
-	    return;
-	  }
-
-	/* Add rounding mode if present.  */
-	if (n_operands == 3)
-	  opcodep[2] = exp[1].X_add_number & 255;
-
-	if (exp[op2no].X_op == O_register)
-	  opcodep[3] = exp[op2no].X_add_number;
-	else if (exp[op2no].X_op == O_constant)
-	  {
-	    opcodep[3] = exp[op2no].X_add_number;
-	    opcodep[0] |= IMM_OFFSET_BIT;
-	  }
-	else
-	  fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 3,
-		       1, exp + op2no, 0,
-		       BFD_RELOC_DADAO_REG_OR_BYTE);
-	break;
-      }
 
     case dadao_operands_sync:
       if (n_operands != 1
