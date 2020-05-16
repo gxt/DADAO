@@ -82,10 +82,6 @@ const struct dadao_spec_reg dadao_spec_regs[] =
 
 const struct dadao_opcode dadao_opcodes[] =
  {
-
-   {"ldsf",	Z (0x90),	0,	OP (regs_z_opt),	MT},
-   {"stsf",	Z (0xb0),	0,	OP (regs_z_opt),	MT},
-
 	{"fcmp",	O (0xDB),	1,	OP (fa_op_fbcd_reg),		N},
 	{"fun",		O (0xDB),	2,	OP (fa_op_fbcd_reg),		N},
 	{"feql",	O (0xDB),	3,	OP (fa_op_fbcd_reg),		N},
@@ -156,11 +152,13 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"ldt",		Z (0x88),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MT},
 	{"ldtu",	Z (0x8A),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MT},
 	{"ldo",		Z (0x8C),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MO},
+	{"ldsf",	Z (0x8E),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MT},
 
 	{"stb",		Z (0xA0),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MB},
 	{"stw",		Z (0xA2),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MW},
 	{"stt",		Z (0xA4),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MT},
 	{"sto",		Z (0xA6),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MO},
+	{"stsf",	Z (0xAE),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MT},
 
    {"cswap",	Z (0x94),	0,	OP (regs_z_opt),	MO},
 
