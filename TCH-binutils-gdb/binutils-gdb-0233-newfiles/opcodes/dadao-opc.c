@@ -138,8 +138,6 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"sto",		Z (0xA6),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MO},
 	{"stsf",	Z (0xAE),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MT},
 
-   {"cswap",	Z (0x94),	0,	OP (regs_z_opt),	MO},
-
    {"go",	Z (GO_INSN_BYTE),
 				0,	OP (regs_z_opt),	B},
 
