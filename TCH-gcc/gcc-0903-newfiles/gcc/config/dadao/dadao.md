@@ -534,7 +534,7 @@
    (clobber (match_scratch:DI 2 "=&r"))]
   ""
 	"sflot	%2, %1, 0\;\
-STSF %2,%0")
+	stsf	%2, %0")
 
 (define_expand "floatunsdisf2"
   [(parallel [(set (match_operand:SF 0 "nonimmediate_operand" "=rm")
@@ -569,7 +569,7 @@ STSF %2,%0")
    (clobber (match_scratch:DI 2 "=&r"))]
   ""
 	"sflotu	%2, %1, 0\;\
-STSF %2,%0")
+	stsf	%2, %0")
 
 ;; Note that this will (somewhat unexpectedly) create an inexact
 ;; exception if rounding is necessary - has to be masked off in crt0?
@@ -649,7 +649,7 @@ STSF %2,%0")
   [(set (match_operand:SF 0 "memory_operand" "=m")
 	(float_truncate:SF (match_operand:DF 1 "register_operand" "r")))]
   ""
-  "STSF %1,%0")
+	"stsf	%1, %0")
 
 ;; Same comment as for truncdfsf2.
 (define_expand "extendsfdf2"
@@ -682,7 +682,7 @@ STSF %2,%0")
   [(set (match_operand:DF 0 "register_operand" "=r")
 	(float_extend:DF (match_operand:SF 1 "memory_operand" "m")))]
   ""
-  "LDSF %0,%1")
+	"ldsf	%0, %1")
 
 ;; Neither sign-extend nor zero-extend are necessary; gcc knows how to
 ;; synthesize using shifts or and, except with a memory source and not
