@@ -184,7 +184,7 @@
 	(plus:DF (match_operand:DF 1 "register_operand" "%r")
 		 (match_operand:DF 2 "register_operand" "r")))]
   ""
-  "FADD %0,%1,%2")
+	"fadd	%0, %1, %2")
 
 ;; Insn canonicalization *should* have removed the need for an integer
 ;; in operand 2.
@@ -200,7 +200,7 @@
 	(minus:DF (match_operand:DF 1 "register_operand" "r")
 		  (match_operand:DF 2 "register_operand" "r")))]
   ""
-  "FSUB %0,%1,%2")
+	"fsub	%0, %1, %2")
 
 (define_insn "muldi3"
   [(set (match_operand:DI 0 "register_operand" "=r,r")
@@ -217,14 +217,14 @@
 	(mult:DF (match_operand:DF 1 "register_operand" "r")
 		 (match_operand:DF 2 "register_operand" "r")))]
   ""
-  "FMUL %0,%1,%2")
+	"fmul	%0, %1, %2")
 
 (define_insn "divdf3"
   [(set (match_operand:DF 0 "register_operand" "=r")
 	(div:DF (match_operand:DF 1 "register_operand" "r")
 		(match_operand:DF 2 "register_operand" "r")))]
   ""
-  "FDIV %0,%1,%2")
+	"fdiv	%0, %1, %2")
 
 ;; FIXME: Is "frem" doing the right operation for moddf3?
 (define_insn "moddf3"
@@ -232,7 +232,7 @@
 	(mod:DF (match_operand:DF 1 "register_operand" "r")
 		(match_operand:DF 2 "register_operand" "r")))]
   ""
-  "FREM %0,%1,%2")
+	"frem	%0, %1, %2")
 
 ;; FIXME: Should we define_expand for smin, smax, umin, umax using a
 ;; nifty conditional sequence?
@@ -474,7 +474,7 @@
 	 (match_operand:DF 1 "register_operand" "r")
 	 (match_operand:DF 2 "register_operand" "r")))]
   ""
-  "FCMP%e0 %0,%1,%2")
+	"fcmp%e0	%0, %1, %2")
 
 ;; FIXME: for -mieee, add fsub %0,%1,%1\;fsub %0,%2,%2 before to
 ;; make signalling compliant.
@@ -484,7 +484,7 @@
 	 (match_operand:DF 1 "register_operand" "r")
 	 (match_operand:DF 2 "register_operand" "r")))]
   ""
-  "FEQL%e0 %0,%1,%2")
+	"feql%e0	%0, %1, %2")
 
 (define_insn "*fun"
   [(set (match_operand:CC_FUN 0 "register_operand" "=r")
@@ -492,7 +492,7 @@
 	 (match_operand:DF 1 "register_operand" "r")
 	 (match_operand:DF 2 "register_operand" "r")))]
   ""
-  "FUN%e0 %0,%1,%2")
+	"fun%e0	%0, %1, %2")
 
 ;; In order to get correct rounding, we have to use SFLOT and SFLOTU for
 ;; conversion.  They do not convert to SFmode; they convert to DFmode,
