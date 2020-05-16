@@ -780,6 +780,7 @@ void dadao_md_assemble (char *str)
 		break;
 
 	case dadao_operands_fa_op_fdfb_reg_fc_i6:
+	case dadao_operands_fa_op_fbcd_reg:
 		max_operands = 3;
 		break;
 
@@ -858,17 +859,6 @@ void dadao_md_assemble (char *str)
 
   switch (instruction->operands)
     {
-    case dadao_operands_regs:
-      /* We check the number of operands here, since we're in a
-	 FALLTHROUGH sequence in the next switch.  */
-      if (n_operands != 3 || exp[2].X_op == O_constant)
-	{
-	  as_bad (_("invalid operands to opcode %s: `%s'"),
-		  instruction->name, operands);
-	  return;
-	}
-      /* FALLTHROUGH.  */
-
 	case dadao_operands_regs_z:
 		if (n_operands != 3) {
 			as_bad (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
@@ -981,9 +971,6 @@ void dadao_md_assemble (char *str)
     case dadao_operands_x_regs_z:
       /* SYNCD: "X,$Y,$Z|Z".  */
       /* FALLTHROUGH.  */
-    case dadao_operands_regs:
-      /* Three registers, $X,$Y,$Z.  */
-      /* FALLTHROUGH.  */
     case dadao_operands_regs_z:
       /* Operands "$X,$Y,$Z|Z", number of arguments checked above.  */
       /* FALLTHROUGH.  */
@@ -1086,8 +1073,7 @@ void dadao_md_assemble (char *str)
       else
 	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 3,
 		     1, exp + 2, 0,
-		     (instruction->operands == dadao_operands_set
-		      || instruction->operands == dadao_operands_regs)
+		     (instruction->operands == dadao_operands_set)
 		     ? BFD_RELOC_DADAO_REG : BFD_RELOC_DADAO_REG_OR_BYTE);
       break;
 
@@ -1253,6 +1239,20 @@ void dadao_md_assemble (char *str)
     case dadao_operands_pushj:
       /* All is done for PUSHJ already.  */
       break;
+
+	case dadao_operands_fa_op_fbcd_reg: /* regd, regb, regc */
+		if (n_operands != 3)
+			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+
+		DDOP_EXP_MUST_BE_REG(exp[0]);
+		DDOP_EXP_MUST_BE_REG(exp[1]);
+		DDOP_EXP_MUST_BE_REG(exp[2]);
+
+		DDOP_SET_FA(opcodep, instruction->fa_as_opcode);
+		DDOP_SET_FB(opcodep, exp[1].X_add_number);
+		DDOP_SET_FC(opcodep, exp[2].X_add_number);
+		DDOP_SET_FD(opcodep, exp[0].X_add_number);
+		break;
 
 	case dadao_operands_fa_op_fbcd_i18: /* SWYM, TRIP, TRAP: one operands  */
 		if ((n_operands != 1) || (exp[0].X_op != O_constant))

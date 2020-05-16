@@ -136,6 +136,7 @@ get_opcode (unsigned long insn, unsigned int fop, unsigned int fa)
   static const struct dadao_opcode **opcodes = NULL;
   static const struct dadao_opcode **opcodes_3E = NULL;
   static const struct dadao_opcode **opcodes_DA = NULL;
+  static const struct dadao_opcode **opcodes_DB = NULL;
   const struct dadao_opcode *opcodep = dadao_opcodes;
   unsigned int opcode_part = (insn >> 24) & 255;
 
@@ -143,6 +144,7 @@ get_opcode (unsigned long insn, unsigned int fop, unsigned int fa)
     opcodes = xcalloc (256, sizeof (struct dadao_opcode *));
     opcodes_3E = xcalloc (64, sizeof (struct dadao_opcode *));
     opcodes_DA = xcalloc (64, sizeof (struct dadao_opcode *));
+    opcodes_DB = xcalloc (64, sizeof (struct dadao_opcode *));
   }
 
 	/* FIXME: too ugly */
@@ -167,6 +169,20 @@ get_opcode (unsigned long insn, unsigned int fop, unsigned int fa)
 			for (opcodep = dadao_opcodes; opcodep->name != NULL; opcodep++) {
 				if ((opcodep->match == 0xDA000000) && (opcodep->fa_as_opcode == fa)) {
 					opcodes_DA[fa] = opcodep;
+					break;
+				}
+			}
+		}
+		goto get_opcode_found;
+	}
+
+	if (fop == 0xDB) {
+		opcodep = opcodes_DB[fa];
+		if (opcodep == NULL) {
+			/* Search through the table.  */
+			for (opcodep = dadao_opcodes; opcodep->name != NULL; opcodep++) {
+				if ((opcodep->match == 0xDB000000) && (opcodep->fa_as_opcode == fa)) {
+					opcodes_DB[fa] = opcodep;
 					break;
 				}
 			}
@@ -206,7 +222,6 @@ get_opcode_found:
 	{
 	  /* These have no restraint on what can be in the lower three
 	     bytes.  */
-	case dadao_operands_regs:
 	case dadao_operands_reg_yz:
 	case dadao_operands_regs_z_opt:
 	case dadao_operands_regs_z:
@@ -217,6 +232,7 @@ get_opcode_found:
 	case dadao_operands_pushj:
 	case dadao_operands_get:
 	case dadao_operands_set:
+	case dadao_operands_fa_op_fbcd_reg:
 	case dadao_operands_fa_op_fbcd_i18:
 	case dadao_operands_fa_op_fdfb_reg_fc_i6:
 	case dadao_operands_fdfa_reg_fbc_rs6_i12:
@@ -377,12 +393,11 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 
   switch (opcodep->operands)
     {
-    case dadao_operands_regs:
-      /*  All registers: "$X,$Y,$Z".  */
-      (*info->fprintf_func) (info->stream, "\t%s,%s,%s",
-			     get_reg_name (minfop, x),
-			     get_reg_name (minfop, y),
-			     get_reg_name (minfop, z));
+    case dadao_operands_fa_op_fbcd_reg: /* regd, regb, regc */
+      (*info->fprintf_func) (info->stream, "\t%s, %s, %s",
+			     get_reg_name (minfop, fd),
+			     get_reg_name (minfop, fb),
+			     get_reg_name (minfop, fc));
       break;
 
     case dadao_operands_reg_yz:

@@ -82,35 +82,34 @@ const struct dadao_spec_reg dadao_spec_regs[] =
 
 const struct dadao_opcode dadao_opcodes[] =
  {
-   {"fcmp",	O (1),		0,	OP (regs),		N},
    {"flot",	Z (8),		0,	OP (roundregs_z),	N},
 
-   {"fun",	O (2),		0,	OP (regs),		N},
-   {"feql",	O (3),		0,	OP (regs),		N},
    {"flotu",	Z (10),		0,	OP (roundregs_z),	N},
 
-   {"fadd",	O (4),		0,	OP (regs),		N},
    {"fix",	O (5),		0,	OP (roundregs),		N},
    {"sflot",	Z (12),		0,	OP (roundregs_z),	N},
 
-   {"fsub",	O (6),		0,	OP (regs),		N},
    {"fixu",	O (7),		0,	OP (roundregs),		N},
    {"sflotu",	Z (14),		0,	OP (roundregs_z),	N},
 
-   {"fmul",	O (16),		0,	OP (regs),		N},
-   {"fcmpe",	O (17),		0,	OP (regs),		N},
-
-   {"fune",	O (18),		0,	OP (regs),		N},
-   {"feqle",	O (19),		0,	OP (regs),		N},
-
-   {"fdiv",	O (20),		0,	OP (regs),		N},
    {"fsqrt",	O (21),		0,	OP (roundregs),		N},
 
-   {"frem",	O (22),		0,	OP (regs),		N},
    {"fint",	O (23),		0,	OP (roundregs),		N},
 
    {"ldsf",	Z (0x90),	0,	OP (regs_z_opt),	MT},
    {"stsf",	Z (0xb0),	0,	OP (regs_z_opt),	MT},
+
+	{"fcmp",	O (0xDB),	1,	OP (fa_op_fbcd_reg),		N},
+	{"fun",		O (0xDB),	2,	OP (fa_op_fbcd_reg),		N},
+	{"feql",	O (0xDB),	3,	OP (fa_op_fbcd_reg),		N},
+	{"fadd",	O (0xDB),	4,	OP (fa_op_fbcd_reg),		N},
+	{"fsub",	O (0xDB),	6,	OP (fa_op_fbcd_reg),		N},
+	{"fmul",	O (0xDB),	16,	OP (fa_op_fbcd_reg),		N},
+	{"fcmpe",	O (0xDB),	17,	OP (fa_op_fbcd_reg),		N},
+	{"fune",	O (0xDB),	18,	OP (fa_op_fbcd_reg),		N},
+	{"feqle",	O (0xDB),	19,	OP (fa_op_fbcd_reg),		N},
+	{"fdiv",	O (0xDB),	20,	OP (fa_op_fbcd_reg),		N},
+	{"frem",	O (0xDB),	22,	OP (fa_op_fbcd_reg),		N},
 
 	{"add",		Z (0x20),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
 	{"addu",	Z (0x22),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
