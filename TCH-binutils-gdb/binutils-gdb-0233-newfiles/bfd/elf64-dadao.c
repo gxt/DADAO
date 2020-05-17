@@ -17,8 +17,6 @@
 
 #define MINUS_ONE	(((bfd_vma) 0) - 1)
 
-#define MAX_PUSHJ_STUB_SIZE (5 * 4)
-
 /* Put these everywhere in new code.  */
 #define FATAL_DEBUG						\
  _bfd_abort (__FILE__, __LINE__,				\
@@ -37,30 +35,11 @@ struct _dadao_elf_section_data
     struct bpo_greg_section_info *greg;
   } bpo;
 
-  struct pushj_stub_info
-  {
-    /* Maximum number of stubs needed for this section.  */
-    bfd_size_type n_pushj_relocs;
-
-    /* Size of stubs after a dadao_elf_relax_section round.  */
-    bfd_size_type stubs_size_sum;
-
-    /* Per-reloc stubs_size_sum information.  The stubs_size_sum member is the sum
-       of these.  Allocated in dadao_elf_check_common_relocs.  */
-    bfd_size_type *stub_size;
-
-    /* Offset of next stub during relocation.  Somewhat redundant with the
-       above: error coverage is easier and we don't have to reset the
-       stubs_size_sum for relocation.  */
-    bfd_size_type stub_offset;
-  } pjs;
-
   /* Whether there has been a warning that this section could not be
      linked due to a specific cause.  FIXME: a way to access the
      linker info or output section, then stuff the limiter guard
      there. */
   bfd_boolean has_warned_bpo;
-  bfd_boolean has_warned_pushj;
 };
 
 #define dadao_elf_section_data(sec) \
@@ -154,8 +133,6 @@ extern void dadao_elf_symbol_processing (bfd *, asymbol *);
 extern void dadao_dump_bpo_gregs
   (struct bfd_link_info *, void (*) (const char *, ...));
 
-static void
-dadao_set_relaxable_size (bfd *, asection *, void *);
 static bfd_reloc_status_type
 dadao_elf_reloc (bfd *, arelent *, asymbol *, void *,
 		asection *, bfd *, char **);
@@ -498,68 +475,6 @@ static reloc_howto_type elf_dadao_howto_table[] =
 	 0x0100ffff,		/* dst_mask */
 	 TRUE),			/* pcrel_offset */
 
-  /* The PUSHJ instruction can reach any (code) address, as long as it's
-     the beginning of a function (no usable restriction).  It can silently
-     expand to a 64-bit operand, but will emit an error if any of the two
-     least significant bits are set.  It can also expand into a call to a
-     stub; see R_DADAO_PUSHJ_STUBBABLE.  The howto members reflect a simple
-     PUSHJ.  */
-  HOWTO (R_DADAO_PUSHJ,		/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 19,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed, /* complain_on_overflow */
-	 dadao_elf_reloc,	/* special_function */
-	 "R_DADAO_PUSHJ",	/* name */
-	 FALSE,			/* partial_inplace */
-	 ~0x0100ffff,		/* src_mask */
-	 0x0100ffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
-
-  HOWTO (R_DADAO_PUSHJ_1,	/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 19,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed, /* complain_on_overflow */
-	 dadao_elf_reloc,	/* special_function */
-	 "R_DADAO_PUSHJ_1",	/* name */
-	 FALSE,			/* partial_inplace */
-	 ~0x0100ffff,		/* src_mask */
-	 0x0100ffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
-
-  HOWTO (R_DADAO_PUSHJ_2,	/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 19,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed, /* complain_on_overflow */
-	 dadao_elf_reloc,	/* special_function */
-	 "R_DADAO_PUSHJ_2",	/* name */
-	 FALSE,			/* partial_inplace */
-	 ~0x0100ffff,		/* src_mask */
-	 0x0100ffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
-
-  HOWTO (R_DADAO_PUSHJ_3,	/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 19,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed, /* complain_on_overflow */
-	 dadao_elf_reloc,	/* special_function */
-	 "R_DADAO_PUSHJ_3",	/* name */
-	 FALSE,			/* partial_inplace */
-	 ~0x0100ffff,		/* src_mask */
-	 0x0100ffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
-
   /* A JMP is supposed to reach any (code) address.  By itself, it can
      reach +-64M; the expansion can reach all 64 bits.  Note that the 64M
      limit is soon reached if you link the program in wildly different
@@ -622,7 +537,7 @@ static reloc_howto_type elf_dadao_howto_table[] =
 
   /* When we don't emit link-time-relaxable code from the assembler, or
      when relaxation has done all it can do, these relocs are used.  For
-     GETA/PUSHJ/branches.  */
+     GETA/branches.  */
   HOWTO (R_DADAO_ADDR19,		/* type */
 	 2,			/* rightshift */
 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
@@ -699,20 +614,6 @@ static reloc_howto_type elf_dadao_howto_table[] =
 	 0,			/* src_mask */
 	 0xffff,		/* dst_mask */
 	 FALSE),		/* pcrel_offset */
-
-  HOWTO (R_DADAO_PUSHJ_STUBBABLE, /* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 19,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed, /* complain_on_overflow */
-	 dadao_elf_reloc,	/* special_function */
-	 "R_DADAO_PUSHJ_STUBBABLE", /* name */
-	 FALSE,			/* partial_inplace */
-	 ~0x0100ffff,		/* src_mask */
-	 0x0100ffff,		/* dst_mask */
-	 TRUE)			/* pcrel_offset */
  };
 
 
@@ -742,14 +643,12 @@ static const struct dadao_reloc_map dadao_reloc_map[] =
     {BFD_RELOC_VTABLE_ENTRY, R_DADAO_GNU_VTENTRY},
     {BFD_RELOC_DADAO_GETA, R_DADAO_GETA},
     {BFD_RELOC_DADAO_CBRANCH, R_DADAO_CBRANCH},
-    {BFD_RELOC_DADAO_PUSHJ, R_DADAO_PUSHJ},
     {BFD_RELOC_DADAO_JMP, R_DADAO_JMP},
     {BFD_RELOC_DADAO_ADDR19, R_DADAO_ADDR19},
     {BFD_RELOC_DADAO_ADDR27, R_DADAO_ADDR27},
     {BFD_RELOC_DADAO_REG_OR_BYTE, R_DADAO_REG_OR_BYTE},
     {BFD_RELOC_DADAO_REG, R_DADAO_REG},
     {BFD_RELOC_DADAO_BASE_PLUS_OFFSET, R_DADAO_BASE_PLUS_OFFSET},
-    {BFD_RELOC_DADAO_PUSHJ_STUBBABLE, R_DADAO_PUSHJ_STUBBABLE}
   };
 
 static reloc_howto_type *
@@ -830,15 +729,6 @@ dadao_elf_new_section_hook (bfd *abfd, asection *sec)
     INCH ...
     GO $255,$255,0
 
-   R_DADAO_PUSHJ: (FIXME: Relaxation...)
-    PUSHJ $N,foo
-   ->
-    SETL $255,foo & ...
-    INCML ...
-    INCMH ...
-    INCH ...
-    PUSHGO $N,$255,0
-
    R_DADAO_JMP: (FIXME: Relaxation...)
     JMP foo
    ->
@@ -897,140 +787,6 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 
 	/* Common sequence starts at offset 4.  */
 	offs = 4;
-
-	/* We change to an absolute value.  */
-	value += addr;
-      }
-      break;
-
-    case R_DADAO_PUSHJ_STUBBABLE:
-      /* If the address fits, we're fine.  */
-      if ((value & 3) == 0
-	  /* Note rightshift 0; see R_DADAO_JMP case below.  */
-	  && (r = bfd_check_overflow (complain_overflow_signed,
-				      howto->bitsize,
-				      0,
-				      bfd_arch_bits_per_address (abfd),
-				      value)) == bfd_reloc_ok)
-	goto pcrel_dadao_reloc_fits;
-      else
-	{
-	  bfd_size_type size = isec->rawsize ? isec->rawsize : isec->size;
-
-	  /* We have the bytes at the PUSHJ insn and need to get the
-	     position for the stub.  There's supposed to be room allocated
-	     for the stub.  */
-	  bfd_byte *stubcontents
-	    = ((bfd_byte *) datap
-	       - (addr - (isec->output_section->vma + isec->output_offset))
-	       + size
-	       + dadao_elf_section_data (isec)->pjs.stub_offset);
-	  bfd_vma stubaddr;
-
-	  if (dadao_elf_section_data (isec)->pjs.n_pushj_relocs == 0)
-	    {
-	      /* This shouldn't happen when linking to ELF or mmo, so
-		 this is an attempt to link to "binary", right?  We
-		 can't access the output bfd, so we can't verify that
-		 assumption.  We only know that the critical
-		 dadao_elf_check_common_relocs has not been called,
-		 which happens when the output format is different
-		 from the input format (and is not mmo).  */
-	      if (! dadao_elf_section_data (isec)->has_warned_pushj)
-		{
-		  /* For the first such error per input section, produce
-		     a verbose message.  */
-		  *error_message
-		    = _("invalid input relocation when producing"
-			" non-ELF, non-mmo format output;"
-			" please use the objcopy program to convert from"
-			" ELF or mmo,"
-			" or assemble using"
-			" \"-no-expand\" (for gcc, \"-Wa,-no-expand\"");
-		  dadao_elf_section_data (isec)->has_warned_pushj = TRUE;
-		  return bfd_reloc_dangerous;
-		}
-
-	      /* For subsequent errors, return this one, which is
-		 rate-limited but looks a little bit different,
-		 hopefully without affecting user-friendliness.  */
-	      return bfd_reloc_overflow;
-	    }
-
-	  /* The address doesn't fit, so redirect the PUSHJ to the
-	     location of the stub.  */
-	  r = dadao_elf_perform_relocation (isec,
-					   &elf_dadao_howto_table
-					   [R_DADAO_ADDR19],
-					   datap,
-					   addr,
-					   isec->output_section->vma
-					   + isec->output_offset
-					   + size
-					   + (dadao_elf_section_data (isec)
-					      ->pjs.stub_offset)
-					   - addr,
-					   error_message);
-	  if (r != bfd_reloc_ok)
-	    return r;
-
-	  stubaddr
-	    = (isec->output_section->vma
-	       + isec->output_offset
-	       + size
-	       + dadao_elf_section_data (isec)->pjs.stub_offset);
-
-	  /* We generate a simple JMP if that suffices, else the whole 5
-	     insn stub.  */
-	  if (bfd_check_overflow (complain_overflow_signed,
-				  elf_dadao_howto_table[R_DADAO_ADDR27].bitsize,
-				  0,
-				  bfd_arch_bits_per_address (abfd),
-				  addr + value - stubaddr) == bfd_reloc_ok)
-	    {
-	      bfd_put_32 (abfd, JMP_INSN_BYTE << 24, stubcontents);
-	      r = dadao_elf_perform_relocation (isec,
-					       &elf_dadao_howto_table
-					       [R_DADAO_ADDR27],
-					       stubcontents,
-					       stubaddr,
-					       value + addr - stubaddr,
-					       error_message);
-	      dadao_elf_section_data (isec)->pjs.stub_offset += 4;
-
-	      if (size + dadao_elf_section_data (isec)->pjs.stub_offset
-		  > isec->size)
-		abort ();
-
-	      return r;
-	    }
-	  else
-	    {
-	      /* Put a "GO $255,0" after the common sequence.  */
-	      bfd_put_32 (abfd,
-			  ((GO_INSN_BYTE | IMM_OFFSET_BIT) << 24)
-			  | 0xff00, (bfd_byte *) stubcontents + 16);
-
-	      /* Prepare for the general code to set the first part of the
-		 linker stub, and */
-	      value += addr;
-	      datap = stubcontents;
-	      dadao_elf_section_data (isec)->pjs.stub_offset
-		+= MAX_PUSHJ_STUB_SIZE;
-	    }
-	}
-      break;
-
-    case R_DADAO_PUSHJ:
-      {
-	int inreg = bfd_get_8 (abfd, (bfd_byte *) datap + 1);
-
-	/* Put a "PUSHGO $N,$255,0" after the common sequence.  */
-	bfd_put_32 (abfd,
-		    ((GO_INSN_BYTE | IMM_OFFSET_BIT) << 24)
-		    | (inreg << 16)
-		    | 0xff00,
-		    (bfd_byte *) datap + 16);
 
 	/* We change to an absolute value.  */
 	value += addr;
@@ -1325,7 +1081,6 @@ dadao_elf_relocate_section (bfd *output_bfd ATTRIBUTE_UNUSED,
   Elf_Internal_Rela *rel;
   Elf_Internal_Rela *relend;
   bfd_size_type size;
-  size_t pjsno = 0;
 
   size = input_section->rawsize ? input_section->rawsize : input_section->size;
   symtab_hdr = &elf_tdata (input_bfd)->symtab_hdr;
@@ -1401,75 +1156,6 @@ dadao_elf_relocate_section (bfd *output_bfd ATTRIBUTE_UNUSED,
 	  if (sym != NULL && ELF_ST_TYPE (sym->st_info) == STT_SECTION)
 	    rel->r_addend += sec->output_offset;
 
-	  /* For PUSHJ stub relocs however, we may need to change the
-	     reloc and the section contents, if the reloc doesn't reach
-	     beyond the end of the output section and previous stubs.
-	     Then we change the section contents to be a PUSHJ to the end
-	     of the input section plus stubs (we can do that without using
-	     a reloc), and then we change the reloc to be a R_DADAO_PUSHJ
-	     at the stub location.  */
-	  if (r_type == R_DADAO_PUSHJ_STUBBABLE)
-	    {
-	      /* We've already checked whether we need a stub; use that
-		 knowledge.  */
-	      if (dadao_elf_section_data (input_section)->pjs.stub_size[pjsno]
-		  != 0)
-		{
-		  Elf_Internal_Rela relcpy;
-
-		  if (dadao_elf_section_data (input_section)
-		      ->pjs.stub_size[pjsno] != MAX_PUSHJ_STUB_SIZE)
-		    abort ();
-
-		  /* There's already a PUSHJ insn there, so just fill in
-		     the offset bits to the stub.  */
-		  if (dadao_final_link_relocate (elf_dadao_howto_table
-						+ R_DADAO_ADDR19,
-						input_section,
-						contents,
-						rel->r_offset,
-						0,
-						input_section
-						->output_section->vma
-						+ input_section->output_offset
-						+ size
-						+ dadao_elf_section_data (input_section)
-						->pjs.stub_offset,
-						NULL, NULL, NULL) != bfd_reloc_ok)
-		    return FALSE;
-
-		  /* Put a JMP insn at the stub; it goes with the
-		     R_DADAO_JMP reloc.  */
-		  bfd_put_32 (output_bfd, JMP_INSN_BYTE << 24,
-			      contents
-			      + size
-			      + dadao_elf_section_data (input_section)
-			      ->pjs.stub_offset);
-
-		  /* Change the reloc to be at the stub, and to a full
-		     R_DADAO_JMP reloc.  */
-		  rel->r_info = ELF64_R_INFO (r_symndx, R_DADAO_JMP);
-		  rel->r_offset
-		    = (size
-		       + dadao_elf_section_data (input_section)
-		       ->pjs.stub_offset);
-
-		  dadao_elf_section_data (input_section)->pjs.stub_offset
-		    += MAX_PUSHJ_STUB_SIZE;
-
-		  /* Shift this reloc to the end of the relocs to maintain
-		     the r_offset sorted reloc order.  */
-		  relcpy = *rel;
-		  memmove (rel, rel + 1, (char *) relend - (char *) rel);
-		  relend[-1] = relcpy;
-
-		  /* Back up one reloc, or else we'd skip the next reloc
-		   in turn.  */
-		  rel--;
-		}
-
-	      pjsno++;
-	    }
 	  continue;
 	}
 
@@ -1544,8 +1230,6 @@ dadao_final_link_relocate (reloc_howto_type *howto, asection *input_section,
   switch (howto->type)
     {
       /* All these are PC-relative.  */
-    case R_DADAO_PUSHJ_STUBBABLE:
-    case R_DADAO_PUSHJ:
     case R_DADAO_CBRANCH:
     case R_DADAO_ADDR19:
     case R_DADAO_GETA:
@@ -1815,28 +1499,7 @@ dadao_elf_check_common_relocs  (bfd *abfd,
 	  gregdata->n_bpo_relocs
 	    = gregdata->n_max_bpo_relocs;
 	  break;
-
-	case R_DADAO_PUSHJ_STUBBABLE:
-	  dadao_elf_section_data (sec)->pjs.n_pushj_relocs++;
-	  break;
 	}
-    }
-
-  /* Allocate per-reloc stub storage and initialize it to the max stub
-     size.  */
-  if (dadao_elf_section_data (sec)->pjs.n_pushj_relocs != 0)
-    {
-      size_t i;
-
-      dadao_elf_section_data (sec)->pjs.stub_size
-	= bfd_alloc (abfd, dadao_elf_section_data (sec)->pjs.n_pushj_relocs
-		     * sizeof (dadao_elf_section_data (sec)
-			       ->pjs.stub_size[0]));
-      if (dadao_elf_section_data (sec)->pjs.stub_size == NULL)
-	return FALSE;
-
-      for (i = 0; i < dadao_elf_section_data (sec)->pjs.n_pushj_relocs; i++)
-	dadao_elf_section_data (sec)->pjs.stub_size[i] = MAX_PUSHJ_STUB_SIZE;
     }
 
   return TRUE;
@@ -2121,33 +1784,6 @@ dadao_elf_final_link (bfd *abfd, struct bfd_link_info *info)
   return TRUE;
 }
 
-/* We need to include the maximum size of PUSHJ-stubs in the initial
-   section size.  This is expected to shrink during linker relaxation.  */
-
-static void
-dadao_set_relaxable_size (bfd *abfd ATTRIBUTE_UNUSED,
-			 asection *sec,
-			 void *ptr)
-{
-  struct bfd_link_info *info = ptr;
-
-  /* Make sure we only do this for section where we know we want this,
-     otherwise we might end up resetting the size of COMMONs.  */
-  if (dadao_elf_section_data (sec)->pjs.n_pushj_relocs == 0)
-    return;
-
-  sec->rawsize = sec->size;
-  sec->size += (dadao_elf_section_data (sec)->pjs.n_pushj_relocs
-		* MAX_PUSHJ_STUB_SIZE);
-
-  /* For use in relocatable link, we start with a max stubs size.  See
-     dadao_elf_relax_section.  */
-  if (bfd_link_relocatable (info) && sec->output_section)
-    dadao_elf_section_data (sec->output_section)->pjs.stubs_size_sum
-      += (dadao_elf_section_data (sec)->pjs.n_pushj_relocs
-	  * MAX_PUSHJ_STUB_SIZE);
-}
-
 /* Initialize stuff for the linker-generated GREGs to match
    R_DADAO_BASE_PLUS_OFFSET relocs seen by the linker.  */
 
@@ -2163,10 +1799,6 @@ _bfd_dadao_before_linker_allocation (bfd *abfd ATTRIBUTE_UNUSED,
   size_t i;
   size_t *bpo_reloc_indexes;
   bfd *ibfd;
-
-  /* Set the initial size of sections.  */
-  for (ibfd = info->input_bfds; ibfd != NULL; ibfd = ibfd->link.next)
-    bfd_map_over_sections (ibfd, dadao_set_relaxable_size, info);
 
   /* The bpo_greg_owner bfd is supposed to have been set by
      dadao_elf_check_relocs when the first R_DADAO_BASE_PLUS_OFFSET is seen.
@@ -2388,8 +2020,6 @@ dadao_dump_bpo_gregs (struct bfd_link_info *link_info,
    from the first allocated register number) and offsets for use in real
    relocation.  (N.B.: Relocatable runs are handled, not just punted.)
 
-   PUSHJ stub accounting is also done here.
-
    Symbol- and reloc-reading infrastructure copied from elf-m10200.c.  */
 
 static bfd_boolean
@@ -2408,11 +2038,8 @@ dadao_elf_relax_section (bfd *abfd,
   /* The initialization is to quiet compiler warnings.  The value is to
      spot a missing actual initialization.  */
   size_t bpono = (size_t) -1;
-  size_t pjsno = 0;
   Elf_Internal_Sym *isymbuf = NULL;
   bfd_size_type size = sec->rawsize ? sec->rawsize : sec->size;
-
-  dadao_elf_section_data (sec)->pjs.stubs_size_sum = 0;
 
   /* Assume nothing changes.  */
   *again = FALSE;
@@ -2423,10 +2050,8 @@ dadao_elf_relax_section (bfd *abfd,
       || sec->reloc_count == 0
       || (sec->flags & SEC_CODE) == 0
       || (sec->flags & SEC_LINKER_CREATED) != 0
-      /* If no R_DADAO_BASE_PLUS_OFFSET relocs and no PUSHJ-stub relocs,
-	 then nothing to do.  */
-      || (bpodata == NULL
-	  && dadao_elf_section_data (sec)->pjs.n_pushj_relocs == 0))
+      /* If no R_DADAO_BASE_PLUS_OFFSET relocs, then nothing to do.  */
+      || (bpodata == NULL))
     return TRUE;
 
   symtab_hdr = &elf_tdata (abfd)->symtab_hdr;
@@ -2455,9 +2080,8 @@ dadao_elf_relax_section (bfd *abfd,
       bfd_vma symval;
       struct elf_link_hash_entry *h = NULL;
 
-      /* We only process two relocs.  */
-      if (ELF64_R_TYPE (irel->r_info) != (int) R_DADAO_BASE_PLUS_OFFSET
-	  && ELF64_R_TYPE (irel->r_info) != (int) R_DADAO_PUSHJ_STUBBABLE)
+      /* We only process one reloc.  */
+      if (ELF64_R_TYPE (irel->r_info) != (int) R_DADAO_BASE_PLUS_OFFSET)
 	continue;
 
       /* We process relocs in a distinctly different way when this is a
@@ -2471,40 +2095,6 @@ dadao_elf_relax_section (bfd *abfd,
 	     output section plus earlier stubs, cannot be reached.  Thus
 	     relocatable linking can only lead to worse code, but it still
 	     works.  */
-	  if (ELF64_R_TYPE (irel->r_info) == R_DADAO_PUSHJ_STUBBABLE)
-	    {
-	      /* If we can reach the end of the output-section and beyond
-		 any current stubs, then we don't need a stub for this
-		 reloc.  The relaxed order of output stub allocation may
-		 not exactly match the straightforward order, so we always
-		 assume presence of output stubs, which will allow
-		 relaxation only on relocations indifferent to the
-		 presence of output stub allocations for other relocations
-		 and thus the order of output stub allocation.  */
-	      if (bfd_check_overflow (complain_overflow_signed,
-				      19,
-				      0,
-				      bfd_arch_bits_per_address (abfd),
-				      /* Output-stub location.  */
-				      sec->output_section->rawsize
-				      + (dadao_elf_section_data (sec
-							       ->output_section)
-					 ->pjs.stubs_size_sum)
-				      /* Location of this PUSHJ reloc.  */
-				      - (sec->output_offset + irel->r_offset)
-				      /* Don't count *this* stub twice.  */
-				      - (dadao_elf_section_data (sec)
-					 ->pjs.stub_size[pjsno]
-					 + MAX_PUSHJ_STUB_SIZE))
-		  == bfd_reloc_ok)
-		dadao_elf_section_data (sec)->pjs.stub_size[pjsno] = 0;
-
-	      dadao_elf_section_data (sec)->pjs.stubs_size_sum
-		+= dadao_elf_section_data (sec)->pjs.stub_size[pjsno];
-
-	      pjsno++;
-	    }
-
 	  continue;
 	}
 
@@ -2576,60 +2166,6 @@ dadao_elf_relax_section (bfd *abfd,
 		}
 	      continue;
 	    }
-	}
-
-      if (ELF64_R_TYPE (irel->r_info) == (int) R_DADAO_PUSHJ_STUBBABLE)
-	{
-	  bfd_vma value = symval + irel->r_addend;
-	  bfd_vma dot
-	    = (sec->output_section->vma
-	       + sec->output_offset
-	       + irel->r_offset);
-	  bfd_vma stubaddr
-	    = (sec->output_section->vma
-	       + sec->output_offset
-	       + size
-	       + dadao_elf_section_data (sec)->pjs.stubs_size_sum);
-
-	  if ((value & 3) == 0
-	      && bfd_check_overflow (complain_overflow_signed,
-				     19,
-				     0,
-				     bfd_arch_bits_per_address (abfd),
-				     value - dot
-				     - (value > dot
-					? dadao_elf_section_data (sec)
-					->pjs.stub_size[pjsno]
-					: 0))
-	      == bfd_reloc_ok)
-	    /* If the reloc fits, no stub is needed.  */
-	    dadao_elf_section_data (sec)->pjs.stub_size[pjsno] = 0;
-	  else
-	    /* Maybe we can get away with just a JMP insn?  */
-	    if ((value & 3) == 0
-		&& bfd_check_overflow (complain_overflow_signed,
-				       27,
-				       0,
-				       bfd_arch_bits_per_address (abfd),
-				       value - stubaddr
-				       - (value > dot
-					  ? dadao_elf_section_data (sec)
-					  ->pjs.stub_size[pjsno] - 4
-					  : 0))
-		== bfd_reloc_ok)
-	      /* Yep, account for a stub consisting of a single JMP insn.  */
-	      dadao_elf_section_data (sec)->pjs.stub_size[pjsno] = 4;
-	  else
-	    /* Nope, go for the full insn stub.  It doesn't seem useful to
-	       emit the intermediate sizes; those will only be useful for
-	       a >64M program assuming contiguous code.  */
-	    dadao_elf_section_data (sec)->pjs.stub_size[pjsno]
-	      = MAX_PUSHJ_STUB_SIZE;
-
-	  dadao_elf_section_data (sec)->pjs.stubs_size_sum
-	    += dadao_elf_section_data (sec)->pjs.stub_size[pjsno];
-	  pjsno++;
-	  continue;
 	}
 
       /* We're looking at a R_DADAO_BASE_PLUS_OFFSET reloc.  */
@@ -2713,20 +2249,9 @@ dadao_elf_relax_section (bfd *abfd,
 	}
     }
 
-  BFD_ASSERT(pjsno == dadao_elf_section_data (sec)->pjs.n_pushj_relocs);
-
   if (internal_relocs != NULL
       && elf_section_data (sec)->relocs != internal_relocs)
     free (internal_relocs);
-
-  if (sec->size < size + dadao_elf_section_data (sec)->pjs.stubs_size_sum)
-    abort ();
-
-  if (sec->size > size + dadao_elf_section_data (sec)->pjs.stubs_size_sum)
-    {
-      sec->size = size + dadao_elf_section_data (sec)->pjs.stubs_size_sum;
-      *again = TRUE;
-    }
 
   return TRUE;
 

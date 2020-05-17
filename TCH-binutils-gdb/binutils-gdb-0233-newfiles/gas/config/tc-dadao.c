@@ -127,10 +127,6 @@ static int predefined_syms = 1;
    (e.g. equated symbols)?  */
 static int equated_spec_regs = 1;
 
-/* When expanding insns, do we want to expand PUSHJ as a call to a stub
-   (or else as a series of insns)?  */
-int pushj_stubs = 1;
-
 struct option md_longopts[] =
  {
 #define OPTION_RELAX  (OPTION_MD_BASE)
@@ -139,7 +135,6 @@ struct option md_longopts[] =
 #define OPTION_NOSYMS  (OPTION_NOMERGEGREG + 1)
 #define OPTION_FIXED_SPEC_REGS  (OPTION_NOSYMS + 1)
 #define OPTION_LINKER_ALLOCATED_GREGS  (OPTION_FIXED_SPEC_REGS + 1)
-#define OPTION_NOPUSHJSTUBS  (OPTION_LINKER_ALLOCATED_GREGS + 1)
    {"linkrelax", no_argument, NULL, OPTION_RELAX},
    {"no-expand", no_argument, NULL, OPTION_NOEXPAND},
    {"no-merge-gregs", no_argument, NULL, OPTION_NOMERGEGREG},
@@ -148,8 +143,6 @@ struct option md_longopts[] =
     OPTION_FIXED_SPEC_REGS},
    {"linker-allocated-gregs", no_argument, NULL,
     OPTION_LINKER_ALLOCATED_GREGS},
-   {"no-pushj-stubs", no_argument, NULL, OPTION_NOPUSHJSTUBS},
-   {"no-stubs", no_argument, NULL, OPTION_NOPUSHJSTUBS},
    {NULL, no_argument, NULL, 0}
  };
 
@@ -171,29 +164,18 @@ static struct hash_control *dadao_opcode_hash;
    2. Bcc
       extra length: zero or five insns.
 
-   3. PUSHJ
-      extra length: zero or four insns.
-      Special handling to deal with transition to PUSHJSTUB.
-
    4. JMP
       extra length: zero or four insns.
 
    5. GREG
       special handling, allocates a named global register unless another
       is within reach for all uses.
-
-   6. PUSHJSTUB
-      special handling (mostly) for external references; assumes the
-      linker will generate a stub if target is no longer than 256k from
-      the end of the section plus max size of previous stubs.  Zero or
-      four insns.  */
+ */
 
 #define STATE_GETA	(1)
 #define STATE_BCC	(2)
-#define STATE_PUSHJ	(3)
-#define STATE_JMP	(4)
-#define STATE_GREG	(5)
-#define STATE_PUSHJSTUB	(6)
+#define STATE_JMP	(3)
+#define STATE_GREG	(4)
 
 /* No fine-grainedness here.  */
 #define STATE_LENGTH_MASK	    (1)
@@ -230,18 +212,6 @@ static struct hash_control *dadao_opcode_hash;
 #define BCC_5F GETA_3F
 #define BCC_5B GETA_3B
 
-#define PUSHJ_0F GETA_0F
-#define PUSHJ_0B GETA_0B
-
-#define PUSHJ_MAX_LEN 5 * 4
-#define PUSHJ_4F GETA_3F
-#define PUSHJ_4B GETA_3B
-
-/* We'll very rarely have sections longer than LONG_MAX, but we'll make a
-   feeble attempt at getting 64-bit values.  */
-#define PUSHJSTUB_MAX ((offsetT) (((addressT) -1) >> 1))
-#define PUSHJSTUB_MIN (-PUSHJSTUB_MAX - 1)
-
 #define JMP_0F (65536 * 256 * 4 - 8)
 #define JMP_0B (-65536 * 256 * 4 - 4)
 
@@ -274,28 +244,15 @@ const relax_typeS dadao_relax_table[] =
    {BCC_5F,	BCC_5B,
 		BCC_MAX_LEN - 4,	0},
 
-   /* PUSHJ (3, 0).  Next state is actually PUSHJSTUB (6, 0).  */
-   {PUSHJ_0F,	PUSHJ_0B,	0,	ENCODE_RELAX (STATE_PUSHJSTUB, STATE_ZERO)},
-
-   /* PUSHJ (3, 1).  */
-   {PUSHJ_4F,	PUSHJ_4B,
-		PUSHJ_MAX_LEN - 4,	0},
-
-   /* JMP (4, 0).  */
+   /* JMP (3, 0).  */
    {JMP_0F,	JMP_0B,		0,	ENCODE_RELAX (STATE_JMP, STATE_MAX)},
 
-   /* JMP (4, 1).  */
+   /* JMP (3, 1).  */
    {JMP_4F,	JMP_4B,
 		JMP_MAX_LEN - 4,	0},
 
    /* GREG (5, 0), (5, 1), though the table entry isn't used.  */
    {0, 0, 0, 0}, {0, 0, 0, 0},
-
-   /* PUSHJSTUB (6, 0).  PUSHJ (3, 0) uses the range, so we set it to infinite.  */
-   {PUSHJSTUB_MAX, PUSHJSTUB_MIN,
-    		0,			ENCODE_RELAX (STATE_PUSHJ, STATE_MAX)},
-   /* PUSHJSTUB (6, 1) isn't used.  */
-   {0, 0,	PUSHJ_MAX_LEN, 		0}
 };
 
 const pseudo_typeS md_pseudo_table[] = {
@@ -349,7 +306,7 @@ dadao_set_jmp_offset (char *opcodep, offsetT value)
   md_number_to_chars (opcodep + 1, value, 3);
 }
 
-/* Fill in NOP:s for the expanded part of GETA/JMP/Bcc/PUSHJ.  */
+/* Fill in NOP:s for the expanded part of GETA/JMP/Bcc.  */
 
 static void
 dadao_fill_nops (char *opcodep, int n)
@@ -579,10 +536,6 @@ md_parse_option (int c, const char *arg ATTRIBUTE_UNUSED)
       allocate_undefined_gregs_in_linker = 1;
       break;
 
-    case OPTION_NOPUSHJSTUBS:
-      pushj_stubs = 0;
-      break;
-
     default:
       return 0;
     }
@@ -605,7 +558,7 @@ md_show_usage (FILE * stream)
   -no-predefined-syms     Do not provide dadaoal built-in constants.\n\
                           Implies -fixed-special-register-names.\n"));
   fprintf (stream, _("\
-  -no-expand              Do not expand GETA, branches, PUSHJ or JUMP\n\
+  -no-expand              Do not expand GETA, branches or JUMP\n\
                           into multiple instructions.\n"));
   fprintf (stream, _("\
   -no-merge-gregs         Do not merge GREG definitions with nearby values.\n"));
@@ -614,7 +567,7 @@ md_show_usage (FILE * stream)
                           operands of an instruction, let the linker resolve.\n"));
   fprintf (stream, _("\
   -x                      Do not warn when an operand to GETA, a branch,\n\
-                          PUSHJ or JUMP is not known to be within range.\n\
+                          or JUMP is not known to be within range.\n\
                           The linker will catch any errors.  Implies\n\
                           -linker-allocated-gregs."));
 }
@@ -758,10 +711,6 @@ void dadao_md_assemble (char *str)
      easier to parse each expression first.   */
   switch (instruction->operands)
     {
-    case dadao_operands_pushj:
-      max_operands = 2;
-      break;
-
     case dadao_operands_none:
       max_operands = 0;
       break;
@@ -819,47 +768,9 @@ void dadao_md_assemble (char *str)
 
   md_number_to_chars (opcodep, instruction->match, 4);
 
-  switch (instruction->operands)
-    {
-    case dadao_operands_pushj:
-      /* We take care of PUSHJ in full here.  */
-      if (n_operands != 2
-	  || ((exp[0].X_op == O_constant || exp[0].X_op == O_register)
-	      && (exp[0].X_add_number > 255 || exp[0].X_add_number < 0)))
-	{
-	  as_bad (_("invalid operands to opcode %s: `%s'"),
-		  instruction->name, operands);
-	  return;
-	}
-
-      if (exp[0].X_op == O_register || exp[0].X_op == O_constant)
-	opcodep[1] = exp[0].X_add_number;
-      else
-	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 1,
-		     1, exp + 0, 0, BFD_RELOC_DADAO_REG_OR_BYTE);
-
-      if (expand_op)
-	frag_var (rs_machine_dependent, PUSHJ_MAX_LEN - 4, 0,
-		  ENCODE_RELAX (STATE_PUSHJ, STATE_UNDF),
-		  exp[1].X_add_symbol,
-		  exp[1].X_add_number,
-		  opcodep);
-      else
-	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4,
-		     exp + 1, 1, BFD_RELOC_DADAO_ADDR19);
-      break;
-
-    default:
-      break;
-    }
-
   /* Handle the rest.  */
   switch (instruction->operands)
     {
-    case dadao_operands_pushj:
-      /* All is done for PUSHJ already.  */
-      break;
-
 	case dadao_operands_fa_op_fdfb_reg_fc_0_get:
 		/* "$X,spec_reg"; GET.
 		   Like with rounding modes, we demand that the special register or
@@ -1278,23 +1189,6 @@ md_estimate_size_before_relax (fragS *fragP, segT segment)
       HANDLE_RELAXABLE (STATE_BCC);
       HANDLE_RELAXABLE (STATE_JMP);
 
-    case ENCODE_RELAX (STATE_PUSHJ, STATE_UNDF):
-      if (fragP->fr_symbol != NULL
-	  && S_GET_SEGMENT (fragP->fr_symbol) == segment
-	  && !S_IS_WEAK (fragP->fr_symbol))
-	/* The symbol lies in the same segment - a relaxable case.  */
-	fragP->fr_subtype = ENCODE_RELAX (STATE_PUSHJ, STATE_ZERO);
-      else if (pushj_stubs)
-	/* If we're to generate stubs, assume we can reach a stub after
-           the section.  */
-	fragP->fr_subtype = ENCODE_RELAX (STATE_PUSHJSTUB, STATE_ZERO);
-      /* FALLTHROUGH.  */
-    case ENCODE_RELAX (STATE_PUSHJ, STATE_ZERO):
-    case ENCODE_RELAX (STATE_PUSHJSTUB, STATE_ZERO):
-      /* We need to distinguish different relaxation rounds.  */
-      seg_info (segment)->tc_segment_info_data.last_stubfrag = fragP;
-      break;
-
     case ENCODE_RELAX (STATE_GETA, STATE_ZERO):
     case ENCODE_RELAX (STATE_BCC, STATE_ZERO):
     case ENCODE_RELAX (STATE_JMP, STATE_ZERO):
@@ -1384,19 +1278,8 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
 
   switch (fragP->fr_subtype)
     {
-    case ENCODE_RELAX (STATE_PUSHJSTUB, STATE_ZERO):
-      /* Setting the unknown bits to 0 seems the most appropriate.  */
-      dadao_set_geta_branch_offset (opcodep, 0);
-      tmpfixP = fix_new (opc_fragP, opcodep - opc_fragP->fr_literal, 8,
-			 fragP->fr_symbol, fragP->fr_offset, 1,
-			 BFD_RELOC_DADAO_PUSHJ_STUBBABLE);
-      COPY_FR_WHERE_TO_FX (fragP, tmpfixP);
-      var_part_size = 0;
-      break;
-
     case ENCODE_RELAX (STATE_GETA, STATE_ZERO):
     case ENCODE_RELAX (STATE_BCC, STATE_ZERO):
-    case ENCODE_RELAX (STATE_PUSHJ, STATE_ZERO):
       dadao_set_geta_branch_offset (opcodep, target_address - opcode_address);
       if (linkrelax)
 	{
@@ -1455,7 +1338,6 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
 
       HANDLE_MAX_RELOC (STATE_GETA, BFD_RELOC_DADAO_GETA);
       HANDLE_MAX_RELOC (STATE_BCC, BFD_RELOC_DADAO_CBRANCH);
-      HANDLE_MAX_RELOC (STATE_PUSHJ, BFD_RELOC_DADAO_PUSHJ);
       HANDLE_MAX_RELOC (STATE_JMP, BFD_RELOC_DADAO_JMP);
 
     default:
@@ -1535,8 +1417,6 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
       /* FALLTHROUGH.  */
     case BFD_RELOC_DADAO_GETA:
     case BFD_RELOC_DADAO_CBRANCH:
-    case BFD_RELOC_DADAO_PUSHJ:
-    case BFD_RELOC_DADAO_PUSHJ_STUBBABLE:
       /* If this fixup is out of range, punt to the linker to emit an
 	 error.  This should only happen with -no-expand.  */
       if (val < -(((offsetT) 1 << 19)/2)
@@ -1619,9 +1499,6 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
       fixP->fx_done = 0;
       return;
 
-    case BFD_RELOC_DADAO_PUSHJ_1:
-    case BFD_RELOC_DADAO_PUSHJ_2:
-    case BFD_RELOC_DADAO_PUSHJ_3:
     case BFD_RELOC_DADAO_CBRANCH_J:
     case BFD_RELOC_DADAO_CBRANCH_1:
     case BFD_RELOC_DADAO_CBRANCH_2:
@@ -1722,11 +1599,6 @@ tc_gen_reloc (asection *section ATTRIBUTE_UNUSED, fixS *fixP)
     case BFD_RELOC_DADAO_CBRANCH_1:
     case BFD_RELOC_DADAO_CBRANCH_2:
     case BFD_RELOC_DADAO_CBRANCH_3:
-    case BFD_RELOC_DADAO_PUSHJ:
-    case BFD_RELOC_DADAO_PUSHJ_1:
-    case BFD_RELOC_DADAO_PUSHJ_2:
-    case BFD_RELOC_DADAO_PUSHJ_3:
-    case BFD_RELOC_DADAO_PUSHJ_STUBBABLE:
     case BFD_RELOC_DADAO_JMP:
     case BFD_RELOC_DADAO_JMP_1:
     case BFD_RELOC_DADAO_JMP_2:
@@ -2014,108 +1886,6 @@ long dadao_md_relax_frag (segT seg, fragS *fragP, long stretch)
 	 correctly estimated, so there's nothing more to do here.  */
     case STATE_GREG_DEF:
       return 0;
-
-    case ENCODE_RELAX (STATE_PUSHJ, STATE_ZERO):
-      {
-	/* We need to handle relaxation type ourselves, since relax_frag
-	   doesn't update fr_subtype if there's no size increase in the
-	   current section; when going from plain PUSHJ to a stub.  This
-	   is otherwise functionally the same as relax_frag in write.c,
-	   simplified for this case.  */
-	offsetT aim;
-	addressT target;
-	addressT address;
-	symbolS *symbolP;
-	target = fragP->fr_offset;
-	address = fragP->fr_address;
-	symbolP = fragP->fr_symbol;
-
-	if (symbolP)
-	  {
-	    fragS *sym_frag;
-
-	    sym_frag = symbol_get_frag (symbolP);
-	    know (S_GET_SEGMENT (symbolP) != absolute_section
-		  || sym_frag == &zero_address_frag);
-	    target += S_GET_VALUE (symbolP);
-
-	    /* If frag has yet to be reached on this pass, assume it will
-	       move by STRETCH just as we did.  If this is not so, it will
-	       be because some frag between grows, and that will force
-	       another pass.  */
-
-	    if (stretch != 0
-		&& sym_frag->relax_marker != fragP->relax_marker
-		&& S_GET_SEGMENT (symbolP) == seg)
-	      target += stretch;
-	  }
-
-	aim = target - address - fragP->fr_fix;
-	if (aim >= PUSHJ_0B && aim <= PUSHJ_0F)
-	  {
-	    /* Target is reachable with a PUSHJ.  */
-	    segment_info_type *seginfo = seg_info (seg);
-
-	    /* If we're at the end of a relaxation round, clear the stub
-	       counter as initialization for the next round.  */
-	    if (fragP == seginfo->tc_segment_info_data.last_stubfrag)
-	      seginfo->tc_segment_info_data.nstubs = 0;
-	    return 0;
-	  }
-
-	/* Not reachable.  Try a stub.  */
-	fragP->fr_subtype = ENCODE_RELAX (STATE_PUSHJSTUB, STATE_ZERO);
-      }
-      /* FALLTHROUGH.  */
-
-      /* See if this PUSHJ is redirectable to a stub.  */
-    case ENCODE_RELAX (STATE_PUSHJSTUB, STATE_ZERO):
-      {
-	segment_info_type *seginfo = seg_info (seg);
-	fragS *lastfrag = seginfo->frchainP->frch_last;
-	relax_substateT prev_type = fragP->fr_subtype;
-
-	/* The last frag is always an empty frag, so it suffices to look
-	   at its address to know the ending address of this section.  */
-	know (lastfrag->fr_type == rs_fill
-	      && lastfrag->fr_fix == 0
-	      && lastfrag->fr_var == 0);
-
-	/* For this PUSHJ to be relaxable into a call to a stub, the
-	   distance must be no longer than 256k bytes from the PUSHJ to
-	   the end of the section plus the maximum size of stubs so far.  */
-	if ((lastfrag->fr_address
-	     + stretch
-	     + PUSHJ_MAX_LEN * seginfo->tc_segment_info_data.nstubs)
-	    - (fragP->fr_address + fragP->fr_fix)
-	    > GETA_0F
-	    || !pushj_stubs)
-	  fragP->fr_subtype = dadao_relax_table[prev_type].rlx_more;
-	else
-	  seginfo->tc_segment_info_data.nstubs++;
-
-	/* If we're at the end of a relaxation round, clear the stub
-	   counter as initialization for the next round.  */
-	if (fragP == seginfo->tc_segment_info_data.last_stubfrag)
-	  seginfo->tc_segment_info_data.nstubs = 0;
-
-	return
-	   (dadao_relax_table[fragP->fr_subtype].rlx_length
-	    - dadao_relax_table[prev_type].rlx_length);
-      }
-
-    case ENCODE_RELAX (STATE_PUSHJ, STATE_MAX):
-      {
-	segment_info_type *seginfo = seg_info (seg);
-
-	/* Need to cover all STATE_PUSHJ states to act on the last stub
-	   frag (the end of this relax round; initialization for the
-	   next).  */
-	if (fragP == seginfo->tc_segment_info_data.last_stubfrag)
-	  seginfo->tc_segment_info_data.nstubs = 0;
-
-	return 0;
-      }
 
     default:
       return relax_frag (seg, fragP, stretch);

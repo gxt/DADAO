@@ -198,8 +198,6 @@ const struct dadao_opcode dadao_opcodes[] =
 
 	{"jmp",		Z (0xf0),	0,	OP (fa_reg_fbcd_i18),	dadao_type_jmp},
 
-   {"pushj",	Z (0xf2),	0,	OP (pushj),		J},
-
 	{"geta",	Z (0xf4),	0,	OP (fa_reg_fbcd_i18),	dadao_type_geta},
 
 	{NULL,	~0,	~0,	0,	OP (none),		N}

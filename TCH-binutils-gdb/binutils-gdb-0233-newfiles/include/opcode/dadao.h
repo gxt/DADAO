@@ -67,9 +67,6 @@ enum dadao_operands_type
 	/* ONLY "imm18" accepted, for swym/trip/trap/nop */
 	dadao_operands_fa_op_fbcd_i18,
 
-   /* "$X|X,Address, like PUSHJ.  */
-   dadao_operands_pushj,
-
 	/* "$X,spec_reg"; GET.  */
 	dadao_operands_fa_op_fdfb_reg_fc_0_get,
 

@@ -222,7 +222,6 @@ get_opcode_found:
 	{
 	  /* These have no restraint on what can be in the lower three
 	     bytes.  */
-	case dadao_operands_pushj:
 	case dadao_operands_fa_op_fdfb_reg_fc_0_get:
 	case dadao_operands_fa_op_fdfb_reg_fc_0_put:
 	case dadao_operands_fa_op_fbcd_reg:
@@ -412,7 +411,6 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 				get_reg_name (minfop, fc));
       break;
 
-    case dadao_operands_pushj:
     case dadao_operands_fa_reg_fbcd_i18:
       /* Like jmp, GETA or branches - "$X,Address".  */
       {
