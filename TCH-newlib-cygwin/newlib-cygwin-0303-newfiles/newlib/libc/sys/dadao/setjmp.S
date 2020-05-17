@@ -10,7 +10,6 @@
 #define arg1 $231
 #define arg2 $232
 #define outret $231
-#define popval 0
 
 	.section .text.setjmp,"ax",@progbits
 	.global setjmp
@@ -28,7 +27,7 @@ setjmp:
 # Jump through hoops to get the value of rO *before* the setjmp call.
 	geta	$63, 0f
 	put	rJ, $63
-	POP  popval,0
+	ret
 0:
 	get	$63, rO
 	sto	$63, $59, 24
@@ -59,7 +58,7 @@ longjmp:
 	cmpu	$60, $60, $63
 	BNP  $252,1f
 	ldo	outret, $59, 32
-	POP  popval,0
+	ret
 1:
 	ldo	$61, $59, 0
 	ldo	$63, $59, 8
