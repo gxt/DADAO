@@ -734,7 +734,7 @@ void dadao_md_assemble (char *str)
 		max_operands = 3;
 		break;
 
-	case dadao_operands_fa_op_fbcd_i18:
+	case dadao_operands_oiii:
 		max_operands = 1;
 		break;
 
@@ -828,7 +828,7 @@ void dadao_md_assemble (char *str)
 
 		break;
 
-	case dadao_operands_fa_op_fbcd_i18: /* SWYM, TRIP, TRAP: one operands  */
+	case dadao_operands_oiii: /* SWYM, TRIP, TRAP: one operands  */
 		if ((n_operands != 1) || (exp[0].X_op != O_constant))
 			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 

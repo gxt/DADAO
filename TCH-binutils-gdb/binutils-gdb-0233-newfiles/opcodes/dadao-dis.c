@@ -225,7 +225,7 @@ get_opcode_found:
 	case dadao_operands_fa_op_fdfb_reg_fc_0_get:
 	case dadao_operands_fa_op_fdfb_reg_fc_0_put:
 	case dadao_operands_fa_op_fbcd_reg:
-	case dadao_operands_fa_op_fbcd_i18:
+	case dadao_operands_oiii:
 	case dadao_operands_fa_op_fdfb_reg_fc_i6:
 	case dadao_operands_fa_op_fdfb_reg_fc_reg_i6:
 	case dadao_operands_fdfa_reg_fbc_rs6_i12:
@@ -455,7 +455,7 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 				     get_reg_name (minfop, z));
 		break;
 
-	case dadao_operands_fa_op_fbcd_i18: /* Like SWYM or TRAP - "imm18".  */
+	case dadao_operands_oiii: /* Like SWYM or TRAP - "imm18".  */
 		(*info->fprintf_func) (info->stream, "\t%d", (fb << 12) | (fc << 6) | fd);
 		break;
 

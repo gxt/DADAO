@@ -65,7 +65,7 @@ enum dadao_operands_type
 	dadao_operands_fa_op_fdfb_reg_fc_i6,
 
 	/* ONLY "imm18" accepted, for swym/trip/trap/nop */
-	dadao_operands_fa_op_fbcd_i18,
+	dadao_operands_oiii,
 
 	/* "$X,spec_reg"; GET.  */
 	dadao_operands_fa_op_fdfb_reg_fc_0_get,

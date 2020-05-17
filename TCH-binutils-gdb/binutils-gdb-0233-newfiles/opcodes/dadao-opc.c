@@ -162,10 +162,10 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"call",	Z (DADAO_INSN_CALL),	0,	OP (fa_reg_fbcd_i18_ri12),	J},
 	{"geta",	Z (0xD4),	0,	OP (fa_reg_fbcd_i18),	dadao_type_geta},
 
-	{"swym",	O (0xDA),	0,	OP (fa_op_fbcd_i18),		N},
+	{"swym",	O (0xDA),	0,	OP (oiii),		N},
 	{"ret",		O (0xDA),	0x01,	OP (none),			B},
-	{"trip",	O (0xDA),	0x04,	OP (fa_op_fbcd_i18),		N},
-	{"trap",	O (0xDA),	0x20,	OP (fa_op_fbcd_i18),		N},
+	{"trip",	O (0xDA),	0x04,	OP (oiii),		N},
+	{"trap",	O (0xDA),	0x20,	OP (oiii),		N},
 	{"nop",		O (0xDA),	0x36,	OP (none),			N},
 
 	{"put",		O (0xDA),	0x37,	OP (fa_op_fdfb_reg_fc_0_put),		N},
