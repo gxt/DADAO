@@ -150,6 +150,9 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"trap",	O (0xDA),	0x20,	OP (fa_op_fbcd_i18),		N},
 	{"nop",		O (0xDA),	0x36,	OP (none),			N},
 
+	{"put",		O (0xDA),	0x37,	OP (fa_op_fdfb_reg_fc_0_put),		N},
+	{"get",		O (0xDA),	0x38,	OP (fa_op_fdfb_reg_fc_0_get),		N},
+
 	{"fcmp",	O (0xDB),	1,	OP (fa_op_fbcd_reg),		N},
 	{"fun",		O (0xDB),	2,	OP (fa_op_fbcd_reg),		N},
 	{"feql",	O (0xDB),	3,	OP (fa_op_fbcd_reg),		N},
@@ -198,10 +201,6 @@ const struct dadao_opcode dadao_opcodes[] =
    {"pushj",	Z (0xf2),	0,	OP (pushj),		J},
 
 	{"geta",	Z (0xf4),	0,	OP (fa_reg_fbcd_i18),	dadao_type_geta},
-
-   {"put", Z (0xf6) | 0xff00,	0,	OP (put),		N},
-   {"get", O (0xfe) | 0xffe0,	0,	OP (get),		N},
-
 
 	{NULL,	~0,	~0,	0,	OP (none),		N}
  };

@@ -470,7 +470,7 @@ get_putget_operands (struct dadao_opcode *insn, char *operands,
   exp[0].X_op = O_illegal;
   exp[1].X_op = O_illegal;
 
-  if (insn->operands == dadao_operands_get)
+  if (insn->operands == dadao_operands_fa_op_fdfb_reg_fc_0_get)
     {
       expp_reg = &exp[0];
       expp_sreg = &exp[1];
@@ -760,8 +760,6 @@ void dadao_md_assemble (char *str)
     {
     case dadao_operands_pop:
     case dadao_operands_pushj:
-    case dadao_operands_get:
-    case dadao_operands_put:
       max_operands = 2;
       break;
 
@@ -771,6 +769,8 @@ void dadao_md_assemble (char *str)
 
 	case dadao_operands_fa_reg_fbcd_i18:
 	case dadao_operands_fd_reg_fabc_i16:
+	case dadao_operands_fa_op_fdfb_reg_fc_0_get:
+	case dadao_operands_fa_op_fdfb_reg_fc_0_put:
 		max_operands = 2;
 		break;
 
@@ -798,8 +798,8 @@ void dadao_md_assemble (char *str)
      equated, we need to parse the names ourselves, so we don't pick up a
      user label instead of the special register.  */
   if (! equated_spec_regs
-      && (instruction->operands == dadao_operands_get
-	  || instruction->operands == dadao_operands_put))
+      && (instruction->operands == dadao_operands_fa_op_fdfb_reg_fc_0_get
+	  || instruction->operands == dadao_operands_fa_op_fdfb_reg_fc_0_put))
     n_operands = get_putget_operands (instruction, operands, exp);
   else
     n_operands = get_operands (max_operands, operands, exp);
@@ -851,28 +851,6 @@ void dadao_md_assemble (char *str)
 
     default:
       break;
-    }
-
-  switch (instruction->operands)
-    {
-    case dadao_operands_get:
-      if (n_operands < 1
-	  || (exp[0].X_op == O_register && exp[0].X_add_number > 255))
-	{
-	  as_bad (_("invalid operands to opcode %s: `%s'"),
-		  instruction->name, operands);
-	  return;
-	}
-
-      if (exp[0].X_op == O_register)
-	opcodep[1] = exp[0].X_add_number;
-      else
-	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 1,
-		     1, exp + 0, 0, BFD_RELOC_DADAO_REG);
-      break;
-
-    default:
-      ;
     }
 
   /* A corresponding once-over for those who take an 8-bit constant as
@@ -928,58 +906,36 @@ void dadao_md_assemble (char *str)
 		     2, exp + 1, 0, BFD_RELOC_16);
       break;
 
-    case dadao_operands_get:
-      /* "$X,spec_reg"; GET.
-	 Like with rounding modes, we demand that the special register or
-	 symbol is already defined when we get here at the point of use.  */
-      if (n_operands != 2
-	  || (exp[1].X_op == O_register
-	      && (exp[1].X_add_number < 256 || exp[1].X_add_number >= 512))
-	  || (exp[1].X_op == O_constant
-	      && (exp[1].X_add_number < 0 || exp[1].X_add_number > 256))
-	  || (exp[1].X_op != O_constant && exp[1].X_op != O_register))
-	{
-	  as_bad (_("invalid operands to opcode %s: `%s'"),
-		  instruction->name, operands);
-	  return;
-	}
-
-      opcodep[3] = exp[1].X_add_number - 256;
-      break;
-
-    case dadao_operands_put:
-      /* "spec_reg,$Z|Z"; PUT.  */
-      if (n_operands != 2
-	  || (exp[0].X_op == O_register
-	      && (exp[0].X_add_number < 256 || exp[0].X_add_number >= 512))
-	  || (exp[0].X_op == O_constant
-	      && (exp[0].X_add_number < 0 || exp[0].X_add_number > 256))
-	  || (exp[0].X_op != O_constant && exp[0].X_op != O_register))
-	{
-	  as_bad (_("invalid operands to opcode %s: `%s'"),
-		  instruction->name, operands);
-	  return;
-	}
-
-      opcodep[1] = exp[0].X_add_number - 256;
-
-      /* Note that the Y field is zero.  */
-
-      if (exp[1].X_op == O_register)
-	opcodep[3] = exp[1].X_add_number;
-      else if (exp[1].X_op == O_constant)
-	{
-	  opcodep[3] = exp[1].X_add_number;
-	  opcodep[0] |= IMM_OFFSET_BIT;
-	}
-      else
-	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 3,
-		     1, exp + 1, 0, BFD_RELOC_DADAO_REG_OR_BYTE);
-      break;
-
     case dadao_operands_pushj:
       /* All is done for PUSHJ already.  */
       break;
+
+	case dadao_operands_fa_op_fdfb_reg_fc_0_get:
+		/* "$X,spec_reg"; GET.
+		   Like with rounding modes, we demand that the special register or
+		   symbol is already defined when we get here at the point of use.  */
+		if (n_operands != 2)
+			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+
+		DDOP_EXP_MUST_BE_REG(exp[0]);
+
+		DDOP_SET_FA(opcodep, instruction->fa_as_opcode);
+		DDOP_SET_FB(opcodep, exp[1].X_add_number - 256);
+		DDOP_SET_FC(opcodep, 0);
+		DDOP_SET_FD(opcodep, exp[0].X_add_number);
+		break;
+
+	case dadao_operands_fa_op_fdfb_reg_fc_0_put:
+		/* "spec_reg,$Z"; PUT.  */
+		if (n_operands != 2)
+			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+
+		DDOP_EXP_MUST_BE_REG(exp[1]);
+		DDOP_SET_FA(opcodep, instruction->fa_as_opcode);
+		DDOP_SET_FB(opcodep, exp[1].X_add_number);
+		DDOP_SET_FC(opcodep, 0);
+		DDOP_SET_FD(opcodep, exp[0].X_add_number - 256);
+		break;
 
 	case dadao_operands_fa_op_fbcd_reg: /* regd, regb, regc */
 		if (n_operands != 3)
@@ -994,6 +950,7 @@ void dadao_md_assemble (char *str)
 		DDOP_SET_FC(opcodep, exp[2].X_add_number);
 		DDOP_SET_FD(opcodep, exp[0].X_add_number);
 		break;
+
 
 	case dadao_operands_fd_reg_fabc_i16: /* regd, imm16  */
 		if ((n_operands != 2) || (exp[1].X_op != O_constant))

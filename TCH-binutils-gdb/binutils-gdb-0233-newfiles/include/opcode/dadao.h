@@ -73,11 +73,11 @@ enum dadao_operands_type
    /* "$X|X,Address, like PUSHJ.  */
    dadao_operands_pushj,
 
-   /* "$X,spec_reg"; GET.  */
-   dadao_operands_get,
+	/* "$X,spec_reg"; GET.  */
+	dadao_operands_fa_op_fdfb_reg_fc_0_get,
 
-   /* "spec_reg,$Z|Z"; PUT.  */
-   dadao_operands_put,
+	/* "spec_reg,$Z"; PUT.  */
+	dadao_operands_fa_op_fdfb_reg_fc_0_put,
  };
 
 struct dadao_opcode

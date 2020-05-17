@@ -225,7 +225,8 @@ get_opcode_found:
 	case dadao_operands_reg_yz:
 	case dadao_operands_pop:
 	case dadao_operands_pushj:
-	case dadao_operands_get:
+	case dadao_operands_fa_op_fdfb_reg_fc_0_get:
+	case dadao_operands_fa_op_fdfb_reg_fc_0_put:
 	case dadao_operands_fa_op_fbcd_reg:
 	case dadao_operands_fa_op_fbcd_i18:
 	case dadao_operands_fa_op_fdfb_reg_fc_i6:
@@ -235,14 +236,6 @@ get_opcode_found:
 	case dadao_operands_fa_reg_fbcd_i18:
 	case dadao_operands_none:
 	  return opcodep;
-
-	case dadao_operands_put:
-	  /* A "PUT".  If it is "immediate", then no restrictions,
-	     otherwise we have to make sure the register number is < 32.  */
-	  if ((insn & INSN_IMMEDIATE_BIT)
-	      || ((insn >> 16) & 255) < 32)
-	    return opcodep;
-	  break;
 
 	default:
 	  BAD_CASE (opcodep->operands);
@@ -447,23 +440,19 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
       }
       break;
 
-    case dadao_operands_get:
-      /* GET - "X,spec_reg".  */
-      (*info->fprintf_func) (info->stream, "\t%s,%s",
-			     get_reg_name (minfop, x),
-			     get_spec_reg_name (minfop, z));
-      break;
+	case dadao_operands_fa_op_fdfb_reg_fc_0_get:
+		/* GET - "X,spec_reg".  */
+		(*info->fprintf_func) (info->stream, "\t%s,%s",
+				     get_reg_name (minfop, x),
+				     get_spec_reg_name (minfop, z));
+		break;
 
-    case dadao_operands_put:
-      /* PUT - "spec_reg,$Z|Z".  */
-      if (insn & INSN_IMMEDIATE_BIT)
-	(*info->fprintf_func) (info->stream, "\t%s,%d",
-			       get_spec_reg_name (minfop, x), z);
-      else
-	(*info->fprintf_func) (info->stream, "\t%s,%s",
-			       get_spec_reg_name (minfop, x),
-			       get_reg_name (minfop, z));
-      break;
+	case dadao_operands_fa_op_fdfb_reg_fc_0_put:
+		/* PUT - "spec_reg,$Z|Z".  */
+		(*info->fprintf_func) (info->stream, "\t%s,%s",
+				     get_spec_reg_name (minfop, x),
+				     get_reg_name (minfop, z));
+		break;
 
 	case dadao_operands_fa_op_fbcd_i18: /* Like SWYM or TRAP - "imm18".  */
 		(*info->fprintf_func) (info->stream, "\t%d", (fb << 12) | (fc << 6) | fd);
