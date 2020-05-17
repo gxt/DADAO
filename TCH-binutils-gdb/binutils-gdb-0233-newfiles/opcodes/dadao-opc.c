@@ -211,8 +211,6 @@ const struct dadao_opcode dadao_opcodes[] =
 
 	{"geta",	Z (0xf4),	0,	OP (fa_reg_fbcd_i18),	dadao_type_geta},
 
-   {"sync",	O (0xfc),	0,	OP (sync),		N},
-
    {"put", Z (0xf6) | 0xff00,	0,	OP (put),		N},
    {"get", O (0xfe) | 0xffe0,	0,	OP (get),		N},
 

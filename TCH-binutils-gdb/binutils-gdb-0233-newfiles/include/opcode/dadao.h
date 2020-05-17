@@ -71,9 +71,6 @@ enum dadao_operands_type
    /* "X,YZ", POP.  Unless GNU syntax, zero or one operand is allowed.  */
    dadao_operands_pop,
 
-   /* "XYZ", like SYNC.  */
-   dadao_operands_sync,
-
    /* "$X|X,Address, like PUSHJ.  */
    dadao_operands_pushj,
 

@@ -226,7 +226,6 @@ get_opcode_found:
 	case dadao_operands_regs_z:
 	case dadao_operands_pushgo:
 	case dadao_operands_pop:
-	case dadao_operands_sync:
 	case dadao_operands_pushj:
 	case dadao_operands_get:
 	case dadao_operands_set:
@@ -440,12 +439,6 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
     case dadao_operands_pop:
       /* Like POP - "X,YZ".  */
       (*info->fprintf_func) (info->stream, "\t%d,%d", x, y*256 + z);
-      break;
-
-    case dadao_operands_sync:
-	/* Like SYNC - "XYZ".  */
-      (*info->fprintf_func) (info->stream, "\t%u",
-			     x * 65536 + y * 256 + z);
       break;
 
     case dadao_operands_pushj:

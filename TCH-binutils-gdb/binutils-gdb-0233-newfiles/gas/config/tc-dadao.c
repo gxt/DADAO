@@ -767,10 +767,6 @@ void dadao_md_assemble (char *str)
       max_operands = 2;
       break;
 
-    case dadao_operands_sync:
-      max_operands = 1;
-      break;
-
     case dadao_operands_none:
       max_operands = 0;
       break;
@@ -1085,29 +1081,6 @@ void dadao_md_assemble (char *str)
 	/* FIXME: This doesn't bring us unsignedness checking.  */
 	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 2,
 		     2, exp + 1, 0, BFD_RELOC_16);
-      break;
-
-    case dadao_operands_sync:
-      if (n_operands != 1
-	  || exp[0].X_op == O_register
-	  || (exp[0].X_op == O_constant
-	      && (exp[0].X_add_number > 0xffffff || exp[0].X_add_number < 0)))
-	{
-	  as_bad (_("invalid operands to opcode %s: `%s'"),
-		  instruction->name, operands);
-	  return;
-	}
-
-      if (exp[0].X_op == O_constant)
-	{
-	  opcodep[1] = (exp[0].X_add_number >> 16) & 255;
-	  opcodep[2] = (exp[0].X_add_number >> 8) & 255;
-	  opcodep[3] = exp[0].X_add_number & 255;
-	}
-      else
-	/* FIXME: This doesn't bring us unsignedness checking.  */
-	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 1,
-		     3, exp + 0, 0, BFD_RELOC_24);
       break;
 
     case dadao_operands_get:
