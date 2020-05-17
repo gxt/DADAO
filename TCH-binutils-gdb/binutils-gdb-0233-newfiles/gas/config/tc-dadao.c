@@ -913,7 +913,6 @@ void dadao_md_assemble (char *str)
 
     case dadao_operands_pop:
       /* FALLTHROUGH.  */
-    case dadao_operands_x_regs_z:
       if (n_operands < 1
 	  || (exp[0].X_op == O_constant
 	      && (exp[0].X_add_number > 255
@@ -965,9 +964,6 @@ void dadao_md_assemble (char *str)
 	  break;
 	}
       /* FALLTHROUGH.  */
-    case dadao_operands_x_regs_z:
-      /* SYNCD: "X,$Y,$Z|Z".  */
-      /* FALLTHROUGH.  */
     case dadao_operands_regs_z:
       /* Operands "$X,$Y,$Z|Z", number of arguments checked above.  */
       /* FALLTHROUGH.  */
@@ -1010,8 +1006,7 @@ void dadao_md_assemble (char *str)
 
 	  /* Not known as a register.  Is base address plus offset
 	     allowed, or can we assume that it is a register anyway?  */
-	  if ((instruction->operands != dadao_operands_x_regs_z
-	       && instruction->operands != dadao_operands_pushgo)
+	  if ((instruction->operands != dadao_operands_pushgo)
 	      || (instruction->type != dadao_type_memaccess_octa
 		  && instruction->type != dadao_type_memaccess_tetra
 		  && instruction->type != dadao_type_memaccess_wyde

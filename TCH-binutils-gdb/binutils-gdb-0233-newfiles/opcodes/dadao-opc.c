@@ -142,10 +142,6 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"stsf",	Z (0xAE),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MT},
 
 
-   {"syncd",	Z (0xb8),	0,	OP (x_regs_z),		M},
-
-   {"syncid",	Z (0xbc),	0,	OP (x_regs_z),		M},
-
    {"pushgo",	Z (PUSHGO_INSN_BYTE),
 				0,	OP (pushgo),		J},
 

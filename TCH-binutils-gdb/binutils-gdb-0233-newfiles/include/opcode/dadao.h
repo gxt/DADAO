@@ -74,9 +74,6 @@ enum dadao_operands_type
    /* "XYZ", like SYNC.  */
    dadao_operands_sync,
 
-   /* "X,$Y,$Z|Z", like SYNCD.  */
-   dadao_operands_x_regs_z,
-
    /* "$X|X,Address, like PUSHJ.  */
    dadao_operands_pushj,
 
