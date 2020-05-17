@@ -97,10 +97,10 @@ const struct dadao_opcode dadao_opcodes[] =
 	/* Synonym for ADDU.  Put after ADDU, since we don't prefer it for disassembly. */
 	{"lda",		Z (0x22),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	D_A_BC},
 
-	{"slu",		Z (0x3E),	1,	OP (fa_op_fdfb_reg_fc_i6),	D_B_C},
-	{"sr",		Z (0x3E),	2,	OP (fa_op_fdfb_reg_fc_i6),	D_B_C},
-	{"sru",		Z (0x3E),	3,	OP (fa_op_fdfb_reg_fc_i6),	D_B_C},
-	{"not",		Z (0x3E),	4,	OP (fa_op_fdfb_reg_fc_i6),	D_B_C},
+	{"slu",		Z (0x3E),	1,	OP (fa_op_fdfb_reg_fc_reg_i6),	D_B_C},
+	{"sr",		Z (0x3E),	2,	OP (fa_op_fdfb_reg_fc_reg_i6),	D_B_C},
+	{"sru",		Z (0x3E),	3,	OP (fa_op_fdfb_reg_fc_reg_i6),	D_B_C},
+	{"not",		Z (0x3E),	4,	OP (fa_op_fdfb_reg_fc_reg_i6),	D_B_C},
 
 	{"bn",		Z (0x40),	0,	OP (fa_reg_fbcd_i18),		COND_BR},
 	{"bnn",		Z (0x48),	0,	OP (fa_reg_fbcd_i18),		COND_BR},

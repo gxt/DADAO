@@ -775,6 +775,7 @@ void dadao_md_assemble (char *str)
 		break;
 
 	case dadao_operands_fa_op_fdfb_reg_fc_i6:
+	case dadao_operands_fa_op_fdfb_reg_fc_reg_i6:
 	case dadao_operands_fa_op_fbcd_reg:
 		max_operands = 3;
 		break;
@@ -1021,7 +1022,22 @@ void dadao_md_assemble (char *str)
 
 		break;
 
-	case dadao_operands_fa_op_fdfb_reg_fc_i6: /* "regd, regb, regc" or "regd, regb, imm6" */
+	case dadao_operands_fa_op_fdfb_reg_fc_i6: /* "regd, regb, imm6" */
+		if ((n_operands != 3) || (exp[2].X_op != O_constant))
+			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+
+		DDOP_EXP_MUST_BE_REG(exp[0]);
+		DDOP_EXP_MUST_BE_REG(exp[1]);
+		DDOP_CHECK_6_BIT(exp[2].X_add_number);
+
+		DDOP_SET_FD(opcodep, exp[0].X_add_number);
+		DDOP_SET_FA(opcodep, instruction->fa_as_opcode);
+		DDOP_SET_FB(opcodep, exp[1].X_add_number);
+		DDOP_SET_FC(opcodep, exp[2].X_add_number);
+
+		break;
+
+	case dadao_operands_fa_op_fdfb_reg_fc_reg_i6: /* "regd, regb, regc" or "regd, regb, imm6" */
 		if (n_operands != 3)
 			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 
