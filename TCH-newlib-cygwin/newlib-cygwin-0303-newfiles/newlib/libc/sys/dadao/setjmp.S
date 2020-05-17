@@ -18,7 +18,7 @@ setjmp:
 # Store fp, sp and return address.  Recycle the static-chain and
 # structure-return registers as temporary register, since we need to keep
 # the jmp_buf (parameter 1) and the return address across a "POP".
-	SET  $251,arg1
+	or	$59, arg1, 0
 	sto	$61, $59, 0
 	GET  $252,rJ
 	sto	$60, $59, 8
@@ -42,7 +42,7 @@ longjmp:
 # Save arg1 in a global register, since it will be destroyed by the POPs
 	csz	arg2, arg2, 1
 	sto	arg2, arg1, 32
-	SET  $251,arg1
+	or	$59, arg1, 0
 
 # Loop and "POP 0,0" until rO is the expected value, like
 # the expansion of nonlocal_goto_receiver, except that we put the return

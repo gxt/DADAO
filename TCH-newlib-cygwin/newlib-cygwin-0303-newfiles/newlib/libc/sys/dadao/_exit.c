@@ -5,7 +5,7 @@
 
 void _exit (int n)
 {
-  __asm__ ("SET $63,%0\n\ttrap 0"
+  __asm__ ("or	$63, %0, 0\n\ttrap	0"
 	   : /* No outputs.  */
 	   : "r" (n)
 	   : "memory");
