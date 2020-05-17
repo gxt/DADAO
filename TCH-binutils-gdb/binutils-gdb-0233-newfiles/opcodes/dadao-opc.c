@@ -183,15 +183,15 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"fdiv",	O (DADAO_INSN_FP),	20,	OP (orrr),		N},
 	{"frem",	O (DADAO_INSN_FP),	22,	OP (orrr),		N},
 
-	{"fix",		O (DADAO_INSN_FP),	5,	OP (fa_op_fdfb_reg_fc_i6),	N},
-	{"fixu",	O (DADAO_INSN_FP),	7,	OP (fa_op_fdfb_reg_fc_i6),	N},
-	{"fsqrt",	O (DADAO_INSN_FP),	21,	OP (fa_op_fdfb_reg_fc_i6),	N},
-	{"fint",	O (DADAO_INSN_FP),	23,	OP (fa_op_fdfb_reg_fc_i6),	N},
+	{"fix",		O (DADAO_INSN_FP),	5,	OP (orir),	N},
+	{"fixu",	O (DADAO_INSN_FP),	7,	OP (orir),	N},
+	{"fsqrt",	O (DADAO_INSN_FP),	21,	OP (orir),	N},
+	{"fint",	O (DADAO_INSN_FP),	23,	OP (orir),	N},
 
-	{"flot",	O (DADAO_INSN_FP),	8,	OP (fa_op_fdfb_reg_fc_i6),	N},
-	{"flotu",	O (DADAO_INSN_FP),	10,	OP (fa_op_fdfb_reg_fc_i6),	N},
-	{"sflot",	O (DADAO_INSN_FP),	12,	OP (fa_op_fdfb_reg_fc_i6),	N},
-	{"sflotu",	O (DADAO_INSN_FP),	14,	OP (fa_op_fdfb_reg_fc_i6),	N},
+	{"flot",	O (DADAO_INSN_FP),	8,	OP (orir),	N},
+	{"flotu",	O (DADAO_INSN_FP),	10,	OP (orir),	N},
+	{"sflot",	O (DADAO_INSN_FP),	12,	OP (orir),	N},
+	{"sflotu",	O (DADAO_INSN_FP),	14,	OP (orir),	N},
 
 	{NULL,	~0,	~0,	0,	OP (none),		N}
  };

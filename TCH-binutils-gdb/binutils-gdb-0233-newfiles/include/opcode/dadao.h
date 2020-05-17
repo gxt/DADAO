@@ -62,7 +62,7 @@ enum dadao_operands_type
 	dadao_operands_fa_op_fdfb_reg_fc_reg_i6,
 
 	/* The regular "regd, regb, imm6" */
-	dadao_operands_fa_op_fdfb_reg_fc_i6,
+	dadao_operands_orir,
 
 	/* ONLY "imm18" accepted, for swym/trip/trap/nop */
 	dadao_operands_oiii,

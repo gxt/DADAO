@@ -226,7 +226,7 @@ get_opcode_found:
 	case dadao_operands_or0r_put:
 	case dadao_operands_orrr:
 	case dadao_operands_oiii:
-	case dadao_operands_fa_op_fdfb_reg_fc_i6:
+	case dadao_operands_orir:
 	case dadao_operands_fa_op_fdfb_reg_fc_reg_i6:
 	case dadao_operands_riir_rrir:
 	case dadao_operands_riir_rrir_or_sym:
@@ -393,7 +393,7 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 				get_reg_name (minfop, fb), fc);
       break;
 
-    case dadao_operands_fa_op_fdfb_reg_fc_i6: /* The regular "regb, regc" or "regb, imm6" */
+    case dadao_operands_orir: /* The regular "regb, regc" or "regb, imm6" */
 	(*info->fprintf_func) (info->stream, "\t%s, %s, %d",
 			       get_reg_name (minfop, fd),
 			       get_reg_name (minfop, fb), fc);
