@@ -855,13 +855,6 @@ void dadao_md_assemble (char *str)
 
   switch (instruction->operands)
     {
-	case dadao_operands_regs_z:
-		if (n_operands != 3) {
-			as_bad (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
-			return;
-		}
-		/* FALLTHROUGH.  */
-
     case dadao_operands_reg_yz:
     case dadao_operands_get:
     case dadao_operands_set:
@@ -940,9 +933,6 @@ void dadao_md_assemble (char *str)
 	  opcodep[3] = exp[1].X_add_number & 255;
 	  break;
 	}
-      /* FALLTHROUGH.  */
-    case dadao_operands_regs_z:
-      /* Operands "$X,$Y,$Z|Z", number of arguments checked above.  */
       if ((n_operands != 2 && n_operands != 3)
 	  || (exp[1].X_op == O_register && exp[1].X_add_number > 255)
 	  || (n_operands == 3
