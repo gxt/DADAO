@@ -13,13 +13,13 @@
 	.section .init,"ax",@progbits
 	geta	$63, 0f
 	put	rJ, $63
-	POP	0,0
+	ret
 0:	put	rJ, $0
-	POP	0,0
+	ret
 	
 	.section .fini,"ax",@progbits
 	geta	$63, 0f
 	put	rJ, $63
-	POP	0,0
+	ret
 0:	put	rJ, $0
-	POP	0,0
+	ret

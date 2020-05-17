@@ -1065,7 +1065,7 @@
 (define_insn "*expanded_return"
   [(return)]
   ""
-  "POP %.,0")
+	"ret")
 
 (define_expand "prologue"
   [(const_int 0)]
@@ -1149,7 +1149,8 @@
 	ldou	$63, %a0, 0\n\
 0:\;	get	%1, rO\;\
 	cmpu	%1, %1, $63	\;\
-BNP %1,1f\;POP 0,0\n1:";
+	bnp	%1, 1f\;\
+	ret\n1:";
 
   my_operands[1] = operands[0];
   my_operands[2] = GEN_INT (-DADAO_fp_rO_OFFSET);
