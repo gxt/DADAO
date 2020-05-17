@@ -71,7 +71,7 @@ enum dadao_operands_type
 	dadao_operands_or0r_get,
 
 	/* "spec_reg,$Z"; PUT.  */
-	dadao_operands_fa_op_fdfb_reg_fc_0_put,
+	dadao_operands_or0r_put,
  };
 
 struct dadao_opcode

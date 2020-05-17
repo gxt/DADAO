@@ -223,7 +223,7 @@ get_opcode_found:
 	  /* These have no restraint on what can be in the lower three
 	     bytes.  */
 	case dadao_operands_or0r_get:
-	case dadao_operands_fa_op_fdfb_reg_fc_0_put:
+	case dadao_operands_or0r_put:
 	case dadao_operands_orrr:
 	case dadao_operands_oiii:
 	case dadao_operands_fa_op_fdfb_reg_fc_i6:
@@ -448,7 +448,7 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 				     get_spec_reg_name (minfop, z));
 		break;
 
-	case dadao_operands_fa_op_fdfb_reg_fc_0_put:
+	case dadao_operands_or0r_put:
 		/* PUT - "spec_reg,$Z|Z".  */
 		(*info->fprintf_func) (info->stream, "\t%s,%s",
 				     get_spec_reg_name (minfop, x),
