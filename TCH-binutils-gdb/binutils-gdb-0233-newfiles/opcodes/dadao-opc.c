@@ -125,23 +125,14 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"sru",		Z (0x3E),	3,	OP (fa_op_fdfb_reg_fc_reg_i6),	D_B_C},
 	{"not",		Z (0x3E),	4,	OP (fa_op_fdfb_reg_fc_reg_i6),	D_B_C},
 
-	{"bn",		Z (0x40),	0,	OP (fa_reg_fbcd_i18),		COND_BR},
-	{"bz",		Z (0x42),	0,	OP (fa_reg_fbcd_i18),		COND_BR},
-	{"bp",		Z (0x44),	0,	OP (fa_reg_fbcd_i18),		COND_BR},
-	{"bod",		Z (0x46),	0,	OP (fa_reg_fbcd_i18),		COND_BR},
-	{"bnn",		Z (0x48),	0,	OP (fa_reg_fbcd_i18),		COND_BR},
-	{"bnz",		Z (0x4a),	0,	OP (fa_reg_fbcd_i18),		COND_BR},
-	{"bnp",		Z (0x4c),	0,	OP (fa_reg_fbcd_i18),		COND_BR},
-	{"bev",		Z (0x4e),	0,	OP (fa_reg_fbcd_i18),		COND_BR},
-
-	{"csn",		Z (0x60),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
-	{"csz",		Z (0x62),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
-	{"csp",		Z (0x64),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
-	{"csod",	Z (0x66),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
-	{"csnn",	Z (0x68),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
-	{"csnz",	Z (0x6a),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
-	{"csnp",	Z (0x6c),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
-	{"csev",	Z (0x6e),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
+	{"csn",		Z (0x40),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
+	{"csz",		Z (0x42),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
+	{"csp",		Z (0x44),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
+	{"csod",	Z (0x46),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
+	{"csnn",	Z (0x48),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
+	{"csnz",	Z (0x4A),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
+	{"csnp",	Z (0x4C),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
+	{"csev",	Z (0x4E),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
 
 	{"ldb",		Z (0x80),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MB},
 	{"ldbu",	Z (0x82),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MB},
@@ -152,11 +143,24 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"ldo",		Z (0x8C),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MO},
 	{"ldsf",	Z (0x8E),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MT},
 
-	{"stb",		Z (0xA0),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MB},
-	{"stw",		Z (0xA2),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MW},
-	{"stt",		Z (0xA4),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MT},
-	{"sto",		Z (0xA6),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MO},
-	{"stsf",	Z (0xAE),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MT},
+	{"stb",		Z (0x90),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MB},
+	{"stw",		Z (0x92),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MW},
+	{"stt",		Z (0x94),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MT},
+	{"sto",		Z (0x96),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MO},
+	{"stsf",	Z (0x9E),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MT},
+
+	{"bn",		Z (0xC0),	0,	OP (fa_reg_fbcd_i18),		COND_BR},
+	{"bz",		Z (0xC2),	0,	OP (fa_reg_fbcd_i18),		COND_BR},
+	{"bp",		Z (0xC4),	0,	OP (fa_reg_fbcd_i18),		COND_BR},
+	{"bod",		Z (0xC6),	0,	OP (fa_reg_fbcd_i18),		COND_BR},
+	{"bnn",		Z (0xC8),	0,	OP (fa_reg_fbcd_i18),		COND_BR},
+	{"bnz",		Z (0xCA),	0,	OP (fa_reg_fbcd_i18),		COND_BR},
+	{"bnp",		Z (0xCC),	0,	OP (fa_reg_fbcd_i18),		COND_BR},
+	{"bev",		Z (0xCE),	0,	OP (fa_reg_fbcd_i18),		COND_BR},
+
+	{"jmp",		Z (DADAO_INSN_JUMP),	0,	OP (fa_reg_fbcd_i18),	dadao_type_jmp},
+	{"call",	Z (DADAO_INSN_CALL),	0,	OP (fa_reg_fbcd_i18_ri12),	J},
+	{"geta",	Z (0xD4),	0,	OP (fa_reg_fbcd_i18),	dadao_type_geta},
 
 	{"swym",	O (0xDA),	0,	OP (fa_op_fbcd_i18),		N},
 	{"ret",		O (0xDA),	0x01,	OP (none),			B},
@@ -188,10 +192,6 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"flotu",	O (DADAO_INSN_FP),	10,	OP (fa_op_fdfb_reg_fc_i6),	N},
 	{"sflot",	O (DADAO_INSN_FP),	12,	OP (fa_op_fdfb_reg_fc_i6),	N},
 	{"sflotu",	O (DADAO_INSN_FP),	14,	OP (fa_op_fdfb_reg_fc_i6),	N},
-
-	{"jmp",		Z (0xf0),	0,	OP (fa_reg_fbcd_i18),	dadao_type_jmp},
-	{"call",	Z (DADAO_INSN_CALL),	0,	OP (fa_reg_fbcd_i18_ri12),	J},
-	{"geta",	Z (0xf4),	0,	OP (fa_reg_fbcd_i18),	dadao_type_geta},
 
 	{NULL,	~0,	~0,	0,	OP (none),		N}
  };
