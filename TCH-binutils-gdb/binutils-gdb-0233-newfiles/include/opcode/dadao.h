@@ -43,11 +43,6 @@ enum dadao_operands_type
    /* "$X,YZ", like SETH.  */
    dadao_operands_reg_yz,
 
-   /* The regular "$X,$Y,$Z|Z".
-      The Z is optional; if only "$X,$Y" is given, then "$X,$Y,0" is
-      assumed.  */
-   dadao_operands_regs_z_opt,
-
    /* The regular "$X,$Y,$Z|Z".  */
    dadao_operands_regs_z,
 

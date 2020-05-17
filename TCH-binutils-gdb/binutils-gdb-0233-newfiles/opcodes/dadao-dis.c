@@ -223,7 +223,6 @@ get_opcode_found:
 	  /* These have no restraint on what can be in the lower three
 	     bytes.  */
 	case dadao_operands_reg_yz:
-	case dadao_operands_regs_z_opt:
 	case dadao_operands_regs_z:
 	case dadao_operands_pushgo:
 	case dadao_operands_pop:
@@ -395,7 +394,6 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 			     get_reg_name (minfop, x), y * 256 + z);
       break;
 
-    case dadao_operands_regs_z_opt:
     case dadao_operands_regs_z:
     case dadao_operands_pushgo:
       /* The regular "$X,$Y,$Z|Z".  */

@@ -867,7 +867,6 @@ void dadao_md_assemble (char *str)
 		/* FALLTHROUGH.  */
 
     case dadao_operands_reg_yz:
-    case dadao_operands_regs_z_opt:
     case dadao_operands_get:
     case dadao_operands_set:
       if (n_operands < 1
@@ -974,12 +973,6 @@ void dadao_md_assemble (char *str)
       /* FALLTHROUGH.  */
     case dadao_operands_pushgo:
       /* Operands "$X|X,$Y,$Z|Z", optional Z.  */
-      /* FALLTHROUGH.  */
-    case dadao_operands_regs_z_opt:
-      /* Operands "$X,$Y,$Z|Z", with $Z|Z being optional, default 0.  Any
-	 operands not completely decided yet are postponed to later in
-	 assembly (but not until link-time yet).  */
-
       if ((n_operands != 2 && n_operands != 3)
 	  || (exp[1].X_op == O_register && exp[1].X_add_number > 255)
 	  || (n_operands == 3
@@ -1017,8 +1010,7 @@ void dadao_md_assemble (char *str)
 
 	  /* Not known as a register.  Is base address plus offset
 	     allowed, or can we assume that it is a register anyway?  */
-	  if ((instruction->operands != dadao_operands_regs_z_opt
-	       && instruction->operands != dadao_operands_x_regs_z
+	  if ((instruction->operands != dadao_operands_x_regs_z
 	       && instruction->operands != dadao_operands_pushgo)
 	      || (instruction->type != dadao_type_memaccess_octa
 		  && instruction->type != dadao_type_memaccess_tetra

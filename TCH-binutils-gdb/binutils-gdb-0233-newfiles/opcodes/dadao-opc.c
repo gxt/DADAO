@@ -132,14 +132,15 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"ldo",		Z (0x8C),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MO},
 	{"ldsf",	Z (0x8E),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MT},
 
+	/* GO_INSN_BYTE: 0x9E */
+	{"call",	Z (GO_INSN_BYTE),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	B},
+
 	{"stb",		Z (0xA0),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MB},
 	{"stw",		Z (0xA2),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MW},
 	{"stt",		Z (0xA4),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MT},
 	{"sto",		Z (0xA6),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MO},
 	{"stsf",	Z (0xAE),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MT},
 
-   {"go",	Z (GO_INSN_BYTE),
-				0,	OP (regs_z_opt),	B},
 
    {"syncd",	Z (0xb8),	0,	OP (x_regs_z),		M},
 
