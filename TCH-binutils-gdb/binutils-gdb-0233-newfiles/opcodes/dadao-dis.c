@@ -222,7 +222,6 @@ get_opcode_found:
 	{
 	  /* These have no restraint on what can be in the lower three
 	     bytes.  */
-	case dadao_operands_reg_yz:
 	case dadao_operands_pushj:
 	case dadao_operands_fa_op_fdfb_reg_fc_0_get:
 	case dadao_operands_fa_op_fdfb_reg_fc_0_put:
@@ -374,12 +373,6 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 			     get_reg_name (minfop, fd),
 			     get_reg_name (minfop, fb),
 			     get_reg_name (minfop, fc));
-      break;
-
-    case dadao_operands_reg_yz:
-      /* Like SETH - "$X,YZ".  */
-      (*info->fprintf_func) (info->stream, "\t%s,0x%x",
-			     get_reg_name (minfop, x), y * 256 + z);
       break;
 
     case dadao_operands_fdfa_reg_fbc_rs6_i12: /* The regular "rega, regb << shift6" or "rega, imm12" */

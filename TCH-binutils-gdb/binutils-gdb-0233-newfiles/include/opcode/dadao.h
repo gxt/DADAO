@@ -40,9 +40,6 @@ enum dadao_operands_type
  {
    dadao_operands_none = 0,
 
-   /* "$X,YZ", like SETH.  */
-   dadao_operands_reg_yz,
-
 	/* All operands are registers: "regd, regb, regc".  */
 	dadao_operands_fa_op_fbcd_reg,
 
