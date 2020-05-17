@@ -758,7 +758,6 @@ void dadao_md_assemble (char *str)
      easier to parse each expression first.   */
   switch (instruction->operands)
     {
-    case dadao_operands_reg_yz:
     case dadao_operands_pop:
     case dadao_operands_pushj:
     case dadao_operands_get:
@@ -771,6 +770,7 @@ void dadao_md_assemble (char *str)
       break;
 
 	case dadao_operands_fa_reg_fbcd_i18:
+	case dadao_operands_fd_reg_fabc_i16:
 		max_operands = 2;
 		break;
 
@@ -854,7 +854,6 @@ void dadao_md_assemble (char *str)
 
   switch (instruction->operands)
     {
-    case dadao_operands_reg_yz:
     case dadao_operands_get:
       if (n_operands < 1
 	  || (exp[0].X_op == O_register && exp[0].X_add_number > 255))
@@ -906,7 +905,6 @@ void dadao_md_assemble (char *str)
     {
     case dadao_operands_pop:
       /* FALLTHROUGH.  */
-    case dadao_operands_reg_yz:
       /* A register and a 16-bit unsigned number.  */
       if (n_operands != 2
 	  || exp[1].X_op == O_register
@@ -994,6 +992,21 @@ void dadao_md_assemble (char *str)
 		DDOP_SET_FB(opcodep, exp[1].X_add_number);
 		DDOP_SET_FC(opcodep, exp[2].X_add_number);
 		DDOP_SET_FD(opcodep, exp[0].X_add_number);
+		break;
+
+	case dadao_operands_fd_reg_fabc_i16: /* regd, imm16  */
+		if ((n_operands != 2) || (exp[1].X_op != O_constant))
+			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+
+		DDOP_EXP_MUST_BE_REG(exp[0]);
+		DDOP_CHECK_16_BIT(exp[1].X_add_number);
+		DDOP_CHECK_2_BIT(instruction->fa_as_opcode);
+
+		DDOP_SET_FD(opcodep, exp[0].X_add_number);
+		DDOP_SET_FA(opcodep, (exp[1].X_add_number >> 10) & 63);
+		DDOP_SET_FB(opcodep, (exp[1].X_add_number >> 4) & 63);
+		DDOP_SET_FC(opcodep, (((exp[1].X_add_number & 0xF) << 2) | (instruction->fa_as_opcode)));
+
 		break;
 
 	case dadao_operands_fa_op_fbcd_i18: /* SWYM, TRIP, TRAP: one operands  */

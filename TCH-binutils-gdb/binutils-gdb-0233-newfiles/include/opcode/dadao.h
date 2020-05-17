@@ -49,6 +49,9 @@ enum dadao_operands_type
 	/* The regular "rega, imm18" */
 	dadao_operands_fa_reg_fbcd_i18,
 
+	/* The regular "regd, imm16", 2-bit in fc used to indicate H/MH/ML/L */
+	dadao_operands_fd_reg_fabc_i16,
+
 	/* The regular "regd, rega, regb << shift6" or "regd, rega, imm12" */
 	dadao_operands_fdfa_reg_fbc_rs6_i12,
 
@@ -98,11 +101,17 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 #define PRED_INV_BIT 0x10
 
 #define GO_INSN_BYTE 0x9e
-#define SETL_INSN_BYTE 0xe3
-#define INCML_INSN_BYTE 0xe6
-#define INCMH_INSN_BYTE 0xe5
-#define INCH_INSN_BYTE 0xe4
 #define JMP_INSN_BYTE 0xf0
+
+#define	DADAO_WYDE_L			0
+#define	DADAO_WYDE_ML			1
+#define	DADAO_WYDE_MH			2
+#define	DADAO_WYDE_H			3
+
+#define	DADAO_INSN_SETW			0xE0
+#define	DADAO_INSN_INCW			0xE1
+#define	DADAO_INSN_ORW			0xE2
+#define	DADAO_INSN_ANDNW		0xE3
 
 /* Dadao bit-field definition:
  *   OP: 8-bit, [31..24]
@@ -111,6 +120,17 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
  *   FC: 6-bit, [11..6]
  *   FD: 6-bit, [5..0]
  */
+#define DDOP_CHECK_BIT(ddop_fx, bit_count)							\
+	do {											\
+		if ((ddop_fx) < 0)								\
+			as_bad_where(__FILE__, __LINE__, "negative");				\
+		if ((ddop_fx) > ((1 << (bit_count)) - 1))					\
+			as_bad_where(__FILE__, __LINE__, "bigger than %d bits", bit_count );	\
+	} while (0)
+
+#define DDOP_CHECK_2_BIT(ddop_fx) DDOP_CHECK_BIT(ddop_fx, 2)
+#define DDOP_CHECK_16_BIT(ddop_fx) DDOP_CHECK_BIT(ddop_fx, 16)
+
 #define DDOP_CHECK_8_BIT(ddop_fx)								\
 	do {											\
 		if ((ddop_fx) < 0)								\
