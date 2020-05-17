@@ -1037,7 +1037,7 @@
    (clobber (reg:DI DADAO_rJ_REGNUM))]
   ""
   "@
-   PUSHJ $%p2,%0
+	call	$0, %0, 0
 	call	$%p2, %a0")
 
 (define_insn "*call_value_real"
@@ -1049,7 +1049,7 @@
   (clobber (reg:DI DADAO_rJ_REGNUM))]
   ""
   "@
-   PUSHJ $%p3,%1
+	call	$0, %1, 0
 	call	$%p3, %a1")
 
 ;; I hope untyped_call and untyped_return are not needed for DADAO.
