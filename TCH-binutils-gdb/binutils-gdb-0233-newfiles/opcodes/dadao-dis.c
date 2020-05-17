@@ -226,7 +226,6 @@ get_opcode_found:
 	case dadao_operands_pop:
 	case dadao_operands_pushj:
 	case dadao_operands_get:
-	case dadao_operands_set:
 	case dadao_operands_fa_op_fbcd_reg:
 	case dadao_operands_fa_op_fbcd_i18:
 	case dadao_operands_fa_op_fdfb_reg_fc_i6:
@@ -457,13 +456,6 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	(*info->fprintf_func) (info->stream, "\t%s,%s",
 			       get_spec_reg_name (minfop, x),
 			       get_reg_name (minfop, z));
-      break;
-
-    case dadao_operands_set:
-      /*  Two registers, "$X,$Y".  */
-      (*info->fprintf_func) (info->stream, "\t%s,%s",
-			     get_reg_name (minfop, x),
-			     get_reg_name (minfop, y));
       break;
 
 	case dadao_operands_fa_op_fbcd_i18: /* Like SWYM or TRAP - "imm18".  */

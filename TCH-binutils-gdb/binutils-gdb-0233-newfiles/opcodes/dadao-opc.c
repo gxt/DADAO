@@ -141,11 +141,6 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"sto",		Z (0xA6),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MO},
 	{"stsf",	Z (0xAE),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MT},
 
-
-   /* Synonym for OR with a zero Z.  */
-   {"set",	O (0xc1)
-		  | 0xff,	0,	OP (set),		N},
-
 	{"or",		Z (0xC0),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
 	{"and",		Z (0xC2),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
 	{"xor",		Z (0xC4),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},

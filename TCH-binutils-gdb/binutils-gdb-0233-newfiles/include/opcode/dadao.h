@@ -72,9 +72,6 @@ enum dadao_operands_type
 
    /* "spec_reg,$Z|Z"; PUT.  */
    dadao_operands_put,
-
-   /* Two registers, "$X,$Y".  */
-   dadao_operands_set,
  };
 
 struct dadao_opcode

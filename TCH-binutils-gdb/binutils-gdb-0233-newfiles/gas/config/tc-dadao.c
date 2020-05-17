@@ -763,7 +763,6 @@ void dadao_md_assemble (char *str)
     case dadao_operands_pushj:
     case dadao_operands_get:
     case dadao_operands_put:
-    case dadao_operands_set:
       max_operands = 2;
       break;
 
@@ -857,7 +856,6 @@ void dadao_md_assemble (char *str)
     {
     case dadao_operands_reg_yz:
     case dadao_operands_get:
-    case dadao_operands_set:
       if (n_operands < 1
 	  || (exp[0].X_op == O_register && exp[0].X_add_number > 255))
 	{
@@ -906,125 +904,6 @@ void dadao_md_assemble (char *str)
   /* Handle the rest.  */
   switch (instruction->operands)
     {
-    case dadao_operands_set:
-      /* SET: Either two registers, "$X,$Y", with Z field as zero, or
-	 "$X,YZ", meaning change the opcode to SETL.  */
-      if (n_operands != 2
-	  || (exp[1].X_op == O_constant
-	      && (exp[1].X_add_number > 0xffff || exp[1].X_add_number < 0)))
-	{
-	  as_bad (_("invalid operands to opcode %s: `%s'"),
-		  instruction->name, operands);
-	  return;
-	}
-
-      if (exp[1].X_op == O_constant)
-	{
-	  /* There's an ambiguity with "SET $0,Y" when Y isn't defined
-	     yet.  To keep things simple, we assume that Y is then a
-	     register, and only change the opcode if Y is defined at this
-	     point.
-
-	     There's no compatibility problem with dadaoal, since it emits
-	     errors if the field is not defined at this point.  */
-	  md_number_to_chars (opcodep, SETL_INSN_BYTE, 1);
-
-	  opcodep[2] = (exp[1].X_add_number >> 8) & 255;
-	  opcodep[3] = exp[1].X_add_number & 255;
-	  break;
-	}
-      if ((n_operands != 2 && n_operands != 3)
-	  || (exp[1].X_op == O_register && exp[1].X_add_number > 255)
-	  || (n_operands == 3
-	      && ((exp[2].X_op == O_register
-		   && exp[2].X_add_number > 255)
-		  || (exp[2].X_op == O_constant
-		      && (exp[2].X_add_number > 255
-			  || exp[2].X_add_number < 0)))))
-	{
-	  as_bad (_("invalid operands to opcode %s: `%s'"),
-		  instruction->name, operands);
-	  return;
-	}
-
-      if (n_operands == 2)
-	{
-	  symbolS *sym;
-
-	  /* The last operand is immediate whenever we see just two
-	     operands.  */
-	  opcodep[0] |= IMM_OFFSET_BIT;
-
-	  /* Now, we could either have an implied "0" as the Z operand, or
-	     it could be the constant of a "base address plus offset".  It
-	     depends on whether it is allowed; only memory operations, as
-	     signified by instruction->type and "T" and "X" operand types,
-	     and it depends on whether we find a register in the second
-	     operand, exp[1].  */
-	  if (exp[1].X_op == O_register && exp[1].X_add_number <= 255)
-	    {
-	      /* A zero then; all done.  */
-	      opcodep[2] = exp[1].X_add_number;
-	      break;
-	    }
-
-	  /* Not known as a register.  Is base address plus offset
-	     allowed, or can we assume that it is a register anyway?  */
-	  if ((instruction->type != dadao_type_memaccess_octa
-		  && instruction->type != dadao_type_memaccess_tetra
-		  && instruction->type != dadao_type_memaccess_wyde
-		  && instruction->type != dadao_type_memaccess_byte
-		  && instruction->type != dadao_type_memaccess_block
-		  && instruction->type != dadao_type_jsr
-		  && instruction->type != dadao_type_branch))
-	    {
-	      fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 2,
-			   1, exp + 1, 0, BFD_RELOC_DADAO_REG);
-	      break;
-	    }
-
-	  /* To avoid getting a NULL add_symbol for constants and then
-	     catching a SEGV in write_relocs since it doesn't handle
-	     constants well for relocs other than PC-relative, we need to
-	     pass expressions as symbols and use fix_new, not fix_new_exp.  */
-	  sym = make_expr_symbol (exp + 1);
-
-	  /* Mark the symbol as being OK for a reloc.  */
-	  symbol_get_bfdsym (sym)->flags |= BSF_KEEP;
-
-	  /* Now we know it can be a "base address plus offset".  Add
-	     proper fixup types so we can handle this later, when we've
-	     parsed everything.  */
-	  fix_new (opc_fragP, opcodep - opc_fragP->fr_literal + 2,
-		   8, sym, 0, 0, BFD_RELOC_DADAO_BASE_PLUS_OFFSET);
-	  break;
-	}
-
-      if (exp[1].X_op == O_register)
-	opcodep[2] = exp[1].X_add_number;
-      else
-	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 2,
-		     1, exp + 1, 0, BFD_RELOC_DADAO_REG);
-
-      /* In dadaoal compatibility mode, we allow special registers as
-	 constants for the Z operand.  They have 256 added to their
-	 register numbers, so the right thing will happen if we just treat
-	 those as constants.  */
-      if (exp[2].X_op == O_register && exp[2].X_add_number <= 255)
-	opcodep[3] = exp[2].X_add_number;
-      else if (exp[2].X_op == O_constant
-	       || (exp[2].X_op == O_register && exp[2].X_add_number > 255))
-	{
-	  opcodep[3] = exp[2].X_add_number;
-	  opcodep[0] |= IMM_OFFSET_BIT;
-	}
-      else
-	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 3,
-		     1, exp + 2, 0,
-		     (instruction->operands == dadao_operands_set)
-		     ? BFD_RELOC_DADAO_REG : BFD_RELOC_DADAO_REG_OR_BYTE);
-      break;
-
     case dadao_operands_pop:
       /* FALLTHROUGH.  */
     case dadao_operands_reg_yz:
