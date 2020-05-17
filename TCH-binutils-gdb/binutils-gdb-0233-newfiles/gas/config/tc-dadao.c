@@ -888,25 +888,6 @@ void dadao_md_assemble (char *str)
      their first operand.  */
   switch (instruction->operands)
     {
-    case dadao_operands_pushgo:
-      /* PUSHGO: X is a constant, but can be expressed as a register.
-	 We handle X here and use the common machinery of T,X,3,$ for
-	 the rest of the operands.  */
-      if (n_operands < 2
-	  || ((exp[0].X_op == O_constant || exp[0].X_op == O_register)
-	      && (exp[0].X_add_number > 255 || exp[0].X_add_number < 0)))
-	{
-	  as_bad (_("invalid operands to opcode %s: `%s'"),
-		  instruction->name, operands);
-	  return;
-	}
-      else if (exp[0].X_op == O_constant || exp[0].X_op == O_register)
-	opcodep[1] = exp[0].X_add_number;
-      else
-	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 1,
-		     1, exp + 0, 0, BFD_RELOC_DADAO_REG_OR_BYTE);
-      break;
-
     case dadao_operands_pop:
       /* FALLTHROUGH.  */
       if (n_operands < 1
@@ -962,9 +943,6 @@ void dadao_md_assemble (char *str)
       /* FALLTHROUGH.  */
     case dadao_operands_regs_z:
       /* Operands "$X,$Y,$Z|Z", number of arguments checked above.  */
-      /* FALLTHROUGH.  */
-    case dadao_operands_pushgo:
-      /* Operands "$X|X,$Y,$Z|Z", optional Z.  */
       if ((n_operands != 2 && n_operands != 3)
 	  || (exp[1].X_op == O_register && exp[1].X_add_number > 255)
 	  || (n_operands == 3
@@ -1002,8 +980,7 @@ void dadao_md_assemble (char *str)
 
 	  /* Not known as a register.  Is base address plus offset
 	     allowed, or can we assume that it is a register anyway?  */
-	  if ((instruction->operands != dadao_operands_pushgo)
-	      || (instruction->type != dadao_type_memaccess_octa
+	  if ((instruction->type != dadao_type_memaccess_octa
 		  && instruction->type != dadao_type_memaccess_tetra
 		  && instruction->type != dadao_type_memaccess_wyde
 		  && instruction->type != dadao_type_memaccess_byte

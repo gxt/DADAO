@@ -133,7 +133,7 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"ldsf",	Z (0x8E),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MT},
 
 	/* GO_INSN_BYTE: 0x9E */
-	{"call",	Z (GO_INSN_BYTE),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	B},
+	{"call",	Z (GO_INSN_BYTE),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	J},
 
 	{"stb",		Z (0xA0),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MB},
 	{"stw",		Z (0xA2),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MW},
@@ -141,9 +141,6 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"sto",		Z (0xA6),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MO},
 	{"stsf",	Z (0xAE),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MT},
 
-
-   {"pushgo",	Z (PUSHGO_INSN_BYTE),
-				0,	OP (pushgo),		J},
 
    /* Synonym for OR with a zero Z.  */
    {"set",	O (0xc1)

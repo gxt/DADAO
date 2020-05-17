@@ -224,7 +224,6 @@ get_opcode_found:
 	     bytes.  */
 	case dadao_operands_reg_yz:
 	case dadao_operands_regs_z:
-	case dadao_operands_pushgo:
 	case dadao_operands_pop:
 	case dadao_operands_pushj:
 	case dadao_operands_get:
@@ -393,7 +392,6 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
       break;
 
     case dadao_operands_regs_z:
-    case dadao_operands_pushgo:
       /* The regular "$X,$Y,$Z|Z".  */
       if (insn & INSN_IMMEDIATE_BIT)
 	(*info->fprintf_func) (info->stream, "\t%s,%s,%d",

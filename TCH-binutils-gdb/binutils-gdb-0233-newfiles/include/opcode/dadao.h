@@ -64,10 +64,6 @@ enum dadao_operands_type
 	/* ONLY "imm18" accepted, for swym/trip/trap/nop */
 	dadao_operands_fa_op_fbcd_i18,
 
-   /* "$X|X,$Y,$Z|Z": PUSHGO; like "3", but X can be expressed as an
-      integer.  */
-   dadao_operands_pushgo,
-
    /* "X,YZ", POP.  Unless GNU syntax, zero or one operand is allowed.  */
    dadao_operands_pop,
 
@@ -107,7 +103,6 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 #define COND_INV_BIT 0x8
 #define PRED_INV_BIT 0x10
 
-#define PUSHGO_INSN_BYTE 0xbe
 #define GO_INSN_BYTE 0x9e
 #define SETL_INSN_BYTE 0xe3
 #define INCML_INSN_BYTE 0xe6

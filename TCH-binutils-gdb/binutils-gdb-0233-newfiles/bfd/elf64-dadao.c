@@ -1027,7 +1027,7 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 
 	/* Put a "PUSHGO $N,$255,0" after the common sequence.  */
 	bfd_put_32 (abfd,
-		    ((PUSHGO_INSN_BYTE | IMM_OFFSET_BIT) << 24)
+		    ((GO_INSN_BYTE | IMM_OFFSET_BIT) << 24)
 		    | (inreg << 16)
 		    | 0xff00,
 		    (bfd_byte *) datap + 16);
