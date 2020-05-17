@@ -102,11 +102,12 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 #define	DADAO_WYDE_MH			2
 #define	DADAO_WYDE_H			3
 
+#define	DADAO_INSN_SETW			0x3A
+#define	DADAO_INSN_INCW			0x3B
+#define	DADAO_INSN_ORW			0x3C
+#define	DADAO_INSN_ANDNW		0x3D
+
 #define	DADAO_INSN_FP			0xDB
-#define	DADAO_INSN_SETW			0xE0
-#define	DADAO_INSN_INCW			0xE1
-#define	DADAO_INSN_ORW			0xE2
-#define	DADAO_INSN_ANDNW		0xE3
 #define	DADAO_INSN_JUMP			0xF0
 #define	DADAO_INSN_CALL			0xF2
 

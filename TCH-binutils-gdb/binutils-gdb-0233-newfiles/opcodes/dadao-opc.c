@@ -100,6 +100,26 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"and",		Z (0x36),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
 	{"xor",		Z (0x38),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
 
+	{"setl",	O (DADAO_INSN_SETW),	DADAO_WYDE_L,	OP (fd_reg_fabc_i16),		N},
+	{"setml",	O (DADAO_INSN_SETW),	DADAO_WYDE_ML,	OP (fd_reg_fabc_i16),		N},
+	{"setmh",	O (DADAO_INSN_SETW),	DADAO_WYDE_MH,	OP (fd_reg_fabc_i16),		N},
+	{"seth",	O (DADAO_INSN_SETW),	DADAO_WYDE_H,	OP (fd_reg_fabc_i16),		N},
+
+	{"incl",	O (DADAO_INSN_INCW),	DADAO_WYDE_L,	OP (fd_reg_fabc_i16),		N},
+	{"incml",	O (DADAO_INSN_INCW),	DADAO_WYDE_ML,	OP (fd_reg_fabc_i16),		N},
+	{"incmh",	O (DADAO_INSN_INCW),	DADAO_WYDE_MH,	OP (fd_reg_fabc_i16),		N},
+	{"inch",	O (DADAO_INSN_INCW),	DADAO_WYDE_H,	OP (fd_reg_fabc_i16),		N},
+
+	{"orl",		O (DADAO_INSN_ORW),	DADAO_WYDE_L,	OP (fd_reg_fabc_i16),		N},
+	{"orml",	O (DADAO_INSN_ORW),	DADAO_WYDE_ML,	OP (fd_reg_fabc_i16),		N},
+	{"ormh",	O (DADAO_INSN_ORW),	DADAO_WYDE_MH,	OP (fd_reg_fabc_i16),		N},
+	{"orh",		O (DADAO_INSN_ORW),	DADAO_WYDE_H,	OP (fd_reg_fabc_i16),		N},
+
+	{"andnl",	O (DADAO_INSN_ANDNW),	DADAO_WYDE_L,	OP (fd_reg_fabc_i16),		N},
+	{"andnml",	O (DADAO_INSN_ANDNW),	DADAO_WYDE_ML,	OP (fd_reg_fabc_i16),		N},
+	{"andnmh",	O (DADAO_INSN_ANDNW),	DADAO_WYDE_MH,	OP (fd_reg_fabc_i16),		N},
+	{"andnh",	O (DADAO_INSN_ANDNW),	DADAO_WYDE_H,	OP (fd_reg_fabc_i16),		N},
+
 	{"slu",		Z (0x3E),	1,	OP (fa_op_fdfb_reg_fc_reg_i6),	D_B_C},
 	{"sr",		Z (0x3E),	2,	OP (fa_op_fdfb_reg_fc_reg_i6),	D_B_C},
 	{"sru",		Z (0x3E),	3,	OP (fa_op_fdfb_reg_fc_reg_i6),	D_B_C},
@@ -168,26 +188,6 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"flotu",	O (DADAO_INSN_FP),	10,	OP (fa_op_fdfb_reg_fc_i6),	N},
 	{"sflot",	O (DADAO_INSN_FP),	12,	OP (fa_op_fdfb_reg_fc_i6),	N},
 	{"sflotu",	O (DADAO_INSN_FP),	14,	OP (fa_op_fdfb_reg_fc_i6),	N},
-
-	{"setl",	O (DADAO_INSN_SETW),	DADAO_WYDE_L,	OP (fd_reg_fabc_i16),		N},
-	{"setml",	O (DADAO_INSN_SETW),	DADAO_WYDE_ML,	OP (fd_reg_fabc_i16),		N},
-	{"setmh",	O (DADAO_INSN_SETW),	DADAO_WYDE_MH,	OP (fd_reg_fabc_i16),		N},
-	{"seth",	O (DADAO_INSN_SETW),	DADAO_WYDE_H,	OP (fd_reg_fabc_i16),		N},
-
-	{"incl",	O (DADAO_INSN_INCW),	DADAO_WYDE_L,	OP (fd_reg_fabc_i16),		N},
-	{"incml",	O (DADAO_INSN_INCW),	DADAO_WYDE_ML,	OP (fd_reg_fabc_i16),		N},
-	{"incmh",	O (DADAO_INSN_INCW),	DADAO_WYDE_MH,	OP (fd_reg_fabc_i16),		N},
-	{"inch",	O (DADAO_INSN_INCW),	DADAO_WYDE_H,	OP (fd_reg_fabc_i16),		N},
-
-	{"orl",		O (DADAO_INSN_ORW),	DADAO_WYDE_L,	OP (fd_reg_fabc_i16),		N},
-	{"orml",	O (DADAO_INSN_ORW),	DADAO_WYDE_ML,	OP (fd_reg_fabc_i16),		N},
-	{"ormh",	O (DADAO_INSN_ORW),	DADAO_WYDE_MH,	OP (fd_reg_fabc_i16),		N},
-	{"orh",		O (DADAO_INSN_ORW),	DADAO_WYDE_H,	OP (fd_reg_fabc_i16),		N},
-
-	{"andnl",	O (DADAO_INSN_ANDNW),	DADAO_WYDE_L,	OP (fd_reg_fabc_i16),		N},
-	{"andnml",	O (DADAO_INSN_ANDNW),	DADAO_WYDE_ML,	OP (fd_reg_fabc_i16),		N},
-	{"andnmh",	O (DADAO_INSN_ANDNW),	DADAO_WYDE_MH,	OP (fd_reg_fabc_i16),		N},
-	{"andnh",	O (DADAO_INSN_ANDNW),	DADAO_WYDE_H,	OP (fd_reg_fabc_i16),		N},
 
 	{"jmp",		Z (0xf0),	0,	OP (fa_reg_fbcd_i18),	dadao_type_jmp},
 	{"call",	Z (DADAO_INSN_CALL),	0,	OP (fa_reg_fbcd_i18_ri12),	J},
