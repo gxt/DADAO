@@ -34,7 +34,7 @@
 	(match_operand:QI 1 "general_operand"	    "r,LS,Pnn,rI,x,m,r,n"))]
   ""
   "@
-   SET %0,%1
+	or	%0, %1, 0
    %s1 %0,%v1
 	subu	%0, $0, %n1
    PUT %0,%1
@@ -48,7 +48,7 @@
 	(match_operand:HI 1 "general_operand"	    "r,LS,Pnn,r,x,m,r,n"))]
   ""
   "@
-   SET %0,%1
+	or	%0, %1, 0
    %s1 %0,%v1
 	subu	%0, $0, %n1
    PUT %0,%1
@@ -63,7 +63,7 @@
 	(match_operand:SI 1 "general_operand"	    "r,LS,Pnn,r,x,m,r,n"))]
   ""
   "@
-   SET %0,%1
+	or	%0, %1, 0
    %s1 %0,%v1
 	subu	%0, $0, %n1
    PUT %0,%1
@@ -78,7 +78,7 @@
 	(match_operand:DI 1 "general_operand"	    "r,LS,Pnn,r,x,m,r,R,s,n"))]
   ""
   "@
-   SET %0,%1
+	or	%0, %1, 0
    %s1 %0,%v1
 	subu	%0, $0, %n1
    PUT %0,%1
@@ -96,7 +96,7 @@
        (match_operand:SF 1 "general_operand"	   "r,G,r,x,m,r,F"))]
   ""
   "@
-   SET %0,%1
+	or	%0, %1, 0
    SETL %0,0
    PUT %0,%1
    GET %0,%1
@@ -109,7 +109,7 @@
 	(match_operand:DF 1 "general_operand"	    "r,G,r,x,m,r,F"))]
   ""
   "@
-   SET %0,%1
+	or	%0, %1, 0
    SETL %0,0
    PUT %0,%1
    GET %0,%1
@@ -130,7 +130,7 @@
   "GET_MODE_CLASS (GET_MODE (operands[0])) == MODE_CC
    && GET_MODE_CLASS (GET_MODE (operands[1])) == MODE_CC"
   "@
-   SET %0,%1
+	or	%0, %1, 0
    PUT %0,%1
    GET %0,%1
 	ldt	%0, %1

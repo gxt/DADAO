@@ -64,13 +64,13 @@ _start:	SETL	$63,32
 #ifdef __DADAO_ABI_GNU__
 # Copy argc and argv from their initial position to argument registers
 # where necessary.
-	SET	$39,$0
-	SET	$40,$1
+	or	$39, $0, 0
+	or	$40, $1, 0
 #else
 # For the dadao ABI, we need to move arguments.  The return value will
 # appear in $0.
-	SET	$2,$1
-	SET	$1,$0
+	or	$2, $1, 0
+	or	$1, $0, 0
 #endif
 
 	PUSHJ	$0,main
