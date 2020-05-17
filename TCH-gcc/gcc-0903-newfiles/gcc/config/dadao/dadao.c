@@ -987,9 +987,6 @@ dadao_trampoline_init (rtx m_tramp, tree fndecl, rtx static_chain)
   emit_move_insn (mem, static_chain);
   mem = adjust_address (m_tramp, DImode, 3*UNITS_PER_WORD);
   emit_move_insn (mem, fnaddr);
-
-  mem = adjust_address (m_tramp, DImode, 0);
-  emit_insn (gen_sync_icache (mem, GEN_INT (TRAMPOLINE_SIZE - 1)));
 }
 
 /* We must exclude constant addresses that have an increment that is not a

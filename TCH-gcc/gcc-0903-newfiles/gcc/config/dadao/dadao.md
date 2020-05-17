@@ -10,7 +10,6 @@
 ;; Uses of UNSPEC in this file:
 ;; UNSPEC_VOLATILE:
 ;;
-;;	0	sync_icache (sync icache before trampoline jump)
 ;;	1	nonlocal_goto_receiver
 ;;
 
@@ -1190,12 +1189,6 @@ BNP %1,1f\;POP 0,0\n1:";
 	 (not:DI (match_operand:DI 2 "dadao_reg_or_8bit_operand" "rI"))))]
   ""
 	"or	%0, %1, %2	\;\	not	%0, %0, 0")
-
-(define_insn "sync_icache"
-  [(unspec_volatile [(match_operand:DI 0 "memory_operand" "m")
-		     (match_operand:DI 1 "const_int_operand" "I")] 0)]
-  ""
-  "SYNCID %1,%0")
 
 ;; Local Variables:
 ;; mode: lisp
