@@ -776,6 +776,7 @@ void dadao_md_assemble (char *str)
 	case dadao_operands_fa_op_fdfb_reg_fc_i6:
 	case dadao_operands_fa_op_fdfb_reg_fc_reg_i6:
 	case dadao_operands_fa_op_fbcd_reg:
+	case dadao_operands_fa_reg_fbcd_i18_ri12:
 		max_operands = 3;
 		break;
 
@@ -1044,6 +1045,63 @@ void dadao_md_assemble (char *str)
 		default:
 			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 		}
+		break;
+
+	case dadao_operands_fa_reg_fbcd_i18_ri12: /* "rega, imm18" or "rega, regb, imm12" */
+		if ((n_operands != 2) && (n_operands != 3))
+			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+
+		if (n_operands == 2) {
+			/* The last operand is imm18 whenever we see just two operands.  */
+			opcodep[0] |= IMM_OFFSET_BIT;
+
+			DDOP_EXP_MUST_BE_REG(exp[0]);
+			DDOP_SET_FA(opcodep, exp[0].X_add_number);
+
+			/* Add a frag for a JMP relaxation; we need room for max four extra instructions.
+			   We don't do any work around here to check if we can determine the offset right away.  */
+			if (! expand_op)
+				fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ADDR19);
+			else
+				frag_var (rs_machine_dependent, 4 * 4, 0, ENCODE_RELAX (STATE_JMP, STATE_UNDF),
+					exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
+			break;
+		}
+
+		if (n_operands == 3) {
+			symbolS *sym;
+
+			DDOP_EXP_MUST_BE_REG(exp[0]);
+
+			DDOP_SET_FA(opcodep, exp[0].X_add_number);
+
+			/* Now, we could either have an implied "0" as the fbcd operand, or
+			   it could be the constant of a "base address plus offset".  It
+			   depends on whether it is allowed; only memory operations, as
+			   signified by instruction->type and "T" and "X" operand types,
+			   and it depends on whether we find a register in the second
+			   operand, exp[1].  */
+
+			if (exp[2].X_op == O_register)
+				as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+
+			/* To avoid getting a NULL add_symbol for constants and then
+			   catching a SEGV in write_relocs since it doesn't handle
+			   constants well for relocs other than PC-relative, we need to
+			   pass expressions as symbols and use fix_new, not fix_new_exp.  */
+			sym = make_expr_symbol (exp + 2);
+
+			/* Mark the symbol as being OK for a reloc.  */
+			symbol_get_bfdsym (sym)->flags |= BSF_KEEP;
+
+			/* Now we know it can be a "base address plus offset".  Add
+			   proper fixup types so we can handle this later, when we've
+			   parsed everything.  */
+			fix_new (opc_fragP, opcodep - opc_fragP->fr_literal + 2,
+				8, sym, 0, 0, BFD_RELOC_DADAO_BASE_PLUS_OFFSET);
+			break;
+		}
+
 		break;
 
 	case dadao_operands_fa_reg_fbcd_i18: /* "rega, imm18" */

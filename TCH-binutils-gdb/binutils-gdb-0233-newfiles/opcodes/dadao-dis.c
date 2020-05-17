@@ -232,6 +232,7 @@ get_opcode_found:
 	case dadao_operands_fdfa_reg_fbc_rs6_i12:
 	case dadao_operands_fdfa_reg_fbc_rs6_i12_or_sym:
 	case dadao_operands_fa_reg_fbcd_i18:
+	case dadao_operands_fa_reg_fbcd_i18_ri12:
 	case dadao_operands_none:
 	  return opcodep;
 
@@ -426,6 +427,21 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	(*info->print_address_func) (memaddr + offset, info);
       }
       break;
+
+	case dadao_operands_fa_reg_fbcd_i18_ri12:
+		if (insn & INSN_IMMEDIATE_BIT) {
+			bfd_signed_vma offset = (y * 256 + z) * 4;
+
+			info->target = memaddr + offset;
+
+			(*info->fprintf_func) (info->stream, "\t%s,", get_reg_name (minfop, fa));
+			(*info->print_address_func) (memaddr + offset, info);
+		} else
+			(*info->fprintf_func) (info->stream, "\t%s, %s, %d",
+				       get_reg_name (minfop, fa),
+				       get_reg_name (minfop, fb), ((fc << 6) | fd));
+		break;
+
 
 	case dadao_operands_fa_op_fdfb_reg_fc_0_get:
 		/* GET - "X,spec_reg".  */

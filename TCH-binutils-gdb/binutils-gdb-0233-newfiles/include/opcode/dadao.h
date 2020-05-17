@@ -46,6 +46,9 @@ enum dadao_operands_type
 	/* The regular "rega, imm18" */
 	dadao_operands_fa_reg_fbcd_i18,
 
+	/* The regular "rega, imm18" or "rega, regb, imm12" */
+	dadao_operands_fa_reg_fbcd_i18_ri12,
+
 	/* The regular "regd, imm16", 2-bit in fc used to indicate H/MH/ML/L */
 	dadao_operands_fd_reg_fabc_i16,
 
