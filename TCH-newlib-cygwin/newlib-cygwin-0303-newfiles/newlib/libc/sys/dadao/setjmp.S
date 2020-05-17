@@ -20,17 +20,17 @@ setjmp:
 # the jmp_buf (parameter 1) and the return address across a "POP".
 	or	$59, arg1, 0
 	sto	$61, $59, 0
-	GET  $252,rJ
+	get	$60, rJ
 	sto	$60, $59, 8
 	sto	$62, $59, 16
 	setl	outret, 0
 
 # Jump through hoops to get the value of rO *before* the setjmp call.
 	geta	$63, 0f
-	PUT  rJ,$255
+	put	rJ, $63
 	POP  popval,0
 0:
-	GET  $255,rO
+	get	$63, rO
 	sto	$63, $59, 24
 	call	$60, $0, 0
 	.size setjmp,.-setjmp
@@ -52,10 +52,10 @@ longjmp:
 # access can be hoisted outside the loop, but this is safe and simple and
 # I see no need to optimize longjmps.
 	geta	$63, 0f
-	PUT  rJ,$255
+	put	rJ, $63
 	ldo	$63, $59, 24
 0:
-	GET  $252,rO
+	get	$60, rO
 	cmpu	$60, $60, $63
 	BNP  $252,1f
 	ldo	outret, $59, 32
