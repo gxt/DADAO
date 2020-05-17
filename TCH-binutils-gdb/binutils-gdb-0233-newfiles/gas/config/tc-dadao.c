@@ -725,7 +725,7 @@ void dadao_md_assemble (char *str)
 	case dadao_operands_fa_op_fdfb_reg_fc_i6:
 	case dadao_operands_fa_op_fdfb_reg_fc_reg_i6:
 	case dadao_operands_orrr:
-	case dadao_operands_fa_reg_fbcd_i18_ri12:
+	case dadao_operands_riii_rrii:
 		max_operands = 3;
 		break;
 
@@ -958,7 +958,7 @@ void dadao_md_assemble (char *str)
 		}
 		break;
 
-	case dadao_operands_fa_reg_fbcd_i18_ri12: /* "rega, imm18" or "rega, regb, imm12" */
+	case dadao_operands_riii_rrii: /* "rega, imm18" or "rega, regb, imm12" */
 		if ((n_operands != 2) && (n_operands != 3))
 			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 

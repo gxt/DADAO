@@ -159,7 +159,7 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"bev",		Z (0xCE),	0,	OP (fa_reg_fbcd_i18),		COND_BR},
 
 	{"jmp",		Z (DADAO_INSN_JUMP),	0,	OP (fa_reg_fbcd_i18),	dadao_type_jmp},
-	{"call",	Z (DADAO_INSN_CALL),	0,	OP (fa_reg_fbcd_i18_ri12),	J},
+	{"call",	Z (DADAO_INSN_CALL),	0,	OP (riii_rrii),	J},
 	{"geta",	Z (0xD4),	0,	OP (fa_reg_fbcd_i18),	dadao_type_geta},
 
 	{"swym",	O (0xDA),	0,	OP (oiii),		N},

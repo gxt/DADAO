@@ -231,7 +231,7 @@ get_opcode_found:
 	case dadao_operands_fdfa_reg_fbc_rs6_i12:
 	case dadao_operands_fdfa_reg_fbc_rs6_i12_or_sym:
 	case dadao_operands_fa_reg_fbcd_i18:
-	case dadao_operands_fa_reg_fbcd_i18_ri12:
+	case dadao_operands_riii_rrii:
 	case dadao_operands_none:
 	  return opcodep;
 
@@ -426,7 +426,7 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
       }
       break;
 
-	case dadao_operands_fa_reg_fbcd_i18_ri12:
+	case dadao_operands_riii_rrii:
 		if (insn & INSN_IMMEDIATE_BIT) {
 			bfd_signed_vma offset = (y * 256 + z) * 4;
 
