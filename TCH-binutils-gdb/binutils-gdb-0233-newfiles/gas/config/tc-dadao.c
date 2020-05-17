@@ -724,7 +724,7 @@ void dadao_md_assemble (char *str)
 
 	case dadao_operands_fa_op_fdfb_reg_fc_i6:
 	case dadao_operands_fa_op_fdfb_reg_fc_reg_i6:
-	case dadao_operands_fa_op_fbcd_reg:
+	case dadao_operands_orrr:
 	case dadao_operands_fa_reg_fbcd_i18_ri12:
 		max_operands = 3;
 		break;
@@ -798,7 +798,7 @@ void dadao_md_assemble (char *str)
 		DDOP_SET_FD(opcodep, exp[0].X_add_number - 256);
 		break;
 
-	case dadao_operands_fa_op_fbcd_reg: /* regd, regb, regc */
+	case dadao_operands_orrr: /* regd, regb, regc */
 		if (n_operands != 3)
 			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 

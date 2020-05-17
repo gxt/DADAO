@@ -41,7 +41,7 @@ enum dadao_operands_type
    dadao_operands_none = 0,
 
 	/* All operands are registers: "regd, regb, regc".  */
-	dadao_operands_fa_op_fbcd_reg,
+	dadao_operands_orrr,
 
 	/* The regular "rega, imm18" */
 	dadao_operands_fa_reg_fbcd_i18,

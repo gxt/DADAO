@@ -224,7 +224,7 @@ get_opcode_found:
 	     bytes.  */
 	case dadao_operands_fa_op_fdfb_reg_fc_0_get:
 	case dadao_operands_fa_op_fdfb_reg_fc_0_put:
-	case dadao_operands_fa_op_fbcd_reg:
+	case dadao_operands_orrr:
 	case dadao_operands_oiii:
 	case dadao_operands_fa_op_fdfb_reg_fc_i6:
 	case dadao_operands_fa_op_fdfb_reg_fc_reg_i6:
@@ -368,7 +368,7 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 
   switch (opcodep->operands)
     {
-    case dadao_operands_fa_op_fbcd_reg: /* regd, regb, regc */
+    case dadao_operands_orrr: /* regd, regb, regc */
       (*info->fprintf_func) (info->stream, "\t%s, %s, %s",
 			     get_reg_name (minfop, fd),
 			     get_reg_name (minfop, fb),
