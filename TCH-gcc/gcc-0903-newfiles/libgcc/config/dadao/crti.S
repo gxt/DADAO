@@ -31,14 +31,14 @@ crtsdat:
 	.dd.octa dstart
 	.dd.octa _end
 
-_start:	SETL	$63,32
+_start:	setl	$63, 32
 	PUT	rG,$63
 
 	geta	$63, crtstxt
 	ldo	$2, $63, 0
-	ANDNL	$2,#7ff
+	andnl	$2, #7ff
 	ldo	$3, $63, 8
-	SETL	$4,2048
+	setl	$4, 2048
 0:
 	addu	$2, $2, $4
 	cmp	$63, $2, $3
@@ -46,7 +46,7 @@ _start:	SETL	$63,32
 
 	geta	$63, crtsdat
 	ldo	$2, $63, 0
-	ANDNL	$2,#7ff
+	andnl	$2, #7ff
 	ldo	$3, $63, 8
 0:
 	addu	$2, $2, $4
@@ -87,7 +87,7 @@ _start:	SETL	$63,32
 _init:
 	GET	$0,rJ
 	PUSHJ	$1,0f
-	SETL	$63,63
+	setl	$63, 63
 	trap	0
 0:	trap	0
 
@@ -104,6 +104,6 @@ _init:
 _fini:
 	GET	$0,rJ
 	PUSHJ	$1,0f
-	SETL	$63,63
+	setl	$63, 63
 	trap	0
 0:	trap	0
