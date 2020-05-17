@@ -17,7 +17,7 @@ index 699831f13..e9f2da61a 100644
  
  lib_a-dtoa.o: dtoa.c
 -	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-dtoa.o `test -f 'dtoa.c' || echo '$(srcdir)/'`dtoa.c
-+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -Os -c -o lib_a-dtoa.o `test -f 'dtoa.c' || echo '$(srcdir)/'`dtoa.c
++	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -O1 -c -o lib_a-dtoa.o `test -f 'dtoa.c' || echo '$(srcdir)/'`dtoa.c
  
  lib_a-dtoa.obj: dtoa.c
  	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-dtoa.obj `if test -f 'dtoa.c'; then $(CYGPATH_W) 'dtoa.c'; else $(CYGPATH_W) '$(srcdir)/dtoa.c'; fi`
