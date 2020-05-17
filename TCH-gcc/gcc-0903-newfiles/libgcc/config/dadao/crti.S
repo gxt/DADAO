@@ -32,7 +32,7 @@ crtsdat:
 	.dd.octa _end
 
 _start:	setl	$63, 32
-	PUT	rG,$63
+	put	rG, $63
 
 	geta	$63, crtstxt
 	ldo	$2, $63, 0
@@ -85,7 +85,7 @@ _start:	setl	$63, 32
 	.section .init,"ax",@progbits
 	.global	_init
 _init:
-	GET	$0,rJ
+	get	$0, rJ
 	PUSHJ	$1,0f
 	setl	$63, 63
 	trap	0
@@ -102,7 +102,7 @@ _init:
 	.section .fini,"ax",@progbits
 	.global	_fini
 _fini:
-	GET	$0,rJ
+	get	$0, rJ
 	PUSHJ	$1,0f
 	setl	$63, 63
 	trap	0

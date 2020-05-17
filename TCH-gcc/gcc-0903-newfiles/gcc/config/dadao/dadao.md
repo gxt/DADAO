@@ -31,14 +31,14 @@
 ;; be synthesized ok?
 (define_insn "movqi"
   [(set (match_operand:QI 0 "nonimmediate_operand" "=r,r ,r,x ,r,r,m,??r")
-	(match_operand:QI 1 "general_operand"	    "r,LS,Pnn,rI,x,m,r,n"))]
+	(match_operand:QI 1 "general_operand"	    "r,LS,Pnn,r,x,m,r,n"))]
   ""
   "@
 	or	%0, %1, 0
    %s1 %0,%v1
 	subu	%0, $0, %n1
-   PUT %0,%1
-   GET %0,%1
+	put	%0, %1
+	get	%0, %1
 	ldb%U0	%0, %1
 	stb	%1, %0
    %r0%I1")
@@ -51,8 +51,8 @@
 	or	%0, %1, 0
    %s1 %0,%v1
 	subu	%0, $0, %n1
-   PUT %0,%1
-   GET %0,%1
+	put	%0, %1
+	get	%0, %1
 	ldw%U0	%0, %1
 	stw	%1, %0
    %r0%I1")
@@ -66,8 +66,8 @@
 	or	%0, %1, 0
    %s1 %0,%v1
 	subu	%0, $0, %n1
-   PUT %0,%1
-   GET %0,%1
+	put	%0, %1
+	get	%0, %1
 	ldt%U0	%0, %1
 	stt	%1, %0
    %r0%I1")
@@ -81,8 +81,8 @@
 	or	%0, %1, 0
    %s1 %0,%v1
 	subu	%0, $0, %n1
-   PUT %0,%1
-   GET %0,%1
+	put	%0, %1
+	get	%0, %1
 	ldo	%0, %1
 	sto	%1, %0
 	geta	%0, %1
@@ -98,8 +98,8 @@
   "@
 	or	%0, %1, 0
 	setl	%0, 0
-   PUT %0,%1
-   GET %0,%1
+	put	%0, %1
+	get	%0, %1
 	ldt	%0, %1
 	stt	%1, %0
    %r0%I1")
@@ -111,8 +111,8 @@
   "@
 	or	%0, %1, 0
 	setl	%0, 0
-   PUT %0,%1
-   GET %0,%1
+	put	%0, %1
+	get	%0, %1
 	ldo	%0, %1
 	sto	%1, %0
    %r0%I1")
@@ -131,8 +131,8 @@
    && GET_MODE_CLASS (GET_MODE (operands[1])) == MODE_CC"
   "@
 	or	%0, %1, 0
-   PUT %0,%1
-   GET %0,%1
+	put	%0, %1
+	get	%0, %1
 	ldt	%0, %1
 	stt	%1, %0")
 
@@ -355,7 +355,7 @@
 	subu	$63, $0, %1	\;\
 	csn	%1, %1, $63	\;\
 	divu	%1, %1, %2	\;\
-   GET %0,rR\;\
+	get	%0, rR\;\
 	subu	%2, $0, %0	\;\
 	csnn	%0, $63, %2")
 
@@ -1145,9 +1145,9 @@
   rtx my_operands[3];
   const char *my_template
     = "	geta	$63, 0f\;\
-PUT rJ,$255\;\
+	put	rJ, $63\;\
 	ldou	$63, %a0, 0\n\
-0:\;GET %1,rO\;\
+0:\;	get	%1, rO\;\
 	cmpu	%1, %1, $63	\;\
 BNP %1,1f\;POP 0,0\n1:";
 
