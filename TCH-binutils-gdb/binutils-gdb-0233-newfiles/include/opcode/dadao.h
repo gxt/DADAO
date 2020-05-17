@@ -68,7 +68,7 @@ enum dadao_operands_type
 	dadao_operands_oiii,
 
 	/* "$X,spec_reg"; GET.  */
-	dadao_operands_fa_op_fdfb_reg_fc_0_get,
+	dadao_operands_or0r_get,
 
 	/* "spec_reg,$Z"; PUT.  */
 	dadao_operands_fa_op_fdfb_reg_fc_0_put,

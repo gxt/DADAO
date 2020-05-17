@@ -169,7 +169,7 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"nop",		O (0xDA),	0x36,	OP (none),			N},
 
 	{"put",		O (0xDA),	0x37,	OP (fa_op_fdfb_reg_fc_0_put),		N},
-	{"get",		O (0xDA),	0x38,	OP (fa_op_fdfb_reg_fc_0_get),		N},
+	{"get",		O (0xDA),	0x38,	OP (or0r_get),		N},
 
 	{"fcmp",	O (DADAO_INSN_FP),	1,	OP (orrr),		N},
 	{"fun",		O (DADAO_INSN_FP),	2,	OP (orrr),		N},

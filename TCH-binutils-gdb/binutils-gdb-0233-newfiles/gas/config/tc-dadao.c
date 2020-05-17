@@ -427,7 +427,7 @@ get_putget_operands (struct dadao_opcode *insn, char *operands,
   exp[0].X_op = O_illegal;
   exp[1].X_op = O_illegal;
 
-  if (insn->operands == dadao_operands_fa_op_fdfb_reg_fc_0_get)
+  if (insn->operands == dadao_operands_or0r_get)
     {
       expp_reg = &exp[0];
       expp_sreg = &exp[1];
@@ -717,7 +717,7 @@ void dadao_md_assemble (char *str)
 
 	case dadao_operands_riii:
 	case dadao_operands_fd_reg_fabc_i16:
-	case dadao_operands_fa_op_fdfb_reg_fc_0_get:
+	case dadao_operands_or0r_get:
 	case dadao_operands_fa_op_fdfb_reg_fc_0_put:
 		max_operands = 2;
 		break;
@@ -747,7 +747,7 @@ void dadao_md_assemble (char *str)
      equated, we need to parse the names ourselves, so we don't pick up a
      user label instead of the special register.  */
   if (! equated_spec_regs
-      && (instruction->operands == dadao_operands_fa_op_fdfb_reg_fc_0_get
+      && (instruction->operands == dadao_operands_or0r_get
 	  || instruction->operands == dadao_operands_fa_op_fdfb_reg_fc_0_put))
     n_operands = get_putget_operands (instruction, operands, exp);
   else
@@ -771,7 +771,7 @@ void dadao_md_assemble (char *str)
   /* Handle the rest.  */
   switch (instruction->operands)
     {
-	case dadao_operands_fa_op_fdfb_reg_fc_0_get:
+	case dadao_operands_or0r_get:
 		/* "$X,spec_reg"; GET.
 		   Like with rounding modes, we demand that the special register or
 		   symbol is already defined when we get here at the point of use.  */
