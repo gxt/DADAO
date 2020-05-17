@@ -230,7 +230,7 @@ get_opcode_found:
 	case dadao_operands_fa_op_fdfb_reg_fc_reg_i6:
 	case dadao_operands_fdfa_reg_fbc_rs6_i12:
 	case dadao_operands_fdfa_reg_fbc_rs6_i12_or_sym:
-	case dadao_operands_fa_reg_fbcd_i18:
+	case dadao_operands_riii:
 	case dadao_operands_riii_rrii:
 	case dadao_operands_none:
 	  return opcodep;
@@ -411,7 +411,7 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 				get_reg_name (minfop, fc));
       break;
 
-    case dadao_operands_fa_reg_fbcd_i18:
+    case dadao_operands_riii:
       /* Like jmp, GETA or branches - "$X,Address".  */
       {
 	bfd_signed_vma offset = (y * 256 + z) * 4;

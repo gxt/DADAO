@@ -715,7 +715,7 @@ void dadao_md_assemble (char *str)
       max_operands = 0;
       break;
 
-	case dadao_operands_fa_reg_fbcd_i18:
+	case dadao_operands_riii:
 	case dadao_operands_fd_reg_fabc_i16:
 	case dadao_operands_fa_op_fdfb_reg_fc_0_get:
 	case dadao_operands_fa_op_fdfb_reg_fc_0_put:
@@ -1015,7 +1015,7 @@ void dadao_md_assemble (char *str)
 
 		break;
 
-	case dadao_operands_fa_reg_fbcd_i18: /* "rega, imm18" */
+	case dadao_operands_riii: /* "rega, imm18" */
 		/* GETA/branch: Add a frag for relaxation.  We don't do any work
 		   around here to check if we can determine the offset right away.  */
 		if ((n_operands != 2) || (exp[1].X_op == O_register))

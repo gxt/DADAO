@@ -44,7 +44,7 @@ enum dadao_operands_type
 	dadao_operands_orrr,
 
 	/* The regular "rega, imm18" */
-	dadao_operands_fa_reg_fbcd_i18,
+	dadao_operands_riii,
 
 	/* The regular "rega, imm18" or "rega, regb, imm12" */
 	dadao_operands_riii_rrii,
