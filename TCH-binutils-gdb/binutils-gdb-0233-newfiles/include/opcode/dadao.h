@@ -97,7 +97,6 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 #define COND_INV_BIT 0x8
 #define PRED_INV_BIT 0x10
 
-#define GO_INSN_BYTE 0x9e
 #define JMP_INSN_BYTE 0xf0
 
 #define	DADAO_WYDE_L			0
@@ -105,6 +104,7 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 #define	DADAO_WYDE_MH			2
 #define	DADAO_WYDE_H			3
 
+#define	DADAO_INSN_CALL			0x9E
 #define	DADAO_INSN_SETW			0xE0
 #define	DADAO_INSN_INCW			0xE1
 #define	DADAO_INSN_ORW			0xE2

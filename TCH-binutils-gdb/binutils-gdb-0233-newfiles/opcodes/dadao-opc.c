@@ -132,8 +132,7 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"ldo",		Z (0x8C),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MO},
 	{"ldsf",	Z (0x8E),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MT},
 
-	/* GO_INSN_BYTE: 0x9E */
-	{"call",	Z (GO_INSN_BYTE),	0,	OP (fa_reg_fbcd_i18_ri12),	J},
+	{"call",	Z (DADAO_INSN_CALL),	0,	OP (fa_reg_fbcd_i18_ri12),	J},
 
 	{"stb",		Z (0xA0),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MB},
 	{"stw",		Z (0xA2),	0,	OP (fdfa_reg_fbc_rs6_i12_or_sym),	MW},

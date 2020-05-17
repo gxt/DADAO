@@ -782,7 +782,7 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 
 	/* Put a "GO $255,$255,0" after the common sequence.  */
 	bfd_put_32 (abfd,
-		    ((GO_INSN_BYTE | IMM_OFFSET_BIT) << 24) | 0xffff00,
+		    ((DADAO_INSN_CALL | IMM_OFFSET_BIT) << 24) | 0xffff00,
 		    (bfd_byte *) datap + 20);
 
 	/* Common sequence starts at offset 4.  */
@@ -813,7 +813,7 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 	     modified below, and put a "GO $255,$255,0" after the
 	     address-loading sequence.  */
 	  bfd_put_32 (abfd,
-		      ((GO_INSN_BYTE | IMM_OFFSET_BIT) << 24)
+		      ((DADAO_INSN_CALL | IMM_OFFSET_BIT) << 24)
 		      | 0xffff00,
 		      (bfd_byte *) datap + 16);
 
