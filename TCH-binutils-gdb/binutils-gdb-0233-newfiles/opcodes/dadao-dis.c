@@ -223,7 +223,6 @@ get_opcode_found:
 	  /* These have no restraint on what can be in the lower three
 	     bytes.  */
 	case dadao_operands_reg_yz:
-	case dadao_operands_pop:
 	case dadao_operands_pushj:
 	case dadao_operands_fa_op_fdfb_reg_fc_0_get:
 	case dadao_operands_fa_op_fdfb_reg_fc_0_put:
@@ -419,11 +418,6 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 				get_reg_name (minfop, fc));
       break;
 
-    case dadao_operands_pop:
-      /* Like POP - "X,YZ".  */
-      (*info->fprintf_func) (info->stream, "\t%d,%d", x, y*256 + z);
-      break;
-
     case dadao_operands_pushj:
     case dadao_operands_fa_reg_fbcd_i18:
       /* Like jmp, GETA or branches - "$X,Address".  */
@@ -458,7 +452,7 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		(*info->fprintf_func) (info->stream, "\t%d", (fb << 12) | (fc << 6) | fd);
 		break;
 
-	case dadao_operands_none: /* nop  */
+	case dadao_operands_none: /* nop / ret  */
 		break;
 
     default:

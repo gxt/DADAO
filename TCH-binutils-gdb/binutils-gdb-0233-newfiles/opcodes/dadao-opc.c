@@ -146,6 +146,7 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"xor",		Z (0xC4),	0,	OP (fdfa_reg_fbc_rs6_i12),	D_A_BC},
 
 	{"swym",	O (0xDA),	0,	OP (fa_op_fbcd_i18),		N},
+	{"ret",		O (0xDA),	0x01,	OP (none),			B},
 	{"trip",	O (0xDA),	0x04,	OP (fa_op_fbcd_i18),		N},
 	{"trap",	O (0xDA),	0x20,	OP (fa_op_fbcd_i18),		N},
 	{"nop",		O (0xDA),	0x36,	OP (none),			N},
@@ -196,7 +197,6 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"andnh",	O (DADAO_INSN_ANDNW),	DADAO_WYDE_H,	OP (fd_reg_fabc_i16),		N},
 
 	{"jmp",		Z (0xf0),	0,	OP (fa_reg_fbcd_i18),	dadao_type_jmp},
-   {"pop",	O (0xf8),	0,	OP (pop),		B},
 
    {"pushj",	Z (0xf2),	0,	OP (pushj),		J},
 

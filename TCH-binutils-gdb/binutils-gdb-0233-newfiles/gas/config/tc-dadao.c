@@ -758,7 +758,6 @@ void dadao_md_assemble (char *str)
      easier to parse each expression first.   */
   switch (instruction->operands)
     {
-    case dadao_operands_pop:
     case dadao_operands_pushj:
       max_operands = 2;
       break;
@@ -853,59 +852,9 @@ void dadao_md_assemble (char *str)
       break;
     }
 
-  /* A corresponding once-over for those who take an 8-bit constant as
-     their first operand.  */
-  switch (instruction->operands)
-    {
-    case dadao_operands_pop:
-      /* FALLTHROUGH.  */
-      if (n_operands < 1
-	  || (exp[0].X_op == O_constant
-	      && (exp[0].X_add_number > 255
-		  || exp[0].X_add_number < 0)))
-	{
-	  as_bad (_("invalid operands to opcode %s: `%s'"),
-		  instruction->name, operands);
-	  return;
-	}
-
-      if (exp[0].X_op == O_constant)
-	opcodep[1] = exp[0].X_add_number;
-      else
-	/* FIXME: This doesn't bring us unsignedness checking.  */
-	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 1,
-		     1, exp + 0, 0, BFD_RELOC_8);
-    default:
-      ;
-    }
-
   /* Handle the rest.  */
   switch (instruction->operands)
     {
-    case dadao_operands_pop:
-      /* FALLTHROUGH.  */
-      /* A register and a 16-bit unsigned number.  */
-      if (n_operands != 2
-	  || exp[1].X_op == O_register
-	  || (exp[1].X_op == O_constant
-	      && (exp[1].X_add_number > 0xffff || exp[1].X_add_number < 0)))
-	{
-	  as_bad (_("invalid operands to opcode %s: `%s'"),
-		  instruction->name, operands);
-	  return;
-	}
-
-      if (exp[1].X_op == O_constant)
-	{
-	  opcodep[2] = (exp[1].X_add_number >> 8) & 255;
-	  opcodep[3] = exp[1].X_add_number & 255;
-	}
-      else
-	/* FIXME: This doesn't bring us unsignedness checking.  */
-	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal + 2,
-		     2, exp + 1, 0, BFD_RELOC_16);
-      break;
-
     case dadao_operands_pushj:
       /* All is done for PUSHJ already.  */
       break;
@@ -1142,9 +1091,17 @@ void dadao_md_assemble (char *str)
 
 		break;
 
-	case dadao_operands_none: /* nop */
+	case dadao_operands_none: /* nop / ret */
 		if (n_operands != 0)
 			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+
+		if (instruction->fa_as_opcode == 0x01) {	/* ret */
+			DDOP_SET_FA(opcodep, instruction->fa_as_opcode);
+			DDOP_SET_FB(opcodep, 0);
+			DDOP_SET_FC(opcodep, 0);
+			DDOP_SET_FD(opcodep, 0);
+			break;
+		}
 
 		/* ONLY for nop: 0xDADADADA */
 		DDOP_SET_FA(opcodep, ((0xDADADA) >> 18) & 63);	/* FA is 0x36 */
