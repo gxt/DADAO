@@ -961,12 +961,12 @@ dadao_asm_trampoline_template (FILE *stream)
      static chain is stored at offset 16, and the function address is
      stored at offset 24.  */
 
-  fprintf (stream, "\tgeta	$63, 1F\n\t");
-  fprintf (stream, "ldo	%s, $63, 0\n\t", reg_names[DADAO_STATIC_CHAIN_REGNUM]);
-  fprintf (stream, "ldo	$63, $63, 8\n\t");
-  fprintf (stream, "GO $255,$255,0\n");
-  fprintf (stream, "1:\t.dd.octa 0\n\t");
-  fprintf (stream, ".dd.octa 0\n");
+  fprintf (stream, "\tgeta	$63, 1F\n");
+  fprintf (stream, "\tldo	%s, $63, 0\n", reg_names[DADAO_STATIC_CHAIN_REGNUM]);
+  fprintf (stream, "\tldo	$63, $63, 8\n");
+  fprintf (stream, "\tcall	$63, $0, 0\n");
+  fprintf (stream, "1:\t.dd.octa 0\n");
+  fprintf (stream, "\t.dd.octa 0\n");
 }
 
 /* TARGET_TRAMPOLINE_INIT.  */

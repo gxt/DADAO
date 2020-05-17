@@ -1093,14 +1093,14 @@
 (define_insn "indirect_jump"
   [(set (pc) (match_operand 0 "address_operand" "p"))]
   ""
-  "GO $255,%a0")
+	"call	$63, %a0")
 
 ;; FIXME: This is just a jump, and should be expanded to one.
 (define_insn "tablejump"
   [(set (pc) (match_operand:DI 0 "address_operand" "p"))
    (use (label_ref (match_operand 1 "" "")))]
   ""
-  "GO $255,%a0")
+	"call	$63, %a0")
 
 ;; The only peculiar thing is that the register stack has to be unwound at
 ;; nonlocal_goto_receiver.  At each function that has a nonlocal label, we
