@@ -729,8 +729,8 @@ void dadao_md_assemble (char *str)
 		max_operands = 3;
 		break;
 
-	case dadao_operands_fdfa_reg_fbc_rs6_i12:
-	case dadao_operands_fdfa_reg_fbc_rs6_i12_or_sym:
+	case dadao_operands_riir_rrir:
+	case dadao_operands_riir_rrir_or_sym:
 		max_operands = 3;
 		break;
 
@@ -884,7 +884,7 @@ void dadao_md_assemble (char *str)
 		}
 		break;
 
-	case dadao_operands_fdfa_reg_fbc_rs6_i12_or_sym: /* "regd, rega, regb << shift6" or "regd, rega, imm12" */
+	case dadao_operands_riir_rrir_or_sym: /* "regd, rega, regb << shift6" or "regd, rega, imm12" */
 		if (n_operands == 2) {
 			symbolS *sym;
 			/* The last operand is immediate whenever we see just two operands.  */
@@ -919,7 +919,7 @@ void dadao_md_assemble (char *str)
 		}
 		/* FALLTHROUGH.  */
 
-	case dadao_operands_fdfa_reg_fbc_rs6_i12: /* "regd, rega, regb << shift6" or "regd, rega, imm12" */
+	case dadao_operands_riir_rrir: /* "regd, rega, regb << shift6" or "regd, rega, imm12" */
 		if (n_operands != 3)
 			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 

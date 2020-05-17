@@ -228,8 +228,8 @@ get_opcode_found:
 	case dadao_operands_oiii:
 	case dadao_operands_fa_op_fdfb_reg_fc_i6:
 	case dadao_operands_fa_op_fdfb_reg_fc_reg_i6:
-	case dadao_operands_fdfa_reg_fbc_rs6_i12:
-	case dadao_operands_fdfa_reg_fbc_rs6_i12_or_sym:
+	case dadao_operands_riir_rrir:
+	case dadao_operands_riir_rrir_or_sym:
 	case dadao_operands_riii:
 	case dadao_operands_riii_rrii:
 	case dadao_operands_none:
@@ -375,8 +375,8 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 			     get_reg_name (minfop, fc));
       break;
 
-    case dadao_operands_fdfa_reg_fbc_rs6_i12: /* The regular "rega, regb << shift6" or "rega, imm12" */
-    case dadao_operands_fdfa_reg_fbc_rs6_i12_or_sym: /* The regular "rega, regb << shift6" or "rega, imm12" */
+    case dadao_operands_riir_rrir: /* The regular "rega, regb << shift6" or "rega, imm12" */
+    case dadao_operands_riir_rrir_or_sym: /* The regular "rega, regb << shift6" or "rega, imm12" */
       if (insn & INSN_IMMEDIATE_BIT)
 	(*info->fprintf_func) (info->stream, "\t%s, %s, %d",
 			       get_reg_name (minfop, fd),
