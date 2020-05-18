@@ -59,7 +59,7 @@ enum dadao_operands_type
 	dadao_operands_riir_rrir_or_sym,
 
 	/* The regular "regd, regb, regc", or "regd, regb, imm6" */
-	dadao_operands_fa_op_fdfb_reg_fc_reg_i6,
+	dadao_operands_orir_orrr,
 
 	/* The regular "regd, regb, imm6" */
 	dadao_operands_orir,

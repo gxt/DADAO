@@ -120,10 +120,10 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"andnmh",	O (DADAO_INSN_ANDNW),	DADAO_WYDE_MH,	OP (fd_reg_fabc_i16),		N},
 	{"andnh",	O (DADAO_INSN_ANDNW),	DADAO_WYDE_H,	OP (fd_reg_fabc_i16),		N},
 
-	{"slu",		Z (0x3E),	1,	OP (fa_op_fdfb_reg_fc_reg_i6),	D_B_C},
-	{"sr",		Z (0x3E),	2,	OP (fa_op_fdfb_reg_fc_reg_i6),	D_B_C},
-	{"sru",		Z (0x3E),	3,	OP (fa_op_fdfb_reg_fc_reg_i6),	D_B_C},
-	{"not",		Z (0x3E),	4,	OP (fa_op_fdfb_reg_fc_reg_i6),	D_B_C},
+	{"slu",		Z (0x3E),	1,	OP (orir_orrr),	D_B_C},
+	{"sr",		Z (0x3E),	2,	OP (orir_orrr),	D_B_C},
+	{"sru",		Z (0x3E),	3,	OP (orir_orrr),	D_B_C},
+	{"not",		Z (0x3E),	4,	OP (orir_orrr),	D_B_C},
 
 	{"csn",		Z (0x40),	0,	OP (riir_rrir),	D_A_BC},
 	{"csz",		Z (0x42),	0,	OP (riir_rrir),	D_A_BC},
