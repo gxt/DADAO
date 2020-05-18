@@ -163,10 +163,10 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"geta",	Z (0xD4),	0,	OP (riii),	dadao_type_geta},
 
 	{"swym",	O (0xDA),	0,	OP (oiii),		N},
-	{"ret",		O (0xDA),	0x01,	OP (none),			B},
+	{"ret",		O (0xDA),	0x01,	OP (o000),			B},
 	{"trip",	O (0xDA),	0x04,	OP (oiii),		N},
 	{"trap",	O (0xDA),	0x20,	OP (oiii),		N},
-	{"nop",		O (0xDA),	0x36,	OP (none),			N},
+	{"nop",		O (0xDA),	0x36,	OP (o000),			N},
 
 	{"put",		O (0xDA),	0x37,	OP (or0r_put),		N},
 	{"get",		O (0xDA),	0x38,	OP (or0r_get),		N},
@@ -193,5 +193,5 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"sflot",	O (DADAO_INSN_FP),	12,	OP (orir),	N},
 	{"sflotu",	O (DADAO_INSN_FP),	14,	OP (orir),	N},
 
-	{NULL,	~0,	~0,	0,	OP (none),		N}
+	{NULL,	~0,	~0,	0,	OP (o000),		N}
  };

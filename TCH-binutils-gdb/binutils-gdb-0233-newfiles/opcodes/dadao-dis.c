@@ -232,7 +232,7 @@ get_opcode_found:
 	case dadao_operands_riir_rrir_or_sym:
 	case dadao_operands_riii:
 	case dadao_operands_riii_rrii:
-	case dadao_operands_none:
+	case dadao_operands_o000:
 	  return opcodep;
 
 	default:
@@ -459,7 +459,7 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		(*info->fprintf_func) (info->stream, "\t%d", (fb << 12) | (fc << 6) | fd);
 		break;
 
-	case dadao_operands_none: /* nop / ret  */
+	case dadao_operands_o000: /* nop / ret  */
 		break;
 
     default:

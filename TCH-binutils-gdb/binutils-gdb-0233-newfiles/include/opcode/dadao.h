@@ -38,10 +38,10 @@ enum dadao_insn_type
    and disassembling.  */
 enum dadao_operands_type
  {
-   dadao_operands_none = 0,
+	dadao_operands_o000 = 0,
 
-	/* All operands are registers: "regd, regb, regc".  */
-	dadao_operands_orrr,
+	/* The regular "regd, imm16", 2-bit in fc used to indicate H/MH/ML/L */
+	dadao_operands_iijr,
 
 	/* The regular "rega, imm18" */
 	dadao_operands_riii,
@@ -49,14 +49,14 @@ enum dadao_operands_type
 	/* The regular "rega, imm18" or "rega, regb, imm12" */
 	dadao_operands_riii_rrii,
 
-	/* The regular "regd, imm16", 2-bit in fc used to indicate H/MH/ML/L */
-	dadao_operands_iijr,
-
 	/* The regular "regd, rega, regb << shift6" or "regd, rega, imm12" */
 	dadao_operands_riir_rrir,
 
 	/* The regular "regd, rega, regb << shift6" or "regd, rega, imm12" or "regd, sym */
 	dadao_operands_riir_rrir_or_sym,
+
+	/* ONLY "imm18" accepted, for swym/trip/trap/nop */
+	dadao_operands_oiii,
 
 	/* The regular "regd, regb, regc", or "regd, regb, imm6" */
 	dadao_operands_orir_orrr,
@@ -64,8 +64,8 @@ enum dadao_operands_type
 	/* The regular "regd, regb, imm6" */
 	dadao_operands_orir,
 
-	/* ONLY "imm18" accepted, for swym/trip/trap/nop */
-	dadao_operands_oiii,
+	/* All operands are registers: "regd, regb, regc".  */
+	dadao_operands_orrr,
 
 	/* "$X,spec_reg"; GET.  */
 	dadao_operands_or0r_get,

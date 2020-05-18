@@ -711,7 +711,7 @@ void dadao_md_assemble (char *str)
      easier to parse each expression first.   */
   switch (instruction->operands)
     {
-    case dadao_operands_none:
+    case dadao_operands_o000:
       max_operands = 0;
       break;
 
@@ -1060,7 +1060,7 @@ void dadao_md_assemble (char *str)
 
 		break;
 
-	case dadao_operands_none: /* nop / ret */
+	case dadao_operands_o000: /* nop / ret */
 		if (n_operands != 0)
 			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 
