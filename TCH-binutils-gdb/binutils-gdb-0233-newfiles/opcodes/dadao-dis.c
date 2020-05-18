@@ -153,7 +153,7 @@ get_opcode (unsigned long insn, unsigned int fop, unsigned int fa)
 		if (opcodep == NULL) {
 			/* Search through the table.  */
 			for (opcodep = dadao_opcodes; opcodep->name != NULL; opcodep++) {
-				if ((opcodep->match == 0x3E000000) && (opcodep->fa_as_opcode == fa)) {
+				if ((opcodep->match == 0x3E000000) && (opcodep->aux_opcode == fa)) {
 					opcodes_3E[fa] = opcodep;
 					break;
 				}
@@ -167,7 +167,7 @@ get_opcode (unsigned long insn, unsigned int fop, unsigned int fa)
 		if (opcodep == NULL) {
 			/* Search through the table.  */
 			for (opcodep = dadao_opcodes; opcodep->name != NULL; opcodep++) {
-				if ((opcodep->match == 0xDA000000) && (opcodep->fa_as_opcode == fa)) {
+				if ((opcodep->match == 0xDA000000) && (opcodep->aux_opcode == fa)) {
 					opcodes_DA[fa] = opcodep;
 					break;
 				}
@@ -181,7 +181,7 @@ get_opcode (unsigned long insn, unsigned int fop, unsigned int fa)
 		if (opcodep == NULL) {
 			/* Search through the table.  */
 			for (opcodep = dadao_opcodes; opcodep->name != NULL; opcodep++) {
-				if ((opcodep->match == 0xDB000000) && (opcodep->fa_as_opcode == fa)) {
+				if ((opcodep->match == 0xDB000000) && (opcodep->aux_opcode == fa)) {
 					opcodes_DB[fa] = opcodep;
 					break;
 				}

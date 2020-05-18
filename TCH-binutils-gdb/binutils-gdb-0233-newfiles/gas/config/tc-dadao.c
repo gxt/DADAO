@@ -780,7 +780,7 @@ void dadao_md_assemble (char *str)
 
 		DDOP_EXP_MUST_BE_REG(exp[0]);
 
-		DDOP_SET_FA(opcodep, instruction->fa_as_opcode);
+		DDOP_SET_FA(opcodep, instruction->aux_opcode);
 		DDOP_SET_FB(opcodep, exp[1].X_add_number - 256);
 		DDOP_SET_FC(opcodep, 0);
 		DDOP_SET_FD(opcodep, exp[0].X_add_number);
@@ -792,7 +792,7 @@ void dadao_md_assemble (char *str)
 			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 
 		DDOP_EXP_MUST_BE_REG(exp[1]);
-		DDOP_SET_FA(opcodep, instruction->fa_as_opcode);
+		DDOP_SET_FA(opcodep, instruction->aux_opcode);
 		DDOP_SET_FB(opcodep, exp[1].X_add_number);
 		DDOP_SET_FC(opcodep, 0);
 		DDOP_SET_FD(opcodep, exp[0].X_add_number - 256);
@@ -806,7 +806,7 @@ void dadao_md_assemble (char *str)
 		DDOP_EXP_MUST_BE_REG(exp[1]);
 		DDOP_EXP_MUST_BE_REG(exp[2]);
 
-		DDOP_SET_FA(opcodep, instruction->fa_as_opcode);
+		DDOP_SET_FA(opcodep, instruction->aux_opcode);
 		DDOP_SET_FB(opcodep, exp[1].X_add_number);
 		DDOP_SET_FC(opcodep, exp[2].X_add_number);
 		DDOP_SET_FD(opcodep, exp[0].X_add_number);
@@ -819,12 +819,12 @@ void dadao_md_assemble (char *str)
 
 		DDOP_EXP_MUST_BE_REG(exp[0]);
 		DDOP_EXP_MUST_BE_UIMM(exp[1], 16);
-		DDOP_CHECK_BIT_COUNT(instruction->fa_as_opcode, 2);
+		DDOP_CHECK_BIT_COUNT(instruction->aux_opcode, 2);
 
 		DDOP_SET_FD(opcodep, exp[0].X_add_number);
 		DDOP_SET_FA(opcodep, (exp[1].X_add_number >> 10) & 63);
 		DDOP_SET_FB(opcodep, (exp[1].X_add_number >> 4) & 63);
-		DDOP_SET_FC(opcodep, (((exp[1].X_add_number & 0xF) << 2) | (instruction->fa_as_opcode)));
+		DDOP_SET_FC(opcodep, (((exp[1].X_add_number & 0xF) << 2) | (instruction->aux_opcode)));
 
 		break;
 
@@ -833,7 +833,7 @@ void dadao_md_assemble (char *str)
 			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 
 		DDOP_EXP_MUST_BE_UIMM(exp[0], 18);
-		DDOP_SET_FA(opcodep, instruction->fa_as_opcode);
+		DDOP_SET_FA(opcodep, instruction->aux_opcode);
 		DDOP_SET_FB(opcodep, (exp[0].X_add_number >> 12) & 63);
 		DDOP_SET_FC(opcodep, (exp[0].X_add_number >> 6) & 63);
 		DDOP_SET_FD(opcodep, (exp[0].X_add_number) & 63);
@@ -849,7 +849,7 @@ void dadao_md_assemble (char *str)
 		DDOP_EXP_MUST_BE_UIMM(exp[2], 6);
 
 		DDOP_SET_FD(opcodep, exp[0].X_add_number);
-		DDOP_SET_FA(opcodep, instruction->fa_as_opcode);
+		DDOP_SET_FA(opcodep, instruction->aux_opcode);
 		DDOP_SET_FB(opcodep, exp[1].X_add_number);
 		DDOP_SET_FC(opcodep, exp[2].X_add_number);
 
@@ -863,7 +863,7 @@ void dadao_md_assemble (char *str)
 		DDOP_EXP_MUST_BE_REG(exp[1]);
 
 		DDOP_SET_FD(opcodep, exp[0].X_add_number);
-		DDOP_SET_FA(opcodep, instruction->fa_as_opcode);
+		DDOP_SET_FA(opcodep, instruction->aux_opcode);
 		DDOP_SET_FB(opcodep, exp[1].X_add_number);
 
 		switch (exp[2].X_op) {
@@ -1065,8 +1065,8 @@ void dadao_md_assemble (char *str)
 		if (n_operands != 0)
 			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 
-		if (instruction->fa_as_opcode == 0x01) {	/* ret */
-			DDOP_SET_FA(opcodep, instruction->fa_as_opcode);
+		if (instruction->aux_opcode == 0x01) {	/* ret */
+			DDOP_SET_FA(opcodep, instruction->aux_opcode);
 			DDOP_SET_FB(opcodep, 0);
 			DDOP_SET_FC(opcodep, 0);
 			DDOP_SET_FD(opcodep, 0);

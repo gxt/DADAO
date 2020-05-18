@@ -79,7 +79,7 @@ struct dadao_opcode
    const char *name;
    unsigned long match;
    unsigned long lose;
-	unsigned char fa_as_opcode;	/* Some insns use fa as op code */
+	unsigned char aux_opcode;	/* Some insns use fa as op code */
    enum dadao_operands_type operands;
 
    /* This is used by the disassembly function.  */
@@ -140,14 +140,12 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 #define DDOP_SET_FA(ddop_insn_p, ddop_fa)							\
 	do {											\
 		char *ddop_insn_char_p = (char *)ddop_insn_p;					\
-		DDOP_CHECK_BIT_COUNT(ddop_fa, 6);						\
 		ddop_insn_char_p[1] |= (((ddop_fa) & 0x3F) << 2);				\
 	} while (0)
 
 #define DDOP_SET_FB(ddop_insn_p, ddop_fb)							\
 	do {											\
 		char *ddop_insn_char_p = (char *)ddop_insn_p;					\
-		DDOP_CHECK_BIT_COUNT(ddop_fb, 6);						\
 		ddop_insn_char_p[1] |= (((ddop_fb) & 0x3F) >> 4);				\
 		ddop_insn_char_p[2] |= (((ddop_fb) & 0xF) << 4);				\
 	} while (0)
@@ -155,7 +153,6 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 #define DDOP_SET_FC(ddop_insn_p, ddop_fc)							\
 	do {											\
 		char *ddop_insn_char_p = (char *)ddop_insn_p;					\
-		DDOP_CHECK_BIT_COUNT(ddop_fc, 6);						\
 		ddop_insn_char_p[2] |= (((ddop_fc) & 0x3F) >> 2);				\
 		ddop_insn_char_p[3] |= (((ddop_fc) & 0x3) << 6);				\
 	} while (0)
@@ -163,7 +160,6 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 #define DDOP_SET_FD(ddop_insn_p, ddop_fd)							\
 	do {											\
 		char *ddop_insn_char_p = (char *)ddop_insn_p;					\
-		DDOP_CHECK_BIT_COUNT(ddop_fd, 6);						\
 		ddop_insn_char_p[3] |= ((ddop_fd) & 0x3F);					\
 	} while (0)
 
