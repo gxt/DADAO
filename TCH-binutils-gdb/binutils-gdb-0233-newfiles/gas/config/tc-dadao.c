@@ -109,10 +109,6 @@ struct dadao_symbol_gregs
    order to generate working code?  */
 static int expand_op = 1;
 
-/* Should we warn when expanding operands?  FIXME: test-cases for when -x
-   is absent.  */
-static int warn_on_expansion = 1;
-
 /* Should we merge non-zero GREG register definitions?  */
 static int merge_gregs = 1;
 
@@ -507,7 +503,6 @@ md_parse_option (int c, const char *arg ATTRIBUTE_UNUSED)
   switch (c)
     {
     case 'x':
-      warn_on_expansion = 0;
       allocate_undefined_gregs_in_linker = 1;
       break;
 
@@ -1329,9 +1324,6 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
     var_part_size							\
       = dadao_relax_table[ENCODE_RELAX (state, STATE_MAX)].rlx_length;	\
     dadao_fill_nops (var_partp, var_part_size / 4);			\
-    if (warn_on_expansion)						\
-      as_warn_where (fragP->fr_file, fragP->fr_line,			\
-		     _("operand out of range, instruction expanded"));	\
     tmpfixP = fix_new (fragP, var_partp - fragP->fr_literal - 4, 8,	\
 		       fragP->fr_symbol, fragP->fr_offset, 1, reloc);	\
     COPY_FR_WHERE_TO_FX (fragP, tmpfixP);				\
@@ -1424,9 +1416,6 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
 	  || val >= ((offsetT) 1 << 19)/2 - 1
 	  || (val & 3) != 0)
 	{
-	  if (warn_on_expansion)
-	    as_warn_where (fixP->fx_file, fixP->fx_line,
-			   _("operand out of range"));
 	  fixP->fx_done = 0;
 	  val = 0;
 	}
@@ -1448,9 +1437,6 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
 	  || val >= ((offsetT) 1 << 27)/2 - 1
 	  || (val & 3) != 0)
 	{
-	  if (warn_on_expansion)
-	    as_warn_where (fixP->fx_file, fixP->fx_line,
-			   _("operand out of range"));
 	  fixP->fx_done = 0;
 	  val = 0;
 	}
