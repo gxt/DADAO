@@ -936,7 +936,7 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
     flag = bfd_reloc_overflow;
 
   bfd_put_32 (abfd,
-	      ((DADAO_INSN_SETW) << 24) | ((value & 0xffff) << 16) | ((DADAO_WYDE_L) << 6) | (reg),
+	      ((DADAO_INSN_SETW) << 24) | ((value & 0xffff) << 8) | ((DADAO_WYDE_L) << 6) | (reg),
 	      (bfd_byte *) datap + offs);
   bfd_put_32 (abfd,
 	      ((DADAO_INSN_INCW) << 24) | ((value >> 16) & 0xffff) | ((DADAO_WYDE_ML) << 6) | (reg),
