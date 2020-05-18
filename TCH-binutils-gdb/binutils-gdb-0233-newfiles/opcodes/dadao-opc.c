@@ -53,21 +53,10 @@ const struct dadao_spec_reg dadao_spec_regs[] =
    macros.  */
 
 /* For easier overview of the table.  */
-#define N dadao_type_normal
-#define B dadao_type_branch
-#define MB dadao_type_memaccess_byte
-#define MW dadao_type_memaccess_wyde
-#define MT dadao_type_memaccess_tetra
-#define MO dadao_type_memaccess_octa
-#define M dadao_type_memaccess_block
-#define J dadao_type_jsr
-#define COND_BR	dadao_type_condbranch
-#define D_A_BC	dadao_type_fd_eq_fa_op_bc
-#define D_B_C	dadao_type_fd_eq_fb_op_fc
-
 #define I(i)	XCONCAT2 (DADAO_INSN_,i)
 #define W(w)	XCONCAT2 (DADAO_WYDE_,w)
 #define OP(y)	XCONCAT2 (dadao_operands_,y)
+#define T(t)	XCONCAT2 (dadao_type_,t)
 
 /* Groups of instructions specified here must, if all are matching the
    same instruction, be consecutive, in order more-specific to
@@ -75,116 +64,116 @@ const struct dadao_spec_reg dadao_spec_regs[] =
 
 const struct dadao_opcode dadao_opcodes[] =
  {
-	{"add",		0x20,		0,	1,	OP (riir_rrir),		D_A_BC},
-	{"addu",	0x22,		0,	1,	OP (riir_rrir),		D_A_BC},
-	{"sub",		0x24,		0,	1,	OP (riir_rrir),		D_A_BC},
-	{"subu",	0x26,		0,	1,	OP (riir_rrir),		D_A_BC},
-	{"mul",		0x28,		0,	1,	OP (riir_rrir),		D_A_BC},
-	{"mulu",	0x2A,		0,	1,	OP (riir_rrir),		D_A_BC},
-	{"div",		0x2C,		0,	1,	OP (riir_rrir),		D_A_BC},
-	{"divu",	0x2E,		0,	1,	OP (riir_rrir),		D_A_BC},
+	{"add",		0x20,		0,	1,	OP (riir_rrir),		T (normal)},
+	{"addu",	0x22,		0,	1,	OP (riir_rrir),		T (normal)},
+	{"sub",		0x24,		0,	1,	OP (riir_rrir),		T (normal)},
+	{"subu",	0x26,		0,	1,	OP (riir_rrir),		T (normal)},
+	{"mul",		0x28,		0,	1,	OP (riir_rrir),		T (normal)},
+	{"mulu",	0x2A,		0,	1,	OP (riir_rrir),		T (normal)},
+	{"div",		0x2C,		0,	1,	OP (riir_rrir),		T (normal)},
+	{"divu",	0x2E,		0,	1,	OP (riir_rrir),		T (normal)},
 
 	/* Synonym for ADDU.  Put after ADDU, since we don't prefer it for disassembly. */
-	{"lda",		0x22,		0,	1,	OP (riir_rrir_or_sym),	D_A_BC},
+	{"lda",		0x22,		0,	1,	OP (riir_rrir_or_sym),	T (normal)},
 
-	{"cmp",		0x30,		0,	1,	OP (riir_rrir),		D_A_BC},
-	{"cmpu",	0x32,		0,	1,	OP (riir_rrir),		D_A_BC},
-	{"or",		0x34,		0,	1,	OP (riir_rrir),		D_A_BC},
-	{"and",		0x36,		0,	1,	OP (riir_rrir),		D_A_BC},
-	{"xor",		0x38,		0,	1,	OP (riir_rrir),		D_A_BC},
+	{"cmp",		0x30,		0,	1,	OP (riir_rrir),		T (normal)},
+	{"cmpu",	0x32,		0,	1,	OP (riir_rrir),		T (normal)},
+	{"or",		0x34,		0,	1,	OP (riir_rrir),		T (normal)},
+	{"and",		0x36,		0,	1,	OP (riir_rrir),		T (normal)},
+	{"xor",		0x38,		0,	1,	OP (riir_rrir),		T (normal)},
 
-	{"setl",	I (SETW),	W (L),	0,	OP (iijr),		N},
-	{"setml",	I (SETW),	W (ML),	0,	OP (iijr),		N},
-	{"setmh",	I (SETW),	W (MH),	0,	OP (iijr),		N},
-	{"seth",	I (SETW),	W (H),	0,	OP (iijr),		N},
+	{"setl",	I (SETW),	W (L),	0,	OP (iijr),		T (normal)},
+	{"setml",	I (SETW),	W (ML),	0,	OP (iijr),		T (normal)},
+	{"setmh",	I (SETW),	W (MH),	0,	OP (iijr),		T (normal)},
+	{"seth",	I (SETW),	W (H),	0,	OP (iijr),		T (normal)},
 
-	{"incl",	I (INCW),	W (L),	0,	OP (iijr),		N},
-	{"incml",	I (INCW),	W (ML),	0,	OP (iijr),		N},
-	{"incmh",	I (INCW),	W (MH),	0,	OP (iijr),		N},
-	{"inch",	I (INCW),	W (H),	0,	OP (iijr),		N},
+	{"incl",	I (INCW),	W (L),	0,	OP (iijr),		T (normal)},
+	{"incml",	I (INCW),	W (ML),	0,	OP (iijr),		T (normal)},
+	{"incmh",	I (INCW),	W (MH),	0,	OP (iijr),		T (normal)},
+	{"inch",	I (INCW),	W (H),	0,	OP (iijr),		T (normal)},
 
-	{"orl",		I (ORW),	W (L),	0,	OP (iijr),		N},
-	{"orml",	I (ORW),	W (ML),	0,	OP (iijr),		N},
-	{"ormh",	I (ORW),	W (MH),	0,	OP (iijr),		N},
-	{"orh",		I (ORW),	W (H),	0,	OP (iijr),		N},
+	{"orl",		I (ORW),	W (L),	0,	OP (iijr),		T (normal)},
+	{"orml",	I (ORW),	W (ML),	0,	OP (iijr),		T (normal)},
+	{"ormh",	I (ORW),	W (MH),	0,	OP (iijr),		T (normal)},
+	{"orh",		I (ORW),	W (H),	0,	OP (iijr),		T (normal)},
 
-	{"andnl",	I (ANDNW),	W (L),	0,	OP (iijr),		N},
-	{"andnml",	I (ANDNW),	W (ML),	0,	OP (iijr),		N},
-	{"andnmh",	I (ANDNW),	W (MH),	0,	OP (iijr),		N},
-	{"andnh",	I (ANDNW),	W (H),	0,	OP (iijr),		N},
+	{"andnl",	I (ANDNW),	W (L),	0,	OP (iijr),		T (normal)},
+	{"andnml",	I (ANDNW),	W (ML),	0,	OP (iijr),		T (normal)},
+	{"andnmh",	I (ANDNW),	W (MH),	0,	OP (iijr),		T (normal)},
+	{"andnh",	I (ANDNW),	W (H),	0,	OP (iijr),		T (normal)},
 
-	{"slu",		0x3E,		1,	1,	OP (orir_orrr),		D_B_C},
-	{"sr",		0x3E,		2,	1,	OP (orir_orrr),		D_B_C},
-	{"sru",		0x3E,		3,	1,	OP (orir_orrr),		D_B_C},
-	{"not",		0x3E,		4,	1,	OP (orir_orrr),		D_B_C},
+	{"slu",		0x3E,		1,	1,	OP (orir_orrr),		T (normal)},
+	{"sr",		0x3E,		2,	1,	OP (orir_orrr),		T (normal)},
+	{"sru",		0x3E,		3,	1,	OP (orir_orrr),		T (normal)},
+	{"not",		0x3E,		4,	1,	OP (orir_orrr),		T (normal)},
 
-	{"csn",		0x40,		0,	1,	OP (riir_rrir),		D_A_BC},
-	{"csz",		0x42,		0,	1,	OP (riir_rrir),		D_A_BC},
-	{"csp",		0x44,		0,	1,	OP (riir_rrir),		D_A_BC},
-	{"csod",	0x46,		0,	1,	OP (riir_rrir),		D_A_BC},
-	{"csnn",	0x48,		0,	1,	OP (riir_rrir),		D_A_BC},
-	{"csnz",	0x4A,		0,	1,	OP (riir_rrir),		D_A_BC},
-	{"csnp",	0x4C,		0,	1,	OP (riir_rrir),		D_A_BC},
-	{"csev",	0x4E,		0,	1,	OP (riir_rrir),		D_A_BC},
+	{"csn",		0x40,		0,	1,	OP (riir_rrir),		T (normal)},
+	{"csz",		0x42,		0,	1,	OP (riir_rrir),		T (normal)},
+	{"csp",		0x44,		0,	1,	OP (riir_rrir),		T (normal)},
+	{"csod",	0x46,		0,	1,	OP (riir_rrir),		T (normal)},
+	{"csnn",	0x48,		0,	1,	OP (riir_rrir),		T (normal)},
+	{"csnz",	0x4A,		0,	1,	OP (riir_rrir),		T (normal)},
+	{"csnp",	0x4C,		0,	1,	OP (riir_rrir),		T (normal)},
+	{"csev",	0x4E,		0,	1,	OP (riir_rrir),		T (normal)},
 
-	{"ldb",		0x80,		0,	1,	OP (riir_rrir_or_sym),	MB},
-	{"ldbu",	0x82,		0,	1,	OP (riir_rrir_or_sym),	MB},
-	{"ldw",		0x84,		0,	1,	OP (riir_rrir_or_sym),	MW},
-	{"ldwu",	0x86,		0,	1,	OP (riir_rrir_or_sym),	MW},
-	{"ldt",		0x88,		0,	1,	OP (riir_rrir_or_sym),	MT},
-	{"ldtu",	0x8A,		0,	1,	OP (riir_rrir_or_sym),	MT},
-	{"ldo",		0x8C,		0,	1,	OP (riir_rrir_or_sym),	MO},
-	{"ldsf",	0x8E,		0,	1,	OP (riir_rrir_or_sym),	MT},
+	{"ldb",		0x80,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
+	{"ldbu",	0x82,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
+	{"ldw",		0x84,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
+	{"ldwu",	0x86,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
+	{"ldt",		0x88,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
+	{"ldtu",	0x8A,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
+	{"ldo",		0x8C,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
+	{"ldsf",	0x8E,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
 
-	{"stb",		0x90,		0,	1,	OP (riir_rrir_or_sym),	MB},
-	{"stw",		0x92,		0,	1,	OP (riir_rrir_or_sym),	MW},
-	{"stt",		0x94,		0,	1,	OP (riir_rrir_or_sym),	MT},
-	{"sto",		0x96,		0,	1,	OP (riir_rrir_or_sym),	MO},
-	{"stsf",	0x9E,		0,	1,	OP (riir_rrir_or_sym),	MT},
+	{"stb",		0x90,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
+	{"stw",		0x92,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
+	{"stt",		0x94,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
+	{"sto",		0x96,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
+	{"stsf",	0x9E,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
 
-	{"bn",		0xC0,		0,	1,	OP (riii),		COND_BR},
-	{"bz",		0xC2,		0,	1,	OP (riii),		COND_BR},
-	{"bp",		0xC4,		0,	1,	OP (riii),		COND_BR},
-	{"bod",		0xC6,		0,	1,	OP (riii),		COND_BR},
-	{"bnn",		0xC8,		0,	1,	OP (riii),		COND_BR},
-	{"bnz",		0xCA,		0,	1,	OP (riii),		COND_BR},
-	{"bnp",		0xCC,		0,	1,	OP (riii),		COND_BR},
-	{"bev",		0xCE,		0,	1,	OP (riii),		COND_BR},
+	{"bn",		0xC0,		0,	1,	OP (riii),		T (condbranch)},
+	{"bz",		0xC2,		0,	1,	OP (riii),		T (condbranch)},
+	{"bp",		0xC4,		0,	1,	OP (riii),		T (condbranch)},
+	{"bod",		0xC6,		0,	1,	OP (riii),		T (condbranch)},
+	{"bnn",		0xC8,		0,	1,	OP (riii),		T (condbranch)},
+	{"bnz",		0xCA,		0,	1,	OP (riii),		T (condbranch)},
+	{"bnp",		0xCC,		0,	1,	OP (riii),		T (condbranch)},
+	{"bev",		0xCE,		0,	1,	OP (riii),		T (condbranch)},
 
-	{"jmp",		I (JUMP),	0,	1,	OP (riii),		dadao_type_jmp},
-	{"call",	I (CALL),	0,	1,	OP (riii_rrii),		J},
-	{"geta",	0xD4,		0,	1,	OP (riii),		dadao_type_geta},
+	{"jmp",		I (JUMP),	0,	1,	OP (riii),		T (jmp)},
+	{"call",	I (CALL),	0,	1,	OP (riii_rrii),		T (jsr)},
+	{"geta",	0xD4,		0,	1,	OP (riii),		T (geta)},
 
-	{"swym",	0xDA,		0,	0,	OP (oiii),		N},
-	{"ret",		0xDA,		0x01,	0,	OP (o000),		B},
-	{"trip",	0xDA,		0x04,	0,	OP (oiii),		N},
-	{"trap",	0xDA,		0x20,	0,	OP (oiii),		N},
-	{"nop",		0xDA,		0x36,	0,	OP (o000),		N},
+	{"swym",	0xDA,		0,	0,	OP (oiii),		T (normal)},
+	{"ret",		0xDA,		0x01,	0,	OP (o000),		T (jsr)},
+	{"trip",	0xDA,		0x04,	0,	OP (oiii),		T (jsr)},
+	{"trap",	0xDA,		0x20,	0,	OP (oiii),		T (jsr)},
+	{"nop",		0xDA,		0x36,	0,	OP (o000),		T (normal)},
 
-	{"put",		0xDA,		0x37,	0,	OP (or0r_put),		N},
-	{"get",		0xDA,		0x38,	0,	OP (or0r_get),		N},
+	{"put",		0xDA,		0x37,	0,	OP (or0r_put),		T (normal)},
+	{"get",		0xDA,		0x38,	0,	OP (or0r_get),		T (normal)},
 
-	{"fcmp",	I (FP),		1,	0,	OP (orrr),		N},
-	{"fun",		I (FP),		2,	0,	OP (orrr),		N},
-	{"feql",	I (FP),		3,	0,	OP (orrr),		N},
-	{"fadd",	I (FP),		4,	0,	OP (orrr),		N},
-	{"fsub",	I (FP),		6,	0,	OP (orrr),		N},
-	{"fmul",	I (FP),		16,	0,	OP (orrr),		N},
-	{"fcmpe",	I (FP),		17,	0,	OP (orrr),		N},
-	{"fune",	I (FP),		18,	0,	OP (orrr),		N},
-	{"feqle",	I (FP),		19,	0,	OP (orrr),		N},
-	{"fdiv",	I (FP),		20,	0,	OP (orrr),		N},
-	{"frem",	I (FP),		22,	0,	OP (orrr),		N},
+	{"fcmp",	I (FP),		1,	0,	OP (orrr),		T (normal)},
+	{"fun",		I (FP),		2,	0,	OP (orrr),		T (normal)},
+	{"feql",	I (FP),		3,	0,	OP (orrr),		T (normal)},
+	{"fadd",	I (FP),		4,	0,	OP (orrr),		T (normal)},
+	{"fsub",	I (FP),		6,	0,	OP (orrr),		T (normal)},
+	{"fmul",	I (FP),		16,	0,	OP (orrr),		T (normal)},
+	{"fcmpe",	I (FP),		17,	0,	OP (orrr),		T (normal)},
+	{"fune",	I (FP),		18,	0,	OP (orrr),		T (normal)},
+	{"feqle",	I (FP),		19,	0,	OP (orrr),		T (normal)},
+	{"fdiv",	I (FP),		20,	0,	OP (orrr),		T (normal)},
+	{"frem",	I (FP),		22,	0,	OP (orrr),		T (normal)},
 
-	{"fix",		I (FP),		5,	0,	OP (orir),		N},
-	{"fixu",	I (FP),		7,	0,	OP (orir),		N},
-	{"fsqrt",	I (FP),		21,	0,	OP (orir),		N},
-	{"fint",	I (FP),		23,	0,	OP (orir),		N},
+	{"fix",		I (FP),		5,	0,	OP (orir),		T (normal)},
+	{"fixu",	I (FP),		7,	0,	OP (orir),		T (normal)},
+	{"fsqrt",	I (FP),		21,	0,	OP (orir),		T (normal)},
+	{"fint",	I (FP),		23,	0,	OP (orir),		T (normal)},
 
-	{"flot",	I (FP),		8,	0,	OP (orir),		N},
-	{"flotu",	I (FP),		10,	0,	OP (orir),		N},
-	{"sflot",	I (FP),		12,	0,	OP (orir),		N},
-	{"sflotu",	I (FP),		14,	0,	OP (orir),		N},
+	{"flot",	I (FP),		8,	0,	OP (orir),		T (normal)},
+	{"flotu",	I (FP),		10,	0,	OP (orir),		T (normal)},
+	{"sflot",	I (FP),		12,	0,	OP (orir),		T (normal)},
+	{"sflotu",	I (FP),		14,	0,	OP (orir),		T (normal)},
 
-	{NULL,		~0,		0,	0,	OP (o000),		N}
+	{NULL,		~0,		0,	0,	OP (o000),		T (normal)}
  };

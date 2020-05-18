@@ -19,19 +19,12 @@ struct dadao_spec_reg
 /* General indication of the type of instruction.  */
 enum dadao_insn_type
  {
-   dadao_type_normal,
-   dadao_type_fd_eq_fa_op_bc,
-   dadao_type_fd_eq_fb_op_fc,
-   dadao_type_branch,
-   dadao_type_condbranch,
-   dadao_type_jmp,
-   dadao_type_geta,
-   dadao_type_memaccess_octa,
-   dadao_type_memaccess_tetra,
-   dadao_type_memaccess_wyde,
-   dadao_type_memaccess_byte,
-   dadao_type_memaccess_block,
-   dadao_type_jsr
+	dadao_type_normal,
+	dadao_type_condbranch,
+	dadao_type_jmp,
+	dadao_type_geta,
+	dadao_type_dref,
+	dadao_type_jsr
  };
 
 /* Type of operands an instruction takes.  Use when parsing assembly code
@@ -81,9 +74,7 @@ struct dadao_opcode
 	unsigned int minor_opcode;
 	unsigned int double_modes;	/* 0 means one operand mode, 1 means two operand modes */
 	enum dadao_operands_type operands;
-
-   /* This is used by the disassembly function.  */
-   enum dadao_insn_type type;
+	enum dadao_insn_type type;
  };
 
 /* Declare the actual tables.  */
