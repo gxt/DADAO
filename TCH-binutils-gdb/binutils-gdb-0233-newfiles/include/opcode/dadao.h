@@ -94,8 +94,6 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 
 /* Some insn values we use when padding and synthesizing address loads.  */
 #define IMM_OFFSET_BIT 1
-#define COND_INV_BIT 0x8
-#define PRED_INV_BIT 0x10
 
 #define	DADAO_WYDE_L			0
 #define	DADAO_WYDE_ML			1

@@ -767,19 +767,6 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
       {
 	int in1 = bfd_get_16 (abfd, (bfd_byte *) datap) << 16;
 
-	/* Invert the condition and prediction bit, and set the offset
-	   to five instructions ahead.
-
-	   We *can* do better if we want to.  If the branch is found to be
-	   within limits, we could leave the branch as is; there'll just
-	   be a bunch of NOP:s after it.  But we shouldn't see this
-	   sequence often enough that it's worth doing it.  */
-
-	bfd_put_32 (abfd,
-		    (((in1 ^ ((PRED_INV_BIT | COND_INV_BIT) << 24)) & ~0xffff)
-		     | (24/4)),
-		    (bfd_byte *) datap);
-
 	/* Put a "GO $255,$255,0" after the common sequence.  */
 	bfd_put_32 (abfd,
 		    ((DADAO_INSN_CALL | IMM_OFFSET_BIT) << 24) | 0xffff00,
