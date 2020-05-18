@@ -76,11 +76,11 @@ enum dadao_operands_type
 
 struct dadao_opcode
  {
-   const char *name;
-   unsigned long match;
-   unsigned long lose;
-	unsigned char aux_opcode;	/* Some insns use fa as op code */
-   enum dadao_operands_type operands;
+	const char *name;
+	unsigned int major_opcode;
+	unsigned int minor_opcode;
+	unsigned int double_modes;	/* 0 means one operand mode, 1 means two operand modes */
+	enum dadao_operands_type operands;
 
    /* This is used by the disassembly function.  */
    enum dadao_insn_type type;

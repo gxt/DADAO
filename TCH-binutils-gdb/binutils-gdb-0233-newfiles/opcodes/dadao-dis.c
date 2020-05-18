@@ -14,15 +14,6 @@
 #include "bfd.h"
 #include "opintl.h"
 
-#define BAD_CASE(x)						\
-  do								\
-   {								\
-     opcodes_error_handler (_("bad case %d (%s) in %s:%d"),	\
-			    x, #x, __FILE__, __LINE__);		\
-     abort ();							\
-   }								\
- while (0)
-
 #define FATAL_DEBUG						\
  do								\
    {								\
@@ -33,16 +24,12 @@
    }								\
  while (0)
 
-#define ROUND_MODE(n)					\
- ((n) == 1 ? "ROUND_OFF" : (n) == 2 ? "ROUND_UP" :	\
-  (n) == 3 ? "ROUND_DOWN" : (n) == 4 ? "ROUND_NEAR" :	\
-  _("(unknown)"))
-
 #define INSN_IMMEDIATE_BIT (IMM_OFFSET_BIT << 24)
 #define INSN_BACKWARD_OFFSET_BIT (1 << 24)
 
 #define MAX_REG_NAME_LEN       256
 #define MAX_SPEC_REG_NAME_LEN  32
+
 struct dadao_dis_info
  {
    const char *reg_name[MAX_REG_NAME_LEN];
@@ -55,13 +42,16 @@ struct dadao_dis_info
  };
 
 /* Initialize a target-specific array in INFO.  */
-
 static bfd_boolean
 initialize_dadao_dis_info (struct disassemble_info *info)
 {
-  struct dadao_dis_info *minfop = malloc (sizeof (struct dadao_dis_info));
+  struct dadao_dis_info *minfop;
   long i;
 
+  if (info->private_data != NULL)
+    return TRUE;
+
+  minfop = malloc (sizeof (struct dadao_dis_info));
   if (minfop == NULL)
     return FALSE;
 
@@ -125,127 +115,109 @@ initialize_dadao_dis_info (struct disassemble_info *info)
 
 /* A table indexed by the first byte is constructed as we disassemble each
    tetrabyte.  The contents is a pointer into dadao_insns reflecting the
-   first found entry with matching match-bits and lose-bits.  Further
-   entries are considered one after one until the operand constraints
-   match or the match-bits and lose-bits do not match.  Normally a
-   "further entry" will just show that there was no other match.  */
-
+   first found entry with matching major_opcode and minor_opcode. */
 static const struct dadao_opcode *
-get_opcode (unsigned long insn, unsigned int fop, unsigned int fa)
+get_opcode (unsigned long insn)
 {
-  static const struct dadao_opcode **opcodes = NULL;
-  static const struct dadao_opcode **opcodes_3E = NULL;
-  static const struct dadao_opcode **opcodes_DA = NULL;
-  static const struct dadao_opcode **opcodes_DB = NULL;
-  const struct dadao_opcode *opcodep = dadao_opcodes;
-  unsigned int opcode_part = (insn >> 24) & 255;
+	static const struct dadao_opcode **opcodes = NULL;
+	static const struct dadao_opcode **opcodes_3A = NULL;
+	static const struct dadao_opcode **opcodes_3E = NULL;
+	static const struct dadao_opcode **opcodes_DA = NULL;
+	static const struct dadao_opcode **opcodes_DB = NULL;
+	const struct dadao_opcode *opcodep = dadao_opcodes;
+	unsigned int majop, minop;
 
-  if (opcodes == NULL) {
-    opcodes = xcalloc (256, sizeof (struct dadao_opcode *));
-    opcodes_3E = xcalloc (64, sizeof (struct dadao_opcode *));
-    opcodes_DA = xcalloc (64, sizeof (struct dadao_opcode *));
-    opcodes_DB = xcalloc (64, sizeof (struct dadao_opcode *));
-  }
+	if (opcodes == NULL) {
+		opcodes = xcalloc (256, sizeof (struct dadao_opcode *));
+		opcodes_3A = xcalloc (4, sizeof (struct dadao_opcode *));
+		opcodes_3E = xcalloc (64, sizeof (struct dadao_opcode *));
+		opcodes_DA = xcalloc (64, sizeof (struct dadao_opcode *));
+		opcodes_DB = xcalloc (64, sizeof (struct dadao_opcode *));
+	}
 
-	/* FIXME: too ugly */
-	if ((fop == 0x3E) || (fop == 0x3F)) {
-		opcodep = opcodes_3E[fa];
-		if (opcodep == NULL) {
-			/* Search through the table.  */
-			for (opcodep = dadao_opcodes; opcodep->name != NULL; opcodep++) {
-				if ((opcodep->match == 0x3E000000) && (opcodep->aux_opcode == fa)) {
-					opcodes_3E[fa] = opcodep;
-					break;
-				}
+	majop = insn >> 24;
+
+	/* FIXME: Break out this into an initialization function.  */
+	if (majop == 0x3A) {
+		minop = (insn & 0xC0) >> 6;
+		opcodep = opcodes_3A[minop];
+		if (opcodep != NULL)	return opcodep;
+
+		/* Search through the table.  */
+		for (opcodep = dadao_opcodes; opcodep->name != NULL; opcodep++) {
+			if ((opcodep->major_opcode == 0x3A) && (opcodep->minor_opcode == minop)) {
+				opcodes_3A[minop] = opcodep;
+				return opcodep;
 			}
 		}
-		goto get_opcode_found;
+
+		return NULL;
 	}
 
-	if (fop == 0xDA) {
-		opcodep = opcodes_DA[fa];
-		if (opcodep == NULL) {
-			/* Search through the table.  */
-			for (opcodep = dadao_opcodes; opcodep->name != NULL; opcodep++) {
-				if ((opcodep->match == 0xDA000000) && (opcodep->aux_opcode == fa)) {
-					opcodes_DA[fa] = opcodep;
-					break;
-				}
+	if ((majop == 0x3E) || (majop == 0x3F)) {
+		minop = (insn & 0x00FC0000) >> 18;
+		opcodep = opcodes_3E[minop];
+		if (opcodep != NULL)	return opcodep;
+
+		/* Search through the table.  */
+		for (opcodep = dadao_opcodes; opcodep->name != NULL; opcodep++) {
+			if ((opcodep->major_opcode == 0x3E) && (opcodep->minor_opcode == minop)) {
+				opcodes_3E[minop] = opcodep;
+				return opcodep;
 			}
 		}
-		goto get_opcode_found;
+
+		return NULL;
 	}
 
-	if (fop == 0xDB) {
-		opcodep = opcodes_DB[fa];
-		if (opcodep == NULL) {
-			/* Search through the table.  */
-			for (opcodep = dadao_opcodes; opcodep->name != NULL; opcodep++) {
-				if ((opcodep->match == 0xDB000000) && (opcodep->aux_opcode == fa)) {
-					opcodes_DB[fa] = opcodep;
-					break;
-				}
+	if (majop == 0xDA) {
+		minop = (insn & 0x00FC0000) >> 18;
+		opcodep = opcodes_DA[minop];
+		if (opcodep != NULL)	return opcodep;
+
+		/* Search through the table.  */
+		for (opcodep = dadao_opcodes; opcodep->name != NULL; opcodep++) {
+			if ((opcodep->major_opcode == 0xDA) && (opcodep->minor_opcode == minop)) {
+				opcodes_DA[minop] = opcodep;
+				return opcodep;
 			}
 		}
-		goto get_opcode_found;
+
+		return NULL;
 	}
 
-  opcodep = opcodes[opcode_part];
-  if (opcodep == NULL
-      || (opcodep->match & insn) != opcodep->match
-      || (opcodep->lose & insn) != 0)
-    {
-      /* Search through the table.  */
-      for (opcodep = dadao_opcodes; opcodep->name != NULL; opcodep++)
-	{
-	  /* FIXME: Break out this into an initialization function.  */
-	  if ((opcodep->match & (opcode_part << 24)) == opcode_part
-	      && (opcodep->lose & (opcode_part << 24)) == 0)
-	    opcodes[opcode_part] = opcodep;
+	if (majop == 0xDB) {
+		minop = (insn & 0x00FC0000) >> 18;
+		opcodep = opcodes_DB[minop];
+		if (opcodep != NULL)	return opcodep;
 
-	  if ((opcodep->match & insn) == opcodep->match
-	      && (opcodep->lose & insn) == 0)
-	    break;
-	}
-    }
+		/* Search through the table.  */
+		for (opcodep = dadao_opcodes; opcodep->name != NULL; opcodep++) {
+			if ((opcodep->major_opcode == 0xDB) && (opcodep->minor_opcode == minop)) {
+				opcodes_DB[minop] = opcodep;
+				return opcodep;
+			}
+		}
 
-get_opcode_found:
-
-  if (opcodep->name == NULL)
-    return NULL;
-
-  /* Check constraints.  If they don't match, loop through the next opcode
-     entries.  */
-  do
-    {
-      switch (opcodep->operands)
-	{
-	  /* These have no restraint on what can be in the lower three
-	     bytes.  */
-	case dadao_operands_or0r_get:
-	case dadao_operands_or0r_put:
-	case dadao_operands_orrr:
-	case dadao_operands_oiii:
-	case dadao_operands_orir:
-	case dadao_operands_orir_orrr:
-	case dadao_operands_riir_rrir:
-	case dadao_operands_riir_rrir_or_sym:
-	case dadao_operands_riii:
-	case dadao_operands_riii_rrii:
-	case dadao_operands_o000:
-	  return opcodep;
-
-	default:
-	  BAD_CASE (opcodep->operands);
+		return NULL;
 	}
 
-      opcodep++;
-    }
-  while ((opcodep->match & insn) == opcodep->match
-	 && (opcodep->lose & insn) == 0);
+	opcodep = opcodes[majop];
+	if (opcodep != NULL)	return opcodep;
 
-  /* If we got here, we had no match.  */
-  return NULL;
+	for (opcodep = dadao_opcodes; opcodep->name != NULL; opcodep++) {
+		if (opcodep->major_opcode == majop) {
+			opcodes[majop] = opcodep;
+			return opcodep;
+		}
+		if ((opcodep->major_opcode == (majop & 0xFE)) && opcodep->double_modes) {
+			opcodes[majop] = opcodep;
+			return opcodep;
+		}
+	}
+
+	/* If we got here, we had no match.  */
+	return NULL;
 }
 
 static inline const char *
@@ -266,169 +238,115 @@ get_spec_reg_name (const struct dadao_dis_info * minfop, unsigned int x)
 
 /* The main disassembly function.  */
 
-int
-print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
+int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 {
-  unsigned char buffer[4];
-  unsigned long insn;
-  unsigned int x, y, z;
-  unsigned int fop, fa, fb, fc, fbc, fd;
-  const struct dadao_opcode *opcodep;
-  int status = (*info->read_memory_func) (memaddr, buffer, 4, info);
-  struct dadao_dis_info *minfop;
+	unsigned char buffer[4];
+	unsigned long insn;
+	unsigned int fa, fb, fc, fd;
+	const struct dadao_opcode *opcodep;
+	int status;
+	struct dadao_dis_info *minfop;
+	bfd_signed_vma offset;
 
-  if (status != 0)
-    {
-      (*info->memory_error_func) (status, memaddr, info);
-      return -1;
-    }
+	status = (*info->read_memory_func) (memaddr, buffer, 4, info);
+	if (status != 0) {
+		(*info->memory_error_func) (status, memaddr, info);
+		return -1;
+	}
 
-  /* FIXME: Is -1 suitable?  */
-  if (info->private_data == NULL
-      && ! initialize_dadao_dis_info (info))
-    return -1;
+	status = initialize_dadao_dis_info (info);
+	if (status != TRUE)	return -1;
 
-  minfop = (struct dadao_dis_info *) info->private_data;
-  x = buffer[1];
-  y = buffer[2];
-  z = buffer[3];
+	minfop = (struct dadao_dis_info *) info->private_data;
 
-  fop = buffer[0];
-  fa = buffer[1] >> 2;
-  fb = ((buffer[1] & 0x3) << 4) | (buffer[2] >> 4);
-  fc = ((buffer[2] & 0xf) << 2) | (buffer[3] >> 6);
-  fbc = (fb << 6) | fc;
-  fd = buffer[3] & 0x3f;
+	fa = buffer[1] >> 2;
+	fb = ((buffer[1] & 0x3) << 4) | (buffer[2] >> 4);
+	fc = ((buffer[2] & 0xf) << 2) | (buffer[3] >> 6);
+	fd = buffer[3] & 0x3f;
 
-  insn = bfd_getb32 (buffer);
+	insn = bfd_getb32 (buffer);
 
-  opcodep = get_opcode (insn, fop, fa);
+	opcodep = get_opcode (insn);
 
-  if (opcodep == NULL)
-    {
-      (*info->fprintf_func) (info->stream, _("*unknown*"));
-      return 4;
-    }
+	if (opcodep == NULL) {
+		(*info->fprintf_func) (info->stream, "*unknown* (0x%08lx)", insn);
+		return 4;
+	}
 
-  (*info->fprintf_func) (info->stream, "%s", opcodep->name);
+	(*info->fprintf_func) (info->stream, "%s", opcodep->name);
 
-  /* Present bytes in the order they are laid out in memory.  */
-  info->display_endian = BFD_ENDIAN_BIG;
+	/* Present bytes in the order they are laid out in memory.  */
+	info->display_endian = BFD_ENDIAN_BIG;
 
-  info->insn_info_valid = 1;
-  info->bytes_per_chunk = 4;
-  info->branch_delay_insns = 0;
-  info->target = 0;
-  switch (opcodep->type)
-    {
-    case dadao_type_normal:
-    case dadao_type_memaccess_block:
-    case dadao_type_fd_eq_fb_op_fc:
-    case dadao_type_fd_eq_fa_op_bc:
-    case dadao_type_geta:
-      info->insn_type = dis_nonbranch;
-      break;
+	info->insn_info_valid = 1;
+	info->bytes_per_chunk = 4;
+	info->branch_delay_insns = 0;
+	info->target = 0;
 
-    case dadao_type_jmp:
-    case dadao_type_branch:
-      info->insn_type = dis_branch;
-      break;
+	switch (opcodep->operands) {
+	case dadao_operands_o000: /* nop / ret  */
+		break;
 
-    case dadao_type_condbranch:
-      info->insn_type = dis_condbranch;
-      break;
+	case dadao_operands_oiii:
+		(*info->fprintf_func) (info->stream, "\t%d", (fb << 12) | (fc << 6) | fd);
+		break;
 
-    case dadao_type_memaccess_octa:
-      info->insn_type = dis_dref;
-      info->data_size = 8;
-      break;
+	case dadao_operands_orrr:
+		(*info->fprintf_func) (info->stream, "\t%s, %s, %s",
+			get_reg_name (minfop, fd), get_reg_name (minfop, fb), get_reg_name (minfop, fc));
+		break;
 
-    case dadao_type_memaccess_tetra:
-      info->insn_type = dis_dref;
-      info->data_size = 4;
-      break;
+	case dadao_operands_orir:
+		(*info->fprintf_func) (info->stream, "\t%s, %s, %d",
+			get_reg_name (minfop, fd), get_reg_name (minfop, fb), fc);
+		break;
 
-    case dadao_type_memaccess_wyde:
-      info->insn_type = dis_dref;
-      info->data_size = 2;
-      break;
+	case dadao_operands_or0r_get: /* GET - "X,spec_reg".  */
+		(*info->fprintf_func) (info->stream, "\t%s,%s",
+			get_reg_name (minfop, fd), get_spec_reg_name (minfop, fb));
+		break;
 
-    case dadao_type_memaccess_byte:
-      info->insn_type = dis_dref;
-      info->data_size = 1;
-      break;
+	case dadao_operands_or0r_put: /* PUT - "spec_reg,$Z".  */
+		(*info->fprintf_func) (info->stream, "\t%s,%s",
+			get_spec_reg_name (minfop, fd), get_reg_name (minfop, fb));
+		break;
 
-    case dadao_type_jsr:
-      info->insn_type = dis_jsr;
-      break;
+	case dadao_operands_riir_rrir:
+	case dadao_operands_riir_rrir_or_sym:
+		if (insn & INSN_IMMEDIATE_BIT)
+			(*info->fprintf_func) (info->stream, "\t%s, %s, %d",
+				get_reg_name (minfop, fd), get_reg_name (minfop, fa), (fb << 6) | fc);
+		else if (fc == 0)
+			(*info->fprintf_func) (info->stream, "\t%s, %s, %s",
+				get_reg_name (minfop, fd), get_reg_name (minfop, fa), get_reg_name (minfop, fb));
+		else
+			(*info->fprintf_func) (info->stream, "\t%s, %s, %s << %d",
+				get_reg_name (minfop, fd), get_reg_name (minfop, fa), get_reg_name (minfop, fb), fc);
+		break;
 
-    default:
-      BAD_CASE(opcodep->type);
-    }
+	case dadao_operands_orir_orrr: /* The regular "regb, regc" or "regb, imm6" */
+		if (insn & INSN_IMMEDIATE_BIT)
+			(*info->fprintf_func) (info->stream, "\t%s, %s, %d",
+				get_reg_name (minfop, fd), get_reg_name (minfop, fb), fc);
+		else
+			(*info->fprintf_func) (info->stream, "\t%s, %s, %s",
+				get_reg_name (minfop, fd), get_reg_name (minfop, fb), get_reg_name (minfop, fc));
+		break;
 
-  switch (opcodep->operands)
-    {
-    case dadao_operands_orrr: /* regd, regb, regc */
-      (*info->fprintf_func) (info->stream, "\t%s, %s, %s",
-			     get_reg_name (minfop, fd),
-			     get_reg_name (minfop, fb),
-			     get_reg_name (minfop, fc));
-      break;
+	case dadao_operands_riii: /* Like jmp, GETA or branches - "$X,Address".  */
+		offset = (fc * 256 + fd) * 4;
 
-    case dadao_operands_riir_rrir: /* The regular "rega, regb << shift6" or "rega, imm12" */
-    case dadao_operands_riir_rrir_or_sym: /* The regular "rega, regb << shift6" or "rega, imm12" */
-      if (insn & INSN_IMMEDIATE_BIT)
-	(*info->fprintf_func) (info->stream, "\t%s, %s, %d",
-			       get_reg_name (minfop, fd),
-			       get_reg_name (minfop, fa), fbc);
-      else if (fc == 0)
-	  (*info->fprintf_func) (info->stream, "\t%s, %s, %s",
-				get_reg_name (minfop, fd),
-				get_reg_name (minfop, fa),
-				get_reg_name (minfop, fb));
-      else
-	  (*info->fprintf_func) (info->stream, "\t%s, %s, %s << %d",
-				get_reg_name (minfop, fd),
-				get_reg_name (minfop, fa),
-				get_reg_name (minfop, fb), fc);
-      break;
+		if (insn & INSN_BACKWARD_OFFSET_BIT)	offset -= 65536 * 4;
 
-    case dadao_operands_orir: /* The regular "regb, regc" or "regb, imm6" */
-	(*info->fprintf_func) (info->stream, "\t%s, %s, %d",
-			       get_reg_name (minfop, fd),
-			       get_reg_name (minfop, fb), fc);
-	break;
+		info->target = memaddr + offset;
 
-    case dadao_operands_orir_orrr: /* The regular "regb, regc" or "regb, imm6" */
-      if (insn & INSN_IMMEDIATE_BIT)
-	(*info->fprintf_func) (info->stream, "\t%s, %s, %d",
-			       get_reg_name (minfop, fd),
-			       get_reg_name (minfop, fb), fc);
-      else
-	  (*info->fprintf_func) (info->stream, "\t%s, %s, %s",
-				get_reg_name (minfop, fd),
-				get_reg_name (minfop, fb),
-				get_reg_name (minfop, fc));
-      break;
-
-    case dadao_operands_riii:
-      /* Like jmp, GETA or branches - "$X,Address".  */
-      {
-	bfd_signed_vma offset = (y * 256 + z) * 4;
-
-	if (insn & INSN_BACKWARD_OFFSET_BIT)
-	  offset -= 65536 * 4;
-
-	info->target = memaddr + offset;
-
-	(*info->fprintf_func) (info->stream, "\t%s,", get_reg_name (minfop, x));
-	(*info->print_address_func) (memaddr + offset, info);
-      }
-      break;
+		(*info->fprintf_func) (info->stream, "\t%s,", get_reg_name (minfop, fa));
+		(*info->print_address_func) (memaddr + offset, info);
+		break;
 
 	case dadao_operands_riii_rrii:
 		if (insn & INSN_IMMEDIATE_BIT) {
-			bfd_signed_vma offset = (y * 256 + z) * 4;
+			offset = (fc * 256 + fd) * 4;
 
 			info->target = memaddr + offset;
 
@@ -436,37 +354,13 @@ print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 			(*info->print_address_func) (memaddr + offset, info);
 		} else
 			(*info->fprintf_func) (info->stream, "\t%s, %s, %d",
-				       get_reg_name (minfop, fa),
-				       get_reg_name (minfop, fb), ((fc << 6) | fd));
+				get_reg_name (minfop, fa), get_reg_name (minfop, fb), ((fc << 6) | fd));
 		break;
 
+	default:
+		(*info->fprintf_func) (info->stream, "*unknown operands type: %d for insn %08lx",
+			opcodep->operands, insn);
+	}
 
-	case dadao_operands_or0r_get:
-		/* GET - "X,spec_reg".  */
-		(*info->fprintf_func) (info->stream, "\t%s,%s",
-				     get_reg_name (minfop, x),
-				     get_spec_reg_name (minfop, z));
-		break;
-
-	case dadao_operands_or0r_put:
-		/* PUT - "spec_reg,$Z|Z".  */
-		(*info->fprintf_func) (info->stream, "\t%s,%s",
-				     get_spec_reg_name (minfop, x),
-				     get_reg_name (minfop, z));
-		break;
-
-	case dadao_operands_oiii: /* Like SWYM or TRAP - "imm18".  */
-		(*info->fprintf_func) (info->stream, "\t%d", (fb << 12) | (fc << 6) | fd);
-		break;
-
-	case dadao_operands_o000: /* nop / ret  */
-		break;
-
-    default:
-      (*info->fprintf_func) (info->stream, _("*unknown operands type: %d*"),
-			     opcodep->operands);
-      break;
-    }
-
-  return 4;
+	return 4;
 }
