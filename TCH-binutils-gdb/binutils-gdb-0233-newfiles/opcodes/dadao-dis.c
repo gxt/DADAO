@@ -121,6 +121,9 @@ get_opcode (unsigned long insn)
 {
 	static const struct dadao_opcode **opcodes = NULL;
 	static const struct dadao_opcode **opcodes_3A = NULL;
+	static const struct dadao_opcode **opcodes_3B = NULL;
+	static const struct dadao_opcode **opcodes_3C = NULL;
+	static const struct dadao_opcode **opcodes_3D = NULL;
 	static const struct dadao_opcode **opcodes_3E = NULL;
 	static const struct dadao_opcode **opcodes_DA = NULL;
 	static const struct dadao_opcode **opcodes_DB = NULL;
@@ -130,6 +133,9 @@ get_opcode (unsigned long insn)
 	if (opcodes == NULL) {
 		opcodes = xcalloc (256, sizeof (struct dadao_opcode *));
 		opcodes_3A = xcalloc (4, sizeof (struct dadao_opcode *));
+		opcodes_3B = xcalloc (4, sizeof (struct dadao_opcode *));
+		opcodes_3C = xcalloc (4, sizeof (struct dadao_opcode *));
+		opcodes_3D = xcalloc (4, sizeof (struct dadao_opcode *));
 		opcodes_3E = xcalloc (64, sizeof (struct dadao_opcode *));
 		opcodes_DA = xcalloc (64, sizeof (struct dadao_opcode *));
 		opcodes_DB = xcalloc (64, sizeof (struct dadao_opcode *));
@@ -147,6 +153,54 @@ get_opcode (unsigned long insn)
 		for (opcodep = dadao_opcodes; opcodep->name != NULL; opcodep++) {
 			if ((opcodep->major_opcode == 0x3A) && (opcodep->minor_opcode == minop)) {
 				opcodes_3A[minop] = opcodep;
+				return opcodep;
+			}
+		}
+
+		return NULL;
+	}
+
+	if (majop == 0x3B) {
+		minop = (insn & 0xC0) >> 6;
+		opcodep = opcodes_3B[minop];
+		if (opcodep != NULL)	return opcodep;
+
+		/* Search through the table.  */
+		for (opcodep = dadao_opcodes; opcodep->name != NULL; opcodep++) {
+			if ((opcodep->major_opcode == 0x3B) && (opcodep->minor_opcode == minop)) {
+				opcodes_3B[minop] = opcodep;
+				return opcodep;
+			}
+		}
+
+		return NULL;
+	}
+
+	if (majop == 0x3C) {
+		minop = (insn & 0xC0) >> 6;
+		opcodep = opcodes_3C[minop];
+		if (opcodep != NULL)	return opcodep;
+
+		/* Search through the table.  */
+		for (opcodep = dadao_opcodes; opcodep->name != NULL; opcodep++) {
+			if ((opcodep->major_opcode == 0x3C) && (opcodep->minor_opcode == minop)) {
+				opcodes_3C[minop] = opcodep;
+				return opcodep;
+			}
+		}
+
+		return NULL;
+	}
+
+	if (majop == 0x3D) {
+		minop = (insn & 0xC0) >> 6;
+		opcodep = opcodes_3D[minop];
+		if (opcodep != NULL)	return opcodep;
+
+		/* Search through the table.  */
+		for (opcodep = dadao_opcodes; opcodep->name != NULL; opcodep++) {
+			if ((opcodep->major_opcode == 0x3D) && (opcodep->minor_opcode == minop)) {
+				opcodes_3D[minop] = opcodep;
 				return opcodep;
 			}
 		}
@@ -285,6 +339,11 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 
 	switch (opcodep->operands) {
 	case dadao_operands_o000: /* nop / ret  */
+		break;
+
+	case dadao_operands_iijr:
+		(*info->fprintf_func) (info->stream, "\t%s, %d",
+			get_reg_name (minfop, fd), (fa << 10) | (fb << 4) | fc);
 		break;
 
 	case dadao_operands_oiii:
