@@ -716,7 +716,7 @@ void dadao_md_assemble (char *str)
       break;
 
 	case dadao_operands_riii:
-	case dadao_operands_fd_reg_fabc_i16:
+	case dadao_operands_iijr:
 	case dadao_operands_or0r_get:
 	case dadao_operands_or0r_put:
 		max_operands = 2;
@@ -813,7 +813,7 @@ void dadao_md_assemble (char *str)
 		break;
 
 
-	case dadao_operands_fd_reg_fabc_i16: /* regd, imm16  */
+	case dadao_operands_iijr: /* regd, imm16  */
 		if ((n_operands != 2) || (exp[1].X_op != O_constant))
 			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 

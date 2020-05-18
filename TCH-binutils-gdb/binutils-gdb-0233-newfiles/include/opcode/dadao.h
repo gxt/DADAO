@@ -50,7 +50,7 @@ enum dadao_operands_type
 	dadao_operands_riii_rrii,
 
 	/* The regular "regd, imm16", 2-bit in fc used to indicate H/MH/ML/L */
-	dadao_operands_fd_reg_fabc_i16,
+	dadao_operands_iijr,
 
 	/* The regular "regd, rega, regb << shift6" or "regd, rega, imm12" */
 	dadao_operands_riir_rrir,
