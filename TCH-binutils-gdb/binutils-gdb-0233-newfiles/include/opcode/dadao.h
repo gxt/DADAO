@@ -117,80 +117,37 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
  *   FC: 6-bit, [11..6]
  *   FD: 6-bit, [5..0]
  */
-#define DDOP_CHECK_BIT(ddop_fx, bit_count)							\
+#define DDOP_CHECK_BIT_COUNT(ddop_fx, bit_count)						\
 	do {											\
-		if ((ddop_fx) < 0)								\
-			as_bad_where(__FILE__, __LINE__, "negative");				\
-		if ((ddop_fx) > ((1 << (bit_count)) - 1))					\
-			as_bad_where(__FILE__, __LINE__, "bigger than %d bits", bit_count );	\
+		if (((ddop_fx) < 0) || ((ddop_fx) > ((1 << (bit_count)) - 1)))			\
+			as_bad_where(__FILE__, __LINE__, "should be UIMM%d", bit_count);	\
 	} while (0)
-
-#define DDOP_CHECK_2_BIT(ddop_fx) DDOP_CHECK_BIT(ddop_fx, 2)
-#define DDOP_CHECK_16_BIT(ddop_fx) DDOP_CHECK_BIT(ddop_fx, 16)
-
-#define DDOP_CHECK_8_BIT(ddop_fx)								\
-	do {											\
-		if ((ddop_fx) < 0)								\
-			as_bad_where(__FILE__, __LINE__, "negative");				\
-		if ((ddop_fx) > 0xFF)								\
-			as_bad_where(__FILE__, __LINE__, "bigger than 255");			\
-	} while (0)
-
-#define DDOP_CHECK_18_BIT(ddop_fx)								\
-	do {											\
-		if ((ddop_fx) < 0)								\
-			as_bad_where(__FILE__, __LINE__, "negative");				\
-		if ((ddop_fx) > 0x3FFFF)								\
-			as_bad_where(__FILE__, __LINE__, "bigger than 18-bit uint");			\
-	} while (0)
-
-/* FIXME: after gcc works */
-#define DDOP_CHECK_6_BIT(x) DDOP_CHECK_8_BIT(x)
-#if 0
-#define DDOP_CHECK_6_BIT(ddop_fx)								\
-	do {											\
-		if ((ddop_fx) < 0)								\
-			as_bad_where(__FILE__, __LINE__, "negative");				\
-		if ((ddop_fx) > 0x3F)								\
-			as_bad_where(__FILE__, __LINE__, "bigger than 63, FIXME!");		\
-	} while (0)
-#endif
 
 #define DDOP_EXP_MUST_BE_REG(ddop_exp)								\
 	do {											\
 		if (ddop_exp.X_op != O_register)						\
 			as_bad_where(__FILE__, __LINE__, "Exp should be register");		\
-		DDOP_CHECK_6_BIT(ddop_exp.X_add_number);					\
+		DDOP_CHECK_BIT_COUNT(ddop_exp.X_add_number, 8);	/* FIXME: shoule be 6 */	\
 	} while (0)
 
-#define DDOP_EXP_MUST_BE_UIMM6(ddop_exp)							\
+#define DDOP_EXP_MUST_BE_UIMM(ddop_exp, bit_count)						\
 	do {											\
 		if (ddop_exp.X_op != O_constant)						\
-			as_bad_where(__FILE__, __LINE__, "Exp should be 6-bit const");		\
-		DDOP_CHECK_6_BIT(ddop_exp.X_add_number);					\
-	} while (0)
-
-#define DDOP_EXP_MUST_BE_UIMM12(ddop_exp)							\
-	do {											\
-		if (ddop_exp.X_op != O_constant)						\
-			as_bad_where(__FILE__, __LINE__, "Exp should be 12-bit const");		\
-		if ((ddop_exp.X_add_number) < 0)						\
-			as_bad_where(__FILE__, __LINE__, "negative");				\
-		if ((ddop_exp.X_add_number) > 0xFFF)						\
-			as_bad_where(__FILE__, __LINE__, "bigger than 12-bit");			\
+			as_bad_where(__FILE__, __LINE__, "Exp should be const");		\
+		DDOP_CHECK_BIT_COUNT(ddop_exp.X_add_number, (bit_count));			\
 	} while (0)
 
 #define DDOP_SET_FA(ddop_insn_p, ddop_fa)							\
 	do {											\
 		char *ddop_insn_char_p = (char *)ddop_insn_p;					\
-		DDOP_CHECK_6_BIT(ddop_fa);							\
+		DDOP_CHECK_BIT_COUNT(ddop_fa, 6);						\
 		ddop_insn_char_p[1] |= (((ddop_fa) & 0x3F) << 2);				\
 	} while (0)
 
 #define DDOP_SET_FB(ddop_insn_p, ddop_fb)							\
 	do {											\
 		char *ddop_insn_char_p = (char *)ddop_insn_p;					\
-		DDOP_CHECK_6_BIT(ddop_fb);							\
+		DDOP_CHECK_BIT_COUNT(ddop_fb, 6);						\
 		ddop_insn_char_p[1] |= (((ddop_fb) & 0x3F) >> 4);				\
 		ddop_insn_char_p[2] |= (((ddop_fb) & 0xF) << 4);				\
 	} while (0)
@@ -198,7 +155,7 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 #define DDOP_SET_FC(ddop_insn_p, ddop_fc)							\
 	do {											\
 		char *ddop_insn_char_p = (char *)ddop_insn_p;					\
-		DDOP_CHECK_6_BIT(ddop_fc);							\
+		DDOP_CHECK_BIT_COUNT(ddop_fc, 6);						\
 		ddop_insn_char_p[2] |= (((ddop_fc) & 0x3F) >> 2);				\
 		ddop_insn_char_p[3] |= (((ddop_fc) & 0x3) << 6);				\
 	} while (0)
@@ -206,14 +163,8 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 #define DDOP_SET_FD(ddop_insn_p, ddop_fd)							\
 	do {											\
 		char *ddop_insn_char_p = (char *)ddop_insn_p;					\
-		DDOP_CHECK_6_BIT(ddop_fd);							\
+		DDOP_CHECK_BIT_COUNT(ddop_fd, 6);						\
 		ddop_insn_char_p[3] |= ((ddop_fd) & 0x3F);					\
-	} while (0)
-
-#define DDOP_SET_FB_FC(ddop_insn_p, ddop_fb_fc)							\
-	do {											\
-		DDOP_SET_FB(ddop_insn_p, ((ddop_fb_fc) >> 6));					\
-		DDOP_SET_FC(ddop_insn_p, ((ddop_fb_fc) & 0x3F));				\
 	} while (0)
 
 /* We can have 256 - 32 (local registers) - 1 ($255 is not allocatable)
