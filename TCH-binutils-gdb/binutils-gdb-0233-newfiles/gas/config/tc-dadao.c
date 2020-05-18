@@ -25,7 +25,7 @@ enum dadao_fixup_action
 };
 
 static int get_spec_regno (char *);
-static int get_operands (int, char *, expressionS *);
+static int get_operands (char *, expressionS *);
 static int get_putget_operands (struct dadao_opcode *, char *, expressionS *);
 static void s_greg (int);
 static void dadao_greg_internal (char *);
@@ -317,10 +317,11 @@ dadao_fill_nops (char *opcodep, int n)
    General idea and code stolen from the tic80 port.  */
 
 static int
-get_operands (int max_operands, char *s, expressionS *exp)
+get_operands (char *s, expressionS *exp)
 {
   char *p = s;
   int numexp = 0;
+  int max_operands = 3;
   int nextchar = ',';
 
   while (nextchar == ',')
@@ -624,7 +625,6 @@ void dadao_md_assemble (char *str)
   char modified_char = 0;
   struct dadao_opcode *instruction;
   fragS *opc_fragP = NULL;
-  int max_operands = 3;
 
   /* Note that the struct frag member fr_literal in frags.h is char[], so
      I have to make this a plain char *.  */
@@ -702,42 +702,6 @@ void dadao_md_assemble (char *str)
      opcode, so we don't have to iterate over more than one opcode; if the
      syntax does not match, then there's a syntax error.  */
 
-  /* Operands have little or no context and are all comma-separated; it is
-     easier to parse each expression first.   */
-  switch (instruction->operands)
-    {
-    case dadao_operands_o000:
-      max_operands = 0;
-      break;
-
-	case dadao_operands_riii:
-	case dadao_operands_iijr:
-	case dadao_operands_or0r_get:
-	case dadao_operands_or0r_put:
-		max_operands = 2;
-		break;
-
-	case dadao_operands_orir:
-	case dadao_operands_orir_orrr:
-	case dadao_operands_orrr:
-	case dadao_operands_riii_rrii:
-		max_operands = 3;
-		break;
-
-	case dadao_operands_riir_rrir:
-	case dadao_operands_riir_rrir_or_sym:
-		max_operands = 3;
-		break;
-
-	case dadao_operands_oiii:
-		max_operands = 1;
-		break;
-
-      /* The original 3 is fine for the rest.  */
-    default:
-      break;
-    }
-
   /* If this is GET or PUT, and we don't do allow those names to be
      equated, we need to parse the names ourselves, so we don't pick up a
      user label instead of the special register.  */
@@ -746,7 +710,7 @@ void dadao_md_assemble (char *str)
 	  || instruction->operands == dadao_operands_or0r_put))
     n_operands = get_putget_operands (instruction, operands, exp);
   else
-    n_operands = get_operands (max_operands, operands, exp);
+    n_operands = get_operands (operands, exp);
 
   /* We also assume that the length of the instruction is at least 4, the
      size of an unexpanded instruction.  We need a self-contained frag
