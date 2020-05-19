@@ -21,7 +21,7 @@ enum dadao_insn_type
  {
 	dadao_type_normal,
 	dadao_type_condbranch,
-	dadao_type_jmp,
+	dadao_type_branch,
 	dadao_type_geta,
 	dadao_type_dref,
 	dadao_type_jsr
@@ -32,6 +32,9 @@ enum dadao_insn_type
 enum dadao_operands_type
  {
 	dadao_operands_o000 = 0,
+
+	/* ONLY for call insn */
+	dadao_operands_iiii_riii,
 
 	/* The regular "regd, imm16", 2-bit in fc used to indicate H/MH/ML/L */
 	dadao_operands_iijr,
@@ -96,8 +99,8 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 #define	DADAO_INSN_ORW			0x3C
 #define	DADAO_INSN_ANDNW		0x3D
 
-#define	DADAO_INSN_JUMP			0xD0
-#define	DADAO_INSN_CALL			0xD2
+#define	DADAO_INSN_CALL			0xD0
+#define	DADAO_INSN_JUMP			0xD2
 
 #define	DADAO_INSN_FP			0xDB
 
