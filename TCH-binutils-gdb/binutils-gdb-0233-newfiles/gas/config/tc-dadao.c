@@ -825,7 +825,7 @@ void dadao_md_assemble (char *str)
 		DDOP_SET_FC(opcodep, exp[1].X_add_number);
 
 		switch (exp[2].X_op) {
-		case O_register: /* regc */
+		case O_register: /* reg */
 			DDOP_EXP_MUST_BE_REG(exp[2]);
 			DDOP_SET_FD(opcodep, exp[2].X_add_number);
 			break;
@@ -842,7 +842,7 @@ void dadao_md_assemble (char *str)
 		}
 		break;
 
-	case dadao_operands_riir_rrir_or_sym: /* "regd, rega, regb << shift6" or "regd, rega, imm12" */
+	case dadao_operands_rrii_rrri_or_sym:
 		if (n_operands == 2) {
 			symbolS *sym;
 			/* The last operand is immediate whenever we see just two operands.  */
@@ -877,37 +877,38 @@ void dadao_md_assemble (char *str)
 		}
 		/* FALLTHROUGH.  */
 
-	case dadao_operands_riir_rrir: /* "regd, rega, regb << shift6" or "regd, rega, imm12" */
+	case dadao_operands_rrii_rrri:
 		if (n_operands != 3)
 			DADAO_BAD_INSN("invalid operands to opcode");
 
 		DDOP_EXP_MUST_BE_REG(exp[0]);
 		DDOP_EXP_MUST_BE_REG(exp[1]);
 
-		DDOP_SET_FD(opcodep, exp[0].X_add_number);
-		DDOP_SET_FA(opcodep, exp[1].X_add_number);
+		DDOP_SET_FA(opcodep, exp[0].X_add_number);
+		DDOP_SET_FB(opcodep, exp[1].X_add_number);
 
 		switch (exp[2].X_op) {
-		case O_register: /* regb */
+		case O_register: /* reg */
 			DDOP_EXP_MUST_BE_REG(exp[2]);
-			DDOP_SET_FB(opcodep, exp[2].X_add_number);
+			DDOP_SET_FC(opcodep, exp[2].X_add_number);
+			DDOP_SET_FD(opcodep, 0);
 			break;
 
-		case O_left_shift: /* regb << shift6 */
+		case O_left_shift: /* reg << shift6 */
 			exp_left = symbol_get_value_expression (exp[2].X_add_symbol);
 			exp_right = symbol_get_value_expression (exp[2].X_op_symbol);
 
 			DDOP_EXP_MUST_BE_REG(exp_left[0]);
 			DDOP_EXP_MUST_BE_UIMM(exp_right[0], 6);
 
-			DDOP_SET_FB(opcodep, exp_left->X_add_number);
-			DDOP_SET_FC(opcodep, exp_right->X_add_number);
+			DDOP_SET_FC(opcodep, exp_left->X_add_number);
+			DDOP_SET_FD(opcodep, exp_right->X_add_number);
 			break;
 
 		case O_constant: /* imm12 */
 			DDOP_EXP_MUST_BE_UIMM(exp[2], 12);
-			DDOP_SET_FB(opcodep, (exp[2].X_add_number) >> 6);
-			DDOP_SET_FC(opcodep, (exp[2].X_add_number) & 0x3F);
+			DDOP_SET_FC(opcodep, (exp[2].X_add_number) >> 6);
+			DDOP_SET_FD(opcodep, (exp[2].X_add_number) & 0x3F);
 
 			opcodep[0] |= IMM_OFFSET_BIT;
 			break;

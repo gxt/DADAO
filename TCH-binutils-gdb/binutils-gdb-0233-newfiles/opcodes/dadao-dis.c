@@ -384,17 +384,17 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 			get_spec_reg_name (minfop, fb), get_reg_name (minfop, fc));
 		break;
 
-	case dadao_operands_riir_rrir:
-	case dadao_operands_riir_rrir_or_sym:
+	case dadao_operands_rrii_rrri:
+	case dadao_operands_rrii_rrri_or_sym:
 		if (insn & INSN_IMMEDIATE_BIT)
 			(*info->fprintf_func) (info->stream, "\t%s, %s, %d",
-				get_reg_name (minfop, fd), get_reg_name (minfop, fa), (fb << 6) | fc);
+				get_reg_name (minfop, fa), get_reg_name (minfop, fb), (fc << 6) | fd);
 		else if (fc == 0)
 			(*info->fprintf_func) (info->stream, "\t%s, %s, %s",
-				get_reg_name (minfop, fd), get_reg_name (minfop, fa), get_reg_name (minfop, fb));
+				get_reg_name (minfop, fa), get_reg_name (minfop, fb), get_reg_name (minfop, fc));
 		else
 			(*info->fprintf_func) (info->stream, "\t%s, %s, %s << %d",
-				get_reg_name (minfop, fd), get_reg_name (minfop, fa), get_reg_name (minfop, fb), fc);
+				get_reg_name (minfop, fa), get_reg_name (minfop, fb), get_reg_name (minfop, fc), fd);
 		break;
 
 	case dadao_operands_orri_orrr:

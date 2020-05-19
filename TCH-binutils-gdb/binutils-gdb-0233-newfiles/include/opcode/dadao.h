@@ -45,11 +45,11 @@ enum dadao_operands_type
 	/* ONLY for jump insn, "ra, imm18" or "ra, rb, imm12" */
 	dadao_operands_riii_rrii,
 
-	/* The regular "regd, rega, regb << shift6" or "regd, rega, imm12" */
-	dadao_operands_riir_rrir,
+	/* The regular "ra, rb, imm12" or "ra, rb, rc << imm6" */
+	dadao_operands_rrii_rrri,
 
-	/* The regular "regd, rega, regb << shift6" or "regd, rega, imm12" or "regd, sym */
-	dadao_operands_riir_rrir_or_sym,
+	/* The regular "ra, rb, imm12" or "ra, rb, rc << imm6" with symbol support */
+	dadao_operands_rrii_rrri_or_sym,
 
 	/* ONLY "imm18" accepted, for swym/trip/trap/nop */
 	dadao_operands_oiii,
