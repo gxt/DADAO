@@ -33,16 +33,16 @@ enum dadao_operands_type
  {
 	dadao_operands_o000 = 0,
 
-	/* ONLY for call insn */
+	/* ONLY for call insn, "imm24" or "ra, imm18" */
 	dadao_operands_iiii_riii,
 
 	/* The regular "ra, imm16", 2-bit in fc used to indicate H/MH/ML/L */
 	dadao_operands_rjii,
 
-	/* The regular "rega, imm18" */
+	/* The regular "ra, imm18" */
 	dadao_operands_riii,
 
-	/* The regular "rega, imm18" or "rega, regb, imm12" */
+	/* ONLY for jump insn, "ra, imm18" or "ra, rb, imm12" */
 	dadao_operands_riii_rrii,
 
 	/* The regular "regd, rega, regb << shift6" or "regd, rega, imm12" */

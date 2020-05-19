@@ -917,7 +917,7 @@ void dadao_md_assemble (char *str)
 		}
 		break;
 
-	case dadao_operands_riii_rrii: /* ONLY jump be here, operands "rega, imm18" or "rega, regb, imm12" */
+	case dadao_operands_riii_rrii: /* ONLY jump be here, operands "ra, imm18" or "ra, rb, imm12" */
 		if ((n_operands != 2) && (n_operands != 3))
 			DADAO_BAD_INSN("invalid operands to opcode");
 
@@ -976,7 +976,7 @@ void dadao_md_assemble (char *str)
 
 		break;
 
-	case dadao_operands_riii: /* ONLY geta or conditional branch be here, operand "rega, imm18" */
+	case dadao_operands_riii: /* ONLY geta or conditional branch be here, operand "ra, imm18" */
 		if ((n_operands != 2) || (exp[1].X_op == O_register))
 			DADAO_BAD_INSN("invalid operands to opcode");
 

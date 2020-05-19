@@ -406,7 +406,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 				get_reg_name (minfop, fd), get_reg_name (minfop, fb), get_reg_name (minfop, fc));
 		break;
 
-	case dadao_operands_riii: /* geta or condbranches - "$X,Address".  */
+	case dadao_operands_riii: /* geta or condbranches - "ra, imm18".  */
 		offset = (fc * 256 + fd) * 4;
 
 		if (insn & INSN_BACKWARD_OFFSET_BIT)	offset -= 65536 * 4;
@@ -417,17 +417,17 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		(*info->print_address_func) (memaddr + offset, info);
 		break;
 
-	case dadao_operands_riii_rrii: /* jump */
+	case dadao_operands_riii_rrii: /* jump, "ra, imm18" or "ra, rb, imm12" */
 		if (insn & INSN_IMMEDIATE_BIT) {
 			offset = (fc * 256 + fd) * 4;
 
 			info->target = memaddr + offset;
 
-			(*info->fprintf_func) (info->stream, "\t%s,", get_reg_name (minfop, fa));
+			(*info->fprintf_func) (info->stream, "\t%s, ", get_reg_name (minfop, fa));
 			(*info->print_address_func) (memaddr + offset, info);
 		} else
 			(*info->fprintf_func) (info->stream, "\t%s, %s, %d",
-				get_reg_name (minfop, fa), get_reg_name (minfop, fb), ((fc << 6) | fd));
+				get_reg_name (minfop, fa), get_reg_name (minfop, fb), ((fc << 8) | (fd << 2)));
 		break;
 
 	default:
