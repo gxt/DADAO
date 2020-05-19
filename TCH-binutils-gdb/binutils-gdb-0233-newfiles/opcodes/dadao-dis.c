@@ -389,7 +389,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		if (insn & INSN_IMMEDIATE_BIT)
 			(*info->fprintf_func) (info->stream, "\t%s, %s, %d",
 				get_reg_name (minfop, fa), get_reg_name (minfop, fb), (fc << 6) | fd);
-		else if (fc == 0)
+		else if (fd == 0)
 			(*info->fprintf_func) (info->stream, "\t%s, %s, %s",
 				get_reg_name (minfop, fa), get_reg_name (minfop, fb), get_reg_name (minfop, fc));
 		else
