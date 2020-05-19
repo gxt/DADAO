@@ -36,8 +36,8 @@ enum dadao_operands_type
 	/* ONLY for call insn */
 	dadao_operands_iiii_riii,
 
-	/* The regular "regd, imm16", 2-bit in fc used to indicate H/MH/ML/L */
-	dadao_operands_iijr,
+	/* The regular "ra, imm16", 2-bit in fc used to indicate H/MH/ML/L */
+	dadao_operands_rjii,
 
 	/* The regular "rega, imm18" */
 	dadao_operands_riii,

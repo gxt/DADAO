@@ -771,7 +771,7 @@ void dadao_md_assemble (char *str)
 		break;
 
 
-	case dadao_operands_iijr: /* regd, imm16  */
+	case dadao_operands_rjii: /* ra, imm16  */
 		if (n_operands != 2)
 			DADAO_BAD_INSN("invalid operands to opcode");
 
@@ -779,10 +779,10 @@ void dadao_md_assemble (char *str)
 		DDOP_EXP_MUST_BE_UIMM(exp[1], 16);
 		DDOP_CHECK_BIT_COUNT(instruction->minor_opcode, 2);
 
-		DDOP_SET_FD(opcodep, exp[0].X_add_number);
-		DDOP_SET_FA(opcodep, (exp[1].X_add_number >> 10) & 63);
-		DDOP_SET_FB(opcodep, (exp[1].X_add_number >> 4) & 63);
-		DDOP_SET_FC(opcodep, (((exp[1].X_add_number & 0xF) << 2) | (instruction->minor_opcode)));
+		DDOP_SET_FA(opcodep, exp[0].X_add_number);
+		DDOP_SET_FB(opcodep, (exp[1].X_add_number >> 12) | (instruction->minor_opcode) << 4);
+		DDOP_SET_FC(opcodep, (exp[1].X_add_number >> 6) & 0x3F);
+		DDOP_SET_FD(opcodep, (exp[1].X_add_number & 0x3F));
 
 		break;
 

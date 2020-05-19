@@ -355,9 +355,9 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		}
 		break;
 
-	case dadao_operands_iijr:
+	case dadao_operands_rjii:
 		(*info->fprintf_func) (info->stream, "\t%s, %d",
-			get_reg_name (minfop, fd), (fa << 10) | (fb << 4) | fc);
+			get_reg_name (minfop, fa), ((fb & 0xF) << 12) | (fc << 6) | fd);
 		break;
 
 	case dadao_operands_oiii:
