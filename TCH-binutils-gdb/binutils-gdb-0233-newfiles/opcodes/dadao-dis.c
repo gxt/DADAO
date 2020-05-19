@@ -366,22 +366,22 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 
 	case dadao_operands_orrr:
 		(*info->fprintf_func) (info->stream, "\t%s, %s, %s",
-			get_reg_name (minfop, fd), get_reg_name (minfop, fb), get_reg_name (minfop, fc));
+			get_reg_name (minfop, fb), get_reg_name (minfop, fc), get_reg_name (minfop, fd));
 		break;
 
-	case dadao_operands_orir:
+	case dadao_operands_orri:
 		(*info->fprintf_func) (info->stream, "\t%s, %s, %d",
-			get_reg_name (minfop, fd), get_reg_name (minfop, fb), fc);
+			get_reg_name (minfop, fb), get_reg_name (minfop, fc), fd);
 		break;
 
-	case dadao_operands_or0r_get: /* GET - "X,spec_reg".  */
-		(*info->fprintf_func) (info->stream, "\t%s,%s",
-			get_reg_name (minfop, fd), get_spec_reg_name (minfop, fb));
+	case dadao_operands_orr0_get: /* GET - "rb, spec_reg".  */
+		(*info->fprintf_func) (info->stream, "\t%s, %s",
+			get_reg_name (minfop, fb), get_spec_reg_name (minfop, fc));
 		break;
 
-	case dadao_operands_or0r_put: /* PUT - "spec_reg,$Z".  */
-		(*info->fprintf_func) (info->stream, "\t%s,%s",
-			get_spec_reg_name (minfop, fd), get_reg_name (minfop, fb));
+	case dadao_operands_orr0_put: /* PUT - "spec_reg, rc".  */
+		(*info->fprintf_func) (info->stream, "\t%s, %s",
+			get_spec_reg_name (minfop, fb), get_reg_name (minfop, fc));
 		break;
 
 	case dadao_operands_riir_rrir:
@@ -397,13 +397,13 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 				get_reg_name (minfop, fd), get_reg_name (minfop, fa), get_reg_name (minfop, fb), fc);
 		break;
 
-	case dadao_operands_orir_orrr: /* The regular "regb, regc" or "regb, imm6" */
+	case dadao_operands_orri_orrr:
 		if (insn & INSN_IMMEDIATE_BIT)
 			(*info->fprintf_func) (info->stream, "\t%s, %s, %d",
-				get_reg_name (minfop, fd), get_reg_name (minfop, fb), fc);
+				get_reg_name (minfop, fb), get_reg_name (minfop, fc), fd);
 		else
 			(*info->fprintf_func) (info->stream, "\t%s, %s, %s",
-				get_reg_name (minfop, fd), get_reg_name (minfop, fb), get_reg_name (minfop, fc));
+				get_reg_name (minfop, fb), get_reg_name (minfop, fc), get_reg_name (minfop, fd));
 		break;
 
 	case dadao_operands_riii: /* geta or condbranches - "ra, imm18".  */

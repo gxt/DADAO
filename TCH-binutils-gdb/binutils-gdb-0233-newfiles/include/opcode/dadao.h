@@ -54,20 +54,20 @@ enum dadao_operands_type
 	/* ONLY "imm18" accepted, for swym/trip/trap/nop */
 	dadao_operands_oiii,
 
-	/* The regular "regd, regb, regc", or "regd, regb, imm6" */
-	dadao_operands_orir_orrr,
+	/* The regular "rb, rc, rd", or "rb, rc, imm6" */
+	dadao_operands_orri_orrr,
 
-	/* The regular "regd, regb, imm6" */
-	dadao_operands_orir,
+	/* The regular "rb, rc, imm6" */
+	dadao_operands_orri,
 
-	/* All operands are registers: "regd, regb, regc".  */
+	/* The regular "rb, rc, rd".  */
 	dadao_operands_orrr,
 
-	/* "$X,spec_reg"; GET.  */
-	dadao_operands_or0r_get,
+	/* "rb, spec_reg"; GET.  */
+	dadao_operands_orr0_get,
 
-	/* "spec_reg,$Z"; PUT.  */
-	dadao_operands_or0r_put,
+	/* "spec_reg, rc"; PUT.  */
+	dadao_operands_orr0_put,
  };
 
 struct dadao_opcode

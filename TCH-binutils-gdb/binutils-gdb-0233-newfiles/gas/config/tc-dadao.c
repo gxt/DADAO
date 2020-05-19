@@ -424,7 +424,7 @@ get_putget_operands (struct dadao_opcode *insn, char *operands,
   exp[0].X_op = O_illegal;
   exp[1].X_op = O_illegal;
 
-  if (insn->operands == dadao_operands_or0r_get)
+  if (insn->operands == dadao_operands_orr0_get)
     {
       expp_reg = &exp[0];
       expp_sreg = &exp[1];
@@ -706,8 +706,8 @@ void dadao_md_assemble (char *str)
      equated, we need to parse the names ourselves, so we don't pick up a
      user label instead of the special register.  */
   if (! equated_spec_regs
-      && (instruction->operands == dadao_operands_or0r_get
-	  || instruction->operands == dadao_operands_or0r_put))
+      && (instruction->operands == dadao_operands_orr0_get
+	  || instruction->operands == dadao_operands_orr0_put))
     n_operands = get_putget_operands (instruction, operands, exp);
   else
     n_operands = get_operands (operands, exp);
@@ -729,8 +729,8 @@ void dadao_md_assemble (char *str)
 
 	/* Handle the rest.  */
 	switch (instruction->operands) {
-	case dadao_operands_or0r_get:
-		/* "$X,spec_reg"; GET.
+	case dadao_operands_orr0_get:
+		/* "rb, spec_reg"; GET.
 		   Like with rounding modes, we demand that the special register or
 		   symbol is already defined when we get here at the point of use.  */
 		if (n_operands != 2)
@@ -739,24 +739,24 @@ void dadao_md_assemble (char *str)
 		DDOP_EXP_MUST_BE_REG(exp[0]);
 
 		DDOP_SET_FA(opcodep, instruction->minor_opcode);
-		DDOP_SET_FB(opcodep, exp[1].X_add_number - 256);
-		DDOP_SET_FC(opcodep, 0);
-		DDOP_SET_FD(opcodep, exp[0].X_add_number);
+		DDOP_SET_FB(opcodep, exp[0].X_add_number);
+		DDOP_SET_FC(opcodep, exp[1].X_add_number - 256);
+		DDOP_SET_FD(opcodep, 0);
 		break;
 
-	case dadao_operands_or0r_put:
-		/* "spec_reg,$Z"; PUT.  */
+	case dadao_operands_orr0_put:
+		/* "spec_reg, rc"; PUT.  */
 		if (n_operands != 2)
 			DADAO_BAD_INSN("invalid operands to opcode");
 
 		DDOP_EXP_MUST_BE_REG(exp[1]);
 		DDOP_SET_FA(opcodep, instruction->minor_opcode);
-		DDOP_SET_FB(opcodep, exp[1].X_add_number);
-		DDOP_SET_FC(opcodep, 0);
-		DDOP_SET_FD(opcodep, exp[0].X_add_number - 256);
+		DDOP_SET_FB(opcodep, exp[0].X_add_number - 256);
+		DDOP_SET_FC(opcodep, exp[1].X_add_number);
+		DDOP_SET_FD(opcodep, 0);
 		break;
 
-	case dadao_operands_orrr: /* regd, regb, regc */
+	case dadao_operands_orrr: /* rb, rc, rd */
 		if (n_operands != 3)
 			DADAO_BAD_INSN("invalid operands to opcode");
 
@@ -765,9 +765,9 @@ void dadao_md_assemble (char *str)
 		DDOP_EXP_MUST_BE_REG(exp[2]);
 
 		DDOP_SET_FA(opcodep, instruction->minor_opcode);
-		DDOP_SET_FB(opcodep, exp[1].X_add_number);
-		DDOP_SET_FC(opcodep, exp[2].X_add_number);
-		DDOP_SET_FD(opcodep, exp[0].X_add_number);
+		DDOP_SET_FB(opcodep, exp[0].X_add_number);
+		DDOP_SET_FC(opcodep, exp[1].X_add_number);
+		DDOP_SET_FD(opcodep, exp[2].X_add_number);
 		break;
 
 
@@ -798,7 +798,7 @@ void dadao_md_assemble (char *str)
 
 		break;
 
-	case dadao_operands_orir: /* "regd, regb, imm6" */
+	case dadao_operands_orri: /* "rb, rc, imm6" */
 		if (n_operands != 3)
 			DADAO_BAD_INSN("invalid operands to opcode");
 
@@ -806,33 +806,33 @@ void dadao_md_assemble (char *str)
 		DDOP_EXP_MUST_BE_REG(exp[1]);
 		DDOP_EXP_MUST_BE_UIMM(exp[2], 6);
 
-		DDOP_SET_FD(opcodep, exp[0].X_add_number);
 		DDOP_SET_FA(opcodep, instruction->minor_opcode);
-		DDOP_SET_FB(opcodep, exp[1].X_add_number);
-		DDOP_SET_FC(opcodep, exp[2].X_add_number);
+		DDOP_SET_FB(opcodep, exp[0].X_add_number);
+		DDOP_SET_FC(opcodep, exp[1].X_add_number);
+		DDOP_SET_FD(opcodep, exp[2].X_add_number);
 
 		break;
 
-	case dadao_operands_orir_orrr: /* "regd, regb, regc" or "regd, regb, imm6" */
+	case dadao_operands_orri_orrr: /* "rb, rc, rd" or "rb, rc, imm6" */
 		if (n_operands != 3)
 			DADAO_BAD_INSN("invalid operands to opcode");
 
 		DDOP_EXP_MUST_BE_REG(exp[0]);
 		DDOP_EXP_MUST_BE_REG(exp[1]);
 
-		DDOP_SET_FD(opcodep, exp[0].X_add_number);
 		DDOP_SET_FA(opcodep, instruction->minor_opcode);
-		DDOP_SET_FB(opcodep, exp[1].X_add_number);
+		DDOP_SET_FB(opcodep, exp[0].X_add_number);
+		DDOP_SET_FC(opcodep, exp[1].X_add_number);
 
 		switch (exp[2].X_op) {
 		case O_register: /* regc */
 			DDOP_EXP_MUST_BE_REG(exp[2]);
-			DDOP_SET_FC(opcodep, exp[2].X_add_number);
+			DDOP_SET_FD(opcodep, exp[2].X_add_number);
 			break;
 
 		case O_constant: /* imm6 */
 			DDOP_EXP_MUST_BE_UIMM(exp[2], 6);
-			DDOP_SET_FC(opcodep, exp[2].X_add_number);
+			DDOP_SET_FD(opcodep, exp[2].X_add_number);
 
 			opcodep[0] |= IMM_OFFSET_BIT;
 			break;

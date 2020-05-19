@@ -102,10 +102,10 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"andnmh",	I (ANDNW),	W (MH),	0,	OP (rjii),		T (normal)},
 	{"andnh",	I (ANDNW),	W (H),	0,	OP (rjii),		T (normal)},
 
-	{"slu",		0x3E,		1,	1,	OP (orir_orrr),		T (normal)},
-	{"sr",		0x3E,		2,	1,	OP (orir_orrr),		T (normal)},
-	{"sru",		0x3E,		3,	1,	OP (orir_orrr),		T (normal)},
-	{"not",		0x3E,		4,	1,	OP (orir_orrr),		T (normal)},
+	{"slu",		0x3E,		1,	1,	OP (orri_orrr),		T (normal)},
+	{"sr",		0x3E,		2,	1,	OP (orri_orrr),		T (normal)},
+	{"sru",		0x3E,		3,	1,	OP (orri_orrr),		T (normal)},
+	{"not",		0x3E,		4,	1,	OP (orri_orrr),		T (normal)},
 
 	{"csn",		0x40,		0,	1,	OP (riir_rrir),		T (normal)},
 	{"csz",		0x42,		0,	1,	OP (riir_rrir),		T (normal)},
@@ -150,8 +150,8 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"trap",	0xDA,		0x20,	0,	OP (oiii),		T (jsr)},
 	{"nop",		0xDA,		0x36,	0,	OP (o000),		T (normal)},
 
-	{"put",		0xDA,		0x37,	0,	OP (or0r_put),		T (normal)},
-	{"get",		0xDA,		0x38,	0,	OP (or0r_get),		T (normal)},
+	{"put",		0xDA,		0x37,	0,	OP (orr0_put),		T (normal)},
+	{"get",		0xDA,		0x38,	0,	OP (orr0_get),		T (normal)},
 
 	{"fcmp",	I (FP),		1,	0,	OP (orrr),		T (normal)},
 	{"fun",		I (FP),		2,	0,	OP (orrr),		T (normal)},
@@ -165,15 +165,15 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"fdiv",	I (FP),		20,	0,	OP (orrr),		T (normal)},
 	{"frem",	I (FP),		22,	0,	OP (orrr),		T (normal)},
 
-	{"fix",		I (FP),		5,	0,	OP (orir),		T (normal)},
-	{"fixu",	I (FP),		7,	0,	OP (orir),		T (normal)},
-	{"fsqrt",	I (FP),		21,	0,	OP (orir),		T (normal)},
-	{"fint",	I (FP),		23,	0,	OP (orir),		T (normal)},
+	{"fix",		I (FP),		5,	0,	OP (orri),		T (normal)},
+	{"fixu",	I (FP),		7,	0,	OP (orri),		T (normal)},
+	{"fsqrt",	I (FP),		21,	0,	OP (orri),		T (normal)},
+	{"fint",	I (FP),		23,	0,	OP (orri),		T (normal)},
 
-	{"flot",	I (FP),		8,	0,	OP (orir),		T (normal)},
-	{"flotu",	I (FP),		10,	0,	OP (orir),		T (normal)},
-	{"sflot",	I (FP),		12,	0,	OP (orir),		T (normal)},
-	{"sflotu",	I (FP),		14,	0,	OP (orir),		T (normal)},
+	{"flot",	I (FP),		8,	0,	OP (orri),		T (normal)},
+	{"flotu",	I (FP),		10,	0,	OP (orri),		T (normal)},
+	{"sflot",	I (FP),		12,	0,	OP (orri),		T (normal)},
+	{"sflotu",	I (FP),		14,	0,	OP (orri),		T (normal)},
 
 	{NULL,		~0,		0,	0,	OP (o000),		T (normal)}
  };
