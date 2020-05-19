@@ -31,7 +31,7 @@ setjmp:
 0:
 	get	$63, rO
 	sto	$63, $59, 24
-	call	$60, $0, 0
+	call	$60, 0
 	.size setjmp,.-setjmp
 
 	.section .text.longjmp,"ax",@progbits
@@ -63,5 +63,5 @@ longjmp:
 	ldo	$61, $59, 0
 	ldo	$63, $59, 8
 	ldo	$62, $59, 16
-	call	$63, $0, 0
+	call	$63, 0
  	.size longjmp,.-longjmp
