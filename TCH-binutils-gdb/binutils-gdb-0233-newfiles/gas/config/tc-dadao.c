@@ -727,15 +727,14 @@ void dadao_md_assemble (char *str)
 
   md_number_to_chars (opcodep, (instruction->major_opcode) << 24, 4);
 
-  /* Handle the rest.  */
-  switch (instruction->operands)
-    {
+	/* Handle the rest.  */
+	switch (instruction->operands) {
 	case dadao_operands_or0r_get:
 		/* "$X,spec_reg"; GET.
 		   Like with rounding modes, we demand that the special register or
 		   symbol is already defined when we get here at the point of use.  */
 		if (n_operands != 2)
-			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+			DADAO_BAD_INSN("invalid operands to opcode");
 
 		DDOP_EXP_MUST_BE_REG(exp[0]);
 
@@ -748,7 +747,7 @@ void dadao_md_assemble (char *str)
 	case dadao_operands_or0r_put:
 		/* "spec_reg,$Z"; PUT.  */
 		if (n_operands != 2)
-			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+			DADAO_BAD_INSN("invalid operands to opcode");
 
 		DDOP_EXP_MUST_BE_REG(exp[1]);
 		DDOP_SET_FA(opcodep, instruction->minor_opcode);
@@ -759,7 +758,7 @@ void dadao_md_assemble (char *str)
 
 	case dadao_operands_orrr: /* regd, regb, regc */
 		if (n_operands != 3)
-			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+			DADAO_BAD_INSN("invalid operands to opcode");
 
 		DDOP_EXP_MUST_BE_REG(exp[0]);
 		DDOP_EXP_MUST_BE_REG(exp[1]);
@@ -774,7 +773,7 @@ void dadao_md_assemble (char *str)
 
 	case dadao_operands_iijr: /* regd, imm16  */
 		if (n_operands != 2)
-			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+			DADAO_BAD_INSN("invalid operands to opcode");
 
 		DDOP_EXP_MUST_BE_REG(exp[0]);
 		DDOP_EXP_MUST_BE_UIMM(exp[1], 16);
@@ -789,7 +788,7 @@ void dadao_md_assemble (char *str)
 
 	case dadao_operands_oiii: /* SWYM, TRIP, TRAP: one operands  */
 		if (n_operands != 1)
-			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+			DADAO_BAD_INSN("invalid operands to opcode");
 
 		DDOP_EXP_MUST_BE_UIMM(exp[0], 18);
 		DDOP_SET_FA(opcodep, instruction->minor_opcode);
@@ -801,7 +800,7 @@ void dadao_md_assemble (char *str)
 
 	case dadao_operands_orir: /* "regd, regb, imm6" */
 		if (n_operands != 3)
-			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+			DADAO_BAD_INSN("invalid operands to opcode");
 
 		DDOP_EXP_MUST_BE_REG(exp[0]);
 		DDOP_EXP_MUST_BE_REG(exp[1]);
@@ -816,7 +815,7 @@ void dadao_md_assemble (char *str)
 
 	case dadao_operands_orir_orrr: /* "regd, regb, regc" or "regd, regb, imm6" */
 		if (n_operands != 3)
-			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+			DADAO_BAD_INSN("invalid operands to opcode");
 
 		DDOP_EXP_MUST_BE_REG(exp[0]);
 		DDOP_EXP_MUST_BE_REG(exp[1]);
@@ -839,7 +838,7 @@ void dadao_md_assemble (char *str)
 			break;
 
 		default:
-			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+			DADAO_BAD_INSN("invalid operands to opcode");
 		}
 		break;
 
@@ -858,7 +857,7 @@ void dadao_md_assemble (char *str)
 			DDOP_EXP_MUST_BE_REG(exp[0]);
 
 			if (exp[1].X_op == O_register)
-				as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+				DADAO_BAD_INSN("invalid operands to opcode");
 
 			/* To avoid getting a NULL add_symbol for constants and then
 			   catching a SEGV in write_relocs since it doesn't handle
@@ -880,7 +879,7 @@ void dadao_md_assemble (char *str)
 
 	case dadao_operands_riir_rrir: /* "regd, rega, regb << shift6" or "regd, rega, imm12" */
 		if (n_operands != 3)
-			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+			DADAO_BAD_INSN("invalid operands to opcode");
 
 		DDOP_EXP_MUST_BE_REG(exp[0]);
 		DDOP_EXP_MUST_BE_REG(exp[1]);
@@ -914,16 +913,16 @@ void dadao_md_assemble (char *str)
 			break;
 
 		default:
-			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+			DADAO_BAD_INSN("invalid operands to opcode");
 		}
 		break;
 
 	case dadao_operands_riii_rrii: /* ONLY jump be here, operands "rega, imm18" or "rega, regb, imm12" */
 		if ((n_operands != 2) && (n_operands != 3))
-			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+			DADAO_BAD_INSN("invalid operands to opcode");
 
 		if (instruction->type != dadao_type_branch)
-			as_fatal (_("FIXME: SHOULD NOT BE HERE: %s"), instruction->name);
+			DADAO_BAD_INSN("SHOULD NOT BE HERE");
 
 		if (n_operands == 2) {
 			if (exp[1].X_op == O_register)
@@ -957,7 +956,7 @@ void dadao_md_assemble (char *str)
 			   operand, exp[1].  */
 
 			if (exp[2].X_op == O_register)
-				as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+				DADAO_BAD_INSN("invalid operands to opcode");
 
 			/* To avoid getting a NULL add_symbol for constants and then
 			   catching a SEGV in write_relocs since it doesn't handle
@@ -979,7 +978,7 @@ void dadao_md_assemble (char *str)
 
 	case dadao_operands_riii: /* ONLY geta or conditional branch be here, operand "rega, imm18" */
 		if ((n_operands != 2) || (exp[1].X_op == O_register))
-			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+			DADAO_BAD_INSN("invalid operands to opcode");
 
 		DDOP_EXP_MUST_BE_REG(exp[0]);
 		DDOP_SET_FA(opcodep, exp[0].X_add_number);
@@ -1002,17 +1001,17 @@ void dadao_md_assemble (char *str)
 			break;
 
 		default:
-			as_fatal (_("FIXME: SHOULD NOT BE HERE: %s"), instruction->name);
+			DADAO_BAD_INSN("SHOULD NOT BE HERE");
 		}
 		break;
 
 	case dadao_operands_iiii_riii: /* ONLY call be here */
 		if ((n_operands != 1) && (n_operands != 2))
-			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+			DADAO_BAD_INSN("invalid operands to opcode");
 
 		if (n_operands == 1) {
 			if (exp[0].X_op == O_register)
-				as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+				DADAO_BAD_INSN("invalid operands to opcode");
 
 			/* The last operand is imm18 whenever we see just two operands.  */
 			opcodep[0] |= IMM_OFFSET_BIT;
@@ -1029,7 +1028,7 @@ void dadao_md_assemble (char *str)
 			symbolS *sym;
 
 			if (exp[1].X_op == O_register)
-				as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+				DADAO_BAD_INSN("invalid operands to opcode");
 
 			DDOP_EXP_MUST_BE_REG(exp[0]);
 			DDOP_SET_FA(opcodep, exp[0].X_add_number);
@@ -1061,7 +1060,7 @@ void dadao_md_assemble (char *str)
 
 	case dadao_operands_o000: /* nop / ret */
 		if (n_operands != 0)
-			as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
+			DADAO_BAD_INSN("invalid operands to opcode");
 
 		if (instruction->minor_opcode == 0x01) {	/* ret */
 			DDOP_SET_FA(opcodep, instruction->minor_opcode);

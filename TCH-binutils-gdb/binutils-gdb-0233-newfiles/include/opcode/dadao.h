@@ -86,6 +86,12 @@ extern const struct dadao_opcode dadao_opcodes[];
 /* This one is terminated with an entry with a NULL name.  */
 extern const struct dadao_spec_reg dadao_spec_regs[];
 
+#define	DADAO_BAD_INSN(msg)									\
+	do {											\
+		as_bad_where(__FILE__, __LINE__, "(%s %s) %s",					\
+			 instruction->name, operands, (msg));					\
+	} while (0)
+
 /* Some insn values we use when padding and synthesizing address loads.  */
 #define IMM_OFFSET_BIT 1
 
@@ -114,20 +120,20 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 #define DDOP_CHECK_BIT_COUNT(ddop_fx, bit_count)						\
 	do {											\
 		if (((ddop_fx) < 0) || ((ddop_fx) > ((1 << (bit_count)) - 1)))			\
-			as_bad_where(__FILE__, __LINE__, "should be UIMM%d", bit_count);	\
+			DADAO_BAD_INSN("bit count is too big");					\
 	} while (0)
 
 #define DDOP_EXP_MUST_BE_REG(ddop_exp)								\
 	do {											\
 		if (ddop_exp.X_op != O_register)						\
-			as_bad_where(__FILE__, __LINE__, "Exp should be register");		\
+			DADAO_BAD_INSN("exp should be register");				\
 		DDOP_CHECK_BIT_COUNT(ddop_exp.X_add_number, 8);	/* FIXME: shoule be 6 */	\
 	} while (0)
 
 #define DDOP_EXP_MUST_BE_UIMM(ddop_exp, bit_count)						\
 	do {											\
 		if (ddop_exp.X_op != O_constant)						\
-			as_bad_where(__FILE__, __LINE__, "Exp should be const");		\
+			DADAO_BAD_INSN("exp should be const");					\
 		DDOP_CHECK_BIT_COUNT(ddop_exp.X_add_number, (bit_count));			\
 	} while (0)
 
