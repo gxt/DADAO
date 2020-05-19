@@ -117,12 +117,12 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"csev",	0x4E,		0,	1,	OP (riir_rrir),		T (normal)},
 
 	{"ldb",		0x80,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
-	{"ldbu",	0x82,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
-	{"ldw",		0x84,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
-	{"ldwu",	0x86,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
-	{"ldt",		0x88,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
-	{"ldtu",	0x8A,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
-	{"ldo",		0x8C,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
+	{"ldw",		0x82,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
+	{"ldt",		0x84,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
+	{"ldo",		0x86,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
+	{"ldbu",	0x88,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
+	{"ldwu",	0x8A,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
+	{"ldtu",	0x8C,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
 	{"ldsf",	0x8E,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
 
 	{"stb",		0x90,		0,	1,	OP (riir_rrir_or_sym),	T (dref)},
