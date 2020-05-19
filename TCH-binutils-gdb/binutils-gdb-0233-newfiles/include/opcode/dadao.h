@@ -29,45 +29,22 @@ enum dadao_insn_type
 
 /* Type of operands an instruction takes.  Use when parsing assembly code
    and disassembling.  */
-enum dadao_operands_type
- {
-	dadao_operands_o000 = 0,
+enum dadao_operands_type {
+	dadao_operands_none = 0,
 
-	/* ONLY for call insn, "imm24" or "ra, imm18" */
-	dadao_operands_iiii_riii,
-
-	/* The regular "ra, imm16", 2-bit in fc used to indicate H/MH/ML/L */
-	dadao_operands_rjii,
-
-	/* The regular "ra, imm18" */
-	dadao_operands_riii,
-
-	/* ONLY for jump insn, "ra, imm18" or "ra, rb, imm12" */
-	dadao_operands_riii_rrii,
-
-	/* The regular "ra, rb, imm12" or "ra, rb, rc << imm6" */
-	dadao_operands_rrii_rrri,
-
-	/* The regular "ra, rb, imm12" or "ra, rb, rc << imm6" with symbol support */
-	dadao_operands_rrii_rrri_or_sym,
-
-	/* ONLY "imm18" accepted, for swym/trip/trap/nop */
-	dadao_operands_oiii,
-
-	/* The regular "rb, rc, rd", or "rb, rc, imm6" */
-	dadao_operands_orri_orrr,
-
-	/* The regular "rb, rc, imm6" */
-	dadao_operands_orri,
-
-	/* The regular "rb, rc, rd".  */
-	dadao_operands_orrr,
-
-	/* "rb, spec_reg"; GET.  */
-	dadao_operands_orr0_get,
-
-	/* "spec_reg, rc"; PUT.  */
-	dadao_operands_orr0_put,
+	dadao_operands_iiii_riii,	/* ONLY for call insn, "imm24" or "ra, imm18" */
+	dadao_operands_o000,		/* no operand, for nop/ret */
+	dadao_operands_oiii,		/* ONLY "imm18" accepted, for swym/trip/trap/nop */
+	dadao_operands_orr0_get,	/* "rb, spec_reg"; GET.  */
+	dadao_operands_orr0_put,	/* "spec_reg, rc"; PUT.  */
+	dadao_operands_orri,		/* The regular "rb, rc, imm6" */
+	dadao_operands_orri_orrr,	/* The regular "rb, rc, rd", or "rb, rc, imm6" */
+	dadao_operands_orrr,		/* The regular "rb, rc, rd".  */
+	dadao_operands_riii,		/* The regular "ra, imm18" */
+	dadao_operands_riii_rrii,	/* ONLY for jump insn, "ra, imm18" or "ra, rb, imm12" */
+	dadao_operands_rjii,		/* The regular "ra, imm16", 2-bit in fc used to indicate H/MH/ML/L */
+	dadao_operands_rrii_rrri,	/* The regular "ra, rb, imm12" or "ra, rb, rc << imm6" */
+	dadao_operands_rrii_rrri_or_sym, /* The regular "ra, rb, imm12" or "ra, rb, rc << imm6" with symbol support */
  };
 
 struct dadao_opcode
