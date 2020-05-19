@@ -914,7 +914,7 @@ dadao_asm_output_mi_thunk (FILE *stream,
       fprintf (stream, "\tADDU %s,%s,$255\n", regname, regname);
     }
 
-  fprintf (stream, "\tjmp	$0, ");
+  fprintf (stream, "\tjump	$0, ");
   assemble_name (stream, XSTR (XEXP (DECL_RTL (func), 0), 0));
   fprintf (stream, "\n");
 }
@@ -964,7 +964,7 @@ dadao_asm_trampoline_template (FILE *stream)
   fprintf (stream, "\tgeta	$63, 1F\n");
   fprintf (stream, "\tldo	%s, $63, 0\n", reg_names[DADAO_STATIC_CHAIN_REGNUM]);
   fprintf (stream, "\tldo	$63, $63, 8\n");
-  fprintf (stream, "\tcall	$63, $0, 0\n");
+  fprintf (stream, "\tcall	$63, 0\n");
   fprintf (stream, "1:\t.dd.octa 0\n");
   fprintf (stream, "\t.dd.octa 0\n");
 }

@@ -59,7 +59,7 @@ _start:	setl	$63, 32
 	geta	$63, stackpp
 	ldo	$62, $63, 0
 
-	call	$0, _init
+	call	_init
 
 #ifdef __DADAO_ABI_GNU__
 # Copy argc and argv from their initial position to argument registers
@@ -73,8 +73,8 @@ _start:	setl	$63, 32
 	or	$1, $0, 0
 #endif
 
-	call	$0, main
-	jmp	$0, exit
+	call	main
+	jump	$0, exit
 
 # Provide the first part of _init and _fini.  Save the return address on the
 # register stack.  We eventually ignore the return address of these
@@ -86,7 +86,7 @@ _start:	setl	$63, 32
 	.global	_init
 _init:
 	get	$0, rJ
-	call	$0, 0f
+	bz	$0, 0f
 	setl	$63, 63
 	trap	0
 0:	trap	0
@@ -97,13 +97,13 @@ _init:
 #else
 	geta	$1, _fini
 #endif
-	call	$0, atexit
+	call	atexit
 
 	.section .fini,"ax",@progbits
 	.global	_fini
 _fini:
 	get	$0, rJ
-	call	$0, 0f
+	bz	$0, 0f
 	setl	$63, 63
 	trap	0
 0:	trap	0

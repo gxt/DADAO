@@ -1037,8 +1037,8 @@
    (clobber (reg:DI DADAO_rJ_REGNUM))]
   ""
   "@
-	call	$0, %0, 0
-	call	$%p2, %a0")
+	call	$%p2, %0
+	jump	$%p2, %a0")
 
 (define_insn "*call_value_real"
   [(set (match_operand 0 "register_operand" "=r,r")
@@ -1049,8 +1049,8 @@
   (clobber (reg:DI DADAO_rJ_REGNUM))]
   ""
   "@
-	call	$0, %1, 0
-	call	$%p3, %a1")
+	call	$%p3, %1
+	jump	$%p3, %a1")
 
 ;; I hope untyped_call and untyped_return are not needed for DADAO.
 ;; Users of Objective-C will notice.
@@ -1087,19 +1087,19 @@
 (define_insn "jump"
   [(set (pc) (label_ref (match_operand 0 "" "")))]
   ""
-	"jmp	$0, %0")
+	"jump	$0, %0")
 
 (define_insn "indirect_jump"
   [(set (pc) (match_operand 0 "address_operand" "p"))]
   ""
-	"call	$63, %a0")
+	"jump	$63, %a0")
 
 ;; FIXME: This is just a jump, and should be expanded to one.
 (define_insn "tablejump"
   [(set (pc) (match_operand:DI 0 "address_operand" "p"))
    (use (label_ref (match_operand 1 "" "")))]
   ""
-	"call	$63, %a0")
+	"jump	$63, %a0")
 
 ;; The only peculiar thing is that the register stack has to be unwound at
 ;; nonlocal_goto_receiver.  At each function that has a nonlocal label, we
