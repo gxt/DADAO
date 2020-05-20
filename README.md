@@ -18,6 +18,7 @@
 Two systems:
 * gcc
 * binutils-gdb
+* newlib-cygwin
 
 ## DADAO simulator
 One system:
@@ -26,13 +27,13 @@ One system:
 ## DADAO environment
 Three systems:
 * linux
-* busybox & initramfs
+* busybox
+* initramfs
 * LFS
 
 # Specification For config
 * cpu-type:	dadao
 * vendor:	tao
-* machine:	wuxing, wuqing, wuming
 * kernel:	linux
 * os:		elf
 * kernel-os:	linux-elf
