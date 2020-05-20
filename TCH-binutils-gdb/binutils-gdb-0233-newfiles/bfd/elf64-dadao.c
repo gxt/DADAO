@@ -767,9 +767,9 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
       {
 	int in1 = bfd_get_16 (abfd, (bfd_byte *) datap) << 16;
 
-	/* Put a "GO $255,$255,0" after the common sequence.  */
+	/* Put a "GO $0,$0,0" after the common sequence.  */
 	bfd_put_32 (abfd,
-		    ((DADAO_INSN_CALL | IMM_OFFSET_BIT) << 24) | 0xffff00,
+		    (DADAO_INSN_CALL << 24) | DADAO_ADDR_MODE_ALT,
 		    (bfd_byte *) datap + 20);
 
 	/* Common sequence starts at offset 4.  */
@@ -797,11 +797,10 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 					 value)) == bfd_reloc_ok))
 	{
 	  /* If the relocation doesn't fit in a JMP, we let the NOP:s be
-	     modified below, and put a "GO $255,$255,0" after the
+	     modified below, and put a "GO $0,$0,0" after the
 	     address-loading sequence.  */
 	  bfd_put_32 (abfd,
-		      ((DADAO_INSN_CALL | IMM_OFFSET_BIT) << 24)
-		      | 0xffff00,
+		      (DADAO_INSN_CALL << 24) | DADAO_ADDR_MODE_ALT,
 		      (bfd_byte *) datap + 16);
 
 	  /* We change to an absolute value.  */

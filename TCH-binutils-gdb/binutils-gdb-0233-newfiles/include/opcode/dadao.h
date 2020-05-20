@@ -70,7 +70,7 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 	} while (0)
 
 /* Some insn values we use when padding and synthesizing address loads.  */
-#define IMM_OFFSET_BIT 1
+#define	DADAO_ADDR_MODE_ALT		(1 << 24)	/* The alternative addressing mode, generally bigger immediate */
 
 #define	DADAO_WYDE_L			0
 #define	DADAO_WYDE_ML			1
@@ -112,6 +112,12 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 		if (ddop_exp.X_op != O_constant)						\
 			DADAO_BAD_INSN("exp should be const");					\
 		DDOP_CHECK_BIT_COUNT(ddop_exp.X_add_number, (bit_count));			\
+	} while (0)
+
+#define	DDOP_SET_ADDR_MODE_ALT(ddop_insn_p)							\
+	do {											\
+		char *ddop_insn_char_p = (char *)ddop_insn_p;					\
+		ddop_insn_char_p[0] |= 1;							\
 	} while (0)
 
 #define DDOP_SET_FA(ddop_insn_p, ddop_fa)							\

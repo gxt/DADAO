@@ -831,10 +831,9 @@ void dadao_md_assemble (char *str)
 			break;
 
 		case O_constant: /* imm6 */
+			DDOP_SET_ADDR_MODE_ALT(opcodep);
 			DDOP_EXP_MUST_BE_UIMM(exp[2], 6);
 			DDOP_SET_FD(opcodep, exp[2].X_add_number);
-
-			opcodep[0] |= IMM_OFFSET_BIT;
 			break;
 
 		default:
@@ -846,7 +845,7 @@ void dadao_md_assemble (char *str)
 		if (n_operands == 2) {
 			symbolS *sym;
 			/* The last operand is immediate whenever we see just two operands.  */
-			opcodep[0] |= IMM_OFFSET_BIT;
+			DDOP_SET_ADDR_MODE_ALT(opcodep);
 
 			/* Now, we could either have an implied "0" as the fbc operand, or
 			   it could be the constant of a "base address plus offset".  It
@@ -906,11 +905,10 @@ void dadao_md_assemble (char *str)
 			break;
 
 		case O_constant: /* imm12 */
+			DDOP_SET_ADDR_MODE_ALT(opcodep);
 			DDOP_EXP_MUST_BE_UIMM(exp[2], 12);
 			DDOP_SET_FC(opcodep, (exp[2].X_add_number) >> 6);
 			DDOP_SET_FD(opcodep, (exp[2].X_add_number) & 0x3F);
-
-			opcodep[0] |= IMM_OFFSET_BIT;
 			break;
 
 		default:
@@ -930,7 +928,7 @@ void dadao_md_assemble (char *str)
 				as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 
 			/* The last operand is imm18 whenever we see just two operands.  */
-			opcodep[0] |= IMM_OFFSET_BIT;
+			DDOP_SET_ADDR_MODE_ALT(opcodep);
 
 			DDOP_EXP_MUST_BE_REG(exp[0]);
 			DDOP_SET_FA(opcodep, exp[0].X_add_number);
@@ -1015,7 +1013,7 @@ void dadao_md_assemble (char *str)
 				DADAO_BAD_INSN("invalid operands to opcode");
 
 			/* The last operand is imm18 whenever we see just two operands.  */
-			opcodep[0] |= IMM_OFFSET_BIT;
+			DDOP_SET_ADDR_MODE_ALT(opcodep);
 
 			/* Add a frag for a JMP relaxation; we need room for max four extra instructions.
 			   We don't do any work around here to check if we can determine the offset right away.  */
@@ -1468,7 +1466,7 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
       if ((fixP->fx_where & 3) == 3
 	  && (fixP->fx_addsy == NULL
 	      || S_GET_SEGMENT (fixP->fx_addsy) == absolute_section))
-	buf[-3] |= IMM_OFFSET_BIT;
+	DDOP_SET_ADDR_MODE_ALT(buf - 3);
       break;
 
     case BFD_RELOC_DADAO_REG:
@@ -1624,7 +1622,7 @@ tc_gen_reloc (asection *section ATTRIBUTE_UNUSED, fixS *fixP)
 	 field when the value is a numeric value, i.e. not a register.  */
       if ((fixP->fx_where & 3) == 3
 	  && (addsy == NULL || bfd_is_abs_section (addsec)))
-	buf[-3] |= IMM_OFFSET_BIT;
+	DDOP_SET_ADDR_MODE_ALT(buf - 3);
 
       buf[0] = val;
       return NULL;

@@ -24,9 +24,6 @@
    }								\
  while (0)
 
-#define INSN_IMMEDIATE_BIT (IMM_OFFSET_BIT << 24)
-#define INSN_BACKWARD_OFFSET_BIT (1 << 24)
-
 #define MAX_REG_NAME_LEN       256
 #define MAX_SPEC_REG_NAME_LEN  32
 
@@ -342,7 +339,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		break;
 
 	case dadao_operands_iiii_riii: /* call */
-		if (insn & INSN_IMMEDIATE_BIT) {
+		if (insn & DADAO_ADDR_MODE_ALT) {
 			offset = ((fa << 24) | (fb << 16) | (fc << 8) | fd) << 2;
 
 			info->target = memaddr + offset;
@@ -386,7 +383,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 
 	case dadao_operands_rrii_rrri:
 	case dadao_operands_rrii_rrri_or_sym:
-		if (insn & INSN_IMMEDIATE_BIT)
+		if (insn & DADAO_ADDR_MODE_ALT)
 			(*info->fprintf_func) (info->stream, "\t%s, %s, %d",
 				get_reg_name (minfop, fa), get_reg_name (minfop, fb), (fc << 6) | fd);
 		else if (fd == 0)
@@ -398,7 +395,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		break;
 
 	case dadao_operands_orri_orrr:
-		if (insn & INSN_IMMEDIATE_BIT)
+		if (insn & DADAO_ADDR_MODE_ALT)
 			(*info->fprintf_func) (info->stream, "\t%s, %s, %d",
 				get_reg_name (minfop, fb), get_reg_name (minfop, fc), fd);
 		else
@@ -409,7 +406,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	case dadao_operands_riii: /* geta or condbranches - "ra, imm18".  */
 		offset = (fc * 256 + fd) * 4;
 
-		if (insn & INSN_BACKWARD_OFFSET_BIT)	offset -= 65536 * 4;
+		if (insn & DADAO_ADDR_MODE_ALT)		offset -= 65536 * 4;
 
 		info->target = memaddr + offset;
 
@@ -418,7 +415,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		break;
 
 	case dadao_operands_riii_rrii: /* jump, "ra, imm18" or "ra, rb, imm12" */
-		if (insn & INSN_IMMEDIATE_BIT) {
+		if (insn & DADAO_ADDR_MODE_ALT) {
 			offset = (fc * 256 + fd) * 4;
 
 			info->target = memaddr + offset;
