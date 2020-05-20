@@ -37,12 +37,7 @@ extern void dadao_md_do_align (int, char *, int, int);
 #define md_operand(exp)							\
   do									\
     {									\
-      if (input_line_pointer[0] == '#')					\
-	{								\
-	  input_line_pointer++;						\
-	  integer_constant (16, (exp));					\
-	}								\
-      else if (input_line_pointer[0] == '&'				\
+      if (input_line_pointer[0] == '&'				\
 	       && input_line_pointer[1] != '&')				\
 	as_bad (_("`&' serial number operator is not supported"));	\
     }									\
