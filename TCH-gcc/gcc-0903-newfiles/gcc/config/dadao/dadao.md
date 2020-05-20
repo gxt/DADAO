@@ -412,7 +412,7 @@
   [(set (match_operand:DF 0 "register_operand" "=r")
 	(abs:DF (match_operand:DF 1 "register_operand" "0")))]
   ""
-	"andnh	%0, #8000")
+	"andnh	%0, 0x8000")
 
 (define_insn "sqrtdf2"
   [(set (match_operand:DF 0 "register_operand" "=r")

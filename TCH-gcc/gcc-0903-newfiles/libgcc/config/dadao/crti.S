@@ -36,7 +36,7 @@ _start:	setl	$63, 32
 
 	geta	$63, crtstxt
 	ldo	$2, $63, 0
-	andnl	$2, #7ff
+	andnl	$2, 0x7ff
 	ldo	$3, $63, 8
 	setl	$4, 2048
 0:
@@ -46,7 +46,7 @@ _start:	setl	$63, 32
 
 	geta	$63, crtsdat
 	ldo	$2, $63, 0
-	andnl	$2, #7ff
+	andnl	$2, 0x7ff
 	ldo	$3, $63, 8
 0:
 	addu	$2, $2, $4

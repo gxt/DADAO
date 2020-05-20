@@ -905,13 +905,13 @@ dadao_asm_output_mi_thunk (FILE *stream,
   const char *regname = reg_names[DADAO_FIRST_INCOMING_ARG_REGNUM];
 
   if (delta >= 0 && delta < 65536)
-    fprintf (stream, "\tINCL %s,%d\n", regname, (int)delta);
+    fprintf (stream, "\tincl	%s, %d\n", regname, (int)delta);
   else if (delta < 0 && delta >= -255)
-    fprintf (stream, "\tSUBU %s,%s,%d\n", regname, regname, (int)-delta);
+    fprintf (stream, "\tsubu	%s, %s, %d\n", regname, regname, (int)-delta);
   else
     {
-      dadao_output_register_setting (stream, 255, delta, 1);
-      fprintf (stream, "\tADDU %s,%s,$255\n", regname, regname);
+      dadao_output_register_setting (stream, 63, delta, 1);
+      fprintf (stream, "\taddu	%s, %s, $63\n", regname, regname);
     }
 
   fprintf (stream, "\tjump	$0, ");
@@ -1320,7 +1320,7 @@ dadao_output_quoted_string (FILE *stream, const char *string, int length)
 	}
       if (string < string_end)
 	{
-	  fprintf (stream, "#%x", *string & 255);
+	  fprintf (stream, "0x%x", *string & 255);
 	  string++;
 	  if (string < string_end)
 	    fprintf (stream, ",");
@@ -1535,7 +1535,7 @@ dadao_print_operand (FILE *stream, rtx x, int code)
 	 one, as that one cannot be part of a consecutive register pair.  */
       if (GET_CODE (x) == CONST_INT)
 	{
-	  fprintf (stream, "#%lx",
+	  fprintf (stream, "0x%lx",
 		   (unsigned long) (INTVAL (x)
 				    & ((unsigned int) 0x7fffffff * 2 + 1)));
 	  return;
@@ -1557,25 +1557,25 @@ dadao_print_operand (FILE *stream, rtx x, int code)
       /* Can't use 'a' because that's a generic modifier for address
 	 output.  */
     case 'A':
-      dadao_output_shiftvalue_op_from_str (stream, "ANDN",
+      dadao_output_shiftvalue_op_from_str (stream, "andn",
 					  ~(uint64_t)
 					  dadao_intval (x));
       return;
 
     case 'i':
-      dadao_output_shiftvalue_op_from_str (stream, "INC",
+      dadao_output_shiftvalue_op_from_str (stream, "inc",
 					  (uint64_t)
 					  dadao_intval (x));
       return;
 
     case 'o':
-      dadao_output_shiftvalue_op_from_str (stream, "OR",
+      dadao_output_shiftvalue_op_from_str (stream, "or",
 					  (uint64_t)
 					  dadao_intval (x));
       return;
 
     case 's':
-      dadao_output_shiftvalue_op_from_str (stream, "SET",
+      dadao_output_shiftvalue_op_from_str (stream, "set",
 					  (uint64_t)
 					  dadao_intval (x));
       return;
@@ -1647,7 +1647,7 @@ dadao_print_operand (FILE *stream, rtx x, int code)
     case 'W':
       if (GET_CODE (x) != CONST_INT)
 	fatal_insn ("DADAO Internal: Expected a CONST_INT, not this", x);
-      fprintf (stream, "#%x", (int) (INTVAL (x) & 0xffff));
+      fprintf (stream, "0x%x", (int) (INTVAL (x) & 0xffff));
       return;
 
     case 0:
@@ -1682,7 +1682,7 @@ dadao_print_operand (FILE *stream, rtx x, int code)
       if (INTVAL (modified_x) > -256 && INTVAL (modified_x) < 256)
 	fprintf (stream, "%d", (int) (INTVAL (modified_x)));
       else
-	fprintf (stream, "#%x",
+	fprintf (stream, "0x%x",
 		 (int) (INTVAL (modified_x)) & (unsigned int) ~0);
       return;
 
@@ -1772,7 +1772,7 @@ dadao_print_operand_address (FILE *stream, machine_mode /*mode*/, rtx x)
 void
 dadao_asm_output_reg_push (FILE *stream, int regno)
 {
-  fprintf (stream, "\tsubu %s, %s, 8\n\tsto %s, %s, 0\n",
+  fprintf (stream, "\tsubu	%s, %s, 8\n\tsto	%s, %s, 0\n",
 	   reg_names[DADAO_STACK_POINTER_REGNUM],
 	   reg_names[DADAO_STACK_POINTER_REGNUM],
 	   reg_names[DADAO_OUTPUT_REGNO (regno)],
@@ -1784,7 +1784,7 @@ dadao_asm_output_reg_push (FILE *stream, int regno)
 void
 dadao_asm_output_reg_pop (FILE *stream, int regno)
 {
-  fprintf (stream, "\tldo %s, %s, 0\n\tINCL %s,8\n",
+  fprintf (stream, "\tldo	%s, %s, 0\n\tincl	%s, 8\n",
 	   reg_names[DADAO_OUTPUT_REGNO (regno)],
 	   reg_names[DADAO_STACK_POINTER_REGNUM],
 	   reg_names[DADAO_STACK_POINTER_REGNUM]);
@@ -2271,10 +2271,10 @@ dadao_output_register_setting (FILE *stream,
   else if (dadao_shiftable_wyde_value ((uint64_t) value))
     {
       /* First, the one-insn cases.  */
-      dadao_output_shiftvalue_op_from_str (stream, "SET",
+      dadao_output_shiftvalue_op_from_str (stream, "set",
 					  (uint64_t)
 					  value);
-      fprintf (stream, " %s,", reg_names[regno]);
+      fprintf (stream, "\t%s, ", reg_names[regno]);
       dadao_output_shifted_value (stream, (uint64_t) value);
     }
   else if (dadao_shiftable_wyde_value (-(uint64_t) value))
@@ -2282,7 +2282,7 @@ dadao_output_register_setting (FILE *stream,
       /* We do this to get a bit more legible assembly code.  The next
 	 alternative is mostly redundant with this.  */
 
-      dadao_output_shiftvalue_op_from_str (stream, "SET",
+      dadao_output_shiftvalue_op_from_str (stream, "set",
 					  -(uint64_t)
 					  value);
       fprintf (stream, " %s,", reg_names[regno]);
@@ -2300,10 +2300,10 @@ dadao_output_register_setting (FILE *stream,
 	 with two insns, since it makes more readable assembly code (if
 	 anyone else cares).  */
 
-      dadao_output_shiftvalue_op_from_str (stream, "SET",
+      dadao_output_shiftvalue_op_from_str (stream, "set",
 					  ~(uint64_t)
 					  value);
-      fprintf (stream, " %s,", reg_names[regno]);
+      fprintf (stream, "\t%s,", reg_names[regno]);
       dadao_output_shifted_value (stream, ~(uint64_t) value);
       fprintf (stream, "\n\tnot	%s, %s, 0", reg_names[regno],
 	       reg_names[regno]);
@@ -2311,8 +2311,8 @@ dadao_output_register_setting (FILE *stream,
   else
     {
       /* The generic case.  2..4 insns.  */
-      static const char *const higher_parts[] = {"L", "ML", "MH", "H"};
-      const char *op = "SET";
+      static const char *const higher_parts[] = {"l", "ml", "mh", "h"};
+      const char *op = "set";
       const char *line_begin = "";
       int insns = 0;
       int i;
@@ -2349,12 +2349,12 @@ dadao_output_register_setting (FILE *stream,
 	    {
 	      if (value & 65535)
 		{
-		  fprintf (stream, "%s%s%s %s,#%x", line_begin, op,
+		  fprintf (stream, "%s%s%s	%s, 0x%x", line_begin, op,
 			   higher_parts[i], reg_names[regno],
 			   (int) (value & 65535));
 		  /* The first one sets the rest of the bits to 0, the next
 		     ones add set bits.  */
-		  op = "INC";
+		  op = "inc";
 		  line_begin = "\n\t";
 		}
 
@@ -2455,7 +2455,7 @@ dadao_output_shiftvalue_op_from_str (FILE *stream,
 				    const char *mainop,
 				    int64_t value)
 {
-  static const char *const op_part[] = {"L", "ML", "MH", "H"};
+  static const char *const op_part[] = {"l", "ml", "mh", "h"};
   int i;
 
   if (! dadao_shiftable_wyde_value (value))
@@ -2496,11 +2496,11 @@ dadao_output_octa (FILE *stream, int64_t value, int do_begin_end)
     fprintf (stream, "%d", (int) value);
   else if (value > (int64_t) 0
 	   && value < ((int64_t) 1 << 31) * 2)
-    fprintf (stream, "#%x", (unsigned int) value);
+    fprintf (stream, "0x%x", (unsigned int) value);
   else if (sizeof (HOST_WIDE_INT) == sizeof (int64_t))
     /* We need to avoid the not-so-universal "0x" prefix; we need the
-       pure hex-digits together with the dadaoal "#" hex prefix.  */
-    fprintf (stream, "#" HOST_WIDE_INT_PRINT_HEX_PURE,
+       pure hex-digits together with the dadaoal "#" hex prefix. DADAO changed */
+    fprintf (stream, "0x" HOST_WIDE_INT_PRINT_HEX_PURE,
 	     (HOST_WIDE_INT) value);
   else /* Need to avoid the hex output; there's no ...WIDEST...HEX_PURE.  */
     fprintf (stream, "%" PRIu64, value);
@@ -2529,7 +2529,7 @@ dadao_output_shifted_value (FILE *stream, int64_t value)
       /* We know we're through when we find one-bits in the low 16 bits.  */
       if (value & 0xffff)
 	{
-	  fprintf (stream, "#%x", (int) (value & 0xffff));
+	  fprintf (stream, "0x%x", (int) (value & 0xffff));
 	  return;
 	}
 
