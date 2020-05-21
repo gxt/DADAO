@@ -29,7 +29,7 @@ static int get_operands (char *, expressionS *);
 static int get_putget_operands (struct dadao_opcode *, char *, expressionS *);
 static void s_greg (int);
 static void dadao_greg_internal (char *);
-static void dadao_set_geta_branch_offset (char *, offsetT);
+static void dd_set_addr_offset(char *, offsetT, int);
 static void dadao_set_jmp_offset (char *, offsetT);
 static void dadao_fill_nops (char *, int);
 static int cmp_greg_symbol_fixes (const void *, const void *);
@@ -271,20 +271,31 @@ const char EXP_CHARS[] = "eE";
 
 const char FLT_CHARS[] = "rf";
 
-
 /* Fill in the offset-related part of GETA or Bcc.  */
-
-static void
-dadao_set_geta_branch_offset (char *opcodep, offsetT value)
+static void dd_set_addr_offset(char *opcodep, offsetT value, int bitcount)
 {
-  if (value < 0)
-    {
-      value += 65536 * 4;
-      opcodep[0] |= 1;
-    }
+	if ((value & 0x3) != 0)
+		as_fatal("instruction address not align correctly");
 
-  value /= 4;
-  md_number_to_chars (opcodep + 2, value, 2);
+	value /= 4;
+
+	if ((value > 0) && (value >= (1 << bitcount)))
+		as_fatal("offset too large");
+	if ((value < 0) && ((-value) > (1 << bitcount)))
+		as_fatal("offset too large");
+
+	switch (bitcount) {
+	case 24:
+		DDOP_SET_FA(opcodep, (value >> 18) & 0x3F);
+		/* FALLTHROUGH */
+	case 18:
+		DDOP_SET_FB(opcodep, (value >> 12) & 0x3F);
+		DDOP_SET_FC(opcodep, (value >> 6) & 0x3F);
+		DDOP_SET_FD(opcodep, (value & 0x3F));
+		break;
+	default:
+		as_fatal("offset bitcount not support");
+	}
 }
 
 /* Fill in the offset-related part of JMP.  */
@@ -1277,7 +1288,7 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
     {
     case ENCODE_RELAX (STATE_GETA, STATE_ZERO):
     case ENCODE_RELAX (STATE_BCC, STATE_ZERO):
-      dadao_set_geta_branch_offset (opcodep, target_address - opcode_address);
+	dd_set_addr_offset(opcodep, target_address - opcode_address, 18);
       if (linkrelax)
 	{
 	  tmpfixP
@@ -1420,7 +1431,7 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
 	  fixP->fx_done = 0;
 	  val = 0;
 	}
-      dadao_set_geta_branch_offset (buf, val);
+	dd_set_addr_offset(buf, val, 18);
       break;
 
     case BFD_RELOC_DADAO_ADDR27:
