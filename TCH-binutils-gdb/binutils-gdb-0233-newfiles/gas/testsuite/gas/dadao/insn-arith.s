@@ -1,7 +1,4 @@
-#
-# Somewhat complete instruction set and operand type check.  No
-# relocations or deferred register definitions here.
-#
+# Da Dao Zhi Jian
 _start:
 	# add/addu/sub/subu/mul/mulu/div/divu
 	add	$12, $23, $8
@@ -28,7 +25,3 @@ _start:
 	divu	$12, $23, $8
 	divu	$12, $23, $8 << 2
 	divu	$12, $23, 4000
-	# swym
-	swym	0
-	# nop
-	nop

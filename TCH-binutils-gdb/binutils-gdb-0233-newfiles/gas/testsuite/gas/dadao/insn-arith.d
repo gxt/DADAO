@@ -1,5 +1,5 @@
 # objdump: -dr
-tmpdir/list-insns.o:     file format elf64-dadao
+tmpdir/insn-arith.o:     file format elf64-dadao
 
 
 Disassembly of section .text:
@@ -29,5 +29,3 @@ Disassembly of section .text:
   54:	2e317200 	divu	\$12, \$23, \$8
   58:	2e317202 	divu	\$12, \$23, \$8 << 2
   5c:	2f317fa0 	divu	\$12, \$23, 4000
-  60:	da000000 	swym	0
-  64:	dadadada 	nop
