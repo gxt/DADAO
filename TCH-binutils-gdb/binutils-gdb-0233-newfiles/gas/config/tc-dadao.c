@@ -160,6 +160,9 @@ static struct hash_control *dadao_opcode_hash;
    2. Bcc
       extra length: zero or five insns.
 
+   3. CALL
+      extra length: zero or four insns.
+
    4. JMP
       extra length: zero or four insns.
 
@@ -170,8 +173,9 @@ static struct hash_control *dadao_opcode_hash;
 
 #define STATE_GETA	(1)
 #define STATE_BCC	(2)
-#define STATE_JMP	(3)
-#define STATE_GREG	(4)
+#define STATE_CALL	(3)
+#define STATE_JMP	(4)
+#define STATE_GREG	(5)
 
 /* No fine-grainedness here.  */
 #define STATE_LENGTH_MASK	    (1)
@@ -208,6 +212,13 @@ static struct hash_control *dadao_opcode_hash;
 #define BCC_5F GETA_3F
 #define BCC_5B GETA_3B
 
+#define CALL_0F GETA_0F
+#define CALL_0B GETA_0B
+
+#define CALL_MAX_LEN 5 * 4
+#define CALL_4F GETA_3F
+#define CALL_4B GETA_3B
+
 #define JMP_0F (65536 * 256 * 4 - 8)
 #define JMP_0B (-65536 * 256 * 4 - 4)
 
@@ -240,10 +251,17 @@ const relax_typeS dadao_relax_table[] =
    {BCC_5F,	BCC_5B,
 		BCC_MAX_LEN - 4,	0},
 
-   /* JMP (3, 0).  */
+   /* CALL (3, 0).  */
+   {CALL_0F,	CALL_0B,	0,	ENCODE_RELAX (STATE_CALL, STATE_MAX)},
+
+   /* CALL (3, 1).  */
+   {CALL_4F,	CALL_4B,
+		CALL_MAX_LEN - 4,	0},
+
+   /* JMP (4, 0).  */
    {JMP_0F,	JMP_0B,		0,	ENCODE_RELAX (STATE_JMP, STATE_MAX)},
 
-   /* JMP (3, 1).  */
+   /* JMP (4, 1).  */
    {JMP_4F,	JMP_4B,
 		JMP_MAX_LEN - 4,	0},
 
@@ -1031,7 +1049,7 @@ void dadao_md_assemble (char *str)
 			if (! expand_op)
 				fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ADDR19);
 			else
-				frag_var (rs_machine_dependent, 4 * 4, 0, ENCODE_RELAX (STATE_JMP, STATE_UNDF),
+				frag_var (rs_machine_dependent, CALL_MAX_LEN - 4, 0, ENCODE_RELAX (STATE_CALL, STATE_UNDF),
 					exp[0].X_add_symbol, exp[0].X_add_number, opcodep);
 
 		} else {	/* (n_operands == 2) */
@@ -1188,14 +1206,23 @@ md_estimate_size_before_relax (fragS *fragP, segT segment)
        /* The symbol lies in the same segment - a relaxable case.  */	\
        fragP->fr_subtype						\
 	 = ENCODE_RELAX (state, STATE_ZERO);				\
-     }									\
-   break;
+     }
 
   switch (fragP->fr_subtype)
     {
       HANDLE_RELAXABLE (STATE_GETA);
+	break;
       HANDLE_RELAXABLE (STATE_BCC);
+	break;
       HANDLE_RELAXABLE (STATE_JMP);
+	break;
+
+      HANDLE_RELAXABLE (STATE_CALL);
+	/* FALLTHROUGH.  */
+    case ENCODE_RELAX (STATE_CALL, STATE_ZERO):
+	/* We need to distinguish different relaxation rounds.  */
+	seg_info (segment)->tc_segment_info_data.last_stubfrag = fragP;
+	break;
 
     case ENCODE_RELAX (STATE_GETA, STATE_ZERO):
     case ENCODE_RELAX (STATE_BCC, STATE_ZERO):
@@ -1286,6 +1313,19 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
 
   switch (fragP->fr_subtype)
     {
+    case ENCODE_RELAX (STATE_CALL, STATE_ZERO):
+	dd_set_addr_offset(opcodep, target_address - opcode_address, 24);
+      if (linkrelax)
+	{
+	  tmpfixP
+	    = fix_new (opc_fragP, opcodep - opc_fragP->fr_literal, 4,
+		       fragP->fr_symbol, fragP->fr_offset, 1,
+		       BFD_RELOC_DADAO_ADDR27);
+	  COPY_FR_WHERE_TO_FX (fragP, tmpfixP);
+	}
+      var_part_size = 0;
+      break;
+
     case ENCODE_RELAX (STATE_GETA, STATE_ZERO):
     case ENCODE_RELAX (STATE_BCC, STATE_ZERO):
 	dd_set_addr_offset(opcodep, target_address - opcode_address, 18);
@@ -1343,6 +1383,7 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
 
       HANDLE_MAX_RELOC (STATE_GETA, BFD_RELOC_DADAO_GETA);
       HANDLE_MAX_RELOC (STATE_BCC, BFD_RELOC_DADAO_CBRANCH);
+      HANDLE_MAX_RELOC (STATE_CALL, BFD_RELOC_DADAO_CALL);
       HANDLE_MAX_RELOC (STATE_JMP, BFD_RELOC_DADAO_JMP);
 
     default:
@@ -1442,6 +1483,7 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
 	  break;
 	}
       /* FALLTHROUGH.  */
+    case BFD_RELOC_DADAO_CALL:
     case BFD_RELOC_DADAO_JMP:
       /* If this fixup is out of range, punt to the linker to emit an
 	 error.  This should only happen with -no-expand.  */
@@ -1505,6 +1547,9 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
     case BFD_RELOC_DADAO_GETA_1:
     case BFD_RELOC_DADAO_GETA_2:
     case BFD_RELOC_DADAO_GETA_3:
+    case BFD_RELOC_DADAO_CALL_1:
+    case BFD_RELOC_DADAO_CALL_2:
+    case BFD_RELOC_DADAO_CALL_3:
     case BFD_RELOC_DADAO_JMP_1:
     case BFD_RELOC_DADAO_JMP_2:
     case BFD_RELOC_DADAO_JMP_3:
@@ -1598,6 +1643,10 @@ tc_gen_reloc (asection *section ATTRIBUTE_UNUSED, fixS *fixP)
     case BFD_RELOC_DADAO_CBRANCH_1:
     case BFD_RELOC_DADAO_CBRANCH_2:
     case BFD_RELOC_DADAO_CBRANCH_3:
+    case BFD_RELOC_DADAO_CALL:
+    case BFD_RELOC_DADAO_CALL_1:
+    case BFD_RELOC_DADAO_CALL_2:
+    case BFD_RELOC_DADAO_CALL_3:
     case BFD_RELOC_DADAO_JMP:
     case BFD_RELOC_DADAO_JMP_1:
     case BFD_RELOC_DADAO_JMP_2:

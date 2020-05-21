@@ -475,6 +475,66 @@ static reloc_howto_type elf_dadao_howto_table[] =
 	 0x0100ffff,		/* dst_mask */
 	 TRUE),			/* pcrel_offset */
 
+  /* A CALL is supposed to reach any (code) address.  By itself, it can
+     reach +-64M; the expansion can reach all 64 bits.  Note that the 64M
+     limit is soon reached if you link the program in wildly different
+     memory segments.  The howto members reflect a trivial JMP.  */
+  HOWTO (R_DADAO_CALL,		/* type */
+	 2,			/* rightshift */
+	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+	 27,			/* bitsize */
+	 TRUE,			/* pc_relative */
+	 0,			/* bitpos */
+	 complain_overflow_signed, /* complain_on_overflow */
+	 dadao_elf_reloc,	/* special_function */
+	 "R_DADAO_CALL",		/* name */
+	 FALSE,			/* partial_inplace */
+	 ~0x1ffffff,		/* src_mask */
+	 0x1ffffff,		/* dst_mask */
+	 TRUE),			/* pcrel_offset */
+
+  HOWTO (R_DADAO_CALL_1,		/* type */
+	 2,			/* rightshift */
+	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+	 27,			/* bitsize */
+	 TRUE,			/* pc_relative */
+	 0,			/* bitpos */
+	 complain_overflow_signed, /* complain_on_overflow */
+	 dadao_elf_reloc,	/* special_function */
+	 "R_DADAO_CALL_1",	/* name */
+	 FALSE,			/* partial_inplace */
+	 ~0x1ffffff,		/* src_mask */
+	 0x1ffffff,		/* dst_mask */
+	 TRUE),			/* pcrel_offset */
+
+  HOWTO (R_DADAO_CALL_2,		/* type */
+	 2,			/* rightshift */
+	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+	 27,			/* bitsize */
+	 TRUE,			/* pc_relative */
+	 0,			/* bitpos */
+	 complain_overflow_signed, /* complain_on_overflow */
+	 dadao_elf_reloc,	/* special_function */
+	 "R_DADAO_CALL_2",	/* name */
+	 FALSE,			/* partial_inplace */
+	 ~0x1ffffff,		/* src_mask */
+	 0x1ffffff,		/* dst_mask */
+	 TRUE),			/* pcrel_offset */
+
+  HOWTO (R_DADAO_CALL_3,		/* type */
+	 2,			/* rightshift */
+	 2,			/* size (0 = byte, 1 = short, 2 = long) */
+	 27,			/* bitsize */
+	 TRUE,			/* pc_relative */
+	 0,			/* bitpos */
+	 complain_overflow_signed, /* complain_on_overflow */
+	 dadao_elf_reloc,	/* special_function */
+	 "R_DADAO_CALL_3",	/* name */
+	 FALSE,			/* partial_inplace */
+	 ~0x1ffffff,		/* src_mask */
+	 0x1ffffff,		/* dst_mask */
+	 TRUE),			/* pcrel_offset */
+
   /* A JMP is supposed to reach any (code) address.  By itself, it can
      reach +-64M; the expansion can reach all 64 bits.  Note that the 64M
      limit is soon reached if you link the program in wildly different
@@ -643,6 +703,7 @@ static const struct dadao_reloc_map dadao_reloc_map[] =
     {BFD_RELOC_VTABLE_ENTRY, R_DADAO_GNU_VTENTRY},
     {BFD_RELOC_DADAO_GETA, R_DADAO_GETA},
     {BFD_RELOC_DADAO_CBRANCH, R_DADAO_CBRANCH},
+    {BFD_RELOC_DADAO_CALL, R_DADAO_CALL},
     {BFD_RELOC_DADAO_JMP, R_DADAO_JMP},
     {BFD_RELOC_DADAO_ADDR19, R_DADAO_ADDR19},
     {BFD_RELOC_DADAO_ADDR27, R_DADAO_ADDR27},
@@ -780,6 +841,7 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
       }
       break;
 
+    case R_DADAO_CALL:
     case R_DADAO_JMP:
       /* This one is a little special.  If we get here on a non-relaxing
 	 link, and the destination is actually in range, we don't need to
@@ -1220,6 +1282,7 @@ dadao_final_link_relocate (reloc_howto_type *howto, asection *input_section,
     case R_DADAO_ADDR19:
     case R_DADAO_GETA:
     case R_DADAO_ADDR27:
+    case R_DADAO_CALL:
     case R_DADAO_JMP:
       contents += r_offset;
 

@@ -340,12 +340,13 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 
 	case dadao_operands_iiii_riii: /* call */
 		if (insn & DADAO_ADDR_MODE_ALT) {
-			offset = ((fa << 24) | (fb << 16) | (fc << 8) | fd) << 2;
+			offset = (fa << 20) | (fb << 14) | (fc << 8) | (fd << 2);
+			if (offset & 0x2000000)		offset -= 0x4000000;	/* backward */
 
-			info->target = memaddr + offset;
+			info->target = memaddr + 4 + offset;
 
 			(*info->fprintf_func) (info->stream, "\t");
-			(*info->print_address_func) (memaddr + offset, info);
+			(*info->print_address_func) (memaddr + 4 + offset, info);
 		} else {
 			(*info->fprintf_func) (info->stream, "\t%s, %d",
 				get_reg_name (minfop, fa), ( (fb << 14) | (fc << 8) | (fd << 2)));
