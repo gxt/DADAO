@@ -404,14 +404,13 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		break;
 
 	case dadao_operands_riii: /* geta or condbranches - "ra, imm18".  */
-		offset = (fc * 256 + fd) * 4;
+		offset = (fb << 14) | (fc << 8) | (fd << 2);
+		if (offset & 0x80000)		offset -= 0x100000;	/* backward */
 
-		if (insn & DADAO_ADDR_MODE_ALT)		offset -= 65536 * 4;
+		info->target = memaddr + 4 + offset;
 
-		info->target = memaddr + offset;
-
-		(*info->fprintf_func) (info->stream, "\t%s,", get_reg_name (minfop, fa));
-		(*info->print_address_func) (memaddr + offset, info);
+		(*info->fprintf_func) (info->stream, "\t%s, ", get_reg_name (minfop, fa));
+		(*info->print_address_func) (memaddr + 4 + offset, info);
 		break;
 
 	case dadao_operands_riii_rrii: /* jump, "ra, imm18" or "ra, rb, imm12" */
