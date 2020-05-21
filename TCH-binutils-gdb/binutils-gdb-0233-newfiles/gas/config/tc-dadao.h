@@ -31,17 +31,7 @@ extern void dadao_md_do_align (int, char *, int, int);
 #define md_do_align(n, fill, len, max, label)	dadao_md_do_align (n, fill, len, max)
 
 #define md_undefined_symbol(x) NULL
-
-/* Since integer_constant is local to expr.c, we have to make this a
-   macro.  FIXME: Do it cleaner.  */
-#define md_operand(exp)							\
-  do									\
-    {									\
-      if (input_line_pointer[0] == '&'				\
-	       && input_line_pointer[1] != '&')				\
-	as_bad (_("`&' serial number operator is not supported"));	\
-    }									\
-  while (0)
+#define	md_operand(x)
 
 #define md_number_to_chars number_to_chars_bigendian
 
