@@ -1032,7 +1032,7 @@ void dadao_md_assemble (char *str)
 				fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ADDR19);
 			else
 				frag_var (rs_machine_dependent, 4 * 4, 0, ENCODE_RELAX (STATE_JMP, STATE_UNDF),
-					exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
+					exp[0].X_add_symbol, exp[0].X_add_number, opcodep);
 
 		} else {	/* (n_operands == 2) */
 			symbolS *sym;
