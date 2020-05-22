@@ -125,13 +125,11 @@ static int equated_spec_regs = 1;
 
 struct option md_longopts[] =
  {
-#define OPTION_RELAX  (OPTION_MD_BASE)
-#define OPTION_NOEXPAND  (OPTION_RELAX + 1)
+#define OPTION_NOEXPAND  (OPTION_MD_BASE)
 #define OPTION_NOMERGEGREG  (OPTION_NOEXPAND + 1)
 #define OPTION_NOSYMS  (OPTION_NOMERGEGREG + 1)
 #define OPTION_FIXED_SPEC_REGS  (OPTION_NOSYMS + 1)
 #define OPTION_LINKER_ALLOCATED_GREGS  (OPTION_FIXED_SPEC_REGS + 1)
-   {"linkrelax", no_argument, NULL, OPTION_RELAX},
    {"no-expand", no_argument, NULL, OPTION_NOEXPAND},
    {"no-merge-gregs", no_argument, NULL, OPTION_NOMERGEGREG},
    {"no-predefined-syms", no_argument, NULL, OPTION_NOSYMS},
@@ -534,10 +532,6 @@ md_parse_option (int c, const char *arg ATTRIBUTE_UNUSED)
     {
     case 'x':
       allocate_undefined_gregs_in_linker = 1;
-      break;
-
-    case OPTION_RELAX:
-      linkrelax = 1;
       break;
 
     case OPTION_NOEXPAND:
@@ -1311,41 +1305,17 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
     {
     case ENCODE_RELAX (STATE_CALL, STATE_ZERO):
 	dd_set_addr_offset(opcodep, target_address - opcode_address, 24);
-      if (linkrelax)
-	{
-	  tmpfixP
-	    = fix_new (opc_fragP, opcodep - opc_fragP->fr_literal, 4,
-		       fragP->fr_symbol, fragP->fr_offset, 1,
-		       BFD_RELOC_DADAO_ADDR27);
-	  COPY_FR_WHERE_TO_FX (fragP, tmpfixP);
-	}
       var_part_size = 0;
       break;
 
     case ENCODE_RELAX (STATE_GETA, STATE_ZERO):
     case ENCODE_RELAX (STATE_BCC, STATE_ZERO):
 	dd_set_addr_offset(opcodep, target_address - opcode_address, 18);
-      if (linkrelax)
-	{
-	  tmpfixP
-	    = fix_new (opc_fragP, opcodep - opc_fragP->fr_literal, 4,
-		       fragP->fr_symbol, fragP->fr_offset, 1,
-		       BFD_RELOC_DADAO_ADDR19);
-	  COPY_FR_WHERE_TO_FX (fragP, tmpfixP);
-	}
       var_part_size = 0;
       break;
 
     case ENCODE_RELAX (STATE_JMP, STATE_ZERO):
       dadao_set_jmp_offset (opcodep, target_address - opcode_address);
-      if (linkrelax)
-	{
-	  tmpfixP
-	    = fix_new (opc_fragP, opcodep - opc_fragP->fr_literal, 4,
-		       fragP->fr_symbol, fragP->fr_offset, 1,
-		       BFD_RELOC_DADAO_ADDR27);
-	  COPY_FR_WHERE_TO_FX (fragP, tmpfixP);
-	}
       var_part_size = 0;
       break;
 
@@ -1393,9 +1363,7 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
 
 /* Applies the desired value to the specified location.
    Also sets up addends for RELA type relocations.
-   Stolen from tc-mcore.c.
-
-   Note that this function isn't called when linkrelax != 0.  */
+   Stolen from tc-mcore.c. */
 
 void
 md_apply_fix (fixS *fixP, valueT *valP, segT segment)
@@ -1572,8 +1540,8 @@ tc_gen_reloc (asection *section ATTRIBUTE_UNUSED, fixS *fixP)
 
       if (addsy == NULL || bfd_is_abs_section (addsec))
 	{
-	  /* Resolve this reloc now, as md_apply_fix would have done (not
-	     called if -linkrelax).  There is no point in keeping a reloc
+	  /* Resolve this reloc now, as md_apply_fix would have done.
+	     There is no point in keeping a reloc
 	     to an absolute symbol.  No reloc that is subject to
 	     relaxation must be to an absolute symbol; difference
 	     involving symbols in a specific section must be signalled as
@@ -1727,8 +1695,7 @@ tc_gen_reloc (asection *section ATTRIBUTE_UNUSED, fixS *fixP)
       /* FALLTHROUGH.  */
 
       /* The others are supposed to be handled by md_apply_fix.
-	 FIXME: ... which isn't called when -linkrelax.  Move over
-	 md_apply_fix code here for everything reasonable.  */
+	 Move over md_apply_fix code here for everything reasonable.  */
     default:
       as_bad_where
 	(fixP->fx_file, fixP->fx_line,
@@ -1776,13 +1743,10 @@ dadao_force_relocation (fixS *fixP)
   if (fixP->fx_r_type == BFD_RELOC_DADAO_BASE_PLUS_OFFSET)
     return 1;
 
-  if (linkrelax)
-    return 1;
-
   /* All our pcrel relocations are must-keep.  Note that md_apply_fix is
      called *after* this, and will handle getting rid of the presumed
      reloc; a relocation isn't *forced* other than to be handled by
-     md_apply_fix (or tc_gen_reloc if linkrelax).  */
+     md_apply_fix.  */
   if (fixP->fx_pcrel)
     return 1;
 
