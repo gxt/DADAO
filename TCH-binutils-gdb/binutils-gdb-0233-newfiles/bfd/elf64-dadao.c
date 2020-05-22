@@ -146,20 +146,8 @@ dadao_final_link_relocate (reloc_howto_type *, asection *, bfd_byte *, bfd_vma,
    their R_DADAO_ number.  */
 static reloc_howto_type elf_dadao_howto_table[] =
  {
-  /* This reloc does nothing.  */
-  HOWTO (R_DADAO_NONE,		/* type */
-	 0,			/* rightshift */
-	 3,			/* size (0 = byte, 1 = short, 2 = long) */
-	 0,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_dont, /* complain_on_overflow */
-	 bfd_elf_generic_reloc,	/* special_function */
-	 "R_DADAO_NONE",		/* name */
-	 FALSE,			/* partial_inplace */
-	 0,			/* src_mask */
-	 0,			/* dst_mask */
-	 FALSE),		/* pcrel_offset */
+	/* This reloc does nothing.  */
+	EMPTY_HOWTO(R_DADAO_NONE),
 
   /* An 8 bit absolute relocation.  */
   HOWTO (R_DADAO_8,		/* type */
@@ -475,23 +463,23 @@ static reloc_howto_type elf_dadao_howto_table[] =
 	 0x0100ffff,		/* dst_mask */
 	 TRUE),			/* pcrel_offset */
 
-  /* A CALL is supposed to reach any (code) address.  By itself, it can
-     reach +-64M; the expansion can reach all 64 bits.  Note that the 64M
-     limit is soon reached if you link the program in wildly different
-     memory segments.  The howto members reflect a trivial JMP.  */
-  HOWTO (R_DADAO_CALL,		/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 27,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed, /* complain_on_overflow */
-	 dadao_elf_reloc,	/* special_function */
-	 "R_DADAO_CALL",		/* name */
-	 FALSE,			/* partial_inplace */
-	 ~0x1ffffff,		/* src_mask */
-	 0x1ffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+	/* A CALL is supposed to reach any (code) address.  By itself, it can
+	   reach +-64M; the expansion can reach all 64 bits.  Note that the 64M
+	   limit is soon reached if you link the program in wildly different
+	   memory segments.  The howto members reflect a trivial JMP.  */
+	HOWTO (R_DADAO_CALL,		/* type */
+		2,			/* rightshift */
+		2,			/* size (0 = byte, 1 = short, 2 = long) */
+		26,			/* bitsize */
+		TRUE,			/* pc_relative */
+		0,			/* bitpos */
+		complain_overflow_signed, /* complain_on_overflow */
+		dadao_elf_reloc,	/* special_function */
+		"R_DADAO_CALL",		/* name */
+		FALSE,			/* partial_inplace */
+		~0xffffff,		/* src_mask */
+		0xffffff,		/* dst_mask */
+		TRUE),			/* pcrel_offset */
 
   HOWTO (R_DADAO_CALL_1,		/* type */
 	 2,			/* rightshift */
@@ -841,7 +829,26 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
       }
       break;
 
-    case R_DADAO_CALL:
+	case R_DADAO_CALL:
+		if ((value & 3) != 0)	return bfd_reloc_notsupported;
+
+		r = bfd_check_overflow (complain_overflow_bitfield,
+					howto->bitsize, 0,
+					bfd_arch_bits_per_address (abfd),
+					value);
+		if (r == bfd_reloc_ok) {
+			bfd_vma in1 = bfd_get_32 (abfd, (bfd_byte *) datap);
+
+			value >>= 2;
+
+			bfd_put_32 (abfd, (DADAO_INSN_CALL << 24) | DADAO_ADDR_MODE_ALT | (value & 0xFFFFFF),
+				(bfd_byte *) datap);
+
+			return bfd_reloc_ok;
+		} else
+			/* Another addr mode need implement  */
+			return bfd_reloc_overflow;
+
     case R_DADAO_JMP:
       /* This one is a little special.  If we get here on a non-relaxing
 	 link, and the destination is actually in range, we don't need to
@@ -1288,7 +1295,7 @@ dadao_final_link_relocate (reloc_howto_type *howto, asection *input_section,
 
       srel -= (input_section->output_section->vma
 	       + input_section->output_offset
-	       + r_offset);
+	       + r_offset + 4);
 
       r = dadao_elf_perform_relocation (input_section, howto, contents,
 				       addr, srel, error_message);
