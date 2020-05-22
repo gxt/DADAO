@@ -1216,14 +1216,10 @@ md_estimate_size_before_relax (fragS *fragP, segT segment)
 	break;
       HANDLE_RELAXABLE (STATE_JMP);
 	break;
-
       HANDLE_RELAXABLE (STATE_CALL);
-	/* FALLTHROUGH.  */
-    case ENCODE_RELAX (STATE_CALL, STATE_ZERO):
-	/* We need to distinguish different relaxation rounds.  */
-	seg_info (segment)->tc_segment_info_data.last_stubfrag = fragP;
 	break;
 
+    case ENCODE_RELAX (STATE_CALL, STATE_ZERO):
     case ENCODE_RELAX (STATE_GETA, STATE_ZERO):
     case ENCODE_RELAX (STATE_BCC, STATE_ZERO):
     case ENCODE_RELAX (STATE_JMP, STATE_ZERO):

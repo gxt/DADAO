@@ -113,17 +113,6 @@ extern void dadao_frob_file (void);
 struct dadao_symbol_gregs;
 #define TC_SYMFIELD_TYPE struct dadao_symbol_gregs *
 
-/* Used by relaxation, counting maximum needed PUSHJ stubs for a section.  */
-struct dadao_segment_info_type
- {
-   /* We only need to keep track of the last stubbable frag because
-      there's no less hackish way to keep track of different relaxation
-      rounds.  */
-   fragS *last_stubfrag;
-   bfd_size_type nstubs;
- };
-#define TC_SEGMENT_INFO_TYPE struct dadao_segment_info_type
-
 /* Each insn is a tetrabyte (4 bytes) long, but if there are BYTE
    sequences sprinkled in, we can get unaligned DWARF2 offsets, so let's
    explicitly say one byte.  */
