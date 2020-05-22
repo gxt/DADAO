@@ -16,6 +16,7 @@ all:
 
 tch-highfive:
 	@echo "=== BUILD Toolchain BEGIN ==="
+	@make -s dadao-clean
 	@make -s binutils-gdb-0233-highfive
 	@make -s gcc-0903-highfive
 	@make -s newlib-cygwin-0303-highfive
