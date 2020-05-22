@@ -1420,8 +1420,7 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
 	  || (fixP->fx_pcrel && symsec != segment)
 	  || (! fixP->fx_pcrel
 	      && symsec != absolute_section
-	      && ((fixP->fx_r_type != BFD_RELOC_DADAO_REG
-		   && fixP->fx_r_type != BFD_RELOC_DADAO_REG_OR_BYTE)
+	      && ((fixP->fx_r_type != BFD_RELOC_DADAO_REG)
 		  || symsec != reg_section))))
     {
       fixP->fx_done = 0;
@@ -1495,31 +1494,6 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
 	  val = 0;
 	}
       dadao_set_jmp_offset (buf, val);
-      break;
-
-    case BFD_RELOC_DADAO_REG_OR_BYTE:
-      if (fixP->fx_addsy != NULL
-	  && (S_GET_SEGMENT (fixP->fx_addsy) != reg_section
-	      || S_GET_VALUE (fixP->fx_addsy) > 255)
-	  && S_GET_SEGMENT (fixP->fx_addsy) != absolute_section)
-	{
-	  as_bad_where (fixP->fx_file, fixP->fx_line,
-			_("invalid operands"));
-	  /* We don't want this "symbol" appearing in output, because
-	     that will fail.  */
-	  fixP->fx_done = 1;
-	}
-
-      buf[0] = val;
-
-      /* If this reloc is for a Z field, we need to adjust
-	 the opcode if we got a constant here.
-	 FIXME: Can we make this more robust?  */
-
-      if ((fixP->fx_where & 3) == 3
-	  && (fixP->fx_addsy == NULL
-	      || S_GET_SEGMENT (fixP->fx_addsy) == absolute_section))
-	DDOP_SET_ADDR_MODE_ALT(buf - 3);
       break;
 
     case BFD_RELOC_DADAO_REG:
@@ -1629,37 +1603,6 @@ tc_gen_reloc (asection *section ATTRIBUTE_UNUSED, fixS *fixP)
     case BFD_RELOC_DADAO_ADDR27:
       code = fixP->fx_r_type;
       break;
-
-    case BFD_RELOC_DADAO_REG_OR_BYTE:
-      /* If we have this kind of relocation to an unknown symbol or to the
-	 register contents section (that is, to a register), then we can't
-	 resolve the relocation here.  */
-      if (addsy != NULL
-	  && (bfd_is_und_section (addsec)
-	      || strcmp (bfd_get_section_name (addsec->owner, addsec),
-			 DADAO_REG_CONTENTS_SECTION_NAME) == 0))
-	{
-	  code = fixP->fx_r_type;
-	  break;
-	}
-
-      /* If the relocation is not to the register section or to the
-	 absolute section (a numeric value), then we have an error.  */
-      if (addsy != NULL
-	  && (S_GET_SEGMENT (addsy) != real_reg_section
-	      || val > 255
-	      || val < 0)
-	  && ! bfd_is_abs_section (addsec))
-	goto badop;
-
-      /* Set the "immediate" bit of the insn if this relocation is to Z
-	 field when the value is a numeric value, i.e. not a register.  */
-      if ((fixP->fx_where & 3) == 3
-	  && (addsy == NULL || bfd_is_abs_section (addsec)))
-	DDOP_SET_ADDR_MODE_ALT(buf - 3);
-
-      buf[0] = val;
-      return NULL;
 
     case BFD_RELOC_DADAO_BASE_PLUS_OFFSET:
       if (addsy != NULL
@@ -1790,7 +1733,6 @@ tc_gen_reloc (asection *section ATTRIBUTE_UNUSED, fixS *fixP)
       /* The others are supposed to be handled by md_apply_fix.
 	 FIXME: ... which isn't called when -linkrelax.  Move over
 	 md_apply_fix code here for everything reasonable.  */
-    badop:
     default:
       as_bad_where
 	(fixP->fx_file, fixP->fx_line,

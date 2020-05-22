@@ -445,22 +445,6 @@ static reloc_howto_type elf_dadao_howto_table[] =
 	 0x1ffffff,		/* dst_mask */
 	 TRUE),			/* pcrel_offset */
 
-  /* A general register or the value 0..255.  If a value, then the
-     instruction (offset -3) needs adjusting.  */
-  HOWTO (R_DADAO_REG_OR_BYTE,	/* type */
-	 0,			/* rightshift */
-	 1,			/* size (0 = byte, 1 = short, 2 = long) */
-	 8,			/* bitsize */
-	 FALSE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_bitfield, /* complain_on_overflow */
-	 dadao_elf_reloc,	/* special_function */
-	 "R_DADAO_REG_OR_BYTE",	/* name */
-	 FALSE,			/* partial_inplace */
-	 0,			/* src_mask */
-	 0xff,			/* dst_mask */
-	 FALSE),		/* pcrel_offset */
-
   /* A general register.  */
   HOWTO (R_DADAO_REG,		/* type */
 	 0,			/* rightshift */
@@ -525,7 +509,6 @@ static const struct dadao_reloc_map dadao_reloc_map[] =
     {BFD_RELOC_DADAO_JMP, R_DADAO_JMP},
     {BFD_RELOC_DADAO_ADDR19, R_DADAO_ADDR19},
     {BFD_RELOC_DADAO_ADDR27, R_DADAO_ADDR27},
-    {BFD_RELOC_DADAO_REG_OR_BYTE, R_DADAO_REG_OR_BYTE},
     {BFD_RELOC_DADAO_REG, R_DADAO_REG},
     {BFD_RELOC_DADAO_BASE_PLUS_OFFSET, R_DADAO_BASE_PLUS_OFFSET},
   };
@@ -814,7 +797,6 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 	return bfd_reloc_ok;
       }
 
-    case R_DADAO_REG_OR_BYTE:
     case R_DADAO_REG:
       if (value > 255)
 	return bfd_reloc_overflow;
@@ -1159,7 +1141,6 @@ dadao_final_link_relocate (reloc_howto_type *howto, asection *input_section,
 	}
       goto do_dadao_reloc;
 
-    case R_DADAO_REG_OR_BYTE:
     case R_DADAO_REG:
       /* For now, we handle these alike.  They must refer to an register
 	 symbol, which is either relative to the register section and in
@@ -1264,11 +1245,9 @@ dadao_elf_sort_relocs (const void * p1, const void * p2)
     return -1;
 
   r1_is_reg
-    = (ELF64_R_TYPE (r1->r_info) == R_DADAO_REG_OR_BYTE
-       || ELF64_R_TYPE (r1->r_info) == R_DADAO_REG);
+    = (ELF64_R_TYPE (r1->r_info) == R_DADAO_REG);
   r2_is_reg
-    = (ELF64_R_TYPE (r2->r_info) == R_DADAO_REG_OR_BYTE
-       || ELF64_R_TYPE (r2->r_info) == R_DADAO_REG);
+    = (ELF64_R_TYPE (r2->r_info) == R_DADAO_REG);
   if (r1_is_reg != r2_is_reg)
     return r2_is_reg - r1_is_reg;
 
