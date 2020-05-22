@@ -146,8 +146,20 @@ dadao_final_link_relocate (reloc_howto_type *, asection *, bfd_byte *, bfd_vma,
    their R_DADAO_ number.  */
 static reloc_howto_type elf_dadao_howto_table[] =
  {
-	/* This reloc does nothing.  */
-	EMPTY_HOWTO(R_DADAO_NONE),
+  /* This reloc does nothing.  */
+  HOWTO (R_DADAO_NONE,		/* type */
+	 0,			/* rightshift */
+	 3,			/* size (0 = byte, 1 = short, 2 = long) */
+	 0,			/* bitsize */
+	 FALSE,			/* pc_relative */
+	 0,			/* bitpos */
+	 complain_overflow_dont, /* complain_on_overflow */
+	 bfd_elf_generic_reloc,	/* special_function */
+	 "R_DADAO_NONE",		/* name */
+	 FALSE,			/* partial_inplace */
+	 0,			/* src_mask */
+	 0,			/* dst_mask */
+	 FALSE),		/* pcrel_offset */
 
   /* An 8 bit absolute relocation.  */
   HOWTO (R_DADAO_8,		/* type */
