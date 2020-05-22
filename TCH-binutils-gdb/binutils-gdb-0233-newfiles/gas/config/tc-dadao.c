@@ -1540,19 +1540,6 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
       fixP->fx_done = 0;
       return;
 
-    case BFD_RELOC_DADAO_CBRANCH_J:
-    case BFD_RELOC_DADAO_CBRANCH_1:
-    case BFD_RELOC_DADAO_CBRANCH_2:
-    case BFD_RELOC_DADAO_CBRANCH_3:
-    case BFD_RELOC_DADAO_GETA_1:
-    case BFD_RELOC_DADAO_GETA_2:
-    case BFD_RELOC_DADAO_GETA_3:
-    case BFD_RELOC_DADAO_CALL_1:
-    case BFD_RELOC_DADAO_CALL_2:
-    case BFD_RELOC_DADAO_CALL_3:
-    case BFD_RELOC_DADAO_JMP_1:
-    case BFD_RELOC_DADAO_JMP_2:
-    case BFD_RELOC_DADAO_JMP_3:
     default:
       BAD_CASE (fixP->fx_r_type);
       break;
@@ -1635,22 +1622,9 @@ tc_gen_reloc (asection *section ATTRIBUTE_UNUSED, fixS *fixP)
     case BFD_RELOC_VTABLE_INHERIT:
     case BFD_RELOC_VTABLE_ENTRY:
     case BFD_RELOC_DADAO_GETA:
-    case BFD_RELOC_DADAO_GETA_1:
-    case BFD_RELOC_DADAO_GETA_2:
-    case BFD_RELOC_DADAO_GETA_3:
     case BFD_RELOC_DADAO_CBRANCH:
-    case BFD_RELOC_DADAO_CBRANCH_J:
-    case BFD_RELOC_DADAO_CBRANCH_1:
-    case BFD_RELOC_DADAO_CBRANCH_2:
-    case BFD_RELOC_DADAO_CBRANCH_3:
     case BFD_RELOC_DADAO_CALL:
-    case BFD_RELOC_DADAO_CALL_1:
-    case BFD_RELOC_DADAO_CALL_2:
-    case BFD_RELOC_DADAO_CALL_3:
     case BFD_RELOC_DADAO_JMP:
-    case BFD_RELOC_DADAO_JMP_1:
-    case BFD_RELOC_DADAO_JMP_2:
-    case BFD_RELOC_DADAO_JMP_3:
     case BFD_RELOC_DADAO_ADDR19:
     case BFD_RELOC_DADAO_ADDR27:
       code = fixP->fx_r_type;

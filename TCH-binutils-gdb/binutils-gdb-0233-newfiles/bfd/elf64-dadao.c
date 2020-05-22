@@ -359,48 +359,6 @@ static reloc_howto_type elf_dadao_howto_table[] =
 	 0x0100ffff,		/* dst_mask */
 	 TRUE),			/* pcrel_offset */
 
-  HOWTO (R_DADAO_GETA_1,		/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 19,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed, /* complain_on_overflow */
-	 dadao_elf_reloc,	/* special_function */
-	 "R_DADAO_GETA_1",		/* name */
-	 FALSE,			/* partial_inplace */
-	 ~0x0100ffff,		/* src_mask */
-	 0x0100ffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
-
-  HOWTO (R_DADAO_GETA_2,		/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 19,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed, /* complain_on_overflow */
-	 dadao_elf_reloc,	/* special_function */
-	 "R_DADAO_GETA_2",		/* name */
-	 FALSE,			/* partial_inplace */
-	 ~0x0100ffff,		/* src_mask */
-	 0x0100ffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
-
-  HOWTO (R_DADAO_GETA_3,		/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 19,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed, /* complain_on_overflow */
-	 dadao_elf_reloc,	/* special_function */
-	 "R_DADAO_GETA_3",		/* name */
-	 FALSE,			/* partial_inplace */
-	 ~0x0100ffff,		/* src_mask */
-	 0x0100ffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
-
   /* The conditional branches are supposed to reach any (code) address.
      It can silently expand to a 64-bit operand, but will emit an error if
      any of the two least significant bits are set.  The howto members
@@ -414,62 +372,6 @@ static reloc_howto_type elf_dadao_howto_table[] =
 	 complain_overflow_signed, /* complain_on_overflow */
 	 dadao_elf_reloc,	/* special_function */
 	 "R_DADAO_CBRANCH",	/* name */
-	 FALSE,			/* partial_inplace */
-	 ~0x0100ffff,		/* src_mask */
-	 0x0100ffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
-
-  HOWTO (R_DADAO_CBRANCH_J,	/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 19,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed, /* complain_on_overflow */
-	 dadao_elf_reloc,	/* special_function */
-	 "R_DADAO_CBRANCH_J",	/* name */
-	 FALSE,			/* partial_inplace */
-	 ~0x0100ffff,		/* src_mask */
-	 0x0100ffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
-
-  HOWTO (R_DADAO_CBRANCH_1,	/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 19,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed, /* complain_on_overflow */
-	 dadao_elf_reloc,	/* special_function */
-	 "R_DADAO_CBRANCH_1",	/* name */
-	 FALSE,			/* partial_inplace */
-	 ~0x0100ffff,		/* src_mask */
-	 0x0100ffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
-
-  HOWTO (R_DADAO_CBRANCH_2,	/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 19,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed, /* complain_on_overflow */
-	 dadao_elf_reloc,	/* special_function */
-	 "R_DADAO_CBRANCH_2",	/* name */
-	 FALSE,			/* partial_inplace */
-	 ~0x0100ffff,		/* src_mask */
-	 0x0100ffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
-
-  HOWTO (R_DADAO_CBRANCH_3,	/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 19,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed, /* complain_on_overflow */
-	 dadao_elf_reloc,	/* special_function */
-	 "R_DADAO_CBRANCH_3",	/* name */
 	 FALSE,			/* partial_inplace */
 	 ~0x0100ffff,		/* src_mask */
 	 0x0100ffff,		/* dst_mask */
@@ -493,48 +395,6 @@ static reloc_howto_type elf_dadao_howto_table[] =
 		0xffffff,		/* dst_mask */
 		TRUE),			/* pcrel_offset */
 
-  HOWTO (R_DADAO_CALL_1,		/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 27,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed, /* complain_on_overflow */
-	 dadao_elf_reloc,	/* special_function */
-	 "R_DADAO_CALL_1",	/* name */
-	 FALSE,			/* partial_inplace */
-	 ~0x1ffffff,		/* src_mask */
-	 0x1ffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
-
-  HOWTO (R_DADAO_CALL_2,		/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 27,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed, /* complain_on_overflow */
-	 dadao_elf_reloc,	/* special_function */
-	 "R_DADAO_CALL_2",	/* name */
-	 FALSE,			/* partial_inplace */
-	 ~0x1ffffff,		/* src_mask */
-	 0x1ffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
-
-  HOWTO (R_DADAO_CALL_3,		/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 27,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed, /* complain_on_overflow */
-	 dadao_elf_reloc,	/* special_function */
-	 "R_DADAO_CALL_3",	/* name */
-	 FALSE,			/* partial_inplace */
-	 ~0x1ffffff,		/* src_mask */
-	 0x1ffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
-
   /* A JMP is supposed to reach any (code) address.  By itself, it can
      reach +-64M; the expansion can reach all 64 bits.  Note that the 64M
      limit is soon reached if you link the program in wildly different
@@ -548,48 +408,6 @@ static reloc_howto_type elf_dadao_howto_table[] =
 	 complain_overflow_signed, /* complain_on_overflow */
 	 dadao_elf_reloc,	/* special_function */
 	 "R_DADAO_JMP",		/* name */
-	 FALSE,			/* partial_inplace */
-	 ~0x1ffffff,		/* src_mask */
-	 0x1ffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
-
-  HOWTO (R_DADAO_JMP_1,		/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 27,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed, /* complain_on_overflow */
-	 dadao_elf_reloc,	/* special_function */
-	 "R_DADAO_JMP_1",	/* name */
-	 FALSE,			/* partial_inplace */
-	 ~0x1ffffff,		/* src_mask */
-	 0x1ffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
-
-  HOWTO (R_DADAO_JMP_2,		/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 27,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed, /* complain_on_overflow */
-	 dadao_elf_reloc,	/* special_function */
-	 "R_DADAO_JMP_2",	/* name */
-	 FALSE,			/* partial_inplace */
-	 ~0x1ffffff,		/* src_mask */
-	 0x1ffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
-
-  HOWTO (R_DADAO_JMP_3,		/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 27,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed, /* complain_on_overflow */
-	 dadao_elf_reloc,	/* special_function */
-	 "R_DADAO_JMP_3",	/* name */
 	 FALSE,			/* partial_inplace */
 	 ~0x1ffffff,		/* src_mask */
 	 0x1ffffff,		/* dst_mask */

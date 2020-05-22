@@ -5,57 +5,31 @@ Subject: [PATCH] DADAO-bfd: reloc.c
 
 Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
 ---
- bfd/reloc.c | 67 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
+ bfd/reloc.c | 41 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
 diff --git a/bfd/reloc.c b/bfd/reloc.c
 index 9ca68ca61da..1d7c0d42ad3 100644
 --- a/bfd/reloc.c
 +++ b/bfd/reloc.c
-@@ -8150,6 +8150,73 @@ ENUM
+@@ -8150,6 +8150,47 @@ ENUM
  ENUMDOC
    S12Z relocations.
  
 +ENUM
 +  BFD_RELOC_DADAO_GETA
-+ENUMX
-+  BFD_RELOC_DADAO_GETA_1
-+ENUMX
-+  BFD_RELOC_DADAO_GETA_2
-+ENUMX
-+  BFD_RELOC_DADAO_GETA_3
 +ENUMDOC
 +  These are relocations for the GETA instruction.
 +ENUM
 +  BFD_RELOC_DADAO_CBRANCH
-+ENUMX
-+  BFD_RELOC_DADAO_CBRANCH_J
-+ENUMX
-+  BFD_RELOC_DADAO_CBRANCH_1
-+ENUMX
-+  BFD_RELOC_DADAO_CBRANCH_2
-+ENUMX
-+  BFD_RELOC_DADAO_CBRANCH_3
 +ENUMDOC
 +  These are relocations for a conditional branch instruction.
 +ENUM
 +  BFD_RELOC_DADAO_CALL
-+ENUMX             CALL
-+  BFD_RELOC_DADAO_CALL_1
-+ENUMX             CALL
-+  BFD_RELOC_DADAO_CALL_2
-+ENUMX             CALL
-+  BFD_RELOC_DADAO_CALL_3
 +ENUMDOC
 +  These are relocations for the CALL instruction.
 +ENUM
 +  BFD_RELOC_DADAO_JMP
-+ENUMX
-+  BFD_RELOC_DADAO_JMP_1
-+ENUMX
-+  BFD_RELOC_DADAO_JMP_2
-+ENUMX
-+  BFD_RELOC_DADAO_JMP_3
 +ENUMDOC
 +  These are relocations for the JMP instruction.
 +ENUM

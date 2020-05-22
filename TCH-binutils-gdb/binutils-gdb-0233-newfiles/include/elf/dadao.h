@@ -33,48 +33,29 @@ START_RELOC_NUMBERS (elf_dadao_reloc_type)
   RELOC_NUMBER (R_DADAO_GNU_VTINHERIT, 11)
   RELOC_NUMBER (R_DADAO_GNU_VTENTRY, 12)
 
-  /* A GETA instruction.  */
+  /* DADAO specific instructions.  */
   RELOC_NUMBER (R_DADAO_GETA, 13)
-  RELOC_NUMBER (R_DADAO_GETA_1, 14)
-  RELOC_NUMBER (R_DADAO_GETA_2, 15)
-  RELOC_NUMBER (R_DADAO_GETA_3, 16)
-
-  /* A conditional branch instruction.  */
-  RELOC_NUMBER (R_DADAO_CBRANCH, 17)
-  RELOC_NUMBER (R_DADAO_CBRANCH_J, 18)
-  RELOC_NUMBER (R_DADAO_CBRANCH_1, 19)
-  RELOC_NUMBER (R_DADAO_CBRANCH_2, 20)
-  RELOC_NUMBER (R_DADAO_CBRANCH_3, 21)
-
-  /* A CALL instruction.  */
-  RELOC_NUMBER (R_DADAO_CALL, 22)
-  RELOC_NUMBER (R_DADAO_CALL_1, 23)
-  RELOC_NUMBER (R_DADAO_CALL_2, 24)
-  RELOC_NUMBER (R_DADAO_CALL_3, 25)
-
-  /* A JMP instruction.  */
-  RELOC_NUMBER (R_DADAO_JMP, 26)
-  RELOC_NUMBER (R_DADAO_JMP_1, 27)
-  RELOC_NUMBER (R_DADAO_JMP_2, 28)
-  RELOC_NUMBER (R_DADAO_JMP_3, 29)
+  RELOC_NUMBER (R_DADAO_CBRANCH, 14)
+  RELOC_NUMBER (R_DADAO_CALL, 15)
+  RELOC_NUMBER (R_DADAO_JMP, 16)
 
   /* A relative address such as in a GETA or a branch.  */
-  RELOC_NUMBER (R_DADAO_ADDR19, 30)
+  RELOC_NUMBER (R_DADAO_ADDR19, 17)
 
   /* A relative address such as in a JMP (only).  */
-  RELOC_NUMBER (R_DADAO_ADDR27, 31)
+  RELOC_NUMBER (R_DADAO_ADDR27, 18)
 
   /* A general register or a number 0..255.  */
-  RELOC_NUMBER (R_DADAO_REG_OR_BYTE, 32)
+  RELOC_NUMBER (R_DADAO_REG_OR_BYTE, 19)
 
   /* A general register. */
-  RELOC_NUMBER (R_DADAO_REG, 33)
+  RELOC_NUMBER (R_DADAO_REG, 20)
 
   /* A global register and an offset, the global register (allocated at
      link time) contents plus the offset made equivalent to the relocation
      expression at link time.  The relocation must point at the Y field of
      an instruction.  */
-  RELOC_NUMBER (R_DADAO_BASE_PLUS_OFFSET, 34)
+  RELOC_NUMBER (R_DADAO_BASE_PLUS_OFFSET, 21)
 
 END_RELOC_NUMBERS (R_DADAO_max)
 
