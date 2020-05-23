@@ -359,23 +359,23 @@ static reloc_howto_type elf_dadao_howto_table[] =
 		0x0003ffff,		/* dst_mask */
 		TRUE),			/* pcrel_offset */
 
-  /* The conditional branches are supposed to reach any (code) address.
-     It can silently expand to a 64-bit operand, but will emit an error if
-     any of the two least significant bits are set.  The howto members
-     reflect a simple branch.  */
-  HOWTO (R_DADAO_CBRANCH,	/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 19,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed, /* complain_on_overflow */
-	 dadao_elf_reloc,	/* special_function */
-	 "R_DADAO_CBRANCH",	/* name */
-	 FALSE,			/* partial_inplace */
-	 ~0x0100ffff,		/* src_mask */
-	 0x0100ffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+	/* The conditional branches are supposed to reach any (code) address.
+	   It can silently expand to a 64-bit operand, but will emit an error if
+	   any of the two least significant bits are set.  The howto members
+	   reflect a simple branch.  */
+	HOWTO (R_DADAO_CBRANCH,		/* type */
+		2,			/* rightshift */
+		2,			/* size (0 = byte, 1 = short, 2 = long) */
+		20,			/* bitsize */
+		TRUE,			/* pc_relative */
+		0,			/* bitpos */
+		complain_overflow_bitfield, /* complain_on_overflow */
+		dadao_elf_reloc,	/* special_function */
+		"R_DADAO_CBRANCH",	/* name */
+		FALSE,			/* partial_inplace */
+		~0x0003ffff,		/* src_mask */
+		0x0003ffff,		/* dst_mask */
+		TRUE),			/* pcrel_offset */
 
 	/* A CALL is supposed to reach any (code) address.  By itself, it can
 	   reach +-64M; the expansion can reach all 64 bits.  Note that the 64M
@@ -582,14 +582,14 @@ dadao_elf_new_section_hook (bfd *abfd, asection *sec)
    R_DADAO_CBRANCH: (FIXME: Relaxation should break this up, but
    condbranches needing relaxation might be rare enough to not be
    worthwhile.)
-    [P]Bcc $N,foo
+    Bcc $N,foo
    ->
-    [~P]B~cc $N,.+20
-    SETL $255,foo & ...
+    B~cc $N,.+20
+    SETL $3,foo & ...
     INCML ...
     INCMH ...
     INCH ...
-    GO $255,$255,0
+    JUMP $3,0
 
    R_DADAO_JMP: (FIXME: Relaxation...)
     JMP foo
@@ -610,8 +610,10 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
   bfd *abfd = isec->owner;
   bfd_reloc_status_type flag = bfd_reloc_ok;
   bfd_reloc_status_type r;
-  int offs = 0;
-  int reg = 255;
+
+	bfd_vma	insn_origin;
+	int offs;
+	int reg;
 
   /* The worst case bits are all similar SETL/INCML/INCMH/INCH sequences.
      We handle the differences here and the common sequence later.  */
@@ -620,41 +622,47 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 	case R_DADAO_GETA:
 		if ((value & 3) != 0)	return bfd_reloc_notsupported;
 
+		insn_origin = bfd_get_32 (abfd, (bfd_byte *) datap);
+
 		r = bfd_check_overflow (complain_overflow_bitfield,
 					howto->bitsize, 0,
 					bfd_arch_bits_per_address (abfd),
 					value);
 		if (r == bfd_reloc_ok) {
-			bfd_vma in1 = bfd_get_32 (abfd, (bfd_byte *) datap);
-
-			value >>= 2;
-
-			bfd_put_32 (abfd, (DADAO_INSN_GETA << 24) | (value & 0xFFFFFF),
+			bfd_put_32 (abfd, insn_origin | ((value >> 2) & 0x3FFFF),
 				(bfd_byte *) datap);
 
 			return bfd_reloc_ok;
 		}
 
 		offs = 0;		/* offset for datap */
-		reg = (bfd_get_8 (abfd, (bfd_byte *) datap + 1)) >> 2;
+		reg = (insn_origin >> 18) & 0x3F;
 		break;
 
-    case R_DADAO_CBRANCH:
-      {
-	int in1 = bfd_get_16 (abfd, (bfd_byte *) datap) << 16;
+	case R_DADAO_CBRANCH:
+		if ((value & 3) != 0)	return bfd_reloc_notsupported;
 
-	/* Put a "GO $0,$0,0" after the common sequence.  */
-	bfd_put_32 (abfd,
-		    (DADAO_INSN_CALL << 24) | DADAO_ADDR_MODE_ALT,
-		    (bfd_byte *) datap + 20);
+		insn_origin = bfd_get_32 (abfd, (bfd_byte *) datap);
 
-	/* Common sequence starts at offset 4.  */
-	offs = 4;
+		r = bfd_check_overflow (complain_overflow_bitfield,
+					howto->bitsize, 0,
+					bfd_arch_bits_per_address (abfd),
+					value);
+		if (r == bfd_reloc_ok) {
+			bfd_put_32 (abfd, insn_origin | ((value >> 2) & 0x3FFFF),
+				(bfd_byte *) datap);
 
-	/* We change to an absolute value.  */
-	value += addr;
-      }
-      break;
+			return bfd_reloc_ok;
+		}
+
+		bfd_put_32 (abfd, (insn_origin ^ DADAO_ADDR_MODE_ALT) | (5), (bfd_byte *) datap);
+
+		/* Put a "jump $3, 0" after the common sequence.  */
+		bfd_put_32 (abfd, (DADAO_INSN_JUMP << 24) | DADAO_ADDR_MODE_ALT | (DADAO_REGP_TAO << 18),
+				(bfd_byte *) datap + 20);
+		offs = 4;
+		reg = DADAO_REGP_TAO;
+		break;
 
 	case R_DADAO_CALL:
 		if ((value & 3) != 0)	return bfd_reloc_notsupported;
