@@ -196,72 +196,41 @@ static struct hash_control *dadao_opcode_hash;
    word of the instruction.  The catch-all states have zero for "reach"
    and "next" entries.  */
 
-#define GETA_0F (65536 * 4 - 8)
-#define GETA_0B (-65536 * 4 - 4)
-
-#define GETA_MAX_LEN 4 * 4
-#define GETA_3F 0
-#define GETA_3B 0
-
-#define BCC_0F GETA_0F
-#define BCC_0B GETA_0B
-
-#define BCC_MAX_LEN 6 * 4
-#define BCC_5F GETA_3F
-#define BCC_5B GETA_3B
-
-#define CALL_0F GETA_0F
-#define CALL_0B GETA_0B
-
-#define CALL_MAX_LEN 4 * 4
-#define CALL_3F GETA_3F
-#define CALL_3B GETA_3B
-
-#define JMP_0F (65536 * 256 * 4 - 8)
-#define JMP_0B (-65536 * 256 * 4 - 4)
-
-#define JMP_MAX_LEN 5 * 4
-#define JMP_4F 0
-#define JMP_4B 0
-
 #define RELAX_ENCODE_SHIFT 1
 #define ENCODE_RELAX(what, length) (((what) << RELAX_ENCODE_SHIFT) + (length))
 
-const relax_typeS dadao_relax_table[] =
- {
+#define	DD_INSN_BYTES(n)	((n) * 4)
+
+const relax_typeS dadao_relax_table[] = {
    /* Error sentinel (0, 0).  */
-   {1,		1,		0,	0},
+   {1,		1,		0,			0},
 
    /* Unused (0, 1).  */
-   {1,		1,		0,	0},
+   {1,		1,		0,			0},
 
    /* GETA (1, 0).  */
-   {GETA_0F,	GETA_0B,	0,	ENCODE_RELAX (STATE_GETA, STATE_MAX)},
+   {(1 << 20),	-(1 << 20),	0,			ENCODE_RELAX (STATE_GETA, STATE_MAX)},
 
    /* GETA (1, 1).  */
-   {GETA_3F,	GETA_3B,
-		GETA_MAX_LEN - 4,	0},
+   {0,		0,		DD_INSN_BYTES(3),	0},
 
    /* BCC (2, 0).  */
-   {BCC_0F,	BCC_0B,		0,	ENCODE_RELAX (STATE_BCC, STATE_MAX)},
+   {(1 << 20),	-(1 << 20),	0,			ENCODE_RELAX (STATE_BCC, STATE_MAX)},
 
    /* BCC (2, 1).  */
-   {BCC_5F,	BCC_5B,
-		BCC_MAX_LEN - 4,	0},
+   {0,		0,		DD_INSN_BYTES(5),	0},
 
    /* CALL (3, 0).  */
-   {CALL_0F,	CALL_0B,	0,	ENCODE_RELAX (STATE_CALL, STATE_MAX)},
+   {(1 << 26),	-(1 << 26),	0,			ENCODE_RELAX (STATE_CALL, STATE_MAX)},
 
    /* CALL (3, 1).  */
-   {CALL_3F,	CALL_3B,
-		CALL_MAX_LEN - 4,	0},
+   {0,		0,		DD_INSN_BYTES(3),	0},
 
    /* JMP (4, 0).  */
-   {JMP_0F,	JMP_0B,		0,	ENCODE_RELAX (STATE_JMP, STATE_MAX)},
+   {(1 << 18),	-(1 << 18),	0,			ENCODE_RELAX (STATE_JMP, STATE_MAX)},
 
    /* JMP (4, 1).  */
-   {JMP_4F,	JMP_4B,
-		JMP_MAX_LEN - 4,	0},
+   {0,		0,		DD_INSN_BYTES(4),	0},
 
    /* GREG (5, 0), (5, 1), though the table entry isn't used.  */
    {0, 0, 0, 0}, {0, 0, 0, 0},
@@ -1010,7 +979,7 @@ void dadao_md_assemble (char *str)
 			if (! expand_op)
 				fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ADDR19);
 			else
-				frag_var (rs_machine_dependent, BCC_MAX_LEN - 4, 0, ENCODE_RELAX (STATE_BCC, STATE_UNDF),
+				frag_var (rs_machine_dependent, DD_INSN_BYTES(5), 0, ENCODE_RELAX (STATE_BCC, STATE_UNDF),
 					exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
 			break;
 
@@ -1018,7 +987,7 @@ void dadao_md_assemble (char *str)
 			if (! expand_op)
 				fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ADDR19);
 			else
-				frag_var (rs_machine_dependent, GETA_MAX_LEN - 4, 0, ENCODE_RELAX (STATE_GETA, STATE_UNDF),
+				frag_var (rs_machine_dependent, DD_INSN_BYTES(3), 0, ENCODE_RELAX (STATE_GETA, STATE_UNDF),
 					exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
 			break;
 
@@ -1043,7 +1012,7 @@ void dadao_md_assemble (char *str)
 			if (! expand_op)
 				fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ADDR19);
 			else
-				frag_var (rs_machine_dependent, CALL_MAX_LEN - 4, 0, ENCODE_RELAX (STATE_CALL, STATE_UNDF),
+				frag_var (rs_machine_dependent, DD_INSN_BYTES(3), 0, ENCODE_RELAX (STATE_CALL, STATE_UNDF),
 					exp[0].X_add_symbol, exp[0].X_add_number, opcodep);
 
 		} else {	/* (n_operands == 2) */
