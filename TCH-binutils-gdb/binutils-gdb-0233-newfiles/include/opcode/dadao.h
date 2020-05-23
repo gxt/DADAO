@@ -79,16 +79,16 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 #define	DADAO_WYDE_MH			(2 << 16)
 #define	DADAO_WYDE_H			(3 << 16)
 
-#define	DADAO_INSN_SETW			(0x3A << 24)
-#define	DADAO_INSN_INCW			(0x3B << 24)
-#define	DADAO_INSN_ORW			(0x3C << 24)
-#define	DADAO_INSN_ANDNW		(0x3D << 24)
+#define	DADAO_INSN_SETW			((unsigned int)(0x3A << 24))
+#define	DADAO_INSN_INCW			((unsigned int)(0x3B << 24))
+#define	DADAO_INSN_ORW			((unsigned int)(0x3C << 24))
+#define	DADAO_INSN_ANDNW		((unsigned int)(0x3D << 24))
 
-#define	DADAO_INSN_CALL			(0xD0 << 24)
-#define	DADAO_INSN_JUMP			(0xD2 << 24)
-#define	DADAO_INSN_GETA			(0xD4 << 24)
+#define	DADAO_INSN_CALL			((unsigned int)(0xD0 << 24))
+#define	DADAO_INSN_JUMP			((unsigned int)(0xD2 << 24))
+#define	DADAO_INSN_GETA			((unsigned int)(0xD4 << 24))
 
-#define	DADAO_INSN_FP			(0xDB << 24)
+#define	DADAO_INSN_FP			((unsigned int)(0xDB << 24))
 
 /* Dadao bit-field definition:
  *   OP: 8-bit, [31..24]
