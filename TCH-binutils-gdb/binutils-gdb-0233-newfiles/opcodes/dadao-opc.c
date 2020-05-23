@@ -132,12 +132,12 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"stsf",	0x9E,		0,	1,	OP (rrii_rrri_or_sym),	T (dref)},
 
 	{"bn",		0xC0,		0,	0,	OP (riii),		T (condbranch)},
-	{"bz",		0xC1,		0,	0,	OP (riii),		T (condbranch)},
-	{"bp",		0xC2,		0,	0,	OP (riii),		T (condbranch)},
-	{"bod",		0xC3,		0,	0,	OP (riii),		T (condbranch)},
-	{"bnn",		0xC4,		0,	0,	OP (riii),		T (condbranch)},
-	{"bnz",		0xC5,		0,	0,	OP (riii),		T (condbranch)},
-	{"bnp",		0xC6,		0,	0,	OP (riii),		T (condbranch)},
+	{"bnn",		0xC1,		0,	0,	OP (riii),		T (condbranch)},
+	{"bz",		0xC2,		0,	0,	OP (riii),		T (condbranch)},
+	{"bnz",		0xC3,		0,	0,	OP (riii),		T (condbranch)},
+	{"bp",		0xC4,		0,	0,	OP (riii),		T (condbranch)},
+	{"bnp",		0xC5,		0,	0,	OP (riii),		T (condbranch)},
+	{"bod",		0xC6,		0,	0,	OP (riii),		T (condbranch)},
 	{"bev",		0xC7,		0,	0,	OP (riii),		T (condbranch)},
 
 	{"call",	I (CALL),	0,	1,	OP (iiii_riii),		T (jsr)},
