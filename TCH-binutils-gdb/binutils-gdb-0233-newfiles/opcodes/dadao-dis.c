@@ -339,7 +339,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		break;
 
 	case dadao_operands_iiii_riii: /* call */
-		if (insn & DADAO_ADDR_MODE_ALT) {
+		if (insn & DADAO_INSN_ALTMODE) {
 			offset = (fa << 20) | (fb << 14) | (fc << 8) | (fd << 2);
 			if (offset & 0x2000000)		offset -= 0x4000000;	/* backward */
 
@@ -384,7 +384,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 
 	case dadao_operands_rrii_rrri:
 	case dadao_operands_rrii_rrri_or_sym:
-		if (insn & DADAO_ADDR_MODE_ALT)
+		if (insn & DADAO_INSN_ALTMODE)
 			(*info->fprintf_func) (info->stream, "\t%s, %s, %d",
 				get_reg_name (minfop, fa), get_reg_name (minfop, fb), (fc << 6) | fd);
 		else if (fd == 0)
@@ -396,7 +396,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		break;
 
 	case dadao_operands_orri_orrr:
-		if (insn & DADAO_ADDR_MODE_ALT)
+		if (insn & DADAO_INSN_ALTMODE)
 			(*info->fprintf_func) (info->stream, "\t%s, %s, %d",
 				get_reg_name (minfop, fb), get_reg_name (minfop, fc), fd);
 		else
@@ -415,7 +415,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		break;
 
 	case dadao_operands_riii_rrii: /* jump, "ra, imm18" or "ra, rb, imm12" */
-		if (insn & DADAO_ADDR_MODE_ALT) {
+		if (insn & DADAO_INSN_ALTMODE) {
 			offset = (fc * 256 + fd) * 4;
 
 			info->target = memaddr + offset;

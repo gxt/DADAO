@@ -854,7 +854,7 @@ void dadao_md_assemble (char *str)
 			break;
 
 		case O_constant: /* imm6 */
-			DDOP_SET_ADDR_MODE_ALT(opcodep);
+			DDOP_SET_INSN_ALTMODE(opcodep);
 			DDOP_EXP_MUST_BE_UIMM(exp[2], 6);
 			DDOP_SET_FD(opcodep, exp[2].X_add_number);
 			break;
@@ -868,7 +868,7 @@ void dadao_md_assemble (char *str)
 		if (n_operands == 2) {
 			symbolS *sym;
 			/* The last operand is immediate whenever we see just two operands.  */
-			DDOP_SET_ADDR_MODE_ALT(opcodep);
+			DDOP_SET_INSN_ALTMODE(opcodep);
 
 			/* Now, we could either have an implied "0" as the fbc operand, or
 			   it could be the constant of a "base address plus offset".  It
@@ -928,7 +928,7 @@ void dadao_md_assemble (char *str)
 			break;
 
 		case O_constant: /* imm12 */
-			DDOP_SET_ADDR_MODE_ALT(opcodep);
+			DDOP_SET_INSN_ALTMODE(opcodep);
 			DDOP_EXP_MUST_BE_UIMM(exp[2], 12);
 			DDOP_SET_FC(opcodep, (exp[2].X_add_number) >> 6);
 			DDOP_SET_FD(opcodep, (exp[2].X_add_number) & 0x3F);
@@ -951,7 +951,7 @@ void dadao_md_assemble (char *str)
 				as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
 
 			/* The last operand is imm18 whenever we see just two operands.  */
-			DDOP_SET_ADDR_MODE_ALT(opcodep);
+			DDOP_SET_INSN_ALTMODE(opcodep);
 
 			DDOP_EXP_MUST_BE_REG(exp[0]);
 			DDOP_SET_FA(opcodep, exp[0].X_add_number);
@@ -1036,7 +1036,7 @@ void dadao_md_assemble (char *str)
 				DADAO_BAD_INSN("invalid operands to opcode");
 
 			/* The last operand is imm18 whenever we see just two operands.  */
-			DDOP_SET_ADDR_MODE_ALT(opcodep);
+			DDOP_SET_INSN_ALTMODE(opcodep);
 
 			/* Add a frag for a JMP relaxation; we need room for max four extra instructions.
 			   We don't do any work around here to check if we can determine the offset right away.  */

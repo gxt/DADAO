@@ -655,10 +655,10 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 			return bfd_reloc_ok;
 		}
 
-		bfd_put_32 (abfd, (insn_origin ^ DADAO_ADDR_MODE_ALT) | (5), (bfd_byte *) datap);
+		bfd_put_32 (abfd, (insn_origin ^ DADAO_INSN_ALTMODE) | (5), (bfd_byte *) datap);
 
 		/* Put a "jump $3, 0" after the common sequence.  */
-		bfd_put_32 (abfd, DADAO_INSN_JUMP | DADAO_ADDR_MODE_ALT | (DADAO_REGP_TAO << 18),
+		bfd_put_32 (abfd, DADAO_INSN_JUMP | DADAO_INSN_ALTMODE | (DADAO_REGP_TAO << 18),
 				(bfd_byte *) datap + 20);
 		offs = 4;
 		reg = DADAO_REGP_TAO;
@@ -676,7 +676,7 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 
 			value >>= 2;
 
-			bfd_put_32 (abfd, DADAO_INSN_CALL | DADAO_ADDR_MODE_ALT | (value & 0xFFFFFF),
+			bfd_put_32 (abfd, DADAO_INSN_CALL | DADAO_INSN_ALTMODE | (value & 0xFFFFFF),
 				(bfd_byte *) datap);
 
 			return bfd_reloc_ok;
@@ -704,7 +704,7 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 	     modified below, and put a "GO $0,$0,0" after the
 	     address-loading sequence.  */
 	  bfd_put_32 (abfd,
-		      DADAO_INSN_CALL | DADAO_ADDR_MODE_ALT,
+		      DADAO_INSN_CALL | DADAO_INSN_ALTMODE,
 		      (bfd_byte *) datap + 16);
 
 	  /* We change to an absolute value.  */
