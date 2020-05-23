@@ -218,7 +218,7 @@ const relax_typeS dadao_relax_table[] = {
    {(1 << 20),	-(1 << 20),	0,			ENCODE_RELAX (STATE_BCC, STATE_MAX)},
 
    /* BCC (2, 1).  */
-   {0,		0,		DD_INSN_BYTES(5),	0},
+   {0,		0,		DD_INSN_BYTES(4),	0},
 
    /* CALL (3, 0).  */
    {(1 << 26),	-(1 << 26),	0,			ENCODE_RELAX (STATE_CALL, STATE_MAX)},
@@ -979,7 +979,7 @@ void dadao_md_assemble (char *str)
 			if (! expand_op)
 				fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ADDR19);
 			else
-				frag_var (rs_machine_dependent, DD_INSN_BYTES(5), 0, ENCODE_RELAX (STATE_BCC, STATE_UNDF),
+				frag_var (rs_machine_dependent, DD_INSN_BYTES(4), 0, ENCODE_RELAX (STATE_BCC, STATE_UNDF),
 					exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
 			break;
 
