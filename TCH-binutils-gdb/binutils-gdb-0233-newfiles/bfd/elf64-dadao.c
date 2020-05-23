@@ -602,6 +602,19 @@ dadao_elf_new_section_hook (bfd *abfd, asection *sec)
 
    R_DADAO_ADDR19 and R_DADAO_ADDR27 are just filled in.  */
 
+#define	DD_SET_REG_WITH_OCTA(dd_insn_p, dd_reg, dd_val)					\
+	do { /* This code adds the common SETL/INCML/INCMH/INCH worst-case sequence */	\
+		bfd_put_32 (abfd, DADAO_INSN_SETW | ((dd_reg) << 18) | DADAO_WYDE_L |	\
+			((dd_val) & 0xffff), (bfd_byte *) (dd_insn_p));			\
+		bfd_put_32 (abfd, DADAO_INSN_INCW | ((dd_reg) << 18) | DADAO_WYDE_ML |	\
+			(((dd_val) >> 16) & 0xffff), (bfd_byte *) (dd_insn_p) + 4);	\
+		bfd_put_32 (abfd, DADAO_INSN_INCW | ((dd_reg) << 18) | DADAO_WYDE_MH |	\
+			(((dd_val) >> 32) & 0xffff), (bfd_byte *) (dd_insn_p) + 8);	\
+		bfd_put_32 (abfd, DADAO_INSN_INCW | ((dd_reg) << 18) | DADAO_WYDE_H |	\
+			(((dd_val) >> 48) & 0xffff), (bfd_byte *) (dd_insn_p) + 12);	\
+	} while (0)
+
+
 static bfd_reloc_status_type
 dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 			     void *datap, bfd_vma addr, bfd_vma value,
@@ -632,12 +645,10 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 			bfd_put_32 (abfd, insn_origin | ((value >> 2) & 0x3FFFF),
 				(bfd_byte *) datap);
 
-			return bfd_reloc_ok;
-		}
+		} else
+			DD_SET_REG_WITH_OCTA(datap, (insn_origin >> 18) & 0x3F, addr);
 
-		offs = 0;		/* offset for datap */
-		reg = (insn_origin >> 18) & 0x3F;
-		break;
+		return bfd_reloc_ok;
 
 	case R_DADAO_CBRANCH:
 		if ((value & 3) != 0)	return bfd_reloc_notsupported;
@@ -653,16 +664,18 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 				(bfd_byte *) datap);
 
 			return bfd_reloc_ok;
+		} else {
+			bfd_put_32 (abfd, (insn_origin ^ DADAO_INSN_ALTMODE) | (5),
+				 (bfd_byte *) datap);
+
+			DD_SET_REG_WITH_OCTA(datap + 4, DADAO_REGP_TAO, addr);
+
+			/* Put a "jump $3, 0" after the common sequence.  */
+			bfd_put_32 (abfd, DADAO_INSN_JUMP | DADAO_INSN_ALTMODE | (DADAO_REGP_TAO << 18),
+				(bfd_byte *) datap + 20);
 		}
 
-		bfd_put_32 (abfd, (insn_origin ^ DADAO_INSN_ALTMODE) | (5), (bfd_byte *) datap);
-
-		/* Put a "jump $3, 0" after the common sequence.  */
-		bfd_put_32 (abfd, DADAO_INSN_JUMP | DADAO_INSN_ALTMODE | (DADAO_REGP_TAO << 18),
-				(bfd_byte *) datap + 20);
-		offs = 4;
-		reg = DADAO_REGP_TAO;
-		break;
+		return bfd_reloc_ok;
 
 	case R_DADAO_CALL:
 		if ((value & 3) != 0)	return bfd_reloc_notsupported;
