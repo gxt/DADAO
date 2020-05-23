@@ -348,18 +348,18 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 			(*info->fprintf_func) (info->stream, "\t");
 			(*info->print_address_func) (memaddr + 4 + offset, info);
 		} else {
-			(*info->fprintf_func) (info->stream, "\t%s, %d",
-				get_reg_name (minfop, fa), ( (fb << 14) | (fc << 8) | (fd << 2)));
+			(*info->fprintf_func) (info->stream, "\t%s, 0x%x",
+				get_reg_name (minfop, fa), ((fb << 12) | (fc << 6) | fd));
 		}
 		break;
 
 	case dadao_operands_rjii:
-		(*info->fprintf_func) (info->stream, "\t%s, %d",
+		(*info->fprintf_func) (info->stream, "\t%s, 0x%x",
 			get_reg_name (minfop, fa), ((fb & 0xF) << 12) | (fc << 6) | fd);
 		break;
 
 	case dadao_operands_oiii:
-		(*info->fprintf_func) (info->stream, "\t%d", (fb << 12) | (fc << 6) | fd);
+		(*info->fprintf_func) (info->stream, "\t0x%x", (fb << 12) | (fc << 6) | fd);
 		break;
 
 	case dadao_operands_orrr:
@@ -416,15 +416,11 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 
 	case dadao_operands_riii_rrii: /* jump, "ra, imm18" or "ra, rb, imm12" */
 		if (insn & DADAO_INSN_ALTMODE) {
-			offset = (fc * 256 + fd) * 4;
-
-			info->target = memaddr + offset;
-
-			(*info->fprintf_func) (info->stream, "\t%s, ", get_reg_name (minfop, fa));
-			(*info->print_address_func) (memaddr + offset, info);
+			(*info->fprintf_func) (info->stream, "\t%s, 0x%x", get_reg_name (minfop, fa),
+				(fb << 12) | (fc << 6) | fd);
 		} else
-			(*info->fprintf_func) (info->stream, "\t%s, %s, %d",
-				get_reg_name (minfop, fa), get_reg_name (minfop, fb), ((fc << 8) | (fd << 2)));
+			(*info->fprintf_func) (info->stream, "\t%s, %s, 0x%x",
+				get_reg_name (minfop, fa), get_reg_name (minfop, fb), (fc << 6) | fd);
 		break;
 
 	default:
