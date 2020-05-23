@@ -1,0 +1,26 @@
+From 9fda101690512e70dec900adc2b48b8f1cfc9226 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sat, 23 May 2020 13:16:35 +0000
+Subject: [PATCH] DADAO-fixup: newlib/libc/stdio/Makefile.in for vfwprintf.o
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ newlib/libc/stdio/Makefile.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/newlib/libc/stdio/Makefile.in b/newlib/libc/stdio/Makefile.in
+index ee2772446..c901c6c5e 100644
+--- a/newlib/libc/stdio/Makefile.in
++++ b/newlib/libc/stdio/Makefile.in
+@@ -871,7 +871,7 @@ lib_a-vfprintf.obj: vfprintf.c
+ 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-vfprintf.obj `if test -f 'vfprintf.c'; then $(CYGPATH_W) 'vfprintf.c'; else $(CYGPATH_W) '$(srcdir)/vfprintf.c'; fi`
+ 
+ lib_a-vfwprintf.o: vfwprintf.c
+-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-vfwprintf.o `test -f 'vfwprintf.c' || echo '$(srcdir)/'`vfwprintf.c
++	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -O2 -c -o lib_a-vfwprintf.o `test -f 'vfwprintf.c' || echo '$(srcdir)/'`vfwprintf.c
+ 
+ lib_a-vfwprintf.obj: vfwprintf.c
+ 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-vfwprintf.obj `if test -f 'vfwprintf.c'; then $(CYGPATH_W) 'vfwprintf.c'; else $(CYGPATH_W) '$(srcdir)/vfwprintf.c'; fi`
+-- 
+2.17.1
+

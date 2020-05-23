@@ -1,0 +1,26 @@
+From c61618acefc48e0398ed0ce5d7d0a789f294b8c9 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sat, 23 May 2020 13:05:57 +0000
+Subject: [PATCH] DADAO-fixup: newlib/libc/stdio/Makefile.in for perror.o
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ newlib/libc/stdio/Makefile.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/newlib/libc/stdio/Makefile.in b/newlib/libc/stdio/Makefile.in
+index febcd4af8..7f5d0d2bf 100644
+--- a/newlib/libc/stdio/Makefile.in
++++ b/newlib/libc/stdio/Makefile.in
+@@ -1105,7 +1105,7 @@ lib_a-makebuf.obj: makebuf.c
+ 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-makebuf.obj `if test -f 'makebuf.c'; then $(CYGPATH_W) 'makebuf.c'; else $(CYGPATH_W) '$(srcdir)/makebuf.c'; fi`
+ 
+ lib_a-perror.o: perror.c
+-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-perror.o `test -f 'perror.c' || echo '$(srcdir)/'`perror.c
++	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -O1 -c -o lib_a-perror.o `test -f 'perror.c' || echo '$(srcdir)/'`perror.c
+ 
+ lib_a-perror.obj: perror.c
+ 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-perror.obj `if test -f 'perror.c'; then $(CYGPATH_W) 'perror.c'; else $(CYGPATH_W) '$(srcdir)/perror.c'; fi`
+-- 
+2.17.1
+

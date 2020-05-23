@@ -1,0 +1,26 @@
+From 4f37d1508dbefb1c6e6210b6ec8f51a1625c8ee6 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sat, 23 May 2020 13:05:22 +0000
+Subject: [PATCH] DADAO-fixup: newlib/libc/search/Makefile.in for hash.o
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ newlib/libc/search/Makefile.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/newlib/libc/search/Makefile.in b/newlib/libc/search/Makefile.in
+index 433047277..5efedf855 100644
+--- a/newlib/libc/search/Makefile.in
++++ b/newlib/libc/search/Makefile.in
+@@ -419,7 +419,7 @@ lib_a-qsort.obj: qsort.c
+ 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-qsort.obj `if test -f 'qsort.c'; then $(CYGPATH_W) 'qsort.c'; else $(CYGPATH_W) '$(srcdir)/qsort.c'; fi`
+ 
+ lib_a-hash.o: hash.c
+-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-hash.o `test -f 'hash.c' || echo '$(srcdir)/'`hash.c
++	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -O2 -c -o lib_a-hash.o `test -f 'hash.c' || echo '$(srcdir)/'`hash.c
+ 
+ lib_a-hash.obj: hash.c
+ 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-hash.obj `if test -f 'hash.c'; then $(CYGPATH_W) 'hash.c'; else $(CYGPATH_W) '$(srcdir)/hash.c'; fi`
+-- 
+2.17.1
+
