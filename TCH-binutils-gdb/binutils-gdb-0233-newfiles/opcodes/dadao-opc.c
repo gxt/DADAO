@@ -53,7 +53,7 @@ const struct dadao_spec_reg dadao_spec_regs[] =
    macros.  */
 
 /* For easier overview of the table.  */
-#define I(i)	XCONCAT2 (DADAO_INSN_,i)
+#define I(i)	(XCONCAT2 (DADAO_INSN_,i) >> 24)
 #define W(w)	XCONCAT2 (DADAO_WYDE_,w)
 #define OP(y)	XCONCAT2 (dadao_operands_,y)
 #define T(t)	XCONCAT2 (dadao_type_,t)

@@ -658,7 +658,7 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 		bfd_put_32 (abfd, (insn_origin ^ DADAO_ADDR_MODE_ALT) | (5), (bfd_byte *) datap);
 
 		/* Put a "jump $3, 0" after the common sequence.  */
-		bfd_put_32 (abfd, (DADAO_INSN_JUMP << 24) | DADAO_ADDR_MODE_ALT | (DADAO_REGP_TAO << 18),
+		bfd_put_32 (abfd, DADAO_INSN_JUMP | DADAO_ADDR_MODE_ALT | (DADAO_REGP_TAO << 18),
 				(bfd_byte *) datap + 20);
 		offs = 4;
 		reg = DADAO_REGP_TAO;
@@ -676,7 +676,7 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 
 			value >>= 2;
 
-			bfd_put_32 (abfd, (DADAO_INSN_CALL << 24) | DADAO_ADDR_MODE_ALT | (value & 0xFFFFFF),
+			bfd_put_32 (abfd, DADAO_INSN_CALL | DADAO_ADDR_MODE_ALT | (value & 0xFFFFFF),
 				(bfd_byte *) datap);
 
 			return bfd_reloc_ok;
@@ -704,7 +704,7 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 	     modified below, and put a "GO $0,$0,0" after the
 	     address-loading sequence.  */
 	  bfd_put_32 (abfd,
-		      (DADAO_INSN_CALL << 24) | DADAO_ADDR_MODE_ALT,
+		      DADAO_INSN_CALL | DADAO_ADDR_MODE_ALT,
 		      (bfd_byte *) datap + 16);
 
 	  /* We change to an absolute value.  */
@@ -834,16 +834,16 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 		value, addr);
 
 	bfd_put_32 (abfd,
-		(DADAO_INSN_SETW << 24) | (reg << 18) | (DADAO_WYDE_L << 16) | (addr & 0xffff),
+		DADAO_INSN_SETW | (reg << 18) | (DADAO_WYDE_L << 16) | (addr & 0xffff),
 		(bfd_byte *) datap + offs);
 	bfd_put_32 (abfd,
-		(DADAO_INSN_INCW << 24) | (reg << 18) | (DADAO_WYDE_ML << 16) | ((addr >> 16) & 0xffff),
+		DADAO_INSN_INCW | (reg << 18) | (DADAO_WYDE_ML << 16) | ((addr >> 16) & 0xffff),
 		(bfd_byte *) datap + offs + 4);
 	bfd_put_32 (abfd,
-		(DADAO_INSN_INCW << 24) | (reg << 18) | (DADAO_WYDE_MH << 16) | ((addr >> 32) & 0xffff),
+		(ADAO_INSN_INCW | (reg << 18) | (DADAO_WYDE_MH << 16) | ((addr >> 32) & 0xffff),
 		(bfd_byte *) datap + offs + 8);
 	bfd_put_32 (abfd,
-		(DADAO_INSN_INCW << 24) | (reg << 18) | (DADAO_WYDE_H << 16) | ((addr >> 48) & 0xffff),
+		DADAO_INSN_INCW | (reg << 18) | (DADAO_WYDE_H << 16) | ((addr >> 48) & 0xffff),
 		(bfd_byte *) datap + offs + 12);
 
 	return bfd_reloc_ok;
