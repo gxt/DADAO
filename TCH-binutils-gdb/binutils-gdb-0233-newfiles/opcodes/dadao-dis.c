@@ -142,7 +142,7 @@ get_opcode (unsigned long insn)
 
 	/* FIXME: Break out this into an initialization function.  */
 	if (majop == 0x3A) {
-		minop = (insn & 0xC0) >> 6;
+		minop = (insn >> 16) & 0x3;
 		opcodep = opcodes_3A[minop];
 		if (opcodep != NULL)	return opcodep;
 
@@ -158,7 +158,7 @@ get_opcode (unsigned long insn)
 	}
 
 	if (majop == 0x3B) {
-		minop = (insn & 0xC0) >> 6;
+		minop = (insn >> 16) & 0x3;
 		opcodep = opcodes_3B[minop];
 		if (opcodep != NULL)	return opcodep;
 
@@ -174,7 +174,7 @@ get_opcode (unsigned long insn)
 	}
 
 	if (majop == 0x3C) {
-		minop = (insn & 0xC0) >> 6;
+		minop = (insn >> 16) & 0x3;
 		opcodep = opcodes_3C[minop];
 		if (opcodep != NULL)	return opcodep;
 
@@ -190,7 +190,7 @@ get_opcode (unsigned long insn)
 	}
 
 	if (majop == 0x3D) {
-		minop = (insn & 0xC0) >> 6;
+		minop = (insn >> 16) & 0x3;
 		opcodep = opcodes_3D[minop];
 		if (opcodep != NULL)	return opcodep;
 
