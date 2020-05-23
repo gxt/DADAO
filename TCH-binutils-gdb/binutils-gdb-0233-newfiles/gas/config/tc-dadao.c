@@ -1099,9 +1099,9 @@ void dadao_md_assemble (char *str)
 		DDOP_SET_FD(opcodep, (0xDADADA) & 63);
 		break;
 
-    default:
-      BAD_CASE (instruction->operands);
-    }
+	default:
+		DADAO_BAD_INSN("unknown instruction operands");
+	}
 }
 
 /* The GREG pseudo.  At LABEL, we have the name of a symbol that we
