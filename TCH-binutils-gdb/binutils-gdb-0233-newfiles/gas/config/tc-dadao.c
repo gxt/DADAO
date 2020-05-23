@@ -1301,18 +1301,17 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
   /* The opcode that would be extended is the last four "fixed" bytes.  */
   opcode_address = fragP->fr_address + fragP->fr_fix;
 
-  switch (fragP->fr_subtype)
-    {
-    case ENCODE_RELAX (STATE_CALL, STATE_ZERO):
-	dd_set_addr_offset(opcodep, target_address - opcode_address, 24);
-      var_part_size = 0;
-      break;
+	switch (fragP->fr_subtype) {
+	case ENCODE_RELAX (STATE_CALL, STATE_ZERO):
+		dd_set_addr_offset(opcodep, target_address - opcode_address, 24);
+		var_part_size = 0;
+		break;
 
-    case ENCODE_RELAX (STATE_GETA, STATE_ZERO):
-    case ENCODE_RELAX (STATE_BCC, STATE_ZERO):
-	dd_set_addr_offset(opcodep, target_address - opcode_address, 18);
-      var_part_size = 0;
-      break;
+	case ENCODE_RELAX (STATE_GETA, STATE_ZERO):
+	case ENCODE_RELAX (STATE_BCC, STATE_ZERO):
+		dd_set_addr_offset(opcodep, target_address - opcode_address, 18);
+		var_part_size = 0;
+		break;
 
     case ENCODE_RELAX (STATE_JMP, STATE_ZERO):
       dadao_set_jmp_offset (opcodep, target_address - opcode_address);
