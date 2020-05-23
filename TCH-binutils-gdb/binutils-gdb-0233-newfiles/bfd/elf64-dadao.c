@@ -680,22 +680,28 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 	case R_DADAO_CALL:
 		if ((value & 3) != 0)	return bfd_reloc_notsupported;
 
+		insn_origin = bfd_get_32 (abfd, (bfd_byte *) datap);
+
 		r = bfd_check_overflow (complain_overflow_bitfield,
 					howto->bitsize, 0,
 					bfd_arch_bits_per_address (abfd),
 					value);
 		if (r == bfd_reloc_ok) {
-			bfd_vma in1 = bfd_get_32 (abfd, (bfd_byte *) datap);
-
-			value >>= 2;
-
-			bfd_put_32 (abfd, DADAO_INSN_CALL | DADAO_INSN_ALTMODE | (value & 0xFFFFFF),
+			bfd_put_32 (abfd, DADAO_INSN_CALL | DADAO_INSN_ALTMODE | ((value >> 2) & 0xFFFFFF),
 				(bfd_byte *) datap);
 
-			return bfd_reloc_ok;
-		} else
-			/* Another addr mode need implement  */
-			return bfd_reloc_overflow;
+		} else {
+			bfd_put_32 (abfd, DADAO_INSN_SETW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_H |
+				((value >> 48) & 0xffff), (bfd_byte *) datap);
+			bfd_put_32 (abfd, DADAO_INSN_INCW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_MH |
+				((value >> 32) & 0xffff), (bfd_byte *) datap + 4);
+			bfd_put_32 (abfd, DADAO_INSN_INCW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_ML |
+				((value >> 16) & 0xffff), (bfd_byte *) datap + 8);
+			bfd_put_32 (abfd, DADAO_INSN_CALL | (DADAO_REGP_TAO << 18) |
+				(value & 0xffff), (bfd_byte *) datap + 12);
+		}
+
+		return bfd_reloc_ok;
 
     case R_DADAO_JMP:
       /* This one is a little special.  If we get here on a non-relaxing
@@ -1130,13 +1136,14 @@ dadao_final_link_relocate (reloc_howto_type *howto, asection *input_section,
 
   switch (howto->type)
     {
-      /* All these are PC-relative.  */
-    case R_DADAO_CBRANCH:
     case R_DADAO_ADDR19:
     case R_DADAO_ADDR27:
-    case R_DADAO_CALL:
     case R_DADAO_JMP:
+
+	/* All these are PC-relative.  */
 	case R_DADAO_GETA:
+	case R_DADAO_CBRANCH:
+	case R_DADAO_CALL:
 		contents += r_offset;
 
 		addr_abs = relocation + (bfd_vma)r_addend;

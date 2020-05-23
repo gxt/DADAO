@@ -213,9 +213,9 @@ static struct hash_control *dadao_opcode_hash;
 #define CALL_0F GETA_0F
 #define CALL_0B GETA_0B
 
-#define CALL_MAX_LEN 5 * 4
-#define CALL_4F GETA_3F
-#define CALL_4B GETA_3B
+#define CALL_MAX_LEN 4 * 4
+#define CALL_3F GETA_3F
+#define CALL_3B GETA_3B
 
 #define JMP_0F (65536 * 256 * 4 - 8)
 #define JMP_0B (-65536 * 256 * 4 - 4)
@@ -253,7 +253,7 @@ const relax_typeS dadao_relax_table[] =
    {CALL_0F,	CALL_0B,	0,	ENCODE_RELAX (STATE_CALL, STATE_MAX)},
 
    /* CALL (3, 1).  */
-   {CALL_4F,	CALL_4B,
+   {CALL_3F,	CALL_3B,
 		CALL_MAX_LEN - 4,	0},
 
    /* JMP (4, 0).  */
