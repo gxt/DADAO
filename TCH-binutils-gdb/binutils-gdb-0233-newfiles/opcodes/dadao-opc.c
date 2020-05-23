@@ -139,10 +139,10 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"bnp",		0xC5,		0,	0,	OP (riii),		T (condbranch)},
 	{"bod",		0xC6,		0,	0,	OP (riii),		T (condbranch)},
 	{"bev",		0xC7,		0,	0,	OP (riii),		T (condbranch)},
+	{"geta",	I (GETA),	0,	0,	OP (riii),		T (geta)},
 
 	{"call",	I (CALL),	0,	1,	OP (iiii_riii),		T (jsr)},
 	{"jump",	I (JUMP),	0,	1,	OP (riii_rrii),		T (branch)},
-	{"geta",	I (GETA),	0,	0,	OP (riii),		T (geta)},
 
 	{"swym",	0xDA,		0,	0,	OP (oiii),		T (normal)},
 	{"ret",		0xDA,		0x01,	0,	OP (o000),		T (jsr)},

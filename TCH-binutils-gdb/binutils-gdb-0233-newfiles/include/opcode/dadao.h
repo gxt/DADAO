@@ -84,9 +84,9 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 #define	DADAO_INSN_ORW			((unsigned int)(0x3C << 24))
 #define	DADAO_INSN_ANDNW		((unsigned int)(0x3D << 24))
 
+#define	DADAO_INSN_GETA			((unsigned int)(0xCA << 24))
 #define	DADAO_INSN_CALL			((unsigned int)(0xD0 << 24))
 #define	DADAO_INSN_JUMP			((unsigned int)(0xD2 << 24))
-#define	DADAO_INSN_GETA			((unsigned int)(0xD4 << 24))
 
 #define	DADAO_INSN_FP			((unsigned int)(0xDB << 24))
 
