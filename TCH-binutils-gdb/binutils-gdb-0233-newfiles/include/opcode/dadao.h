@@ -74,10 +74,10 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 
 #define	DADAO_REGP_TAO			3		/* No. 3 reg is reserved for insn expand */
 
-#define	DADAO_WYDE_L			0
-#define	DADAO_WYDE_ML			1
-#define	DADAO_WYDE_MH			2
-#define	DADAO_WYDE_H			3
+#define	DADAO_WYDE_L			(0 << 16)
+#define	DADAO_WYDE_ML			(1 << 16)
+#define	DADAO_WYDE_MH			(2 << 16)
+#define	DADAO_WYDE_H			(3 << 16)
 
 #define	DADAO_INSN_SETW			(0x3A << 24)
 #define	DADAO_INSN_INCW			(0x3B << 24)

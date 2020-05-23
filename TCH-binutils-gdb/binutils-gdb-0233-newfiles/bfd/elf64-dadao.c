@@ -834,16 +834,16 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 		value, addr);
 
 	bfd_put_32 (abfd,
-		DADAO_INSN_SETW | (reg << 18) | (DADAO_WYDE_L << 16) | (addr & 0xffff),
+		DADAO_INSN_SETW | (reg << 18) | DADAO_WYDE_L | (addr & 0xffff),
 		(bfd_byte *) datap + offs);
 	bfd_put_32 (abfd,
-		DADAO_INSN_INCW | (reg << 18) | (DADAO_WYDE_ML << 16) | ((addr >> 16) & 0xffff),
+		DADAO_INSN_INCW | (reg << 18) | DADAO_WYDE_ML | ((addr >> 16) & 0xffff),
 		(bfd_byte *) datap + offs + 4);
 	bfd_put_32 (abfd,
-		(ADAO_INSN_INCW | (reg << 18) | (DADAO_WYDE_MH << 16) | ((addr >> 32) & 0xffff),
+		DADAO_INSN_INCW | (reg << 18) | DADAO_WYDE_MH | ((addr >> 32) & 0xffff),
 		(bfd_byte *) datap + offs + 8);
 	bfd_put_32 (abfd,
-		DADAO_INSN_INCW | (reg << 18) | (DADAO_WYDE_H << 16) | ((addr >> 48) & 0xffff),
+		DADAO_INSN_INCW | (reg << 18) | DADAO_WYDE_H | ((addr >> 48) & 0xffff),
 		(bfd_byte *) datap + offs + 12);
 
 	return bfd_reloc_ok;
