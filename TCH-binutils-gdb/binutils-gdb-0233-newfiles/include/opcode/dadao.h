@@ -84,6 +84,7 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 
 #define	DADAO_INSN_CALL			0xD0
 #define	DADAO_INSN_JUMP			0xD2
+#define	DADAO_INSN_GETA			0xD4
 
 #define	DADAO_INSN_FP			0xDB
 
