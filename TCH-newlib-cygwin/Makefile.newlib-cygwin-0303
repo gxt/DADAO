@@ -90,6 +90,7 @@ newlib-cygwin-0303-build-new:
 	@rm -fr $(NEWLIB_CYGWIN_0303_BUILD)
 	@mkdir -p $(NEWLIB_CYGWIN_0303_BUILD)
 	@cd $(NEWLIB_CYGWIN_0303_BUILD) && PATH=$(NEWLIB_CYGWIN_0303_PATH)	\
+		CFLAGS_FOR_TARGET="-g -Os"					\
 		$(NEWLIB_CYGWIN_0303_SOURCE)/configure				\
 			--target=$(NEWLIB_CYGWIN_0303_TARGET)			\
 			--srcdir=$(NEWLIB_CYGWIN_0303_SOURCE)			\
