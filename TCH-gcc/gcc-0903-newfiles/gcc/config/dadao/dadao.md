@@ -1037,7 +1037,7 @@
    (clobber (reg:DI DADAO_rJ_REGNUM))]
   ""
   "@
-	call	$%p2, %0
+	call	%0
 	jump	$%p2, %a0")
 
 (define_insn "*call_value_real"
@@ -1049,7 +1049,7 @@
   (clobber (reg:DI DADAO_rJ_REGNUM))]
   ""
   "@
-	call	$%p3, %1
+	call	%1
 	jump	$%p3, %a1")
 
 ;; I hope untyped_call and untyped_return are not needed for DADAO.
@@ -1087,7 +1087,7 @@
 (define_insn "jump"
   [(set (pc) (label_ref (match_operand 0 "" "")))]
   ""
-	"jump	$0, %0")
+	"bz	$0, %0")
 
 (define_insn "indirect_jump"
   [(set (pc) (match_operand 0 "address_operand" "p"))]

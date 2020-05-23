@@ -74,7 +74,7 @@ _start:	setl	$63, 32
 #endif
 
 	call	main
-	jump	$0, exit
+	call	exit
 
 # Provide the first part of _init and _fini.  Save the return address on the
 # register stack.  We eventually ignore the return address of these

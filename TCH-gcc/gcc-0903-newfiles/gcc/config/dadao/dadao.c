@@ -914,7 +914,7 @@ dadao_asm_output_mi_thunk (FILE *stream,
       fprintf (stream, "\taddu	%s, %s, $63\n", regname, regname);
     }
 
-  fprintf (stream, "\tjump	$0, ");
+  fprintf (stream, "\tbz	$0, ");
   assemble_name (stream, XSTR (XEXP (DECL_RTL (func), 0), 0));
   fprintf (stream, "\n");
 }
