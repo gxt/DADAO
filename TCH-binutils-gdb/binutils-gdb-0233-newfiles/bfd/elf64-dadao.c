@@ -341,23 +341,23 @@ static reloc_howto_type elf_dadao_howto_table[] =
 	 0,			/* dst_mask */
 	 FALSE),		/* pcrel_offset */
 
-  /* The GETA relocation is supposed to get any address that could
-     possibly be reached by the GETA instruction.  It can silently expand
-     to get a 64-bit operand, but will complain if any of the two least
-     significant bits are set.  The howto members reflect a simple GETA.  */
-  HOWTO (R_DADAO_GETA,		/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 19,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed, /* complain_on_overflow */
-	 dadao_elf_reloc,	/* special_function */
-	 "R_DADAO_GETA",		/* name */
-	 FALSE,			/* partial_inplace */
-	 ~0x0100ffff,		/* src_mask */
-	 0x0100ffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
+	/* The GETA relocation is supposed to get any address that could
+	   possibly be reached by the GETA instruction.  It can silently expand
+	   to get a 64-bit operand, but will complain if any of the two least
+	   significant bits are set.  The howto members reflect a simple GETA.  */
+	HOWTO (R_DADAO_GETA,		/* type */
+		2,			/* rightshift */
+		2,			/* size (0 = byte, 1 = short, 2 = long) */
+		20,			/* bitsize */
+		TRUE,			/* pc_relative */
+		0,			/* bitpos */
+		complain_overflow_bitfield, /* complain_on_overflow */
+		dadao_elf_reloc,	/* special_function */
+		"R_DADAO_GETA",		/* name */
+		FALSE,			/* partial_inplace */
+		~0x0003ffff,		/* src_mask */
+		0x0003ffff,		/* dst_mask */
+		TRUE),			/* pcrel_offset */
 
   /* The conditional branches are supposed to reach any (code) address.
      It can silently expand to a 64-bit operand, but will emit an error if
@@ -387,7 +387,7 @@ static reloc_howto_type elf_dadao_howto_table[] =
 		26,			/* bitsize */
 		TRUE,			/* pc_relative */
 		0,			/* bitpos */
-		complain_overflow_signed, /* complain_on_overflow */
+		complain_overflow_bitfield, /* complain_on_overflow */
 		dadao_elf_reloc,	/* special_function */
 		"R_DADAO_CALL",		/* name */
 		FALSE,			/* partial_inplace */
@@ -617,13 +617,27 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
      We handle the differences here and the common sequence later.  */
   switch (howto->type)
     {
-    case R_DADAO_GETA:
-      offs = 0;
-      reg = bfd_get_8 (abfd, (bfd_byte *) datap + 1);
+	case R_DADAO_GETA:
+		if ((value & 3) != 0)	return bfd_reloc_notsupported;
 
-      /* We change to an absolute value.  */
-      value += addr;
-      break;
+		r = bfd_check_overflow (complain_overflow_bitfield,
+					howto->bitsize, 0,
+					bfd_arch_bits_per_address (abfd),
+					value);
+		if (r == bfd_reloc_ok) {
+			bfd_vma in1 = bfd_get_32 (abfd, (bfd_byte *) datap);
+
+			value >>= 2;
+
+			bfd_put_32 (abfd, (DADAO_INSN_GETA << 24) | (value & 0xFFFFFF),
+				(bfd_byte *) datap);
+
+			return bfd_reloc_ok;
+		}
+
+		offs = 0;		/* offset for datap */
+		reg = (bfd_get_8 (abfd, (bfd_byte *) datap + 1)) >> 2;
+		break;
 
     case R_DADAO_CBRANCH:
       {
@@ -807,28 +821,24 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
       BAD_CASE (howto->type);
     }
 
-  /* This code adds the common SETL/INCML/INCMH/INCH worst-case
-     sequence.  */
+	/* This code adds the common SETL/INCML/INCMH/INCH worst-case sequence.  */
+	_bfd_error_handler("FIXME: expand one insn to four insns (rel to abs: from %x to %x)",
+		value, addr);
 
-  /* Lowest two bits must be 0.  We return bfd_reloc_overflow for
-     everything that looks strange.  */
-  if (value & 3)
-    flag = bfd_reloc_overflow;
+	bfd_put_32 (abfd,
+		(DADAO_INSN_SETW << 24) | (reg << 18) | (DADAO_WYDE_L << 16) | (addr & 0xffff),
+		(bfd_byte *) datap + offs);
+	bfd_put_32 (abfd,
+		(DADAO_INSN_INCW << 24) | (reg << 18) | (DADAO_WYDE_ML << 16) | ((addr >> 16) & 0xffff),
+		(bfd_byte *) datap + offs + 4);
+	bfd_put_32 (abfd,
+		(DADAO_INSN_INCW << 24) | (reg << 18) | (DADAO_WYDE_MH << 16) | ((addr >> 32) & 0xffff),
+		(bfd_byte *) datap + offs + 8);
+	bfd_put_32 (abfd,
+		(DADAO_INSN_INCW << 24) | (reg << 18) | (DADAO_WYDE_H << 16) | ((addr >> 48) & 0xffff),
+		(bfd_byte *) datap + offs + 12);
 
-  bfd_put_32 (abfd,
-	      ((DADAO_INSN_SETW) << 24) | ((value & 0xffff) << 8) | ((DADAO_WYDE_L) << 6) | (reg),
-	      (bfd_byte *) datap + offs);
-  bfd_put_32 (abfd,
-	      ((DADAO_INSN_INCW) << 24) | ((value >> 16) & 0xffff) | ((DADAO_WYDE_ML) << 6) | (reg),
-	      (bfd_byte *) datap + offs + 4);
-  bfd_put_32 (abfd,
-	      ((DADAO_INSN_INCW) << 24) | ((value >> 32) & 0xffff) | ((DADAO_WYDE_MH) << 6) | (reg),
-	      (bfd_byte *) datap + offs + 8);
-  bfd_put_32 (abfd,
-	      ((DADAO_INSN_INCW) << 24) | ((value >> 48) & 0xffff) | ((DADAO_WYDE_H) << 6) | (reg),
-	      (bfd_byte *) datap + offs + 12);
-
-  return flag;
+	return bfd_reloc_ok;
 }
 
 /* Set the howto pointer for an DADAO ELF reloc (type RELA).  */
@@ -1086,6 +1096,9 @@ dadao_final_link_relocate (reloc_howto_type *howto, asection *input_section,
 			  const char *symname, asection *symsec,
 			  char **error_message)
 {
+	bfd_vma		addr_abs;
+	bfd_signed_vma	addr_rel;
+
   bfd_reloc_status_type r = bfd_reloc_ok;
   bfd_vma addr
     = (input_section->output_section->vma
@@ -1099,19 +1112,19 @@ dadao_final_link_relocate (reloc_howto_type *howto, asection *input_section,
       /* All these are PC-relative.  */
     case R_DADAO_CBRANCH:
     case R_DADAO_ADDR19:
-    case R_DADAO_GETA:
     case R_DADAO_ADDR27:
     case R_DADAO_CALL:
     case R_DADAO_JMP:
-      contents += r_offset;
+	case R_DADAO_GETA:
+		contents += r_offset;
 
-      srel -= (input_section->output_section->vma
-	       + input_section->output_offset
-	       + r_offset + 4);
+		addr_abs = relocation + (bfd_vma)r_addend;
+		addr_rel = addr_abs - (input_section->output_section->vma
+			+ input_section->output_offset
+			+ r_offset + 4);
 
-      r = dadao_elf_perform_relocation (input_section, howto, contents,
-				       addr, srel, error_message);
-      break;
+		return dadao_elf_perform_relocation (input_section, howto, contents,
+					addr_abs, addr_rel, error_message);
 
     case R_DADAO_BASE_PLUS_OFFSET:
       if (symsec == NULL)
