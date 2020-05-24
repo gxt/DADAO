@@ -45,72 +45,6 @@ dadao_before_allocation (void)
   /* Force -relax on (regardless of whether we're doing a relocatable
      link).  */
   ENABLE_RELAXATION;
-
-  if (!_bfd_dadao_before_linker_allocation (link_info.output_bfd, &link_info))
-    einfo (_("%X%P: internal problems setting up section %s"),
-	   DADAO_LD_ALLOCATED_REG_CONTENTS_SECTION_NAME);
-}
-
-/* We need to set the VMA of the .DADAO.reg_contents section when it has
-   been allocated, and produce the final settings for the linker-generated
-   GREGs.  */
-
-static void
-dadao_after_allocation (void)
-{
-  asection *sec;
-  bfd_signed_vma regvma;
-
-  gld${EMULATION_NAME}_after_allocation ();
-
-  /* If there's no register section, we don't need to do anything.  On the
-     other hand, if there's a non-standard linker-script without a mapping
-     from DADAO_LD_ALLOCATED_REG_CONTENTS_SECTION_NAME when that section is
-     present (as in the ld test "NOCROSSREFS 2"), that section (1) will be
-     orphaned; not inserted in DADAO_REG_CONTENTS_SECTION_NAME and (2) we
-     will not do the necessary preparations for those relocations that
-     caused it to be created.  We'll SEGV from the latter error.  The
-     former error in separation will result in a non-working binary, but
-     that's expected when you play tricks with linker scripts.  The
-     "NOCROSSREFS 2" test does not run the output so it does not matter
-     there.  */
-  sec = bfd_get_section_by_name (link_info.output_bfd,
-				 DADAO_REG_CONTENTS_SECTION_NAME);
-  if (sec == NULL)
-    sec
-      = bfd_get_section_by_name (link_info.output_bfd,
-				 DADAO_LD_ALLOCATED_REG_CONTENTS_SECTION_NAME);
-  if (sec == NULL)
-    return;
-
-  regvma = 256 * 8 - sec->size - 8;
-
-  /* If we start on a local register, we have too many global registers.
-     We treat this error as nonfatal (meaning processing will continue in
-     search for other errors), because it's a link error in the same way
-     as an undefined symbol.  */
-  if (regvma < 32 * 8)
-    {
-      einfo (_("%X%P: too many global registers: %u, max 223\n"),
-	     (unsigned) sec->size / 8);
-      regvma = 32 * 8;
-    }
-
-  /* Set vma to correspond to first such register number * 8.  */
-  bfd_set_section_vma (link_info.output_bfd, sec, (bfd_vma) regvma);
-
-  /* Simplify symbol output for the register section (without contents;
-     created for register symbols) by setting the output offset to 0.
-     This section is only present when there are register symbols.  */
-  sec = bfd_get_section_by_name (link_info.output_bfd, DADAO_REG_SECTION_NAME);
-  if (sec != NULL)
-    bfd_set_section_vma (sec->owner, sec, 0);
-
-  if (!_bfd_dadao_after_linker_allocation (link_info.output_bfd, &link_info))
-    {
-      /* This is a fatal error; make einfo call not return.  */
-      einfo (_("%F%P: can't finalize linker-allocated global registers\n"));
-    }
 }
 
 static void
@@ -124,5 +58,4 @@ dadao_before_parse (void)
 EOF
 
 LDEMUL_BEFORE_PARSE=dadao_before_parse
-LDEMUL_AFTER_ALLOCATION=dadao_after_allocation
 LDEMUL_BEFORE_ALLOCATION=dadao_before_allocation

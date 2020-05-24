@@ -14,27 +14,13 @@
 #include "safe-ctype.h"
 #include "dwarf2dbg.h"
 
-/* Something to describe what we need to do with a fixup before output,
-   for example assert something of what it became or make a relocation.  */
-
-enum dadao_fixup_action
-{
-  dadao_fixup_byte,
-  dadao_fixup_register,
-  dadao_fixup_register_or_adjust_for_byte
-};
-
 static int get_spec_regno (char *);
 static int get_operands (char *, expressionS *);
 static int get_putget_operands (struct dadao_opcode *, char *, expressionS *);
-static void s_greg (int);
-static void dadao_greg_internal (char *);
 static void dd_set_addr_offset(char *, offsetT, int);
 static void dd_set_data_addr_offset(char *, offsetT, int);
 static void dadao_set_jmp_offset (char *, offsetT);
 static void dadao_fill_nops (char *, int);
-static int cmp_greg_symbol_fixes (const void *, const void *);
-static int cmp_greg_val_greg_symbol_fixes (const void *, const void *);
 
 /* Copy the location of a frag to a fix.  */
 #define COPY_FR_WHERE_TO_FX(FRAG, FIX)		\
@@ -61,15 +47,6 @@ static int data_has_contents = 0;
    md_assemble.  */
 fragS *dadao_opcode_frag = NULL;
 
-/* Raw GREGs as appearing in input.  These may be fewer than the number
-   after relaxing.  */
-static int n_of_raw_gregs = 0;
-static struct
- {
-   char *label;
-   expressionS exp;
- } dadao_raw_gregs[MAX_GREGS];
-
 static struct loc_assert_s
  {
    segT old_seg;
@@ -78,44 +55,9 @@ static struct loc_assert_s
    struct loc_assert_s *next;
  } *loc_asserts = NULL;
 
-/* Fixups for all unique GREG registers.  We store the fixups here in
-   md_convert_frag, then we use the array to convert
-   BFD_RELOC_DADAO_BASE_PLUS_OFFSET fixups in tc_gen_reloc.  The index is
-   just a running number and is not supposed to be correlated to a
-   register number.  */
-static fixS *dadao_gregs[MAX_GREGS];
-static int n_of_cooked_gregs = 0;
-
-/* Pointing to the register section we use for output.  */
-static asection *real_reg_section;
-
-/* For each symbol; unknown or section symbol, we keep a list of GREG
-   definitions sorted on increasing offset.  It seems no use keeping count
-   to allocate less room than the maximum number of gregs when we've found
-   one for a section or symbol.  */
-struct dadao_symbol_gregs
- {
-   int n_gregs;
-   struct dadao_symbol_greg_fixes
-   {
-     fixS *fix;
-
-     /* A signed type, since we may have GREGs pointing slightly before the
-	contents of a section.  */
-     offsetT offs;
-   } greg_fixes[MAX_GREGS];
- };
-
 /* Should we automatically expand instructions into multiple insns in
    order to generate working code?  */
 static int expand_op = 1;
-
-/* Should we merge non-zero GREG register definitions?  */
-static int merge_gregs = 1;
-
-/* Should we pass on undefined BFD_RELOC_DADAO_BASE_PLUS_OFFSET relocs
-   (missing suitable GREG definitions) to the linker?  */
-static int allocate_undefined_gregs_in_linker = 0;
 
 /* Should we emit built-in symbols?  */
 static int predefined_syms = 1;
@@ -127,17 +69,12 @@ static int equated_spec_regs = 1;
 struct option md_longopts[] =
  {
 #define OPTION_NOEXPAND  (OPTION_MD_BASE)
-#define OPTION_NOMERGEGREG  (OPTION_NOEXPAND + 1)
-#define OPTION_NOSYMS  (OPTION_NOMERGEGREG + 1)
+#define OPTION_NOSYMS  (OPTION_NOEXPAND + 1)
 #define OPTION_FIXED_SPEC_REGS  (OPTION_NOSYMS + 1)
-#define OPTION_LINKER_ALLOCATED_GREGS  (OPTION_FIXED_SPEC_REGS + 1)
    {"no-expand", no_argument, NULL, OPTION_NOEXPAND},
-   {"no-merge-gregs", no_argument, NULL, OPTION_NOMERGEGREG},
    {"no-predefined-syms", no_argument, NULL, OPTION_NOSYMS},
    {"fixed-special-register-names", no_argument, NULL,
     OPTION_FIXED_SPEC_REGS},
-   {"linker-allocated-gregs", no_argument, NULL,
-    OPTION_LINKER_ALLOCATED_GREGS},
    {NULL, no_argument, NULL, 0}
  };
 
@@ -174,7 +111,6 @@ static struct hash_control *dadao_opcode_hash;
 #define STATE_CALL	(3)
 #define STATE_JMP	(4)
 #define STATE_LDST	(5)
-#define STATE_GREG	(6)
 
 /* No fine-grainedness here.  */
 #define STATE_LENGTH_MASK	    (1)
@@ -185,13 +121,6 @@ static struct hash_control *dadao_opcode_hash;
 /* More descriptive name for convenience.  */
 /* FIXME: We should start on something different, not MAX.  */
 #define STATE_UNDF		    STATE_MAX
-
-/* FIXME: For GREG, we must have other definitions; UNDF == MAX isn't
-   appropriate; we need it the other way round.  This value together with
-   fragP->tc_frag_data shows what state the frag is in: tc_frag_data
-   non-NULL means 0, NULL means 8 bytes.  */
-#define STATE_GREG_UNDF ENCODE_RELAX (STATE_GREG, STATE_ZERO)
-#define STATE_GREG_DEF ENCODE_RELAX (STATE_GREG, STATE_MAX)
 
 /* These displacements are relative to the address following the opcode
    word of the instruction.  The catch-all states have zero for "reach"
@@ -238,9 +167,6 @@ const relax_typeS dadao_relax_table[] = {
 
    /* LDST (5, 1).  */
    {0,		0,		DD_INSN_BYTES(4),	0},
-
-   /* GREG (6, 0), (6, 1), though the table entry isn't used.  */
-   {0, 0, 0, 0}, {0, 0, 0, 0},
 };
 
 const pseudo_typeS md_pseudo_table[] = {
@@ -249,10 +175,7 @@ const pseudo_typeS md_pseudo_table[] = {
 	{"dd.tetra", cons, 4},
 	{"dd.octa", cons, 8},
 
-   /* Support " .greg sym,expr" syntax.  */
-   {"greg", s_greg, 0},
-
-   {NULL, 0, 0}
+	{NULL, 0, 0}
  };
 
 const char comment_chars[] = "";
@@ -525,15 +448,10 @@ md_parse_option (int c, const char *arg ATTRIBUTE_UNUSED)
   switch (c)
     {
     case 'x':
-      allocate_undefined_gregs_in_linker = 1;
       break;
 
     case OPTION_NOEXPAND:
       expand_op = 0;
-      break;
-
-    case OPTION_NOMERGEGREG:
-      merge_gregs = 0;
       break;
 
     case OPTION_NOSYMS:
@@ -543,10 +461,6 @@ md_parse_option (int c, const char *arg ATTRIBUTE_UNUSED)
 
     case OPTION_FIXED_SPEC_REGS:
       equated_spec_regs = 0;
-      break;
-
-    case OPTION_LINKER_ALLOCATED_GREGS:
-      allocate_undefined_gregs_in_linker = 1;
       break;
 
     default:
@@ -574,15 +488,9 @@ md_show_usage (FILE * stream)
   -no-expand              Do not expand GETA, branches or JUMP\n\
                           into multiple instructions.\n"));
   fprintf (stream, _("\
-  -no-merge-gregs         Do not merge GREG definitions with nearby values.\n"));
-  fprintf (stream, _("\
-  -linker-allocated-gregs If there's no suitable GREG definition for the\n\
-                          operands of an instruction, let the linker resolve.\n"));
-  fprintf (stream, _("\
   -x                      Do not warn when an operand to GETA, a branch,\n\
                           or JUMP is not known to be within range.\n\
-                          The linker will catch any errors.  Implies\n\
-                          -linker-allocated-gregs."));
+                          The linker will catch any errors. \n"));
 }
 
 /* Initialize GAS DADAO specifics.  */
@@ -592,9 +500,6 @@ void dadao_md_begin (void)
   const struct dadao_opcode *opcode;
 
   dadao_opcode_hash = hash_new ();
-
-  real_reg_section
-    = bfd_make_section_old_way (stdoutput, DADAO_REG_SECTION_NAME);
 
   for (opcode = dadao_opcodes; opcode->name; opcode++)
     hash_insert (dadao_opcode_hash, opcode->name, (char *) opcode);
@@ -995,7 +900,7 @@ void dadao_md_assemble (char *str)
 			/* Add a frag for a JMP relaxation; we need room for max four extra instructions.
 			   We don't do any work around here to check if we can determine the offset right away.  */
 			//if (! expand_op)
-			//	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ADDR19);
+			//	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_JMP);
 			//else
 			//	frag_var (rs_machine_dependent, 4 * 4, 0, ENCODE_RELAX (STATE_JMP, STATE_UNDF),
 			//		exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
@@ -1023,7 +928,7 @@ void dadao_md_assemble (char *str)
 		switch (instruction->type) {
 		case dadao_type_condbranch:
 			if (! expand_op)
-				fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ADDR19);
+				fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_CBRANCH);
 			else
 				frag_var (rs_machine_dependent, DD_INSN_BYTES(4), 0, ENCODE_RELAX (STATE_BCC, STATE_UNDF),
 					exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
@@ -1031,7 +936,7 @@ void dadao_md_assemble (char *str)
 
 		case dadao_type_geta:
 			if (! expand_op)
-				fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ADDR19);
+				fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_GETA);
 			else
 				frag_var (rs_machine_dependent, DD_INSN_BYTES(3), 0, ENCODE_RELAX (STATE_GETA, STATE_UNDF),
 					exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
@@ -1056,7 +961,7 @@ void dadao_md_assemble (char *str)
 			/* Add a frag for a JMP relaxation; we need room for max four extra instructions.
 			   We don't do any work around here to check if we can determine the offset right away.  */
 			if (! expand_op)
-				fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ADDR19);
+				fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_CALL);
 			else
 				frag_var (rs_machine_dependent, DD_INSN_BYTES(3), 0, ENCODE_RELAX (STATE_CALL, STATE_UNDF),
 					exp[0].X_add_symbol, exp[0].X_add_number, opcodep);
@@ -1095,84 +1000,6 @@ void dadao_md_assemble (char *str)
 	default:
 		DADAO_BAD_INSN("unknown instruction operands");
 	}
-}
-
-/* The GREG pseudo.  At LABEL, we have the name of a symbol that we
-   want to make a register symbol, and which should be initialized with
-   the value in the expression at INPUT_LINE_POINTER (defaulting to 0).
-   Either and (perhaps less meaningful) both may be missing. */
-
-static void
-dadao_greg_internal (char *label)
-{
-  expressionS *expP = &dadao_raw_gregs[n_of_raw_gregs].exp;
-  segT section;
-
-  /* Don't set the section to register contents section before the
-     expression has been parsed; it may refer to the current position.  */
-  section = expression (expP);
-
-  /* FIXME: Check that no expression refers to the register contents
-     section.  May need to be done in elf64-dadao.c.  */
-  if (expP->X_op == O_absent)
-    {
-      /* Default to zero if the expression was absent.  */
-      expP->X_op = O_constant;
-      expP->X_add_number = 0;
-      expP->X_unsigned = 0;
-      expP->X_add_symbol = NULL;
-      expP->X_op_symbol = NULL;
-    }
-
-  if (section == undefined_section)
-    {
-      /* This is an error or a LOC with an expression involving
-	 forward references.  For the expression to be correctly
-	 evaluated, we need to force a proper symbol; gas loses track
-	 of the segment for "local symbols".  */
-      if (expP->X_op == O_add)
-	{
-	  symbol_get_value_expression (expP->X_op_symbol);
-	  symbol_get_value_expression (expP->X_add_symbol);
-	}
-      else
-	{
-	  gas_assert (expP->X_op == O_symbol);
-	  symbol_get_value_expression (expP->X_add_symbol);
-	}
-    }
-
-  dadao_raw_gregs[n_of_raw_gregs].label =label;
-
-  if (n_of_raw_gregs == MAX_GREGS - 1)
-    as_bad (_("too many GREG registers allocated (max %d)"), MAX_GREGS);
-  else
-    n_of_raw_gregs++;
-
-  demand_empty_rest_of_line ();
-}
-
-/* The ".greg label,expr" worker.  */
-
-static void
-s_greg (int unused ATTRIBUTE_UNUSED)
-{
-  char *p;
-  char c;
-
-  /* This will skip over what can be a symbol and zero out the next
-     character, which we assume is a ',' or other meaningful delimiter.
-     What comes after that is the initializer expression for the
-     register.  */
-  c = get_symbol_name (&p);
-
-  if (c == '"')
-    c = * ++ input_line_pointer;
-
-  if (! is_end_of_line[(unsigned char) c])
-    input_line_pointer++;
-
-  dadao_greg_internal (NULL);
 }
 
 /* Set fragP->fr_var to the initial guess of the size of a relaxable insn
@@ -1215,15 +1042,6 @@ md_estimate_size_before_relax (fragS *fragP, segT segment)
     case ENCODE_RELAX (STATE_JMP, STATE_ZERO):
       /* When relaxing a section for the second time, we don't need to do
 	 anything except making sure that fr_var is set right.  */
-      break;
-
-    case STATE_GREG_DEF:
-      length = fragP->tc_frag_data != NULL ? 0 : 8;
-      fragP->fr_var = length;
-
-      /* Don't consult the relax_table; it isn't valid for this
-	 relaxation.  */
-      return length;
       break;
 
     default:
@@ -1320,24 +1138,6 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
       var_part_size = 0;
       break;
 
-    case STATE_GREG_DEF:
-      if (fragP->tc_frag_data == NULL)
-	{
-	  /* We must initialize data that's supposed to be "fixed up" to
-	     avoid emitting garbage, because md_apply_fix won't do
-	     anything for undefined symbols.  */
-	  md_number_to_chars (var_partp, 0, 8);
-	  tmpfixP
-	    = fix_new (fragP, var_partp - fragP->fr_literal, 8,
-		       fragP->fr_symbol, fragP->fr_offset, 0, BFD_RELOC_64);
-	  COPY_FR_WHERE_TO_FX (fragP, tmpfixP);
-	  dadao_gregs[n_of_cooked_gregs++] = tmpfixP;
-	  var_part_size = 8;
-	}
-      else
-	var_part_size = 0;
-      break;
-
 #define HANDLE_MAX_RELOC(state, reloc)					\
   case ENCODE_RELAX (state, STATE_MAX):					\
     var_part_size							\
@@ -1385,9 +1185,7 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
 	  || S_IS_WEAK (fixP->fx_addsy)
 	  || (fixP->fx_pcrel && symsec != segment)
 	  || (! fixP->fx_pcrel
-	      && symsec != absolute_section
-	      && ((fixP->fx_r_type != BFD_RELOC_DADAO_REG)
-		  || symsec != reg_section))))
+	      && symsec != absolute_section)))
     {
       fixP->fx_done = 0;
       return;
@@ -1418,14 +1216,6 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
       md_number_to_chars (buf, val, fixP->fx_size);
       break;
 
-    case BFD_RELOC_DADAO_ADDR19:
-      if (expand_op)
-	{
-	  /* This shouldn't happen.  */
-	  BAD_CASE (fixP->fx_r_type);
-	  break;
-	}
-      /* FALLTHROUGH.  */
     case BFD_RELOC_DADAO_GETA:
     case BFD_RELOC_DADAO_CBRANCH:
       /* If this fixup is out of range, punt to the linker to emit an
@@ -1440,14 +1230,6 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
 	dd_set_addr_offset(buf, val, 18);
       break;
 
-    case BFD_RELOC_DADAO_ADDR27:
-      if (expand_op)
-	{
-	  /* This shouldn't happen.  */
-	  BAD_CASE (fixP->fx_r_type);
-	  break;
-	}
-      /* FALLTHROUGH.  */
     case BFD_RELOC_DADAO_CALL:
     case BFD_RELOC_DADAO_JMP:
       /* If this fixup is out of range, punt to the linker to emit an
@@ -1474,25 +1256,6 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
       dd_set_data_addr_offset (buf, val, 12);
       break;
 
-
-    case BFD_RELOC_DADAO_REG:
-      if (fixP->fx_addsy == NULL
-	  || S_GET_SEGMENT (fixP->fx_addsy) != reg_section
-	  || S_GET_VALUE (fixP->fx_addsy) > 255)
-	{
-	  as_bad_where (fixP->fx_file, fixP->fx_line,
-			_("invalid operands"));
-	  fixP->fx_done = 1;
-	}
-
-      *buf = val;
-      break;
-
-    case BFD_RELOC_DADAO_BASE_PLUS_OFFSET:
-      /* These are never "fixed".  */
-      fixP->fx_done = 0;
-      return;
-
     default:
       BAD_CASE (fixP->fx_r_type);
       break;
@@ -1502,24 +1265,6 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
     /* Make sure that for completed fixups we have the value around for
        use by e.g. dadao_frob_file.  */
     fixP->fx_offset = val;
-}
-
-/* A bsearch function for looking up a value against offsets for GREG
-   definitions.  */
-
-static int
-cmp_greg_val_greg_symbol_fixes (const void *p1, const void *p2)
-{
-  offsetT val1 = *(offsetT *) p1;
-  offsetT val2 = ((struct dadao_symbol_greg_fixes *) p2)->offs;
-
-  if (val1 >= val2 && val1 < val2 + 255)
-    return 0;
-
-  if (val1 > val2)
-    return 1;
-
-  return -1;
 }
 
 /* Generate a machine-dependent relocation.  */
@@ -1579,139 +1324,9 @@ tc_gen_reloc (asection *section ATTRIBUTE_UNUSED, fixS *fixP)
     case BFD_RELOC_DADAO_CALL:
     case BFD_RELOC_DADAO_JMP:
     case BFD_RELOC_DADAO_LDST:
-    case BFD_RELOC_DADAO_ADDR19:
-    case BFD_RELOC_DADAO_ADDR27:
       code = fixP->fx_r_type;
       break;
 
-    case BFD_RELOC_DADAO_BASE_PLUS_OFFSET:
-      if (addsy != NULL
-	  && strcmp (bfd_get_section_name (addsec->owner, addsec),
-		     DADAO_REG_CONTENTS_SECTION_NAME) == 0)
-	{
-	  /* This changed into a register; the relocation is for the
-	     register-contents section.  The constant part remains zero.  */
-	  code = BFD_RELOC_DADAO_REG;
-	  break;
-	}
-
-      /* If we've found out that this was indeed a register, then replace
-	 with the register number.  The constant part is already zero.
-
-	 If we encounter any other defined symbol, then we must find a
-	 suitable register and emit a reloc.  */
-      if (addsy == NULL || addsec != real_reg_section)
-	{
-	  struct dadao_symbol_gregs *gregs;
-	  struct dadao_symbol_greg_fixes *fix;
-
-	  if (S_IS_DEFINED (addsy)
-	      && !bfd_is_com_section (addsec)
-	      && !S_IS_WEAK (addsy))
-	    {
-	      if (! symbol_section_p (addsy) && ! bfd_is_abs_section (addsec))
-		as_fatal (_("internal: BFD_RELOC_DADAO_BASE_PLUS_OFFSET not resolved to section"));
-
-	      /* If this is an absolute symbol sufficiently near
-		 lowest_data_loc, then we canonicalize on the data
-		 section.  Note that val is signed here; we may subtract
-		 lowest_data_loc which is unsigned.  Careful with those
-		 comparisons.  */
-	      if (lowest_data_loc != (bfd_vma) -1
-		  && (bfd_vma) val + 256 > lowest_data_loc
-		  && bfd_is_abs_section (addsec))
-		{
-		  val -= (offsetT) lowest_data_loc;
-		  addsy = section_symbol (data_section);
-		}
-	      /* Likewise text section.  */
-	      else if (lowest_text_loc != (bfd_vma) -1
-		       && (bfd_vma) val + 256 > lowest_text_loc
-		       && bfd_is_abs_section (addsec))
-		{
-		  val -= (offsetT) lowest_text_loc;
-		  addsy = section_symbol (text_section);
-		}
-	    }
-
-	  gregs = *symbol_get_tc (addsy);
-
-	  /* If that symbol does not have any associated GREG definitions,
-	     we can't do anything.  */
-	  if (gregs == NULL
-	      || (fix = bsearch (&val, gregs->greg_fixes, gregs->n_gregs,
-				 sizeof (gregs->greg_fixes[0]),
-				 cmp_greg_val_greg_symbol_fixes)) == NULL
-	      /* The register must not point *after* the address we want.  */
-	      || fix->offs > val
-	      /* Neither must the register point more than 255 bytes
-		 before the address we want.  */
-	      || fix->offs + 255 < val)
-	    {
-	      /* We can either let the linker allocate GREGs
-		 automatically, or emit an error.  */
-	      if (allocate_undefined_gregs_in_linker)
-		{
-		  /* The values in baddsy and addend are right.  */
-		  code = fixP->fx_r_type;
-		  break;
-		}
-	      else
-		as_bad_where (fixP->fx_file, fixP->fx_line,
-			      _("no suitable GREG definition for operands"));
-	      return NULL;
-	    }
-	  else
-	    {
-	      /* Transform the base-plus-offset reloc for the actual area
-		 to a reloc for the register with the address of the area.
-		 Put addend for register in Z operand.  */
-	      buf[1] = val - fix->offs;
-	      code = BFD_RELOC_DADAO_REG;
-	      baddsy
-		= (bfd_get_section_by_name (stdoutput,
-					    DADAO_REG_CONTENTS_SECTION_NAME)
-		   ->symbol);
-
-	      addend = fix->fix->fx_frag->fr_address + fix->fix->fx_where;
-	    }
-	}
-      else if (S_GET_VALUE (addsy) > 255)
-	as_bad_where (fixP->fx_file, fixP->fx_line,
-		      _("invalid operands"));
-      else
-	{
-	  *buf = val;
-	  return NULL;
-	}
-      break;
-
-    case BFD_RELOC_DADAO_REG:
-      if (addsy != NULL
-	  && (bfd_is_und_section (addsec)
-	      || strcmp (bfd_get_section_name (addsec->owner, addsec),
-			 DADAO_REG_CONTENTS_SECTION_NAME) == 0))
-	{
-	  code = fixP->fx_r_type;
-	  break;
-	}
-
-      if (addsy != NULL
-	  && (addsec != real_reg_section
-	      || val > 255
-	      || val < 0)
-	  && ! bfd_is_und_section (addsec))
-	/* Drop through to error message.  */
-	;
-      else
-	{
-	  buf[0] = val;
-	  return NULL;
-	}
-      /* FALLTHROUGH.  */
-
-      /* The others are supposed to be handled by md_apply_fix.
-	 Move over md_apply_fix code here for everything reasonable.  */
     default:
       as_bad_where
 	(fixP->fx_file, fixP->fx_line,
@@ -1756,9 +1371,6 @@ tc_gen_reloc (asection *section ATTRIBUTE_UNUSED, fixS *fixP)
 int
 dadao_force_relocation (fixS *fixP)
 {
-  if (fixP->fx_r_type == BFD_RELOC_DADAO_BASE_PLUS_OFFSET)
-    return 1;
-
   /* All our pcrel relocations are must-keep.  Note that md_apply_fix is
      called *after* this, and will handle getting rid of the presumed
      reloc; a relocation isn't *forced* other than to be handled by
@@ -1787,68 +1399,12 @@ md_pcrel_from_section (fixS *fixP, segT sec)
   return (fixP->fx_frag->fr_address + fixP->fx_where);
 }
 
-/* Adjust the symbol table.  We make reg_section relative to the real
-   register section.  */
-
-void
-dadao_adjust_symtab (void)
-{
-  symbolS *sym;
-  symbolS *regsec = section_symbol (reg_section);
-
-  for (sym = symbol_rootP; sym != NULL; sym = symbol_next (sym))
-    if (S_GET_SEGMENT (sym) == reg_section)
-      {
-	if (sym == regsec)
-	  {
-	    if (S_IS_EXTERNAL (sym) || symbol_used_in_reloc_p (sym))
-	      abort ();
-	    symbol_remove (sym, &symbol_rootP, &symbol_lastP);
-	  }
-	else
-	  /* Change section to the *real* register section, so it gets
-	     proper treatment when writing it out.  Only do this for
-	     global symbols.  This also means we don't have to check for
-	     $0..$255.  */
-	  S_SET_SEGMENT (sym, real_reg_section);
-      }
-}
-
-/* This is the expansion of md_relax_frag.  We go through the ordinary
-   relax table function except when the frag is for a GREG.  Then we have
-   to check whether there's another GREG by the same value that we can
-   join with.  */
-long dadao_md_relax_frag (segT seg, fragS *fragP, long stretch)
-{
-  switch (fragP->fr_subtype)
-    {
-      /* Growth for this type has been handled by dadao_md_end and
-	 correctly estimated, so there's nothing more to do here.  */
-    case STATE_GREG_DEF:
-      return 0;
-
-    default:
-      return relax_frag (seg, fragP, stretch);
-
-    case STATE_GREG_UNDF:
-      BAD_CASE (fragP->fr_subtype);
-    }
-
-  as_fatal (_("internal: unexpected relax type %d:%d"),
-	    fragP->fr_type, fragP->fr_subtype);
-  return 0;
-}
-
 /* Various things we punt until all input is seen.  */
 void dadao_md_end (void)
 {
   fragS *fragP;
-  asection *regsec;
   struct loc_assert_s *loc_assert;
   int i;
-
-  /* The first frag of GREG:s going into the register contents section.  */
-  fragS *dadao_reg_contents_frags = NULL;
 
   /* Emit the low LOC setting of .text.  */
   if (text_has_contents && lowest_text_loc != (bfd_vma) -1)
@@ -1914,235 +1470,6 @@ void dadao_md_end (void)
 	  fragP->fr_fix = 0;
 	}
     }
-
-  if (n_of_raw_gregs != 0)
-    {
-      /* Emit GREGs.  They are collected in order of appearance, but must
-	 be emitted in opposite order to both have section address regno*8
-	 and the same allocation order (within a file) as dadaoal.  */
-      segT this_segment = now_seg;
-      subsegT this_subsegment = now_subseg;
-
-      regsec = bfd_make_section_old_way (stdoutput,
-					 DADAO_REG_CONTENTS_SECTION_NAME);
-      subseg_set (regsec, 0);
-
-      /* Finally emit the initialization-value.  Emit a variable frag, which
-	 we'll fix in md_estimate_size_before_relax.  We set the initializer
-	 for the tc_frag_data field to NULL, so we can use that field for
-	 relaxation purposes.  */
-      dadao_opcode_frag = NULL;
-
-      frag_grow (0);
-      dadao_reg_contents_frags = frag_now;
-
-      for (i = n_of_raw_gregs - 1; i >= 0; i--)
-	{
-	  if (dadao_raw_gregs[i].label != NULL)
-	    /* There's a symbol.  Let it refer to this location in the
-	       register contents section.  The symbol must be globalized
-	       separately.  */
-	    colon (dadao_raw_gregs[i].label);
-
-	  frag_var (rs_machine_dependent, 8, 0, STATE_GREG_UNDF,
-		    make_expr_symbol (&dadao_raw_gregs[i].exp), 0, NULL);
-	}
-
-      subseg_set (this_segment, this_subsegment);
-    }
-
-  regsec = bfd_get_section_by_name (stdoutput, DADAO_REG_CONTENTS_SECTION_NAME);
-  /* Mark the section symbol as being OK for a reloc.  */
-  if (regsec != NULL)
-    regsec->symbol->flags |= BSF_KEEP;
-
-  /* Iterate over frags resulting from GREGs and move those that evidently
-     have the same value together and point one to another.
-
-     This works in time O(N^2) but since the upper bound for non-error use
-     is 223, it's best to keep this simpler algorithm.  */
-  for (fragP = dadao_reg_contents_frags; fragP != NULL; fragP = fragP->fr_next)
-    {
-      fragS **fpp;
-      fragS *fp = NULL;
-      fragS *osymfrag;
-      offsetT osymval;
-      expressionS *oexpP;
-      symbolS *symbolP = fragP->fr_symbol;
-
-      if (fragP->fr_type != rs_machine_dependent
-	  || fragP->fr_subtype != STATE_GREG_UNDF)
-	continue;
-
-      /* Whatever the outcome, we will have this GREG judged merged or
-	 non-merged.  Since the tc_frag_data is NULL at this point, we
-	 default to non-merged.  */
-      fragP->fr_subtype = STATE_GREG_DEF;
-
-      /* If we're not supposed to merge GREG definitions, then just don't
-	 look for equivalents.  */
-      if (! merge_gregs)
-	continue;
-
-      osymval = (offsetT) S_GET_VALUE (symbolP);
-      osymfrag = symbol_get_frag (symbolP);
-
-      /* If the symbol isn't defined, we can't say that another symbol
-	 equals this frag, then.  FIXME: We can look at the "deepest"
-	 defined name; if a = c and b = c then obviously a == b.  */
-      if (! S_IS_DEFINED (symbolP))
-	continue;
-
-      oexpP = symbol_get_value_expression (fragP->fr_symbol);
-
-      /* If the initialization value is zero, then we must not merge them.  */
-      if (oexpP->X_op == O_constant && osymval == 0)
-	continue;
-
-      /* Iterate through the frags downward this one.  If we find one that
-	 has the same non-zero value, move it to after this one and point
-	 to it as the equivalent.  */
-      for (fpp = &fragP->fr_next; *fpp != NULL; fpp = &fpp[0]->fr_next)
-	{
-	  fp = *fpp;
-
-	  if (fp->fr_type != rs_machine_dependent
-	      || fp->fr_subtype != STATE_GREG_UNDF)
-	    continue;
-
-	  /* Calling S_GET_VALUE may simplify the symbol, changing from
-	     expr_section etc. so call it first.  */
-	  if ((offsetT) S_GET_VALUE (fp->fr_symbol) == osymval
-	      && symbol_get_frag (fp->fr_symbol) == osymfrag)
-	    {
-	      /* Move the frag links so the one we found equivalent comes
-		 after the current one, carefully considering that
-		 sometimes fpp == &fragP->fr_next and the moves must be a
-		 NOP then.  */
-	      *fpp = fp->fr_next;
-	      fp->fr_next = fragP->fr_next;
-	      fragP->fr_next = fp;
-	      break;
-	    }
-	}
-
-      if (*fpp != NULL)
-	fragP->tc_frag_data = fp;
-    }
-}
-
-/* qsort function for dadao_symbol_gregs.  */
-
-static int
-cmp_greg_symbol_fixes (const void *parg, const void *qarg)
-{
-  const struct dadao_symbol_greg_fixes *p
-    = (const struct dadao_symbol_greg_fixes *) parg;
-  const struct dadao_symbol_greg_fixes *q
-    = (const struct dadao_symbol_greg_fixes *) qarg;
-
-  return p->offs > q->offs ? 1 : p->offs < q->offs ? -1 : 0;
-}
-
-/* Collect GREG definitions from dadao_gregs and hang them as lists sorted
-   on increasing offsets onto each section symbol or undefined symbol.
-
-   Also, remove the register convenience section so it doesn't get output
-   as an ELF section.  */
-
-void
-dadao_frob_file (void)
-{
-  int i;
-  struct dadao_symbol_gregs *all_greg_symbols[MAX_GREGS];
-  int n_greg_symbols = 0;
-
-  /* Collect all greg fixups and decorate each corresponding symbol with
-     the greg fixups for it.  */
-  for (i = 0; i < n_of_cooked_gregs; i++)
-    {
-      offsetT offs;
-      symbolS *sym;
-      struct dadao_symbol_gregs *gregs;
-      fixS *fixP;
-
-      fixP = dadao_gregs[i];
-      know (fixP->fx_r_type == BFD_RELOC_64);
-
-      /* This case isn't doable in general anyway, methinks.  */
-      if (fixP->fx_subsy != NULL)
-	{
-	  as_bad_where (fixP->fx_file, fixP->fx_line,
-			_("GREG expression too complicated"));
-	  continue;
-	}
-
-      sym = fixP->fx_addsy;
-      offs = (offsetT) fixP->fx_offset;
-
-      /* If the symbol is defined, then it must be resolved to a section
-	 symbol at this time, or else we don't know how to handle it.  */
-      if (S_IS_DEFINED (sym)
-	  && !bfd_is_com_section (S_GET_SEGMENT (sym))
-	  && !S_IS_WEAK (sym))
-	{
-	  if (! symbol_section_p (sym)
-	      && ! bfd_is_abs_section (S_GET_SEGMENT (sym)))
-	    as_fatal (_("internal: GREG expression not resolved to section"));
-
-	  offs += S_GET_VALUE (sym);
-	}
-
-      /* If this is an absolute symbol sufficiently near lowest_data_loc,
-	 then we canonicalize on the data section.  Note that offs is
-	 signed here; we may subtract lowest_data_loc which is unsigned.
-	 Careful with those comparisons.  */
-      if (lowest_data_loc != (bfd_vma) -1
-	  && (bfd_vma) offs + 256 > lowest_data_loc
-	  && bfd_is_abs_section (S_GET_SEGMENT (sym)))
-	{
-	  offs -= (offsetT) lowest_data_loc;
-	  sym = section_symbol (data_section);
-	}
-      /* Likewise text section.  */
-      else if (lowest_text_loc != (bfd_vma) -1
-	       && (bfd_vma) offs + 256 > lowest_text_loc
-	       && bfd_is_abs_section (S_GET_SEGMENT (sym)))
-	{
-	  offs -= (offsetT) lowest_text_loc;
-	  sym = section_symbol (text_section);
-	}
-
-      gregs = *symbol_get_tc (sym);
-
-      if (gregs == NULL)
-	{
-	  gregs = XNEW (struct dadao_symbol_gregs);
-	  gregs->n_gregs = 0;
-	  symbol_set_tc (sym, &gregs);
-	  all_greg_symbols[n_greg_symbols++] = gregs;
-	}
-
-      gregs->greg_fixes[gregs->n_gregs].fix = fixP;
-      gregs->greg_fixes[gregs->n_gregs++].offs = offs;
-    }
-
-  /* For each symbol having a GREG definition, sort those definitions on
-     offset.  */
-  for (i = 0; i < n_greg_symbols; i++)
-    qsort (all_greg_symbols[i]->greg_fixes, all_greg_symbols[i]->n_gregs,
-	   sizeof (all_greg_symbols[i]->greg_fixes[0]), cmp_greg_symbol_fixes);
-
-  if (real_reg_section != NULL)
-    {
-      /* FIXME: Pass error state gracefully.  */
-      if (bfd_get_section_flags (stdoutput, real_reg_section) & SEC_HAS_CONTENTS)
-	as_fatal (_("register section has contents\n"));
-
-      bfd_section_list_remove (stdoutput, real_reg_section);
-      --stdoutput->section_count;
-    }
-
 }
 
 /* Just get knowledge about alignment from the new section.  */

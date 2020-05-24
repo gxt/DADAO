@@ -54,46 +54,6 @@ initialize_dadao_dis_info (struct disassemble_info *info)
 
   memset (minfop, 0, sizeof (*minfop));
 
-  /* Initialize register names from register symbols.  If there's no
-     register section, then there are no register symbols.  */
-  if ((info->section != NULL && info->section->owner != NULL)
-      || (info->symbols != NULL
-	  && info->symbols[0] != NULL
-	  && bfd_asymbol_bfd (info->symbols[0]) != NULL))
-    {
-      bfd *abfd = info->section && info->section->owner != NULL
-	? info->section->owner
-	: bfd_asymbol_bfd (info->symbols[0]);
-      asection *reg_section = bfd_get_section_by_name (abfd, "*REG*");
-
-      if (reg_section != NULL)
-	{
-	  /* The returned symcount *does* include the ending NULL.  */
-	  long symsize = bfd_get_symtab_upper_bound (abfd);
-	  asymbol **syms = malloc (symsize);
-	  long nsyms;
-
-	  if (syms == NULL)
-	    {
-	      FATAL_DEBUG;
-	      free (minfop);
-	      return FALSE;
-	    }
-	  nsyms = bfd_canonicalize_symtab (abfd, syms);
-
-	  /* We use the first name for a register.  If this is MMO, then
-	     it's the name with the first sequence number, presumably the
-	     first in the source.  */
-	  for (i = 0; i < nsyms && syms[i] != NULL; i++)
-	    {
-	      if (syms[i]->section == reg_section
-		  && syms[i]->value < MAX_REG_NAME_LEN
-		  && minfop->reg_name[syms[i]->value] == NULL)
-		minfop->reg_name[syms[i]->value] = syms[i]->name;
-	    }
-	}
-    }
-
   /* Fill in the rest with the canonical names.  */
   for (i = 0; i < MAX_REG_NAME_LEN; i++)
     if (minfop->reg_name[i] == NULL)

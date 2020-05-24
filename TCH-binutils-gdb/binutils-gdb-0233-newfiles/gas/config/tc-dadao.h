@@ -17,14 +17,11 @@
 extern void dadao_md_assemble (char *);
 extern void dadao_md_begin (void);
 extern void dadao_md_end (void);
-/* We use the relax table for everything except the GREG frags and PUSHJ.  */
-extern long dadao_md_relax_frag (segT, fragS *, long);
 extern void dadao_md_elf_section_change_hook (void);
 
 #define md_assemble			dadao_md_assemble
 #define md_begin			dadao_md_begin
 #define md_end				dadao_md_end
-#define md_relax_frag			dadao_md_relax_frag
 #define md_elf_section_change_hook	dadao_md_elf_section_change_hook
 
 extern void dadao_md_do_align (int, char *, int, int);
@@ -45,10 +42,6 @@ extern const struct relax_type dadao_relax_table[];
    || S_GET_SEGMENT ((FIX)->fx_addsy) != reg_section)		\
   && (FIX)->fx_r_type != BFD_RELOC_VTABLE_INHERIT		\
   && (FIX)->fx_r_type != BFD_RELOC_VTABLE_ENTRY)
-
-/* Adjust symbols which are registers.  */
-#define tc_adjust_symtab() dadao_adjust_symtab ()
-extern void dadao_adjust_symtab (void);
 
 /* Here's where we make all symbols global, when so requested.
    We must avoid doing that for expression symbols or section symbols,
@@ -89,29 +82,6 @@ extern long md_pcrel_from_section (struct fix *, segT);
 extern fragS *dadao_opcode_frag;
 #define TC_FRAG_TYPE fragS *
 #define TC_FRAG_INIT(frag, max_bytes) (frag)->tc_frag_data = dadao_opcode_frag
-
-/* We need to associate each section symbol with a list of GREGs defined
-   for that section/segment and sorted on offset, between the point where
-   all symbols have been evaluated and all frags mapped, and when the
-   fixups are done and relocs are output.  Similarly for each unknown
-   symbol.  */
-extern void dadao_frob_file (void);
-#define tc_frob_file_before_fix()					\
-  do									\
-    {									\
-      int i = 0;							\
-									\
-      /* It's likely dadao_frob_file changed (removed) sections, so make	\
-	 sure sections are correctly numbered as per renumber_sections,	\
-	 (static to write.c where this macro is called).  */		\
-      dadao_frob_file ();						\
-      bfd_map_over_sections (stdoutput, renumber_sections, &i);		\
-    }									\
-  while (0)
-
-/* Used by dadao_frob_file.  Hangs on section symbols and unknown symbols.  */
-struct dadao_symbol_gregs;
-#define TC_SYMFIELD_TYPE struct dadao_symbol_gregs *
 
 /* Each insn is a tetrabyte (4 bytes) long, but if there are BYTE
    sequences sprinkled in, we can get unaligned DWARF2 offsets, so let's

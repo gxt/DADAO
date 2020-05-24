@@ -153,6 +153,3 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 		ddop_insn_char_p[3] |= ((ddop_fd) & 0x3F);					\
 	} while (0)
 
-/* We can have 256 - 32 (local registers) - 1 ($255 is not allocatable)
-   global registers.  */
-#define MAX_GREGS 223
