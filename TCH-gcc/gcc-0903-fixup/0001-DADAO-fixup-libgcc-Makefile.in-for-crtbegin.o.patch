@@ -1,0 +1,26 @@
+From 631ac10c02b1f546712291ba83306e741abb904d Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sun, 24 May 2020 08:19:57 +0000
+Subject: [PATCH] DADAO-fixup: libgcc/Makefile.in for crtbegin.o
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ libgcc/Makefile.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libgcc/Makefile.in b/libgcc/Makefile.in
+index ea390a5bbea..80b254832ad 100644
+--- a/libgcc/Makefile.in
++++ b/libgcc/Makefile.in
+@@ -1020,7 +1020,7 @@ ifeq ($(CUSTOM_CRTSTUFF),)
+ # linked using GCC on systems using COFF or ELF, for the sake of C++
+ # constructors.
+ crtbegin$(objext): $(srcdir)/crtstuff.c
+-	$(crt_compile) $(CRTSTUFF_T_CFLAGS) -c $< -DCRT_BEGIN
++	$(crt_compile) $(CRTSTUFF_T_CFLAGS) -Os -c $< -DCRT_BEGIN
+ 
+ crtend$(objext): $(srcdir)/crtstuff.c
+ 	$(crt_compile) $(CRTSTUFF_T_CFLAGS) -c $< -DCRT_END
+-- 
+2.17.1
+
