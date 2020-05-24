@@ -2331,13 +2331,8 @@ dadao_output_register_setting (FILE *stream,
 	     ghostscript-6.52.  Two and four are excluded because there
 	     are too many such constants, and each unique constant (maybe
 	     offset by 1..255) were used few times compared to other uses,
-	     e.g. addresses.
-
-	     We use base-plus-offset addressing to force it into a global
-	     register; we just use a "lda reg,VALUE", which will cause the
-	     assembler and linker to DTRT (for constants as well as
-	     addresses).  */
-	  fprintf (stream, "lda	%s, ", reg_names[regno]);
+	     e.g. addresses.  */
+	  fprintf (stream, "seto	%s, ", reg_names[regno]);
 	  dadao_output_octa (stream, value, 0);
 	}
       else
