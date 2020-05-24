@@ -61,17 +61,10 @@ _start:	setl	$63, 32
 
 	call	_init
 
-#ifdef __DADAO_ABI_GNU__
 # Copy argc and argv from their initial position to argument registers
 # where necessary.
 	or	$39, $0, 0
 	or	$40, $1, 0
-#else
-# For the dadao ABI, we need to move arguments.  The return value will
-# appear in $0.
-	or	$2, $1, 0
-	or	$1, $0, 0
-#endif
 
 	call	main
 	call	exit
@@ -92,11 +85,7 @@ _init:
 0:	trap	0
 
 # Register _fini to be executed as the last atexit function.
-#ifdef __DADAO_ABI_GNU__
 	geta	$39, _fini
-#else
-	geta	$1, _fini
-#endif
 	call	atexit
 
 	.section .fini,"ax",@progbits

@@ -72,24 +72,10 @@
    of local registers (value of rL) low, since there's a cost of
    increasing rL and clearing unused (unset) registers with lower numbers.
    Don't translate while outputting the prologue.  */
-#define DADAO_OUTPUT_REGNO(N)					\
- (TARGET_ABI_GNU 						\
-  || (int) (N) < DADAO_RETURN_VALUE_REGNUM			\
-  || (int) (N) > DADAO_LAST_STACK_REGISTER_REGNUM		\
-  || cfun == NULL 						\
-  || cfun->machine == NULL 					\
-  || cfun->machine->in_prologue					\
-  ? (N) : ((N) - DADAO_RETURN_VALUE_REGNUM			\
-	   + cfun->machine->highest_saved_stack_register + 1))
+#define DADAO_OUTPUT_REGNO(N)	(N)
 
 /* The %d in "POP %d,0".  */
-#define DADAO_POP_ARGUMENT()						\
- ((! TARGET_ABI_GNU							\
-   && crtl->return_rtx != NULL				\
-   && ! cfun->returns_struct)				\
-  ? (GET_CODE (crtl->return_rtx) == PARALLEL			\
-     ? GET_NUM_ELEM (XVEC (crtl->return_rtx, 0)) : 1)	\
-  : 0)
+#define DADAO_POP_ARGUMENT()	0
 
 /* The canonical saved comparison operands for non-cc0 machines, set in
    the compare expander.  */
@@ -374,8 +360,6 @@ dadao_conditional_register_usage (void)
 {
   int i;
 
-  if (TARGET_ABI_GNU)
-    {
       static const int gnu_abi_reg_alloc_order[]
 	= DADAO_GNU_ABI_REG_ALLOC_ORDER;
 
@@ -397,7 +381,6 @@ dadao_conditional_register_usage (void)
 	   i < DADAO_RESERVED_GNU_ARG_0_REGNUM + DADAO_MAX_ARGS_IN_REGS;
 	   i++)
 	fixed_regs[i] = 0;
-    }
 }
 
 /* INCOMING_REGNO and OUTGOING_REGNO worker function.
@@ -719,52 +702,8 @@ dadao_function_value (const_tree valtype,
   /* Return values that fit in a register need no special handling.
      There's no register hole when parameters are passed in global
      registers.  */
-  if (TARGET_ABI_GNU
-      || GET_MODE_BITSIZE (mode) <= BITS_PER_WORD)
-    return
+  return
       gen_rtx_REG (mode, DADAO_OUTGOING_RETURN_VALUE_REGNUM);
-
-  if (COMPLEX_MODE_P (mode))
-    /* A complex type, made up of components.  */
-    cmode = TYPE_MODE (TREE_TYPE (valtype));
-  else
-    {
-      /* Of the other larger-than-register modes, we only support
-	 scalar mode TImode.  (At least, that's the only one that's
-	 been rudimentally tested.)  Make sure we're alerted for
-	 unexpected cases.  */
-      if (mode != TImode)
-	sorry ("support for mode %qs", GET_MODE_NAME (mode));
-
-      /* In any case, we will fill registers to the natural size.  */
-      cmode = DImode;
-    }
-
-  nregs = ((GET_MODE_BITSIZE (mode) + BITS_PER_WORD - 1) / BITS_PER_WORD);
-
-  /* We need to take care of the effect of the register hole on return
-     values of large sizes; the last register will appear as the first
-     register, with the rest shifted.  (For complex modes, this is just
-     swapped registers.)  */
-
-  if (nregs > DADAO_MAX_REGS_FOR_VALUE)
-    internal_error ("too large function value type, needs %d registers,\
- have only %d registers for this", nregs, DADAO_MAX_REGS_FOR_VALUE);
-
-  /* FIXME: Maybe we should handle structure values like this too
-     (adjusted for BLKmode), perhaps for both ABI:s.  */
-  for (i = 0; i < nregs - 1; i++)
-    vec[i]
-      = gen_rtx_EXPR_LIST (VOIDmode,
-			   gen_rtx_REG (cmode, first_val_regnum + i),
-			   GEN_INT ((i + 1) * BITS_PER_UNIT));
-
-  vec[nregs - 1]
-    = gen_rtx_EXPR_LIST (VOIDmode,
-			 gen_rtx_REG (cmode, first_val_regnum + nregs - 1),
-			 const0_rtx);
-
-  return gen_rtx_PARALLEL (mode, gen_rtvec_v (nregs, vec));
 }
 
 /* Implements TARGET_LIBCALL_VALUE.  */
@@ -858,25 +797,6 @@ dadao_reorg (void)
     if ((df_regs_ever_live_p (regno) && !call_used_regs[regno])
 	|| (regno == DADAO_FRAME_POINTER_REGNUM && frame_pointer_needed))
       break;
-
-  /* Regardless of whether they're saved (they might be just read), we
-     mustn't include registers that carry parameters.  We could scan the
-     insns to see whether they're actually used (and indeed do other less
-     trivial register usage analysis and transformations), but it seems
-     wasteful to optimize for unused parameter registers.  As of
-     2002-04-30, df_regs_ever_live_p (n) seems to be set for only-reads too, but
-     that might change.  */
-  if (!TARGET_ABI_GNU && regno < crtl->args.info.regs - 1)
-    {
-      regno = crtl->args.info.regs - 1;
-
-      /* We don't want to let this cause us to go over the limit and make
-	 incoming parameter registers be misnumbered and treating the last
-	 parameter register and incoming return value register call-saved.
-	 Stop things at the unmodified scheme.  */
-      if (regno > DADAO_RETURN_VALUE_REGNUM - 1)
-	regno = DADAO_RETURN_VALUE_REGNUM - 1;
-    }
 
   cfun->machine->highest_saved_stack_register = regno;
 }

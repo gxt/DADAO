@@ -11,20 +11,16 @@
    FIXED_REGISTERS, CALL_USED_REGISTERS, REG_ALLOC_ORDER and
    REG_CLASS_CONTENTS depend on these values.  */
 #define DADAO_RESERVED_GNU_ARG_0_REGNUM 231
-#define DADAO_FIRST_ARG_REGNUM \
-  (TARGET_ABI_GNU ? DADAO_RESERVED_GNU_ARG_0_REGNUM : 16)
-#define DADAO_FIRST_INCOMING_ARG_REGNUM \
-  (TARGET_ABI_GNU ? DADAO_RESERVED_GNU_ARG_0_REGNUM : 0)
+#define DADAO_FIRST_ARG_REGNUM		(DADAO_RESERVED_GNU_ARG_0_REGNUM)
+#define DADAO_FIRST_INCOMING_ARG_REGNUM (DADAO_RESERVED_GNU_ARG_0_REGNUM)
 #define DADAO_MAX_ARGS_IN_REGS 16
 
 /* FIXME: This one isn't fully implemented yet.  Return values larger than
    one register are passed by reference in DADAO_STRUCT_VALUE_REGNUM by the
    caller, except for return values of type "complex".  */
 #define DADAO_MAX_REGS_FOR_VALUE 16
-#define DADAO_RETURN_VALUE_REGNUM \
-  (TARGET_ABI_GNU ? DADAO_RESERVED_GNU_ARG_0_REGNUM : 15)
-#define DADAO_OUTGOING_RETURN_VALUE_REGNUM \
-  (TARGET_ABI_GNU ? DADAO_RESERVED_GNU_ARG_0_REGNUM : 0)
+#define DADAO_RETURN_VALUE_REGNUM (DADAO_RESERVED_GNU_ARG_0_REGNUM)
+#define DADAO_OUTGOING_RETURN_VALUE_REGNUM (DADAO_RESERVED_GNU_ARG_0_REGNUM)
 #define DADAO_STRUCT_VALUE_REGNUM 251
 #define DADAO_STATIC_CHAIN_REGNUM 252
 #define DADAO_FRAME_POINTER_REGNUM 253
@@ -112,10 +108,6 @@ struct GTY(()) machine_function
     {								\
       builtin_define ("__dadao__");				\
       builtin_define ("__DADAO__");				\
-      if (TARGET_ABI_GNU)					\
-	builtin_define ("__DADAO_ABI_GNU__");			\
-      else							\
-	builtin_define ("__DADAO_ABI_DADAOWARE__");		\
     }								\
   while (0)
 

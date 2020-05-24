@@ -7,14 +7,6 @@ mlibfuncs
 Target Report Mask(LIBFUNC)
 For intrinsics library: pass all parameters in registers.
 
-mabi=dadaoware
-Target Report RejectNegative InverseMask(ABI_GNU)
-Use register stack for parameters and return value.
-
-mabi=gnu
-Target Report RejectNegative Mask(ABI_GNU)
-Use call-clobbered registers for parameters and return value.
-
 ; FIXME: Provide a way to *load* the epsilon register.
 mepsilon
 Target Report Mask(FCMP_EPSILON)
