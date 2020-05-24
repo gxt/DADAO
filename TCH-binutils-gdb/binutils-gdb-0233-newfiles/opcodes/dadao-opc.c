@@ -73,9 +73,6 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"div",		0x2C,		0,	1,	OP (rrii_rrri),		T (normal)},
 	{"divu",	0x2E,		0,	1,	OP (rrii_rrri),		T (normal)},
 
-	/* Synonym for ADDU.  Put after ADDU, since we don't prefer it for disassembly. */
-	{"lda",		0x22,		0,	1,	OP (rrii_rrri_or_sym),	T (normal)},
-
 	{"cmp",		0x30,		0,	1,	OP (rrii_rrri),		T (normal)},
 	{"cmpu",	0x32,		0,	1,	OP (rrii_rrri),		T (normal)},
 	{"or",		0x34,		0,	1,	OP (rrii_rrri),		T (normal)},
