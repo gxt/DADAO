@@ -30,6 +30,7 @@ static int get_putget_operands (struct dadao_opcode *, char *, expressionS *);
 static void s_greg (int);
 static void dadao_greg_internal (char *);
 static void dd_set_addr_offset(char *, offsetT, int);
+static void dd_set_data_addr_offset(char *, offsetT, int);
 static void dadao_set_jmp_offset (char *, offsetT);
 static void dadao_fill_nops (char *, int);
 static int cmp_greg_symbol_fixes (const void *, const void *);
@@ -164,16 +165,16 @@ static struct hash_control *dadao_opcode_hash;
    4. JMP
       extra length: zero or four insns.
 
-   5. GREG
-      special handling, allocates a named global register unless another
-      is within reach for all uses.
+   5. LDST
+      extra length: four insns.
  */
 
 #define STATE_GETA	(1)
 #define STATE_BCC	(2)
 #define STATE_CALL	(3)
 #define STATE_JMP	(4)
-#define STATE_GREG	(5)
+#define STATE_LDST	(5)
+#define STATE_GREG	(6)
 
 /* No fine-grainedness here.  */
 #define STATE_LENGTH_MASK	    (1)
@@ -232,7 +233,13 @@ const relax_typeS dadao_relax_table[] = {
    /* JMP (4, 1).  */
    {0,		0,		DD_INSN_BYTES(4),	0},
 
-   /* GREG (5, 0), (5, 1), though the table entry isn't used.  */
+   /* LDST (5, 0).  */
+   {(1 << 12),	-(1 << 12),	0,			ENCODE_RELAX (STATE_LDST, STATE_MAX)},
+
+   /* LDST (5, 1).  */
+   {0,		0,		DD_INSN_BYTES(4),	0},
+
+   /* GREG (6, 0), (6, 1), though the table entry isn't used.  */
    {0, 0, 0, 0}, {0, 0, 0, 0},
 };
 
@@ -275,6 +282,24 @@ static void dd_set_addr_offset(char *opcodep, offsetT value, int bitcount)
 		/* FALLTHROUGH */
 	case 18:
 		DDOP_SET_FB(opcodep, (value >> 12) & 0x3F);
+		DDOP_SET_FC(opcodep, (value >> 6) & 0x3F);
+		DDOP_SET_FD(opcodep, (value & 0x3F));
+		break;
+	default:
+		as_fatal("offset bitcount not support");
+	}
+}
+
+/* Fill in the offset-related part of ld/st.  */
+static void dd_set_data_addr_offset(char *opcodep, offsetT value, int bitcount)
+{
+	if ((value > 0) && (value >= (1 << bitcount)))
+		as_fatal("offset too large");
+	if ((value < 0) && ((-value) > (1 << bitcount)))
+		as_fatal("offset too large");
+
+	switch (bitcount) {
+	case 12:
 		DDOP_SET_FC(opcodep, (value >> 6) & 0x3F);
 		DDOP_SET_FD(opcodep, (value & 0x3F));
 		break;
@@ -835,35 +860,20 @@ void dadao_md_assemble (char *str)
 
 	case dadao_operands_rrii_rrri_or_sym:
 		if (n_operands == 2) {
-			symbolS *sym;
 			/* The last operand is immediate whenever we see just two operands.  */
 			DDOP_SET_INSN_ALTMODE(opcodep);
 
-			/* Now, we could either have an implied "0" as the fbc operand, or
-			   it could be the constant of a "base address plus offset".  It
-			   depends on whether it is allowed; only memory operations, as
-			   signified by instruction->type and "T" and "X" operand types,
-			   and it depends on whether we find a register in the second
-			   operand, exp[1].  */
 			DDOP_EXP_MUST_BE_REG(exp[0]);
+			DDOP_SET_FA(opcodep, exp[0].X_add_number);
 
-			if (exp[1].X_op == O_register)
+			if (exp[1].X_op != O_symbol)
 				DADAO_BAD_INSN("invalid operands to opcode");
 
-			/* To avoid getting a NULL add_symbol for constants and then
-			   catching a SEGV in write_relocs since it doesn't handle
-			   constants well for relocs other than PC-relative, we need to
-			   pass expressions as symbols and use fix_new, not fix_new_exp.  */
-			sym = make_expr_symbol (exp + 1);
+			/* Add a frag for a ldst relaxation; we need room for max four extra instructions.
+			   We don't do any work around here to check if we can determine the offset right away.  */
+			frag_var (rs_machine_dependent, DD_INSN_BYTES(4), 0, ENCODE_RELAX (STATE_LDST, STATE_UNDF),
+				exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
 
-			/* Mark the symbol as being OK for a reloc.  */
-			symbol_get_bfdsym (sym)->flags |= BSF_KEEP;
-
-			/* Now we know it can be a "base address plus offset".  Add
-			   proper fixup types so we can handle this later, when we've
-			   parsed everything.  */
-			fix_new (opc_fragP, opcodep - opc_fragP->fr_literal + 2,
-				8, sym, 0, 0, BFD_RELOC_DADAO_BASE_PLUS_OFFSET);
 			break;
 		}
 		/* FALLTHROUGH.  */
@@ -1143,8 +1153,11 @@ md_estimate_size_before_relax (fragS *fragP, segT segment)
 	break;
       HANDLE_RELAXABLE (STATE_CALL);
 	break;
+      HANDLE_RELAXABLE (STATE_LDST);
+	break;
 
     case ENCODE_RELAX (STATE_CALL, STATE_ZERO):
+    case ENCODE_RELAX (STATE_LDST, STATE_ZERO):
     case ENCODE_RELAX (STATE_GETA, STATE_ZERO):
     case ENCODE_RELAX (STATE_BCC, STATE_ZERO):
     case ENCODE_RELAX (STATE_JMP, STATE_ZERO):
@@ -1244,6 +1257,12 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
 		var_part_size = 0;
 		break;
 
+	case ENCODE_RELAX (STATE_LDST, STATE_ZERO):
+		DDOP_SET_FB(opcodep, DADAO_REGP_PC);
+		dd_set_data_addr_offset(opcodep, target_address - opcode_address, 12);
+		var_part_size = 0;
+		break;
+
     case ENCODE_RELAX (STATE_JMP, STATE_ZERO):
       dadao_set_jmp_offset (opcodep, target_address - opcode_address);
       var_part_size = 0;
@@ -1281,6 +1300,7 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
       HANDLE_MAX_RELOC (STATE_BCC, BFD_RELOC_DADAO_CBRANCH);
       HANDLE_MAX_RELOC (STATE_CALL, BFD_RELOC_DADAO_CALL);
       HANDLE_MAX_RELOC (STATE_JMP, BFD_RELOC_DADAO_JMP);
+      HANDLE_MAX_RELOC (STATE_LDST, BFD_RELOC_DADAO_LDST);
 
     default:
       BAD_CASE (fragP->fr_subtype);
@@ -1390,6 +1410,19 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
       dadao_set_jmp_offset (buf, val);
       break;
 
+    case BFD_RELOC_DADAO_LDST:
+      /* If this fixup is out of range, punt to the linker to emit an
+	 error.  This should only happen with -no-expand.  */
+      if (val < -(((offsetT) 1 << 12)/2)
+	  || val >= ((offsetT) 1 << 12)/2 - 1)
+	{
+	  fixP->fx_done = 0;
+	  val = 0;
+	}
+      dd_set_data_addr_offset (buf, val, 12);
+      break;
+
+
     case BFD_RELOC_DADAO_REG:
       if (fixP->fx_addsy == NULL
 	  || S_GET_SEGMENT (fixP->fx_addsy) != reg_section
@@ -1493,6 +1526,7 @@ tc_gen_reloc (asection *section ATTRIBUTE_UNUSED, fixS *fixP)
     case BFD_RELOC_DADAO_CBRANCH:
     case BFD_RELOC_DADAO_CALL:
     case BFD_RELOC_DADAO_JMP:
+    case BFD_RELOC_DADAO_LDST:
     case BFD_RELOC_DADAO_ADDR19:
     case BFD_RELOC_DADAO_ADDR27:
       code = fixP->fx_r_type;

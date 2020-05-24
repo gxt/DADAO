@@ -38,21 +38,22 @@ START_RELOC_NUMBERS (elf_dadao_reloc_type)
   RELOC_NUMBER (R_DADAO_CBRANCH, 14)
   RELOC_NUMBER (R_DADAO_CALL, 15)
   RELOC_NUMBER (R_DADAO_JMP, 16)
+  RELOC_NUMBER (R_DADAO_LDST, 17)
 
   /* A relative address such as in a GETA or a branch.  */
-  RELOC_NUMBER (R_DADAO_ADDR19, 17)
+  RELOC_NUMBER (R_DADAO_ADDR19, 18)
 
   /* A relative address such as in a JMP (only).  */
-  RELOC_NUMBER (R_DADAO_ADDR27, 18)
+  RELOC_NUMBER (R_DADAO_ADDR27, 19)
 
   /* A general register. */
-  RELOC_NUMBER (R_DADAO_REG, 19)
+  RELOC_NUMBER (R_DADAO_REG, 20)
 
   /* A global register and an offset, the global register (allocated at
      link time) contents plus the offset made equivalent to the relocation
      expression at link time.  The relocation must point at the Y field of
      an instruction.  */
-  RELOC_NUMBER (R_DADAO_BASE_PLUS_OFFSET, 20)
+  RELOC_NUMBER (R_DADAO_BASE_PLUS_OFFSET, 21)
 
 END_RELOC_NUMBERS (R_DADAO_max)
 

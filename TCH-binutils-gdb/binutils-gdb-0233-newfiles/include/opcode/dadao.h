@@ -72,6 +72,7 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 /* Some insn values we use when padding and synthesizing address loads.  */
 #define	DADAO_INSN_ALTMODE		(1 << 24)	/* The alternative addressing mode, generally bigger immediate */
 
+#define	DADAO_REGP_PC			0		/* No. 0 reg is pc, read only */
 #define	DADAO_REGP_TAO			3		/* No. 3 reg is reserved for insn expand */
 
 #define	DADAO_WYDE_L			(0 << 16)

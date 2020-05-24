@@ -5,14 +5,14 @@ Subject: [PATCH] DADAO-bfd: reloc.c
 
 Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
 ---
- bfd/reloc.c | 36 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ bfd/reloc.c | 40 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
 diff --git a/bfd/reloc.c b/bfd/reloc.c
 index 9ca68ca61da..1d7c0d42ad3 100644
 --- a/bfd/reloc.c
 +++ b/bfd/reloc.c
-@@ -8150,6 +8150,42 @@ ENUM
+@@ -8150,6 +8150,46 @@ ENUM
  ENUMDOC
    S12Z relocations.
  
@@ -32,6 +32,10 @@ index 9ca68ca61da..1d7c0d42ad3 100644
 +  BFD_RELOC_DADAO_JMP
 +ENUMDOC
 +  These are relocations for the JMP instruction.
++ENUM
++  BFD_RELOC_DADAO_LDST
++ENUMDOC
++  These are relocations for the LD/ST instruction.
 +ENUM
 +  BFD_RELOC_DADAO_ADDR19
 +ENUMDOC
