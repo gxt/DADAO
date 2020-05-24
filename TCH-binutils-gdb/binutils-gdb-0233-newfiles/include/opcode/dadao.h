@@ -20,6 +20,7 @@ struct dadao_spec_reg
 enum dadao_insn_type
  {
 	dadao_type_normal,
+	dadao_type_pseudo,
 	dadao_type_condbranch,
 	dadao_type_branch,
 	dadao_type_geta,
@@ -31,6 +32,8 @@ enum dadao_insn_type
    and disassembling.  */
 enum dadao_operands_type {
 	dadao_operands_none = 0,
+
+	dadao_operands_ps_seto,		/* seto pseudo insn */
 
 	dadao_operands_iiii_riii,	/* ONLY for call insn, "imm24" or "ra, imm18" */
 	dadao_operands_o000,		/* no operand, for nop/ret */
@@ -44,7 +47,7 @@ enum dadao_operands_type {
 	dadao_operands_riii_rrii,	/* ONLY for jump insn, "ra, imm18" or "ra, rb, imm12" */
 	dadao_operands_rjii,		/* The regular "ra, imm16", 2-bit in fc used to indicate H/MH/ML/L */
 	dadao_operands_rrii_rrri,	/* The regular "ra, rb, imm12" or "ra, rb, rc << imm6" */
-	dadao_operands_rrii_rrri_or_sym, /* The regular "ra, rb, imm12" or "ra, rb, rc << imm6" with symbol support */
+	dadao_operands_rrii_rrri_or_sym	/* The regular "ra, rb, imm12" or "ra, rb, rc << imm6" with symbol support */
  };
 
 struct dadao_opcode

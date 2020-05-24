@@ -649,6 +649,8 @@ void dadao_md_assemble (char *str)
 
   expressionS exp[4];
   int n_operands = 0;
+  int seto_flag = 0;
+  unsigned int seto_w16 = 0;
   expressionS *exp_left;
   expressionS *exp_right;
 
@@ -746,6 +748,56 @@ void dadao_md_assemble (char *str)
 
 	/* Handle the rest.  */
 	switch (instruction->operands) {
+	case dadao_operands_ps_seto:	/* pseudo insn: seto ra, imm64 */
+		if (n_operands != 2)
+			DADAO_BAD_INSN("invalid operands to opcode");
+
+		DDOP_EXP_MUST_BE_REG(exp[0]);
+
+		if (exp[1].X_op != O_constant)
+			DADAO_BAD_INSN("invalid operands to opcode");
+
+		seto_flag = 0;
+
+		seto_w16 = (exp[1].X_add_number >> 48) & 0xFFFF;
+		if (seto_w16 != 0) {
+			md_number_to_chars(opcodep, DADAO_INSN_SETW | DADAO_WYDE_H | seto_w16, 4);
+			DDOP_SET_FA(opcodep, exp[0].X_add_number);
+			opcodep = frag_more (4);
+			seto_flag = 1;
+		}
+
+		seto_w16 = (exp[1].X_add_number >> 32) & 0xFFFF;
+		if (seto_w16 != 0) {
+			if (seto_flag)
+				md_number_to_chars(opcodep, DADAO_INSN_INCW | DADAO_WYDE_MH | seto_w16, 4);
+			else
+				md_number_to_chars(opcodep, DADAO_INSN_SETW | DADAO_WYDE_MH | seto_w16, 4);
+			DDOP_SET_FA(opcodep, exp[0].X_add_number);
+			opcodep = frag_more (4);
+			seto_flag = 1;
+		}
+
+		seto_w16 = (exp[1].X_add_number >> 16) & 0xFFFF;
+		if (seto_w16 != 0) {
+			if (seto_flag)
+				md_number_to_chars(opcodep, DADAO_INSN_INCW | DADAO_WYDE_ML | seto_w16, 4);
+			else
+				md_number_to_chars(opcodep, DADAO_INSN_SETW | DADAO_WYDE_ML | seto_w16, 4);
+			DDOP_SET_FA(opcodep, exp[0].X_add_number);
+			opcodep = frag_more (4);
+			seto_flag = 1;
+		}
+
+		seto_w16 = (exp[1].X_add_number) & 0xFFFF;
+		if (seto_flag)
+			md_number_to_chars(opcodep, DADAO_INSN_INCW | DADAO_WYDE_L | seto_w16, 4);
+		else
+			md_number_to_chars(opcodep, DADAO_INSN_SETW | DADAO_WYDE_L | seto_w16, 4);
+		DDOP_SET_FA(opcodep, exp[0].X_add_number);
+
+		break;
+
 	case dadao_operands_orr0_get:
 		/* "rb, spec_reg"; GET.
 		   Like with rounding modes, we demand that the special register or

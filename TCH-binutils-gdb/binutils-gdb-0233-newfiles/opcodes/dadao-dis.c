@@ -257,6 +257,9 @@ get_opcode (unsigned long insn)
 	if (opcodep != NULL)	return opcodep;
 
 	for (opcodep = dadao_opcodes; opcodep->name != NULL; opcodep++) {
+		if (opcodep->type == dadao_type_pseudo)
+			continue;
+
 		if (opcodep->major_opcode == majop) {
 			opcodes[majop] = opcodep;
 			return opcodep;

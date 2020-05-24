@@ -175,5 +175,7 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"sflot",	I (FP),		12,	0,	OP (orri),		T (normal)},
 	{"sflotu",	I (FP),		14,	0,	OP (orri),		T (normal)},
 
-	{NULL,		~0,		0,	0,	OP (o000),		T (normal)}
+	{"seto",	~0,		0,	0,	OP (ps_seto),		T (pseudo)},
+
+	{NULL,		~0,		0,	0,	OP (none),		T (normal)}
  };
