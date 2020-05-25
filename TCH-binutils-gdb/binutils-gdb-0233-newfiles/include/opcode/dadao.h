@@ -45,7 +45,7 @@ enum dadao_operands_type {
 	dadao_operands_orrr,		/* The regular "rb, rc, rd".  */
 	dadao_operands_riii,		/* The regular "ra, imm18" */
 	dadao_operands_riii_rrii,	/* ONLY for jump insn, "ra, imm18" or "ra, rb, imm12" */
-	dadao_operands_rjii,		/* The regular "ra, imm16", 2-bit in fc used to indicate H/MH/ML/L */
+	dadao_operands_rjii,		/* The regular "ra, imm16", 2-bit in fc used to indicate WH/WJ/WK/WL */
 	dadao_operands_rrii_rrri,	/* The regular "ra, rb, imm12" or "ra, rb, rc << imm6" */
 	dadao_operands_rsym_rrii_rrri	/* The regular "ra, rb, imm12" or "ra, rb, rc << imm6" with symbol support */
  };
@@ -78,10 +78,11 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
 #define	DADAO_REGP_PC			0		/* No. 0 reg is pc, read only */
 #define	DADAO_REGP_TAO			3		/* No. 3 reg is reserved for insn expand */
 
-#define	DADAO_WYDE_L			(0 << 16)
-#define	DADAO_WYDE_ML			(1 << 16)
-#define	DADAO_WYDE_MH			(2 << 16)
-#define	DADAO_WYDE_H			(3 << 16)
+/* One octa, four wydes, named wh/wj/wk/wl */
+#define	DADAO_WYDE_WH			(3 << 16)
+#define	DADAO_WYDE_WJ			(2 << 16)
+#define	DADAO_WYDE_WK			(1 << 16)
+#define	DADAO_WYDE_WL			(0 << 16)
 
 #define	DADAO_INSN_SETW			((unsigned int)(0x3A << 24))
 #define	DADAO_INSN_INCW			((unsigned int)(0x3B << 24))

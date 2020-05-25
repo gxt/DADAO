@@ -613,7 +613,7 @@ void dadao_md_assemble (char *str)
 
 		seto_w16 = (exp[1].X_add_number >> 48) & 0xFFFF;
 		if (seto_w16 != 0) {
-			md_number_to_chars(opcodep, DADAO_INSN_SETW | DADAO_WYDE_H | seto_w16, 4);
+			md_number_to_chars(opcodep, DADAO_INSN_SETW | DADAO_WYDE_WH | seto_w16, 4);
 			DDOP_SET_FA(opcodep, exp[0].X_add_number);
 			opcodep = frag_more (4);
 			seto_flag = 1;
@@ -622,9 +622,9 @@ void dadao_md_assemble (char *str)
 		seto_w16 = (exp[1].X_add_number >> 32) & 0xFFFF;
 		if (seto_w16 != 0) {
 			if (seto_flag)
-				md_number_to_chars(opcodep, DADAO_INSN_INCW | DADAO_WYDE_MH | seto_w16, 4);
+				md_number_to_chars(opcodep, DADAO_INSN_INCW | DADAO_WYDE_WJ | seto_w16, 4);
 			else
-				md_number_to_chars(opcodep, DADAO_INSN_SETW | DADAO_WYDE_MH | seto_w16, 4);
+				md_number_to_chars(opcodep, DADAO_INSN_SETW | DADAO_WYDE_WJ | seto_w16, 4);
 			DDOP_SET_FA(opcodep, exp[0].X_add_number);
 			opcodep = frag_more (4);
 			seto_flag = 1;
@@ -633,9 +633,9 @@ void dadao_md_assemble (char *str)
 		seto_w16 = (exp[1].X_add_number >> 16) & 0xFFFF;
 		if (seto_w16 != 0) {
 			if (seto_flag)
-				md_number_to_chars(opcodep, DADAO_INSN_INCW | DADAO_WYDE_ML | seto_w16, 4);
+				md_number_to_chars(opcodep, DADAO_INSN_INCW | DADAO_WYDE_WK | seto_w16, 4);
 			else
-				md_number_to_chars(opcodep, DADAO_INSN_SETW | DADAO_WYDE_ML | seto_w16, 4);
+				md_number_to_chars(opcodep, DADAO_INSN_SETW | DADAO_WYDE_WK | seto_w16, 4);
 			DDOP_SET_FA(opcodep, exp[0].X_add_number);
 			opcodep = frag_more (4);
 			seto_flag = 1;
@@ -643,9 +643,9 @@ void dadao_md_assemble (char *str)
 
 		seto_w16 = (exp[1].X_add_number) & 0xFFFF;
 		if (seto_flag)
-			md_number_to_chars(opcodep, DADAO_INSN_INCW | DADAO_WYDE_L | seto_w16, 4);
+			md_number_to_chars(opcodep, DADAO_INSN_INCW | DADAO_WYDE_WL | seto_w16, 4);
 		else
-			md_number_to_chars(opcodep, DADAO_INSN_SETW | DADAO_WYDE_L | seto_w16, 4);
+			md_number_to_chars(opcodep, DADAO_INSN_SETW | DADAO_WYDE_WL | seto_w16, 4);
 		DDOP_SET_FA(opcodep, exp[0].X_add_number);
 
 		break;

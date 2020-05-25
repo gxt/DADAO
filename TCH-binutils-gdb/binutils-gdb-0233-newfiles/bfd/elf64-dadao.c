@@ -400,46 +400,46 @@ bfd_elf64_bfd_reloc_name_lookup (bfd *abfd ATTRIBUTE_UNUSED,
    R_DADAO_GETA: (FIXME: Relaxation should break this up in 1, 2, 3 tetra)
     GETA $N,foo
    ->
-    SETL $N,foo & 0xffff
-    INCML $N,(foo >> 16) & 0xffff
-    INCMH $N,(foo >> 32) & 0xffff
-    INCH $N,(foo >> 48) & 0xffff
+    SETWH $N, (foo >> 48) & 0xffff
+    INCWJ $N, (foo >> 32) & 0xffff
+    INCWK $N, (foo >> 16) & 0xffff
+    INCWL $N, foo & 0xffff
 
    R_DADAO_BRCC: (FIXME: Relaxation should break this up, but
    condbranches needing relaxation might be rare enough to not be
    worthwhile.)
     Bcc $N,foo
    ->
-    B~cc $N,.+20
-    SETH $3,foo & ...
-    INCMH ...
-    INCML ...
+    B~cc $N,.+16
+    SETWH $3, (foo >> 48) & 0xffff
+    INCWJ $3, (foo >> 32) & 0xffff
+    INCWK $3, (foo >> 16) & 0xffff
     JUMP $3, foo & 0xffff
 
    R_DADAO_CALL: (FIXME: Relaxation should break this up)
     Call foo
    ->
-    SETH $3,foo & ...
-    INCMH ...
-    INCML ...
+    SETWH $3, (foo >> 48) & 0xffff
+    INCWJ $3, (foo >> 32) & 0xffff
+    INCWK $3, (foo >> 16) & 0xffff
     CALL $3, foo & 0xffff
 
    R_DADAO_JUMP: (FIXME: Relaxation...)
     JUMP foo
    ->
-    SETL $255,foo & ...
-    INCML ...
-    INCMH ...
-    INCH ...
+    SETWH $3, (foo >> 48) & 0xffff
+    INCWJ $3, (foo >> 32) & 0xffff
+    INCWK $3, (foo >> 16) & 0xffff
+    INCWL $3, foo & 0xffff
     GO $255,$255,0
 
    R_DADAO_LDST: (FIXME: Relaxation should break this up)
     LD/ST $N,foo
    ->
-    SETH $3,foo & ...
-    INCMH ...
-    INCML ...
-    INCL ...
+    SETWH $3, (foo >> 48) & 0xffff
+    INCWJ $3, (foo >> 32) & 0xffff
+    INCWK $3, (foo >> 16) & 0xffff
+    INCWL $3, foo & 0xffff
     LD/ST $N, $3, 0
  */
 static bfd_reloc_status_type
@@ -455,10 +455,7 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 	int offs;
 	int reg;
 
-  /* The worst case bits are all similar SETL/INCML/INCMH/INCH sequences.
-     We handle the differences here and the common sequence later.  */
-  switch (howto->type)
-    {
+	switch (howto->type) {
 	case R_DADAO_GETA:
 		if ((value & 3) != 0)	return bfd_reloc_notsupported;
 
@@ -475,13 +472,13 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 		} else {
 			reg = (insn_origin >> 18) & 0x3F;
 
-			bfd_put_32 (abfd, DADAO_INSN_SETW | (reg << 18) | DADAO_WYDE_H |
+			bfd_put_32 (abfd, DADAO_INSN_SETW | (reg << 18) | DADAO_WYDE_WH |
 				((addr >> 48) & 0xffff), (bfd_byte *) datap);
-			bfd_put_32 (abfd, DADAO_INSN_INCW | (reg << 18) | DADAO_WYDE_MH |
+			bfd_put_32 (abfd, DADAO_INSN_INCW | (reg << 18) | DADAO_WYDE_WJ |
 				((addr >> 32) & 0xffff), (bfd_byte *) datap + 4);
-			bfd_put_32 (abfd, DADAO_INSN_INCW | (reg << 18) | DADAO_WYDE_ML |
+			bfd_put_32 (abfd, DADAO_INSN_INCW | (reg << 18) | DADAO_WYDE_WK |
 				((addr >> 16) & 0xffff), (bfd_byte *) datap + 8);
-			bfd_put_32 (abfd, DADAO_INSN_INCW | (reg << 18) | DADAO_WYDE_L |
+			bfd_put_32 (abfd, DADAO_INSN_INCW | (reg << 18) | DADAO_WYDE_WL |
 				(addr & 0xffff), (bfd_byte *) datap + 12);
 		}
 
@@ -505,11 +502,11 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 			bfd_put_32 (abfd, (insn_origin ^ DADAO_INSN_ALTMODE) | (4),
 				 (bfd_byte *) datap);
 
-			bfd_put_32 (abfd, DADAO_INSN_SETW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_H |
+			bfd_put_32 (abfd, DADAO_INSN_SETW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WH |
 				((value >> 48) & 0xffff), (bfd_byte *) datap + 4);
-			bfd_put_32 (abfd, DADAO_INSN_INCW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_MH |
+			bfd_put_32 (abfd, DADAO_INSN_INCW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WJ |
 				((value >> 32) & 0xffff), (bfd_byte *) datap + 8);
-			bfd_put_32 (abfd, DADAO_INSN_INCW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_ML |
+			bfd_put_32 (abfd, DADAO_INSN_INCW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WK |
 				((value >> 16) & 0xffff), (bfd_byte *) datap + 12);
 
 			/* Put a "jump $3, 0" after the common sequence.  */
@@ -533,11 +530,11 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 				(bfd_byte *) datap);
 
 		} else {
-			bfd_put_32 (abfd, DADAO_INSN_SETW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_H |
+			bfd_put_32 (abfd, DADAO_INSN_SETW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WH |
 				((value >> 48) & 0xffff), (bfd_byte *) datap);
-			bfd_put_32 (abfd, DADAO_INSN_INCW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_MH |
+			bfd_put_32 (abfd, DADAO_INSN_INCW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WJ |
 				((value >> 32) & 0xffff), (bfd_byte *) datap + 4);
-			bfd_put_32 (abfd, DADAO_INSN_INCW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_ML |
+			bfd_put_32 (abfd, DADAO_INSN_INCW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WK |
 				((value >> 16) & 0xffff), (bfd_byte *) datap + 8);
 			bfd_put_32 (abfd, DADAO_INSN_CALL | (DADAO_REGP_TAO << 18) |
 				(value & 0xffff), (bfd_byte *) datap + 12);
@@ -548,13 +545,13 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 	case R_DADAO_LDST:
 		insn_origin = bfd_get_32 (abfd, (bfd_byte *) datap);
 
-		bfd_put_32 (abfd, DADAO_INSN_SETW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_H |
+		bfd_put_32 (abfd, DADAO_INSN_SETW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WH |
 			((addr >> 48) & 0xffff), (bfd_byte *) datap);
-		bfd_put_32 (abfd, DADAO_INSN_INCW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_MH |
+		bfd_put_32 (abfd, DADAO_INSN_INCW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WJ |
 			((addr >> 32) & 0xffff), (bfd_byte *) datap + 4);
-		bfd_put_32 (abfd, DADAO_INSN_INCW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_ML |
+		bfd_put_32 (abfd, DADAO_INSN_INCW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WK |
 			((addr >> 16) & 0xffff), (bfd_byte *) datap + 8);
-		bfd_put_32 (abfd, DADAO_INSN_INCW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_L |
+		bfd_put_32 (abfd, DADAO_INSN_INCW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WL |
 			(addr & 0xffff), (bfd_byte *) datap + 12);
 		bfd_put_32 (abfd, insn_origin | (DADAO_REGP_TAO << 12), (bfd_byte *) datap + 16);
 
@@ -620,29 +617,12 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 	}
       else
 	return bfd_reloc_overflow;
-
     default:
       BAD_CASE (howto->type);
     }
 
-	/* This code adds the common SETL/INCML/INCMH/INCH worst-case sequence.  */
-	_bfd_error_handler("FIXME: expand one insn to four insns (rel to abs: from %x to %x)",
-		value, addr);
-
-	bfd_put_32 (abfd,
-		DADAO_INSN_SETW | (reg << 18) | DADAO_WYDE_L | (addr & 0xffff),
-		(bfd_byte *) datap + offs);
-	bfd_put_32 (abfd,
-		DADAO_INSN_INCW | (reg << 18) | DADAO_WYDE_ML | ((addr >> 16) & 0xffff),
-		(bfd_byte *) datap + offs + 4);
-	bfd_put_32 (abfd,
-		DADAO_INSN_INCW | (reg << 18) | DADAO_WYDE_MH | ((addr >> 32) & 0xffff),
-		(bfd_byte *) datap + offs + 8);
-	bfd_put_32 (abfd,
-		DADAO_INSN_INCW | (reg << 18) | DADAO_WYDE_H | ((addr >> 48) & 0xffff),
-		(bfd_byte *) datap + offs + 12);
-
-	return bfd_reloc_ok;
+	/* SHOULD NOT BE HERE */
+	return bfd_reloc_notsupported;
 }
 
 /* Set the howto pointer for an DADAO ELF reloc (type RELA).  */
