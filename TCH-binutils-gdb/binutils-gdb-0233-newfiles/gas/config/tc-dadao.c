@@ -31,8 +31,6 @@ static void dadao_fill_nops (char *, int);
    }						\
  while (0)
 
-const char *md_shortopts = "x";
-
 static bfd_vma lowest_text_loc = (bfd_vma) -1;
 static int text_has_contents = 0;
 
@@ -55,26 +53,16 @@ static struct loc_assert_s
    struct loc_assert_s *next;
  } *loc_asserts = NULL;
 
+const char *md_shortopts = "x";
+
 /* Should we automatically expand instructions into multiple insns in
    order to generate working code?  */
 static int expand_op = 1;
 
-/* Should we emit built-in symbols?  */
-static int predefined_syms = 1;
-
-/* Should we allow anything but the listed special register name
-   (e.g. equated symbols)?  */
-static int equated_spec_regs = 1;
-
 struct option md_longopts[] =
  {
 #define OPTION_NOEXPAND  (OPTION_MD_BASE)
-#define OPTION_NOSYMS  (OPTION_NOEXPAND + 1)
-#define OPTION_FIXED_SPEC_REGS  (OPTION_NOSYMS + 1)
    {"no-expand", no_argument, NULL, OPTION_NOEXPAND},
-   {"no-predefined-syms", no_argument, NULL, OPTION_NOSYMS},
-   {"fixed-special-register-names", no_argument, NULL,
-    OPTION_FIXED_SPEC_REGS},
    {NULL, no_argument, NULL, 0}
  };
 
@@ -454,15 +442,6 @@ md_parse_option (int c, const char *arg ATTRIBUTE_UNUSED)
       expand_op = 0;
       break;
 
-    case OPTION_NOSYMS:
-      predefined_syms = 0;
-      equated_spec_regs = 0;
-      break;
-
-    case OPTION_FIXED_SPEC_REGS:
-      equated_spec_regs = 0;
-      break;
-
     default:
       return 0;
     }
@@ -476,14 +455,6 @@ void
 md_show_usage (FILE * stream)
 {
   fprintf (stream, _(" DADAO-specific command line options:\n"));
-  fprintf (stream, _("\
-  -fixed-special-register-names\n\
-                          Allow only the original special register names.\n"));
-  fprintf (stream, _("\
-  -relax                  Create linker relaxable code.\n"));
-  fprintf (stream, _("\
-  -no-predefined-syms     Do not provide dadaoal built-in constants.\n\
-                          Implies -fixed-special-register-names.\n"));
   fprintf (stream, _("\
   -no-expand              Do not expand GETA, branches or JUMP\n\
                           into multiple instructions.\n"));
@@ -513,29 +484,6 @@ void dadao_md_begin (void)
 	 but keeping the registers as symbols helps keep parsing simple.  */
       sprintf (buf, "$%d", i);
       symbol_table_insert (symbol_new (buf, reg_section, i,
-				       &zero_address_frag));
-    }
-
-  /* Insert dadaoal built-in names if allowed.  */
-  if (predefined_syms)
-    {
-      for (i = 0; dadao_spec_regs[i].name != NULL; i++)
-	symbol_table_insert (symbol_new (dadao_spec_regs[i].name,
-					 reg_section,
-					 dadao_spec_regs[i].number + 256,
-					 &zero_address_frag));
-
-      /* FIXME: Perhaps these should be recognized as specials; as field
-	 names for those instructions.  */
-      symbol_table_insert (symbol_new ("ROUND_CURRENT", reg_section, 512,
-				       &zero_address_frag));
-      symbol_table_insert (symbol_new ("ROUND_OFF", reg_section, 512 + 1,
-				       &zero_address_frag));
-      symbol_table_insert (symbol_new ("ROUND_UP", reg_section, 512 + 2,
-				       &zero_address_frag));
-      symbol_table_insert (symbol_new ("ROUND_DOWN", reg_section, 512 + 3,
-				       &zero_address_frag));
-      symbol_table_insert (symbol_new ("ROUND_NEAR", reg_section, 512 + 4,
 				       &zero_address_frag));
     }
 }
@@ -629,9 +577,8 @@ void dadao_md_assemble (char *str)
   /* If this is GET or PUT, and we don't do allow those names to be
      equated, we need to parse the names ourselves, so we don't pick up a
      user label instead of the special register.  */
-  if (! equated_spec_regs
-      && (instruction->operands == dadao_operands_orr0_get
-	  || instruction->operands == dadao_operands_orr0_put))
+  if (instruction->operands == dadao_operands_orr0_get
+	  || instruction->operands == dadao_operands_orr0_put)
     n_operands = get_putget_operands (instruction, operands, exp);
   else
     n_operands = get_operands (operands, exp);
