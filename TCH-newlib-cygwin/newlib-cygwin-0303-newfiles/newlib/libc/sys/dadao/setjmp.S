@@ -22,7 +22,7 @@ setjmp:
 	get	$60, rJ
 	sto	$60, $59, 8
 	sto	$62, $59, 16
-	setl	outret, 0
+	setwl	outret, 0
 
 # Jump through hoops to get the value of rO *before* the setjmp call.
 	geta	$63, 0f
