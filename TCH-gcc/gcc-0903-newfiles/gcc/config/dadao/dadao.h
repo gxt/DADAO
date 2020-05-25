@@ -80,7 +80,7 @@ struct GTY(()) machine_function
 /* User symbols are in the same name-space as built-in symbols, but we
    don't need the built-in symbols, so remove those and instead apply
    stricter operand checking.  Don't warn when expanding insns.  */
-#define ASM_SPEC "-no-predefined-syms -x"
+#define ASM_SPEC "-x"
 
 /* Pass on -mset-program-start=N and -mset-data-start=M to the linker.
    Provide default program start 0x400000 unless -mno-set-program-start.
