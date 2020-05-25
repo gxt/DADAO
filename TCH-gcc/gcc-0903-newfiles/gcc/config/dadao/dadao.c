@@ -74,9 +74,6 @@
    Don't translate while outputting the prologue.  */
 #define DADAO_OUTPUT_REGNO(N)	(N)
 
-/* The %d in "POP %d,0".  */
-#define DADAO_POP_ARGUMENT()	0
-
 /* The canonical saved comparison operands for non-cc0 machines, set in
    the compare expander.  */
 rtx dadao_compare_op0;
@@ -139,7 +136,6 @@ static void dadao_asm_trampoline_template (FILE *);
 static void dadao_trampoline_init (rtx, tree, rtx);
 static void dadao_print_operand (FILE *, rtx, int);
 static void dadao_print_operand_address (FILE *, machine_mode, rtx);
-static bool dadao_print_operand_punct_valid_p (unsigned char);
 static void dadao_conditional_register_usage (void);
 static HOST_WIDE_INT dadao_static_rtx_alignment (machine_mode);
 static HOST_WIDE_INT dadao_constant_alignment (const_tree, HOST_WIDE_INT);
@@ -174,8 +170,6 @@ static HOST_WIDE_INT dadao_starting_frame_offset (void);
 #define TARGET_PRINT_OPERAND dadao_print_operand
 #undef TARGET_PRINT_OPERAND_ADDRESS
 #define TARGET_PRINT_OPERAND_ADDRESS dadao_print_operand_address
-#undef TARGET_PRINT_OPERAND_PUNCT_VALID_P
-#define TARGET_PRINT_OPERAND_PUNCT_VALID_P dadao_print_operand_punct_valid_p
 
 #undef TARGET_ENCODE_SECTION_INFO
 #define TARGET_ENCODE_SECTION_INFO  dadao_encode_section_info
@@ -1428,12 +1422,6 @@ dadao_print_operand (FILE *stream, rtx x, int code)
   switch (code)
     {
       /* Unrelated codes are in alphabetic order.  */
-
-    case '.':
-      /* For the %d in POP %d,0.  */
-      fprintf (stream, "%d", DADAO_POP_ARGUMENT ());
-      return;
-
     case 'B':
       if (GET_CODE (x) != CONST_INT)
 	fatal_insn ("DADAO Internal: Expected a CONST_INT, not this", x);
@@ -1630,17 +1618,6 @@ dadao_print_operand (FILE *stream, rtx x, int code)
       /* We need the original here.  */
       fatal_insn ("DADAO Internal: Cannot decode this operand", x);
     }
-}
-
-/* TARGET_PRINT_OPERAND_PUNCT_VALID_P.  */
-
-static bool
-dadao_print_operand_punct_valid_p (unsigned char code)
-{
-  /* A '+' is used for branch prediction, similar to other ports.  */
-  return code == '+'
-    /* A '.' is used for the %d in the POP %d,0 return insn.  */
-    || code == '.';
 }
 
 /* TARGET_PRINT_OPERAND_ADDRESS.  */
