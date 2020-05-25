@@ -762,7 +762,7 @@ void dadao_md_assemble (char *str)
 		}
 		break;
 
-	case dadao_operands_rrii_rrri_or_sym:
+	case dadao_operands_rsym_rrii_rrri:
 		if (n_operands == 2) {
 			/* The last operand is immediate whenever we see just two operands.  */
 			DDOP_SET_INSN_ALTMODE(opcodep);

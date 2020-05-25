@@ -47,7 +47,7 @@ enum dadao_operands_type {
 	dadao_operands_riii_rrii,	/* ONLY for jump insn, "ra, imm18" or "ra, rb, imm12" */
 	dadao_operands_rjii,		/* The regular "ra, imm16", 2-bit in fc used to indicate H/MH/ML/L */
 	dadao_operands_rrii_rrri,	/* The regular "ra, rb, imm12" or "ra, rb, rc << imm6" */
-	dadao_operands_rrii_rrri_or_sym	/* The regular "ra, rb, imm12" or "ra, rb, rc << imm6" with symbol support */
+	dadao_operands_rsym_rrii_rrri	/* The regular "ra, rb, imm12" or "ra, rb, rc << imm6" with symbol support */
  };
 
 struct dadao_opcode
