@@ -256,7 +256,7 @@ static reloc_howto_type elf_dadao_howto_table[] =
 	   It can silently expand to a 64-bit operand, but will emit an error if
 	   any of the two least significant bits are set.  The howto members
 	   reflect a simple branch.  */
-	HOWTO (R_DADAO_CBRANCH,		/* type */
+	HOWTO (R_DADAO_BRCC,		/* type */
 		2,			/* rightshift */
 		2,			/* size (0 = byte, 1 = short, 2 = long) */
 		20,			/* bitsize */
@@ -264,7 +264,7 @@ static reloc_howto_type elf_dadao_howto_table[] =
 		0,			/* bitpos */
 		complain_overflow_bitfield, /* complain_on_overflow */
 		dadao_elf_reloc,	/* special_function */
-		"R_DADAO_CBRANCH",	/* name */
+		"R_DADAO_BRCC",	/* name */
 		FALSE,			/* partial_inplace */
 		~0x0003ffff,		/* src_mask */
 		0x0003ffff,		/* dst_mask */
@@ -351,7 +351,7 @@ static const struct dadao_reloc_map dadao_reloc_map[] =
     {BFD_RELOC_VTABLE_INHERIT, R_DADAO_GNU_VTINHERIT},
     {BFD_RELOC_VTABLE_ENTRY, R_DADAO_GNU_VTENTRY},
     {BFD_RELOC_DADAO_GETA, R_DADAO_GETA},
-    {BFD_RELOC_DADAO_CBRANCH, R_DADAO_CBRANCH},
+    {BFD_RELOC_DADAO_BRCC, R_DADAO_BRCC},
     {BFD_RELOC_DADAO_CALL, R_DADAO_CALL},
     {BFD_RELOC_DADAO_JUMP, R_DADAO_JUMP},
     {BFD_RELOC_DADAO_LDST, R_DADAO_LDST},
@@ -405,7 +405,7 @@ bfd_elf64_bfd_reloc_name_lookup (bfd *abfd ATTRIBUTE_UNUSED,
     INCMH $N,(foo >> 32) & 0xffff
     INCH $N,(foo >> 48) & 0xffff
 
-   R_DADAO_CBRANCH: (FIXME: Relaxation should break this up, but
+   R_DADAO_BRCC: (FIXME: Relaxation should break this up, but
    condbranches needing relaxation might be rare enough to not be
    worthwhile.)
     Bcc $N,foo
@@ -487,7 +487,7 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 
 		return bfd_reloc_ok;
 
-	case R_DADAO_CBRANCH:
+	case R_DADAO_BRCC:
 		if ((value & 3) != 0)	return bfd_reloc_notsupported;
 
 		insn_origin = bfd_get_32 (abfd, (bfd_byte *) datap);
@@ -918,7 +918,7 @@ dadao_final_link_relocate (reloc_howto_type *howto, asection *input_section,
 	case R_DADAO_LDST:	/* absolute address */
 	/* All these are PC-relative.  */
 	case R_DADAO_GETA:
-	case R_DADAO_CBRANCH:
+	case R_DADAO_BRCC:
 	case R_DADAO_CALL:
 		contents += r_offset;
 

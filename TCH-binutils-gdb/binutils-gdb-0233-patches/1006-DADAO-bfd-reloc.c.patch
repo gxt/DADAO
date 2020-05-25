@@ -21,7 +21,7 @@ index 9ca68ca61da..1d7c0d42ad3 100644
 +ENUMDOC
 +  These are relocations for the GETA instruction.
 +ENUM
-+  BFD_RELOC_DADAO_CBRANCH
++  BFD_RELOC_DADAO_BRCC
 +ENUMDOC
 +  These are relocations for a conditional branch instruction.
 +ENUM

@@ -875,7 +875,7 @@ void dadao_md_assemble (char *str)
 		switch (instruction->type) {
 		case dadao_type_condbranch:
 			if (! expand_op)
-				fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_CBRANCH);
+				fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_BRCC);
 			else
 				frag_var (rs_machine_dependent, DD_INSN_BYTES(4), 0, ENCODE_RELAX (STATE_BCC, STATE_UNDF),
 					exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
@@ -1094,7 +1094,7 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
     break
 
       HANDLE_MAX_RELOC (STATE_GETA, BFD_RELOC_DADAO_GETA);
-      HANDLE_MAX_RELOC (STATE_BCC, BFD_RELOC_DADAO_CBRANCH);
+      HANDLE_MAX_RELOC (STATE_BCC, BFD_RELOC_DADAO_BRCC);
       HANDLE_MAX_RELOC (STATE_CALL, BFD_RELOC_DADAO_CALL);
       HANDLE_MAX_RELOC (STATE_JUMP, BFD_RELOC_DADAO_JUMP);
       HANDLE_MAX_RELOC (STATE_LDST, BFD_RELOC_DADAO_LDST);
@@ -1162,7 +1162,7 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
       break;
 
     case BFD_RELOC_DADAO_GETA:
-    case BFD_RELOC_DADAO_CBRANCH:
+    case BFD_RELOC_DADAO_BRCC:
       /* If this fixup is out of range, punt to the linker to emit an
 	 error.  This should only happen with -no-expand.  */
       if (val < -(((offsetT) 1 << 19)/2)
@@ -1265,7 +1265,7 @@ tc_gen_reloc (asection *section ATTRIBUTE_UNUSED, fixS *fixP)
     case BFD_RELOC_VTABLE_INHERIT:
     case BFD_RELOC_VTABLE_ENTRY:
     case BFD_RELOC_DADAO_GETA:
-    case BFD_RELOC_DADAO_CBRANCH:
+    case BFD_RELOC_DADAO_BRCC:
     case BFD_RELOC_DADAO_CALL:
     case BFD_RELOC_DADAO_JUMP:
     case BFD_RELOC_DADAO_LDST:
