@@ -885,8 +885,8 @@ dadao_asm_trampoline_template (FILE *stream)
   fprintf (stream, "\tldo	%s, $63, 0\n", reg_names[DADAO_STATIC_CHAIN_REGNUM]);
   fprintf (stream, "\tldo	$63, $63, 8\n");
   fprintf (stream, "\tcall	$63, 0\n");
-  fprintf (stream, "1:\t.dd.octa 0\n");
-  fprintf (stream, "\t.dd.octa 0\n");
+  fprintf (stream, "1:\t.dd.o64 0\n");
+  fprintf (stream, "\t.dd.o64 0\n");
 }
 
 /* TARGET_TRAMPOLINE_INIT.  */
@@ -1278,7 +1278,7 @@ dadao_assemble_integer (rtx x, unsigned int size, int aligned_p)
 	    assemble_integer_with_op ("\t.byte\t", x);
 	    return true;
 	  }
-	fputs ("\t.dd.byte\t", asm_out_file);
+	fputs ("\t.dd.b08\t", asm_out_file);
 	dadao_print_operand (asm_out_file, x, 'B');
 	fputc ('\n', asm_out_file);
 	return true;
@@ -1289,7 +1289,7 @@ dadao_assemble_integer (rtx x, unsigned int size, int aligned_p)
 	    aligned_p = 0;
 	    break;
 	  }
-	fputs ("\t.dd.wyde\t", asm_out_file);
+	fputs ("\t.dd.w16\t", asm_out_file);
 	dadao_print_operand (asm_out_file, x, 'W');
 	fputc ('\n', asm_out_file);
 	return true;
@@ -1300,7 +1300,7 @@ dadao_assemble_integer (rtx x, unsigned int size, int aligned_p)
 	    aligned_p = 0;
 	    break;
 	  }
-	fputs ("\t.dd.tetra\t", asm_out_file);
+	fputs ("\t.dd.t32\t", asm_out_file);
 	dadao_print_operand (asm_out_file, x, 'L');
 	fputc ('\n', asm_out_file);
 	return true;
@@ -1310,7 +1310,7 @@ dadao_assemble_integer (rtx x, unsigned int size, int aligned_p)
 	   isn't expressed as CONST_DOUBLE, and DFmode is handled
 	   elsewhere.  */
 	gcc_assert (GET_CODE (x) != CONST_DOUBLE);
-	assemble_integer_with_op ("\t.dd.octa\t", x);
+	assemble_integer_with_op ("\t.dd.o64\t", x);
 	return true;
       }
   return default_assemble_integer (x, size, aligned_p);
@@ -1718,7 +1718,7 @@ dadao_asm_output_addr_diff_elt (FILE *stream,
 			       int value,
 			       int rel)
 {
-  fprintf (stream, "\t.dd.tetra L%d-L%d\n", value, rel);
+  fprintf (stream, "\t.dd.t32 L%d-L%d\n", value, rel);
 }
 
 /* ASM_OUTPUT_ADDR_VEC_ELT.  */
@@ -1726,7 +1726,7 @@ dadao_asm_output_addr_diff_elt (FILE *stream,
 void
 dadao_asm_output_addr_vec_elt (FILE *stream, int value)
 {
-  fprintf (stream, "\t.dd.octa L%d\n", value);
+  fprintf (stream, "\t.dd.o64 L%d\n", value);
 }
 
 /* ASM_OUTPUT_SKIP.  */
@@ -2402,7 +2402,7 @@ static void
 dadao_output_octa (FILE *stream, int64_t value, int do_begin_end)
 {
   if (do_begin_end)
-    fprintf (stream, "\t.dd.octa ");
+    fprintf (stream, "\t.dd.o64 ");
 
   /* Provide a few alternative output formats depending on the number, to
      improve legibility of assembler output.  */

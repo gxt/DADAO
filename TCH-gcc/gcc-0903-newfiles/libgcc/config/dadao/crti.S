@@ -15,21 +15,21 @@
 	.data
 	.p2align 3
 dstart:
-	.dd.octa 2009
+	.dd.o64	2009
 
 	.text
 	.global _start
 
 # The __Stack_start symbol is provided by the link script.
 stackpp:
-	.dd.octa __Stack_start
+	.dd.o64 __Stack_start
 crtstxt:
-	.dd.octa _init
-	.dd.octa __etext
+	.dd.o64	_init
+	.dd.o64	__etext
 
 crtsdat:
-	.dd.octa dstart
-	.dd.octa _end
+	.dd.o64	 dstart
+	.dd.o64	_end
 
 _start:	setwl	$63, 32
 	put	rG, $63
