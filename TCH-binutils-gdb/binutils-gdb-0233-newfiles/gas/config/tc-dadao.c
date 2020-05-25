@@ -257,7 +257,7 @@ dadao_fill_nops (char *opcodep, int n)
     md_number_to_chars (opcodep + i * 4, 0xDADADADA, 4);
 }
 
-/* Get up to three operands, filling them into the exp array.
+/* Get up to four operands, filling them into the exp array.
    General idea and code stolen from the tic80 port.  */
 
 static int
@@ -265,7 +265,7 @@ get_operands (char *s, expressionS *exp)
 {
   char *p = s;
   int numexp = 0;
-  int max_operands = 3;
+  int max_operands = 4;
   int nextchar = ',';
 
   while (nextchar == ',')
@@ -283,7 +283,7 @@ get_operands (char *s, expressionS *exp)
 	{
 	  /* This seems more sane than saying "too many operands".  We'll
 	     get here only if the trailing trash starts with a comma.  */
-	  as_bad (_("invalid operands"));
+	  as_bad (_("too many operands"));
 	  return 0;
 	}
 
@@ -990,12 +990,10 @@ void dadao_md_assemble (char *str)
 			break;
 		}
 
-		/* ONLY for nop: 0xDADADADA */
-		DDOP_SET_FA(opcodep, ((0xDADADA) >> 18) & 63);	/* FA is 0x36 */
-		DDOP_SET_FB(opcodep, ((0xDADADA) >> 12) & 63);
-		DDOP_SET_FC(opcodep, ((0xDADADA) >> 6) & 63);
-		DDOP_SET_FD(opcodep, (0xDADADA) & 63);
-		break;
+		if (instruction->minor_opcode == 0x36) {	/* nop */
+			md_number_to_chars(opcodep, 0xDADADADA, 4);
+			break;
+		}
 
 	default:
 		DADAO_BAD_INSN("unknown instruction operands");

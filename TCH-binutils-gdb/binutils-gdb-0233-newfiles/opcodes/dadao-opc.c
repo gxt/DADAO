@@ -145,6 +145,8 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"ret",		0xDA,		0x01,	0,	OP (o000),		T (jsr)},
 	{"trip",	0xDA,		0x04,	0,	OP (oiii),		T (jsr)},
 	{"trap",	0xDA,		0x20,	0,	OP (oiii),		T (jsr)},
+
+	/* nop is 0xDADADADA, DA is 11011010, so minor-opcode is 110110 */
 	{"nop",		0xDA,		0x36,	0,	OP (o000),		T (normal)},
 
 	{"put",		0xDA,		0x37,	0,	OP (orr0_put),		T (normal)},
