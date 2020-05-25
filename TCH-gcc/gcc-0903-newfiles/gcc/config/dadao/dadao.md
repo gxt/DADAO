@@ -1146,7 +1146,7 @@
   const char *my_template
     = "	geta	$63, 0f\;\
 	put	rJ, $63\;\
-	ldou	$63, %a0, 0\n\
+	ldo	$63, %a0, 0\n\
 0:\;	get	%1, rO\;\
 	cmpu	%1, %1, $63	\;\
 	bnp	%1, 1f\;\
