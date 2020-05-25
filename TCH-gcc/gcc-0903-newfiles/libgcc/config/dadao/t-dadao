@@ -1,4 +1,5 @@
 HOST_LIBGCC2_CFLAGS += -mlibfuncs -O2
+INTERNAL_CFLAGS += -Os
 
 # Don't use global registers in libraries.
 # FIXME: Not applied at "root" level, so disabled at the moment to stop

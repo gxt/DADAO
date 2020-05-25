@@ -136,7 +136,6 @@ static void dadao_asm_trampoline_template (FILE *);
 static void dadao_trampoline_init (rtx, tree, rtx);
 static void dadao_print_operand (FILE *, rtx, int);
 static void dadao_print_operand_address (FILE *, machine_mode, rtx);
-static void dadao_conditional_register_usage (void);
 static HOST_WIDE_INT dadao_static_rtx_alignment (machine_mode);
 static HOST_WIDE_INT dadao_constant_alignment (const_tree, HOST_WIDE_INT);
 static HOST_WIDE_INT dadao_starting_frame_offset (void);
@@ -189,9 +188,6 @@ static HOST_WIDE_INT dadao_starting_frame_offset (void);
 
 #undef TARGET_INIT_LIBFUNCS
 #define TARGET_INIT_LIBFUNCS dadao_init_libfuncs
-
-#undef TARGET_CONDITIONAL_REGISTER_USAGE
-#define TARGET_CONDITIONAL_REGISTER_USAGE dadao_conditional_register_usage
 
 #undef TARGET_HAVE_SPECULATION_SAFE_VALUE
 #define TARGET_HAVE_SPECULATION_SAFE_VALUE speculation_safe_value_not_needed
@@ -345,36 +341,6 @@ dadao_local_alignment (tree type ATTRIBUTE_UNUSED, unsigned basic_align)
     return 32;
 
   return basic_align;
-}
-
-/* TARGET_CONDITIONAL_REGISTER_USAGE.  */
-
-static void
-dadao_conditional_register_usage (void)
-{
-  int i;
-
-      static const int gnu_abi_reg_alloc_order[]
-	= DADAO_GNU_ABI_REG_ALLOC_ORDER;
-
-      for (i = 0; i < FIRST_PSEUDO_REGISTER; i++)
-	reg_alloc_order[i] = gnu_abi_reg_alloc_order[i];
-
-      /* Change the default from the dadaoware ABI.  For the GNU ABI,
-	 $15..$30 are call-saved just as $0..$14.  There must be one
-	 call-clobbered local register for the "hole" that holds the
-	 number of saved local registers saved by PUSHJ/PUSHGO during the
-	 function call, receiving the return value at return.  So best is
-	 to use the highest, $31.  It's already marked call-clobbered for
-	 the dadaoware ABI.  */
-      for (i = 15; i <= 30; i++)
-	call_used_regs[i] = 0;
-
-      /* "Unfix" the parameter registers.  */
-      for (i = DADAO_RESERVED_GNU_ARG_0_REGNUM;
-	   i < DADAO_RESERVED_GNU_ARG_0_REGNUM + DADAO_MAX_ARGS_IN_REGS;
-	   i++)
-	fixed_regs[i] = 0;
 }
 
 /* INCOMING_REGNO and OUTGOING_REGNO worker function.
