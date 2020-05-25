@@ -2393,7 +2393,7 @@ dadao_output_shiftvalue_op_from_str (FILE *stream,
     }
 
   /* No bits set?  Then it must have been zero.  */
-  fprintf (stream, "%sL", mainop);
+  fprintf (stream, "%swl", mainop);
 }
 
 /* Print a 64-bit value, optionally prefixed by assembly pseudo.  */
