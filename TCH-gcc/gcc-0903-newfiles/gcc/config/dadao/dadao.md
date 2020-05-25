@@ -97,7 +97,7 @@
   ""
   "@
 	or	%0, %1, 0
-	setl	%0, 0
+	setwl	%0, 0
 	put	%0, %1
 	get	%0, %1
 	ldt	%0, %1
@@ -110,7 +110,7 @@
   ""
   "@
 	or	%0, %1, 0
-	setl	%0, 0
+	setwl	%0, 0
 	put	%0, %1
 	get	%0, %1
 	ldo	%0, %1
@@ -317,7 +317,7 @@
    (clobber (reg:DI DADAO_rR_REGNUM))]
   "! TARGET_KNUTH_DIVISION"
   "@
-	setl	%0, 1
+	setwl	%0, 1
 	xor	$63, %1, %2	\;\
 	subu	%0, $0, %2	\;\
 	csn	%2, %2, %0	\;\
@@ -349,7 +349,7 @@
    (clobber (reg:DI DADAO_rR_REGNUM))]
   "! TARGET_KNUTH_DIVISION"
   "@
-	setl	%0, 0
+	setwl	%0, 0
 	subu	%0, $0, %2	\;\
 	csn	%2, %2, %0	\;\
 	subu	$63, $0, %1	\;\
@@ -412,7 +412,7 @@
   [(set (match_operand:DF 0 "register_operand" "=r")
 	(abs:DF (match_operand:DF 1 "register_operand" "0")))]
   ""
-	"andnh	%0, 0x8000")
+	"andnwh	%0, 0x8000")
 
 (define_insn "sqrtdf2"
   [(set (match_operand:DF 0 "register_operand" "=r")

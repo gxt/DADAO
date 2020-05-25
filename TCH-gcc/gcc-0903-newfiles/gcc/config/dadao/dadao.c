@@ -2231,7 +2231,7 @@ dadao_output_register_setting (FILE *stream,
   else
     {
       /* The generic case.  2..4 insns.  */
-      static const char *const higher_parts[] = {"l", "ml", "mh", "h"};
+      static const char *const higher_parts[] = {"wl", "wk", "wj", "wh"};
       const char *op = "set";
       const char *line_begin = "";
       int insns = 0;
@@ -2370,7 +2370,7 @@ dadao_output_shiftvalue_op_from_str (FILE *stream,
 				    const char *mainop,
 				    int64_t value)
 {
-  static const char *const op_part[] = {"l", "ml", "mh", "h"};
+  static const char *const op_part[] = {"wl", "wk", "wj", "wh"};
   int i;
 
   if (! dadao_shiftable_wyde_value (value))
