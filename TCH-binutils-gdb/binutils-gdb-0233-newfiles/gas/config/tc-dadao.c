@@ -158,10 +158,10 @@ const relax_typeS dadao_relax_table[] = {
 };
 
 const pseudo_typeS md_pseudo_table[] = {
-	{"dd.byte", cons, 1},
-	{"dd.wyde", cons, 2},
-	{"dd.tetra", cons, 4},
-	{"dd.octa", cons, 8},
+	{"dd.b08", cons, 1},
+	{"dd.w16", cons, 2},
+	{"dd.t32", cons, 4},
+	{"dd.o64", cons, 8},
 
 	{NULL, 0, 0}
  };
