@@ -273,7 +273,7 @@ static reloc_howto_type elf_dadao_howto_table[] =
 	/* A CALL is supposed to reach any (code) address.  By itself, it can
 	   reach +-64M; the expansion can reach all 64 bits.  Note that the 64M
 	   limit is soon reached if you link the program in wildly different
-	   memory segments.  The howto members reflect a trivial JMP.  */
+	   memory segments.  The howto members reflect a trivial JUMP.  */
 	HOWTO (R_DADAO_CALL,		/* type */
 		2,			/* rightshift */
 		2,			/* size (0 = byte, 1 = short, 2 = long) */
@@ -306,11 +306,11 @@ static reloc_howto_type elf_dadao_howto_table[] =
 		0xfff,			/* dst_mask */
 		FALSE),			/* pcrel_offset */
 
-  /* A JMP is supposed to reach any (code) address.  By itself, it can
+  /* A JUMP is supposed to reach any (code) address.  By itself, it can
      reach +-64M; the expansion can reach all 64 bits.  Note that the 64M
      limit is soon reached if you link the program in wildly different
-     memory segments.  The howto members reflect a trivial JMP.  */
-  HOWTO (R_DADAO_JMP,		/* type */
+     memory segments.  The howto members reflect a trivial JUMP.  */
+  HOWTO (R_DADAO_JUMP,		/* type */
 	 2,			/* rightshift */
 	 2,			/* size (0 = byte, 1 = short, 2 = long) */
 	 27,			/* bitsize */
@@ -318,7 +318,7 @@ static reloc_howto_type elf_dadao_howto_table[] =
 	 0,			/* bitpos */
 	 complain_overflow_signed, /* complain_on_overflow */
 	 dadao_elf_reloc,	/* special_function */
-	 "R_DADAO_JMP",		/* name */
+	 "R_DADAO_JUMP",		/* name */
 	 FALSE,			/* partial_inplace */
 	 ~0x1ffffff,		/* src_mask */
 	 0x1ffffff,		/* dst_mask */
@@ -353,7 +353,7 @@ static const struct dadao_reloc_map dadao_reloc_map[] =
     {BFD_RELOC_DADAO_GETA, R_DADAO_GETA},
     {BFD_RELOC_DADAO_CBRANCH, R_DADAO_CBRANCH},
     {BFD_RELOC_DADAO_CALL, R_DADAO_CALL},
-    {BFD_RELOC_DADAO_JMP, R_DADAO_JMP},
+    {BFD_RELOC_DADAO_JUMP, R_DADAO_JUMP},
     {BFD_RELOC_DADAO_LDST, R_DADAO_LDST},
   };
 
@@ -424,8 +424,8 @@ bfd_elf64_bfd_reloc_name_lookup (bfd *abfd ATTRIBUTE_UNUSED,
     INCML ...
     CALL $3, foo & 0xffff
 
-   R_DADAO_JMP: (FIXME: Relaxation...)
-    JMP foo
+   R_DADAO_JUMP: (FIXME: Relaxation...)
+    JUMP foo
    ->
     SETL $255,foo & ...
     INCML ...
@@ -560,7 +560,7 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 
 		return bfd_reloc_ok;
 
-    case R_DADAO_JMP:
+    case R_DADAO_JUMP:
       /* This one is a little special.  If we get here on a non-relaxing
 	 link, and the destination is actually in range, we don't need to
 	 execute the nops.
@@ -576,7 +576,7 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 					 bfd_arch_bits_per_address (abfd),
 					 value)) == bfd_reloc_ok))
 	{
-	  /* If the relocation doesn't fit in a JMP, we let the NOP:s be
+	  /* If the relocation doesn't fit in a JUMP, we let the NOP:s be
 	     modified below, and put a "GO $0,$0,0" after the
 	     address-loading sequence.  */
 	  bfd_put_32 (abfd,
@@ -913,7 +913,7 @@ dadao_final_link_relocate (reloc_howto_type *howto, asection *input_section,
 
   switch (howto->type)
     {
-    case R_DADAO_JMP:
+    case R_DADAO_JUMP:
 
 	case R_DADAO_LDST:	/* absolute address */
 	/* All these are PC-relative.  */

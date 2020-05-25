@@ -29,9 +29,9 @@ index 9ca68ca61da..1d7c0d42ad3 100644
 +ENUMDOC
 +  These are relocations for the CALL instruction.
 +ENUM
-+  BFD_RELOC_DADAO_JMP
++  BFD_RELOC_DADAO_JUMP
 +ENUMDOC
-+  These are relocations for the JMP instruction.
++  These are relocations for the JUMP instruction.
 +ENUM
 +  BFD_RELOC_DADAO_LDST
 +ENUMDOC

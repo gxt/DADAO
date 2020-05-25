@@ -19,7 +19,7 @@ static int get_operands (char *, expressionS *);
 static int get_putget_operands (struct dadao_opcode *, char *, expressionS *);
 static void dd_set_addr_offset(char *, offsetT, int);
 static void dd_set_data_addr_offset(char *, offsetT, int);
-static void dadao_set_jmp_offset (char *, offsetT);
+static void dadao_set_jump_offset (char *, offsetT);
 static void dadao_fill_nops (char *, int);
 
 /* Copy the location of a frag to a fix.  */
@@ -87,7 +87,7 @@ static struct hash_control *dadao_opcode_hash;
    3. CALL
       extra length: zero or four insns.
 
-   4. JMP
+   4. JUMP
       extra length: zero or four insns.
 
    5. LDST
@@ -97,7 +97,7 @@ static struct hash_control *dadao_opcode_hash;
 #define STATE_GETA	(1)
 #define STATE_BCC	(2)
 #define STATE_CALL	(3)
-#define STATE_JMP	(4)
+#define STATE_JUMP	(4)
 #define STATE_LDST	(5)
 
 /* No fine-grainedness here.  */
@@ -144,10 +144,10 @@ const relax_typeS dadao_relax_table[] = {
    /* CALL (3, 1).  */
    {0,		0,		DD_INSN_BYTES(3),	0},
 
-   /* JMP (4, 0).  */
-   {(1 << 18),	-(1 << 18),	0,			ENCODE_RELAX (STATE_JMP, STATE_MAX)},
+   /* JUMP (4, 0).  */
+   {(1 << 18),	-(1 << 18),	0,			ENCODE_RELAX (STATE_JUMP, STATE_MAX)},
 
-   /* JMP (4, 1).  */
+   /* JUMP (4, 1).  */
    {0,		0,		DD_INSN_BYTES(4),	0},
 
    /* LDST (5, 0).  */
@@ -219,10 +219,10 @@ static void dd_set_data_addr_offset(char *opcodep, offsetT value, int bitcount)
 	}
 }
 
-/* Fill in the offset-related part of JMP.  */
+/* Fill in the offset-related part of JUMP.  */
 
 static void
-dadao_set_jmp_offset (char *opcodep, offsetT value)
+dadao_set_jump_offset (char *opcodep, offsetT value)
 {
   if (value < 0)
     {
@@ -234,7 +234,7 @@ dadao_set_jmp_offset (char *opcodep, offsetT value)
   md_number_to_chars (opcodep + 1, value, 3);
 }
 
-/* Fill in NOP:s for the expanded part of GETA/JMP/Bcc.  */
+/* Fill in NOP:s for the expanded part of GETA/JUMP/Bcc.  */
 
 static void
 dadao_fill_nops (char *opcodep, int n)
@@ -844,12 +844,12 @@ void dadao_md_assemble (char *str)
 			DDOP_SET_FC(opcodep, ((exp[1].X_add_number) >> 6) & 0x3F);
 			DDOP_SET_FD(opcodep, (exp[1].X_add_number) & 0x3F);
 
-			/* Add a frag for a JMP relaxation; we need room for max four extra instructions.
+			/* Add a frag for a JUMP relaxation; we need room for max four extra instructions.
 			   We don't do any work around here to check if we can determine the offset right away.  */
 			//if (! expand_op)
-			//	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_JMP);
+			//	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_JUMP);
 			//else
-			//	frag_var (rs_machine_dependent, 4 * 4, 0, ENCODE_RELAX (STATE_JMP, STATE_UNDF),
+			//	frag_var (rs_machine_dependent, 4 * 4, 0, ENCODE_RELAX (STATE_JUMP, STATE_UNDF),
 			//		exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
 
 		} else {	/* (n_operands == 3) */
@@ -905,7 +905,7 @@ void dadao_md_assemble (char *str)
 			/* The last operand is imm18 whenever we see just two operands.  */
 			DDOP_SET_INSN_ALTMODE(opcodep);
 
-			/* Add a frag for a JMP relaxation; we need room for max four extra instructions.
+			/* Add a frag for a JUMP relaxation; we need room for max four extra instructions.
 			   We don't do any work around here to check if we can determine the offset right away.  */
 			if (! expand_op)
 				fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_CALL);
@@ -973,7 +973,7 @@ md_estimate_size_before_relax (fragS *fragP, segT segment)
 	break;
       HANDLE_RELAXABLE (STATE_BCC);
 	break;
-      HANDLE_RELAXABLE (STATE_JMP);
+      HANDLE_RELAXABLE (STATE_JUMP);
 	break;
       HANDLE_RELAXABLE (STATE_CALL);
 	break;
@@ -984,7 +984,7 @@ md_estimate_size_before_relax (fragS *fragP, segT segment)
     case ENCODE_RELAX (STATE_LDST, STATE_ZERO):
     case ENCODE_RELAX (STATE_GETA, STATE_ZERO):
     case ENCODE_RELAX (STATE_BCC, STATE_ZERO):
-    case ENCODE_RELAX (STATE_JMP, STATE_ZERO):
+    case ENCODE_RELAX (STATE_JUMP, STATE_ZERO):
       /* When relaxing a section for the second time, we don't need to do
 	 anything except making sure that fr_var is set right.  */
       break;
@@ -1078,8 +1078,8 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
 		var_part_size = 0;
 		break;
 
-    case ENCODE_RELAX (STATE_JMP, STATE_ZERO):
-      dadao_set_jmp_offset (opcodep, target_address - opcode_address);
+    case ENCODE_RELAX (STATE_JUMP, STATE_ZERO):
+      dadao_set_jump_offset (opcodep, target_address - opcode_address);
       var_part_size = 0;
       break;
 
@@ -1096,7 +1096,7 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
       HANDLE_MAX_RELOC (STATE_GETA, BFD_RELOC_DADAO_GETA);
       HANDLE_MAX_RELOC (STATE_BCC, BFD_RELOC_DADAO_CBRANCH);
       HANDLE_MAX_RELOC (STATE_CALL, BFD_RELOC_DADAO_CALL);
-      HANDLE_MAX_RELOC (STATE_JMP, BFD_RELOC_DADAO_JMP);
+      HANDLE_MAX_RELOC (STATE_JUMP, BFD_RELOC_DADAO_JUMP);
       HANDLE_MAX_RELOC (STATE_LDST, BFD_RELOC_DADAO_LDST);
 
     default:
@@ -1176,7 +1176,7 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
       break;
 
     case BFD_RELOC_DADAO_CALL:
-    case BFD_RELOC_DADAO_JMP:
+    case BFD_RELOC_DADAO_JUMP:
       /* If this fixup is out of range, punt to the linker to emit an
 	 error.  This should only happen with -no-expand.  */
       if (val < -(((offsetT) 1 << 27)/2)
@@ -1186,7 +1186,7 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
 	  fixP->fx_done = 0;
 	  val = 0;
 	}
-      dadao_set_jmp_offset (buf, val);
+      dadao_set_jump_offset (buf, val);
       break;
 
     case BFD_RELOC_DADAO_LDST:
@@ -1267,7 +1267,7 @@ tc_gen_reloc (asection *section ATTRIBUTE_UNUSED, fixS *fixP)
     case BFD_RELOC_DADAO_GETA:
     case BFD_RELOC_DADAO_CBRANCH:
     case BFD_RELOC_DADAO_CALL:
-    case BFD_RELOC_DADAO_JMP:
+    case BFD_RELOC_DADAO_JUMP:
     case BFD_RELOC_DADAO_LDST:
       code = fixP->fx_r_type;
       break;
