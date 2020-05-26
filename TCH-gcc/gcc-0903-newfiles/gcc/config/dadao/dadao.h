@@ -31,7 +31,6 @@
 #define DADAO_REMAINDER_REGNUM DADAO_rR_REGNUM
 #define DADAO_ARG_POINTER_REGNUM 261
 #define DADAO_rO_REGNUM 262
-#define DADAO_LAST_STACK_REGISTER_REGNUM 31
 
 /* Four registers; "ideally, these registers should be call-clobbered", so
    just grab a bunch of the common clobbered registers.  FIXME: Last
@@ -62,7 +61,6 @@
 struct GTY(()) machine_function
  {
    int has_landing_pad;
-   int highest_saved_stack_register;
    int in_prologue;
  };
 
@@ -238,11 +236,6 @@ struct GTY(()) machine_function
 #define INCOMING_REGNO(OUT) dadao_opposite_regno (OUT, 0)
 
 #define OUTGOING_REGNO(IN) dadao_opposite_regno (IN, 1)
-
-/* Defining LOCAL_REGNO is necessary in presence of prologue/epilogue,
-   else GCC will be confused that those registers aren't saved and
-   restored.  */
-#define LOCAL_REGNO(REGNO) dadao_local_regno (REGNO)
 
 /* Node: Allocation Order */
 /* (empty) */

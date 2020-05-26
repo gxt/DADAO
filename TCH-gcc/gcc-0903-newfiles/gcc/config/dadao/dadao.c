@@ -103,7 +103,6 @@ static reg_class_t dadao_preferred_reload_class (rtx, reg_class_t);
 static reg_class_t dadao_preferred_output_reload_class (rtx, reg_class_t);
 static bool dadao_legitimate_address_p (machine_mode, rtx, bool);
 static bool dadao_legitimate_constant_p (machine_mode, rtx);
-static void dadao_reorg (void);
 static void dadao_asm_output_mi_thunk
   (FILE *, tree, HOST_WIDE_INT, HOST_WIDE_INT, tree);
 static void dadao_setup_incoming_varargs
@@ -199,9 +198,6 @@ static HOST_WIDE_INT dadao_starting_frame_offset (void);
 
 #undef TARGET_REGISTER_MOVE_COST
 #define TARGET_REGISTER_MOVE_COST dadao_register_move_cost
-
-#undef TARGET_MACHINE_DEPENDENT_REORG
-#define TARGET_MACHINE_DEPENDENT_REORG dadao_reorg
 
 #undef TARGET_PROMOTE_FUNCTION_MODE
 #define TARGET_PROMOTE_FUNCTION_MODE dadao_promote_function_mode
@@ -379,16 +375,6 @@ dadao_opposite_regno (int regno, int incoming)
     regno - (incoming
 	     ? DADAO_FIRST_INCOMING_ARG_REGNUM - DADAO_FIRST_ARG_REGNUM
 	     : DADAO_FIRST_ARG_REGNUM - DADAO_FIRST_INCOMING_ARG_REGNUM);
-}
-
-/* LOCAL_REGNO.
-   All registers that are part of the register stack and that will be
-   saved are local.  */
-
-int
-dadao_local_regno (int regno)
-{
-  return regno <= DADAO_LAST_STACK_REGISTER_REGNUM && !call_used_regs[regno];
 }
 
 /* TARGET_PREFERRED_RELOAD_CLASS.
@@ -736,29 +722,6 @@ static void
 dadao_target_asm_function_end_prologue (FILE *stream ATTRIBUTE_UNUSED)
 {
   cfun->machine->in_prologue = 0;
-}
-
-/* Implement TARGET_MACHINE_DEPENDENT_REORG.  No actual rearrangements
-   done here; just virtually by calculating the highest saved stack
-   register number used to modify the register numbers at output time.  */
-
-static void
-dadao_reorg (void)
-{
-  int regno;
-
-  /* We put the number of the highest saved register-file register in a
-     location convenient for the call-patterns to output.  Note that we
-     don't tell dwarf2 about these registers, since it can't restore them
-     anyway.  */
-  for (regno = DADAO_LAST_STACK_REGISTER_REGNUM;
-       regno >= 0;
-       regno--)
-    if ((df_regs_ever_live_p (regno) && !call_used_regs[regno])
-	|| (regno == DADAO_FRAME_POINTER_REGNUM && frame_pointer_needed))
-      break;
-
-  cfun->machine->highest_saved_stack_register = regno;
 }
 
 /* TARGET_ASM_FUNCTION_EPILOGUE.  */
@@ -1474,15 +1437,6 @@ dadao_print_operand (FILE *stream, rtx x, int code)
 	}
       fprintf (stream, "%" PRId64,
 	       (int64_t) (dadao_intval (x) - 1));
-      return;
-
-    case 'p':
-      /* Store the number of registers we want to save.  This was setup
-	 by the prologue.  The actual operand contains the number of
-	 registers to pass, but we don't use it currently.  Anyway, we
-	 need to output the number of saved registers here.  */
-      fprintf (stream, "%d",
-	       cfun->machine->highest_saved_stack_register + 1);
       return;
 
     case 'r':
