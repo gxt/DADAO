@@ -23,8 +23,8 @@
 #define DADAO_OUTGOING_RETURN_VALUE_REGNUM (DADAO_RESERVED_GNU_ARG_0_REGNUM)
 #define DADAO_STRUCT_VALUE_REGNUM 251
 #define DADAO_STATIC_CHAIN_REGNUM 252
-#define DADAO_FRAME_POINTER_REGNUM 253
-#define DADAO_STACK_POINTER_REGNUM 254
+#define DADAO_FRAME_POINTER_REGNUM		65
+#define DADAO_STACK_POINTER_REGNUM		66
 #define DADAO_LAST_GENERAL_REGISTER 255
 #define DADAO_INCOMING_RETURN_ADDRESS_REGNUM DADAO_rJ_REGNUM
 #define DADAO_HIMULT_REGNUM 258
@@ -201,7 +201,7 @@ struct GTY(()) machine_function
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
-	1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, \
+	1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, \
 	/* 256 ~ 287 */					\
 	1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
@@ -227,7 +227,7 @@ struct GTY(()) machine_function
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, \
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	/* 256 ~ 287 */					\
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
@@ -349,11 +349,11 @@ enum reg_class {
  dadao_asm_preferred_eh_data_format (CODE, GLOBAL)
 
 /* Node: Frame Registers */
-#define STACK_POINTER_REGNUM DADAO_STACK_POINTER_REGNUM
+#define STACK_POINTER_REGNUM	DADAO_STACK_POINTER_REGNUM
 
 /* Perhaps we can use HARD_FRAME_POINTER_REGNUM and decide later on
    what register we want to use.  */
-#define FRAME_POINTER_REGNUM DADAO_FRAME_POINTER_REGNUM
+#define FRAME_POINTER_REGNUM	DADAO_FRAME_POINTER_REGNUM
 #define ARG_POINTER_REGNUM DADAO_ARG_POINTER_REGNUM
 
 #define STATIC_CHAIN_REGNUM DADAO_STATIC_CHAIN_REGNUM
@@ -563,7 +563,7 @@ typedef struct { int regs; int lib; } CUMULATIVE_ARGS;
 	"N.A.24", "N.A.25", "N.A.26", "N.A.27", "N.A.28", "N.A.29", "N.A.30", "N.A.31" }
 
 #define ADDITIONAL_REGISTER_NAMES			\
- {{"sp", 254}, {"rD", 256}, {"rE", 257},	\
+ {{"sp", 66}, {"rD", 256}, {"rE", 257},	\
   {"rH", 258}, {"rJ", DADAO_rJ_REGNUM}, {"rO", DADAO_rO_REGNUM}}
 
 #define ASM_OUTPUT_REG_PUSH(STREAM, REGNO) \
