@@ -1,0 +1,26 @@
+From f8c851a016ab401824d9a298341a1554944d2a15 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Tue, 26 May 2020 01:32:12 +0000
+Subject: [PATCH] DADAO-fixup: newlib/libc/stdio/Makefile.in for vfiwprintf.o
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ newlib/libc/stdio/Makefile.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/newlib/libc/stdio/Makefile.in b/newlib/libc/stdio/Makefile.in
+index e342532af..bcdffc900 100644
+--- a/newlib/libc/stdio/Makefile.in
++++ b/newlib/libc/stdio/Makefile.in
+@@ -1913,7 +1913,7 @@ $(lpfx)svfiprintf.$(oext): vfprintf.c
+ 	$(LIB_COMPILE) -DINTEGER_ONLY -DSTRING_ONLY -c $(srcdir)/vfprintf.c -o $@
+ 
+ $(lpfx)vfiwprintf.$(oext): vfwprintf.c
+-	$(LIB_COMPILE) -DINTEGER_ONLY -c $(srcdir)/vfwprintf.c -o $@
++	$(LIB_COMPILE) -O2 -DINTEGER_ONLY -c $(srcdir)/vfwprintf.c -o $@
+ 
+ $(lpfx)svfwprintf.$(oext): vfwprintf.c
+ 	$(LIB_COMPILE) -O1 -DSTRING_ONLY -c $(srcdir)/vfwprintf.c -o $@
+-- 
+2.17.1
+
