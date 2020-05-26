@@ -73,30 +73,28 @@ struct GTY(()) machine_function
    the opposite, since we don't have to care about old littering and
    soon outdated generic comments.  */
 
-/* Node: Driver */
+/* Node: Controlling the Compilation Driver */
 
 /* User symbols are in the same name-space as built-in symbols, but we
    don't need the built-in symbols, so remove those and instead apply
    stricter operand checking.  Don't warn when expanding insns.  */
-#define ASM_SPEC "-x"
+#define ASM_SPEC			"-x"
 
 /* Pass on -mset-program-start=N and -mset-data-start=M to the linker.
    Provide default program start 0x400000 unless -mno-set-program-start.
    Don't do this if linking relocatably, with -r.  For a final link,
    produce mmo, unless ELF is requested or when linking relocatably.  */
-#define LINK_SPEC \
- "%{mset-program-start=*:--defsym __.DADAO.start..text=%*}\
-  %{mset-data-start=*:--defsym __.DADAO.start..data=%*}\
-  %{!mset-program-start=*:\
-    %{!mno-set-program-start:\
-     %{!r:--defsym __.DADAO.start..text=0x400000}}}\
+#define LINK_SPEC						\
+ "%{mset-program-start=*:--defsym __.DADAO.start..text=%*}	\
+  %{mset-data-start=*:--defsym __.DADAO.start..data=%*}		\
+  %{!mset-program-start=*:					\
+    %{!mno-set-program-start:					\
+     %{!r:--defsym __.DADAO.start..text=0x400000}}}		\
   %{melf|r:-m elf64_dadao}"
 
 /* FIXME: There's no provision for profiling here.  */
-#define STARTFILE_SPEC  \
-  "crti%O%s crtbegin%O%s"
-
-#define ENDFILE_SPEC "crtend%O%s crtn%O%s"
+#define STARTFILE_SPEC			"crti%O%s crtbegin%O%s"
+#define ENDFILE_SPEC			"crtend%O%s crtn%O%s"
 
 /* Node: Run-time Target */
 
