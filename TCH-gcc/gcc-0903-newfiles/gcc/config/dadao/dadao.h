@@ -73,7 +73,20 @@ struct GTY(()) machine_function
    the opposite, since we don't have to care about old littering and
    soon outdated generic comments.  */
 
-/* Node: Controlling the Compilation Driver */
+/* XXX gccint Chapter 18: Target Description Macros and Functions */
+
+/* XXX gccint 18.1 Node: The Global targetm Variable */
+
+/* targetm variable and targetm_common variable */
+/*
+  in gcc/config/dadao/dadao.c:
+	struct gcc_target targetm = TARGET_INITIALIZER;
+
+  in gcc/common/config/dadao/dadao-common.c
+	struct gcc_targetm_common targetm_common = TARGETM_COMMON_INITIALIZER;
+ */
+
+/* XXX gccint 18.2 Node: Controlling the Compilation Driver, gcc */
 
 /* User symbols are in the same name-space as built-in symbols, but we
    don't need the built-in symbols, so remove those and instead apply
@@ -96,16 +109,13 @@ struct GTY(()) machine_function
 #define STARTFILE_SPEC			"crti%O%s crtbegin%O%s"
 #define ENDFILE_SPEC			"crtend%O%s crtn%O%s"
 
-/* Node: Run-time Target */
+/* XXX gccint 18.3 Node: Run-time Target Specification */
 
-/* Define __LONG_MAX__, since we're advised not to change glimits.h.  */
 #define TARGET_CPU_CPP_BUILTINS()				\
-  do								\
-    {								\
-      builtin_define ("__dadao__");				\
-      builtin_define ("__DADAO__");				\
-    }								\
-  while (0)
+	do {							\
+		builtin_define ("__dadao__");			\
+		builtin_define ("__DADAO__");			\
+	} while (0)
 
 #define TARGET_DEFAULT (MASK_BASE_ADDRESSES | MASK_USE_RETURN_INSN)
 
