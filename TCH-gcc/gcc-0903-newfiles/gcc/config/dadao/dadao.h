@@ -129,22 +129,15 @@ struct GTY(()) machine_function
 #define	STRICT_ALIGNMENT		1
 #define	PCC_BITFIELD_TYPE_MATTERS	1
 
+/* XXX gccint 18.6 Node: Layout of Source Language Data Types */
+#define	INT_TYPE_SIZE			32
+#define	LONG_LONG_TYPE_SIZE		64
 
-/* Node: Type Layout */
+#define	FLOAT_TYPE_SIZE			32
+#define	DOUBLE_TYPE_SIZE		64
+#define	LONG_DOUBLE_TYPE_SIZE		64
 
-/* It might seem more natural to have 64-bit ints on a 64-bit machine,
-   but then an occasional DADAO programmer needs to know how to put a lot
-   of __attribute__ stuff to get to the 8, 16 and 32-bit modes rather
-   than the "intuitive" char, short and int types.  */
-#define INT_TYPE_SIZE 32
-#define SHORT_TYPE_SIZE 16
-#define LONG_LONG_TYPE_SIZE 64
-
-#define FLOAT_TYPE_SIZE 32
-#define DOUBLE_TYPE_SIZE 64
-#define LONG_DOUBLE_TYPE_SIZE 64
-
-#define DEFAULT_SIGNED_CHAR 1
+#define	DEFAULT_SIGNED_CHAR		0
 
 
 /* Node: Register Basics */

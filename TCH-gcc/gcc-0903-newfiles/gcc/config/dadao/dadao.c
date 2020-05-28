@@ -291,6 +291,8 @@ static struct machine_function * dadao_init_machine_status (void)
 /* XXX gccint 18.5 Node: Storage Layout */
 /* (empty) */
 
+/* XXX gccint 18.6 Node: Layout of Source Language Data Types */
+/* (empty) */
 
 /* INCOMING_REGNO and OUTGOING_REGNO worker function.
    Those two macros must only be applied to function argument
