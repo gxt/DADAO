@@ -139,14 +139,14 @@ struct GTY(()) machine_function
 
 #define	DEFAULT_SIGNED_CHAR		0
 
+/* XXX gccint 18.7 Node: Register Usage */
 
-/* Node: Register Basics */
-
-#define FIRST_PSEUDO_REGISTER			(256 + 32)
+/* XXX gccint 18.7.1 Node: Basic Characteristics of Registers */
+#define	FIRST_PSEUDO_REGISTER		(256 + 32)
 
 #define FIXED_REGISTERS {				\
 	/* 0 ~ 63 */					\
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
@@ -172,7 +172,7 @@ struct GTY(()) machine_function
 
 #define CALL_USED_REGISTERS {				\
 	/* 0 ~ 63 */					\
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,	\
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,	\
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
@@ -196,14 +196,18 @@ struct GTY(()) machine_function
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 }
 
-#define INCOMING_REGNO(OUT) dadao_opposite_regno (OUT, 0)
+#define	PC_REGNUM			64
 
-#define OUTGOING_REGNO(IN) dadao_opposite_regno (IN, 1)
-
-/* Node: Allocation Order */
+/* XXX gccint 18.7.2 Node: Order of Allocation of Registers */
 /* (empty) */
 
-/* Node: Leaf Functions */
+/* XXX gccint 18.7.3 Node: How Values Fit in Registers */
+/* (empty) */
+
+/* XXX gccint 18.7.4 Node: Handling Leaf Functions */
+/* (empty) */
+
+/* XXX gccint 18.7.5 Node: Registers That Form a Stack */
 /* (empty) */
 
 

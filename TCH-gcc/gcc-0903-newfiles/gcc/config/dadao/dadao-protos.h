@@ -25,7 +25,6 @@ extern void dadao_asm_output_align (FILE *, int);
 extern int64_t dadao_intval (const_rtx);
 extern int dadao_shiftable_wyde_value (uint64_t);
 extern void dadao_output_register_setting (FILE *, int, int64_t, int);
-extern int dadao_opposite_regno (int, int);
 extern unsigned dadao_dbx_register_number (unsigned);
 extern int dadao_use_simple_return (void);
 extern void dadao_make_decl_one_only (tree);

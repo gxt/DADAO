@@ -294,43 +294,6 @@ static struct machine_function * dadao_init_machine_status (void)
 /* XXX gccint 18.6 Node: Layout of Source Language Data Types */
 /* (empty) */
 
-/* INCOMING_REGNO and OUTGOING_REGNO worker function.
-   Those two macros must only be applied to function argument
-   registers and the function return value register for the opposite
-   use.  FIXME: for their current use in gcc, it'd be better with an
-   explicit specific additional FUNCTION_INCOMING_ARG_REGNO_P a'la
-   TARGET_FUNCTION_ARG / TARGET_FUNCTION_INCOMING_ARG instead of
-   forcing the target to commit to a fixed mapping and for any
-   unspecified register use.  Particularly when thinking about the
-   return-value, it is better to imagine INCOMING_REGNO and
-   OUTGOING_REGNO as named CALLEE_TO_CALLER_REGNO and INNER_REGNO as
-   named CALLER_TO_CALLEE_REGNO because the direction.  The "incoming"
-   and "outgoing" is from the perspective of the parameter-registers,
-   but the same macro is (must be, lacking an alternative like
-   suggested above) used to map the return-value-register from the
-   same perspective.  To make directions even more confusing, the macro
-   DADAO_OUTGOING_RETURN_VALUE_REGNUM holds the number of the register
-   in which to return a value, i.e. INCOMING_REGNO for the return-value-
-   register as received from a called function; the return-value on the
-   way out.  */
-
-int
-dadao_opposite_regno (int regno, int incoming)
-{
-  if (incoming && regno == DADAO_OUTGOING_RETURN_VALUE_REGNUM)
-    return DADAO_RETURN_VALUE_REGNUM;
-
-  if (!incoming && regno == DADAO_RETURN_VALUE_REGNUM)
-    return DADAO_OUTGOING_RETURN_VALUE_REGNUM;
-
-  if (!dadao_function_arg_regno_p (regno, incoming))
-    return regno;
-
-  return
-    regno - (incoming
-	     ? DADAO_FIRST_INCOMING_ARG_REGNUM - DADAO_FIRST_ARG_REGNUM
-	     : DADAO_FIRST_ARG_REGNUM - DADAO_FIRST_INCOMING_ARG_REGNUM);
-}
 
 /* TARGET_PREFERRED_RELOAD_CLASS.
    We need to extend the reload class of REMAINDER_REG and HIMULT_REG.  */
