@@ -114,48 +114,20 @@ struct GTY(()) machine_function
 /* XXX gccint 18.4 Node: Defining data structures for per-function information */
 #define INIT_EXPANDERS			dadao_init_expanders ()
 
-/* Node: Storage Layout */
-/* I see no bit-field instructions.  Anyway, the common order is from low
-   to high, as the power of two, hence little-endian.  */
-#define BITS_BIG_ENDIAN 0
-#define BYTES_BIG_ENDIAN 1
-#define WORDS_BIG_ENDIAN 1
-#define FLOAT_WORDS_BIG_ENDIAN 1
-#define UNITS_PER_WORD 8
+/* XXX gccint 18.5 Node: Storage Layout */
+#define	BITS_BIG_ENDIAN			0
+#define	BYTES_BIG_ENDIAN		1
+#define	WORDS_BIG_ENDIAN		1
+#define	FLOAT_WORDS_BIG_ENDIAN		1
+#define	UNITS_PER_WORD			8
 
-/* We need to align everything to 64 bits that can affect the alignment
-   of other types.  Since address N is interpreted in DADAO as (N modulo
-   access_size), we must align.  */
-#define PARM_BOUNDARY 64
-#define STACK_BOUNDARY 64
-#define FUNCTION_BOUNDARY 32
-#define BIGGEST_ALIGNMENT 64
+#define	PARM_BOUNDARY			64
+#define	STACK_BOUNDARY			64
+#define	FUNCTION_BOUNDARY		32
+#define	BIGGEST_ALIGNMENT		64
 
-/* This one is only used in the ADA front end.  */
-#define MINIMUM_ATOMIC_ALIGNMENT 8
-
-/* Copied from elfos.h.  */
-#define MAX_OFILE_ALIGNMENT (32768 * 8)
-
-#define DATA_ABI_ALIGNMENT(TYPE, BASIC_ALIGN) \
- dadao_data_alignment (TYPE, BASIC_ALIGN)
-
-#define LOCAL_ALIGNMENT(TYPE, BASIC_ALIGN) \
- dadao_local_alignment (TYPE, BASIC_ALIGN)
-
-/* Following other ports, this seems to most commonly be the word-size,
-   so let's do that here too.  */
-#define EMPTY_FIELD_BOUNDARY 64
-
-/* We chose to have this low solely for similarity with the alpha.  It has
-   nothing to do with passing the tests dg/c99-scope-2 and
-   execute/align-1.c.  Nothing.  Though the tests seem wrong.  Padding of
-   the structure is automatically added to get alignment when needed if we
-   set this to just byte-boundary.  */
-#define STRUCTURE_SIZE_BOUNDARY 8
-
-/* The lower bits are ignored.  */
-#define STRICT_ALIGNMENT 1
+#define	STRICT_ALIGNMENT		1
+#define	PCC_BITFIELD_TYPE_MATTERS	1
 
 
 /* Node: Type Layout */

@@ -135,8 +135,6 @@ static void dadao_asm_trampoline_template (FILE *);
 static void dadao_trampoline_init (rtx, tree, rtx);
 static void dadao_print_operand (FILE *, rtx, int);
 static void dadao_print_operand_address (FILE *, machine_mode, rtx);
-static HOST_WIDE_INT dadao_static_rtx_alignment (machine_mode);
-static HOST_WIDE_INT dadao_constant_alignment (const_tree, HOST_WIDE_INT);
 static HOST_WIDE_INT dadao_starting_frame_offset (void);
 
 /* Target structure macros.  Listed by node.  See `Using and Porting GCC'
@@ -245,11 +243,6 @@ static HOST_WIDE_INT dadao_starting_frame_offset (void);
 #undef TARGET_TRAMPOLINE_INIT
 #define TARGET_TRAMPOLINE_INIT dadao_trampoline_init
 
-#undef TARGET_STATIC_RTX_ALIGNMENT
-#define TARGET_STATIC_RTX_ALIGNMENT dadao_static_rtx_alignment
-#undef TARGET_CONSTANT_ALIGNMENT
-#define TARGET_CONSTANT_ALIGNMENT dadao_constant_alignment
-
 #undef TARGET_STARTING_FRAME_OFFSET
 #define TARGET_STARTING_FRAME_OFFSET dadao_starting_frame_offset
 
@@ -295,49 +288,9 @@ static struct machine_function * dadao_init_machine_status (void)
 	return ggc_cleared_alloc<machine_function> ();
 }
 
-/* DATA_ABI_ALIGNMENT.
-   We have trouble getting the address of stuff that is located at other
-   than 32-bit alignments (GETA requirements), so try to give everything
-   at least 32-bit alignment.  */
+/* XXX gccint 18.5 Node: Storage Layout */
+/* (empty) */
 
-int
-dadao_data_alignment (tree type ATTRIBUTE_UNUSED, int basic_align)
-{
-  if (basic_align < 32)
-    return 32;
-
-  return basic_align;
-}
-
-/* Implement TARGET_STATIC_RTX_ALIGNMENT.  */
-
-static HOST_WIDE_INT
-dadao_static_rtx_alignment (machine_mode mode)
-{
-  return MAX (GET_MODE_ALIGNMENT (mode), 32);
-}
-
-/* Implement tARGET_CONSTANT_ALIGNMENT.  */
-
-static HOST_WIDE_INT
-dadao_constant_alignment (const_tree, HOST_WIDE_INT basic_align)
-{
-  if (basic_align < 32)
-    return 32;
-
-  return basic_align;
-}
-
-/* LOCAL_ALIGNMENT.  */
-
-unsigned
-dadao_local_alignment (tree type ATTRIBUTE_UNUSED, unsigned basic_align)
-{
-  if (basic_align < 32)
-    return 32;
-
-  return basic_align;
-}
 
 /* INCOMING_REGNO and OUTGOING_REGNO worker function.
    Those two macros must only be applied to function argument

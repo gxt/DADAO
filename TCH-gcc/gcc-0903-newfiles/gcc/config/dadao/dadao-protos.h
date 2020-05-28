@@ -29,8 +29,6 @@ extern int dadao_opposite_regno (int, int);
 extern unsigned dadao_dbx_register_number (unsigned);
 extern int dadao_use_simple_return (void);
 extern void dadao_make_decl_one_only (tree);
-extern int dadao_data_alignment (tree, int);
-extern unsigned dadao_local_alignment (tree, unsigned);
 extern void dadao_asm_output_pool_prologue (FILE *, const char *, tree, int);
 extern void dadao_asm_output_aligned_common (FILE *, const char *, int, int);
 extern void dadao_asm_output_aligned_local (FILE *, const char *, int, int);
