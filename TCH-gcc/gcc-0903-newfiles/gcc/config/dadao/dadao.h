@@ -117,8 +117,7 @@ struct GTY(()) machine_function
 		builtin_define ("__DADAO__");			\
 	} while (0)
 
-#define TARGET_DEFAULT (MASK_BASE_ADDRESSES | MASK_USE_RETURN_INSN)
-
+#define	TARGET_DEFAULT_TARGET_FLAGS	(MASK_BASE_ADDRESSES)
 
 /* Node: Per-Function Data */
 #define INIT_EXPANDERS dadao_init_expanders ()

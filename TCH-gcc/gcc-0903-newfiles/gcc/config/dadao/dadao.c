@@ -1691,7 +1691,7 @@ dadao_use_simple_return (void)
        + crtl->args.pretend_args_size
        + get_frame_size () + 7) & ~7;
 
-  if (!TARGET_USE_RETURN_INSN || !reload_completed)
+  if (!reload_completed)
     return 0;
 
   for (regno = 255;

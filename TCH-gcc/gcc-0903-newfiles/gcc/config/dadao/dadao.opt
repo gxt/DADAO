@@ -46,14 +46,6 @@ mno-base-addresses
 Target Report RejectNegative InverseMask(BASE_ADDRESSES)
 Do not use addresses that allocate global registers.
 
-msingle-exit
-Target Report RejectNegative InverseMask(USE_RETURN_INSN)
-Generate a single exit point for each function.
-
-mno-single-exit
-Target Report RejectNegative Mask(USE_RETURN_INSN)
-Do not generate a single exit point for each function.
-
 mset-program-start=
 Target Report RejectNegative Joined
 Set start-address of the program.
