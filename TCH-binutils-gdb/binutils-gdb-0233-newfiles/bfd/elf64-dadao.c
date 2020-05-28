@@ -457,8 +457,6 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 
 	switch (howto->type) {
 	case R_DADAO_GETA:
-		if ((value & 3) != 0)	return bfd_reloc_notsupported;
-
 		insn_origin = bfd_get_32 (abfd, (bfd_byte *) datap);
 
 		r = bfd_check_overflow (complain_overflow_bitfield,
