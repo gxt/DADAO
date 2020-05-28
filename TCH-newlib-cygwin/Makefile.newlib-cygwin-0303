@@ -84,8 +84,7 @@ newlib-cygwin-0303-source:
 		git commit -sm"DADAO: re-generate root configure"
 	# fixups
 	@echo "FIXUP: Apply fixup ..."
-	@cd $(NEWLIB_CYGWIN_0303_SOURCE); git am $(NEWLIB_CYGWIN_0303_FIXUP)/0*.patch
-	@cd $(NEWLIB_CYGWIN_0303_SOURCE); git am $(NEWLIB_CYGWIN_0303_FIXUP)/1*.patch
+	@cd $(NEWLIB_CYGWIN_0303_SOURCE); git am $(NEWLIB_CYGWIN_0303_FIXUP)/*.patch
 
 newlib-cygwin-0303-build-new:
 	@rm -fr $(NEWLIB_CYGWIN_0303_BUILD)
