@@ -245,9 +245,6 @@ static HOST_WIDE_INT dadao_starting_frame_offset (void);
 #undef TARGET_TRAMPOLINE_INIT
 #define TARGET_TRAMPOLINE_INIT dadao_trampoline_init
 
-#undef TARGET_OPTION_OVERRIDE
-#define TARGET_OPTION_OVERRIDE dadao_option_override
-
 #undef TARGET_STATIC_RTX_ALIGNMENT
 #define TARGET_STATIC_RTX_ALIGNMENT dadao_static_rtx_alignment
 #undef TARGET_CONSTANT_ALIGNMENT
@@ -256,28 +253,33 @@ static HOST_WIDE_INT dadao_starting_frame_offset (void);
 #undef TARGET_STARTING_FRAME_OFFSET
 #define TARGET_STARTING_FRAME_OFFSET dadao_starting_frame_offset
 
+/* XXX gccint 18.24 Node: Defining target-specific uses of __attribute__ */
+#undef	TARGET_OPTION_OVERRIDE
+#define	TARGET_OPTION_OVERRIDE			dadao_option_override
+
+static void dadao_option_override (void)
+{
+	/* Should we err or should we warn?  Hmm.  At least we must neutralize
+	   it.  For example the wrong kind of case-tables will be generated with
+	   PIC; we use absolute address items for dadaoal compatibility.  FIXME:
+	   They could be relative if we just elide them to after all pertinent
+	   labels.  */
+	if (flag_pic) {
+		warning (0, "%<-f%s%> not supported: ignored", (flag_pic > 1) ? "PIC" : "pic");
+		flag_pic = 0;
+	}
+}
+
+/* XXX gccint Chapter 18: Target Description Macros and Functions */
+
+/* XXX gccint 18.1 Node: The Global targetm Variable */
 struct gcc_target targetm = TARGET_INITIALIZER;
 
-/* Functions that are expansions for target macros.
-   See Target Macros in `Using and Porting GCC'.  */
+/* XXX gccint 18.2 Node: Controlling the Compilation Driver, gcc */
+/* (empty) */
 
-/* TARGET_OPTION_OVERRIDE.  */
-
-static void
-dadao_option_override (void)
-{
-  /* Should we err or should we warn?  Hmm.  At least we must neutralize
-     it.  For example the wrong kind of case-tables will be generated with
-     PIC; we use absolute address items for dadaoal compatibility.  FIXME:
-     They could be relative if we just elide them to after all pertinent
-     labels.  */
-  if (flag_pic)
-    {
-      warning (0, "%<-f%s%> not supported: ignored",
-	       (flag_pic > 1) ? "PIC" : "pic");
-      flag_pic = 0;
-    }
-}
+/* XXX gccint 18.3 Node: Run-time Target Specification */
+/* (empty) */
 
 /* XXX gccint 18.4 Node: Defining data structures for per-function information */
 

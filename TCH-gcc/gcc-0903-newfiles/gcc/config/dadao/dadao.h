@@ -76,15 +76,7 @@ struct GTY(()) machine_function
 /* XXX gccint Chapter 18: Target Description Macros and Functions */
 
 /* XXX gccint 18.1 Node: The Global targetm Variable */
-
-/* targetm variable and targetm_common variable */
-/*
-  in gcc/config/dadao/dadao.c:
-	struct gcc_target targetm = TARGET_INITIALIZER;
-
-  in gcc/common/config/dadao/dadao-common.c
-	struct gcc_targetm_common targetm_common = TARGETM_COMMON_INITIALIZER;
- */
+/* (empty) */
 
 /* XXX gccint 18.2 Node: Controlling the Compilation Driver, gcc */
 
