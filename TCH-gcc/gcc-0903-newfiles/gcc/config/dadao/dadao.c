@@ -279,20 +279,18 @@ dadao_option_override (void)
     }
 }
 
-/* INIT_EXPANDERS.  */
+/* XXX gccint 18.4 Node: Defining data structures for per-function information */
 
-void
-dadao_init_expanders (void)
+/* INIT_EXPANDERS.  */
+void dadao_init_expanders (void)
 {
-  init_machine_status = dadao_init_machine_status;
+	init_machine_status = dadao_init_machine_status;
 }
 
 /* Set the per-function data.  */
-
-static struct machine_function *
-dadao_init_machine_status (void)
+static struct machine_function * dadao_init_machine_status (void)
 {
-  return ggc_cleared_alloc<machine_function> ();
+	return ggc_cleared_alloc<machine_function> ();
 }
 
 /* DATA_ABI_ALIGNMENT.

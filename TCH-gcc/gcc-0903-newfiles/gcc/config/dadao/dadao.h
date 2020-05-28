@@ -119,9 +119,8 @@ struct GTY(()) machine_function
 
 #define	TARGET_DEFAULT_TARGET_FLAGS	(MASK_BASE_ADDRESSES)
 
-/* Node: Per-Function Data */
-#define INIT_EXPANDERS dadao_init_expanders ()
-
+/* XXX gccint 18.4 Node: Defining data structures for per-function information */
+#define INIT_EXPANDERS			dadao_init_expanders ()
 
 /* Node: Storage Layout */
 /* I see no bit-field instructions.  Anyway, the common order is from low
