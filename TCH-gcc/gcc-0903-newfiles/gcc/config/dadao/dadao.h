@@ -22,14 +22,13 @@
 #define DADAO_RETURN_VALUE_REGNUM (DADAO_RESERVED_GNU_ARG_0_REGNUM)
 #define DADAO_OUTGOING_RETURN_VALUE_REGNUM (DADAO_RESERVED_GNU_ARG_0_REGNUM)
 #define DADAO_STRUCT_VALUE_REGNUM 251
-#define DADAO_STATIC_CHAIN_REGNUM 252
 #define DADAO_FRAME_POINTER_REGNUM		65
 #define DADAO_STACK_POINTER_REGNUM		66
 #define DADAO_LAST_GENERAL_REGISTER 255
 #define DADAO_INCOMING_RETURN_ADDRESS_REGNUM DADAO_rJ_REGNUM
 #define DADAO_HIMULT_REGNUM 258
 #define DADAO_REMAINDER_REGNUM DADAO_rR_REGNUM
-#define DADAO_ARG_POINTER_REGNUM 261
+#define DADAO_ARG_POINTER_REGNUM		261
 #define DADAO_rO_REGNUM 262
 
 /* Four registers; "ideally, these registers should be call-clobbered", so
@@ -50,7 +49,7 @@
 
 /* This chosen as "a call-clobbered hard register that is otherwise
    untouched by the epilogue".  */
-#define DADAO_EH_RETURN_STACKADJ_REGNUM DADAO_STATIC_CHAIN_REGNUM
+#define DADAO_EH_RETURN_STACKADJ_REGNUM 252
 
 #define DADAO_FUNCTION_ARG_SIZE(MODE, TYPE) \
  ((MODE) != BLKmode ? GET_MODE_SIZE (MODE) : int_size_in_bytes (TYPE))
@@ -296,20 +295,12 @@ enum reg_class {
 /* XXX gccint 18.9.3 Node: Specifying How Stack Checking is Done */
 /* (empty) */
 
+/* XXX gccint 18.9.4 Node: Registers That Address the Stack Frame */
+#define	STACK_POINTER_REGNUM			DADAO_STACK_POINTER_REGNUM
+#define	FRAME_POINTER_REGNUM			DADAO_FRAME_POINTER_REGNUM
+#define	ARG_POINTER_REGNUM			DADAO_ARG_POINTER_REGNUM
+
 /* XXX */
-
-
-
-/* Node: Frame Registers */
-#define STACK_POINTER_REGNUM	DADAO_STACK_POINTER_REGNUM
-
-/* Perhaps we can use HARD_FRAME_POINTER_REGNUM and decide later on
-   what register we want to use.  */
-#define FRAME_POINTER_REGNUM	DADAO_FRAME_POINTER_REGNUM
-#define ARG_POINTER_REGNUM DADAO_ARG_POINTER_REGNUM
-
-#define STATIC_CHAIN_REGNUM DADAO_STATIC_CHAIN_REGNUM
-
 
 /* Node: Elimination */
 

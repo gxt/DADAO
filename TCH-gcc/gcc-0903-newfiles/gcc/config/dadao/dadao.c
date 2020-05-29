@@ -411,6 +411,9 @@ int dadao_asm_preferred_eh_data_format (int code ATTRIBUTE_UNUSED, int global AT
 /* XXX gccint 18.9.3 Node: Specifying How Stack Checking is Done */
 /* (empty) */
 
+/* XXX gccint 18.9.4 Node: Registers That Address the Stack Frame */
+/* (empty) */
+
 /* XXX */
 
 /* The difference between the (imaginary) frame pointer and the stack
@@ -710,11 +713,9 @@ dadao_asm_trampoline_template (FILE *stream)
      stored at offset 24.  */
 
   fprintf (stream, "\tgeta	$63, 1f\n");
-  fprintf (stream, "\tldo	%s, $63, 0\n", reg_names[DADAO_STATIC_CHAIN_REGNUM]);
-  fprintf (stream, "\tldo	$63, $63, 8\n");
+  fprintf (stream, "\tldo	$63, $63, 0\n");
   fprintf (stream, "\tcall	$63, 0\n");
   fprintf (stream, "1:\t.dd.o64 0\n");
-  fprintf (stream, "\t.dd.o64 0\n");
 }
 
 /* TARGET_TRAMPOLINE_INIT.  */
