@@ -300,21 +300,21 @@ enum reg_class {
 #define	FRAME_POINTER_REGNUM			DADAO_FRAME_POINTER_REGNUM
 #define	ARG_POINTER_REGNUM			DADAO_ARG_POINTER_REGNUM
 
-/* XXX */
-
-/* Node: Elimination */
+/* XXX gccint 18.9.5 Node: Eliminating Frame Pointer and Arg Pointer */
 
 /* The frame-pointer is stored in a location that either counts to the
    offset of incoming parameters, or that counts to the offset of the
    frame, so we can't use a single offset.  We therefore eliminate those
    two separately.  */
-#define ELIMINABLE_REGS				\
- {{ARG_POINTER_REGNUM, STACK_POINTER_REGNUM},	\
-  {ARG_POINTER_REGNUM, FRAME_POINTER_REGNUM},	\
-  {FRAME_POINTER_REGNUM, STACK_POINTER_REGNUM}}
+#define ELIMINABLE_REGS {					\
+		{ARG_POINTER_REGNUM,	STACK_POINTER_REGNUM},	\
+		{ARG_POINTER_REGNUM,	FRAME_POINTER_REGNUM},	\
+		{FRAME_POINTER_REGNUM,	STACK_POINTER_REGNUM}}
 
-#define INITIAL_ELIMINATION_OFFSET(FROM, TO, OFFSET) \
- (OFFSET) = dadao_initial_elimination_offset (FROM, TO)
+#define INITIAL_ELIMINATION_OFFSET(FROM, TO, OFFSET)		\
+		(OFFSET) = dadao_initial_elimination_offset (FROM, TO)
+
+/* XXX */
 
 
 /* Node: Stack Arguments */

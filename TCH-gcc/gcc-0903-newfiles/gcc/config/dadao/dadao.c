@@ -414,17 +414,14 @@ int dadao_asm_preferred_eh_data_format (int code ATTRIBUTE_UNUSED, int global AT
 /* XXX gccint 18.9.4 Node: Registers That Address the Stack Frame */
 /* (empty) */
 
-/* XXX */
+/* XXX gccint 18.9.5 Node: Eliminating Frame Pointer and Arg Pointer */
 
 /* The difference between the (imaginary) frame pointer and the stack
    pointer.  Used to eliminate the frame pointer.  */
-
-int
-dadao_initial_elimination_offset (int fromreg, int toreg)
+int dadao_initial_elimination_offset (int fromreg, int toreg)
 {
   int regno;
-  int fp_sp_offset
-    = (get_frame_size () + crtl->outgoing_args_size + 7) & ~7;
+  int fp_sp_offset = (get_frame_size () + crtl->outgoing_args_size + 7) & ~7;
 
   /* There is no actual offset between these two virtual values, but for
      the frame-pointer, we have the old one in the stack position below
@@ -468,6 +465,8 @@ dadao_initial_elimination_offset (int fromreg, int toreg)
        ? 16 : (DADAO_CFUN_NEEDS_SAVED_EH_RETURN_ADDRESS ? 8 : 0))
     + (fromreg == DADAO_ARG_POINTER_REGNUM ? 0 : 8);
 }
+
+/* XXX */
 
 static void
 dadao_function_arg_advance (cumulative_args_t argsp_v, machine_mode mode,
