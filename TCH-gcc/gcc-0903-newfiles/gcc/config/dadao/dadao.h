@@ -318,20 +318,19 @@ enum reg_class {
 
 #define ACCUMULATE_OUTGOING_ARGS		1
 
+/* XXX gccint 18.9.7 Node: Passing Arguments in Registers */
+
+typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
+
+#define INIT_CUMULATIVE_ARGS(CUM, FNTYPE, LIBNAME, INDIRECT, N_NAMED_ARGS)	\
+	((CUM).regs = 0, (CUM).lib = ((LIBNAME) != 0))
+
+#define FUNCTION_ARG_REGNO_P(REGNO)						\
+	(((REGNO) >= (DADAO_FIRST_ARG_REGNUM)) &&				\
+	 ((REGNO) < ((DADAO_FIRST_ARG_REGNUM) + (DADAO_MAX_ARGS_IN_REGS))))
+
+
 /* XXX */
-
-
-
-/* Node: Register Arguments */
-
-typedef struct { int regs; int lib; } CUMULATIVE_ARGS;
-
-#define INIT_CUMULATIVE_ARGS(CUM, FNTYPE, LIBNAME, INDIRECT, N_NAMED_ARGS) \
- ((CUM).regs = 0, (CUM).lib = ((LIBNAME) != 0))
-
-#define FUNCTION_ARG_REGNO_P(REGNO)		\
- dadao_function_arg_regno_p (REGNO, 0)
-
 
 /* Node: Caller Saves */
 /* (empty) */

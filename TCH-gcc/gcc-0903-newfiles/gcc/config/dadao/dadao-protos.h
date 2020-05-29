@@ -7,7 +7,6 @@
 extern void dadao_init_expanders (void);
 extern int dadao_eh_return_data_regno (int);
 extern int dadao_initial_elimination_offset (int, int);
-extern int dadao_function_arg_regno_p (int, int);
 extern void dadao_function_profiler (FILE *, int);
 extern int dadao_reversible_cc_mode (machine_mode);
 extern const char *dadao_text_section_asm_op (void);

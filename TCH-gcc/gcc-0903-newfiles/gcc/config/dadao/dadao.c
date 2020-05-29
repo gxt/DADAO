@@ -562,19 +562,6 @@ dadao_pass_by_reference (cumulative_args_t argsp_v, machine_mode mode,
   return false;
 }
 
-/* Return nonzero if regno is a register number where a parameter is
-   passed, and 0 otherwise.  */
-
-int
-dadao_function_arg_regno_p (int regno, int incoming)
-{
-  int first_arg_regnum
-    = incoming ? DADAO_FIRST_INCOMING_ARG_REGNUM : DADAO_FIRST_ARG_REGNUM;
-
-  return regno >= first_arg_regnum
-    && regno < first_arg_regnum + DADAO_MAX_ARGS_IN_REGS;
-}
-
 /* Implements TARGET_FUNCTION_VALUE.  */
 
 static rtx
