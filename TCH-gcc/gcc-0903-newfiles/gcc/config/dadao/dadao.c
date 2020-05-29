@@ -311,17 +311,18 @@ static reg_class_t dd_preferred_output_reload_class (rtx x, reg_class_t rclass)
     ? REMAINDER_REG : rclass;
 }
 
-/* SECONDARY_RELOAD_CLASS.
-   We need to reload regs of REMAINDER_REG and HIMULT_REG elsewhere.  */
-enum reg_class dadao_secondary_reload_class (enum reg_class rclass,
-		machine_mode mode ATTRIBUTE_UNUSED, rtx x ATTRIBUTE_UNUSED, int in_p ATTRIBUTE_UNUSED)
+#undef	TARGET_SECONDARY_RELOAD
+#define	TARGET_SECONDARY_RELOAD			dd_secondary_reload
+/* We need to reload regs of REMAINDER_REG and HIMULT_REG elsewhere.  */
+static reg_class_t dd_secondary_reload (bool in_p ATTRIBUTE_UNUSED,
+		rtx x ATTRIBUTE_UNUSED, reg_class_t rclass,
+		machine_mode reload_mode ATTRIBUTE_UNUSED,
+		secondary_reload_info *sri ATTRIBUTE_UNUSED)
 {
-  if (rclass == REMAINDER_REG
-      || rclass == HIMULT_REG
-      || rclass == SYSTEM_REGS)
-    return GENERAL_REGS;
+	if (rclass == REMAINDER_REG || rclass == HIMULT_REG || rclass == SYSTEM_REGS)
+		return GENERAL_REGS;
 
-  return NO_REGS;
+	return NO_REGS;
 }
 
 #undef	TARGET_LRA_P

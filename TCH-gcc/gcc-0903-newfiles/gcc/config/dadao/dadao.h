@@ -267,9 +267,6 @@ enum reg_class {
 
 #define REGNO_OK_FOR_INDEX_P(REGNO) REGNO_OK_FOR_BASE_P (REGNO)
 
-#define SECONDARY_INPUT_RELOAD_CLASS(CLASS, MODE, X)		dadao_secondary_reload_class (CLASS, MODE, X, 1)
-#define SECONDARY_OUTPUT_RELOAD_CLASS(CLASS, MODE, X)		dadao_secondary_reload_class (CLASS, MODE, X, 0)
-
 #define CLASS_MAX_NREGS(CLASS, MODE)				targetm.hard_regno_nregs (CLASS, MODE)
 
 

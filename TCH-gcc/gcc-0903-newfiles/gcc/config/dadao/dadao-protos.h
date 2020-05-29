@@ -35,8 +35,6 @@ extern void dadao_asm_declare_register_global
   (FILE *, tree, int, const char *);
 extern void dadao_asm_output_addr_diff_elt (FILE *, rtx, int, int);
 extern void dadao_asm_output_addr_vec_elt (FILE *, int);
-extern enum reg_class dadao_secondary_reload_class
-  (enum reg_class, machine_mode, rtx, int);
 extern rtx dadao_dynamic_chain_address (rtx);
 extern rtx dadao_return_addr_rtx (int, rtx);
 extern rtx dadao_eh_return_stackadj_rtx (void);
