@@ -466,6 +466,9 @@ int dadao_initial_elimination_offset (int fromreg, int toreg)
     + (fromreg == DADAO_ARG_POINTER_REGNUM ? 0 : 8);
 }
 
+/* XXX gccint 18.9.6 Node: Passing Function Arguments on the Stack */
+/* (empty) */
+
 /* XXX */
 
 static void

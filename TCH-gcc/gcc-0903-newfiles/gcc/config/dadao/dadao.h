@@ -314,12 +314,12 @@ enum reg_class {
 #define INITIAL_ELIMINATION_OFFSET(FROM, TO, OFFSET)		\
 		(OFFSET) = dadao_initial_elimination_offset (FROM, TO)
 
+/* XXX gccint 18.9.6 Node: Passing Function Arguments on the Stack */
+
+#define ACCUMULATE_OUTGOING_ARGS		1
+
 /* XXX */
 
-
-/* Node: Stack Arguments */
-
-#define ACCUMULATE_OUTGOING_ARGS 1
 
 
 /* Node: Register Arguments */
