@@ -269,37 +269,26 @@ enum reg_class {
 
 #define CLASS_MAX_NREGS(CLASS, MODE)				targetm.hard_regno_nregs (CLASS, MODE)
 
+/* XXX gccint 18.9 Node: Stack Layout and Calling Conventions */
 
-/* Node: Frame Layout */
+/* XXX gccint 18.9.1 Node: Basic Stack Layout */
+#define STACK_GROWS_DOWNWARD			1
+#define FRAME_GROWS_DOWNWARD			1
 
-#define STACK_GROWS_DOWNWARD 1
-#define FRAME_GROWS_DOWNWARD 1
+#define FIRST_PARM_OFFSET(FUNDECL)		0
 
-#define FIRST_PARM_OFFSET(FUNDECL) 0
+#define DYNAMIC_CHAIN_ADDRESS(FRAMEADDR)	dadao_dynamic_chain_address (FRAMEADDR)
 
-#define DYNAMIC_CHAIN_ADDRESS(FRAMEADDR) \
- dadao_dynamic_chain_address (FRAMEADDR)
+#define SETUP_FRAME_ADDRESSES()			dadao_setup_frame_addresses ()
 
-/* FIXME: It seems RETURN_ADDR_OFFSET is undocumented.  */
-
-#define SETUP_FRAME_ADDRESSES() \
- dadao_setup_frame_addresses ()
-
-#define RETURN_ADDR_RTX(COUNT, FRAME)		\
- dadao_return_addr_rtx (COUNT, FRAME)
+#define RETURN_ADDR_RTX(COUNT, FRAME)		dadao_return_addr_rtx (COUNT, FRAME)
 
 /* It's in rJ before we store it somewhere.  */
-#define INCOMING_RETURN_ADDR_RTX \
- gen_rtx_REG (Pmode, DADAO_INCOMING_RETURN_ADDRESS_REGNUM)
+#define INCOMING_RETURN_ADDR_RTX		gen_rtx_REG (Pmode, DADAO_INCOMING_RETURN_ADDRESS_REGNUM)
 
-/* FIXME: This does not seem properly documented or cross-indexed.
-   Nowhere except in the code does it say it *has* to be in the range
-   0..255, or else it will be truncated.  That goes for the default too.  */
-#define DWARF_FRAME_RETURN_COLUMN \
- DWARF_FRAME_REGNUM (DADAO_INCOMING_RETURN_ADDRESS_REGNUM)
+/* XXX */
 
-/* No return address is stored there.  */
-#define INCOMING_FRAME_SP_OFFSET 0
+/* FIXME: It seems RETURN_ADDR_OFFSET is undocumented.  */
 
 /* Node: Stack Checking */
 /* (empty) */

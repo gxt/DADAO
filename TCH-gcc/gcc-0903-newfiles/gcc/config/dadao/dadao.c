@@ -233,9 +233,6 @@ static HOST_WIDE_INT dadao_starting_frame_offset (void);
 #undef TARGET_TRAMPOLINE_INIT
 #define TARGET_TRAMPOLINE_INIT dadao_trampoline_init
 
-#undef TARGET_STARTING_FRAME_OFFSET
-#define TARGET_STARTING_FRAME_OFFSET dadao_starting_frame_offset
-
 /* XXX gccint 18.24 Node: Defining target-specific uses of __attribute__ */
 #undef	TARGET_OPTION_OVERRIDE
 #define	TARGET_OPTION_OVERRIDE			dadao_option_override
@@ -328,23 +325,15 @@ static reg_class_t dd_secondary_reload (bool in_p ATTRIBUTE_UNUSED,
 #undef	TARGET_LRA_P
 #define	TARGET_LRA_P			hook_bool_void_false
 
+/* XXX gccint 18.9 Node: Stack Layout and Calling Conventions */
 
-/* DYNAMIC_CHAIN_ADDRESS.  */
+/* XXX gccint 18.9.1 Node: Basic Stack Layout */
 
-rtx
-dadao_dynamic_chain_address (rtx frame)
-{
-  /* FIXME: the frame-pointer is stored at offset -8 from the current
-     frame-pointer.  Unfortunately, the caller assumes that a
-     frame-pointer is present for *all* previous frames.  There should be
-     a way to say that that cannot be done, like for RETURN_ADDR_RTX.  */
-  return plus_constant (Pmode, frame, -8);
-}
+#undef	TARGET_STARTING_FRAME_OFFSET
+#define	TARGET_STARTING_FRAME_OFFSET	dadao_starting_frame_offset
 
 /* Implement TARGET_STARTING_FRAME_OFFSET.  */
-
-static HOST_WIDE_INT
-dadao_starting_frame_offset (void)
+static HOST_WIDE_INT dadao_starting_frame_offset (void)
 {
   /* The old frame pointer is in the slot below the new one, so
      FIRST_PARM_OFFSET does not need to depend on whether the
@@ -358,10 +347,24 @@ dadao_starting_frame_offset (void)
 	? -16 : (DADAO_CFUN_NEEDS_SAVED_EH_RETURN_ADDRESS ? -8 : 0)));
 }
 
-/* RETURN_ADDR_RTX.  */
+/* DYNAMIC_CHAIN_ADDRESS.  */
+rtx dadao_dynamic_chain_address (rtx frame)
+{
+  /* FIXME: the frame-pointer is stored at offset -8 from the current
+     frame-pointer.  Unfortunately, the caller assumes that a
+     frame-pointer is present for *all* previous frames.  There should be
+     a way to say that that cannot be done, like for RETURN_ADDR_RTX.  */
+  return plus_constant (Pmode, frame, -8);
+}
 
-rtx
-dadao_return_addr_rtx (int count, rtx frame ATTRIBUTE_UNUSED)
+/* SETUP_FRAME_ADDRESSES.  */
+void dadao_setup_frame_addresses (void)
+{
+  /* Nothing needed at the moment.  */
+}
+
+/* RETURN_ADDR_RTX.  */
+rtx dadao_return_addr_rtx (int count, rtx frame ATTRIBUTE_UNUSED)
 {
   return count == 0
     ? (DADAO_CFUN_NEEDS_SAVED_EH_RETURN_ADDRESS
@@ -376,13 +379,7 @@ dadao_return_addr_rtx (int count, rtx frame ATTRIBUTE_UNUSED)
     : NULL_RTX;
 }
 
-/* SETUP_FRAME_ADDRESSES.  */
-
-void
-dadao_setup_frame_addresses (void)
-{
-  /* Nothing needed at the moment.  */
-}
+/* XXX */
 
 /* The difference between the (imaginary) frame pointer and the stack
    pointer.  Used to eliminate the frame pointer.  */
