@@ -210,21 +210,28 @@ struct GTY(()) machine_function
 /* XXX gccint 18.7.5 Node: Registers That Form a Stack */
 /* (empty) */
 
-
-/* Node: Register Classes */
+/* XXX gccint 18.8 Node: Register Classes */
 
 enum reg_class {
 	NO_REGS,
 	GENERAL_REGS,
-	REMAINDER_REG, HIMULT_REG,
-	SYSTEM_REGS, ALL_REGS,
+	POINTER_REGS,
+	FLOATING_REGS,
+	VECTOR_REGS,
+	REMAINDER_REG,
+	HIMULT_REG,
+	SYSTEM_REGS,
+	ALL_REGS,
 	LIM_REG_CLASSES };
 
-#define N_REG_CLASSES (int) LIM_REG_CLASSES
+#define N_REG_CLASSES			((int) LIM_REG_CLASSES)
 
 #define REG_CLASS_NAMES	{			\
 	"NO_REGS",				\
 	"GENERAL_REGS",				\
+	"POINTER_REGS",				\
+	"FLOATING_REGS",			\
+	"VECTOR_REGS",				\
 	"REMAINDER_REG",			\
 	"HIMULT_REG",				\
 	"SYSTEM_REGS",				\
@@ -234,36 +241,36 @@ enum reg_class {
 #define REG_CLASS_CONTENTS {							\
 	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	0},	\
 	{~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	0x20},	\
+	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	0},	\
+	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	0},	\
+	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	0},	\
 	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	0x10},	\
 	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	4},	\
 	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	~0},	\
 	{~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0}}
 
-#define REGNO_REG_CLASS(REGNO)					\
+#define REGNO_REG_CLASS(REGNO)						\
  ((REGNO) <= DADAO_LAST_GENERAL_REGISTER				\
   || (REGNO) == DADAO_ARG_POINTER_REGNUM				\
-  ? GENERAL_REGS						\
-  : (REGNO) == DADAO_REMAINDER_REGNUM ? REMAINDER_REG		\
+  ? GENERAL_REGS							\
+  : (REGNO) == DADAO_REMAINDER_REGNUM ? REMAINDER_REG			\
   : (REGNO) == DADAO_HIMULT_REGNUM ? HIMULT_REG : SYSTEM_REGS)
 
 #define BASE_REG_CLASS		GENERAL_REGS
 #define INDEX_REG_CLASS		GENERAL_REGS
 
-#define REGNO_OK_FOR_BASE_P(REGNO)				\
+#define REGNO_OK_FOR_BASE_P(REGNO)					\
  ((REGNO) <= DADAO_LAST_GENERAL_REGISTER				\
   || (REGNO) == DADAO_ARG_POINTER_REGNUM				\
-  || (reg_renumber[REGNO] > 0					\
+  || (reg_renumber[REGNO] > 0						\
       && reg_renumber[REGNO] <= DADAO_LAST_GENERAL_REGISTER))
 
 #define REGNO_OK_FOR_INDEX_P(REGNO) REGNO_OK_FOR_BASE_P (REGNO)
 
-#define SECONDARY_INPUT_RELOAD_CLASS(CLASS, MODE, X) \
- dadao_secondary_reload_class (CLASS, MODE, X, 1)
+#define SECONDARY_INPUT_RELOAD_CLASS(CLASS, MODE, X)		dadao_secondary_reload_class (CLASS, MODE, X, 1)
+#define SECONDARY_OUTPUT_RELOAD_CLASS(CLASS, MODE, X)		dadao_secondary_reload_class (CLASS, MODE, X, 0)
 
-#define SECONDARY_OUTPUT_RELOAD_CLASS(CLASS, MODE, X) \
- dadao_secondary_reload_class (CLASS, MODE, X, 0)
-
-#define CLASS_MAX_NREGS(CLASS, MODE) targetm.hard_regno_nregs (CLASS, MODE)
+#define CLASS_MAX_NREGS(CLASS, MODE)				targetm.hard_regno_nregs (CLASS, MODE)
 
 
 /* Node: Frame Layout */

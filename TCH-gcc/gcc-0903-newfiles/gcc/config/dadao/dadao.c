@@ -99,8 +99,6 @@ static void dadao_emit_sp_add (HOST_WIDE_INT offset);
 static void dadao_target_asm_function_prologue (FILE *);
 static void dadao_target_asm_function_end_prologue (FILE *);
 static void dadao_target_asm_function_epilogue (FILE *);
-static reg_class_t dadao_preferred_reload_class (rtx, reg_class_t);
-static reg_class_t dadao_preferred_output_reload_class (rtx, reg_class_t);
 static bool dadao_legitimate_address_p (machine_mode, rtx, bool);
 static bool dadao_legitimate_constant_p (machine_mode, rtx);
 static void dadao_asm_output_mi_thunk
@@ -222,14 +220,6 @@ static HOST_WIDE_INT dadao_starting_frame_offset (void);
 #undef TARGET_CALLEE_COPIES
 #define TARGET_CALLEE_COPIES hook_bool_CUMULATIVE_ARGS_mode_tree_bool_true
 
-#undef TARGET_PREFERRED_RELOAD_CLASS
-#define TARGET_PREFERRED_RELOAD_CLASS dadao_preferred_reload_class
-#undef TARGET_PREFERRED_OUTPUT_RELOAD_CLASS
-#define TARGET_PREFERRED_OUTPUT_RELOAD_CLASS dadao_preferred_output_reload_class
-
-#undef TARGET_LRA_P
-#define TARGET_LRA_P hook_bool_void_false
-
 #undef TARGET_LEGITIMATE_ADDRESS_P
 #define TARGET_LEGITIMATE_ADDRESS_P	dadao_legitimate_address_p
 #undef TARGET_LEGITIMATE_CONSTANT_P
@@ -294,23 +284,27 @@ static struct machine_function * dadao_init_machine_status (void)
 /* XXX gccint 18.6 Node: Layout of Source Language Data Types */
 /* (empty) */
 
+/* XXX gccint 18.7 Node: Register Usage */
+/* (empty) */
 
-/* TARGET_PREFERRED_RELOAD_CLASS.
-   We need to extend the reload class of REMAINDER_REG and HIMULT_REG.  */
+/* XXX gccint 18.8 Node: Register Classes */
 
-static reg_class_t
-dadao_preferred_reload_class (rtx x, reg_class_t rclass)
+#undef	TARGET_PREFERRED_RELOAD_CLASS
+#define	TARGET_PREFERRED_RELOAD_CLASS		dd_preferred_reload_class
+
+/* We need to extend the reload class of REMAINDER_REG and HIMULT_REG.  */
+static reg_class_t dd_preferred_reload_class (rtx x, reg_class_t rclass)
 {
   /* FIXME: Revisit.  */
   return GET_CODE (x) == MOD && GET_MODE (x) == DImode
     ? REMAINDER_REG : rclass;
 }
 
-/* TARGET_PREFERRED_OUTPUT_RELOAD_CLASS.
-   We need to extend the reload class of REMAINDER_REG and HIMULT_REG.  */
+#undef	TARGET_PREFERRED_OUTPUT_RELOAD_CLASS
+#define	TARGET_PREFERRED_OUTPUT_RELOAD_CLASS	dd_preferred_output_reload_class
 
-static reg_class_t
-dadao_preferred_output_reload_class (rtx x, reg_class_t rclass)
+/* We need to extend the reload class of REMAINDER_REG and HIMULT_REG.  */
+static reg_class_t dd_preferred_output_reload_class (rtx x, reg_class_t rclass)
 {
   /* FIXME: Revisit.  */
   return GET_CODE (x) == MOD && GET_MODE (x) == DImode
@@ -319,12 +313,8 @@ dadao_preferred_output_reload_class (rtx x, reg_class_t rclass)
 
 /* SECONDARY_RELOAD_CLASS.
    We need to reload regs of REMAINDER_REG and HIMULT_REG elsewhere.  */
-
-enum reg_class
-dadao_secondary_reload_class (enum reg_class rclass,
-			     machine_mode mode ATTRIBUTE_UNUSED,
-			     rtx x ATTRIBUTE_UNUSED,
-			     int in_p ATTRIBUTE_UNUSED)
+enum reg_class dadao_secondary_reload_class (enum reg_class rclass,
+		machine_mode mode ATTRIBUTE_UNUSED, rtx x ATTRIBUTE_UNUSED, int in_p ATTRIBUTE_UNUSED)
 {
   if (rclass == REMAINDER_REG
       || rclass == HIMULT_REG
@@ -333,6 +323,10 @@ dadao_secondary_reload_class (enum reg_class rclass,
 
   return NO_REGS;
 }
+
+#undef	TARGET_LRA_P
+#define	TARGET_LRA_P			hook_bool_void_false
+
 
 /* DYNAMIC_CHAIN_ADDRESS.  */
 
