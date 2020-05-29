@@ -286,27 +286,18 @@ enum reg_class {
 /* It's in rJ before we store it somewhere.  */
 #define INCOMING_RETURN_ADDR_RTX		gen_rtx_REG (Pmode, DADAO_INCOMING_RETURN_ADDRESS_REGNUM)
 
-/* XXX */
+/* XXX gccint 18.9.2 Node: Exception Handling Support */
+#define EH_RETURN_DATA_REGNO(N)			dadao_eh_return_data_regno (N)
+#define EH_RETURN_STACKADJ_RTX			dadao_eh_return_stackadj_rtx ()
+#define EH_RETURN_HANDLER_RTX			dadao_eh_return_handler_rtx ()
 
-/* FIXME: It seems RETURN_ADDR_OFFSET is undocumented.  */
+#define ASM_PREFERRED_EH_DATA_FORMAT(CODE, GLOBAL)	dadao_asm_preferred_eh_data_format (CODE, GLOBAL)
+
+/* XXX */
 
 /* Node: Stack Checking */
 /* (empty) */
 
-
-/* Node: Exception Handling */
-
-#define EH_RETURN_DATA_REGNO(N) \
- dadao_eh_return_data_regno (N)
-
-#define EH_RETURN_STACKADJ_RTX \
- dadao_eh_return_stackadj_rtx ()
-
-#define EH_RETURN_HANDLER_RTX \
- dadao_eh_return_handler_rtx ()
-
-#define ASM_PREFERRED_EH_DATA_FORMAT(CODE, GLOBAL) \
- dadao_asm_preferred_eh_data_format (CODE, GLOBAL)
 
 /* Node: Frame Registers */
 #define STACK_POINTER_REGNUM	DADAO_STACK_POINTER_REGNUM

@@ -379,6 +379,35 @@ rtx dadao_return_addr_rtx (int count, rtx frame ATTRIBUTE_UNUSED)
     : NULL_RTX;
 }
 
+/* XXX gccint 18.9.2 Node: Exception Handling Support */
+/* EH_RETURN_DATA_REGNO. */
+int dadao_eh_return_data_regno (int n)
+{
+  if (n >= 0 && n < 4)
+    return DADAO_EH_RETURN_DATA_REGNO_START + n;
+
+  return INVALID_REGNUM;
+}
+
+/* EH_RETURN_STACKADJ_RTX. */
+rtx dadao_eh_return_stackadj_rtx (void)
+{
+  return gen_rtx_REG (Pmode, DADAO_EH_RETURN_STACKADJ_REGNUM);
+}
+
+/* EH_RETURN_HANDLER_RTX.  */
+rtx dadao_eh_return_handler_rtx (void)
+{
+  return gen_rtx_REG (Pmode, DADAO_INCOMING_RETURN_ADDRESS_REGNUM);
+}
+
+/* ASM_PREFERRED_EH_DATA_FORMAT. */
+int dadao_asm_preferred_eh_data_format (int code ATTRIBUTE_UNUSED, int global ATTRIBUTE_UNUSED)
+{
+  /* This is the default (was at 2001-07-20).  Revisit when needed.  */
+  return DW_EH_PE_absptr;
+}
+
 /* XXX */
 
 /* The difference between the (imaginary) frame pointer and the stack
@@ -577,43 +606,6 @@ static bool
 dadao_function_value_regno_p (const unsigned int regno)
 {
   return regno == DADAO_RETURN_VALUE_REGNUM;
-}
-
-/* EH_RETURN_DATA_REGNO. */
-
-int
-dadao_eh_return_data_regno (int n)
-{
-  if (n >= 0 && n < 4)
-    return DADAO_EH_RETURN_DATA_REGNO_START + n;
-
-  return INVALID_REGNUM;
-}
-
-/* EH_RETURN_STACKADJ_RTX. */
-
-rtx
-dadao_eh_return_stackadj_rtx (void)
-{
-  return gen_rtx_REG (Pmode, DADAO_EH_RETURN_STACKADJ_REGNUM);
-}
-
-/* EH_RETURN_HANDLER_RTX.  */
-
-rtx
-dadao_eh_return_handler_rtx (void)
-{
-  return gen_rtx_REG (Pmode, DADAO_INCOMING_RETURN_ADDRESS_REGNUM);
-}
-
-/* ASM_PREFERRED_EH_DATA_FORMAT. */
-
-int
-dadao_asm_preferred_eh_data_format (int code ATTRIBUTE_UNUSED,
-				   int global ATTRIBUTE_UNUSED)
-{
-  /* This is the default (was at 2001-07-20).  Revisit when needed.  */
-  return DW_EH_PE_absptr;
 }
 
 /* Make a note that we've seen the beginning of the prologue.  This
