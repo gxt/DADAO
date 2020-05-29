@@ -408,6 +408,9 @@ int dadao_asm_preferred_eh_data_format (int code ATTRIBUTE_UNUSED, int global AT
   return DW_EH_PE_absptr;
 }
 
+/* XXX gccint 18.9.3 Node: Specifying How Stack Checking is Done */
+/* (empty) */
+
 /* XXX */
 
 /* The difference between the (imaginary) frame pointer and the stack

@@ -293,10 +293,11 @@ enum reg_class {
 
 #define ASM_PREFERRED_EH_DATA_FORMAT(CODE, GLOBAL)	dadao_asm_preferred_eh_data_format (CODE, GLOBAL)
 
+/* XXX gccint 18.9.3 Node: Specifying How Stack Checking is Done */
+/* (empty) */
+
 /* XXX */
 
-/* Node: Stack Checking */
-/* (empty) */
 
 
 /* Node: Frame Registers */
