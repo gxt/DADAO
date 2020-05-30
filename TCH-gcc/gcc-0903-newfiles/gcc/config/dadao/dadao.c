@@ -84,7 +84,6 @@ rtx dadao_compare_op1;
 /* Intermediate for insn output.  */
 static int dadao_output_destination_register;
 
-static void dadao_asm_output_source_filename (FILE *, const char *);
 static void dadao_output_shiftvalue_op_from_str
   (FILE *, const char *, int64_t);
 static void dadao_output_shifted_value (FILE *, int64_t);
@@ -96,8 +95,6 @@ static const char *dadao_strip_name_encoding (const char *);
 static void dadao_emit_sp_add (HOST_WIDE_INT offset);
 static void dadao_asm_output_mi_thunk
   (FILE *, tree, HOST_WIDE_INT, HOST_WIDE_INT, tree);
-static void dadao_file_start (void);
-static void dadao_file_end (void);
 static machine_mode dadao_promote_function_mode (const_tree,
 						     machine_mode,
 	                                             int *, const_tree, int);
@@ -125,15 +122,6 @@ static void dadao_print_operand_address (FILE *, machine_mode, rtx);
 #define TARGET_PRINT_OPERAND dadao_print_operand
 #undef TARGET_PRINT_OPERAND_ADDRESS
 #define TARGET_PRINT_OPERAND_ADDRESS dadao_print_operand_address
-
-#undef TARGET_ASM_FILE_START
-#define TARGET_ASM_FILE_START dadao_file_start
-#undef TARGET_ASM_FILE_START_FILE_DIRECTIVE
-#define TARGET_ASM_FILE_START_FILE_DIRECTIVE true
-#undef TARGET_ASM_FILE_END
-#define TARGET_ASM_FILE_END dadao_file_end
-#undef TARGET_ASM_OUTPUT_SOURCE_FILENAME
-#define TARGET_ASM_OUTPUT_SOURCE_FILENAME dadao_asm_output_source_filename
 
 #undef TARGET_HAVE_SPECULATION_SAFE_VALUE
 #define TARGET_HAVE_SPECULATION_SAFE_VALUE speculation_safe_value_not_needed
@@ -881,85 +869,14 @@ static void dd_encode_section_info (tree decl, rtx rtl, int first)
 /* XXX gccint 18.19 Node: Position Independent Code */
 /* (empty) */
 
+/* XXX gccint 18.20 Node: Defining the Output Assembler Language */
+/* XXX gccint 18.20.1 Node: The Overall Framework of an Assembler File */
+
+#undef	TARGET_ASM_FILE_START_FILE_DIRECTIVE
+#define	TARGET_ASM_FILE_START_FILE_DIRECTIVE	true
+
 
 /* XXX */
-
-/* TARGET_ASM_FILE_START.
-   We just emit a little comment for the time being.  */
-
-static void
-dadao_file_start (void)
-{
-  fputs ("# Da Dao Zhi Jian\n", asm_out_file);
-
-  default_file_start ();
-
-  /* Make sure each file starts with the text section.  */
-  switch_to_section (text_section);
-}
-
-/* TARGET_ASM_FILE_END.  */
-
-static void
-dadao_file_end (void)
-{
-  /* Make sure each file ends with the data section.  */
-  switch_to_section (data_section);
-}
-
-/* TARGET_ASM_OUTPUT_SOURCE_FILENAME.  */
-
-static void
-dadao_asm_output_source_filename (FILE *stream, const char *name)
-{
-  fprintf (stream, "# 1 ");
-  OUTPUT_QUOTED_STRING (stream, name);
-  fprintf (stream, "\n");
-}
-
-/* OUTPUT_QUOTED_STRING.  */
-
-void
-dadao_output_quoted_string (FILE *stream, const char *string, int length)
-{
-  const char * string_end = string + length;
-  static const char *const unwanted_chars = "\"[]\\";
-
-  /* Output "any character except newline and double quote character".  We
-     play it safe and avoid all control characters too.  We also do not
-     want [] as characters, should input be passed through m4 with [] as
-     quotes.  Further, we avoid "\", because the GAS port handles it as a
-     quoting character.  */
-  while (string < string_end)
-    {
-      if (*string
-	  && (unsigned char) *string < 128
-	  && !ISCNTRL (*string)
-	  && strchr (unwanted_chars, *string) == NULL)
-	{
-	  fputc ('"', stream);
-	  while (*string
-		 && (unsigned char) *string < 128
-		 && !ISCNTRL (*string)
-		 && strchr (unwanted_chars, *string) == NULL
-		 && string < string_end)
-	    {
-	      fputc (*string, stream);
-	      string++;
-	    }
-	  fputc ('"', stream);
-	  if (string < string_end)
-	    fprintf (stream, ",");
-	}
-      if (string < string_end)
-	{
-	  fprintf (stream, "0x%x", *string & 255);
-	  string++;
-	  if (string < string_end)
-	    fprintf (stream, ",");
-	}
-    }
-}
 
 /* Target hook for assembling integer objects.  Use dadao_print_operand
    for WYDE and TETRA.  Use dadao_output_octa to output 8-byte

@@ -9,7 +9,6 @@ extern int dadao_eh_return_data_regno (int);
 extern int dadao_initial_elimination_offset (int, int);
 extern void dadao_function_profiler (FILE *, int);
 extern int dadao_reversible_cc_mode (machine_mode);
-extern void dadao_output_quoted_string (FILE *, const char *, int);
 extern void dadao_asm_output_label (FILE *, const char *);
 extern void dadao_asm_output_internal_label (FILE *, const char *);
 extern void dadao_asm_weaken_label (FILE *, const char *);

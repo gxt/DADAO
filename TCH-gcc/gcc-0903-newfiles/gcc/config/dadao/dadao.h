@@ -410,18 +410,16 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 /* XXX gccint 18.19 Node: Position Independent Code */
 /* (empty) */
 
-
-/* XXX */
-
-/* Node: File Framework */
-#define ASM_COMMENT_START "#"
+/* XXX gccint 18.20 Node: Defining the Output Assembler Language */
+/* XXX gccint 18.20.1 Node: The Overall Framework of an Assembler File */
+#define ASM_COMMENT_START			"#"
 
 /* These aren't currently functional.  We just keep them as markers.  */
-#define ASM_APP_ON "#APP\n"
-#define ASM_APP_OFF "#NO_APP\n"
+#define ASM_APP_ON				"#APP\n"
+#define ASM_APP_OFF				"#NO_APP\n"
 
-#define OUTPUT_QUOTED_STRING(STREAM, STRING) \
- dadao_output_quoted_string (STREAM, STRING, strlen (STRING))
+
+/* XXX */
 
 #define TARGET_ASM_NAMED_SECTION default_elf_asm_named_section
 
