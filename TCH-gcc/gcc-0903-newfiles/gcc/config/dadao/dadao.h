@@ -329,6 +329,9 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 	(((REGNO) >= (DADAO_FIRST_ARG_REGNUM)) &&				\
 	 ((REGNO) < ((DADAO_FIRST_ARG_REGNUM) + (DADAO_MAX_ARGS_IN_REGS))))
 
+/* XXX gccint 18.9.8 Node: How Scalar Function Values Are Returned */
+/* (empty) */
+
 
 /* XXX */
 

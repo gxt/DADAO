@@ -114,9 +114,6 @@ static rtx dadao_struct_value_rtx (tree, int);
 static machine_mode dadao_promote_function_mode (const_tree,
 						     machine_mode,
 	                                             int *, const_tree, int);
-static rtx dadao_function_value (const_tree, const_tree, bool);
-static rtx dadao_libcall_value (machine_mode, const_rtx);
-static bool dadao_function_value_regno_p (const unsigned int);
 static bool dadao_frame_pointer_required (void);
 static void dadao_asm_trampoline_template (FILE *);
 static void dadao_trampoline_init (rtx, tree, rtx);
@@ -185,13 +182,6 @@ static void dadao_print_operand_address (FILE *, machine_mode, rtx);
 
 #undef TARGET_PROMOTE_FUNCTION_MODE
 #define TARGET_PROMOTE_FUNCTION_MODE dadao_promote_function_mode
-
-#undef TARGET_FUNCTION_VALUE
-#define TARGET_FUNCTION_VALUE dadao_function_value
-#undef TARGET_LIBCALL_VALUE
-#define TARGET_LIBCALL_VALUE dadao_libcall_value
-#undef TARGET_FUNCTION_VALUE_REGNO_P
-#define TARGET_FUNCTION_VALUE_REGNO_P dadao_function_value_regno_p
 
 #undef TARGET_STRUCT_VALUE_RTX
 #define TARGET_STRUCT_VALUE_RTX dadao_struct_value_rtx
@@ -520,48 +510,43 @@ static void dd_function_arg_advance (cumulative_args_t argsp_v, machine_mode mod
 #undef	TARGET_FUNCTION_ARG_ADVANCE
 #define	TARGET_FUNCTION_ARG_ADVANCE	dd_function_arg_advance
 
-/* XXX */
+/* XXX gccint 18.9.8 Node: How Scalar Function Values Are Returned */
 
 /* Implements TARGET_FUNCTION_VALUE.  */
-
-static rtx
-dadao_function_value (const_tree valtype,
-		     const_tree func ATTRIBUTE_UNUSED,
-		     bool outgoing)
+static rtx dd_function_value (const_tree valtype,
+			const_tree func ATTRIBUTE_UNUSED,
+			bool outgoing ATTRIBUTE_UNUSED)
 {
   machine_mode mode = TYPE_MODE (valtype);
-  machine_mode cmode;
-  int first_val_regnum = DADAO_OUTGOING_RETURN_VALUE_REGNUM;
-  rtx vec[DADAO_MAX_REGS_FOR_VALUE];
-  int i;
-  int nregs;
 
-  if (!outgoing)
-    return gen_rtx_REG (mode, DADAO_RETURN_VALUE_REGNUM);
-  
-  /* Return values that fit in a register need no special handling.
-     There's no register hole when parameters are passed in global
-     registers.  */
-  return
-      gen_rtx_REG (mode, DADAO_OUTGOING_RETURN_VALUE_REGNUM);
+  return gen_rtx_REG (mode, DADAO_RETURN_VALUE_REGNUM);
 }
 
-/* Implements TARGET_LIBCALL_VALUE.  */
+#undef	TARGET_FUNCTION_VALUE
+#define	TARGET_FUNCTION_VALUE		dd_function_value
 
-static rtx
-dadao_libcall_value (machine_mode mode,
+/* Implements TARGET_LIBCALL_VALUE.  */
+static rtx dd_libcall_value (machine_mode mode,
 		    const_rtx fun ATTRIBUTE_UNUSED)
 {
   return gen_rtx_REG (mode, DADAO_RETURN_VALUE_REGNUM);
 }
 
-/* Implements TARGET_FUNCTION_VALUE_REGNO_P.  */
+#undef	TARGET_LIBCALL_VALUE
+#define	TARGET_LIBCALL_VALUE		dd_libcall_value
 
-static bool
-dadao_function_value_regno_p (const unsigned int regno)
+/* Implements TARGET_FUNCTION_VALUE_REGNO_P.  */
+static bool dd_function_value_regno_p (const unsigned int regno)
 {
   return regno == DADAO_RETURN_VALUE_REGNUM;
 }
+
+#undef	TARGET_FUNCTION_VALUE_REGNO_P
+#define	TARGET_FUNCTION_VALUE_REGNO_P	dd_function_value_regno_p
+
+
+/* XXX */
+
 
 /* Make a note that we've seen the beginning of the prologue.  This
    matters to whether we'll translate register numbers as calculated by
