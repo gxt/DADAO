@@ -1362,7 +1362,7 @@ dadao_print_operand_address (FILE *stream, machine_mode /*mode*/, rtx x)
 	}
     }
 
-  if (TARGET_BASE_ADDRESSES && dadao_legitimate_constant_p (Pmode, x))
+  if (TARGET_BASE_ADDRESSES && dd_legitimate_constant_p (Pmode, x))
     {
       output_addr_const (stream, x);
       return;
