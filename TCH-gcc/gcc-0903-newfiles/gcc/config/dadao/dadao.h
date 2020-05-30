@@ -359,6 +359,9 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 /* XXX gccint 18.9.15 Node: Stack smashing protection */
 /* (empty) */
 
+/* XXX gccint 18.9.16 Node: Miscellaneous register hooks */
+/* (empty) */
+
 
 /* XXX */
 
