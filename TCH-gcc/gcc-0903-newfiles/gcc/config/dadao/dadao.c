@@ -99,8 +99,6 @@ static bool dadao_legitimate_address_p (machine_mode, rtx, bool);
 static bool dadao_legitimate_constant_p (machine_mode, rtx);
 static void dadao_asm_output_mi_thunk
   (FILE *, tree, HOST_WIDE_INT, HOST_WIDE_INT, tree);
-static void dadao_setup_incoming_varargs
-  (cumulative_args_t, machine_mode, tree, int *, int);
 static void dadao_file_start (void);
 static void dadao_file_end (void);
 static void dadao_init_libfuncs (void);
@@ -166,8 +164,6 @@ static void dadao_print_operand_address (FILE *, machine_mode, rtx);
 #undef TARGET_PROMOTE_FUNCTION_MODE
 #define TARGET_PROMOTE_FUNCTION_MODE dadao_promote_function_mode
 
-#undef TARGET_SETUP_INCOMING_VARARGS
-#define TARGET_SETUP_INCOMING_VARARGS dadao_setup_incoming_varargs
 #undef TARGET_CALLEE_COPIES
 #define TARGET_CALLEE_COPIES hook_bool_CUMULATIVE_ARGS_mode_tree_bool_true
 
@@ -593,19 +589,14 @@ void dadao_function_profiler (FILE *stream ATTRIBUTE_UNUSED,
 /* XXX gccint 18.9.16 Node: Miscellaneous register hooks */
 /* (empty) */
 
-
-/* XXX */
+/* XXX gccint 18.10 Node: Implementing the Varargs Macros */
 
 /* Worker function for TARGET_SETUP_INCOMING_VARARGS.  For the moment,
    let's stick to pushing argument registers on the stack.  Later, we
    can parse all arguments in registers, to improve performance.  */
-
-static void
-dadao_setup_incoming_varargs (cumulative_args_t args_so_farp_v,
-			     machine_mode mode,
-			     tree vartype,
-			     int *pretend_sizep,
-			     int second_time ATTRIBUTE_UNUSED)
+static void dd_setup_incoming_varargs (cumulative_args_t args_so_farp_v,
+			machine_mode mode, tree vartype, int *pretend_sizep,
+			int second_time ATTRIBUTE_UNUSED)
 {
   CUMULATIVE_ARGS *args_so_farp = get_cumulative_args (args_so_farp_v);
 
@@ -619,6 +610,12 @@ dadao_setup_incoming_varargs (cumulative_args_t args_so_farp_v,
   if ((7 + (DADAO_FUNCTION_ARG_SIZE (mode, vartype))) / 8 != 1)
     internal_error ("DADAO Internal: Last named vararg would not fit in a register");
 }
+
+#undef	TARGET_SETUP_INCOMING_VARARGS
+#define	TARGET_SETUP_INCOMING_VARARGS		dd_setup_incoming_varargs
+
+
+/* XXX */
 
 /* TARGET_ASM_TRAMPOLINE_TEMPLATE.  */
 
