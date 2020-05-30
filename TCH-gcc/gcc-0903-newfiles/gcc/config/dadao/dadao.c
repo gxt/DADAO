@@ -572,16 +572,16 @@ static void dd_asm_function_epilogue (FILE *stream)
 #undef	TARGET_ASM_FUNCTION_EPILOGUE
 #define	TARGET_ASM_FUNCTION_EPILOGUE		dd_asm_function_epilogue
 
-/* XXX */
+/* XXX gccint 18.9.12 Node: Generating Code for Profiling */
 
 /* FUNCTION_PROFILER.  */
-
-void
-dadao_function_profiler (FILE *stream ATTRIBUTE_UNUSED,
+void dadao_function_profiler (FILE *stream ATTRIBUTE_UNUSED,
 			int labelno ATTRIBUTE_UNUSED)
 {
   sorry ("function_profiler support for DADAO");
 }
+
+/* XXX */
 
 /* Worker function for TARGET_SETUP_INCOMING_VARARGS.  For the moment,
    let's stick to pushing argument registers on the stack.  Later, we

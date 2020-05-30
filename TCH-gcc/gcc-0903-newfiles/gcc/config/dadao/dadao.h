@@ -346,11 +346,11 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
    FIXME: Not needed if nonlocal_goto_stack_level.  */
 #define EPILOGUE_USES(REGNO)		((REGNO) == DADAO_INCOMING_RETURN_ADDRESS_REGNUM)
 
-/* XXX */
+/* XXX gccint 18.9.12 Node: Generating Code for Profiling */
 
-/* Node: Profiling */
-#define FUNCTION_PROFILER(FILE, LABELNO)	\
- dadao_function_profiler (FILE, LABELNO)
+#define FUNCTION_PROFILER(FILE, LABELNO)	dadao_function_profiler (FILE, LABELNO)
+
+/* XXX */
 
 /* Node: Trampolines */
 
