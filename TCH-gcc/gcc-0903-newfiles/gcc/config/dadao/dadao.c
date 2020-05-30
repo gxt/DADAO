@@ -84,7 +84,6 @@ rtx dadao_compare_op1;
 /* Intermediate for insn output.  */
 static int dadao_output_destination_register;
 
-static void dadao_option_override (void);
 static void dadao_asm_output_source_filename (FILE *, const char *);
 static void dadao_output_shiftvalue_op_from_str
   (FILE *, const char *, int64_t);
@@ -123,7 +122,6 @@ static void dadao_asm_trampoline_template (FILE *);
 static void dadao_trampoline_init (rtx, tree, rtx);
 static void dadao_print_operand (FILE *, rtx, int);
 static void dadao_print_operand_address (FILE *, machine_mode, rtx);
-static HOST_WIDE_INT dadao_starting_frame_offset (void);
 
 /* Target structure macros.  Listed by node.  See `Using and Porting GCC'
    for a general description.  */
@@ -216,10 +214,7 @@ static HOST_WIDE_INT dadao_starting_frame_offset (void);
 #define TARGET_TRAMPOLINE_INIT dadao_trampoline_init
 
 /* XXX gccint 18.24 Node: Defining target-specific uses of __attribute__ */
-#undef	TARGET_OPTION_OVERRIDE
-#define	TARGET_OPTION_OVERRIDE			dadao_option_override
-
-static void dadao_option_override (void)
+static void dd_option_override (void)
 {
 	/* Should we err or should we warn?  Hmm.  At least we must neutralize
 	   it.  For example the wrong kind of case-tables will be generated with
@@ -231,6 +226,9 @@ static void dadao_option_override (void)
 		flag_pic = 0;
 	}
 }
+
+#undef	TARGET_OPTION_OVERRIDE
+#define	TARGET_OPTION_OVERRIDE			dd_option_override
 
 /* XXX gccint Chapter 18: Target Description Macros and Functions */
 
@@ -247,16 +245,16 @@ static void dadao_option_override (void)
 
 /* XXX gccint 18.4 Node: Defining data structures for per-function information */
 
+/* Set the per-function data.  */
+static struct machine_function * dd_init_machine_status (void)
+{
+	return ggc_cleared_alloc<machine_function> ();
+}
+
 /* INIT_EXPANDERS.  */
 void dadao_init_expanders (void)
 {
-	init_machine_status = dadao_init_machine_status;
-}
-
-/* Set the per-function data.  */
-static struct machine_function * dadao_init_machine_status (void)
-{
-	return ggc_cleared_alloc<machine_function> ();
+	init_machine_status = dd_init_machine_status;
 }
 
 /* XXX gccint 18.5 Node: Storage Layout */
@@ -270,9 +268,6 @@ static struct machine_function * dadao_init_machine_status (void)
 
 /* XXX gccint 18.8 Node: Register Classes */
 
-#undef	TARGET_PREFERRED_RELOAD_CLASS
-#define	TARGET_PREFERRED_RELOAD_CLASS		dd_preferred_reload_class
-
 /* We need to extend the reload class of REMAINDER_REG and HIMULT_REG.  */
 static reg_class_t dd_preferred_reload_class (rtx x, reg_class_t rclass)
 {
@@ -281,8 +276,8 @@ static reg_class_t dd_preferred_reload_class (rtx x, reg_class_t rclass)
     ? REMAINDER_REG : rclass;
 }
 
-#undef	TARGET_PREFERRED_OUTPUT_RELOAD_CLASS
-#define	TARGET_PREFERRED_OUTPUT_RELOAD_CLASS	dd_preferred_output_reload_class
+#undef	TARGET_PREFERRED_RELOAD_CLASS
+#define	TARGET_PREFERRED_RELOAD_CLASS		dd_preferred_reload_class
 
 /* We need to extend the reload class of REMAINDER_REG and HIMULT_REG.  */
 static reg_class_t dd_preferred_output_reload_class (rtx x, reg_class_t rclass)
@@ -292,8 +287,9 @@ static reg_class_t dd_preferred_output_reload_class (rtx x, reg_class_t rclass)
     ? REMAINDER_REG : rclass;
 }
 
-#undef	TARGET_SECONDARY_RELOAD
-#define	TARGET_SECONDARY_RELOAD			dd_secondary_reload
+#undef	TARGET_PREFERRED_OUTPUT_RELOAD_CLASS
+#define	TARGET_PREFERRED_OUTPUT_RELOAD_CLASS	dd_preferred_output_reload_class
+
 /* We need to reload regs of REMAINDER_REG and HIMULT_REG elsewhere.  */
 static reg_class_t dd_secondary_reload (bool in_p ATTRIBUTE_UNUSED,
 		rtx x ATTRIBUTE_UNUSED, reg_class_t rclass,
@@ -306,18 +302,18 @@ static reg_class_t dd_secondary_reload (bool in_p ATTRIBUTE_UNUSED,
 	return NO_REGS;
 }
 
+#undef	TARGET_SECONDARY_RELOAD
+#define	TARGET_SECONDARY_RELOAD			dd_secondary_reload
+
 #undef	TARGET_LRA_P
-#define	TARGET_LRA_P			hook_bool_void_false
+#define	TARGET_LRA_P				hook_bool_void_false
 
 /* XXX gccint 18.9 Node: Stack Layout and Calling Conventions */
 
 /* XXX gccint 18.9.1 Node: Basic Stack Layout */
 
-#undef	TARGET_STARTING_FRAME_OFFSET
-#define	TARGET_STARTING_FRAME_OFFSET	dadao_starting_frame_offset
-
 /* Implement TARGET_STARTING_FRAME_OFFSET.  */
-static HOST_WIDE_INT dadao_starting_frame_offset (void)
+static HOST_WIDE_INT dd_starting_frame_offset (void)
 {
   /* The old frame pointer is in the slot below the new one, so
      FIRST_PARM_OFFSET does not need to depend on whether the
@@ -330,6 +326,9 @@ static HOST_WIDE_INT dadao_starting_frame_offset (void)
      + (DADAO_CFUN_HAS_LANDING_PAD
 	? -16 : (DADAO_CFUN_NEEDS_SAVED_EH_RETURN_ADDRESS ? -8 : 0)));
 }
+
+#undef	TARGET_STARTING_FRAME_OFFSET
+#define	TARGET_STARTING_FRAME_OFFSET		dd_starting_frame_offset
 
 /* DYNAMIC_CHAIN_ADDRESS.  */
 rtx dadao_dynamic_chain_address (rtx frame)
