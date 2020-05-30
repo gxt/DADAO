@@ -4,11 +4,27 @@
  * Contributed by Guan Xuetao <gxt@pku.edu.cn>
  */
 
+/* XXX gccint 18.4 Node: Defining data structures for per-function information */
 extern void dadao_init_expanders (void);
+/* XXX gccint 18.9.1 Node: Basic Stack Layout */
+extern rtx dadao_dynamic_chain_address (rtx);
+extern void dadao_setup_frame_addresses (void);
+extern rtx dadao_return_addr_rtx (int, rtx);
+/* XXX gccint 18.9.2 Node: Exception Handling Support */
 extern int dadao_eh_return_data_regno (int);
+extern rtx dadao_eh_return_stackadj_rtx (void);
+extern rtx dadao_eh_return_handler_rtx (void);
+extern int dadao_asm_preferred_eh_data_format (int, int);
+/* XXX gccint 18.9.5 Node: Eliminating Frame Pointer and Arg Pointer */
 extern int dadao_initial_elimination_offset (int, int);
+/* XXX gccint 18.9.12 Node: Generating Code for Profiling */
 extern void dadao_function_profiler (FILE *, int);
+/* XXX gccint 18.15.2 Node: Representation of condition codes using registers */
+#ifdef RTX_CODE
+extern machine_mode dadao_select_cc_mode (enum rtx_code, rtx, rtx);
+#endif
 extern int dadao_reversible_cc_mode (machine_mode);
+
 extern void dadao_asm_output_label (FILE *, const char *);
 extern void dadao_asm_output_internal_label (FILE *, const char *);
 extern void dadao_asm_weaken_label (FILE *, const char *);
@@ -31,20 +47,13 @@ extern void dadao_asm_declare_register_global
   (FILE *, tree, int, const char *);
 extern void dadao_asm_output_addr_diff_elt (FILE *, rtx, int, int);
 extern void dadao_asm_output_addr_vec_elt (FILE *, int);
-extern rtx dadao_dynamic_chain_address (rtx);
-extern rtx dadao_return_addr_rtx (int, rtx);
-extern rtx dadao_eh_return_stackadj_rtx (void);
-extern rtx dadao_eh_return_handler_rtx (void);
 extern int dadao_constant_address_p (rtx);
 extern void dadao_expand_prologue (void);
 extern void dadao_expand_epilogue (void);
 extern rtx dadao_get_hard_reg_initial_val (machine_mode, int);
-extern int dadao_asm_preferred_eh_data_format (int, int);
-extern void dadao_setup_frame_addresses (void);
 
 #ifdef RTX_CODE
 /* Needs to be ifdef:d for sake of enum rtx_code.  */
-extern machine_mode dadao_select_cc_mode (enum rtx_code, rtx, rtx);
 extern void dadao_canonicalize_comparison (enum rtx_code *, rtx *, rtx *);
 extern rtx dadao_gen_compare_reg (enum rtx_code, rtx, rtx);
 #endif
