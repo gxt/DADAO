@@ -353,6 +353,10 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 /* XXX gccint 18.9.13 Node: Permitting tail calls */
 /* (empty) */
 
+/* XXX gccint 18.9.14 Node: Shrink-wrapping separate components */
+/* (empty) */
+
+
 /* XXX */
 
 /* Node: Trampolines */
