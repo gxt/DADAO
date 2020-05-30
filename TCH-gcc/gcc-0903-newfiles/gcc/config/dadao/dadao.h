@@ -398,23 +398,17 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 /* XXX gccint 18.17 Node: Adjusting the Instruction Scheduler */
 /* (empty) */
 
+/* XXX gccint 18.18 Node: Dividing the Output into Sections (Texts, Data, ...) */
+
+#define TEXT_SECTION_ASM_OP			"\t.text"
+#define DATA_SECTION_ASM_OP			"\t.data"
+#define READONLY_DATA_SECTION_ASM_OP		"\t.section\t.rodata"
+#define BSS_SECTION_ASM_OP			"\t.bss"
+#define INIT_SECTION_ASM_OP			"\t.section .init,\"ax\""
+#define FINI_SECTION_ASM_OP			"\t.section .fini,\"ax\""
+
 
 /* XXX */
-
-
-
-
-/* Node: Sections */
-
-/* This must be a constant string, since it's used in crtstuff.c.  */
-#define TEXT_SECTION_ASM_OP \
- "\t.text"
-
-/* FIXME: Not documented.  */
-#define DATA_SECTION_ASM_OP \
- dadao_data_section_asm_op ()
-
-#define READONLY_DATA_SECTION_ASM_OP	"\t.section\t.rodata"
 
 /* Node: PIC */
 /* (empty) */
@@ -472,11 +466,6 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 /* Node: Macros for Initialization */
 /* We're compiling to ELF and linking to MMO; fundamental ELF features
    that GCC depend on are there.  */
-
-/* These must be constant strings, since they're used in crtstuff.c.  */
-#define INIT_SECTION_ASM_OP "\t.section .init,\"ax\""
-
-#define FINI_SECTION_ASM_OP "\t.section .fini,\"ax\""
 
 #define OBJECT_FORMAT_ELF
 

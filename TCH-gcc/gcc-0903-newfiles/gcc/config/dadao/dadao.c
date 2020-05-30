@@ -92,7 +92,6 @@ static void dadao_output_condition (FILE *, const_rtx, int);
 static void dadao_output_octa (FILE *, int64_t, int);
 static bool dadao_assemble_integer (rtx, unsigned int, int);
 static struct machine_function *dadao_init_machine_status (void);
-static void dadao_encode_section_info (tree, rtx, int);
 static const char *dadao_strip_name_encoding (const char *);
 static void dadao_emit_sp_add (HOST_WIDE_INT offset);
 static void dadao_asm_output_mi_thunk
@@ -126,9 +125,6 @@ static void dadao_print_operand_address (FILE *, machine_mode, rtx);
 #define TARGET_PRINT_OPERAND dadao_print_operand
 #undef TARGET_PRINT_OPERAND_ADDRESS
 #define TARGET_PRINT_OPERAND_ADDRESS dadao_print_operand_address
-
-#undef TARGET_ENCODE_SECTION_INFO
-#define TARGET_ENCODE_SECTION_INFO  dadao_encode_section_info
 
 #undef TARGET_ASM_FILE_START
 #define TARGET_ASM_FILE_START dadao_file_start
@@ -847,23 +843,9 @@ static bool dd_rtx_costs (rtx x ATTRIBUTE_UNUSED,
 /* XXX gccint 18.17 Node: Adjusting the Instruction Scheduler */
 /* (empty) */
 
+/* XXX gccint 18.18 Node: Dividing the Output into Sections (Texts, Data, ...) */
 
-/* XXX */
-
-/* Note that we don't have a TEXT_SECTION_ASM_OP, because it has to be a
-   compile-time constant; it's used in an asm in crtstuff.c, compiled for
-   the target.  */
-
-/* DATA_SECTION_ASM_OP.  */
-
-const char *
-dadao_data_section_asm_op (void)
-{
-  return "\t.data";
-}
-
-static void
-dadao_encode_section_info (tree decl, rtx rtl, int first)
+static void dd_encode_section_info (tree decl, rtx rtl, int first)
 {
   /* Test for an external declaration, and do nothing if it is one.  */
   if ((TREE_CODE (decl) == VAR_DECL
@@ -892,6 +874,12 @@ dadao_encode_section_info (tree decl, rtx rtl, int first)
 	      || TREE_CONSTANT (DECL_INITIAL (decl)))))
     SYMBOL_REF_FLAG (XEXP (rtl, 0)) = 1;
 }
+
+#undef	TARGET_ENCODE_SECTION_INFO
+#define	TARGET_ENCODE_SECTION_INFO		dd_encode_section_info
+
+
+/* XXX */
 
 /* TARGET_ASM_FILE_START.
    We just emit a little comment for the time being.  */
