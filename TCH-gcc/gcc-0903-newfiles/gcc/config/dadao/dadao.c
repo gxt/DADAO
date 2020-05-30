@@ -253,7 +253,9 @@ static void dadao_option_override (void)
 /* XXX gccint Chapter 18: Target Description Macros and Functions */
 
 /* XXX gccint 18.1 Node: The Global targetm Variable */
-struct gcc_target targetm = TARGET_INITIALIZER;
+
+/* gcc_target MUST be at the end of this file, since TARGET_* macros will be used in TARGET_INITIALIZER */
+/* struct gcc_target targetm = TARGET_INITIALIZER; */
 
 /* XXX gccint 18.2 Node: Controlling the Compilation Driver, gcc */
 /* (empty) */
@@ -2441,6 +2443,10 @@ dadao_frame_pointer_required (void)
 {
   return (cfun->has_nonlocal_label);
 }
+
+/* XXX gccint 18.1 Node: The Global targetm Variable */
+/* gcc_target MUST be at the end of this file, since TARGET_* macros will be used in TARGET_INITIALIZER */
+struct gcc_target targetm = TARGET_INITIALIZER;
 
 /*
  * Local variables:
