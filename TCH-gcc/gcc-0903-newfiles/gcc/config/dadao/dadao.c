@@ -99,9 +99,6 @@ static void dadao_asm_output_mi_thunk
   (FILE *, tree, HOST_WIDE_INT, HOST_WIDE_INT, tree);
 static void dadao_file_start (void);
 static void dadao_file_end (void);
-static bool dadao_rtx_costs (rtx, machine_mode, int, int, int *, bool);
-static int dadao_register_move_cost (machine_mode,
-				    reg_class_t, reg_class_t);
 static machine_mode dadao_promote_function_mode (const_tree,
 						     machine_mode,
 	                                             int *, const_tree, int);
@@ -144,14 +141,6 @@ static void dadao_print_operand_address (FILE *, machine_mode, rtx);
 
 #undef TARGET_HAVE_SPECULATION_SAFE_VALUE
 #define TARGET_HAVE_SPECULATION_SAFE_VALUE speculation_safe_value_not_needed
-
-#undef TARGET_RTX_COSTS
-#define TARGET_RTX_COSTS dadao_rtx_costs
-#undef TARGET_ADDRESS_COST
-#define TARGET_ADDRESS_COST hook_int_rtx_mode_as_bool_0
-
-#undef TARGET_REGISTER_MOVE_COST
-#define TARGET_REGISTER_MOVE_COST dadao_register_move_cost
 
 #undef TARGET_PROMOTE_FUNCTION_MODE
 #define TARGET_PROMOTE_FUNCTION_MODE dadao_promote_function_mode
@@ -820,14 +809,23 @@ int dadao_reversible_cc_mode (machine_mode mode)
   return mode != CC_FPmode;
 }
 
+/* XXX gccint 18.16 Node: Describing Relative Costs of Operations */
 
-/* XXX */
+/* TARGET_REGISTER_MOVE_COST.
+   The special registers can only move to and from general regs, and we
+   need to check that their constraints match, so say 3 for them.  */
+static int dd_register_move_cost (machine_mode mode ATTRIBUTE_UNUSED,
+			 reg_class_t from,
+			 reg_class_t to)
+{
+  return (from == GENERAL_REGS && from == to) ? 2 : 3;
+}
 
+#undef	TARGET_REGISTER_MOVE_COST
+#define	TARGET_REGISTER_MOVE_COST		dd_register_move_cost
 
 /* TARGET_RTX_COSTS.  */
-
-static bool
-dadao_rtx_costs (rtx x ATTRIBUTE_UNUSED,
+static bool dd_rtx_costs (rtx x ATTRIBUTE_UNUSED,
 		machine_mode mode ATTRIBUTE_UNUSED,
 		int outer_code ATTRIBUTE_UNUSED,
 		int opno ATTRIBUTE_UNUSED,
@@ -840,18 +838,14 @@ dadao_rtx_costs (rtx x ATTRIBUTE_UNUSED,
   return false;
 }
 
-/* TARGET_REGISTER_MOVE_COST.
+#undef	TARGET_RTX_COSTS
+#define	TARGET_RTX_COSTS			dd_rtx_costs
 
-   The special registers can only move to and from general regs, and we
-   need to check that their constraints match, so say 3 for them.  */
+#undef	TARGET_ADDRESS_COST
+#define	TARGET_ADDRESS_COST			hook_int_rtx_mode_as_bool_0
 
-static int
-dadao_register_move_cost (machine_mode mode ATTRIBUTE_UNUSED,
-			 reg_class_t from,
-			 reg_class_t to)
-{
-  return (from == GENERAL_REGS && from == to) ? 2 : 3;
-}
+
+/* XXX */
 
 /* Note that we don't have a TEXT_SECTION_ASM_OP, because it has to be a
    compile-time constant; it's used in an asm in crtstuff.c, compiled for

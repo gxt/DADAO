@@ -391,12 +391,14 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 
 #define REVERSIBLE_CC_MODE(MODE)		dadao_reversible_cc_mode (MODE)
 
+/* XXX gccint 18.16 Node: Describing Relative Costs of Operations */
+
+#define SLOW_BYTE_ACCESS			0
+
 
 /* XXX */
 
-/* Node: Costs */
 
-#define SLOW_BYTE_ACCESS 0
 
 
 /* Node: Sections */
