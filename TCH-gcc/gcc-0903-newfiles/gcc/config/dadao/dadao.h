@@ -382,25 +382,17 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 /* XXX gccint 18.14 Node: Anchored Addresses */
 /* (empty) */
 
+/* XXX gccint 18.15 Node: Condition Code Status */
+/* XXX gccint 18.15.1 Node: Representation of condition codes using (cc0) */
+/* (empty) */
+/* XXX gccint 18.15.2 Node: Representation of condition codes using registers */
+
+#define SELECT_CC_MODE(OP, X, Y)		dadao_select_cc_mode (OP, X, Y)
+
+#define REVERSIBLE_CC_MODE(MODE)		dadao_reversible_cc_mode (MODE)
+
 
 /* XXX */
-
-/* Node: Condition Code */
-
-#define SELECT_CC_MODE(OP, X, Y)		\
- dadao_select_cc_mode (OP, X, Y)
-
-/* A definition of CANONICALIZE_COMPARISON that changed LE and GT
-   comparisons with -1 to LT and GE respectively, and LT, LTU, GE or GEU
-   comparisons with 256 to 255 and LE, LEU, GT and GTU has been
-   ineffective; the code path for performing the changes did not trig for
-   neither the GCC testsuite nor ghostscript-6.52 nor Knuth's dadao.tar.gz
-   itself (core GCC functionality supposedly handling it) with sources
-   from 2002-06-06.  */
-
-#define REVERSIBLE_CC_MODE(MODE)		\
- dadao_reversible_cc_mode (MODE)
-
 
 /* Node: Costs */
 

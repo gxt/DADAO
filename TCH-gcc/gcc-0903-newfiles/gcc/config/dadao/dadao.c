@@ -782,13 +782,13 @@ static bool dd_legitimate_constant_p (machine_mode mode ATTRIBUTE_UNUSED, rtx x)
 /* XXX gccint 18.14 Node: Anchored Addresses */
 /* (empty) */
 
-
-/* XXX */
+/* XXX gccint 18.15 Node: Condition Code Status */
+/* XXX gccint 18.15.1 Node: Representation of condition codes using (cc0) */
+/* (empty) */
+/* XXX gccint 18.15.2 Node: Representation of condition codes using registers */
 
 /* SELECT_CC_MODE.  */
-
-machine_mode
-dadao_select_cc_mode (RTX_CODE op, rtx x, rtx y ATTRIBUTE_UNUSED)
+machine_mode dadao_select_cc_mode (RTX_CODE op, rtx x, rtx y ATTRIBUTE_UNUSED)
 {
   /* We use CCmode, CC_UNSmode, CC_FPmode, CC_FPEQmode and CC_FUNmode to
      output different compare insns.  Note that we do not check the
@@ -813,14 +813,16 @@ dadao_select_cc_mode (RTX_CODE op, rtx x, rtx y ATTRIBUTE_UNUSED)
 }
 
 /* REVERSIBLE_CC_MODE.  */
-
-int
-dadao_reversible_cc_mode (machine_mode mode)
+int dadao_reversible_cc_mode (machine_mode mode)
 {
   /* That is, all integer and the EQ, NE, ORDERED and UNORDERED float
      compares.  */
   return mode != CC_FPmode;
 }
+
+
+/* XXX */
+
 
 /* TARGET_RTX_COSTS.  */
 
