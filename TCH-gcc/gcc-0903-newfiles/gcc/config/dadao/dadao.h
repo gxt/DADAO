@@ -395,6 +395,9 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 
 #define SLOW_BYTE_ACCESS			0
 
+/* XXX gccint 18.17 Node: Adjusting the Instruction Scheduler */
+/* (empty) */
+
 
 /* XXX */
 

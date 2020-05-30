@@ -844,6 +844,9 @@ static bool dd_rtx_costs (rtx x ATTRIBUTE_UNUSED,
 #undef	TARGET_ADDRESS_COST
 #define	TARGET_ADDRESS_COST			hook_int_rtx_mode_as_bool_0
 
+/* XXX gccint 18.17 Node: Adjusting the Instruction Scheduler */
+/* (empty) */
+
 
 /* XXX */
 
