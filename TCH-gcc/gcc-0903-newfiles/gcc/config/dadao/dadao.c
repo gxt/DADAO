@@ -95,8 +95,6 @@ static struct machine_function *dadao_init_machine_status (void);
 static void dadao_encode_section_info (tree, rtx, int);
 static const char *dadao_strip_name_encoding (const char *);
 static void dadao_emit_sp_add (HOST_WIDE_INT offset);
-static bool dadao_legitimate_address_p (machine_mode, rtx, bool);
-static bool dadao_legitimate_constant_p (machine_mode, rtx);
 static void dadao_asm_output_mi_thunk
   (FILE *, tree, HOST_WIDE_INT, HOST_WIDE_INT, tree);
 static void dadao_file_start (void);
@@ -161,10 +159,6 @@ static void dadao_print_operand_address (FILE *, machine_mode, rtx);
 #undef TARGET_CALLEE_COPIES
 #define TARGET_CALLEE_COPIES hook_bool_CUMULATIVE_ARGS_mode_tree_bool_true
 
-#undef TARGET_LEGITIMATE_ADDRESS_P
-#define TARGET_LEGITIMATE_ADDRESS_P	dadao_legitimate_address_p
-#undef TARGET_LEGITIMATE_CONSTANT_P
-#define TARGET_LEGITIMATE_CONSTANT_P	dadao_legitimate_constant_p
 
 #undef TARGET_FRAME_POINTER_REQUIRED
 #define TARGET_FRAME_POINTER_REQUIRED dadao_frame_pointer_required
@@ -645,15 +639,12 @@ static void dd_trampoline_init (rtx m_tramp, tree fndecl, rtx static_chain)
 /* XXX gccint 18.12 Node: Implicit Calls to Library Routines */
 /* (empty) */
 
-
-/* XXX */
+/* XXX gccint 18.13 Node: Addressing Modes */
 
 /* We must exclude constant addresses that have an increment that is not a
    multiple of four bytes because of restrictions of the GETA
    instruction, unless TARGET_BASE_ADDRESSES.  */
-
-int
-dadao_constant_address_p (rtx x)
+int dadao_constant_address_p (rtx x)
 {
   RTX_CODE code = GET_CODE (x);
   int addend = 0;
@@ -712,11 +703,8 @@ dadao_constant_address_p (rtx x)
 }
 
 /* Return 1 if the address is OK, otherwise 0.  */
-
-bool
-dadao_legitimate_address_p (machine_mode mode ATTRIBUTE_UNUSED,
-			   rtx x,
-			   bool strict_checking)
+static bool dd_legitimate_address_p (machine_mode mode ATTRIBUTE_UNUSED,
+			   rtx x, bool strict_checking)
 {
 #define DADAO_REG_OK(X)							\
   ((strict_checking							\
@@ -771,10 +759,11 @@ dadao_legitimate_address_p (machine_mode mode ATTRIBUTE_UNUSED,
   return TARGET_BASE_ADDRESSES && dadao_constant_address_p (x);
 }
 
-/* Implement TARGET_LEGITIMATE_CONSTANT_P.  */
+#undef	TARGET_LEGITIMATE_ADDRESS_P
+#define	TARGET_LEGITIMATE_ADDRESS_P		dd_legitimate_address_p
 
-static bool
-dadao_legitimate_constant_p (machine_mode mode ATTRIBUTE_UNUSED, rtx x)
+/* Implement TARGET_LEGITIMATE_CONSTANT_P.  */
+static bool dd_legitimate_constant_p (machine_mode mode ATTRIBUTE_UNUSED, rtx x)
 {
   RTX_CODE code = GET_CODE (x);
 
@@ -786,6 +775,12 @@ dadao_legitimate_constant_p (machine_mode mode ATTRIBUTE_UNUSED, rtx x)
 
   return CONSTANT_ADDRESS_P (x);
 }
+
+#undef	TARGET_LEGITIMATE_CONSTANT_P
+#define	TARGET_LEGITIMATE_CONSTANT_P		dd_legitimate_constant_p
+
+
+/* XXX */
 
 /* SELECT_CC_MODE.  */
 

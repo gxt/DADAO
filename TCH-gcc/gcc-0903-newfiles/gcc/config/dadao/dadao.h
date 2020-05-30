@@ -373,16 +373,14 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 /* XXX gccint 18.12 Node: Implicit Calls to Library Routines */
 /* (empty) */
 
+/* XXX gccint 18.13 Node: Addressing Modes */
+
+#define	CONSTANT_ADDRESS_P(X)			dadao_constant_address_p (X)
+
+#define	MAX_REGS_PER_ADDRESS			2
+
 
 /* XXX */
-
-/* Node: Addressing Modes */
-
-#define CONSTANT_ADDRESS_P(X) \
- dadao_constant_address_p (X)
-
-#define MAX_REGS_PER_ADDRESS 2
-
 
 /* Node: Condition Code */
 
