@@ -115,19 +115,9 @@ static rtx dadao_struct_value_rtx (tree, int);
 static machine_mode dadao_promote_function_mode (const_tree,
 						     machine_mode,
 	                                             int *, const_tree, int);
-static void dadao_function_arg_advance (cumulative_args_t, machine_mode,
-				       const_tree, bool);
-static rtx dadao_function_arg_1 (const cumulative_args_t, machine_mode,
-				const_tree, bool, bool);
-static rtx dadao_function_incoming_arg (cumulative_args_t, machine_mode,
-				       const_tree, bool);
-static rtx dadao_function_arg (cumulative_args_t, machine_mode,
-			      const_tree, bool);
 static rtx dadao_function_value (const_tree, const_tree, bool);
 static rtx dadao_libcall_value (machine_mode, const_rtx);
 static bool dadao_function_value_regno_p (const unsigned int);
-static bool dadao_pass_by_reference (cumulative_args_t,
-				    machine_mode, const_tree, bool);
 static bool dadao_frame_pointer_required (void);
 static void dadao_asm_trampoline_template (FILE *);
 static void dadao_trampoline_init (rtx, tree, rtx);
@@ -205,18 +195,10 @@ static HOST_WIDE_INT dadao_starting_frame_offset (void);
 #undef TARGET_FUNCTION_VALUE_REGNO_P
 #define TARGET_FUNCTION_VALUE_REGNO_P dadao_function_value_regno_p
 
-#undef TARGET_FUNCTION_ARG
-#define TARGET_FUNCTION_ARG dadao_function_arg
-#undef TARGET_FUNCTION_INCOMING_ARG
-#define TARGET_FUNCTION_INCOMING_ARG dadao_function_incoming_arg
-#undef TARGET_FUNCTION_ARG_ADVANCE
-#define TARGET_FUNCTION_ARG_ADVANCE dadao_function_arg_advance
 #undef TARGET_STRUCT_VALUE_RTX
 #define TARGET_STRUCT_VALUE_RTX dadao_struct_value_rtx
 #undef TARGET_SETUP_INCOMING_VARARGS
 #define TARGET_SETUP_INCOMING_VARARGS dadao_setup_incoming_varargs
-#undef TARGET_PASS_BY_REFERENCE
-#define TARGET_PASS_BY_REFERENCE dadao_pass_by_reference
 #undef TARGET_CALLEE_COPIES
 #define TARGET_CALLEE_COPIES hook_bool_CUMULATIVE_ARGS_mode_tree_bool_true
 
@@ -471,41 +453,20 @@ int dadao_initial_elimination_offset (int fromreg, int toreg)
 /* XXX gccint 18.9.6 Node: Passing Function Arguments on the Stack */
 /* (empty) */
 
-/* XXX */
+/* XXX gccint 18.9.7 Node: Passing Arguments in Registers */
 
-static void
-dadao_function_arg_advance (cumulative_args_t argsp_v, machine_mode mode,
-			   const_tree type, bool named ATTRIBUTE_UNUSED)
-{
-  CUMULATIVE_ARGS *argsp = get_cumulative_args (argsp_v);
-  int arg_size = DADAO_FUNCTION_ARG_SIZE (mode, type);
-
-  argsp->regs = ((targetm.calls.must_pass_in_stack (mode, type)
-		  || (arg_size > 8
-		      && !TARGET_LIBFUNC
-		      && !argsp->lib))
-		 ? (DADAO_MAX_ARGS_IN_REGS) + 1
-		 : argsp->regs + (7 + arg_size) / 8);
-}
-
-/* Helper function for dadao_function_arg and dadao_function_incoming_arg.  */
-
-static rtx
-dadao_function_arg_1 (const cumulative_args_t argsp_v,
-		     machine_mode mode,
-		     const_tree type,
-		     bool named ATTRIBUTE_UNUSED,
-		     bool incoming)
+/* Return an rtx for a function argument to go in a register, and 0 for
+   one that must go on stack.  */
+static rtx dd_function_arg (cumulative_args_t argsp_v,
+			machine_mode mode, const_tree type,
+			bool named ATTRIBUTE_UNUSED)
 {
   CUMULATIVE_ARGS *argsp = get_cumulative_args (argsp_v);
 
   /* Last-argument marker.  */
   if (type == void_type_node)
     return (argsp->regs < DADAO_MAX_ARGS_IN_REGS)
-      ? gen_rtx_REG (mode,
-		     (incoming
-		      ? DADAO_FIRST_INCOMING_ARG_REGNUM
-		      : DADAO_FIRST_ARG_REGNUM) + argsp->regs)
+      ? gen_rtx_REG (mode, DADAO_FIRST_ARG_REGNUM + argsp->regs)
       : NULL_RTX;
 
   return (argsp->regs < DADAO_MAX_ARGS_IN_REGS
@@ -513,40 +474,16 @@ dadao_function_arg_1 (const cumulative_args_t argsp_v,
 	  && (GET_MODE_BITSIZE (mode) <= 64
 	      || argsp->lib
 	      || TARGET_LIBFUNC))
-    ? gen_rtx_REG (mode,
-		   (incoming
-		    ? DADAO_FIRST_INCOMING_ARG_REGNUM
-		    : DADAO_FIRST_ARG_REGNUM)
-		   + argsp->regs)
+    ? gen_rtx_REG (mode, DADAO_FIRST_ARG_REGNUM + argsp->regs)
     : NULL_RTX;
 }
 
-/* Return an rtx for a function argument to go in a register, and 0 for
-   one that must go on stack.  */
-
-static rtx
-dadao_function_arg (cumulative_args_t argsp,
-		   machine_mode mode,
-		   const_tree type,
-		   bool named)
-{
-  return dadao_function_arg_1 (argsp, mode, type, named, false);
-}
-
-static rtx
-dadao_function_incoming_arg (cumulative_args_t argsp,
-			    machine_mode mode,
-			    const_tree type,
-			    bool named)
-{
-  return dadao_function_arg_1 (argsp, mode, type, named, true);
-}
+#undef	TARGET_FUNCTION_ARG
+#define	TARGET_FUNCTION_ARG		dd_function_arg
 
 /* Returns nonzero for everything that goes by reference, 0 for
    everything that goes by value.  */
-
-static bool
-dadao_pass_by_reference (cumulative_args_t argsp_v, machine_mode mode,
+static bool dd_pass_by_reference (cumulative_args_t argsp_v, machine_mode mode,
 			const_tree type, bool named ATTRIBUTE_UNUSED)
 {
   CUMULATIVE_ARGS *argsp = get_cumulative_args (argsp_v);
@@ -563,6 +500,28 @@ dadao_pass_by_reference (cumulative_args_t argsp_v, machine_mode mode,
 
   return false;
 }
+
+#undef	TARGET_PASS_BY_REFERENCE
+#define	TARGET_PASS_BY_REFERENCE	dd_pass_by_reference
+
+static void dd_function_arg_advance (cumulative_args_t argsp_v, machine_mode mode,
+			const_tree type, bool named ATTRIBUTE_UNUSED)
+{
+  CUMULATIVE_ARGS *argsp = get_cumulative_args (argsp_v);
+  int arg_size = DADAO_FUNCTION_ARG_SIZE (mode, type);
+
+  argsp->regs = ((targetm.calls.must_pass_in_stack (mode, type)
+		  || (arg_size > 8
+		      && !TARGET_LIBFUNC
+		      && !argsp->lib))
+		 ? (DADAO_MAX_ARGS_IN_REGS) + 1
+		 : argsp->regs + (7 + arg_size) / 8);
+}
+
+#undef	TARGET_FUNCTION_ARG_ADVANCE
+#define	TARGET_FUNCTION_ARG_ADVANCE	dd_function_arg_advance
+
+/* XXX */
 
 /* Implements TARGET_FUNCTION_VALUE.  */
 
