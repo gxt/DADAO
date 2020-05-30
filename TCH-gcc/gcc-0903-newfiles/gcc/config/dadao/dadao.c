@@ -109,8 +109,6 @@ static machine_mode dadao_promote_function_mode (const_tree,
 						     machine_mode,
 	                                             int *, const_tree, int);
 static bool dadao_frame_pointer_required (void);
-static void dadao_asm_trampoline_template (FILE *);
-static void dadao_trampoline_init (rtx, tree, rtx);
 static void dadao_print_operand (FILE *, rtx, int);
 static void dadao_print_operand_address (FILE *, machine_mode, rtx);
 
@@ -175,10 +173,6 @@ static void dadao_print_operand_address (FILE *, machine_mode, rtx);
 #undef TARGET_FRAME_POINTER_REQUIRED
 #define TARGET_FRAME_POINTER_REQUIRED dadao_frame_pointer_required
 
-#undef TARGET_ASM_TRAMPOLINE_TEMPLATE
-#define TARGET_ASM_TRAMPOLINE_TEMPLATE dadao_asm_trampoline_template
-#undef TARGET_TRAMPOLINE_INIT
-#define TARGET_TRAMPOLINE_INIT dadao_trampoline_init
 
 /* XXX gccint 18.24 Node: Defining target-specific uses of __attribute__ */
 static void dd_option_override (void)
@@ -614,13 +608,10 @@ static void dd_setup_incoming_varargs (cumulative_args_t args_so_farp_v,
 #undef	TARGET_SETUP_INCOMING_VARARGS
 #define	TARGET_SETUP_INCOMING_VARARGS		dd_setup_incoming_varargs
 
-
-/* XXX */
+/* XXX gccint 18.11 Node: Support for Nested Functions */
 
 /* TARGET_ASM_TRAMPOLINE_TEMPLATE.  */
-
-static void
-dadao_asm_trampoline_template (FILE *stream)
+static void dd_asm_trampoline_template (FILE *stream)
 {
   /* Read a value into the static-chain register and jump somewhere.  The
      static chain is stored at offset 16, and the function address is
@@ -632,13 +623,13 @@ dadao_asm_trampoline_template (FILE *stream)
   fprintf (stream, "1:\t.dd.o64 0\n");
 }
 
-/* TARGET_TRAMPOLINE_INIT.  */
+#undef	TARGET_ASM_TRAMPOLINE_TEMPLATE
+#define	TARGET_ASM_TRAMPOLINE_TEMPLATE		dd_asm_trampoline_template
+
 /* Set the static chain and function pointer field in the trampoline.
    We also SYNCID here to be sure (doesn't matter in the simulator, but
    some day it will).  */
-
-static void
-dadao_trampoline_init (rtx m_tramp, tree fndecl, rtx static_chain)
+static void dd_trampoline_init (rtx m_tramp, tree fndecl, rtx static_chain)
 {
   rtx fnaddr = XEXP (DECL_RTL (fndecl), 0);
   rtx mem;
@@ -651,6 +642,12 @@ dadao_trampoline_init (rtx m_tramp, tree fndecl, rtx static_chain)
   mem = adjust_address (m_tramp, DImode, 3*UNITS_PER_WORD);
   emit_move_insn (mem, fnaddr);
 }
+
+#undef	TARGET_TRAMPOLINE_INIT
+#define	TARGET_TRAMPOLINE_INIT			dd_trampoline_init
+
+
+/* XXX */
 
 /* We must exclude constant addresses that have an increment that is not a
    multiple of four bytes because of restrictions of the GETA

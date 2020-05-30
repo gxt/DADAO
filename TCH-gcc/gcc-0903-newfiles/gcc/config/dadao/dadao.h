@@ -365,13 +365,13 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 /* XXX gccint 18.10 Node: Implementing the Varargs Macros */
 /* (empty) */
 
+/* XXX gccint 18.11 Node: Support for Nested Functions */
+
+#define	TRAMPOLINE_SIZE				(4*UNITS_PER_WORD)
+#define	TRAMPOLINE_ALIGNMENT			BITS_PER_WORD
+
 
 /* XXX */
-
-/* Node: Trampolines */
-
-#define TRAMPOLINE_SIZE		(4*UNITS_PER_WORD)
-#define TRAMPOLINE_ALIGNMENT	BITS_PER_WORD
 
 /* Node: Addressing Modes */
 
