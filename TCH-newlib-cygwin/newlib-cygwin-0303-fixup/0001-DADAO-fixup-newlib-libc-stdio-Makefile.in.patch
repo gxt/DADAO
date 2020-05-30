@@ -1,15 +1,15 @@
-From 34dca917fcf944bdd0028781de58d8a5d0dde92b Mon Sep 17 00:00:00 2001
+From 83172661e459e2c88db1334615c2435fbcdf3b4d Mon Sep 17 00:00:00 2001
 From: Guan Xuetao <gxt@pku.edu.cn>
-Date: Fri, 29 May 2020 03:07:39 +0000
+Date: Sat, 30 May 2020 01:55:24 +0000
 Subject: [PATCH] DADAO-fixup: newlib/libc/stdio/Makefile.in
 
 Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
 ---
- newlib/libc/stdio/Makefile.in | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ newlib/libc/stdio/Makefile.in | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
 diff --git a/newlib/libc/stdio/Makefile.in b/newlib/libc/stdio/Makefile.in
-index aa22a0e3a..aa06b18f5 100644
+index aa22a0e3a..0ccba1220 100644
 --- a/newlib/libc/stdio/Makefile.in
 +++ b/newlib/libc/stdio/Makefile.in
 @@ -871,7 +871,7 @@ lib_a-vfprintf.obj: vfprintf.c
@@ -48,7 +48,7 @@ index aa22a0e3a..aa06b18f5 100644
  
  lib_a-mktemp.obj: mktemp.c
  	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-mktemp.obj `if test -f 'mktemp.c'; then $(CYGPATH_W) 'mktemp.c'; else $(CYGPATH_W) '$(srcdir)/mktemp.c'; fi`
-@@ -1904,22 +1904,22 @@ docbook: $(DOCBOOK_OUT_FILES)
+@@ -1904,7 +1904,7 @@ docbook: $(DOCBOOK_OUT_FILES)
  # Otherwise libtool moves vfprintf.o and subsequently can't find it.
  
  $(lpfx)vfiprintf.$(oext): vfprintf.c
@@ -56,10 +56,8 @@ index aa22a0e3a..aa06b18f5 100644
 +	$(LIB_COMPILE) -O1 -DINTEGER_ONLY -c $(srcdir)/vfprintf.c -o $@
  
  $(lpfx)svfprintf.$(oext): vfprintf.c
--	$(LIB_COMPILE) -DSTRING_ONLY -c $(srcdir)/vfprintf.c -o $@
-+	$(LIB_COMPILE) -O1 -DSTRING_ONLY -c $(srcdir)/vfprintf.c -o $@
- 
- $(lpfx)svfiprintf.$(oext): vfprintf.c
+ 	$(LIB_COMPILE) -DSTRING_ONLY -c $(srcdir)/vfprintf.c -o $@
+@@ -1913,13 +1913,13 @@ $(lpfx)svfiprintf.$(oext): vfprintf.c
  	$(LIB_COMPILE) -DINTEGER_ONLY -DSTRING_ONLY -c $(srcdir)/vfprintf.c -o $@
  
  $(lpfx)vfiwprintf.$(oext): vfwprintf.c
