@@ -350,6 +350,9 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 
 #define FUNCTION_PROFILER(FILE, LABELNO)	dadao_function_profiler (FILE, LABELNO)
 
+/* XXX gccint 18.9.13 Node: Permitting tail calls */
+/* (empty) */
+
 /* XXX */
 
 /* Node: Trampolines */

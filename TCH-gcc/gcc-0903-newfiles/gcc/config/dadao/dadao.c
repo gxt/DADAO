@@ -581,6 +581,9 @@ void dadao_function_profiler (FILE *stream ATTRIBUTE_UNUSED,
   sorry ("function_profiler support for DADAO");
 }
 
+/* XXX gccint 18.9.13 Node: Permitting tail calls */
+/* (empty) */
+
 /* XXX */
 
 /* Worker function for TARGET_SETUP_INCOMING_VARARGS.  For the moment,
