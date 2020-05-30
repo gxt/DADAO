@@ -370,6 +370,9 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 #define	TRAMPOLINE_SIZE				(4*UNITS_PER_WORD)
 #define	TRAMPOLINE_ALIGNMENT			BITS_PER_WORD
 
+/* XXX gccint 18.12 Node: Implicit Calls to Library Routines */
+/* (empty) */
+
 
 /* XXX */
 
@@ -595,10 +598,6 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 #define Pmode DImode
 
 #define FUNCTION_MODE QImode
-
-/* dadao-knuth-dadaoware target has no support of C99 runtime */
-#undef TARGET_LIBC_HAS_FUNCTION
-#define TARGET_LIBC_HAS_FUNCTION no_c99_libc_has_function
 
 /* These are checked.  */
 #define DOLLARS_IN_IDENTIFIERS 0

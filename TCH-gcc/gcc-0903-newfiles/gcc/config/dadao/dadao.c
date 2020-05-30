@@ -101,7 +101,6 @@ static void dadao_asm_output_mi_thunk
   (FILE *, tree, HOST_WIDE_INT, HOST_WIDE_INT, tree);
 static void dadao_file_start (void);
 static void dadao_file_end (void);
-static void dadao_init_libfuncs (void);
 static bool dadao_rtx_costs (rtx, machine_mode, int, int, int *, bool);
 static int dadao_register_move_cost (machine_mode,
 				    reg_class_t, reg_class_t);
@@ -144,9 +143,6 @@ static void dadao_print_operand_address (FILE *, machine_mode, rtx);
 #define TARGET_ASM_FILE_END dadao_file_end
 #undef TARGET_ASM_OUTPUT_SOURCE_FILENAME
 #define TARGET_ASM_OUTPUT_SOURCE_FILENAME dadao_asm_output_source_filename
-
-#undef TARGET_INIT_LIBFUNCS
-#define TARGET_INIT_LIBFUNCS dadao_init_libfuncs
 
 #undef TARGET_HAVE_SPECULATION_SAFE_VALUE
 #define TARGET_HAVE_SPECULATION_SAFE_VALUE speculation_safe_value_not_needed
@@ -646,6 +642,9 @@ static void dd_trampoline_init (rtx m_tramp, tree fndecl, rtx static_chain)
 #undef	TARGET_TRAMPOLINE_INIT
 #define	TARGET_TRAMPOLINE_INIT			dd_trampoline_init
 
+/* XXX gccint 18.12 Node: Implicit Calls to Library Routines */
+/* (empty) */
+
 
 /* XXX */
 
@@ -928,20 +927,6 @@ dadao_asm_output_source_filename (FILE *stream, const char *name)
   fprintf (stream, "# 1 ");
   OUTPUT_QUOTED_STRING (stream, name);
   fprintf (stream, "\n");
-}
-
-/* Unfortunately, by default __builtin_ffs is expanded to ffs for
-   targets where INT_TYPE_SIZE < BITS_PER_WORD.  That together with
-   newlib since 2017-07-04 implementing ffs as __builtin_ffs leads to
-   (newlib) ffs recursively calling itself.  But, because of argument
-   promotion, and with ffs we're counting from the least bit, the
-   libgcc equivalent for ffsl works equally well for int arguments, so
-   just use that.  */
-
-static void
-dadao_init_libfuncs (void)
-{
-  set_optab_libfunc (ffs_optab, SImode, "__ffsdi2");
 }
 
 /* OUTPUT_QUOTED_STRING.  */
