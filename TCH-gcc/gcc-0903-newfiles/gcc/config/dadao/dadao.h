@@ -418,10 +418,10 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 #define ASM_APP_ON				"#APP\n"
 #define ASM_APP_OFF				"#NO_APP\n"
 
+#define TARGET_ASM_NAMED_SECTION		default_elf_asm_named_section
+
 
 /* XXX */
-
-#define TARGET_ASM_NAMED_SECTION default_elf_asm_named_section
 
 /* Node: Uninitialized Data */
 
