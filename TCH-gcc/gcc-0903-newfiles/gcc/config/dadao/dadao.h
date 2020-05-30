@@ -379,6 +379,9 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 
 #define	MAX_REGS_PER_ADDRESS			2
 
+/* XXX gccint 18.14 Node: Anchored Addresses */
+/* (empty) */
+
 
 /* XXX */
 

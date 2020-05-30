@@ -779,6 +779,9 @@ static bool dd_legitimate_constant_p (machine_mode mode ATTRIBUTE_UNUSED, rtx x)
 #undef	TARGET_LEGITIMATE_CONSTANT_P
 #define	TARGET_LEGITIMATE_CONSTANT_P		dd_legitimate_constant_p
 
+/* XXX gccint 18.14 Node: Anchored Addresses */
+/* (empty) */
+
 
 /* XXX */
 
