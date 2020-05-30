@@ -878,6 +878,9 @@ static void dd_encode_section_info (tree decl, rtx rtl, int first)
 #undef	TARGET_ENCODE_SECTION_INFO
 #define	TARGET_ENCODE_SECTION_INFO		dd_encode_section_info
 
+/* XXX gccint 18.19 Node: Position Independent Code */
+/* (empty) */
+
 
 /* XXX */
 

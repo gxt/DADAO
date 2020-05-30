@@ -407,12 +407,11 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 #define INIT_SECTION_ASM_OP			"\t.section .init,\"ax\""
 #define FINI_SECTION_ASM_OP			"\t.section .fini,\"ax\""
 
-
-/* XXX */
-
-/* Node: PIC */
+/* XXX gccint 18.19 Node: Position Independent Code */
 /* (empty) */
 
+
+/* XXX */
 
 /* Node: File Framework */
 #define ASM_COMMENT_START "#"
