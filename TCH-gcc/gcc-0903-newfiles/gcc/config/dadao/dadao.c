@@ -95,9 +95,6 @@ static struct machine_function *dadao_init_machine_status (void);
 static void dadao_encode_section_info (tree, rtx, int);
 static const char *dadao_strip_name_encoding (const char *);
 static void dadao_emit_sp_add (HOST_WIDE_INT offset);
-static void dadao_target_asm_function_prologue (FILE *);
-static void dadao_target_asm_function_end_prologue (FILE *);
-static void dadao_target_asm_function_epilogue (FILE *);
 static bool dadao_legitimate_address_p (machine_mode, rtx, bool);
 static bool dadao_legitimate_constant_p (machine_mode, rtx);
 static void dadao_asm_output_mi_thunk
@@ -135,15 +132,6 @@ static void dadao_print_operand_address (FILE *, machine_mode, rtx);
 #undef TARGET_ASM_INTEGER
 #define TARGET_ASM_INTEGER dadao_assemble_integer
 
-#undef TARGET_ASM_FUNCTION_PROLOGUE
-#define TARGET_ASM_FUNCTION_PROLOGUE dadao_target_asm_function_prologue
-
-#undef TARGET_ASM_FUNCTION_END_PROLOGUE
-#define TARGET_ASM_FUNCTION_END_PROLOGUE dadao_target_asm_function_end_prologue
-
-#undef TARGET_ASM_FUNCTION_EPILOGUE
-#define TARGET_ASM_FUNCTION_EPILOGUE dadao_target_asm_function_epilogue
-
 #undef TARGET_PRINT_OPERAND
 #define TARGET_PRINT_OPERAND dadao_print_operand
 #undef TARGET_PRINT_OPERAND_ADDRESS
@@ -152,10 +140,6 @@ static void dadao_print_operand_address (FILE *, machine_mode, rtx);
 #undef TARGET_ENCODE_SECTION_INFO
 #define TARGET_ENCODE_SECTION_INFO  dadao_encode_section_info
 
-#undef TARGET_ASM_OUTPUT_MI_THUNK
-#define TARGET_ASM_OUTPUT_MI_THUNK dadao_asm_output_mi_thunk
-#undef TARGET_ASM_CAN_OUTPUT_MI_THUNK
-#define TARGET_ASM_CAN_OUTPUT_MI_THUNK default_can_output_mi_thunk_no_vcall
 #undef TARGET_ASM_FILE_START
 #define TARGET_ASM_FILE_START dadao_file_start
 #undef TARGET_ASM_FILE_START_FILE_DIRECTIVE
@@ -556,64 +540,39 @@ static rtx dd_struct_value_rtx (tree fntype ATTRIBUTE_UNUSED,
 /* XXX gccint 18.9.10 Node: Caller-Saves Register Allocation */
 /* (empty) */
 
-/* XXX */
-
+/* XXX gccint 18.9.11 Node: Function Entry and Exit */
 
 /* Make a note that we've seen the beginning of the prologue.  This
    matters to whether we'll translate register numbers as calculated by
    dadao_reorg.  */
-
-static void
-dadao_target_asm_function_prologue (FILE *)
+static void dd_asm_function_prologue (FILE *)
 {
   cfun->machine->in_prologue = 1;
 }
 
-/* Make a note that we've seen the end of the prologue.  */
+#undef	TARGET_ASM_FUNCTION_PROLOGUE
+#define	TARGET_ASM_FUNCTION_PROLOGUE		dd_asm_function_prologue
 
-static void
-dadao_target_asm_function_end_prologue (FILE *stream ATTRIBUTE_UNUSED)
+/* Make a note that we've seen the end of the prologue.  */
+static void dd_asm_function_end_prologue (FILE *stream ATTRIBUTE_UNUSED)
 {
   cfun->machine->in_prologue = 0;
 }
 
-/* TARGET_ASM_FUNCTION_EPILOGUE.  */
+#undef	TARGET_ASM_FUNCTION_END_PROLOGUE
+#define	TARGET_ASM_FUNCTION_END_PROLOGUE	dd_asm_function_end_prologue
 
-static void
-dadao_target_asm_function_epilogue (FILE *stream)
+/* TARGET_ASM_FUNCTION_EPILOGUE.  */
+static void dd_asm_function_epilogue (FILE *stream)
 {
   /* Emit an \n for readability of the generated assembly.  */
   fputc ('\n', stream);
 }
 
-/* TARGET_ASM_OUTPUT_MI_THUNK.  */
+#undef	TARGET_ASM_FUNCTION_EPILOGUE
+#define	TARGET_ASM_FUNCTION_EPILOGUE		dd_asm_function_epilogue
 
-static void
-dadao_asm_output_mi_thunk (FILE *stream,
-			  tree fndecl ATTRIBUTE_UNUSED,
-			  HOST_WIDE_INT delta,
-			  HOST_WIDE_INT vcall_offset ATTRIBUTE_UNUSED,
-			  tree func)
-{
-  /* If you define TARGET_STRUCT_VALUE_RTX that returns 0 (i.e. pass
-     location of structure to return as invisible first argument), you
-     need to tweak this code too.  */
-  const char *regname = reg_names[DADAO_FIRST_INCOMING_ARG_REGNUM];
-
-  if (delta >= 0 && delta < 65536)
-    fprintf (stream, "\tincl	%s, %d\n", regname, (int)delta);
-  else if (delta < 0 && delta >= -255)
-    fprintf (stream, "\tsubu	%s, %s, %d\n", regname, regname, (int)-delta);
-  else
-    {
-      dadao_output_register_setting (stream, 63, delta, 1);
-      fprintf (stream, "\taddu	%s, %s, $63\n", regname, regname);
-    }
-
-  fprintf (stream, "\tbz	$0, ");
-  assemble_name (stream, XSTR (XEXP (DECL_RTL (func), 0), 0));
-  fprintf (stream, "\n");
-}
+/* XXX */
 
 /* FUNCTION_PROFILER.  */
 

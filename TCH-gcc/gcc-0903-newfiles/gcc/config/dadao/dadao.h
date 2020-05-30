@@ -338,19 +338,15 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 /* XXX gccint 18.9.10 Node: Caller-Saves Register Allocation */
 /* (empty) */
 
-/* XXX */
-
-/* Node: Function Entry */
-
-/* See dadao.c for TARGET_ASM_FUNCTION_PROLOGUE and
-   TARGET_ASM_FUNCTION_EPILOGUE.  */
+/* XXX gccint 18.9.11 Node: Function Entry and Exit */
 
 /* We need to say that the epilogue uses the return address, so the
    initial-value machinery restores it.  FIXME: Some targets
    conditionalize on "reload_completed &&".  Investigate difference.
    FIXME: Not needed if nonlocal_goto_stack_level.  */
-#define EPILOGUE_USES(REGNO) \
- ((REGNO) == DADAO_INCOMING_RETURN_ADDRESS_REGNUM)
+#define EPILOGUE_USES(REGNO)		((REGNO) == DADAO_INCOMING_RETURN_ADDRESS_REGNUM)
+
+/* XXX */
 
 /* Node: Profiling */
 #define FUNCTION_PROFILER(FILE, LABELNO)	\
