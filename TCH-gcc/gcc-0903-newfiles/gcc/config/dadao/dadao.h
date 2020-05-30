@@ -332,6 +332,8 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 /* XXX gccint 18.9.8 Node: How Scalar Function Values Are Returned */
 /* (empty) */
 
+/* XXX gccint 18.9.9 Node: How Large Values Are Returned */
+/* (empty) */
 
 /* XXX */
 

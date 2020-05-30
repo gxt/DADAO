@@ -110,7 +110,6 @@ static void dadao_init_libfuncs (void);
 static bool dadao_rtx_costs (rtx, machine_mode, int, int, int *, bool);
 static int dadao_register_move_cost (machine_mode,
 				    reg_class_t, reg_class_t);
-static rtx dadao_struct_value_rtx (tree, int);
 static machine_mode dadao_promote_function_mode (const_tree,
 						     machine_mode,
 	                                             int *, const_tree, int);
@@ -183,8 +182,6 @@ static void dadao_print_operand_address (FILE *, machine_mode, rtx);
 #undef TARGET_PROMOTE_FUNCTION_MODE
 #define TARGET_PROMOTE_FUNCTION_MODE dadao_promote_function_mode
 
-#undef TARGET_STRUCT_VALUE_RTX
-#define TARGET_STRUCT_VALUE_RTX dadao_struct_value_rtx
 #undef TARGET_SETUP_INCOMING_VARARGS
 #define TARGET_SETUP_INCOMING_VARARGS dadao_setup_incoming_varargs
 #undef TARGET_CALLEE_COPIES
@@ -544,6 +541,17 @@ static bool dd_function_value_regno_p (const unsigned int regno)
 #undef	TARGET_FUNCTION_VALUE_REGNO_P
 #define	TARGET_FUNCTION_VALUE_REGNO_P	dd_function_value_regno_p
 
+/* XXX gccint 18.9.9 Node: How Large Values Are Returned */
+
+/* Worker function for TARGET_STRUCT_VALUE_RTX.  */
+static rtx dd_struct_value_rtx (tree fntype ATTRIBUTE_UNUSED,
+		       int incoming ATTRIBUTE_UNUSED)
+{
+  return gen_rtx_REG (Pmode, DADAO_STRUCT_VALUE_REGNUM);
+}
+
+#undef	TARGET_STRUCT_VALUE_RTX
+#define	TARGET_STRUCT_VALUE_RTX		dd_struct_value_rtx
 
 /* XXX */
 
@@ -2366,14 +2374,6 @@ dadao_promote_function_mode (const_tree type ATTRIBUTE_UNUSED,
     return DImode;
   else
     return mode;
-}
-/* Worker function for TARGET_STRUCT_VALUE_RTX.  */
-
-static rtx
-dadao_struct_value_rtx (tree fntype ATTRIBUTE_UNUSED,
-		       int incoming ATTRIBUTE_UNUSED)
-{
-  return gen_rtx_REG (Pmode, DADAO_STRUCT_VALUE_REGNUM);
 }
 
 /* Worker function for TARGET_FRAME_POINTER_REQUIRED.
