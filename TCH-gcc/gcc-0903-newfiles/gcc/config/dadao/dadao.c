@@ -553,6 +553,9 @@ static rtx dd_struct_value_rtx (tree fntype ATTRIBUTE_UNUSED,
 #undef	TARGET_STRUCT_VALUE_RTX
 #define	TARGET_STRUCT_VALUE_RTX		dd_struct_value_rtx
 
+/* XXX gccint 18.9.10 Node: Caller-Saves Register Allocation */
+/* (empty) */
+
 /* XXX */
 
 

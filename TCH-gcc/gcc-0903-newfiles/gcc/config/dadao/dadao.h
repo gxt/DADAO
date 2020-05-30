@@ -335,11 +335,10 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 /* XXX gccint 18.9.9 Node: How Large Values Are Returned */
 /* (empty) */
 
-/* XXX */
-
-/* Node: Caller Saves */
+/* XXX gccint 18.9.10 Node: Caller-Saves Register Allocation */
 /* (empty) */
 
+/* XXX */
 
 /* Node: Function Entry */
 
