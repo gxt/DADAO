@@ -587,6 +587,9 @@ void dadao_function_profiler (FILE *stream ATTRIBUTE_UNUSED,
 /* XXX gccint 18.9.14 Node: Shrink-wrapping separate components */
 /* (empty) */
 
+/* XXX gccint 18.9.15 Node: Stack smashing protection */
+/* (empty) */
+
 
 /* XXX */
 

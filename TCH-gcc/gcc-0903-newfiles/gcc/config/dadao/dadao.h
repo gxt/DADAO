@@ -356,6 +356,9 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 /* XXX gccint 18.9.14 Node: Shrink-wrapping separate components */
 /* (empty) */
 
+/* XXX gccint 18.9.15 Node: Stack smashing protection */
+/* (empty) */
+
 
 /* XXX */
 
