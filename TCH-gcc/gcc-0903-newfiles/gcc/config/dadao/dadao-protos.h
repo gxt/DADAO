@@ -40,7 +40,6 @@ extern void dadao_output_register_setting (FILE *, int, int64_t, int);
 extern unsigned dadao_dbx_register_number (unsigned);
 extern int dadao_use_simple_return (void);
 extern void dadao_make_decl_one_only (tree);
-extern void dadao_asm_output_pool_prologue (FILE *, const char *, tree, int);
 extern void dadao_asm_output_aligned_common (FILE *, const char *, int, int);
 extern void dadao_asm_output_aligned_local (FILE *, const char *, int, int);
 extern void dadao_asm_declare_register_global

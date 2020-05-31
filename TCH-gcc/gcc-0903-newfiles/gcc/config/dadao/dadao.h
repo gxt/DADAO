@@ -420,6 +420,9 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 
 #define TARGET_ASM_NAMED_SECTION		default_elf_asm_named_section
 
+/* XXX gccint 18.20.2 Node: Output of Data */
+/* (empty) */
+
 
 /* XXX */
 

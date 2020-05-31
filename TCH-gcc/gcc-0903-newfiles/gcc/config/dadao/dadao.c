@@ -89,7 +89,6 @@ static void dadao_output_shiftvalue_op_from_str
 static void dadao_output_shifted_value (FILE *, int64_t);
 static void dadao_output_condition (FILE *, const_rtx, int);
 static void dadao_output_octa (FILE *, int64_t, int);
-static bool dadao_assemble_integer (rtx, unsigned int, int);
 static struct machine_function *dadao_init_machine_status (void);
 static const char *dadao_strip_name_encoding (const char *);
 static void dadao_emit_sp_add (HOST_WIDE_INT offset);
@@ -104,19 +103,6 @@ static void dadao_print_operand_address (FILE *, machine_mode, rtx);
 
 /* Target structure macros.  Listed by node.  See `Using and Porting GCC'
    for a general description.  */
-
-/* Node: Function Entry */
-
-#undef TARGET_ASM_BYTE_OP
-#define TARGET_ASM_BYTE_OP NULL
-#undef TARGET_ASM_ALIGNED_HI_OP
-#define TARGET_ASM_ALIGNED_HI_OP NULL
-#undef TARGET_ASM_ALIGNED_SI_OP
-#define TARGET_ASM_ALIGNED_SI_OP NULL
-#undef TARGET_ASM_ALIGNED_DI_OP
-#define TARGET_ASM_ALIGNED_DI_OP NULL
-#undef TARGET_ASM_INTEGER
-#define TARGET_ASM_INTEGER dadao_assemble_integer
 
 #undef TARGET_PRINT_OPERAND
 #define TARGET_PRINT_OPERAND dadao_print_operand
@@ -875,76 +861,17 @@ static void dd_encode_section_info (tree decl, rtx rtl, int first)
 #undef	TARGET_ASM_FILE_START_FILE_DIRECTIVE
 #define	TARGET_ASM_FILE_START_FILE_DIRECTIVE	true
 
+/* XXX gccint 18.20.2 Node: Output of Data */
+
+#undef	TARGET_ASM_ALIGNED_HI_OP
+#define	TARGET_ASM_ALIGNED_HI_OP		"\t.dd.w16\t"
+#undef	TARGET_ASM_ALIGNED_SI_OP
+#define	TARGET_ASM_ALIGNED_SI_OP		"\t.dd.t32\t"
+#undef	TARGET_ASM_ALIGNED_DI_OP
+#define	TARGET_ASM_ALIGNED_DI_OP		"\t.dd.o64\t"
+
 
 /* XXX */
-
-/* Target hook for assembling integer objects.  Use dadao_print_operand
-   for WYDE and TETRA.  Use dadao_output_octa to output 8-byte
-   CONST_DOUBLEs.  */
-
-static bool
-dadao_assemble_integer (rtx x, unsigned int size, int aligned_p)
-{
-  if (aligned_p)
-    switch (size)
-      {
-	/* We handle a limited number of types of operands in here.  But
-	   that's ok, because we can punt to generic functions.  We then
-	   pretend that aligned data isn't needed, so the usual .<pseudo>
-	   syntax is used (which works for aligned data too).  We actually
-	   *must* do that, since we say we don't have simple aligned
-	   pseudos, causing this function to be called.  We just try and
-	   keep as much compatibility as possible with dadaoal syntax for
-	   normal cases (i.e. without GNU extensions and C only).  */
-      case 1:
-	if (GET_CODE (x) != CONST_INT)
-	  {
-	    /* There is no "unaligned byte" op or generic function to
-	       which we can punt, so we have to handle this here.  As
-	       the expression isn't a plain literal, the generated
-	       assembly-code can't be dadaoal-equivalent (i.e. "BYTE"
-	       won't work) and thus it's ok to emit the default op
-	       ".byte". */
-	    assemble_integer_with_op ("\t.byte\t", x);
-	    return true;
-	  }
-	fputs ("\t.dd.b08\t", asm_out_file);
-	dadao_print_operand (asm_out_file, x, 'B');
-	fputc ('\n', asm_out_file);
-	return true;
-
-      case 2:
-	if (GET_CODE (x) != CONST_INT)
-	  {
-	    aligned_p = 0;
-	    break;
-	  }
-	fputs ("\t.dd.w16\t", asm_out_file);
-	dadao_print_operand (asm_out_file, x, 'W');
-	fputc ('\n', asm_out_file);
-	return true;
-
-      case 4:
-	if (GET_CODE (x) != CONST_INT)
-	  {
-	    aligned_p = 0;
-	    break;
-	  }
-	fputs ("\t.dd.t32\t", asm_out_file);
-	dadao_print_operand (asm_out_file, x, 'L');
-	fputc ('\n', asm_out_file);
-	return true;
-
-      case 8:
-	/* We don't get here anymore for CONST_DOUBLE, because DImode
-	   isn't expressed as CONST_DOUBLE, and DFmode is handled
-	   elsewhere.  */
-	gcc_assert (GET_CODE (x) != CONST_DOUBLE);
-	assemble_integer_with_op ("\t.dd.o64\t", x);
-	return true;
-      }
-  return default_assemble_integer (x, size, aligned_p);
-}
 
 /* ASM_OUTPUT_ALIGNED_COMMON.  */
 
