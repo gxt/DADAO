@@ -290,7 +290,7 @@ enum reg_class {
 #define EH_RETURN_STACKADJ_RTX			dadao_eh_return_stackadj_rtx ()
 #define EH_RETURN_HANDLER_RTX			dadao_eh_return_handler_rtx ()
 
-#define ASM_PREFERRED_EH_DATA_FORMAT(CODE, GLOBAL)	dadao_asm_preferred_eh_data_format (CODE, GLOBAL)
+#define ASM_PREFERRED_EH_DATA_FORMAT(CODE, GLOBAL)	(DW_EH_PE_absptr)
 
 /* XXX gccint 18.9.3 Node: Specifying How Stack Checking is Done */
 /* (empty) */

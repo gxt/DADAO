@@ -14,7 +14,6 @@ extern rtx dadao_return_addr_rtx (int, rtx);
 extern int dadao_eh_return_data_regno (int);
 extern rtx dadao_eh_return_stackadj_rtx (void);
 extern rtx dadao_eh_return_handler_rtx (void);
-extern int dadao_asm_preferred_eh_data_format (int, int);
 /* XXX gccint 18.9.5 Node: Eliminating Frame Pointer and Arg Pointer */
 extern int dadao_initial_elimination_offset (int, int);
 /* XXX gccint 18.9.12 Node: Generating Code for Profiling */

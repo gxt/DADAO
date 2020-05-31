@@ -294,13 +294,6 @@ rtx dadao_eh_return_handler_rtx (void)
   return gen_rtx_REG (Pmode, DADAO_INCOMING_RETURN_ADDRESS_REGNUM);
 }
 
-/* ASM_PREFERRED_EH_DATA_FORMAT. */
-int dadao_asm_preferred_eh_data_format (int code ATTRIBUTE_UNUSED, int global ATTRIBUTE_UNUSED)
-{
-  /* This is the default (was at 2001-07-20).  Revisit when needed.  */
-  return DW_EH_PE_absptr;
-}
-
 /* XXX gccint 18.9.3 Node: Specifying How Stack Checking is Done */
 /* (empty) */
 
