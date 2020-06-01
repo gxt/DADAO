@@ -403,7 +403,7 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 #define TEXT_SECTION_ASM_OP			"\t.text"
 #define DATA_SECTION_ASM_OP			"\t.data"
 #define READONLY_DATA_SECTION_ASM_OP		"\t.section\t.rodata"
-#define BSS_SECTION_ASM_OP			"\t.bss"
+#define BSS_SECTION_ASM_OP			"\t.section\t.bss"
 #define INIT_SECTION_ASM_OP			"\t.section .init,\"ax\""
 #define FINI_SECTION_ASM_OP			"\t.section .fini,\"ax\""
 
