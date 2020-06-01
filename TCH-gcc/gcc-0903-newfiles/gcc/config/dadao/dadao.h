@@ -428,7 +428,7 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 	do {										\
 		fprintf (STREAM, "\t.comm\t");						\
 		assemble_name (STREAM, NAME);						\
-		fprintf (STREAM, ", %d\t", (int) (SIZE));				\
+		fprintf (STREAM, ", %d\n", (int) (SIZE));				\
 	} while (0)
 
 #define	ASM_OUTPUT_ALIGNED_LOCAL(STREAM, NAME, SIZE, ALIGN)				\
