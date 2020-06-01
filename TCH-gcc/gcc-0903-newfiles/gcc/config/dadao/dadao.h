@@ -423,17 +423,24 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 /* XXX gccint 18.20.2 Node: Output of Data */
 /* (empty) */
 
+/* XXX gccint 18.20.3 Node: Output of Uninitialized Variables */
+#define	ASM_OUTPUT_COMMON(STREAM, NAME, SIZE, ROUNDED)					\
+	do {										\
+		fprintf (STREAM, "\t.comm\t");						\
+		assemble_name (STREAM, NAME);						\
+		fprintf (STREAM, ", %d\t", (int) (SIZE));				\
+	} while (0)
+
+#define	ASM_OUTPUT_ALIGNED_LOCAL(STREAM, NAME, SIZE, ALIGN)				\
+	do {										\
+		switch_to_section (bss_section);					\
+		ASM_OUTPUT_ALIGN (STREAM, floor_log2 ((ALIGN) / BITS_PER_UNIT));	\
+		assemble_name (STREAM, NAME);						\
+		fprintf (STREAM, ":\t.space\t%d\n", (int) (SIZE));			\
+	} while (0)
+
 
 /* XXX */
-
-/* Node: Uninitialized Data */
-
-#define ASM_OUTPUT_ALIGNED_COMMON(ST, N, S, A) \
- dadao_asm_output_aligned_common (ST, N, S, A)
-
-#define ASM_OUTPUT_ALIGNED_LOCAL(ST, N, S, A) \
- dadao_asm_output_aligned_local (ST, N, S, A)
-
 
 /* Node: Label Output */
 

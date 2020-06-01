@@ -863,39 +863,11 @@ static void dd_encode_section_info (tree decl, rtx rtl, int first)
 #undef	TARGET_ASM_ALIGNED_DI_OP
 #define	TARGET_ASM_ALIGNED_DI_OP		"\t.dd.o64\t"
 
+/* XXX gccint 18.20.3 Node: Output of Uninitialized Variables */
+/* (empty) */
+
 
 /* XXX */
-
-/* ASM_OUTPUT_ALIGNED_COMMON.  */
-
-void
-dadao_asm_output_aligned_common (FILE *stream,
-				const char *name,
-				int size,
-				int align)
-{
-  /* This is mostly the elfos.h one.  There doesn't seem to be a way to
-     express this in a dadaoal-compatible way.  */
-  fprintf (stream, "\t.comm\t");
-  assemble_name (stream, name);
-  fprintf (stream, ",%u,%u\n",
-	   size, align / BITS_PER_UNIT);
-}
-
-/* ASM_OUTPUT_ALIGNED_LOCAL.  */
-
-void
-dadao_asm_output_aligned_local (FILE *stream,
-			       const char *name,
-			       int size,
-			       int align)
-{
-  switch_to_section (data_section);
-
-  ASM_OUTPUT_ALIGN (stream, exact_log2 (align/BITS_PER_UNIT));
-  assemble_name (stream, name);
-  fprintf (stream, "\t= .+%d\n", size);
-}
 
 /* ASM_OUTPUT_LABEL.  */
 
