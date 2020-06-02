@@ -1098,27 +1098,11 @@ static void dd_print_operand_address (FILE *stream, machine_mode /*mode*/, rtx x
 #undef	TARGET_PRINT_OPERAND_ADDRESS
 #define	TARGET_PRINT_OPERAND_ADDRESS			dd_print_operand_address
 
+/* XXX gccint 18.20.8 Node: Output of Dispatch Tables */
+/* (empty) */
+
 
 /* XXX */
-
-/* ASM_OUTPUT_ADDR_DIFF_ELT.  */
-
-void
-dadao_asm_output_addr_diff_elt (FILE *stream,
-			       rtx body ATTRIBUTE_UNUSED,
-			       int value,
-			       int rel)
-{
-  fprintf (stream, "\t.dd.t32 L%d-L%d\n", value, rel);
-}
-
-/* ASM_OUTPUT_ADDR_VEC_ELT.  */
-
-void
-dadao_asm_output_addr_vec_elt (FILE *stream, int value)
-{
-  fprintf (stream, "\t.dd.o64 L%d\n", value);
-}
 
 /* ASM_OUTPUT_ALIGN.  */
 

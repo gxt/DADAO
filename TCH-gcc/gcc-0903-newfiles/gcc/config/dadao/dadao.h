@@ -506,20 +506,15 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 			reg_names[DADAO_STACK_POINTER_REGNUM]);		\
 	} while (0)
 
+/* XXX gccint 18.20.8 Node: Output of Dispatch Tables */
+#define	ASM_OUTPUT_ADDR_DIFF_ELT(STREAM, BODY, VALUE, REL)		\
+	fprintf (STREAM, "\t.dd.t32\tL%d-L%d\n", VALUE, REL)
+
+#define	ASM_OUTPUT_ADDR_VEC_ELT(STREAM, VALUE)				\
+	fprintf (STREAM, "\t.dd.o64\tL%d\n", VALUE)
+
 
 /* XXX */
-
-
-/* Node: Dispatch Tables */
-
-/* We define both types, since SImode is the better, but DImode the only
-   possible for dadaoal so that's the one actually used.  */
-#define ASM_OUTPUT_ADDR_DIFF_ELT(STREAM, BODY, VALUE, REL) \
- dadao_asm_output_addr_diff_elt (STREAM, BODY, VALUE, REL)
-
-#define ASM_OUTPUT_ADDR_VEC_ELT(STREAM, VALUE) \
- dadao_asm_output_addr_vec_elt (STREAM, VALUE)
-
 
 /* Node: Exception Region Output */
 /* (empty) */

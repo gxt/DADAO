@@ -30,8 +30,6 @@ extern int dadao_shiftable_wyde_value (uint64_t);
 extern void dadao_output_register_setting (FILE *, int, int64_t, int);
 extern unsigned dadao_dbx_register_number (unsigned);
 extern int dadao_use_simple_return (void);
-extern void dadao_asm_output_addr_diff_elt (FILE *, rtx, int, int);
-extern void dadao_asm_output_addr_vec_elt (FILE *, int);
 extern int dadao_constant_address_p (rtx);
 extern void dadao_expand_prologue (void);
 extern void dadao_expand_epilogue (void);
