@@ -872,6 +872,9 @@ static void dd_encode_section_info (tree decl, rtx rtl, int first)
 /* XXX gccint 18.20.5 Node: How Initialization Functions Are Handled */
 /* (empty) */
 
+/* XXX gccint 18.20.6 Node: Macros Controlling Initialization Routines */
+/* (empty) */
+
 
 /* XXX */
 

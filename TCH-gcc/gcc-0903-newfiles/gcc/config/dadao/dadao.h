@@ -457,12 +457,12 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 /* XXX gccint 18.20.5 Node: How Initialization Functions Are Handled */
 /* (empty) */
 
+/* XXX gccint 18.20.6 Node: Macros Controlling Initialization Routines */
+/* (empty) */
+/* INIT_SECTION_ASM_OP already defined in gccint 18.18 Node */
+
 
 /* XXX */
-
-/* Node: Macros for Initialization */
-/* We're compiling to ELF and linking to MMO; fundamental ELF features
-   that GCC depend on are there.  */
 
 #define OBJECT_FORMAT_ELF
 
