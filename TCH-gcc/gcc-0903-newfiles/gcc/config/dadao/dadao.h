@@ -454,6 +454,9 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 #define	ASM_GENERATE_INTERNAL_LABEL(LABEL, PREFIX, NUM)					\
 	sprintf (LABEL, "*%s%u", PREFIX, (unsigned int)(NUM))
 
+/* XXX gccint 18.20.5 Node: How Initialization Functions Are Handled */
+/* (empty) */
+
 
 /* XXX */
 
