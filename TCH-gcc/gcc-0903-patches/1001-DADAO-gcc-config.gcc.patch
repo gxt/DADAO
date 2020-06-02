@@ -17,7 +17,7 @@ index b2282ecdf0b..88faeecfbf6 100644
  	esac
  	;;
 +dadao-*-*)
-+	tm_file="${tm_file} newlib-stdint.h"
++	tm_file="dbxelf.h elfos.h newlib-stdint.h ${tm_file}"
 +	use_gcc_stdint=wrap
 +	;;
  epiphany-*-elf | epiphany-*-rtems*)

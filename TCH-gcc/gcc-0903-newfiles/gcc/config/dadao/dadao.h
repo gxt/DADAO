@@ -7,6 +7,10 @@
 #ifndef GCC_DADAO_H
 #define GCC_DADAO_H
 
+#ifndef	OBJECT_FORMAT_ELF
+#error	DADAO ONLY SUPPORT ELF FORMAT!
+#endif
+
 /* First, some local helper macros.  Note that the "default" value of
    FIXED_REGISTERS, CALL_USED_REGISTERS, REG_ALLOC_ORDER and
    REG_CLASS_CONTENTS depend on these values.  */
@@ -463,8 +467,6 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 
 
 /* XXX */
-
-#define OBJECT_FORMAT_ELF
 
 
 /* Node: Instruction Output */
