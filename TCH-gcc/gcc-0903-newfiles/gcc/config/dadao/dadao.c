@@ -850,9 +850,7 @@ static void dd_encode_section_info (tree decl, rtx rtl, int first)
 
 /* XXX gccint 18.20 Node: Defining the Output Assembler Language */
 /* XXX gccint 18.20.1 Node: The Overall Framework of an Assembler File */
-
-#undef	TARGET_ASM_FILE_START_FILE_DIRECTIVE
-#define	TARGET_ASM_FILE_START_FILE_DIRECTIVE	true
+/* (empty) */
 
 /* XXX gccint 18.20.2 Node: Output of Data */
 
@@ -1164,14 +1162,6 @@ void
 dadao_asm_output_addr_vec_elt (FILE *stream, int value)
 {
   fprintf (stream, "\t.dd.o64 L%d\n", value);
-}
-
-/* ASM_OUTPUT_SKIP.  */
-
-void
-dadao_asm_output_skip (FILE *stream, int nbytes)
-{
-  fprintf (stream, "\t. = .+%d\n", nbytes);
 }
 
 /* ASM_OUTPUT_ALIGN.  */

@@ -26,7 +26,6 @@ extern int dadao_reversible_cc_mode (machine_mode);
 
 extern void dadao_asm_output_reg_push (FILE *, int);
 extern void dadao_asm_output_reg_pop (FILE *, int);
-extern void dadao_asm_output_skip (FILE *, int);
 extern void dadao_asm_output_align (FILE *, int);
 extern int64_t dadao_intval (const_rtx);
 extern int dadao_shiftable_wyde_value (uint64_t);

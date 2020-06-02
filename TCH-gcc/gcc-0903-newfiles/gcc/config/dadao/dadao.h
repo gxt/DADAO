@@ -130,7 +130,6 @@ struct GTY(()) machine_function
 #define	BIGGEST_ALIGNMENT		64
 
 #define	STRICT_ALIGNMENT		1
-#define	PCC_BITFIELD_TYPE_MATTERS	1
 
 /* XXX gccint 18.6 Node: Layout of Source Language Data Types */
 #define	INT_TYPE_SIZE			32
@@ -406,10 +405,7 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 
 #define TEXT_SECTION_ASM_OP			"\t.text"
 #define DATA_SECTION_ASM_OP			"\t.data"
-#define READONLY_DATA_SECTION_ASM_OP		"\t.section\t.rodata"
 #define BSS_SECTION_ASM_OP			"\t.section\t.bss"
-#define INIT_SECTION_ASM_OP			"\t.section .init,\"ax\""
-#define FINI_SECTION_ASM_OP			"\t.section .fini,\"ax\""
 
 /* XXX gccint 18.19 Node: Position Independent Code */
 /* (empty) */
@@ -422,48 +418,22 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 #define ASM_APP_ON				"#APP\n"
 #define ASM_APP_OFF				"#NO_APP\n"
 
-#define TARGET_ASM_NAMED_SECTION		default_elf_asm_named_section
-
 /* XXX gccint 18.20.2 Node: Output of Data */
 /* (empty) */
 
 /* XXX gccint 18.20.3 Node: Output of Uninitialized Variables */
-#define	ASM_OUTPUT_COMMON(STREAM, NAME, SIZE, ROUNDED)					\
-	do {										\
-		fprintf (STREAM, "\t.comm\t");						\
-		assemble_name (STREAM, NAME);						\
-		fprintf (STREAM, ", %d\n", (int) (SIZE));				\
-	} while (0)
-
-#define	ASM_OUTPUT_ALIGNED_LOCAL(STREAM, NAME, SIZE, ALIGN)				\
-	do {										\
-		switch_to_section (bss_section);					\
-		ASM_OUTPUT_ALIGN (STREAM, floor_log2 ((ALIGN) / BITS_PER_UNIT));	\
-		assemble_name (STREAM, NAME);						\
-		fprintf (STREAM, ":\t.space\t%d\n", (int) (SIZE));			\
-	} while (0)
+/* (empty) */
 
 /* XXX gccint 18.20.4 Node: Output and Generation of Labels */
 
 /* Undocumented, see TARGET_ASM_GLOBALIZE_LABEL in gccint 18.20.4 */
 #define	GLOBAL_ASM_OP				"\t.global\t"
 
-#define	ASM_WEAKEN_LABEL(STREAM, NAME)							\
-	do {										\
-		fprintf (STREAM, "\t.weak\t");						\
-		assemble_name (STREAM, NAME);						\
-		fprintf (STREAM, "\n");							\
-	} while (0)
-
-#define	ASM_GENERATE_INTERNAL_LABEL(LABEL, PREFIX, NUM)					\
-	sprintf (LABEL, "*%s%u", PREFIX, (unsigned int)(NUM))
-
 /* XXX gccint 18.20.5 Node: How Initialization Functions Are Handled */
 /* (empty) */
 
 /* XXX gccint 18.20.6 Node: Macros Controlling Initialization Routines */
 /* (empty) */
-/* INIT_SECTION_ASM_OP already defined in gccint 18.18 Node */
 
 
 /* XXX */
@@ -535,9 +505,6 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 
 /* Node: Alignment Output */
 
-#define ASM_OUTPUT_SKIP(STREAM, NBYTES) \
- dadao_asm_output_skip (STREAM, NBYTES)
-
 #define ASM_OUTPUT_ALIGN(STREAM, POWER) \
  dadao_asm_output_align (STREAM, POWER)
 
@@ -557,7 +524,6 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 
 
 /* Node: DWARF */
-#define DWARF2_DEBUGGING_INFO 1
 #define DWARF2_ASM_LINE_DEBUG_INFO 1
 
 /* Node: Misc */
