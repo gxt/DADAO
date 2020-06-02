@@ -516,14 +516,13 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 /* XXX gccint 18.20.9 Node: Assembler Commands for Exception Regions */
 /* (empty) */
 
+/* XXX gccint 18.20.10 Node: Assembler Commands for Alignment */
+
+#define	ASM_OUTPUT_ALIGN(STREAM, POWER)					\
+	fprintf (STREAM, "%s%d\n", ALIGN_ASM_OP, POWER)
+
 
 /* XXX */
-
-/* Node: Alignment Output */
-
-#define ASM_OUTPUT_ALIGN(STREAM, POWER) \
- dadao_asm_output_align (STREAM, POWER)
-
 
 /* Node: All Debuggers */
 

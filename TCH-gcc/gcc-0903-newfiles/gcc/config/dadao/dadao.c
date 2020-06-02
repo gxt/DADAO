@@ -1104,20 +1104,11 @@ static void dd_print_operand_address (FILE *stream, machine_mode /*mode*/, rtx x
 /* XXX gccint 18.20.9 Node: Assembler Commands for Exception Regions */
 /* (empty) */
 
+/* XXX gccint 18.20.10 Node: Assembler Commands for Alignment */
+/* (empty) */
+
 
 /* XXX */
-
-/* ASM_OUTPUT_ALIGN.  */
-
-void
-dadao_asm_output_align (FILE *stream, int power)
-{
-  /* We need to record the needed alignment of this section in the object,
-     so we have to output an alignment directive.  Use a .p2align (not
-     .align) so people will never have to wonder about whether the
-     argument is in number of bytes or the log2 thereof.  */
- fprintf (stream, "\t.p2align %d\n", power);
-}
 
 /* DBX_REGISTER_NUMBER.  */
 
