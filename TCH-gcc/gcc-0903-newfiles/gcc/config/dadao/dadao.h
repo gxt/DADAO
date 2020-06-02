@@ -521,25 +521,11 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 #define	ASM_OUTPUT_ALIGN(STREAM, POWER)					\
 	fprintf (STREAM, "%s%d\n", ALIGN_ASM_OP, POWER)
 
+/* XXX gccint 18.21 Node: Controlling Debugging Information Format */
+/* (empty) */
+
 
 /* XXX */
-
-/* Node: All Debuggers */
-
-#define DBX_REGISTER_NUMBER(REGNO) \
- dadao_dbx_register_number (REGNO)
-
-
-/* Node: DBX Options */
-/* (empty) */
-/* Node: DBX Hooks */
-/* (empty) */
-/* Node: File Names and DBX */
-/* (empty) */
-
-
-/* Node: DWARF */
-#define DWARF2_ASM_LINE_DEBUG_INFO 1
 
 /* Node: Misc */
 

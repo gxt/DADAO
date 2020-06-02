@@ -1107,27 +1107,11 @@ static void dd_print_operand_address (FILE *stream, machine_mode /*mode*/, rtx x
 /* XXX gccint 18.20.10 Node: Assembler Commands for Alignment */
 /* (empty) */
 
+/* XXX gccint 18.21 Node: Controlling Debugging Information Format */
+/* (empty) */
+
 
 /* XXX */
-
-/* DBX_REGISTER_NUMBER.  */
-
-unsigned
-dadao_dbx_register_number (unsigned regno)
-{
-  /* Adjust the register number to the one it will be output as, dammit.
-     It'd be nice if we could check the assumption that we're filling a
-     gap, but every register between the last saved register and parameter
-     registers might be a valid parameter register.  */
-  regno = DADAO_OUTPUT_REGNO (regno);
-
-  /* We need to renumber registers to get the number of the return address
-     register in the range 0..255.  It is also space-saving if registers
-     mentioned in the call-frame information (which uses this function by
-     defaulting DWARF_FRAME_REGNUM to DBX_REGISTER_NUMBER) are numbered
-     0 .. 63.  So map 224 .. 256+15 -> 0 .. 47 and 0 .. 223 -> 48..223+48.  */
-  return regno >= 224 ? (regno - 224) : (regno + 48);
-}
 
 /* End of target macro support functions.
 
