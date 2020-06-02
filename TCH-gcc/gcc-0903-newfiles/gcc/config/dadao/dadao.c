@@ -866,76 +866,11 @@ static void dd_encode_section_info (tree decl, rtx rtl, int first)
 /* XXX gccint 18.20.3 Node: Output of Uninitialized Variables */
 /* (empty) */
 
+/* XXX gccint 18.20.4 Node: Output and Generation of Labels */
+/* (empty) */
+
 
 /* XXX */
-
-/* ASM_OUTPUT_LABEL.  */
-
-void
-dadao_asm_output_label (FILE *stream, const char *name)
-{
-  assemble_name (stream, name);
-  fprintf (stream, ":\n");
-}
-
-/* ASM_OUTPUT_INTERNAL_LABEL.  */
-
-void
-dadao_asm_output_internal_label (FILE *stream, const char *name)
-{
-  assemble_name_raw (stream, name);
-  fprintf (stream, ":\n");
-}
-
-/* ASM_DECLARE_REGISTER_GLOBAL.  */
-
-void
-dadao_asm_declare_register_global (FILE *stream ATTRIBUTE_UNUSED,
-				  tree decl ATTRIBUTE_UNUSED,
-				  int regno ATTRIBUTE_UNUSED,
-				  const char *name ATTRIBUTE_UNUSED)
-{
-  /* Nothing to do here, but there *will* be, therefore the framework is
-     here.  */
-}
-
-/* ASM_WEAKEN_LABEL.  */
-
-void
-dadao_asm_weaken_label (FILE *stream ATTRIBUTE_UNUSED,
-		       const char *name ATTRIBUTE_UNUSED)
-{
-  fprintf (stream, "\t.weak ");
-  assemble_name (stream, name);
-  fputc ('\n', stream);
-}
-
-/* MAKE_DECL_ONE_ONLY.  */
-
-void
-dadao_make_decl_one_only (tree decl)
-{
-  DECL_WEAK (decl) = 1;
-}
-
-/* ASM_OUTPUT_LABELREF. */
-
-void
-dadao_asm_output_labelref (FILE *stream, const char *name)
-{
-  asm_fprintf (stream, "%U%s", name);
-}
-
-/* ASM_OUTPUT_DEF.  */
-
-void
-dadao_asm_output_def (FILE *stream, const char *name, const char *value)
-{
-  assemble_name (stream, name);
-  fprintf (stream, ":\t");
-  assemble_name (stream, value);
-  fputc ('\n', stream);
-}
 
 /* TARGET_PRINT_OPERAND.  */
 

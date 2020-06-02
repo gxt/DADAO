@@ -24,11 +24,6 @@ extern machine_mode dadao_select_cc_mode (enum rtx_code, rtx, rtx);
 #endif
 extern int dadao_reversible_cc_mode (machine_mode);
 
-extern void dadao_asm_output_label (FILE *, const char *);
-extern void dadao_asm_output_internal_label (FILE *, const char *);
-extern void dadao_asm_weaken_label (FILE *, const char *);
-extern void dadao_asm_output_labelref (FILE *, const char *);
-extern void dadao_asm_output_def (FILE *, const char *, const char *);
 extern void dadao_asm_output_reg_push (FILE *, int);
 extern void dadao_asm_output_reg_pop (FILE *, int);
 extern void dadao_asm_output_skip (FILE *, int);
@@ -38,9 +33,6 @@ extern int dadao_shiftable_wyde_value (uint64_t);
 extern void dadao_output_register_setting (FILE *, int, int64_t, int);
 extern unsigned dadao_dbx_register_number (unsigned);
 extern int dadao_use_simple_return (void);
-extern void dadao_make_decl_one_only (tree);
-extern void dadao_asm_declare_register_global
-  (FILE *, tree, int, const char *);
 extern void dadao_asm_output_addr_diff_elt (FILE *, rtx, int, int);
 extern void dadao_asm_output_addr_vec_elt (FILE *, int);
 extern int dadao_constant_address_p (rtx);

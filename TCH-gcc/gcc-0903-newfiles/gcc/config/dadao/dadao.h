@@ -439,36 +439,23 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 		fprintf (STREAM, ":\t.space\t%d\n", (int) (SIZE));			\
 	} while (0)
 
+/* XXX gccint 18.20.4 Node: Output and Generation of Labels */
+
+/* Undocumented, see TARGET_ASM_GLOBALIZE_LABEL in gccint 18.20.4 */
+#define	GLOBAL_ASM_OP				"\t.global\t"
+
+#define	ASM_WEAKEN_LABEL(STREAM, NAME)							\
+	do {										\
+		fprintf (STREAM, "\t.weak\t");						\
+		assemble_name (STREAM, NAME);						\
+		fprintf (STREAM, "\n");							\
+	} while (0)
+
+#define	ASM_GENERATE_INTERNAL_LABEL(LABEL, PREFIX, NUM)					\
+	sprintf (LABEL, "*%s%u", PREFIX, (unsigned int)(NUM))
+
 
 /* XXX */
-
-/* Node: Label Output */
-
-#define ASM_OUTPUT_LABEL(STREAM, NAME) \
- dadao_asm_output_label (STREAM, NAME)
-
-#define ASM_OUTPUT_INTERNAL_LABEL(STREAM, NAME) \
- dadao_asm_output_internal_label (STREAM, NAME)
-
-#define ASM_DECLARE_REGISTER_GLOBAL(STREAM, DECL, REGNO, NAME) \
- dadao_asm_declare_register_global (STREAM, DECL, REGNO, NAME)
-
-#define GLOBAL_ASM_OP "\t.global "
-
-#define ASM_WEAKEN_LABEL(STREAM, NAME) \
- dadao_asm_weaken_label (STREAM, NAME)
-
-#define MAKE_DECL_ONE_ONLY(DECL) \
- dadao_make_decl_one_only (DECL)
-
-#define ASM_OUTPUT_LABELREF(STREAM, NAME) \
- dadao_asm_output_labelref (STREAM, NAME)
-
-#define ASM_GENERATE_INTERNAL_LABEL(LABEL, PREFIX, NUM) \
- sprintf (LABEL, "*%s%ld", PREFIX, (long)(NUM))
-
-#define ASM_OUTPUT_DEF(STREAM, NAME, VALUE) \
- dadao_asm_output_def (STREAM, NAME, VALUE)
 
 /* Node: Macros for Initialization */
 /* We're compiling to ELF and linking to MMO; fundamental ELF features
@@ -526,7 +513,6 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 
 #define ASM_OUTPUT_REG_POP(STREAM, REGNO) \
  dadao_asm_output_reg_pop (STREAM, REGNO)
-
 
 /* Node: Dispatch Tables */
 
@@ -595,9 +581,6 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 
 /* These are checked.  */
 #define DOLLARS_IN_IDENTIFIERS 0
-#define NO_DOLLAR_IN_LABEL
-#define NO_DOT_IN_LABEL
-
 #endif /* GCC_DADAO_H */
 /*
  * Local variables:
