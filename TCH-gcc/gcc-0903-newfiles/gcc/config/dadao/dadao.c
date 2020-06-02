@@ -98,16 +98,7 @@ static machine_mode dadao_promote_function_mode (const_tree,
 						     machine_mode,
 	                                             int *, const_tree, int);
 static bool dadao_frame_pointer_required (void);
-static void dadao_print_operand (FILE *, rtx, int);
-static void dadao_print_operand_address (FILE *, machine_mode, rtx);
 
-/* Target structure macros.  Listed by node.  See `Using and Porting GCC'
-   for a general description.  */
-
-#undef TARGET_PRINT_OPERAND
-#define TARGET_PRINT_OPERAND dadao_print_operand
-#undef TARGET_PRINT_OPERAND_ADDRESS
-#define TARGET_PRINT_OPERAND_ADDRESS dadao_print_operand_address
 
 #undef TARGET_HAVE_SPECULATION_SAFE_VALUE
 #define TARGET_HAVE_SPECULATION_SAFE_VALUE speculation_safe_value_not_needed
@@ -873,13 +864,10 @@ static void dd_encode_section_info (tree decl, rtx rtl, int first)
 /* XXX gccint 18.20.6 Node: Macros Controlling Initialization Routines */
 /* (empty) */
 
-
-/* XXX */
+/* XXX gccint 18.20.7 Node: Output of Assembler Instructions */
 
 /* TARGET_PRINT_OPERAND.  */
-
-static void
-dadao_print_operand (FILE *stream, rtx x, int code)
+static void dd_print_operand (FILE *stream, rtx x, int code)
 {
   /* When we add support for different codes later, we can, when needed,
      drop through to the main handler with a modified operand.  */
@@ -910,8 +898,7 @@ dadao_print_operand (FILE *stream, rtx x, int code)
 	 one, as that one cannot be part of a consecutive register pair.  */
       if (GET_CODE (x) == CONST_INT)
 	{
-	  fprintf (stream, "0x%lx",
-		   (unsigned long) (INTVAL (x)
+	  fprintf (stream, "0x%lx", (unsigned long) (INTVAL (x)
 				    & ((unsigned int) 0x7fffffff * 2 + 1)));
 	  return;
 	}
@@ -932,27 +919,19 @@ dadao_print_operand (FILE *stream, rtx x, int code)
       /* Can't use 'a' because that's a generic modifier for address
 	 output.  */
     case 'A':
-      dadao_output_shiftvalue_op_from_str (stream, "andn",
-					  ~(uint64_t)
-					  dadao_intval (x));
+      dadao_output_shiftvalue_op_from_str (stream, "andn", ~(uint64_t) dadao_intval (x));
       return;
 
     case 'i':
-      dadao_output_shiftvalue_op_from_str (stream, "inc",
-					  (uint64_t)
-					  dadao_intval (x));
+      dadao_output_shiftvalue_op_from_str (stream, "inc", (uint64_t) dadao_intval (x));
       return;
 
     case 'o':
-      dadao_output_shiftvalue_op_from_str (stream, "or",
-					  (uint64_t)
-					  dadao_intval (x));
+      dadao_output_shiftvalue_op_from_str (stream, "or", (uint64_t) dadao_intval (x));
       return;
 
     case 's':
-      dadao_output_shiftvalue_op_from_str (stream, "set",
-					  (uint64_t)
-					  dadao_intval (x));
+      dadao_output_shiftvalue_op_from_str (stream, "set", (uint64_t) dadao_intval (x));
       return;
 
     case 'd':
@@ -969,12 +948,8 @@ dadao_print_operand (FILE *stream, rtx x, int code)
     case 'm':
       /* Output the number minus 1.  */
       if (GET_CODE (x) != CONST_INT)
-	{
-	  fatal_insn ("DADAO Internal: Bad value for 'm', not a CONST_INT",
-		      x);
-	}
-      fprintf (stream, "%" PRId64,
-	       (int64_t) (dadao_intval (x) - 1));
+	  fatal_insn ("DADAO Internal: Bad value for 'm', not a CONST_INT", x);
+      fprintf (stream, "%" PRId64, (int64_t) (dadao_intval (x) - 1));
       return;
 
     case 'r':
@@ -986,8 +961,7 @@ dadao_print_operand (FILE *stream, rtx x, int code)
 
     case 'I':
       /* Output the constant.  Note that we use this for floats as well.  */
-      if (GET_CODE (x) != CONST_INT
-	  && (GET_CODE (x) != CONST_DOUBLE
+      if (GET_CODE (x) != CONST_INT && (GET_CODE (x) != CONST_DOUBLE
 	      || (GET_MODE (x) != VOIDmode && GET_MODE (x) != DFmode
 		  && GET_MODE (x) != SFmode)))
 	fatal_insn ("DADAO Internal: Expected a constant, not this", x);
@@ -1022,7 +996,7 @@ dadao_print_operand (FILE *stream, rtx x, int code)
 
     default:
       /* Presumably there's a missing case above if we get here.  */
-      internal_error ("DADAO Internal: Missing %qc case in dadao_print_operand", code);
+      internal_error ("DADAO Internal: Missing %qc case in dd_print_operand", code);
     }
 
   switch (GET_CODE (modified_x))
@@ -1078,16 +1052,16 @@ dadao_print_operand (FILE *stream, rtx x, int code)
     }
 }
 
-/* TARGET_PRINT_OPERAND_ADDRESS.  */
+#undef	TARGET_PRINT_OPERAND
+#define	TARGET_PRINT_OPERAND				dd_print_operand
 
-static void
-dadao_print_operand_address (FILE *stream, machine_mode /*mode*/, rtx x)
+/* TARGET_PRINT_OPERAND_ADDRESS.  */
+static void dd_print_operand_address (FILE *stream, machine_mode /*mode*/, rtx x)
 {
   if (REG_P (x))
     {
-      /* I find the generated assembly code harder to read without
-	 the ",0".  */
-      fprintf (stream, "%s,0", reg_names[DADAO_OUTPUT_REGNO (REGNO (x))]);
+      /* I find the generated assembly code harder to read without the ",0".  */
+      fprintf (stream, "%s, 0", reg_names[DADAO_OUTPUT_REGNO (REGNO (x))]);
       return;
     }
   else if (GET_CODE (x) == PLUS)
@@ -1097,12 +1071,11 @@ dadao_print_operand_address (FILE *stream, machine_mode /*mode*/, rtx x)
 
       if (REG_P (x1))
 	{
-	  fprintf (stream, "%s,", reg_names[DADAO_OUTPUT_REGNO (REGNO (x1))]);
+	  fprintf (stream, "%s, ", reg_names[DADAO_OUTPUT_REGNO (REGNO (x1))]);
 
 	  if (REG_P (x2))
 	    {
-	      fprintf (stream, "%s",
-		       reg_names[DADAO_OUTPUT_REGNO (REGNO (x2))]);
+	      fprintf (stream, "%s", reg_names[DADAO_OUTPUT_REGNO (REGNO (x2))]);
 	      return;
 	    }
 	  else if (satisfies_constraint_I (x2))
@@ -1122,28 +1095,11 @@ dadao_print_operand_address (FILE *stream, machine_mode /*mode*/, rtx x)
   fatal_insn ("DADAO Internal: This is not a recognized address", x);
 }
 
-/* ASM_OUTPUT_REG_PUSH.  */
+#undef	TARGET_PRINT_OPERAND_ADDRESS
+#define	TARGET_PRINT_OPERAND_ADDRESS			dd_print_operand_address
 
-void
-dadao_asm_output_reg_push (FILE *stream, int regno)
-{
-  fprintf (stream, "\tsubu	%s, %s, 8\n\tsto	%s, %s, 0\n",
-	   reg_names[DADAO_STACK_POINTER_REGNUM],
-	   reg_names[DADAO_STACK_POINTER_REGNUM],
-	   reg_names[DADAO_OUTPUT_REGNO (regno)],
-	   reg_names[DADAO_STACK_POINTER_REGNUM]);
-}
 
-/* ASM_OUTPUT_REG_POP.  */
-
-void
-dadao_asm_output_reg_pop (FILE *stream, int regno)
-{
-  fprintf (stream, "\tldo	%s, %s, 0\n\tincl	%s, 8\n",
-	   reg_names[DADAO_OUTPUT_REGNO (regno)],
-	   reg_names[DADAO_STACK_POINTER_REGNUM],
-	   reg_names[DADAO_STACK_POINTER_REGNUM]);
-}
+/* XXX */
 
 /* ASM_OUTPUT_ADDR_DIFF_ELT.  */
 
