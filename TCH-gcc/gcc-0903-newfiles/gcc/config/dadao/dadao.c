@@ -1101,6 +1101,9 @@ static void dd_print_operand_address (FILE *stream, machine_mode /*mode*/, rtx x
 /* XXX gccint 18.20.8 Node: Output of Dispatch Tables */
 /* (empty) */
 
+/* XXX gccint 18.20.9 Node: Assembler Commands for Exception Regions */
+/* (empty) */
+
 
 /* XXX */
 

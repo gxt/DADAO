@@ -513,11 +513,11 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 #define	ASM_OUTPUT_ADDR_VEC_ELT(STREAM, VALUE)				\
 	fprintf (STREAM, "\t.dd.o64\tL%d\n", VALUE)
 
+/* XXX gccint 18.20.9 Node: Assembler Commands for Exception Regions */
+/* (empty) */
+
 
 /* XXX */
-
-/* Node: Exception Region Output */
-/* (empty) */
 
 /* Node: Alignment Output */
 
