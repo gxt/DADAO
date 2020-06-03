@@ -1110,6 +1110,9 @@ static void dd_print_operand_address (FILE *stream, machine_mode /*mode*/, rtx x
 /* XXX gccint 18.21 Node: Controlling Debugging Information Format */
 /* (empty) */
 
+/* XXX gccint 18.22 Node: Cross Compilation and Floating Point */
+/* (empty) */
+
 
 /* XXX */
 

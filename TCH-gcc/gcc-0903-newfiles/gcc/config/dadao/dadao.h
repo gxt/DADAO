@@ -524,6 +524,10 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 /* XXX gccint 18.21 Node: Controlling Debugging Information Format */
 /* (empty) */
 
+/* XXX gccint 18.22 Node: Cross Compilation and Floating Point */
+/* (empty) */
+
+
 
 /* XXX */
 
