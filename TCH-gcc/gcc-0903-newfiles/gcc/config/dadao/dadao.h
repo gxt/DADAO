@@ -533,6 +533,25 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 /* XXX gccint 18.24 Node: Defining target-specific uses of __attribute__ */
 /* (empty) */
 
+/* XXX gccint 18.25 Node: Emulating TLS */
+/* (empty) */
+
+/* XXX gccint 18.26 Node: Defining coprocessor specifics for MIPS targets */
+/* (empty) */
+
+/* XXX gccint 18.27 Node: Parameters for Precompiled Header Validity Checking */
+/* (empty) */
+
+/* XXX gccint 18.28 Node: C++ ABI parameters */
+/* (empty) */
+
+/* XXX gccint 18.29 Node: D ABI parameters */
+/* (empty) */
+
+/* XXX gccint 18.30 Node: Adding support for named address spaces */
+/* (empty) */
+
+
 /* XXX */
 
 /* Node: Misc */

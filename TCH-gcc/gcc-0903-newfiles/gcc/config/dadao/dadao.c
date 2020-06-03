@@ -1133,6 +1133,24 @@ static void dd_option_override (void)
 #undef	TARGET_OPTION_OVERRIDE
 #define	TARGET_OPTION_OVERRIDE				dd_option_override
 
+/* XXX gccint 18.25 Node: Emulating TLS */
+/* (empty) */
+
+/* XXX gccint 18.26 Node: Defining coprocessor specifics for MIPS targets */
+/* (empty) */
+
+/* XXX gccint 18.27 Node: Parameters for Precompiled Header Validity Checking */
+/* (empty) */
+
+/* XXX gccint 18.28 Node: C++ ABI parameters */
+/* (empty) */
+
+/* XXX gccint 18.29 Node: D ABI parameters */
+/* (empty) */
+
+/* XXX gccint 18.30 Node: Adding support for named address spaces */
+/* (empty) */
+
 
 /* XXX */
 
