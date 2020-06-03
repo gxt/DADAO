@@ -94,24 +94,12 @@ static const char *dadao_strip_name_encoding (const char *);
 static void dadao_emit_sp_add (HOST_WIDE_INT offset);
 static void dadao_asm_output_mi_thunk
   (FILE *, tree, HOST_WIDE_INT, HOST_WIDE_INT, tree);
-static machine_mode dadao_promote_function_mode (const_tree,
-						     machine_mode,
-	                                             int *, const_tree, int);
-static bool dadao_frame_pointer_required (void);
-
 
 #undef TARGET_HAVE_SPECULATION_SAFE_VALUE
 #define TARGET_HAVE_SPECULATION_SAFE_VALUE speculation_safe_value_not_needed
 
-#undef TARGET_PROMOTE_FUNCTION_MODE
-#define TARGET_PROMOTE_FUNCTION_MODE dadao_promote_function_mode
-
 #undef TARGET_CALLEE_COPIES
 #define TARGET_CALLEE_COPIES hook_bool_CUMULATIVE_ARGS_mode_tree_bool_true
-
-
-#undef TARGET_FRAME_POINTER_REQUIRED
-#define TARGET_FRAME_POINTER_REQUIRED dadao_frame_pointer_required
 
 
 /* XXX gccint Chapter 18: Target Description Macros and Functions */
@@ -142,7 +130,28 @@ void dadao_init_expanders (void)
 }
 
 /* XXX gccint 18.5 Node: Storage Layout */
-/* (empty) */
+
+/* Worker function for TARGET_PROMOTE_FUNCTION_MODE.  */
+static machine_mode dd_promote_function_mode (const_tree type ATTRIBUTE_UNUSED,
+                            machine_mode mode, int *punsignedp ATTRIBUTE_UNUSED,
+                            const_tree fntype ATTRIBUTE_UNUSED, int for_return)
+{
+  /* Apparently not doing TRT if int < register-size.  FIXME: Perhaps
+     FUNCTION_VALUE and LIBCALL_VALUE needs tweaking as some ports say.  */
+  if (for_return == 1)
+    return mode;
+
+  /* Promotion of modes currently generates slow code, extending before
+     operation, so we do it only for arguments.  */
+  if (GET_MODE_CLASS (mode) == MODE_INT
+      && GET_MODE_SIZE (mode) < 8)
+    return DImode;
+  else
+    return mode;
+}
+
+#undef	TARGET_PROMOTE_FUNCTION_MODE
+#define	TARGET_PROMOTE_FUNCTION_MODE		dd_promote_function_mode
 
 /* XXX gccint 18.6 Node: Layout of Source Language Data Types */
 /* (empty) */
@@ -275,6 +284,16 @@ rtx dadao_eh_return_handler_rtx (void)
 /* (empty) */
 
 /* XXX gccint 18.9.5 Node: Eliminating Frame Pointer and Arg Pointer */
+
+/* FIXME: Is this requirement built-in?  Anyway, we should try to get rid
+   of it; we can deduce the value.  */
+static bool dd_frame_pointer_required (void)
+{
+  return (cfun->has_nonlocal_label);
+}
+
+#undef	TARGET_FRAME_POINTER_REQUIRED
+#define	TARGET_FRAME_POINTER_REQUIRED			dd_frame_pointer_required
 
 /* The difference between the (imaginary) frame pointer and the stack
    pointer.  Used to eliminate the frame pointer.  */
@@ -1958,40 +1977,6 @@ dadao_intval (const_rtx x)
     }
 
   fatal_insn ("DADAO Internal: This is not a constant:", x);
-}
-
-/* Worker function for TARGET_PROMOTE_FUNCTION_MODE.  */
-
-machine_mode
-dadao_promote_function_mode (const_tree type ATTRIBUTE_UNUSED,
-                            machine_mode mode,
-                            int *punsignedp ATTRIBUTE_UNUSED,
-                            const_tree fntype ATTRIBUTE_UNUSED,
-                            int for_return)
-{
-  /* Apparently not doing TRT if int < register-size.  FIXME: Perhaps
-     FUNCTION_VALUE and LIBCALL_VALUE needs tweaking as some ports say.  */
-  if (for_return == 1)
-    return mode;
-
-  /* Promotion of modes currently generates slow code, extending before
-     operation, so we do it only for arguments.  */
-  if (GET_MODE_CLASS (mode) == MODE_INT
-      && GET_MODE_SIZE (mode) < 8)
-    return DImode;
-  else
-    return mode;
-}
-
-/* Worker function for TARGET_FRAME_POINTER_REQUIRED.
-
-   FIXME: Is this requirement built-in?  Anyway, we should try to get rid
-   of it; we can deduce the value.  */
-
-bool
-dadao_frame_pointer_required (void)
-{
-  return (cfun->has_nonlocal_label);
 }
 
 /* XXX gccint 18.1 Node: The Global targetm Variable */
