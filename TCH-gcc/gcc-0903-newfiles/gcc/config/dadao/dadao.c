@@ -1151,12 +1151,11 @@ static void dd_option_override (void)
 /* XXX gccint 18.30 Node: Adding support for named address spaces */
 /* (empty) */
 
+/* XXX gccint 18.31 Node: Miscellaneous Parameters */
+/* (empty) */
 
-/* XXX */
+/* XXX End of gccint Chapter 18: Target Description Macros and Functions */
 
-/* End of target macro support functions.
-
-   Now the DADAO port's own functions.  First the exported ones.  */
 
 /* Wrapper for get_hard_reg_initial_val since integrate.h isn't included
    from insn-emit.c.  */

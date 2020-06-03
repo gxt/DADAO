@@ -3,7 +3,6 @@
  * Copyright (C) 2020-2033 Guan Xuetao (AT) Peking Univ.
  * Contributed by Guan Xuetao <gxt@pku.edu.cn>
  */
-
 #ifndef GCC_DADAO_H
 #define GCC_DADAO_H
 
@@ -551,39 +550,24 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 /* XXX gccint 18.30 Node: Adding support for named address spaces */
 /* (empty) */
 
+/* XXX gccint 18.31 Node: Miscellaneous Parameters */
 
-/* XXX */
+#define	CASE_VECTOR_MODE			DImode
+#define	CASE_VECTOR_PC_RELATIVE			0
 
-/* Node: Misc */
-
-/* There's no way to get a PC-relative offset into tables for SImode, so
-   for the moment we have absolute entries in DImode.
-   When we're going ELF, these should be SImode and 1.  */
-#define CASE_VECTOR_MODE DImode
-#define CASE_VECTOR_PC_RELATIVE 0
-
-#define WORD_REGISTER_OPERATIONS 1
+#define	WORD_REGISTER_OPERATIONS		1
 
 /* We have a choice, which makes this yet another parameter to tweak.  The
    gut feeling is currently that SIGN_EXTEND wins; "int" is more frequent
    than "unsigned int", and we have signed characters.  FIXME: measure.  */
-#define LOAD_EXTEND_OP(MODE) (TARGET_ZERO_EXTEND ? ZERO_EXTEND : SIGN_EXTEND)
+#define	LOAD_EXTEND_OP(MODE)			(TARGET_ZERO_EXTEND ? ZERO_EXTEND : SIGN_EXTEND)
 
-#define MOVE_MAX 8
+#define	MOVE_MAX				8
 
 /* ??? DADAO allows a choice of STORE_FLAG_VALUE.  Revisit later,
    we don't have scc expanders yet.  */
 
-#define Pmode DImode
+#define	Pmode					DImode
+#define	FUNCTION_MODE				QImode
 
-#define FUNCTION_MODE QImode
-
-/* These are checked.  */
-#define DOLLARS_IN_IDENTIFIERS 0
 #endif /* GCC_DADAO_H */
-/*
- * Local variables:
- * eval: (c-set-style "gnu")
- * indent-tabs-mode: t
- * End:
- */
