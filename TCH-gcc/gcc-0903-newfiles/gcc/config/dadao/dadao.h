@@ -527,6 +527,8 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 /* XXX gccint 18.22 Node: Cross Compilation and Floating Point */
 /* (empty) */
 
+/* XXX gccint 18.23 Node: Mode Switching Instructions */
+/* (empty) */
 
 
 /* XXX */

@@ -1113,6 +1113,9 @@ static void dd_print_operand_address (FILE *stream, machine_mode /*mode*/, rtx x
 /* XXX gccint 18.22 Node: Cross Compilation and Floating Point */
 /* (empty) */
 
+/* XXX gccint 18.23 Node: Mode Switching Instructions */
+/* (empty) */
+
 
 /* XXX */
 
