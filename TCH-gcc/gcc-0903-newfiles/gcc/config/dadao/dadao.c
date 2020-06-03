@@ -98,9 +98,6 @@ static void dadao_asm_output_mi_thunk
 #undef TARGET_HAVE_SPECULATION_SAFE_VALUE
 #define TARGET_HAVE_SPECULATION_SAFE_VALUE speculation_safe_value_not_needed
 
-#undef TARGET_CALLEE_COPIES
-#define TARGET_CALLEE_COPIES hook_bool_CUMULATIVE_ARGS_mode_tree_bool_true
-
 
 /* XXX gccint Chapter 18: Target Description Macros and Functions */
 
