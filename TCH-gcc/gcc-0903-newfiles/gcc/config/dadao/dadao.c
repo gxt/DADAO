@@ -114,23 +114,6 @@ static bool dadao_frame_pointer_required (void);
 #define TARGET_FRAME_POINTER_REQUIRED dadao_frame_pointer_required
 
 
-/* XXX gccint 18.24 Node: Defining target-specific uses of __attribute__ */
-static void dd_option_override (void)
-{
-	/* Should we err or should we warn?  Hmm.  At least we must neutralize
-	   it.  For example the wrong kind of case-tables will be generated with
-	   PIC; we use absolute address items for dadaoal compatibility.  FIXME:
-	   They could be relative if we just elide them to after all pertinent
-	   labels.  */
-	if (flag_pic) {
-		warning (0, "%<-f%s%> not supported: ignored", (flag_pic > 1) ? "PIC" : "pic");
-		flag_pic = 0;
-	}
-}
-
-#undef	TARGET_OPTION_OVERRIDE
-#define	TARGET_OPTION_OVERRIDE			dd_option_override
-
 /* XXX gccint Chapter 18: Target Description Macros and Functions */
 
 /* XXX gccint 18.1 Node: The Global targetm Variable */
@@ -1115,6 +1098,24 @@ static void dd_print_operand_address (FILE *stream, machine_mode /*mode*/, rtx x
 
 /* XXX gccint 18.23 Node: Mode Switching Instructions */
 /* (empty) */
+
+/* XXX gccint 18.24 Node: Defining target-specific uses of __attribute__ */
+
+static void dd_option_override (void)
+{
+	/* Should we err or should we warn?  Hmm.  At least we must neutralize
+	   it.  For example the wrong kind of case-tables will be generated with
+	   PIC; we use absolute address items for dadaoal compatibility.  FIXME:
+	   They could be relative if we just elide them to after all pertinent
+	   labels.  */
+	if (flag_pic) {
+		warning (0, "%<-f%s%> not supported: ignored", (flag_pic > 1) ? "PIC" : "pic");
+		flag_pic = 0;
+	}
+}
+
+#undef	TARGET_OPTION_OVERRIDE
+#define	TARGET_OPTION_OVERRIDE				dd_option_override
 
 
 /* XXX */

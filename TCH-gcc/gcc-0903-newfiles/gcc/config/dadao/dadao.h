@@ -530,6 +530,8 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 /* XXX gccint 18.23 Node: Mode Switching Instructions */
 /* (empty) */
 
+/* XXX gccint 18.24 Node: Defining target-specific uses of __attribute__ */
+/* (empty) */
 
 /* XXX */
 
