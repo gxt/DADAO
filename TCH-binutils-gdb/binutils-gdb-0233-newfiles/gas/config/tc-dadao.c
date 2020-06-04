@@ -1161,19 +1161,10 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
       md_number_to_chars (buf, val, fixP->fx_size);
       break;
 
-    case BFD_RELOC_DADAO_GETA:
-    case BFD_RELOC_DADAO_BRCC:
-      /* If this fixup is out of range, punt to the linker to emit an
-	 error.  This should only happen with -no-expand.  */
-      if (val < -(((offsetT) 1 << 19)/2)
-	  || val >= ((offsetT) 1 << 19)/2 - 1
-	  || (val & 3) != 0)
-	{
-	  fixP->fx_done = 0;
-	  val = 0;
-	}
-	dd_set_addr_offset(buf, val, 18);
-      break;
+	case BFD_RELOC_DADAO_GETA:
+	case BFD_RELOC_DADAO_BRCC:
+		dd_set_addr_offset(buf, val, 18);
+		break;
 
     case BFD_RELOC_DADAO_CALL:
     case BFD_RELOC_DADAO_JUMP:
