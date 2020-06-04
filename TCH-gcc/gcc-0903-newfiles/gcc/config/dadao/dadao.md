@@ -943,7 +943,7 @@
   "B%D1 %2,%0")
 
 (define_expand "call"
-  [(parallel [(call (match_operand:QI 0 "memory_operand" "")
+  [(parallel [(call (match_operand:SI 0 "memory_operand" "")
 		    (match_operand 1 "general_operand" ""))
 	      (use (match_operand 2 "general_operand" ""))
 	      (clobber (match_dup 4))])
@@ -980,7 +980,7 @@
 
 (define_expand "call_value"
   [(parallel [(set (match_operand 0 "" "")
-		   (call (match_operand:QI 1 "memory_operand" "")
+		   (call (match_operand:SI 1 "memory_operand" "")
 			 (match_operand 2 "general_operand" "")))
 	      (use (match_operand 3 "general_operand" ""))
 	      (clobber (match_dup 5))])
@@ -1032,7 +1032,7 @@
 ;; caveats (and very small advantages) of 'p'.
 ;; As of r190682 still so: newlib/libc/stdlib/dtoa.c ICEs if "p" is used.
 (define_insn "*call_real"
-  [(call (mem:QI
+  [(call (mem:SI
 	  (match_operand:DI 0 "dadao_symbolic_or_address_operand" "s,rU"))
 	 (match_operand 1 "" ""))
    (use (match_operand 2 "" ""))
@@ -1044,7 +1044,7 @@
 
 (define_insn "*call_value_real"
   [(set (match_operand 0 "register_operand" "=r,r")
-	(call (mem:QI
+	(call (mem:SI
 	       (match_operand:DI 1 "dadao_symbolic_or_address_operand" "s,rU"))
 	      (match_operand 2 "" "")))
   (use (match_operand 3 "" ""))

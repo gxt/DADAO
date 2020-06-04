@@ -568,6 +568,6 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
    we don't have scc expanders yet.  */
 
 #define	Pmode					DImode
-#define	FUNCTION_MODE				QImode
+#define	FUNCTION_MODE				SImode
 
 #endif /* GCC_DADAO_H */
