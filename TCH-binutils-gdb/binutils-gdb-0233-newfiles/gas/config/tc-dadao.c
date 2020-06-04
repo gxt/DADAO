@@ -17,8 +17,7 @@
 static int get_spec_regno (char *);
 static int get_operands (char *, expressionS *);
 static int get_putget_operands (struct dadao_opcode *, char *, expressionS *);
-static void dd_set_addr_offset(char *, offsetT, int);
-static void dd_set_data_addr_offset(char *, offsetT, int);
+static void dd_set_addr_offset(char *, offsetT, int, int);
 static void dadao_set_jump_offset (char *, offsetT);
 static void dadao_fill_nops (char *, int);
 
@@ -174,13 +173,15 @@ const char EXP_CHARS[] = "eE";
 
 const char FLT_CHARS[] = "rf";
 
-/* Fill in the offset-related part of GETA or BRCC.  */
-static void dd_set_addr_offset(char *opcodep, offsetT value, int bitcount)
+/* Fill in the offset-related part.  */
+static void dd_set_addr_offset(char *opcodep, offsetT value, int bitcount, int is_insn)
 {
-	if ((value & 0x3) != 0)
-		as_fatal("instruction address not align correctly");
+	if (is_insn) {
+		if ((value & 0x3) != 0)
+			as_fatal("instruction address not align correctly");
 
-	value /= 4;
+		value /= 4;
+	}
 
 	if ((value > 0) && (value >= (1 << bitcount)))
 		as_fatal("offset too large");
@@ -193,23 +194,7 @@ static void dd_set_addr_offset(char *opcodep, offsetT value, int bitcount)
 		/* FALLTHROUGH */
 	case 18:
 		DDOP_SET_FB(opcodep, (value >> 12) & 0x3F);
-		DDOP_SET_FC(opcodep, (value >> 6) & 0x3F);
-		DDOP_SET_FD(opcodep, (value & 0x3F));
-		break;
-	default:
-		as_fatal("offset bitcount not support");
-	}
-}
-
-/* Fill in the offset-related part of ld/st.  */
-static void dd_set_data_addr_offset(char *opcodep, offsetT value, int bitcount)
-{
-	if ((value > 0) && (value >= (1 << bitcount)))
-		as_fatal("offset too large");
-	if ((value < 0) && ((-value) > (1 << bitcount)))
-		as_fatal("offset too large");
-
-	switch (bitcount) {
+		/* FALLTHROUGH */
 	case 12:
 		DDOP_SET_FC(opcodep, (value >> 6) & 0x3F);
 		DDOP_SET_FD(opcodep, (value & 0x3F));
@@ -1062,19 +1047,19 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
 
 	switch (fragP->fr_subtype) {
 	case ENCODE_RELAX (STATE_CALL, STATE_ZERO):
-		dd_set_addr_offset(opcodep, target_address - opcode_address, 24);
+		dd_set_addr_offset(opcodep, target_address - opcode_address, 24, 1);
 		var_part_size = 0;
 		break;
 
 	case ENCODE_RELAX (STATE_GETA, STATE_ZERO):
 	case ENCODE_RELAX (STATE_BRCC, STATE_ZERO):
-		dd_set_addr_offset(opcodep, target_address - opcode_address, 18);
+		dd_set_addr_offset(opcodep, target_address - opcode_address, 18, 1);
 		var_part_size = 0;
 		break;
 
 	case ENCODE_RELAX (STATE_LDST, STATE_ZERO):
 		DDOP_SET_FB(opcodep, DADAO_REGP_PC);
-		dd_set_data_addr_offset(opcodep, target_address - opcode_address, 12);
+		dd_set_addr_offset(opcodep, target_address - opcode_address, 12, 0);
 		var_part_size = 0;
 		break;
 
@@ -1163,7 +1148,7 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
 
 	case BFD_RELOC_DADAO_GETA:
 	case BFD_RELOC_DADAO_BRCC:
-		dd_set_addr_offset(buf, val, 18);
+		dd_set_addr_offset(buf, val, 18, 1);
 		break;
 
     case BFD_RELOC_DADAO_CALL:
@@ -1180,17 +1165,9 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
       dadao_set_jump_offset (buf, val);
       break;
 
-    case BFD_RELOC_DADAO_LDST:
-      /* If this fixup is out of range, punt to the linker to emit an
-	 error.  This should only happen with -no-expand.  */
-      if (val < -(((offsetT) 1 << 12)/2)
-	  || val >= ((offsetT) 1 << 12)/2 - 1)
-	{
-	  fixP->fx_done = 0;
-	  val = 0;
-	}
-      dd_set_data_addr_offset (buf, val, 12);
-      break;
+	case BFD_RELOC_DADAO_LDST:
+		dd_set_addr_offset (buf, val, 12, 0);
+		break;
 
     default:
       BAD_CASE (fixP->fx_r_type);
