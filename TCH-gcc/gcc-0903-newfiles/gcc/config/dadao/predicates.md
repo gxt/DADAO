@@ -1,3 +1,5 @@
+;; vim: filetype=lisp
+
 ;; Operand and operator predicates for the GCC DADAO port.
 ;; Copyright (C) 2020-2033 Guan Xuetao (AT) Peking Univ.
 

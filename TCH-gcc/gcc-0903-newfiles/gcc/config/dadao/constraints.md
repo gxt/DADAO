@@ -1,3 +1,5 @@
+;; vim: filetype=lisp
+
 ;; DADAO constraints
 ;; Copyright (C) 2020-2033 by Guan Xuetao (AT) Peking Univ.
 ;;
