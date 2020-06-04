@@ -81,7 +81,7 @@ static struct hash_control *dadao_opcode_hash;
    1. GETA
       extra length: zero or three insns.
 
-   2. Bcc
+   2. BRCC
       extra length: zero or five insns.
 
    3. CALL
@@ -95,7 +95,7 @@ static struct hash_control *dadao_opcode_hash;
  */
 
 #define STATE_GETA	(1)
-#define STATE_BCC	(2)
+#define STATE_BRCC	(2)
 #define STATE_CALL	(3)
 #define STATE_JUMP	(4)
 #define STATE_LDST	(5)
@@ -132,10 +132,10 @@ const relax_typeS dadao_relax_table[] = {
    /* GETA (1, 1).  */
    {0,		0,		DD_INSN_BYTES(3),	0},
 
-   /* BCC (2, 0).  */
-   {(1 << 20),	-(1 << 20),	0,			ENCODE_RELAX (STATE_BCC, STATE_MAX)},
+   /* BRCC (2, 0).  */
+   {(1 << 20),	-(1 << 20),	0,			ENCODE_RELAX (STATE_BRCC, STATE_MAX)},
 
-   /* BCC (2, 1).  */
+   /* BRCC (2, 1).  */
    {0,		0,		DD_INSN_BYTES(4),	0},
 
    /* CALL (3, 0).  */
@@ -174,7 +174,7 @@ const char EXP_CHARS[] = "eE";
 
 const char FLT_CHARS[] = "rf";
 
-/* Fill in the offset-related part of GETA or Bcc.  */
+/* Fill in the offset-related part of GETA or BRCC.  */
 static void dd_set_addr_offset(char *opcodep, offsetT value, int bitcount)
 {
 	if ((value & 0x3) != 0)
@@ -234,7 +234,7 @@ dadao_set_jump_offset (char *opcodep, offsetT value)
   md_number_to_chars (opcodep + 1, value, 3);
 }
 
-/* Fill in NOP:s for the expanded part of GETA/JUMP/Bcc.  */
+/* Fill in NOP:s for the expanded part of GETA/JUMP/BRCC.  */
 
 static void
 dadao_fill_nops (char *opcodep, int n)
@@ -877,7 +877,7 @@ void dadao_md_assemble (char *str)
 			if (! expand_op)
 				fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_BRCC);
 			else
-				frag_var (rs_machine_dependent, DD_INSN_BYTES(4), 0, ENCODE_RELAX (STATE_BCC, STATE_UNDF),
+				frag_var (rs_machine_dependent, DD_INSN_BYTES(4), 0, ENCODE_RELAX (STATE_BRCC, STATE_UNDF),
 					exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
 			break;
 
@@ -971,7 +971,7 @@ md_estimate_size_before_relax (fragS *fragP, segT segment)
     {
       HANDLE_RELAXABLE (STATE_GETA);
 	break;
-      HANDLE_RELAXABLE (STATE_BCC);
+      HANDLE_RELAXABLE (STATE_BRCC);
 	break;
       HANDLE_RELAXABLE (STATE_JUMP);
 	break;
@@ -983,7 +983,7 @@ md_estimate_size_before_relax (fragS *fragP, segT segment)
     case ENCODE_RELAX (STATE_CALL, STATE_ZERO):
     case ENCODE_RELAX (STATE_LDST, STATE_ZERO):
     case ENCODE_RELAX (STATE_GETA, STATE_ZERO):
-    case ENCODE_RELAX (STATE_BCC, STATE_ZERO):
+    case ENCODE_RELAX (STATE_BRCC, STATE_ZERO):
     case ENCODE_RELAX (STATE_JUMP, STATE_ZERO):
       /* When relaxing a section for the second time, we don't need to do
 	 anything except making sure that fr_var is set right.  */
@@ -1067,7 +1067,7 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
 		break;
 
 	case ENCODE_RELAX (STATE_GETA, STATE_ZERO):
-	case ENCODE_RELAX (STATE_BCC, STATE_ZERO):
+	case ENCODE_RELAX (STATE_BRCC, STATE_ZERO):
 		dd_set_addr_offset(opcodep, target_address - opcode_address, 18);
 		var_part_size = 0;
 		break;
@@ -1094,7 +1094,7 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
     break
 
       HANDLE_MAX_RELOC (STATE_GETA, BFD_RELOC_DADAO_GETA);
-      HANDLE_MAX_RELOC (STATE_BCC, BFD_RELOC_DADAO_BRCC);
+      HANDLE_MAX_RELOC (STATE_BRCC, BFD_RELOC_DADAO_BRCC);
       HANDLE_MAX_RELOC (STATE_CALL, BFD_RELOC_DADAO_CALL);
       HANDLE_MAX_RELOC (STATE_JUMP, BFD_RELOC_DADAO_JUMP);
       HANDLE_MAX_RELOC (STATE_LDST, BFD_RELOC_DADAO_LDST);

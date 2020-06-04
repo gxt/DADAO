@@ -1,5 +1,5 @@
 # objdump: -dr
-tmpdir/insn-bcc.o:     file format elf64-dadao
+tmpdir/insn-brcc.o:     file format elf64-dadao
 
 
 Disassembly of section .text:
