@@ -807,49 +807,6 @@ void dadao_md_assemble (char *str)
 		}
 		break;
 
-	case dadao_operands_riii_rrii: /* ONLY jump be here, operands "ra, imm18" or "ra, rb, imm12" */
-		if ((n_operands != 2) && (n_operands != 3))
-			DADAO_BAD_INSN("invalid operands to opcode");
-
-		if (instruction->type != dadao_type_branch)
-			DADAO_BAD_INSN("SHOULD NOT BE HERE");
-
-		if (n_operands == 2) {
-			if (exp[1].X_op == O_register)
-				as_fatal (_("invalid operands to opcode %s: `%s'"), instruction->name, operands);
-
-			/* The last operand is imm18 whenever we see just two operands.  */
-			DDOP_SET_INSN_ALTMODE(opcodep);
-
-			DDOP_EXP_MUST_BE_REG(exp[0]);
-			DDOP_EXP_MUST_BE_UIMM(exp[1], 18);
-
-			DDOP_SET_FA(opcodep, exp[0].X_add_number);
-			DDOP_SET_FB(opcodep, ((exp[1].X_add_number) >> 12) & 0x3F);
-			DDOP_SET_FC(opcodep, ((exp[1].X_add_number) >> 6) & 0x3F);
-			DDOP_SET_FD(opcodep, (exp[1].X_add_number) & 0x3F);
-
-			/* Add a frag for a JUMP relaxation; we need room for max four extra instructions.
-			   We don't do any work around here to check if we can determine the offset right away.  */
-			//if (! expand_op)
-			//	fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_JUMP);
-			//else
-			//	frag_var (rs_machine_dependent, 4 * 4, 0, ENCODE_RELAX (STATE_JUMP, STATE_UNDF),
-			//		exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
-
-		} else {	/* (n_operands == 3) */
-			DDOP_EXP_MUST_BE_REG(exp[0]);
-			DDOP_EXP_MUST_BE_REG(exp[1]);
-			DDOP_EXP_MUST_BE_UIMM(exp[2], 12);
-
-			DDOP_SET_FA(opcodep, exp[0].X_add_number);
-			DDOP_SET_FB(opcodep, exp[1].X_add_number);
-			DDOP_SET_FC(opcodep, ((exp[2].X_add_number) >> 6) & 0x3F);
-			DDOP_SET_FD(opcodep, (exp[2].X_add_number) & 0x3F);
-		}
-
-		break;
-
 	case dadao_operands_riii: /* ONLY geta or conditional branch be here, operand "ra, imm18" */
 		if ((n_operands != 2) || (exp[1].X_op == O_register))
 			DADAO_BAD_INSN("invalid operands to opcode");
@@ -879,33 +836,47 @@ void dadao_md_assemble (char *str)
 		}
 		break;
 
-	case dadao_operands_iiii_riii: /* ONLY call be here */
-		if ((n_operands != 1) && (n_operands != 2))
+	case dadao_operands_iiii_rrii: /* ONLY call or jump be here */
+		if ((n_operands != 1) && (n_operands != 3))
 			DADAO_BAD_INSN("invalid operands to opcode");
 
 		if (n_operands == 1) {
 			if (exp[0].X_op == O_register)
 				DADAO_BAD_INSN("invalid operands to opcode");
 
-			/* The last operand is imm18 whenever we see just two operands.  */
+			/* The last operand is imm24 whenever we see just two operands.  */
 			DDOP_SET_INSN_ALTMODE(opcodep);
 
-			/* Add a frag for a JUMP relaxation; we need room for max four extra instructions.
-			   We don't do any work around here to check if we can determine the offset right away.  */
-			if (! expand_op)
-				fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_CALL);
-			else
-				frag_var (rs_machine_dependent, DD_INSN_BYTES(3), 0, ENCODE_RELAX (STATE_CALL, STATE_UNDF),
-					exp[0].X_add_symbol, exp[0].X_add_number, opcodep);
+			switch (instruction->type) {
+			case dadao_type_branch:
+				if (! expand_op)
+					fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_JUMP);
+				else
+					frag_var (rs_machine_dependent, DD_INSN_BYTES(4), 0, ENCODE_RELAX (STATE_JUMP, STATE_UNDF),
+						exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
+				break;
 
-		} else {	/* (n_operands == 2) */
+			case dadao_type_jsr:
+				if (! expand_op)
+					fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_CALL);
+				else
+					frag_var (rs_machine_dependent, DD_INSN_BYTES(3), 0, ENCODE_RELAX (STATE_CALL, STATE_UNDF),
+						exp[0].X_add_symbol, exp[0].X_add_number, opcodep);
+				break;
+
+			default:
+				DADAO_BAD_INSN("SHOULD NOT BE HERE");
+			}
+
+		} else {	/* (n_operands == 3) */
 			DDOP_EXP_MUST_BE_REG(exp[0]);
-			DDOP_EXP_MUST_BE_UIMM(exp[1], 18);
+			DDOP_EXP_MUST_BE_REG(exp[1]);
+			DDOP_EXP_MUST_BE_UIMM(exp[2], 12);
 
 			DDOP_SET_FA(opcodep, exp[0].X_add_number);
-			DDOP_SET_FB(opcodep, ((exp[1].X_add_number) >> 12) & 0x3F);
-			DDOP_SET_FC(opcodep, ((exp[1].X_add_number) >> 6) & 0x3F);
-			DDOP_SET_FD(opcodep, (exp[1].X_add_number) & 0x3F);
+			DDOP_SET_FB(opcodep, exp[1].X_add_number);
+			DDOP_SET_FC(opcodep, ((exp[2].X_add_number) >> 6) & 0x3F);
+			DDOP_SET_FD(opcodep, (exp[2].X_add_number) & 0x3F);
 		}
 
 		break;

@@ -138,8 +138,8 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"bev",		0xC7,		0,	0,	OP (riii),		T (condbranch)},
 	{"geta",	I (GETA),	0,	0,	OP (riii),		T (geta)},
 
-	{"call",	I (CALL),	0,	1,	OP (iiii_riii),		T (jsr)},
-	{"jump",	I (JUMP),	0,	1,	OP (riii_rrii),		T (branch)},
+	{"call",	I (CALL),	0,	1,	OP (iiii_rrii),		T (jsr)},
+	{"jump",	I (JUMP),	0,	1,	OP (iiii_rrii),		T (branch)},
 
 	{"swym",	0xDA,		0,	0,	OP (oiii),		T (normal)},
 	{"ret",		0xDA,		0x01,	0,	OP (o000),		T (jsr)},
