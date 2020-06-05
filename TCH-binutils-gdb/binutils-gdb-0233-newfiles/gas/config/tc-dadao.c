@@ -825,7 +825,7 @@ void dadao_md_assemble (char *str)
 					fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_JUMP);
 				else
 					frag_var (rs_machine_dependent, DD_INSN_BYTES(4), 0, ENCODE_RELAX (STATE_JUMP, STATE_UNDF),
-						exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
+						exp[0].X_add_symbol, exp[0].X_add_number, opcodep);
 				break;
 
 			case dadao_type_jsr:
