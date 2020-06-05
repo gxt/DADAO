@@ -101,24 +101,21 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
  *   FC: 6-bit, [11..6]
  *   FD: 6-bit, [5..0]
  */
-#define DDOP_CHECK_BIT_COUNT(ddop_fx, bit_count)						\
-	do {											\
-		if (((ddop_fx) < 0) || ((ddop_fx) > ((1 << (bit_count)) - 1)))			\
-			DADAO_BAD_INSN("bit count is too big");					\
-	} while (0)
-
 #define DDOP_EXP_MUST_BE_REG(ddop_exp)								\
 	do {											\
 		if (ddop_exp.X_op != O_register)						\
 			DADAO_BAD_INSN("exp should be register");				\
-		DDOP_CHECK_BIT_COUNT(ddop_exp.X_add_number, 8);	/* FIXME: shoule be 6 */	\
+		/* FIXME: shoule be 0x3F */							\
+		if ( (unsigned long long) ddop_exp.X_add_number > 0xFF)				\
+			DADAO_BAD_INSN("bit count is too big");					\
 	} while (0)
 
 #define DDOP_EXP_MUST_BE_UIMM(ddop_exp, bit_count)						\
 	do {											\
 		if (ddop_exp.X_op != O_constant)						\
 			DADAO_BAD_INSN("exp should be const");					\
-		DDOP_CHECK_BIT_COUNT(ddop_exp.X_add_number, (bit_count));			\
+		if ( (unsigned long long) ddop_exp.X_add_number > ((1 << (bit_count)) - 1))	\
+			DADAO_BAD_INSN("bit count is too big");					\
 	} while (0)
 
 #define	DDOP_SET_INSN_ALTMODE(ddop_insn_p)							\

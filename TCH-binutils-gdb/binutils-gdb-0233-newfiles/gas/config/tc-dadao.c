@@ -174,9 +174,9 @@ static void dd_set_addr_offset(char *opcodep, offsetT value, int bitcount, int i
 	}
 
 	if ((value > 0) && (value >= (1 << bitcount)))
-		as_fatal("offset too large: 0x%x", value);
+		as_fatal("offset too large: 0x%llx", (unsigned long long)value);
 	if ((value < 0) && ((-value) > (1 << bitcount)))
-		as_fatal("offset too large: 0x%x", value);
+		as_fatal("offset too large: 0x%llx", (unsigned long long)value);
 
 	switch (bitcount) {
 	case 24:
@@ -651,12 +651,11 @@ void dadao_md_assemble (char *str)
 
 
 	case dadao_operands_rjii: /* ra, imm16  */
-		if (n_operands != 2)
+		if ((n_operands != 2) || (instruction->minor_opcode > 3))
 			DADAO_BAD_INSN("invalid operands to opcode");
 
 		DDOP_EXP_MUST_BE_REG(exp[0]);
 		DDOP_EXP_MUST_BE_UIMM(exp[1], 16);
-		DDOP_CHECK_BIT_COUNT(instruction->minor_opcode, 2);
 
 		DDOP_SET_FA(opcodep, exp[0].X_add_number);
 		DDOP_SET_FB(opcodep, (exp[1].X_add_number >> 12) | (instruction->minor_opcode) << 4);
@@ -871,6 +870,7 @@ void dadao_md_assemble (char *str)
 			break;
 		}
 
+		/* FALLTHROUGH.  */
 	default:
 		DADAO_BAD_INSN("unknown instruction operands");
 	}
@@ -968,7 +968,6 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
 
   /* This is the frag for the opcode.  It, rather than fragP, must be used
      when emitting a frag for the opcode.  */
-  fragS *opc_fragP = fragP->tc_frag_data;
   fixS *tmpfixP;
 
   /* Where, in file space, does addr point?  */
@@ -1249,7 +1248,6 @@ void dadao_md_end (void)
 {
   fragS *fragP;
   struct loc_assert_s *loc_assert;
-  int i;
 
   /* Emit the low LOC setting of .text.  */
   if (text_has_contents && lowest_text_loc != (bfd_vma) -1)
