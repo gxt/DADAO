@@ -447,14 +447,12 @@ bfd_elf64_bfd_reloc_name_lookup (bfd *abfd ATTRIBUTE_UNUSED,
 static bfd_reloc_status_type
 dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 			     void *datap, bfd_vma addr, bfd_vma value,
-			     char **error_message)
+			     char **error_message ATTRIBUTE_UNUSED)
 {
   bfd *abfd = isec->owner;
-  bfd_reloc_status_type flag = bfd_reloc_ok;
   bfd_reloc_status_type r;
 
 	bfd_vma	insn_origin;
-	int offs;
 	int reg;
 
 	switch (howto->type) {
@@ -683,9 +681,7 @@ dadao_elf_relocate_section (bfd *output_bfd ATTRIBUTE_UNUSED,
   struct elf_link_hash_entry **sym_hashes;
   Elf_Internal_Rela *rel;
   Elf_Internal_Rela *relend;
-  bfd_size_type size;
 
-  size = input_section->rawsize ? input_section->rawsize : input_section->size;
   symtab_hdr = &elf_tdata (input_bfd)->symtab_hdr;
   sym_hashes = elf_sym_hashes (input_bfd);
   relend = relocs + input_section->reloc_count;
@@ -819,29 +815,23 @@ static bfd_reloc_status_type
 dadao_final_link_relocate (reloc_howto_type *howto, asection *input_section,
 			  bfd_byte *contents, bfd_vma r_offset,
 			  bfd_signed_vma r_addend, bfd_vma relocation,
-			  const char *symname, asection *symsec,
+			  const char *symname ATTRIBUTE_UNUSED,
+			  asection *symsec ATTRIBUTE_UNUSED,
 			  char **error_message)
 {
 	bfd_vma		addr_abs;
 	bfd_signed_vma	addr_rel;
 
-  bfd_reloc_status_type r = bfd_reloc_ok;
-  bfd_vma addr
-    = (input_section->output_section->vma
-       + input_section->output_offset
-       + r_offset);
-  bfd_signed_vma srel
-    = (bfd_signed_vma) relocation + r_addend;
+	bfd_reloc_status_type r = bfd_reloc_ok;
 
-  switch (howto->type)
-    {
-    case R_DADAO_JUMP:
+	switch (howto->type) {
 
 	case R_DADAO_LDST:	/* absolute address */
 	/* All these are PC-relative.  */
 	case R_DADAO_GETA:
 	case R_DADAO_BRCC:
 	case R_DADAO_CALL:
+	case R_DADAO_JUMP:
 		contents += r_offset;
 
 		addr_abs = relocation + (bfd_vma)r_addend;
@@ -849,16 +839,16 @@ dadao_final_link_relocate (reloc_howto_type *howto, asection *input_section,
 			+ input_section->output_offset
 			+ r_offset + 4);
 
-		return dadao_elf_perform_relocation (input_section, howto, contents,
+		r = dadao_elf_perform_relocation (input_section, howto, contents,
 					addr_abs, addr_rel, error_message);
+		break;
 
-    default:
-      r = _bfd_final_link_relocate (howto, input_section->owner, input_section,
-				    contents, r_offset,
-				    relocation, r_addend);
-    }
+	default:
+		r = _bfd_final_link_relocate (howto, input_section->owner, input_section,
+				contents, r_offset, relocation, r_addend);
+	}
 
-  return r;
+	return r;
 }
 
 /* Return the section that should be marked against GC for a given
