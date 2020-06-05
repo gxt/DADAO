@@ -18,7 +18,7 @@ static int get_spec_regno (char *);
 static int get_operands (char *, expressionS *);
 static int get_putget_operands (struct dadao_opcode *, char *, expressionS *);
 static void dd_set_addr_offset(char *, offsetT, int, int);
-static void dadao_fill_nops (char *, int);
+static void dd_fill_nops (char *, int);
 
 /* Copy the location of a frag to a fix.  */
 #define COPY_FR_WHERE_TO_FX(FRAG, FIX)		\
@@ -204,9 +204,7 @@ static void dd_set_addr_offset(char *opcodep, offsetT value, int bitcount, int i
 }
 
 /* Fill in NOP:s for the expanded part of GETA/JUMP/BRCC.  */
-
-static void
-dadao_fill_nops (char *opcodep, int n)
+static void dd_fill_nops (char *opcodep, int n)
 {
   int i;
 
@@ -1023,7 +1021,7 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
   case ENCODE_RELAX (state, STATE_MAX):					\
     var_part_size							\
       = dadao_relax_table[ENCODE_RELAX (state, STATE_MAX)].rlx_length;	\
-    dadao_fill_nops (var_partp, var_part_size / 4);			\
+    dd_fill_nops (var_partp, var_part_size / 4);			\
     tmpfixP = fix_new (fragP, var_partp - fragP->fr_literal - 4, 8,	\
 		       fragP->fr_symbol, fragP->fr_offset, 1, reloc);	\
     COPY_FR_WHERE_TO_FX (fragP, tmpfixP);				\
