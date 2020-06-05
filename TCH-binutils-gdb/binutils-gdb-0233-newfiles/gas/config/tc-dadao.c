@@ -18,7 +18,6 @@ static int get_spec_regno (char *);
 static int get_operands (char *, expressionS *);
 static int get_putget_operands (struct dadao_opcode *, char *, expressionS *);
 static void dd_set_addr_offset(char *, offsetT, int, int);
-static void dadao_set_jump_offset (char *, offsetT);
 static void dadao_fill_nops (char *, int);
 
 /* Copy the location of a frag to a fix.  */
@@ -184,9 +183,9 @@ static void dd_set_addr_offset(char *opcodep, offsetT value, int bitcount, int i
 	}
 
 	if ((value > 0) && (value >= (1 << bitcount)))
-		as_fatal("offset too large");
+		as_fatal("offset too large: 0x%x", value);
 	if ((value < 0) && ((-value) > (1 << bitcount)))
-		as_fatal("offset too large");
+		as_fatal("offset too large: 0x%x", value);
 
 	switch (bitcount) {
 	case 24:
@@ -200,23 +199,8 @@ static void dd_set_addr_offset(char *opcodep, offsetT value, int bitcount, int i
 		DDOP_SET_FD(opcodep, (value & 0x3F));
 		break;
 	default:
-		as_fatal("offset bitcount not support");
+		as_fatal("offset bitcount(%d) not support", bitcount);
 	}
-}
-
-/* Fill in the offset-related part of JUMP.  */
-
-static void
-dadao_set_jump_offset (char *opcodep, offsetT value)
-{
-  if (value < 0)
-    {
-      value += 65536 * 256 * 4;
-      opcodep[0] |= 1;
-    }
-
-  value /= 4;
-  md_number_to_chars (opcodep + 1, value, 3);
 }
 
 /* Fill in NOP:s for the expanded part of GETA/JUMP/BRCC.  */
@@ -1018,6 +1002,7 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
 
 	switch (fragP->fr_subtype) {
 	case ENCODE_RELAX (STATE_CALL, STATE_ZERO):
+	case ENCODE_RELAX (STATE_JUMP, STATE_ZERO):
 		dd_set_addr_offset(opcodep, target_address - opcode_address, 24, 1);
 		var_part_size = 0;
 		break;
@@ -1033,11 +1018,6 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
 		dd_set_addr_offset(opcodep, target_address - opcode_address, 12, 0);
 		var_part_size = 0;
 		break;
-
-    case ENCODE_RELAX (STATE_JUMP, STATE_ZERO):
-      dadao_set_jump_offset (opcodep, target_address - opcode_address);
-      var_part_size = 0;
-      break;
 
 #define HANDLE_MAX_RELOC(state, reloc)					\
   case ENCODE_RELAX (state, STATE_MAX):					\
@@ -1122,22 +1102,13 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
 		dd_set_addr_offset(buf, val, 18, 1);
 		break;
 
-    case BFD_RELOC_DADAO_CALL:
-    case BFD_RELOC_DADAO_JUMP:
-      /* If this fixup is out of range, punt to the linker to emit an
-	 error.  This should only happen with -no-expand.  */
-      if (val < -(((offsetT) 1 << 27)/2)
-	  || val >= ((offsetT) 1 << 27)/2 - 1
-	  || (val & 3) != 0)
-	{
-	  fixP->fx_done = 0;
-	  val = 0;
-	}
-      dadao_set_jump_offset (buf, val);
-      break;
+	case BFD_RELOC_DADAO_CALL:
+	case BFD_RELOC_DADAO_JUMP:
+		dd_set_addr_offset(buf, val, 24, 1);
+		break;
 
 	case BFD_RELOC_DADAO_LDST:
-		dd_set_addr_offset (buf, val, 12, 0);
+		dd_set_addr_offset(buf, val, 12, 0);
 		break;
 
     default:
