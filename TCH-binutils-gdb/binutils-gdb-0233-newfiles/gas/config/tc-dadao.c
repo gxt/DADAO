@@ -20,15 +20,6 @@ static int get_putget_operands (struct dadao_opcode *, char *, expressionS *);
 static void dd_set_addr_offset(char *, offsetT, int, int);
 static void dd_fill_nops (char *, int);
 
-/* Copy the location of a frag to a fix.  */
-#define COPY_FR_WHERE_TO_FX(FRAG, FIX)		\
- do						\
-   {						\
-     (FIX)->fx_file = (FRAG)->fr_file;		\
-     (FIX)->fx_line = (FRAG)->fr_line;		\
-   }						\
- while (0)
-
 static bfd_vma lowest_text_loc = (bfd_vma) -1;
 static int text_has_contents = 0;
 
@@ -1024,7 +1015,8 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
     dd_fill_nops (var_partp, var_part_size / 4);			\
     tmpfixP = fix_new (fragP, var_partp - fragP->fr_literal - 4, 8,	\
 		       fragP->fr_symbol, fragP->fr_offset, 1, reloc);	\
-    COPY_FR_WHERE_TO_FX (fragP, tmpfixP);				\
+    tmpfixP->fx_file = fragP->fr_file;					\
+    tmpfixP->fx_line = fragP->fr_line;					\
     break
 
       HANDLE_MAX_RELOC (STATE_GETA, BFD_RELOC_DADAO_GETA);
