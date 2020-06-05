@@ -143,7 +143,7 @@ const relax_typeS dadao_relax_table[] = {
    {0,		0,		DD_INSN_BYTES(3),	0},
 
    /* JUMP (4, 0).  */
-   {(1 << 18),	-(1 << 18),	0,			ENCODE_RELAX (STATE_JUMP, STATE_MAX)},
+   {(1 << 26),	-(1 << 26),	0,			ENCODE_RELAX (STATE_JUMP, STATE_MAX)},
 
    /* JUMP (4, 1).  */
    {0,		0,		DD_INSN_BYTES(4),	0},
