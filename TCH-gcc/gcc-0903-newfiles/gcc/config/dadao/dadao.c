@@ -551,8 +551,8 @@ static void dd_asm_trampoline_template (FILE *stream)
 
   fprintf (stream, "\tgeta	$63, 1f\n");
   fprintf (stream, "\tldo	$63, $63, 0\n");
-  fprintf (stream, "\tcall	$63, 0\n");
-  fprintf (stream, "1:\t.dd.o64 0\n");
+  fprintf (stream, "\tcall	$0, $63, 0\n");
+  fprintf (stream, "1:\t.dd.o64	0\n");
 }
 
 #undef	TARGET_ASM_TRAMPOLINE_TEMPLATE

@@ -1040,7 +1040,7 @@
   ""
   "@
 	call	%0
-	jump	%2, %a0")
+	call	%2, %a0")
 
 (define_insn "*call_value_real"
   [(set (match_operand 0 "register_operand" "=r,r")
@@ -1052,7 +1052,7 @@
   ""
   "@
 	call	%1
-	jump	%3, %a1")
+	call	%3, %a1")
 
 ;; I hope untyped_call and untyped_return are not needed for DADAO.
 ;; Users of Objective-C will notice.
@@ -1089,7 +1089,7 @@
 (define_insn "jump"
   [(set (pc) (label_ref (match_operand 0 "" "")))]
   ""
-	"bz	$0, %0")
+	"jump	%0")
 
 (define_insn "indirect_jump"
   [(set (pc) (match_operand 0 "address_operand" "p"))]
