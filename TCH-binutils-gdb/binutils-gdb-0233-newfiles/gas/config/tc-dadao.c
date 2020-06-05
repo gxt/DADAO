@@ -116,7 +116,7 @@ const relax_typeS dadao_relax_table[] = {
    {1,		1,		0,			0},
 
    /* GETA (1, 0).  */
-   {(1 << 20),	-(1 << 20),	0,			ENCODE_RELAX (STATE_GETA, STATE_MAX)},
+   {(1 << 18),	-(1 << 18),	0,			ENCODE_RELAX (STATE_GETA, STATE_MAX)},
 
    /* GETA (1, 1).  */
    {0,		0,		DD_INSN_BYTES(3),	0},
@@ -996,6 +996,10 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
 		break;
 
 	case ENCODE_RELAX (STATE_GETA, STATE_ZERO):
+		dd_set_addr_offset(opcodep, target_address - opcode_address, 18, 0);
+		var_part_size = 0;
+		break;
+
 	case ENCODE_RELAX (STATE_BRCC, STATE_ZERO):
 		dd_set_addr_offset(opcodep, target_address - opcode_address, 18, 1);
 		var_part_size = 0;
@@ -1087,6 +1091,9 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
       break;
 
 	case BFD_RELOC_DADAO_GETA:
+		dd_set_addr_offset(buf, val, 18, 0);
+		break;
+
 	case BFD_RELOC_DADAO_BRCC:
 		dd_set_addr_offset(buf, val, 18, 1);
 		break;

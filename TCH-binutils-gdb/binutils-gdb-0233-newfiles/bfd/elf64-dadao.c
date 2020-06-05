@@ -239,17 +239,17 @@ static reloc_howto_type elf_dadao_howto_table[] =
 	   to get a 64-bit operand, but will complain if any of the two least
 	   significant bits are set.  The howto members reflect a simple GETA.  */
 	HOWTO (R_DADAO_GETA,		/* type */
-		2,			/* rightshift */
-		2,			/* size (0 = byte, 1 = short, 2 = long) */
-		20,			/* bitsize */
+		0,			/* rightshift */
+		0,			/* size (0 = byte, 1 = short, 2 = long) */
+		18,			/* bitsize */
 		TRUE,			/* pc_relative */
 		0,			/* bitpos */
 		complain_overflow_bitfield, /* complain_on_overflow */
 		dadao_elf_reloc,	/* special_function */
 		"R_DADAO_GETA",		/* name */
 		FALSE,			/* partial_inplace */
-		~0x0003ffff,		/* src_mask */
-		0x0003ffff,		/* dst_mask */
+		~0x0000ffff,		/* src_mask */
+		0x0000ffff,		/* dst_mask */
 		TRUE),			/* pcrel_offset */
 
 	/* The conditional branches are supposed to reach any (code) address.
@@ -396,6 +396,8 @@ bfd_elf64_bfd_reloc_name_lookup (bfd *abfd ATTRIBUTE_UNUSED,
    caught in linker relaxation earlier.  When we get here, the relocation
    looks like the smallest instruction with SWYM:s (nop:s) appended to the
    max size.  We fill in those nop:s.
+
+	FIXME: GETA should be pc-relative, but expansion is absolute addr
 
    R_DADAO_GETA: (FIXME: Relaxation should break this up in 1, 2, 3 tetra)
     GETA $N,foo
