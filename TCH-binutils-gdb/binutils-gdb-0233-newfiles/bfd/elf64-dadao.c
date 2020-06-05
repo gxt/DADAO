@@ -306,24 +306,24 @@ static reloc_howto_type elf_dadao_howto_table[] =
 		0xfff,			/* dst_mask */
 		FALSE),			/* pcrel_offset */
 
-  /* A JUMP is supposed to reach any (code) address.  By itself, it can
-     reach +-64M; the expansion can reach all 64 bits.  Note that the 64M
-     limit is soon reached if you link the program in wildly different
-     memory segments.  The howto members reflect a trivial JUMP.  */
-  HOWTO (R_DADAO_JUMP,		/* type */
-	 2,			/* rightshift */
-	 2,			/* size (0 = byte, 1 = short, 2 = long) */
-	 27,			/* bitsize */
-	 TRUE,			/* pc_relative */
-	 0,			/* bitpos */
-	 complain_overflow_signed, /* complain_on_overflow */
-	 dadao_elf_reloc,	/* special_function */
-	 "R_DADAO_JUMP",		/* name */
-	 FALSE,			/* partial_inplace */
-	 ~0x1ffffff,		/* src_mask */
-	 0x1ffffff,		/* dst_mask */
-	 TRUE),			/* pcrel_offset */
- };
+	/* A JUMP is supposed to reach any (code) address.  By itself, it can
+	   reach +-64M; the expansion can reach all 64 bits.  Note that the 64M
+	   limit is soon reached if you link the program in wildly different
+	   memory segments.  The howto members reflect a trivial JUMP.  */
+	HOWTO (R_DADAO_JUMP,		/* type */
+		2,			/* rightshift */
+		2,			/* size (0 = byte, 1 = short, 2 = long) */
+		26,			/* bitsize */
+		TRUE,			/* pc_relative */
+		0,			/* bitpos */
+		complain_overflow_bitfield, /* complain_on_overflow */
+		dadao_elf_reloc,	/* special_function */
+		"R_DADAO_JUMP",		/* name */
+		FALSE,			/* partial_inplace */
+		~0xffffff,		/* src_mask */
+		0xffffff,		/* dst_mask */
+		TRUE),			/* pcrel_offset */
+};
 
 
 /* Map BFD reloc types to DADAO ELF reloc types.  */
@@ -414,7 +414,8 @@ bfd_elf64_bfd_reloc_name_lookup (bfd *abfd ATTRIBUTE_UNUSED,
     SETWH $3, (foo >> 48) & 0xffff
     INCWJ $3, (foo >> 32) & 0xffff
     INCWK $3, (foo >> 16) & 0xffff
-    JUMP $3, foo & 0xffff
+    INCWL $3, foo & 0xffff
+    JUMP $3, $0, 0
 
    R_DADAO_CALL: (FIXME: Relaxation should break this up)
     Call foo
@@ -422,7 +423,8 @@ bfd_elf64_bfd_reloc_name_lookup (bfd *abfd ATTRIBUTE_UNUSED,
     SETWH $3, (foo >> 48) & 0xffff
     INCWJ $3, (foo >> 32) & 0xffff
     INCWK $3, (foo >> 16) & 0xffff
-    CALL $3, foo & 0xffff
+    INCWL $3, foo & 0xffff
+    CALL $3, $0, 0
 
    R_DADAO_JUMP: (FIXME: Relaxation...)
     JUMP foo
@@ -431,7 +433,7 @@ bfd_elf64_bfd_reloc_name_lookup (bfd *abfd ATTRIBUTE_UNUSED,
     INCWJ $3, (foo >> 32) & 0xffff
     INCWK $3, (foo >> 16) & 0xffff
     INCWL $3, foo & 0xffff
-    GO $255,$255,0
+    JUMP $3, $0, 0
 
    R_DADAO_LDST: (FIXME: Relaxation should break this up)
     LD/ST $N,foo
@@ -506,10 +508,11 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 				((value >> 32) & 0xffff), (bfd_byte *) datap + 8);
 			bfd_put_32 (abfd, DADAO_INSN_INCW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WK |
 				((value >> 16) & 0xffff), (bfd_byte *) datap + 12);
-
-			/* Put a "jump $3, 0" after the common sequence.  */
-			bfd_put_32 (abfd, DADAO_INSN_JUMP | DADAO_INSN_ALTMODE | (DADAO_REGP_TAO << 18) |
+			bfd_put_32 (abfd, DADAO_INSN_INCW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WL |
 				(value & 0xffff), (bfd_byte *) datap + 16);
+
+			/* Put a "jump $3, $0, 0" after the common sequence.  */
+			bfd_put_32 (abfd, DADAO_INSN_JUMP | (DADAO_REGP_TAO << 18), (bfd_byte *) datap + 20);
 		}
 
 		return bfd_reloc_ok;
@@ -524,9 +527,8 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 					bfd_arch_bits_per_address (abfd),
 					value);
 		if (r == bfd_reloc_ok) {
-			bfd_put_32 (abfd, DADAO_INSN_CALL | DADAO_INSN_ALTMODE | ((value >> 2) & 0xFFFFFF),
+			bfd_put_32 (abfd, insn_origin | DADAO_INSN_ALTMODE | ((value >> 2) & 0xFFFFFF),
 				(bfd_byte *) datap);
-
 		} else {
 			bfd_put_32 (abfd, DADAO_INSN_SETW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WH |
 				((value >> 48) & 0xffff), (bfd_byte *) datap);
@@ -534,8 +536,10 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 				((value >> 32) & 0xffff), (bfd_byte *) datap + 4);
 			bfd_put_32 (abfd, DADAO_INSN_INCW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WK |
 				((value >> 16) & 0xffff), (bfd_byte *) datap + 8);
-			bfd_put_32 (abfd, DADAO_INSN_CALL | (DADAO_REGP_TAO << 18) |
+			bfd_put_32 (abfd, DADAO_INSN_INCW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WL |
 				(value & 0xffff), (bfd_byte *) datap + 12);
+
+			bfd_put_32 (abfd, (insn_origin & ~DADAO_INSN_ALTMODE) | (DADAO_REGP_TAO << 18), (bfd_byte *) datap + 16);
 		}
 
 		return bfd_reloc_ok;
@@ -555,69 +559,9 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 
 		return bfd_reloc_ok;
 
-    case R_DADAO_JUMP:
-      /* This one is a little special.  If we get here on a non-relaxing
-	 link, and the destination is actually in range, we don't need to
-	 execute the nops.
-	 If so, we fall through to the bit-fiddling relocs.
-
-	 FIXME: bfd_check_overflow seems broken; the relocation is
-	 rightshifted before testing, so supply a zero rightshift.  */
-
-      if (! ((value & 3) == 0
-	     && (r = bfd_check_overflow (complain_overflow_signed,
-					 howto->bitsize,
-					 0,
-					 bfd_arch_bits_per_address (abfd),
-					 value)) == bfd_reloc_ok))
-	{
-	  /* If the relocation doesn't fit in a JUMP, we let the NOP:s be
-	     modified below, and put a "GO $0,$0,0" after the
-	     address-loading sequence.  */
-	  bfd_put_32 (abfd,
-		      DADAO_INSN_CALL | DADAO_INSN_ALTMODE,
-		      (bfd_byte *) datap + 16);
-
-	  /* We change to an absolute value.  */
-	  value += addr;
-	  break;
+	default:
+		BAD_CASE (howto->type);
 	}
-      /* These must be in range, or else we emit an error.  */
-      if ((value & 3) == 0
-	  /* Note rightshift 0; see above.  */
-	  && (r = bfd_check_overflow (complain_overflow_signed,
-				      howto->bitsize,
-				      0,
-				      bfd_arch_bits_per_address (abfd),
-				      value)) == bfd_reloc_ok)
-	{
-	  bfd_vma in1
-	    = bfd_get_32 (abfd, (bfd_byte *) datap);
-	  bfd_vma highbit;
-
-	  if ((bfd_signed_vma) value < 0)
-	    {
-	      highbit = 1 << 24;
-	      value += (1 << (howto->bitsize - 1));
-	    }
-	  else
-	    highbit = 0;
-
-	  value >>= 2;
-
-	  bfd_put_32 (abfd,
-		      (in1 & howto->src_mask)
-		      | highbit
-		      | (value & howto->dst_mask),
-		      (bfd_byte *) datap);
-
-	  return bfd_reloc_ok;
-	}
-      else
-	return bfd_reloc_overflow;
-    default:
-      BAD_CASE (howto->type);
-    }
 
 	/* SHOULD NOT BE HERE */
 	return bfd_reloc_notsupported;
