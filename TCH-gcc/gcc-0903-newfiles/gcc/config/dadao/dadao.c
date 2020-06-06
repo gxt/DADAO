@@ -89,11 +89,7 @@ static void dadao_output_shiftvalue_op_from_str
 static void dadao_output_shifted_value (FILE *, int64_t);
 static void dadao_output_condition (FILE *, const_rtx, int);
 static void dadao_output_octa (FILE *, int64_t, int);
-static struct machine_function *dadao_init_machine_status (void);
-static const char *dadao_strip_name_encoding (const char *);
 static void dadao_emit_sp_add (HOST_WIDE_INT offset);
-static void dadao_asm_output_mi_thunk
-  (FILE *, tree, HOST_WIDE_INT, HOST_WIDE_INT, tree);
 
 #undef TARGET_HAVE_SPECULATION_SAFE_VALUE
 #define TARGET_HAVE_SPECULATION_SAFE_VALUE speculation_safe_value_not_needed
