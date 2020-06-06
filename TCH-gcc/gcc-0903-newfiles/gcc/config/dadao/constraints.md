@@ -16,7 +16,7 @@
 (define_register_constraint "z" "HIMULT_REG"
   "@internal")
 
-(define_constraint "I"
+(define_constraint "Tti"
   "A 8-bit unsigned integer"
   (and (match_code "const_int")
        (match_test "IN_RANGE (ival, 0, 255)")))
@@ -66,7 +66,7 @@
   (and (match_code "const_double")
        (match_test "op == CONST0_RTX (mode)")))
 
-;; R asks whether x is to be loaded with GETA or something else.  Right
+;; Ttr asks whether x is to be loaded with GETA or something else.  Right
 ;; now, only a SYMBOL_REF and LABEL_REF can fit for
 ;; TARGET_BASE_ADDRESSES.
 ;;
@@ -79,7 +79,7 @@
 ;; is all that's needed; we want all constant addresses to be loaded
 ;; with GETA then.
 
-(define_constraint "R"
+(define_constraint "Ttr"
   "@internal"
   (and (not (match_code "const_int,const_double"))
        (match_test "dadao_constant_address_p (op)")
@@ -95,9 +95,9 @@
   (and (match_code "const_int,const_double")
        (match_test "dadao_shiftable_wyde_value (dadao_intval (op))")))
 
-;; FIXME: N (or T) is redundant.
+;; FIXME: N (or Ttt) is redundant.
 
-(define_constraint "T"
+(define_constraint "Ttt"
   "@internal"
   (and (match_code "const_int,const_double")
        (match_test "dadao_shiftable_wyde_value (~dadao_intval (op))")))

@@ -79,7 +79,7 @@
 ;; We assume all "s" are addresses.  Does that hold?
 (define_insn "movdi"
   [(set (match_operand:DI 0 "nonimmediate_operand" "=r,r ,r,x,r,r,m,r,r,??r")
-	(match_operand:DI 1 "general_operand"	    "r,LS,Pnn,r,x,m,r,R,s,n"))]
+	(match_operand:DI 1 "general_operand"	    "r,LS,Pnn,r,x,m,r,Ttr,s,n"))]
   ""
   "@
 	or	%0, %1, 0
@@ -146,7 +146,7 @@
   [(set (match_operand:DI 0 "register_operand"	"=r,r,r")
 	(plus:DI
 	 (match_operand:DI 1 "register_operand" "%r,r,0")
-	 (match_operand:DI 2 "dadao_reg_or_constant_operand" "rI,Pnn,LS")))]
+	 (match_operand:DI 2 "dadao_reg_or_constant_operand" "rTti,Pnn,LS")))]
   ""
   "@
 	addu	%0, %1, %2
@@ -181,7 +181,7 @@
   [(set (match_operand:DI 0 "register_operand" "=r,r")
 	(and:DI
 	 (match_operand:DI 1 "register_operand" "%r,0")
-	 (match_operand:DI 2 "dadao_reg_or_constant_operand" "rI,NT")))]
+	 (match_operand:DI 2 "dadao_reg_or_constant_operand" "rTti,NTtt")))]
   ""
   "@
 	and	%0, %1, %2
@@ -190,7 +190,7 @@
 (define_insn "iordi3"
   [(set (match_operand:DI 0 "register_operand" "=r,r")
 	(ior:DI (match_operand:DI 1 "register_operand" "%r,0")
-		(match_operand:DI 2 "dadao_reg_or_constant_operand" "rI,LS")))]
+		(match_operand:DI 2 "dadao_reg_or_constant_operand" "rTti,LS")))]
   ""
   "@
 	or	%0, %1, %2
@@ -199,7 +199,7 @@
 (define_insn "xordi3"
   [(set (match_operand:DI 0 "register_operand" "=r")
 	(xor:DI (match_operand:DI 1 "register_operand" "%r")
-		(match_operand:DI 2 "dadao_reg_or_8bit_operand" "rI")))]
+		(match_operand:DI 2 "dadao_reg_or_8bit_operand" "rTti")))]
   ""
 	"xor	%0, %1, %2")
 
@@ -303,7 +303,7 @@
   [(set (match_operand:DI 0 "register_operand" "=r")
 	(ashift:DI
 	 (match_operand:DI 1 "register_operand" "r")
-	 (match_operand:DI 2 "dadao_reg_or_8bit_operand" "rI")))]
+	 (match_operand:DI 2 "dadao_reg_or_8bit_operand" "rTti")))]
   ""
 	"slu	%0, %1, %2")
 
@@ -311,7 +311,7 @@
   [(set (match_operand:DI 0 "register_operand" "=r")
 	(ashiftrt:DI
 	 (match_operand:DI 1 "register_operand" "r")
-	 (match_operand:DI 2 "dadao_reg_or_8bit_operand" "rI")))]
+	 (match_operand:DI 2 "dadao_reg_or_8bit_operand" "rTti")))]
   ""
 	"sr	%0, %1, %2")
 
@@ -319,7 +319,7 @@
   [(set (match_operand:DI 0 "register_operand" "=r")
 	(lshiftrt:DI
 	 (match_operand:DI 1 "register_operand" "r")
-	 (match_operand:DI 2 "dadao_reg_or_8bit_operand" "rI")))]
+	 (match_operand:DI 2 "dadao_reg_or_8bit_operand" "rTti")))]
   ""
 	"sru	%0, %1, %2")
 
@@ -404,8 +404,8 @@
 	 (match_operator 2 "dadao_foldable_comparison_operator"
 			 [(match_operand:DI 3 "register_operand" "r,r,r,r")
 			  (const_int 0)])
-	 (match_operand:DI 1 "dadao_reg_or_8bit_operand" "rI,0 ,rI,GM")
-	 (match_operand:DI 4 "dadao_reg_or_8bit_operand" "0 ,rI,GM,rI")))]
+	 (match_operand:DI 1 "dadao_reg_or_8bit_operand" "rTti,0 ,rTti,GM")
+	 (match_operand:DI 4 "dadao_reg_or_8bit_operand" "0 ,rTti,GM,rTti")))]
   ""
   "@
 	cs%d2	%0, %3, %1
@@ -421,8 +421,8 @@
       2 "dadao_comparison_operator"
       [(match_operand 3 "dadao_reg_cc_operand"	    "r ,r ,r ,r")
       (const_int 0)])
-     (match_operand:DI 1 "dadao_reg_or_8bit_operand" "rI,0 ,rI,GM")
-     (match_operand:DI 4 "dadao_reg_or_8bit_operand" "0 ,rI,GM,rI")))]
+     (match_operand:DI 1 "dadao_reg_or_8bit_operand" "rTti,0 ,rTti,GM")
+     (match_operand:DI 4 "dadao_reg_or_8bit_operand" "0 ,rTti,GM,rTti")))]
   "REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
 	cs%d2	%0, %3, %1
@@ -438,7 +438,7 @@
       2 "dadao_comparison_operator"
       [(match_operand 3 "dadao_reg_cc_operand"	    "r ,r")
       (const_int 0)])
-     (match_operand:DI 1 "dadao_reg_or_8bit_operand" "rI,rI")
+     (match_operand:DI 1 "dadao_reg_or_8bit_operand" "rTti,rTti")
      (match_operand:DI 4 "dadao_reg_or_0_operand" "0 ,GM")))]
   "!REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
@@ -747,7 +747,7 @@
       int64_t offs = INTVAL (XEXP (operands[1], 1));
       offs += DADAO_fp_rO_OFFSET;
 
-      if (insn_const_int_ok_for_constraint (offs, CONSTRAINT_I))
+      if (insn_const_int_ok_for_constraint (offs, CONSTRAINT_Tti))
 	my_operands[0]
 	  = gen_rtx_PLUS (Pmode, stack_pointer_rtx, GEN_INT (offs));
       else
@@ -767,7 +767,7 @@
   [(set (match_operand:DI 0 "register_operand" "=r")
 	(and:DI
 	 (not:DI (match_operand:DI 1 "register_operand" "%r"))
-	 (not:DI (match_operand:DI 2 "dadao_reg_or_8bit_operand" "rI"))))]
+	 (not:DI (match_operand:DI 2 "dadao_reg_or_8bit_operand" "rTti"))))]
   ""
 	"or	%0, %1, %2	\;	not	%0, %0, 0")
 

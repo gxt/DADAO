@@ -692,7 +692,7 @@ static bool dd_legitimate_address_p (machine_mode mode ATTRIBUTE_UNUSED,
 	return 1;
 
       /* (mem (plus (reg) (0..255?))) */
-      if (satisfies_constraint_I (x2))
+      if (satisfies_constraint_Tti (x2))
 	return 1;
 
       return 0;
@@ -1077,7 +1077,7 @@ static void dd_print_operand_address (FILE *stream, machine_mode /*mode*/, rtx x
 	      fprintf (stream, "%s", reg_names[DADAO_OUTPUT_REGNO (REGNO (x2))]);
 	      return;
 	    }
-	  else if (satisfies_constraint_I (x2))
+	  else if (satisfies_constraint_Tti (x2))
 	    {
 	      output_addr_const (stream, x2);
 	      return;
