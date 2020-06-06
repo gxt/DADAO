@@ -10,6 +10,12 @@
 #error	DADAO ONLY SUPPORT ELF FORMAT!
 #endif
 
+#define	DADAO_REG_RG_START			0x00
+#define	DADAO_REG_RP_START			0x40
+#define	DADAO_REG_RF_START			0x80
+#define	DADAO_REG_RV_START			0xC0
+#define	DADAO_REG_RS_START			0x100
+
 /* First, some local helper macros.  Note that the "default" value of
    FIXED_REGISTERS, CALL_USED_REGISTERS, REG_ALLOC_ORDER and
    REG_CLASS_CONTENTS depend on these values.  */
@@ -25,8 +31,6 @@
 #define DADAO_RETURN_VALUE_REGNUM (DADAO_RESERVED_GNU_ARG_0_REGNUM)
 #define DADAO_OUTGOING_RETURN_VALUE_REGNUM (DADAO_RESERVED_GNU_ARG_0_REGNUM)
 #define DADAO_STRUCT_VALUE_REGNUM 251
-#define DADAO_FRAME_POINTER_REGNUM		65
-#define DADAO_STACK_POINTER_REGNUM		66
 #define DADAO_LAST_GENERAL_REGISTER 255
 #define DADAO_INCOMING_RETURN_ADDRESS_REGNUM DADAO_rJ_REGNUM
 #define DADAO_HIMULT_REGNUM 258
@@ -298,8 +302,8 @@ enum reg_class {
 /* (empty) */
 
 /* XXX gccint 18.9.4 Node: Registers That Address the Stack Frame */
-#define	STACK_POINTER_REGNUM			DADAO_STACK_POINTER_REGNUM
-#define	FRAME_POINTER_REGNUM			DADAO_FRAME_POINTER_REGNUM
+#define	STACK_POINTER_REGNUM			(DADAO_REG_RP_START + 1)
+#define	FRAME_POINTER_REGNUM			(DADAO_REG_RP_START + 2)
 #define	ARG_POINTER_REGNUM			DADAO_ARG_POINTER_REGNUM
 
 /* XXX gccint 18.9.5 Node: Eliminating Frame Pointer and Arg Pointer */
@@ -475,7 +479,7 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 	"??24", "??25", "??26", "??27", "??28", "??29", "??30", "??31" }
 
 #define	ADDITIONAL_REGISTER_NAMES {		\
-	{"sp", DADAO_STACK_POINTER_REGNUM},	\
+	{"sp", STACK_POINTER_REGNUM},		\
 	{"rD", 256},				\
 	{"rE", 257},				\
 	{"rH", 258},				\
@@ -488,21 +492,21 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 #define	ASM_OUTPUT_REG_PUSH(STREAM, REGNO)				\
 	do {								\
 		fprintf (STREAM, "\tsubu\t%s, %s, 8\n",			\
-			reg_names[DADAO_STACK_POINTER_REGNUM],		\
-			reg_names[DADAO_STACK_POINTER_REGNUM]);		\
+			reg_names[STACK_POINTER_REGNUM],		\
+			reg_names[STACK_POINTER_REGNUM]);		\
 		fprintf (STREAM, "\tsto\t%s, %s, 0\n",			\
 			reg_names[(REGNO)],				\
-			reg_names[DADAO_STACK_POINTER_REGNUM]);		\
+			reg_names[STACK_POINTER_REGNUM]);		\
 	} while (0)
 
 #define	ASM_OUTPUT_REG_POP(STREAM, REGNO)				\
 	do {								\
 		fprintf (STREAM, "\tldo\t%s, %s, 0\n",			\
 			reg_names[(REGNO)],				\
-			reg_names[DADAO_STACK_POINTER_REGNUM]);		\
+			reg_names[STACK_POINTER_REGNUM]);		\
 		fprintf (STREAM, "\taddu\t%s, %s, 8\n",			\
-			reg_names[DADAO_STACK_POINTER_REGNUM],		\
-			reg_names[DADAO_STACK_POINTER_REGNUM]);		\
+			reg_names[STACK_POINTER_REGNUM],		\
+			reg_names[STACK_POINTER_REGNUM]);		\
 	} while (0)
 
 /* XXX gccint 18.20.8 Node: Output of Dispatch Tables */

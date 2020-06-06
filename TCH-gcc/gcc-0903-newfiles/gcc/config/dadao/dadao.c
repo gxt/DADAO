@@ -300,7 +300,7 @@ int dadao_initial_elimination_offset (int fromreg, int toreg)
      it, so the offset for the frame-pointer to the stack-pointer is one
      octabyte larger.  */
   if (fromreg == DADAO_ARG_POINTER_REGNUM
-      && toreg == DADAO_FRAME_POINTER_REGNUM)
+      && toreg == FRAME_POINTER_REGNUM)
     return 0;
 
   /* The difference is the size of local variables plus the size of
@@ -1183,7 +1183,7 @@ dadao_use_simple_return (void)
        regno--)
     /* Note that we assume that the frame-pointer-register is one of these
        registers, in which case we don't count it here.  */
-    if ((((regno != DADAO_FRAME_POINTER_REGNUM || !frame_pointer_needed)
+    if ((((regno != FRAME_POINTER_REGNUM || !frame_pointer_needed)
 	  && df_regs_ever_live_p (regno) && !call_used_regs[regno]))
 	|| IS_DADAO_EH_RETURN_DATA_REG (regno))
       return 0;
@@ -1219,7 +1219,7 @@ dadao_expand_prologue (void)
        regno--)
     /* Note that we assume that the frame-pointer-register is one of these
        registers, in which case we don't count it here.  */
-    if ((((regno != DADAO_FRAME_POINTER_REGNUM || !frame_pointer_needed)
+    if ((((regno != FRAME_POINTER_REGNUM || !frame_pointer_needed)
 	  && df_regs_ever_live_p (regno) && !call_used_regs[regno]))
 	|| IS_DADAO_EH_RETURN_DATA_REG (regno))
       stack_space_to_allocate += 8;
@@ -1405,7 +1405,7 @@ dadao_expand_prologue (void)
   for (regno = 255;
        regno >= DADAO_FIRST_GLOBAL_REGNUM;
        regno--)
-    if (((regno != DADAO_FRAME_POINTER_REGNUM || !frame_pointer_needed)
+    if (((regno != FRAME_POINTER_REGNUM || !frame_pointer_needed)
 	 && df_regs_ever_live_p (regno) && ! call_used_regs[regno])
 	|| IS_DADAO_EH_RETURN_DATA_REG (regno))
       {
@@ -1458,7 +1458,7 @@ dadao_expand_epilogue (void)
   for (regno = 255;
        regno >= DADAO_FIRST_GLOBAL_REGNUM;
        regno--)
-    if (((regno != DADAO_FRAME_POINTER_REGNUM || !frame_pointer_needed)
+    if (((regno != FRAME_POINTER_REGNUM || !frame_pointer_needed)
 	 && df_regs_ever_live_p (regno) && !call_used_regs[regno])
 	|| IS_DADAO_EH_RETURN_DATA_REG (regno))
       stack_space_to_deallocate += 8;
@@ -1487,7 +1487,7 @@ dadao_expand_epilogue (void)
   for (regno = DADAO_FIRST_GLOBAL_REGNUM;
        regno <= 255;
        regno++)
-    if (((regno != DADAO_FRAME_POINTER_REGNUM || !frame_pointer_needed)
+    if (((regno != FRAME_POINTER_REGNUM || !frame_pointer_needed)
 	 && df_regs_ever_live_p (regno) && !call_used_regs[regno])
 	|| IS_DADAO_EH_RETURN_DATA_REG (regno))
       {
