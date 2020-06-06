@@ -1,0 +1,35 @@
+From bb6d6084f3d703485a33a67dfbdbbb0ff02c614d Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sat, 6 Jun 2020 13:42:45 +0000
+Subject: [PATCH] DADAO-fixup: newlib/libc/stdlib/Makefile.in
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ newlib/libc/stdlib/Makefile.in | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/newlib/libc/stdlib/Makefile.in b/newlib/libc/stdlib/Makefile.in
+index 699831f13..293248739 100644
+--- a/newlib/libc/stdlib/Makefile.in
++++ b/newlib/libc/stdlib/Makefile.in
+@@ -941,7 +941,7 @@ lib_a-sb_charsets.obj: sb_charsets.c
+ 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-sb_charsets.obj `if test -f 'sb_charsets.c'; then $(CYGPATH_W) 'sb_charsets.c'; else $(CYGPATH_W) '$(srcdir)/sb_charsets.c'; fi`
+ 
+ lib_a-strtod.o: strtod.c
+-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-strtod.o `test -f 'strtod.c' || echo '$(srcdir)/'`strtod.c
++	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -O1 -c -o lib_a-strtod.o `test -f 'strtod.c' || echo '$(srcdir)/'`strtod.c
+ 
+ lib_a-strtod.obj: strtod.c
+ 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-strtod.obj `if test -f 'strtod.c'; then $(CYGPATH_W) 'strtod.c'; else $(CYGPATH_W) '$(srcdir)/strtod.c'; fi`
+@@ -1241,7 +1241,7 @@ lib_a-btowc.obj: btowc.c
+ 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-btowc.obj `if test -f 'btowc.c'; then $(CYGPATH_W) 'btowc.c'; else $(CYGPATH_W) '$(srcdir)/btowc.c'; fi`
+ 
+ lib_a-getopt.o: getopt.c
+-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-getopt.o `test -f 'getopt.c' || echo '$(srcdir)/'`getopt.c
++	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -O1 -c -o lib_a-getopt.o `test -f 'getopt.c' || echo '$(srcdir)/'`getopt.c
+ 
+ lib_a-getopt.obj: getopt.c
+ 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-getopt.obj `if test -f 'getopt.c'; then $(CYGPATH_W) 'getopt.c'; else $(CYGPATH_W) '$(srcdir)/getopt.c'; fi`
+-- 
+2.17.1
+

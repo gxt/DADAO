@@ -1,15 +1,15 @@
-From 83172661e459e2c88db1334615c2435fbcdf3b4d Mon Sep 17 00:00:00 2001
+From c67b20940a115bb6bffea66736fe9880b0edc6ad Mon Sep 17 00:00:00 2001
 From: Guan Xuetao <gxt@pku.edu.cn>
-Date: Sat, 30 May 2020 01:55:24 +0000
+Date: Sat, 6 Jun 2020 13:44:39 +0000
 Subject: [PATCH] DADAO-fixup: newlib/libc/stdio/Makefile.in
 
 Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
 ---
- newlib/libc/stdio/Makefile.in | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ newlib/libc/stdio/Makefile.in | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
 diff --git a/newlib/libc/stdio/Makefile.in b/newlib/libc/stdio/Makefile.in
-index aa22a0e3a..0ccba1220 100644
+index aa22a0e3a..7294e7776 100644
 --- a/newlib/libc/stdio/Makefile.in
 +++ b/newlib/libc/stdio/Makefile.in
 @@ -871,7 +871,7 @@ lib_a-vfprintf.obj: vfprintf.c
@@ -21,6 +21,15 @@ index aa22a0e3a..0ccba1220 100644
  
  lib_a-vfwprintf.obj: vfwprintf.c
  	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-vfwprintf.obj `if test -f 'vfwprintf.c'; then $(CYGPATH_W) 'vfwprintf.c'; else $(CYGPATH_W) '$(srcdir)/vfwprintf.c'; fi`
+@@ -1039,7 +1039,7 @@ lib_a-ftell.obj: ftell.c
+ 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-ftell.obj `if test -f 'ftell.c'; then $(CYGPATH_W) 'ftell.c'; else $(CYGPATH_W) '$(srcdir)/ftell.c'; fi`
+ 
+ lib_a-fvwrite.o: fvwrite.c
+-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-fvwrite.o `test -f 'fvwrite.c' || echo '$(srcdir)/'`fvwrite.c
++	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -O1 -c -o lib_a-fvwrite.o `test -f 'fvwrite.c' || echo '$(srcdir)/'`fvwrite.c
+ 
+ lib_a-fvwrite.obj: fvwrite.c
+ 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-fvwrite.obj `if test -f 'fvwrite.c'; then $(CYGPATH_W) 'fvwrite.c'; else $(CYGPATH_W) '$(srcdir)/fvwrite.c'; fi`
 @@ -1105,7 +1105,7 @@ lib_a-makebuf.obj: makebuf.c
  	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-makebuf.obj `if test -f 'makebuf.c'; then $(CYGPATH_W) 'makebuf.c'; else $(CYGPATH_W) '$(srcdir)/makebuf.c'; fi`
  
@@ -65,8 +74,7 @@ index aa22a0e3a..0ccba1220 100644
 +	$(LIB_COMPILE) -O2 -DINTEGER_ONLY -c $(srcdir)/vfwprintf.c -o $@
  
  $(lpfx)svfwprintf.$(oext): vfwprintf.c
--	$(LIB_COMPILE) -DSTRING_ONLY -c $(srcdir)/vfwprintf.c -o $@
-+	$(LIB_COMPILE) -O1 -DSTRING_ONLY -c $(srcdir)/vfwprintf.c -o $@
+ 	$(LIB_COMPILE) -DSTRING_ONLY -c $(srcdir)/vfwprintf.c -o $@
  
  $(lpfx)svfiwprintf.$(oext): vfwprintf.c
 -	$(LIB_COMPILE) -DINTEGER_ONLY -DSTRING_ONLY -c $(srcdir)/vfwprintf.c -o $@
@@ -82,7 +90,8 @@ index aa22a0e3a..0ccba1220 100644
 +	$(LIB_COMPILE) -O1 -c $(srcdir)/vfscanf.c -o $@
  
  $(lpfx)vfiscanf.$(oext): vfscanf.c
- 	$(LIB_COMPILE) -DINTEGER_ONLY -c $(srcdir)/vfscanf.c -o $@
+-	$(LIB_COMPILE) -DINTEGER_ONLY -c $(srcdir)/vfscanf.c -o $@
++	$(LIB_COMPILE) -O1 -DINTEGER_ONLY -c $(srcdir)/vfscanf.c -o $@
  
  $(lpfx)svfscanf.$(oext): vfscanf.c
 -	$(LIB_COMPILE) -DSTRING_ONLY -c $(srcdir)/vfscanf.c -o $@
