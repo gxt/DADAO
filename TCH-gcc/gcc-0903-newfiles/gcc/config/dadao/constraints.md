@@ -7,6 +7,18 @@
 ;;   2020:
 ;;	Guan Xuetao <gxt@pku.edu.cn>
 
+(define_register_constraint "Rg" "GENERAL_REGS"
+	"General registers")
+
+(define_register_constraint "Rp" "POINTER_REGS"
+	"Pointer registers")
+
+(define_register_constraint "Rf" "FLOATING_REGS"
+	"Floating-point registers")
+
+(define_register_constraint "Rv" "VECTOR_REGS"
+	"Vector registers")
+
 (define_register_constraint "x" "SYSTEM_REGS"
   "@internal")
 
