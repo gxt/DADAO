@@ -10,10 +10,6 @@ extern void dadao_init_expanders (void);
 extern rtx dadao_dynamic_chain_address (rtx);
 extern void dadao_setup_frame_addresses (void);
 extern rtx dadao_return_addr_rtx (int, rtx);
-/* XXX gccint 18.9.2 Node: Exception Handling Support */
-extern int dadao_eh_return_data_regno (int);
-extern rtx dadao_eh_return_stackadj_rtx (void);
-extern rtx dadao_eh_return_handler_rtx (void);
 /* XXX gccint 18.9.5 Node: Eliminating Frame Pointer and Arg Pointer */
 extern int dadao_initial_elimination_offset (int, int);
 /* XXX gccint 18.9.12 Node: Generating Code for Profiling */

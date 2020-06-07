@@ -45,26 +45,6 @@
    mostly.  */
 #define DADAO_CFUN_HAS_LANDING_PAD (cfun->machine->has_landing_pad != 0)
 
-/* We have no means to tell DWARF 2 about the register stack, so we need
-   to store the return address on the stack if an exception can get into
-   this function.  We'll have an "initial value" recorded for the
-   return-register if we've seen a call instruction emitted.  This note
-   will be inaccurate before instructions are emitted, but the only caller
-   at that time is looking for modulo from stack-boundary, to which the
-   return-address does not contribute, and which is always 0 for DADAO
-   anyway.  Beware of calling leaf_function_p here, as it'll abort if
-   called within a sequence.  */
-#define DADAO_CFUN_NEEDS_SAVED_EH_RETURN_ADDRESS			\
- (flag_exceptions						\
-  && has_hard_reg_initial_val (Pmode, DADAO_INCOMING_RETURN_ADDRESS_REGNUM))
-
-#define IS_DADAO_EH_RETURN_DATA_REG(REGNO)	\
- (crtl->calls_eh_return		\
-  && (EH_RETURN_DATA_REGNO (0) == REGNO		\
-      || EH_RETURN_DATA_REGNO (1) == REGNO	\
-      || EH_RETURN_DATA_REGNO (2) == REGNO	\
-      || EH_RETURN_DATA_REGNO (3) == REGNO))
-
 /* For the default ABI, we rename registers at output-time to fill the gap
    between the (statically partitioned) saved registers and call-clobbered
    registers.  In effect this makes unused call-saved registers to be used
@@ -208,9 +188,7 @@ static HOST_WIDE_INT dd_starting_frame_offset (void)
      Similarly, we store the return address on the stack too, for
      exception handling, and always if we save the register stack pointer.  */
   return
-    (-8
-     + (DADAO_CFUN_HAS_LANDING_PAD
-	? -16 : (DADAO_CFUN_NEEDS_SAVED_EH_RETURN_ADDRESS ? -8 : 0)));
+    (-8 + (DADAO_CFUN_HAS_LANDING_PAD ? -16 : 0));
 }
 
 #undef	TARGET_STARTING_FRAME_OFFSET
@@ -236,39 +214,12 @@ void dadao_setup_frame_addresses (void)
 rtx dadao_return_addr_rtx (int count, rtx frame ATTRIBUTE_UNUSED)
 {
   return count == 0
-    ? (DADAO_CFUN_NEEDS_SAVED_EH_RETURN_ADDRESS
-       /* FIXME: Set frame_alias_set on the following.  (Why?)
-	  See dadao_initial_elimination_offset for the reason we can't use
-	  get_hard_reg_initial_val for both.  Always using a stack slot
-	  and not a register would be suboptimal.  */
-       ? validize_mem (gen_rtx_MEM (Pmode,
-				    plus_constant (Pmode,
-						   frame_pointer_rtx, -16)))
-       : get_hard_reg_initial_val (Pmode, DADAO_INCOMING_RETURN_ADDRESS_REGNUM))
+    ? get_hard_reg_initial_val (Pmode, DADAO_INCOMING_RETURN_ADDRESS_REGNUM)
     : NULL_RTX;
 }
 
 /* XXX gccint 18.9.2 Node: Exception Handling Support */
-/* EH_RETURN_DATA_REGNO. */
-int dadao_eh_return_data_regno (int n)
-{
-  if (n >= 0 && n < 4)
-    return DADAO_EH_RETURN_DATA_REGNO_START + n;
-
-  return INVALID_REGNUM;
-}
-
-/* EH_RETURN_STACKADJ_RTX. */
-rtx dadao_eh_return_stackadj_rtx (void)
-{
-  return gen_rtx_REG (Pmode, DADAO_EH_RETURN_STACKADJ_REGNUM);
-}
-
-/* EH_RETURN_HANDLER_RTX.  */
-rtx dadao_eh_return_handler_rtx (void)
-{
-  return gen_rtx_REG (Pmode, DADAO_INCOMING_RETURN_ADDRESS_REGNUM);
-}
+/* (empty) */
 
 /* XXX gccint 18.9.3 Node: Specifying How Stack Checking is Done */
 /* (empty) */
@@ -319,22 +270,13 @@ int dadao_initial_elimination_offset (int fromreg, int toreg)
      store the return address in a frame slot too.  FIXME: Only for
      non-leaf functions.  FIXME: Always with a landing pad, because it's
      hard to know whether we need the other at the time we know we need
-     the offset for one (and have to state it).  It's a kludge until we
-     can express the register stack in the EH frame info.
+     the offset for one (and have to state it).
 
      We have to do alignment here; get_frame_size will not return a
      multiple of STACK_BOUNDARY.  FIXME: Add note in manual.  */
 
-  for (regno = DADAO_FIRST_GLOBAL_REGNUM;
-       regno <= 255;
-       regno++)
-    if ((df_regs_ever_live_p (regno) && ! call_used_regs[regno])
-	|| IS_DADAO_EH_RETURN_DATA_REG (regno))
-      fp_sp_offset += 8;
-
   return fp_sp_offset
-    + (DADAO_CFUN_HAS_LANDING_PAD
-       ? 16 : (DADAO_CFUN_NEEDS_SAVED_EH_RETURN_ADDRESS ? 8 : 0))
+    + (DADAO_CFUN_HAS_LANDING_PAD ? 16 : 0)
     + (fromreg == DADAO_ARG_POINTER_REGNUM ? 0 : 8);
 }
 
@@ -1178,23 +1120,11 @@ dadao_use_simple_return (void)
   if (!reload_completed)
     return 0;
 
-  for (regno = 255;
-       regno >= DADAO_FIRST_GLOBAL_REGNUM;
-       regno--)
-    /* Note that we assume that the frame-pointer-register is one of these
-       registers, in which case we don't count it here.  */
-    if ((((regno != FRAME_POINTER_REGNUM || !frame_pointer_needed)
-	  && df_regs_ever_live_p (regno) && !call_used_regs[regno]))
-	|| IS_DADAO_EH_RETURN_DATA_REG (regno))
-      return 0;
-
   if (frame_pointer_needed)
     stack_space_to_allocate += 8;
 
   if (DADAO_CFUN_HAS_LANDING_PAD)
     stack_space_to_allocate += 16;
-  else if (DADAO_CFUN_NEEDS_SAVED_EH_RETURN_ADDRESS)
-    stack_space_to_allocate += 8;
 
   return stack_space_to_allocate == 0;
 }
@@ -1213,17 +1143,6 @@ dadao_expand_prologue (void)
        + locals_size + 7) & ~7;
   HOST_WIDE_INT offset = -8;
 
-  /* Add room needed to save global non-register-stack registers.  */
-  for (regno = 255;
-       regno >= DADAO_FIRST_GLOBAL_REGNUM;
-       regno--)
-    /* Note that we assume that the frame-pointer-register is one of these
-       registers, in which case we don't count it here.  */
-    if ((((regno != FRAME_POINTER_REGNUM || !frame_pointer_needed)
-	  && df_regs_ever_live_p (regno) && !call_used_regs[regno]))
-	|| IS_DADAO_EH_RETURN_DATA_REG (regno))
-      stack_space_to_allocate += 8;
-
   /* If we do have a frame-pointer, add room for it.  */
   if (frame_pointer_needed)
     stack_space_to_allocate += 8;
@@ -1233,9 +1152,6 @@ dadao_expand_prologue (void)
      address if we do that.  */
   if (DADAO_CFUN_HAS_LANDING_PAD)
     stack_space_to_allocate += 16;
-  else if (DADAO_CFUN_NEEDS_SAVED_EH_RETURN_ADDRESS)
-    /* If we do have a saved return-address slot, add room for it.  */
-    stack_space_to_allocate += 8;
 
   /* Make sure we don't get an unaligned stack.  */
   if ((stack_space_to_allocate % 8) != 0)
@@ -1307,52 +1223,7 @@ dadao_expand_prologue (void)
       offset -= 8;
     }
 
-  if (DADAO_CFUN_NEEDS_SAVED_EH_RETURN_ADDRESS)
-    {
-      rtx tmpreg, retreg;
-      rtx insn;
-
-      /* Store the return-address, if one is needed on the stack.  We
-	 usually store it in a register when needed, but that doesn't work
-	 with -fexceptions.  */
-
-      if (offset < 0)
-	{
-	  /* Get 8 less than otherwise, since we need to reach offset + 8.  */
-	  HOST_WIDE_INT stack_chunk
-	    = stack_space_to_allocate > (256 - 8 - 8)
-	    ? (256 - 8 - 8) : stack_space_to_allocate;
-
-	  dadao_emit_sp_add (-stack_chunk);
-
-	  offset += stack_chunk;
-	  stack_space_to_allocate -= stack_chunk;
-	}
-
-      tmpreg = gen_rtx_REG (DImode, 255);
-      retreg = gen_rtx_REG (DImode, DADAO_rJ_REGNUM);
-
-      /* Dwarf2 code is confused by the use of a temporary register for
-	 storing the return address, so we have to express it as a note,
-	 which we attach to the actual store insn.  */
-      emit_move_insn (tmpreg, retreg);
-
-      insn = emit_move_insn (gen_rtx_MEM (DImode,
-					  plus_constant (Pmode,
-							 stack_pointer_rtx,
-							 offset)),
-			     tmpreg);
-      RTX_FRAME_RELATED_P (insn) = 1;
-      add_reg_note (insn, REG_FRAME_RELATED_EXPR,
-		    gen_rtx_SET (gen_rtx_MEM (DImode,
-					      plus_constant (Pmode,
-							     stack_pointer_rtx,
-							     offset)),
-				 retreg));
-
-      offset -= 8;
-    }
-  else if (DADAO_CFUN_HAS_LANDING_PAD)
+  if (DADAO_CFUN_HAS_LANDING_PAD)
     offset -= 8;
 
   if (DADAO_CFUN_HAS_LANDING_PAD)
@@ -1396,41 +1267,6 @@ dadao_expand_prologue (void)
      variables.  They're the ones that may have an "unaligned" size.  */
   offset -= (locals_size + 7) & ~7;
 
-  /* Now store all registers that are global, i.e. not saved by the
-     register file machinery.
-
-     It is assumed that the frame-pointer is one of these registers, so it
-     is explicitly excluded in the count.  */
-
-  for (regno = 255;
-       regno >= DADAO_FIRST_GLOBAL_REGNUM;
-       regno--)
-    if (((regno != FRAME_POINTER_REGNUM || !frame_pointer_needed)
-	 && df_regs_ever_live_p (regno) && ! call_used_regs[regno])
-	|| IS_DADAO_EH_RETURN_DATA_REG (regno))
-      {
-	rtx insn;
-
-	if (offset < 0)
-	  {
-	    HOST_WIDE_INT stack_chunk
-	      = (stack_space_to_allocate > (256 - offset - 8)
-		 ? (256 - offset - 8) : stack_space_to_allocate);
-
-	    dadao_emit_sp_add (-stack_chunk);
-	    offset += stack_chunk;
-	    stack_space_to_allocate -= stack_chunk;
-	  }
-
-	insn = emit_move_insn (gen_rtx_MEM (DImode,
-					    plus_constant (Pmode,
-							   stack_pointer_rtx,
-							   offset)),
-			       gen_rtx_REG (DImode, regno));
-	RTX_FRAME_RELATED_P (insn) = 1;
-	offset -= 8;
-      }
-
   /* Finally, allocate room for outgoing args and local vars if room
      wasn't allocated above.  */
   if (stack_space_to_allocate)
@@ -1452,24 +1288,10 @@ dadao_expand_epilogue (void)
   /* The first address to access is beyond the outgoing_args area.  */
   HOST_WIDE_INT offset = crtl->outgoing_args_size;
 
-  /* Add the space for global non-register-stack registers.
-     It is assumed that the frame-pointer register can be one of these
-     registers, in which case it is excluded from the count when needed.  */
-  for (regno = 255;
-       regno >= DADAO_FIRST_GLOBAL_REGNUM;
-       regno--)
-    if (((regno != FRAME_POINTER_REGNUM || !frame_pointer_needed)
-	 && df_regs_ever_live_p (regno) && !call_used_regs[regno])
-	|| IS_DADAO_EH_RETURN_DATA_REG (regno))
-      stack_space_to_deallocate += 8;
-
   /* Add in the space for register stack-pointer.  If so, always add room
      for the saved PC.  */
   if (DADAO_CFUN_HAS_LANDING_PAD)
     stack_space_to_deallocate += 16;
-  else if (DADAO_CFUN_NEEDS_SAVED_EH_RETURN_ADDRESS)
-    /* If we have a saved return-address slot, add it in.  */
-    stack_space_to_deallocate += 8;
 
   /* Add in the frame-pointer.  */
   if (frame_pointer_needed)
@@ -1480,31 +1302,6 @@ dadao_expand_epilogue (void)
     internal_error ("stack frame not a multiple of octabyte: %wd",
 		    stack_space_to_deallocate);
 
-  /* We will add back small offsets to the stack pointer as we go.
-     First, we restore all registers that are global, i.e. not saved by
-     the register file machinery.  */
-
-  for (regno = DADAO_FIRST_GLOBAL_REGNUM;
-       regno <= 255;
-       regno++)
-    if (((regno != FRAME_POINTER_REGNUM || !frame_pointer_needed)
-	 && df_regs_ever_live_p (regno) && !call_used_regs[regno])
-	|| IS_DADAO_EH_RETURN_DATA_REG (regno))
-      {
-	if (offset > 255)
-	  {
-	    dadao_emit_sp_add (offset);
-	    stack_space_to_deallocate -= offset;
-	    offset = 0;
-	  }
-
-	emit_move_insn (gen_rtx_REG (DImode, regno),
-			gen_rtx_MEM (DImode,
-				     plus_constant (Pmode, stack_pointer_rtx,
-						    offset)));
-	offset += 8;
-      }
-
   /* Here is where the local variables were.  As in the prologue, they
      might be of an unaligned size.  */
   offset += (locals_size + 7) & ~7;
@@ -1514,10 +1311,6 @@ dadao_expand_epilogue (void)
      instruction does that.  */
   if (DADAO_CFUN_HAS_LANDING_PAD)
     offset += 16;
-  else if (DADAO_CFUN_NEEDS_SAVED_EH_RETURN_ADDRESS)
-    /* The return-address slot is just below the frame-pointer register.
-       We don't need to restore it because we don't really use it.  */
-    offset += 8;
 
   /* Get back the old frame-pointer-value.  */
   if (frame_pointer_needed)
@@ -1542,13 +1335,6 @@ dadao_expand_epilogue (void)
   if (stack_space_to_deallocate != 0)
     dadao_emit_sp_add (stack_space_to_deallocate);
 
-  if (crtl->calls_eh_return)
-    /* Adjust the (normal) stack-pointer to that of the receiver.
-       FIXME: It would be nice if we could also adjust the register stack
-       here, but we need to express it through DWARF 2 too.  */
-    emit_insn (gen_adddi3 (stack_pointer_rtx, stack_pointer_rtx,
-			   gen_rtx_REG (DImode,
-					DADAO_EH_RETURN_STACKADJ_REGNUM)));
 }
 
 /* Output an optimal sequence for setting a register to a specific

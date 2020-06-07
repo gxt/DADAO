@@ -38,25 +38,12 @@
 #define DADAO_ARG_POINTER_REGNUM		261
 #define DADAO_rO_REGNUM 262
 
-/* Four registers; "ideally, these registers should be call-clobbered", so
-   just grab a bunch of the common clobbered registers.  FIXME: Last
-   registers of return-value should be used, with an error if there's a
-   return-value (that collides in size).  */
-#define DADAO_EH_RETURN_DATA_REGNO_START (DADAO_STRUCT_VALUE_REGNUM - 4)
-
-/* Try to keep the definitions from running away on their own.  */
-#if (DADAO_EH_RETURN_DATA_REGNO_START \
-     != DADAO_RESERVED_GNU_ARG_0_REGNUM + DADAO_MAX_ARGS_IN_REGS)
- #error DADAO register definition inconsistency
-#endif
+#define	DADAO_EH_RETURN_DATA_REGNUM		(DADAO_REG_RG_START + 0x30)
+#define	DADAO_EH_RETURN_HANDLER_REGNUM		(DADAO_REG_RG_START + 0x34)
 
 #if (DADAO_MAX_REGS_FOR_VALUE + DADAO_MAX_ARGS_IN_REGS > 32)
  #error DADAO parameters and return values bad, more than 32 registers
 #endif
-
-/* This chosen as "a call-clobbered hard register that is otherwise
-   untouched by the epilogue".  */
-#define DADAO_EH_RETURN_STACKADJ_REGNUM 252
 
 #define DADAO_FUNCTION_ARG_SIZE(MODE, TYPE) \
  ((MODE) != BLKmode ? GET_MODE_SIZE (MODE) : int_size_in_bytes (TYPE))
@@ -292,11 +279,8 @@ enum reg_class {
 #define INCOMING_RETURN_ADDR_RTX		gen_rtx_REG (Pmode, DADAO_INCOMING_RETURN_ADDRESS_REGNUM)
 
 /* XXX gccint 18.9.2 Node: Exception Handling Support */
-#define EH_RETURN_DATA_REGNO(N)			dadao_eh_return_data_regno (N)
-#define EH_RETURN_STACKADJ_RTX			dadao_eh_return_stackadj_rtx ()
-#define EH_RETURN_HANDLER_RTX			dadao_eh_return_handler_rtx ()
-
-#define ASM_PREFERRED_EH_DATA_FORMAT(CODE, GLOBAL)	(DW_EH_PE_absptr)
+#define	EH_RETURN_DATA_REGNO(N)			(((N) < 4) ? (DADAO_EH_RETURN_DATA_REGNUM + (N)) : INVALID_REGNUM)
+#define	EH_RETURN_HANDLER_RTX			gen_rtx_REG (Pmode, DADAO_EH_RETURN_HANDLER_REGNUM)
 
 /* XXX gccint 18.9.3 Node: Specifying How Stack Checking is Done */
 /* (empty) */
