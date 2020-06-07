@@ -17,15 +17,10 @@
 extern void dadao_md_assemble (char *);
 extern void dadao_md_begin (void);
 extern void dadao_md_end (void);
-extern void dadao_md_elf_section_change_hook (void);
 
 #define md_assemble			dadao_md_assemble
 #define md_begin			dadao_md_begin
 #define md_end				dadao_md_end
-#define md_elf_section_change_hook	dadao_md_elf_section_change_hook
-
-extern void dadao_md_do_align (int, char *, int, int);
-#define md_do_align(n, fill, len, max, label)	dadao_md_do_align (n, fill, len, max)
 
 #define md_undefined_symbol(x) NULL
 #define	md_operand(x)

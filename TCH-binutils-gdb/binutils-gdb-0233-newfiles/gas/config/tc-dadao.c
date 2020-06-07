@@ -23,10 +23,6 @@ static void dd_fill_nops (char *, int);
 static bfd_vma lowest_text_loc = (bfd_vma) -1;
 static int text_has_contents = 0;
 
-/* The alignment of the previous instruction, and a boolean for whether we
-   want to avoid aligning the next WYDE, TETRA, OCTA or insn.  */
-static int last_alignment = 0;
-
 static bfd_vma lowest_data_loc = (bfd_vma) -1;
 static int data_has_contents = 0;
 
@@ -516,16 +512,6 @@ void dadao_md_assemble (char *str)
 	}
 
       text_has_contents = 1;
-    }
-
-  /* After a sequence of BYTEs or WYDEs, we need to get to instruction
-     alignment.  For other pseudos, a ".p2align 2" is supposed to be
-     inserted by the user.  */
-  if (last_alignment < 2)
-    {
-      frag_align (2, 0, 0);
-      record_alignment (now_seg, 2);
-      last_alignment = 2;
     }
 
   /* We assume that dadao_opcodes keeps having unique mnemonics for each
@@ -1320,20 +1306,4 @@ void dadao_md_end (void)
 	  fragP->fr_fix = 0;
 	}
     }
-}
-
-/* Just get knowledge about alignment from the new section.  */
-void dadao_md_elf_section_change_hook (void)
-{
-  last_alignment = bfd_get_section_alignment (now_seg->owner, now_seg);
-}
-
-/* The md_do_align worker.  At present, we just record an alignment to
-   nullify the automatic alignment we do for WYDE, TETRA and OCTA, as gcc
-   does not use the unaligned macros when attribute packed is used.
-   Arguably this is a GCC bug.  */
-void dadao_md_do_align (int n, char *fill ATTRIBUTE_UNUSED,
-		  int len ATTRIBUTE_UNUSED, int max ATTRIBUTE_UNUSED)
-{
-  last_alignment = n;
 }
