@@ -29,6 +29,7 @@
 (include "predicates.md")
 (include "constraints.md")
 
+(include "dadao-generic.md")
 (include "dadao-fp.md")
 
 ;; FIXME: Can we remove the reg-to-reg for smaller modes?  Shouldn't they
@@ -658,11 +659,6 @@
   [(return)]
   ""
   "dadao_expand_epilogue ();")
-
-(define_insn "nop"
-  [(const_int 0)]
-  ""
-	"nop")
 
 (define_insn "jump"
   [(set (pc) (label_ref (match_operand 0 "" "")))]
