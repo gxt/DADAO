@@ -19,20 +19,22 @@
 #define	DADAO_MAX_ARGS_IN_REGS			16
 #define	DADAO_FIRST_ARG_REGNUM			(DADAO_REG_RG_START + 0x10)
 #define	DADAO_RETURN_VALUE_REGNUM		(DADAO_REG_RG_START + 0x1F)
+#define	DADAO_EH_RETURN_DATA_REGNUM		(DADAO_REG_RG_START + 0x30)
+#define	DADAO_EH_RETURN_HANDLER_REGNUM		(DADAO_REG_RG_START + 0x34)
 
 /* FIXME: This one isn't fully implemented yet.  Return values larger than
    one register are passed by reference in DADAO_STRUCT_VALUE_REGNUM by the
    caller, except for return values of type "complex".  */
-#define DADAO_STRUCT_VALUE_REGNUM 251
+#define	DADAO_STACK_POINTER_REGNUM		(DADAO_REG_RP_START + 0x01)
+#define	DADAO_FRAME_POINTER_REGNUM		(DADAO_REG_RP_START + 0x02)
+#define	DADAO_STRUCT_VALUE_REGNUM		(DADAO_REG_RP_START + 0x1F)
+
 #define DADAO_LAST_GENERAL_REGISTER 255
 #define DADAO_INCOMING_RETURN_ADDRESS_REGNUM DADAO_rJ_REGNUM
 #define DADAO_HIMULT_REGNUM 258
 #define DADAO_REMAINDER_REGNUM DADAO_rR_REGNUM
 #define DADAO_ARG_POINTER_REGNUM		261
 #define DADAO_rO_REGNUM 262
-
-#define	DADAO_EH_RETURN_DATA_REGNUM		(DADAO_REG_RG_START + 0x30)
-#define	DADAO_EH_RETURN_HANDLER_REGNUM		(DADAO_REG_RG_START + 0x34)
 
 #define DADAO_FUNCTION_ARG_SIZE(MODE, TYPE) \
  ((MODE) != BLKmode ? GET_MODE_SIZE (MODE) : int_size_in_bytes (TYPE))
@@ -127,9 +129,9 @@ struct GTY(()) machine_function
 
 #define FIXED_REGISTERS {				\
 	/* 0 ~ 63 */					\
-	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
+	1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	/* 64 ~ 127 */					\
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
@@ -153,9 +155,9 @@ struct GTY(()) machine_function
 
 #define CALL_USED_REGISTERS {				\
 	/* 0 ~ 63 */					\
-	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,	\
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	\
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	/* 64 ~ 127 */					\
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
@@ -275,8 +277,8 @@ enum reg_class {
 /* (empty) */
 
 /* XXX gccint 18.9.4 Node: Registers That Address the Stack Frame */
-#define	STACK_POINTER_REGNUM			(DADAO_REG_RP_START + 1)
-#define	FRAME_POINTER_REGNUM			(DADAO_REG_RP_START + 2)
+#define	STACK_POINTER_REGNUM			DADAO_STACK_POINTER_REGNUM
+#define	FRAME_POINTER_REGNUM			DADAO_FRAME_POINTER_REGNUM
 #define	ARG_POINTER_REGNUM			DADAO_ARG_POINTER_REGNUM
 
 /* XXX gccint 18.9.5 Node: Eliminating Frame Pointer and Arg Pointer */
