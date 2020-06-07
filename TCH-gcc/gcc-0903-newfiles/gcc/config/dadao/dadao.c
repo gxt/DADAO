@@ -1161,12 +1161,12 @@ dadao_expand_prologue (void)
   if (crtl->args.pretend_args_size)
     {
       int dadao_first_vararg_reg
-	= (DADAO_FIRST_INCOMING_ARG_REGNUM
+	= (DADAO_FIRST_ARG_REGNUM
 	   + (DADAO_MAX_ARGS_IN_REGS
 	      - crtl->args.pretend_args_size / 8));
 
       for (regno
-	     = DADAO_FIRST_INCOMING_ARG_REGNUM + DADAO_MAX_ARGS_IN_REGS - 1;
+	     = DADAO_FIRST_ARG_REGNUM + DADAO_MAX_ARGS_IN_REGS - 1;
 	   regno >= dadao_first_vararg_reg;
 	   regno--)
 	{
