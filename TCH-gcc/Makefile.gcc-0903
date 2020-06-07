@@ -66,8 +66,8 @@ gcc-0903-source:
 		git add .;						\
 		git commit -sm"DADAO: re-generate root configure"
 	# fixups
-	@echo "FIXUP: Apply fixup ..."
-	@cd $(GCC_0903_SOURCE); git am $(GCC_0903_FIXUP)/*.patch
+	#@echo "FIXUP: Apply fixup ..."
+	#@cd $(GCC_0903_SOURCE); git am $(GCC_0903_FIXUP)/*.patch
 
 gcc-0903-build-new:
 	@rm -fr $(GCC_0903_BUILD)
