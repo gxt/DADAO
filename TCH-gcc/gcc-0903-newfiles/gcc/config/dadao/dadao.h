@@ -118,7 +118,7 @@ struct GTY(()) machine_function
 #define	DOUBLE_TYPE_SIZE		64
 #define	LONG_DOUBLE_TYPE_SIZE		64
 
-#define	DEFAULT_SIGNED_CHAR		0
+#define	DEFAULT_SIGNED_CHAR		1
 
 /* XXX gccint 18.7 Node: Register Usage */
 
