@@ -83,14 +83,14 @@ newlib-cygwin-0303-source:
 		git add .;							\
 		git commit -sm"DADAO: re-generate root configure"
 	# fixups
-	@echo "FIXUP: Apply fixup ..."
-	@cd $(NEWLIB_CYGWIN_0303_SOURCE); git am $(NEWLIB_CYGWIN_0303_FIXUP)/*.patch
+	#@echo "FIXUP: Apply fixup ..."
+	#@cd $(NEWLIB_CYGWIN_0303_SOURCE); git am $(NEWLIB_CYGWIN_0303_FIXUP)/*.patch
 
 newlib-cygwin-0303-build-new:
 	@rm -fr $(NEWLIB_CYGWIN_0303_BUILD)
 	@mkdir -p $(NEWLIB_CYGWIN_0303_BUILD)
+	# CFLAGS_FOR_TARGET="-g -Os" can be added before configure to modify default CFLAGS
 	@cd $(NEWLIB_CYGWIN_0303_BUILD) && PATH=$(NEWLIB_CYGWIN_0303_PATH)	\
-		CFLAGS_FOR_TARGET="-g -Os"					\
 		$(NEWLIB_CYGWIN_0303_SOURCE)/configure				\
 			--target=$(NEWLIB_CYGWIN_0303_TARGET)			\
 			--srcdir=$(NEWLIB_CYGWIN_0303_SOURCE)			\
