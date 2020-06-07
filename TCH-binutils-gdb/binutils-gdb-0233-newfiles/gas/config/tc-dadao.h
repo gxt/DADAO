@@ -16,11 +16,9 @@
 
 extern void dadao_md_assemble (char *);
 extern void dadao_md_begin (void);
-extern void dadao_md_end (void);
 
 #define md_assemble			dadao_md_assemble
 #define md_begin			dadao_md_begin
-#define md_end				dadao_md_end
 
 #define md_undefined_symbol(x) NULL
 #define	md_operand(x)

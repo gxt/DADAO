@@ -47,11 +47,6 @@ END_RELOC_NUMBERS (R_DADAO_max)
 /* A section containing necessary information for relaxation.  */
 #define SHF_DADAO_CANRELAX	0x80000000
 
-/* A section SECNAME is noted to start at "__.DADAO.start.SECNAME" by the
-   presence of this symbol.  Currently only implemented for ".text"
-   through the symbol "__.DADAO.start..text".  */
-#define DADAO_LOC_SECTION_START_SYMBOL_PREFIX "__.DADAO.start."
-
 /* This symbol is always a function.  */
 #define DADAO_START_SYMBOL_NAME "Main"
 

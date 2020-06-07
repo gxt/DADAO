@@ -20,23 +20,9 @@ static int get_putget_operands (struct dadao_opcode *, char *, expressionS *);
 static void dd_set_addr_offset(char *, offsetT, int, int);
 static void dd_fill_nops (char *, int);
 
-static bfd_vma lowest_text_loc = (bfd_vma) -1;
-static int text_has_contents = 0;
-
-static bfd_vma lowest_data_loc = (bfd_vma) -1;
-static int data_has_contents = 0;
-
 /* The fragS of the instruction being assembled.  Only valid from within
    md_assemble.  */
 fragS *dadao_opcode_frag = NULL;
-
-static struct loc_assert_s
- {
-   segT old_seg;
-   symbolS *loc_sym;
-   fragS *frag;
-   struct loc_assert_s *next;
- } *loc_asserts = NULL;
 
 const char *md_shortopts = "x";
 
@@ -486,33 +472,6 @@ void dadao_md_assemble (char *str)
     operands[-1] = modified_char;
 
   input_line_pointer = operands;
-
-  if (now_seg == data_section)
-    {
-      if (lowest_data_loc != (bfd_vma) -1 && (lowest_data_loc & 3) != 0)
-	{
-	  if (data_has_contents)
-	    as_bad (_("specified location wasn't TETRA-aligned"));
-
-	  lowest_data_loc &= ~(bfd_vma) 3;
-	  lowest_data_loc += 4;
-	}
-
-      data_has_contents = 1;
-    }
-  else if (now_seg == text_section)
-    {
-      if (lowest_text_loc != (bfd_vma) -1 && (lowest_text_loc & 3) != 0)
-	{
-	  if (text_has_contents)
-	    as_bad (_("specified location wasn't TETRA-aligned"));
-
-	  lowest_text_loc &= ~(bfd_vma) 3;
-	  lowest_text_loc += 4;
-	}
-
-      text_has_contents = 1;
-    }
 
   /* We assume that dadao_opcodes keeps having unique mnemonics for each
      opcode, so we don't have to iterate over more than one opcode; if the
@@ -1234,76 +1193,4 @@ md_pcrel_from_section (fixS *fixP, segT sec)
     }
 
   return (fixP->fx_frag->fr_address + fixP->fx_where);
-}
-
-/* Various things we punt until all input is seen.  */
-void dadao_md_end (void)
-{
-  fragS *fragP;
-  struct loc_assert_s *loc_assert;
-
-  /* Emit the low LOC setting of .text.  */
-  if (text_has_contents && lowest_text_loc != (bfd_vma) -1)
-    {
-      symbolS *symbolP;
-      char locsymbol[sizeof (":") - 1
-		    + sizeof (DADAO_LOC_SECTION_START_SYMBOL_PREFIX) - 1
-		    + sizeof (".text")];
-
-      /* An exercise in non-ISO-C-ness, this one.  */
-      sprintf (locsymbol, ":%s%s", DADAO_LOC_SECTION_START_SYMBOL_PREFIX,
-	       ".text");
-      symbolP
-	= symbol_new (locsymbol, absolute_section, lowest_text_loc,
-		      &zero_address_frag);
-      S_SET_EXTERNAL (symbolP);
-    }
-
-  /* Ditto .data.  */
-  if (data_has_contents && lowest_data_loc != (bfd_vma) -1)
-    {
-      symbolS *symbolP;
-      char locsymbol[sizeof (":") - 1
-		     + sizeof (DADAO_LOC_SECTION_START_SYMBOL_PREFIX) - 1
-		     + sizeof (".data")];
-
-      sprintf (locsymbol, ":%s%s", DADAO_LOC_SECTION_START_SYMBOL_PREFIX,
-	       ".data");
-      symbolP
-	= symbol_new (locsymbol, absolute_section, lowest_data_loc,
-		      &zero_address_frag);
-      S_SET_EXTERNAL (symbolP);
-    }
-
-  /* Check that we didn't LOC into the unknown, or rather that when it
-     was unknown, we actually change sections.  */
-  for (loc_assert = loc_asserts;
-       loc_assert != NULL;
-       loc_assert = loc_assert->next)
-    {
-      segT actual_seg;
-
-      resolve_symbol_value (loc_assert->loc_sym);
-      actual_seg = S_GET_SEGMENT (loc_assert->loc_sym);
-      if (actual_seg != loc_assert->old_seg)
-	{
-	  const char *fnam;
-	  unsigned int line;
-	  int e_valid = expr_symbol_where (loc_assert->loc_sym, &fnam, &line);
-
-	  gas_assert (e_valid == 1);
-	  as_bad_where (fnam, line,
-			_("LOC to section unknown or indeterminable "
-			  "at first pass"));
-
-	  /* Patch up the generic location data to avoid cascading
-	     error messages from later passes.  (See original in
-	     write.c:relax_segment.)  */
-	  fragP = loc_assert->frag;
-	  fragP->fr_type = rs_align;
-	  fragP->fr_subtype = 0;
-	  fragP->fr_offset = 0;
-	  fragP->fr_fix = 0;
-	}
-    }
 }
