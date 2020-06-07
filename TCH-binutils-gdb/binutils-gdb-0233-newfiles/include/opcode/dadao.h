@@ -46,7 +46,6 @@ enum dadao_operands_type {
 	dadao_operands_riii,		/* The regular "ra, imm18" */
 	dadao_operands_rjii,		/* The regular "ra, imm16", 2-bit in fc used to indicate WH/WJ/WK/WL */
 	dadao_operands_rrii_rrri,	/* The regular "ra, rb, imm12" or "ra, rb, rc << imm6" */
-	dadao_operands_rsym_rrii_rrri	/* The regular "ra, rb, imm12" or "ra, rb, rc << imm6" with symbol support */
  };
 
 struct dadao_opcode

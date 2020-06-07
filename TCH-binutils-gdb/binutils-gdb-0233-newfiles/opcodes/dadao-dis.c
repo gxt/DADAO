@@ -346,7 +346,6 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		break;
 
 	case dadao_operands_rrii_rrri:
-	case dadao_operands_rsym_rrii_rrri:
 		if (insn & DADAO_INSN_ALTMODE)
 			(*info->fprintf_func) (info->stream, "\t%s, %s, %d",
 				get_reg_name (minfop, fa), get_reg_name (minfop, fb), (fc << 6) | fd);

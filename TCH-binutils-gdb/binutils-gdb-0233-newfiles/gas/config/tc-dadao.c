@@ -60,16 +60,12 @@ static struct hash_control *dadao_opcode_hash;
 
    4. JUMP
       extra length: zero or four insns.
-
-   5. LDST
-      extra length: four insns.
  */
 
 #define STATE_GETA	(1)
 #define STATE_BRCC	(2)
 #define STATE_CALL	(3)
 #define STATE_JUMP	(4)
-#define STATE_LDST	(5)
 
 /* No fine-grainedness here.  */
 #define STATE_LENGTH_MASK	    (1)
@@ -119,12 +115,6 @@ const relax_typeS dadao_relax_table[] = {
    {(1 << 26),	-(1 << 26),	0,			ENCODE_RELAX (STATE_JUMP, STATE_MAX)},
 
    /* JUMP (4, 1).  */
-   {0,		0,		DD_INSN_BYTES(4),	0},
-
-   /* LDST (5, 0).  */
-   {(1 << 12),	-(1 << 12),	0,			ENCODE_RELAX (STATE_LDST, STATE_MAX)},
-
-   /* LDST (5, 1).  */
    {0,		0,		DD_INSN_BYTES(4),	0},
 };
 
@@ -664,26 +654,6 @@ void dadao_md_assemble (char *str)
 		}
 		break;
 
-	case dadao_operands_rsym_rrii_rrri:
-		if (n_operands == 2) {
-			/* The last operand is immediate whenever we see just two operands.  */
-			DDOP_SET_INSN_ALTMODE(opcodep);
-
-			DDOP_EXP_MUST_BE_REG(exp[0]);
-			DDOP_SET_FA(opcodep, exp[0].X_add_number);
-
-			if (exp[1].X_op != O_symbol)
-				DADAO_BAD_INSN("invalid operands to opcode");
-
-			/* Add a frag for a ldst relaxation; we need room for max four extra instructions.
-			   We don't do any work around here to check if we can determine the offset right away.  */
-			frag_var (rs_machine_dependent, DD_INSN_BYTES(4), 0, ENCODE_RELAX (STATE_LDST, STATE_UNDF),
-				exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
-
-			break;
-		}
-		/* FALLTHROUGH.  */
-
 	case dadao_operands_rrii_rrri:
 		if (n_operands != 3)
 			DADAO_BAD_INSN("invalid operands to opcode");
@@ -851,11 +821,8 @@ md_estimate_size_before_relax (fragS *fragP, segT segment)
 	break;
       HANDLE_RELAXABLE (STATE_CALL);
 	break;
-      HANDLE_RELAXABLE (STATE_LDST);
-	break;
 
     case ENCODE_RELAX (STATE_CALL, STATE_ZERO):
-    case ENCODE_RELAX (STATE_LDST, STATE_ZERO):
     case ENCODE_RELAX (STATE_GETA, STATE_ZERO):
     case ENCODE_RELAX (STATE_BRCC, STATE_ZERO):
     case ENCODE_RELAX (STATE_JUMP, STATE_ZERO):
@@ -950,12 +917,6 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
 		var_part_size = 0;
 		break;
 
-	case ENCODE_RELAX (STATE_LDST, STATE_ZERO):
-		DDOP_SET_FB(opcodep, DADAO_REGP_PC);
-		dd_set_addr_offset(opcodep, target_address - opcode_address, 12, 0);
-		var_part_size = 0;
-		break;
-
 #define HANDLE_MAX_RELOC(state, reloc)					\
   case ENCODE_RELAX (state, STATE_MAX):					\
     var_part_size							\
@@ -971,7 +932,6 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
       HANDLE_MAX_RELOC (STATE_BRCC, BFD_RELOC_DADAO_BRCC);
       HANDLE_MAX_RELOC (STATE_CALL, BFD_RELOC_DADAO_CALL);
       HANDLE_MAX_RELOC (STATE_JUMP, BFD_RELOC_DADAO_JUMP);
-      HANDLE_MAX_RELOC (STATE_LDST, BFD_RELOC_DADAO_LDST);
 
     default:
       BAD_CASE (fragP->fr_subtype);
@@ -1048,10 +1008,6 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
 		dd_set_addr_offset(buf, val, 24, 1);
 		break;
 
-	case BFD_RELOC_DADAO_LDST:
-		dd_set_addr_offset(buf, val, 12, 0);
-		break;
-
     default:
       BAD_CASE (fixP->fx_r_type);
       break;
@@ -1119,7 +1075,6 @@ tc_gen_reloc (asection *section ATTRIBUTE_UNUSED, fixS *fixP)
     case BFD_RELOC_DADAO_BRCC:
     case BFD_RELOC_DADAO_CALL:
     case BFD_RELOC_DADAO_JUMP:
-    case BFD_RELOC_DADAO_LDST:
       code = fixP->fx_r_type;
       break;
 

@@ -288,24 +288,6 @@ static reloc_howto_type elf_dadao_howto_table[] =
 		0xffffff,		/* dst_mask */
 		TRUE),			/* pcrel_offset */
 
-	/* A LDST is supposed to reach any address.  By itself, it can
-	   reach +-4K; the expansion can reach all 64 bits.  Note that the 4K
-	   limit is soon reached if you link the program in wildly different
-	   memory segments. */
-	HOWTO (R_DADAO_LDST,		/* type */
-		0,			/* rightshift */
-		0,			/* size (0 = byte, 1 = short, 2 = long) */
-		12,			/* bitsize */
-		FALSE,			/* pc_relative */
-		0,			/* bitpos */
-		complain_overflow_bitfield, /* complain_on_overflow */
-		dadao_elf_reloc,	/* special_function */
-		"R_DADAO_LDST",		/* name */
-		FALSE,			/* partial_inplace */
-		~0xfff,			/* src_mask */
-		0xfff,			/* dst_mask */
-		FALSE),			/* pcrel_offset */
-
 	/* A JUMP is supposed to reach any (code) address.  By itself, it can
 	   reach +-64M; the expansion can reach all 64 bits.  Note that the 64M
 	   limit is soon reached if you link the program in wildly different
@@ -354,7 +336,6 @@ static const struct dadao_reloc_map dadao_reloc_map[] =
     {BFD_RELOC_DADAO_BRCC, R_DADAO_BRCC},
     {BFD_RELOC_DADAO_CALL, R_DADAO_CALL},
     {BFD_RELOC_DADAO_JUMP, R_DADAO_JUMP},
-    {BFD_RELOC_DADAO_LDST, R_DADAO_LDST},
   };
 
 static reloc_howto_type *
@@ -436,15 +417,6 @@ bfd_elf64_bfd_reloc_name_lookup (bfd *abfd ATTRIBUTE_UNUSED,
     INCWK $3, (foo >> 16) & 0xffff
     INCWL $3, foo & 0xffff
     JUMP $3, $0, 0
-
-   R_DADAO_LDST: (FIXME: Relaxation should break this up)
-    LD/ST $N,foo
-   ->
-    SETWH $3, (foo >> 48) & 0xffff
-    INCWJ $3, (foo >> 32) & 0xffff
-    INCWK $3, (foo >> 16) & 0xffff
-    INCWL $3, foo & 0xffff
-    LD/ST $N, $3, 0
  */
 static bfd_reloc_status_type
 dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
@@ -541,21 +513,6 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 
 			bfd_put_32 (abfd, (insn_origin & ~DADAO_INSN_ALTMODE) | (DADAO_REGP_TAO << 18), (bfd_byte *) datap + 16);
 		}
-
-		return bfd_reloc_ok;
-
-	case R_DADAO_LDST:
-		insn_origin = bfd_get_32 (abfd, (bfd_byte *) datap);
-
-		bfd_put_32 (abfd, DADAO_INSN_SETW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WH |
-			((addr >> 48) & 0xffff), (bfd_byte *) datap);
-		bfd_put_32 (abfd, DADAO_INSN_INCW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WJ |
-			((addr >> 32) & 0xffff), (bfd_byte *) datap + 4);
-		bfd_put_32 (abfd, DADAO_INSN_INCW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WK |
-			((addr >> 16) & 0xffff), (bfd_byte *) datap + 8);
-		bfd_put_32 (abfd, DADAO_INSN_INCW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WL |
-			(addr & 0xffff), (bfd_byte *) datap + 12);
-		bfd_put_32 (abfd, insn_origin | (DADAO_REGP_TAO << 12), (bfd_byte *) datap + 16);
 
 		return bfd_reloc_ok;
 
@@ -828,7 +785,6 @@ dadao_final_link_relocate (reloc_howto_type *howto, asection *input_section,
 
 	switch (howto->type) {
 
-	case R_DADAO_LDST:	/* absolute address */
 	/* All these are PC-relative.  */
 	case R_DADAO_GETA:
 	case R_DADAO_BRCC:
