@@ -93,8 +93,6 @@ struct GTY(()) machine_function
 		builtin_define ("__DADAO__");			\
 	} while (0)
 
-#define	TARGET_DEFAULT_TARGET_FLAGS	(MASK_BASE_ADDRESSES)
-
 /* XXX gccint 18.4 Node: Defining data structures for per-function information */
 #define INIT_EXPANDERS			dadao_init_expanders ()
 

@@ -37,9 +37,6 @@
 /* This file should be included last.  */
 #include "target-def.h"
 
-/* First some local helper definitions.  */
-#define DADAO_FIRST_GLOBAL_REGNUM 32
-
 /* We'd need a current_function_has_landing_pad.  It's marked as such when
    a nonlocal_goto_receiver is expanded.  Not just a C++ thing, but
    mostly.  */
@@ -523,13 +520,13 @@ static void dd_trampoline_init (rtx m_tramp, tree fndecl, rtx static_chain)
 
 /* We must exclude constant addresses that have an increment that is not a
    multiple of four bytes because of restrictions of the GETA
-   instruction, unless TARGET_BASE_ADDRESSES.  */
+   instruction.  */
 int dadao_constant_address_p (rtx x)
 {
   RTX_CODE code = GET_CODE (x);
   int addend = 0;
   /* When using "base addresses", anything constant goes.  */
-  int constant_ok = TARGET_BASE_ADDRESSES != 0;
+  int constant_ok = 0;
 
   switch (code)
     {
@@ -600,8 +597,7 @@ static bool dd_legitimate_address_p (machine_mode mode ATTRIBUTE_UNUSED,
      (mem reg)
      (mem (plus reg reg))
      (mem (plus reg 0..255)).
-     unless TARGET_BASE_ADDRESSES, in which case we accept all
-     (mem constant_address) too.  */
+   */
 
 
     /* (mem reg) */
@@ -623,7 +619,7 @@ static bool dd_legitimate_address_p (machine_mode mode ATTRIBUTE_UNUSED,
 
       /* (mem (plus (reg?) (?))) */
       if (!REG_P (x1) || !DADAO_REG_OK (x1))
-	return TARGET_BASE_ADDRESSES && dadao_constant_address_p (x);
+	return 0;
 
       /* (mem (plus (reg) (reg?))) */
       if (REG_P (x2) && DADAO_REG_OK (x2))
@@ -636,7 +632,7 @@ static bool dd_legitimate_address_p (machine_mode mode ATTRIBUTE_UNUSED,
       return 0;
     }
 
-  return TARGET_BASE_ADDRESSES && dadao_constant_address_p (x);
+  return 0;
 }
 
 #undef	TARGET_LEGITIMATE_ADDRESS_P
@@ -1023,12 +1019,6 @@ static void dd_print_operand_address (FILE *stream, machine_mode /*mode*/, rtx x
 	}
     }
 
-  if (TARGET_BASE_ADDRESSES && dd_legitimate_constant_p (Pmode, x))
-    {
-      output_addr_const (stream, x);
-      return;
-    }
-
   fatal_insn ("DADAO Internal: This is not a recognized address", x);
 }
 
@@ -1397,52 +1387,8 @@ dadao_output_register_setting (FILE *stream,
     }
   else
     {
-      /* The generic case.  2..4 insns.  */
-      static const char *const higher_parts[] = {"wl", "wk", "wj", "wh"};
-      const char *op = "set";
-      const char *line_begin = "";
-      int insns = 0;
-      int i;
-      int64_t tmpvalue = value;
-
-      /* Compute the number of insns needed to output this constant.  */
-      for (i = 0; i < 4 && tmpvalue != 0; i++)
-	{
-	  if (tmpvalue & 65535)
-	    insns++;
-	  tmpvalue >>= 16;
-	}
-      if (TARGET_BASE_ADDRESSES && insns == 3)
-	{
-	  /* The number three is based on a static observation on
-	     ghostscript-6.52.  Two and four are excluded because there
-	     are too many such constants, and each unique constant (maybe
-	     offset by 1..255) were used few times compared to other uses,
-	     e.g. addresses.  */
-	  fprintf (stream, "seto	%s, ", reg_names[regno]);
-	  dadao_output_octa (stream, value, 0);
-	}
-      else
-	{
-	  /* Output pertinent parts of the 4-wyde sequence.
-	     Still more to do if we want this to be optimal, but hey...
-	     Note that the zero case has been handled above.  */
-	  for (i = 0; i < 4 && value != 0; i++)
-	    {
-	      if (value & 65535)
-		{
-		  fprintf (stream, "%s%s%s	%s, 0x%x", line_begin, op,
-			   higher_parts[i], reg_names[regno],
-			   (int) (value & 65535));
-		  /* The first one sets the rest of the bits to 0, the next
-		     ones add set bits.  */
-		  op = "inc";
-		  line_begin = "\n\t";
-		}
-
-	      value >>= 16;
-	    }
-	}
+	fprintf (stream, "seto	%s, ", reg_names[regno]);
+	dadao_output_octa (stream, value, 0);
     }
 
   if (do_begin_end)

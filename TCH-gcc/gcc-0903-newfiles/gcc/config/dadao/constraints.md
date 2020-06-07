@@ -66,27 +66,10 @@
   (and (match_code "const_double")
        (match_test "op == CONST0_RTX (mode)")))
 
-;; Ttr asks whether x is to be loaded with GETA or something else.  Right
-;; now, only a SYMBOL_REF and LABEL_REF can fit for
-;; TARGET_BASE_ADDRESSES.
-;;
-;; Only constant symbolic addresses apply.  With TARGET_BASE_ADDRESSES,
-;; we just allow straight LABEL_REF or SYMBOL_REFs with SYMBOL_REF_FLAG
-;; set right now; only function addresses and code labels.  If we change
-;; to let SYMBOL_REF_FLAG be set on other symbols, we have to check
-;; inside CONST expressions.  When TARGET_BASE_ADDRESSES is not in
-;; effect, a "raw" constant check together with dadao_constant_address_p
-;; is all that's needed; we want all constant addresses to be loaded
-;; with GETA then.
-
 (define_constraint "Ttr"
   "@internal"
   (and (not (match_code "const_int,const_double"))
-       (match_test "dadao_constant_address_p (op)")
-       (ior (match_test "!TARGET_BASE_ADDRESSES")
-	    (match_code "label_ref")
-	    (and (match_code "symbol_ref")
-		 (match_test "SYMBOL_REF_FLAG (op)")))))
+       (match_test "dadao_constant_address_p (op)")))
 
 ;; FIXME: L (or S) is redundant.
 
