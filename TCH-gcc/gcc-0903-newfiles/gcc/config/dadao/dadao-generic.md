@@ -20,8 +20,8 @@
 
 ;; seto is pseudo insn, so we place ? before Rg
 (define_insn "mov_ri<mode>"
-  [(set (match_operand:QHSD 0 "register_operand"  "= Rg,  Rg, ?Rg")
-        (match_operand:QHSD 1 "const_int_operand" "  Iw, Pnn,  n"))]
+  [(set (match_operand:QHSD 0 "register_operand"  "= Rg, Rg, ?Rg")
+        (match_operand:QHSD 1 "const_int_operand" "  Iw, In,  n"))]
 	""
 	"@
 	%s1	%0, %v1

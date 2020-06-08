@@ -1343,7 +1343,7 @@ dadao_output_register_setting (FILE *stream,
   if (do_begin_end)
     fprintf (stream, "\t");
 
-  if (insn_const_int_ok_for_constraint (value, CONSTRAINT_Pnn))
+  if (insn_const_int_ok_for_constraint (value, CONSTRAINT_In))
     fprintf (stream, "subu	%s, $0, %" PRId64, reg_names[regno], -value);
   else if (dadao_shiftable_wyde_value ((uint64_t) value))
     {
