@@ -3,6 +3,11 @@
 ;; Operand and operator predicates for the GCC DADAO port.
 ;; Copyright (C) 2020-2033 Guan Xuetao (AT) Peking Univ.
 
+;; TODO: ri add shift-imm handler
+(define_predicate "dd_ii_ri_operand"
+  (ior (match_operand 0 "register_operand")
+       (match_code "const_int")))
+
 ;; Return 1 if OP is a valid comparison operator for "cbranch" instructions.
 ;; LE and GE are further lowered by the cbranchdf4 pattern.
 (define_predicate "float_comparison_operator"

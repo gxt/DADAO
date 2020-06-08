@@ -122,26 +122,6 @@
   ""
   "")
 
-(define_insn "adddi3"
-  [(set (match_operand:DI 0 "register_operand"	"=r,r,r")
-	(plus:DI
-	 (match_operand:DI 1 "register_operand" "%r,r,0")
-	 (match_operand:DI 2 "dadao_reg_or_constant_operand" "rTti,In,IwS")))]
-  ""
-  "@
-	addu	%0, %1, %2
-	subu	%0, %1, %n2
-   %i2 %0,%v2")
-
-;; Insn canonicalization *should* have removed the need for an integer
-;; in operand 2.
-(define_insn "subdi3"
-  [(set (match_operand:DI 0 "register_operand" "=r")
-	(minus:DI (match_operand:DI 1 "register_operand" "r")
-		  (match_operand:DI 2 "register_operand" "r")))]
-  ""
-  "subu	%0, %1, %2")
-
 (define_insn "muldi3"
   [(set (match_operand:DI 0 "register_operand" "=r,r")
 	(mult:DI (match_operand:DI 1 "register_operand" "%r,r")
