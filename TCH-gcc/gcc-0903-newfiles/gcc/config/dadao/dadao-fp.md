@@ -7,8 +7,8 @@
 ;; Note that we move around the float as a collection of bits; no
 ;; conversion to double.
 (define_insn "movsf"
- [(set (match_operand:SF 0 "nonimmediate_operand" "=r,r,x,r,r,m,??r")
-       (match_operand:SF 1 "general_operand"	   "r,G,r,x,m,r,F"))]
+ [(set (match_operand:SF 0 "nonimmediate_operand" "=r,r,Rs,r,r,m,??r")
+       (match_operand:SF 1 "general_operand"	   "r,G,r,Rs,m,r,F"))]
   ""
   "@
 	or	%0, %1, 0
@@ -20,8 +20,8 @@
    %r0%I1")
 
 (define_insn "movdf"
-  [(set (match_operand:DF 0 "nonimmediate_operand" "=r,r,x,r,r,m,??r")
-	(match_operand:DF 1 "general_operand"	    "r,G,r,x,m,r,F"))]
+  [(set (match_operand:DF 0 "nonimmediate_operand" "=r,r,Rs,r,r,m,??r")
+	(match_operand:DF 1 "general_operand"	    "r,G,r,Rs,m,r,F"))]
   ""
   "@
 	or	%0, %1, 0

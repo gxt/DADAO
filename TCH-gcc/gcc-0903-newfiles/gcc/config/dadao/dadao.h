@@ -222,7 +222,7 @@ enum reg_class {
 /* Note that the contents of each item is always 32 bits.  */
 #define REG_CLASS_CONTENTS {							\
 	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	0},	\
-	{~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	0x20},	\
+	{~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	0},	\
 	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	0},	\
 	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	0},	\
 	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	0},	\

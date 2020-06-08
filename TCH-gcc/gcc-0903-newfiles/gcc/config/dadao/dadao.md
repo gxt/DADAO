@@ -76,8 +76,8 @@
 
 ;; We assume all "s" are addresses.  Does that hold?
 (define_insn "movdi"
-  [(set (match_operand:DI 0 "nonimmediate_operand" "=r,r ,r,x,r,r,m,r,r,??r")
-	(match_operand:DI 1 "general_operand"	    "r,LS,Pnn,r,x,m,r,Ttr,s,n"))]
+  [(set (match_operand:DI 0 "nonimmediate_operand" "=r,r ,r,Rs,r,r,m,r,r,??r")
+	(match_operand:DI 1 "general_operand"	    "r,LS,Pnn,r,Rs,m,r,Ttr,s,n"))]
   ""
   "@
 	or	%0, %1, 0
@@ -99,8 +99,8 @@
 ;; we treat them as signed entities; see dadao-modes.def.  The following
 ;; expanders should cover all MODE_CC modes, and expand for this pattern.
 (define_insn "*movcc_expanded"
-  [(set (match_operand 0 "nonimmediate_operand" "=r,x,r,r,m")
-	(match_operand 1 "nonimmediate_operand"  "r,r,x,m,r"))]
+  [(set (match_operand 0 "nonimmediate_operand" "=r,Rs,r,r,m")
+	(match_operand 1 "nonimmediate_operand"  "r,r,Rs,m,r"))]
   "GET_MODE_CLASS (GET_MODE (operands[0])) == MODE_CC
    && GET_MODE_CLASS (GET_MODE (operands[1])) == MODE_CC"
   "@

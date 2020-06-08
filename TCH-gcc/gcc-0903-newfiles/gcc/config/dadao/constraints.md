@@ -19,7 +19,7 @@
 (define_register_constraint "Rv" "VECTOR_REGS"
 	"Vector registers")
 
-(define_register_constraint "x" "SPECIAL_REGS"
+(define_register_constraint "Rs" "SPECIAL_REGS"
 	"Special registers")
 
 (define_register_constraint "y" "REMAINDER_REG"
