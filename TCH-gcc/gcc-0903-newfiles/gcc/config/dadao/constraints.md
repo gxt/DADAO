@@ -19,8 +19,8 @@
 (define_register_constraint "Rv" "VECTOR_REGS"
 	"Vector registers")
 
-(define_register_constraint "x" "SYSTEM_REGS"
-  "@internal")
+(define_register_constraint "x" "SPECIAL_REGS"
+	"Special registers")
 
 (define_register_constraint "y" "REMAINDER_REG"
   "@internal")

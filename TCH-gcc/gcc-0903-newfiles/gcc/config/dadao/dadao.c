@@ -159,7 +159,7 @@ static reg_class_t dd_secondary_reload (bool in_p ATTRIBUTE_UNUSED,
 		machine_mode reload_mode ATTRIBUTE_UNUSED,
 		secondary_reload_info *sri ATTRIBUTE_UNUSED)
 {
-	if (rclass == REMAINDER_REG || rclass == HIMULT_REG || rclass == SYSTEM_REGS)
+	if (rclass == REMAINDER_REG || rclass == HIMULT_REG || rclass == SPECIAL_REGS)
 		return GENERAL_REGS;
 
 	return NO_REGS;

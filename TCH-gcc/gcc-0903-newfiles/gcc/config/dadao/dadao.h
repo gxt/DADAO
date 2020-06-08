@@ -202,7 +202,7 @@ enum reg_class {
 	VECTOR_REGS,
 	REMAINDER_REG,
 	HIMULT_REG,
-	SYSTEM_REGS,
+	SPECIAL_REGS,
 	ALL_REGS,
 	LIM_REG_CLASSES };
 
@@ -216,7 +216,7 @@ enum reg_class {
 	"VECTOR_REGS",				\
 	"REMAINDER_REG",			\
 	"HIMULT_REG",				\
-	"SYSTEM_REGS",				\
+	"SPECIAL_REGS",				\
 	"ALL_REGS"}
 
 /* Note that the contents of each item is always 32 bits.  */
@@ -236,7 +236,7 @@ enum reg_class {
   || (REGNO) == DADAO_ARG_POINTER_REGNUM				\
   ? GENERAL_REGS							\
   : (REGNO) == DADAO_REMAINDER_REGNUM ? REMAINDER_REG			\
-  : (REGNO) == DADAO_HIMULT_REGNUM ? HIMULT_REG : SYSTEM_REGS)
+  : (REGNO) == DADAO_HIMULT_REGNUM ? HIMULT_REG : SPECIAL_REGS)
 
 #define BASE_REG_CLASS		GENERAL_REGS
 #define INDEX_REG_CLASS		GENERAL_REGS
