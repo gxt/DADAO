@@ -22,6 +22,11 @@
 (define_register_constraint "Rs" "SPECIAL_REGS"
 	"Special registers")
 
+(define_constraint "Iw"
+	"Shiftable wyde integer"
+	(and (match_code "const_int")
+	     (match_test "dadao_shiftable_wyde_value (ival)")))
+
 (define_register_constraint "y" "REMAINDER_REG"
   "@internal")
 
@@ -37,11 +42,6 @@
   "A 16-bit unsigned integer."
   (and (match_code "const_int")
        (match_test "IN_RANGE (ival, 0, 65535)")))
-
-(define_constraint "L"
-  "@internal"
-  (and (match_code "const_int")
-       (match_test "dadao_shiftable_wyde_value (ival)")))
 
 (define_constraint "M"
   "The value 0."
