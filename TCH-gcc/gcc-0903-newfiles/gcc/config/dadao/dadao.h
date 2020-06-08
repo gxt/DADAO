@@ -25,6 +25,7 @@
 /* FIXME: This one isn't fully implemented yet.  Return values larger than
    one register are passed by reference in DADAO_STRUCT_VALUE_REGNUM by the
    caller, except for return values of type "complex".  */
+#define	DADAO_PROGRAM_COUNTER_REGNUM		(DADAO_REG_RP_START + 0x00)
 #define	DADAO_STACK_POINTER_REGNUM		(DADAO_REG_RP_START + 0x01)
 #define	DADAO_FRAME_POINTER_REGNUM		(DADAO_REG_RP_START + 0x02)
 #define	DADAO_STRUCT_VALUE_REGNUM		(DADAO_REG_RP_START + 0x1F)
@@ -177,7 +178,7 @@ struct GTY(()) machine_function
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 }
 
-#define	PC_REGNUM			64
+#define	PC_REGNUM				DADAO_PROGRAM_COUNTER_REGNUM
 
 /* XXX gccint 18.7.2 Node: Order of Allocation of Registers */
 /* (empty) */

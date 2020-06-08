@@ -23,7 +23,10 @@
    (DADAO_rR_REGNUM 260)
    (DADAO_fp_rO_OFFSET -24)]
 )
-
+
+(define_mode_iterator	QHSD	[QI HI SI DI])
+(define_mode_attr	bwto	[(QI "b") (HI "w") (SI "t") (DI "o")])
+
 ;; Operand and operator predicates.
 
 (include "predicates.md")
@@ -35,44 +38,38 @@
 ;; FIXME: Can we remove the reg-to-reg for smaller modes?  Shouldn't they
 ;; be synthesized ok?
 (define_insn "movqi"
-  [(set (match_operand:QI 0 "nonimmediate_operand" "=r,r ,r,x ,r,r,m,??r")
-	(match_operand:QI 1 "general_operand"	    "r,LS,Pnn,r,x,m,r,n"))]
+  [(set (match_operand:QI 0 "nonimmediate_operand" "=r, r,  r,r,m,??r")
+        (match_operand:QI 1 "general_operand"       "r,LS,Pnn,m,r,  n"))]
   ""
   "@
 	or	%0, %1, 0
    %s1 %0,%v1
 	subu	%0, $0, %n1
-	put	%0, %1
-	get	%0, %1
 	ldb%U0	%0, %1
 	stb	%1, %0
    %r0%I1")
 
 (define_insn "movhi"
-  [(set (match_operand:HI 0 "nonimmediate_operand" "=r,r ,r ,x,r,r,m,??r")
-	(match_operand:HI 1 "general_operand"	    "r,LS,Pnn,r,x,m,r,n"))]
+  [(set (match_operand:HI 0 "nonimmediate_operand" "=r, r,  r,r,m,??r")
+        (match_operand:HI 1 "general_operand"       "r,LS,Pnn,m,r,  n"))]
   ""
   "@
 	or	%0, %1, 0
    %s1 %0,%v1
 	subu	%0, $0, %n1
-	put	%0, %1
-	get	%0, %1
 	ldw%U0	%0, %1
 	stw	%1, %0
    %r0%I1")
 
 ;; gcc.c-torture/compile/920428-2.c fails if there's no "n".
 (define_insn "movsi"
-  [(set (match_operand:SI 0 "nonimmediate_operand" "=r,r ,r,x,r,r,m,??r")
-	(match_operand:SI 1 "general_operand"	    "r,LS,Pnn,r,x,m,r,n"))]
+  [(set (match_operand:SI 0 "nonimmediate_operand" "=r, r,  r,r,m,??r")
+        (match_operand:SI 1 "general_operand"       "r,LS,Pnn,m,r,n"))]
   ""
   "@
 	or	%0, %1, 0
    %s1 %0,%v1
 	subu	%0, $0, %n1
-	put	%0, %1
-	get	%0, %1
 	ldt%U0	%0, %1
 	stt	%1, %0
    %r0%I1")
