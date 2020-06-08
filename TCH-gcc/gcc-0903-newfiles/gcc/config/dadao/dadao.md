@@ -37,24 +37,22 @@
 
 ;; FIXME: Can we remove the reg-to-reg for smaller modes?  Shouldn't they
 ;; be synthesized ok?
-(define_insn "movqi"
-  [(set (match_operand:QI 0 "nonimmediate_operand" "=r, r,  r,r,m,??r")
-        (match_operand:QI 1 "general_operand"       "r,LS,Pnn,m,r,  n"))]
+(define_insn "*movqi"
+  [(set (match_operand:QI 0 "nonimmediate_operand" "= r,  r,r,m,??r")
+        (match_operand:QI 1 "general_operand"       "LS,Pnn,m,r,  n"))]
   ""
   "@
-	or	%0, %1, 0
    %s1 %0,%v1
 	subu	%0, $0, %n1
 	ldb%U0	%0, %1
 	stb	%1, %0
    %r0%I1")
 
-(define_insn "movhi"
-  [(set (match_operand:HI 0 "nonimmediate_operand" "=r, r,  r,r,m,??r")
-        (match_operand:HI 1 "general_operand"       "r,LS,Pnn,m,r,  n"))]
+(define_insn "*movhi"
+  [(set (match_operand:HI 0 "nonimmediate_operand" "= r,  r,r,m,??r")
+        (match_operand:HI 1 "general_operand"       "LS,Pnn,m,r,  n"))]
   ""
   "@
-	or	%0, %1, 0
    %s1 %0,%v1
 	subu	%0, $0, %n1
 	ldw%U0	%0, %1
@@ -62,12 +60,11 @@
    %r0%I1")
 
 ;; gcc.c-torture/compile/920428-2.c fails if there's no "n".
-(define_insn "movsi"
-  [(set (match_operand:SI 0 "nonimmediate_operand" "=r, r,  r,r,m,??r")
-        (match_operand:SI 1 "general_operand"       "r,LS,Pnn,m,r,n"))]
+(define_insn "*movsi"
+  [(set (match_operand:SI 0 "nonimmediate_operand" "= r,  r,r,m,??r")
+        (match_operand:SI 1 "general_operand"       "LS,Pnn,m,r,n"))]
   ""
   "@
-	or	%0, %1, 0
    %s1 %0,%v1
 	subu	%0, $0, %n1
 	ldt%U0	%0, %1
@@ -75,16 +72,13 @@
    %r0%I1")
 
 ;; We assume all "s" are addresses.  Does that hold?
-(define_insn "movdi"
-  [(set (match_operand:DI 0 "nonimmediate_operand" "=r,r ,r,Rs,r,r,m,r,r,??r")
-	(match_operand:DI 1 "general_operand"	    "r,LS,Pnn,r,Rs,m,r,Ttr,s,n"))]
+(define_insn "*movdi"
+  [(set (match_operand:DI 0 "nonimmediate_operand" "= r,  r,r,m,  r,r,??r")
+	(match_operand:DI 1 "general_operand"	    "LS,Pnn,m,r,Ttr,s,n"))]
   ""
   "@
-	or	%0, %1, 0
    %s1 %0,%v1
 	subu	%0, $0, %n1
-	put	%0, %1
-	get	%0, %1
 	ldo	%0, %1
 	sto	%1, %0
 	geta	%0, %1
