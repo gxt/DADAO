@@ -71,11 +71,6 @@
 	    (match_test "ival == 9")
 	    (match_test "ival == 17"))))
 
-(define_constraint "Pbc"
-  "A 12-bit unsigned integer"
-  (and (match_code "const_int")
-       (match_test "IN_RANGE (ival, 0, 4095)")))
-
 ;; FIXME: M (or G) is redundant.
 
 (define_constraint "G"

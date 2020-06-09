@@ -169,7 +169,7 @@
 (define_insn "divmoddi4"
   [(set (match_operand:DI 0 "register_operand" "=r")
 	(div:DI (match_operand:DI 1 "register_operand" "r")
-		(match_operand:DI 2 "dadao_reg_or_12bit_operand" "rPbc")))
+		(match_operand:DI 2 "dd_ii_ri_operand" "rId")))
    (set (match_operand:DI 3 "register_operand" "=y")
 	(mod:DI (match_dup 1) (match_dup 2)))]
   ;; Do the library stuff later.
@@ -179,7 +179,7 @@
 (define_insn "udivmoddi4"
   [(set (match_operand:DI 0 "register_operand" "=r")
 	(udiv:DI (match_operand:DI 1 "register_operand" "r")
-		 (match_operand:DI 2 "dadao_reg_or_12bit_operand" "rPbc")))
+		 (match_operand:DI 2 "dd_ii_ri_operand" "rId")))
    (set (match_operand:DI 3 "register_operand" "=y")
 	(umod:DI (match_dup 1) (match_dup 2)))]
   ""
@@ -313,7 +313,7 @@
   [(set (match_operand:CC 0 "register_operand" "=r")
 	(compare:CC
 	 (match_operand:DI 1 "register_operand" "r")
-	 (match_operand:DI 2 "dadao_reg_or_12bit_operand" "rPbc")))]
+	 (match_operand:DI 2 "dd_ii_ri_operand" "rId")))]
   ""
 	"cmp	%0, %1, %2")
 
@@ -321,7 +321,7 @@
   [(set (match_operand:CC_UNS 0 "register_operand" "=r")
 	(compare:CC_UNS
 	 (match_operand:DI 1 "register_operand" "r")
-	 (match_operand:DI 2 "dadao_reg_or_12bit_operand" "rPbc")))]
+	 (match_operand:DI 2 "dd_ii_ri_operand" "rId")))]
   ""
 	"cmpu	%0, %1, %2")
 

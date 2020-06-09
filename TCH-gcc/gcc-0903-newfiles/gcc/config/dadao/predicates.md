@@ -146,13 +146,6 @@
    (and (match_code "const_int")
 	(match_test "satisfies_constraint_Tti (op)"))))
 
-;; True if this is a register or an int 0..4095.
-(define_predicate "dadao_reg_or_12bit_operand"
-  (ior
-   (match_operand 0 "register_operand")
-   (and (match_code "const_int")
-	(match_test "satisfies_constraint_Pbc (op)"))))
-
 ;; True if this is a memory address, possibly strictly.
 ;; See also comment above the "*call_real" pattern.
 
