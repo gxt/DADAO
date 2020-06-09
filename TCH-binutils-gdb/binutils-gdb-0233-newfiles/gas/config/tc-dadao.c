@@ -712,7 +712,7 @@ void dadao_md_assemble (char *str)
 		if (n_operands != 0)
 			DADAO_BAD_INSN("invalid operands to opcode");
 
-		if (instruction->minor_opcode == 0x01) {	/* ret */
+		if (instruction->minor_opcode == 0x37) {	/* ret */
 			DDOP_SET_FA(opcodep, instruction->minor_opcode);
 			DDOP_SET_FB(opcodep, 0);
 			DDOP_SET_FC(opcodep, 0);
