@@ -878,13 +878,6 @@ static void dd_print_operand (FILE *stream, rtx x, int code)
 	fprintf (stream, "e");
       return;
 
-    case 'm':
-      /* Output the number minus 1.  */
-      if (GET_CODE (x) != CONST_INT)
-	  fatal_insn ("DADAO Internal: Bad value for 'm', not a CONST_INT", x);
-      fprintf (stream, "%" PRId64, (int64_t) (dadao_intval (x) - 1));
-      return;
-
     case 'r':
       /* Store the register to output a constant to.  */
       if (! REG_P (x))

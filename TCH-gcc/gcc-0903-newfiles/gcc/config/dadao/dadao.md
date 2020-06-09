@@ -121,16 +121,6 @@
 	(match_operand:CC_FUN 1 "nonimmediate_operand" ""))]
   ""
   "")
-
-(define_insn "muldi3"
-  [(set (match_operand:DI 0 "register_operand" "=r,r")
-	(mult:DI (match_operand:DI 1 "register_operand" "%r,r")
-		 (match_operand:DI 2 "dadao_reg_or_12bit_operand" "O,rPbc")))
-   (clobber (match_scratch:DI 3 "=X,z"))]
-  ""
-  "@
-   %m	addu	%0, %1, %1 << 1
-	mulu	%0, %1, %2")
 
 ;; FIXME: Should we define_expand for smin, smax, umin, umax using a
 ;; nifty conditional sequence?

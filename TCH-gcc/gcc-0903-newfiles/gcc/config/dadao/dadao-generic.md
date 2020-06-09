@@ -44,3 +44,12 @@
               (match_operand:DI 2 "register_operand" "  Rg")))]
 	""
 	"subu	%0, %1, %2")
+
+(define_insn "muldi3"
+  [(set      (match_operand:DI 0 "register_operand" "=   Rg")
+    (mult:DI (match_operand:DI 1 "register_operand" "%   Rg")
+             (match_operand:DI 2 "dd_ii_ri_operand" "  RgId")))
+   (clobber  (match_scratch:DI 3                    "=    z"))]
+	""
+	"@
+	mulu	%0, %1, %2")

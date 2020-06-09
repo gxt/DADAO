@@ -6,7 +6,8 @@
 ;; TODO: ri add shift-imm handler
 (define_predicate "dd_ii_ri_operand"
   (ior (match_operand 0 "register_operand")
-       (match_code "const_int")))
+       (and (match_code "const_int")
+            (match_test "satisfies_constraint_Id(op)"))))
 
 ;; Return 1 if OP is a valid comparison operator for "cbranch" instructions.
 ;; LE and GE are further lowered by the cbranchdf4 pattern.
