@@ -142,15 +142,23 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"jump",	I (JUMP),	0,	1,	OP (iiii_rrii),		T (branch)},
 
 	{"swym",	0xDA,		0,	0,	OP (oiii),		T (normal)},
-	{"ret",		0xDA,		0x01,	0,	OP (o000),		T (jsr)},
-	{"trip",	0xDA,		0x04,	0,	OP (oiii),		T (jsr)},
-	{"trap",	0xDA,		0x20,	0,	OP (oiii),		T (jsr)},
+
+	{"put.rp",	0xDA,		0x10,	0,	OP (orr0_put),		T (normal)},
+	{"put.rf",	0xDA,		0x11,	0,	OP (orr0_put),		T (normal)},
+	{"put.rv",	0xDA,		0x12,	0,	OP (orr0_put),		T (normal)},
+	{"put.rs",	0xDA,		0x13,	0,	OP (orr0_put),		T (normal)},
+
+	{"get.rp",	0xDA,		0x20,	0,	OP (orr0_get),		T (normal)},
+	{"get.rf",	0xDA,		0x21,	0,	OP (orr0_get),		T (normal)},
+	{"get.rv",	0xDA,		0x22,	0,	OP (orr0_get),		T (normal)},
+	{"get.rs",	0xDA,		0x23,	0,	OP (orr0_get),		T (normal)},
 
 	/* nop is 0xDADADADA, DA is 11011010, so minor-opcode is 110110 */
 	{"nop",		0xDA,		0x36,	0,	OP (o000),		T (normal)},
 
-	{"put",		0xDA,		0x37,	0,	OP (orr0_put),		T (normal)},
-	{"get",		0xDA,		0x38,	0,	OP (orr0_get),		T (normal)},
+	{"ret",		0xDA,		0x37,	0,	OP (o000),		T (jsr)},
+	{"trip",	0xDA,		0x38,	0,	OP (oiii),		T (jsr)},
+	{"trap",	0xDA,		0x3F,	0,	OP (oiii),		T (jsr)},
 
 	{"fcmp",	I (FP),		1,	0,	OP (orrr),		T (normal)},
 	{"fun",		I (FP),		2,	0,	OP (orrr),		T (normal)},
