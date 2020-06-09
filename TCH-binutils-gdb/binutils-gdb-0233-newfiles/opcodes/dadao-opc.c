@@ -10,43 +10,24 @@
 #include "opcode/dadao.h"
 #include "symcat.h"
 
-/* Register-name-table for special registers.  */
-const struct dadao_spec_reg dadao_spec_regs[] =
+/* Register-name-table */
+const struct dadao_reg_alias dadao_reg_aliases[] =
  {
-   /* Keep rJ at top; it's the most frequently used one.  */
-   {"rJ", 4},
-   {"rA", 21},
-   {"rB", 0},
-   {"rC", 8},
-   {"rD", 1},
-   {"rE", 2},
-   {"rF", 22},
-   {"rG", 19},
-   {"rH", 3},
-   {"rI", 12},
-   {"rK", 15},
-   {"rL", 20},
-   {"rM", 5},
-   {"rN", 9},
-   {"rO", 10},
-   {"rP", 23},
-   {"rQ", 16},
-   {"rR", 6},
-   {"rS", 11},
-   {"rT", 13},
-   {"rU", 17},
-   {"rV", 18},
-   {"rW", 24},
-   {"rX", 25},
-   {"rY", 26},
-   {"rZ", 27},
-   {"rBB", 7},
-   {"rTT", 14},
-   {"rWW", 28},
-   {"rXX", 29},
-   {"rYY", 30},
-   {"rZZ", 31},
-   {NULL, 0}
+	/* General registers */
+	{"zero", 0},
+	/* Pointer registers */
+	{"pc", 0x40 + 0},
+	{"sp", 0x40 + 1},
+	{"fp", 0x40 + 2},
+	/* Special registers */
+	{"rD", 0x100 + 1},
+	{"rE", 0x100 + 2},
+	{"rH", 0x100 + 3},
+	{"rJ", 0x100 + 4},
+	{"rR", 0x100 + 6},
+	{"rO", 0x100 + 10},
+
+	{NULL, 0}
  };
 
 /* Opcode-table.  In order to cut down on redundant contents, we use helper
@@ -143,15 +124,15 @@ const struct dadao_opcode dadao_opcodes[] =
 
 	{"swym",	0xDA,		0,	0,	OP (oiii),		T (normal)},
 
-	{"put.rp",	0xDA,		0x10,	0,	OP (orr0_put),		T (normal)},
-	{"put.rf",	0xDA,		0x11,	0,	OP (orr0_put),		T (normal)},
-	{"put.rv",	0xDA,		0x12,	0,	OP (orr0_put),		T (normal)},
-	{"put.rs",	0xDA,		0x13,	0,	OP (orr0_put),		T (normal)},
+	{"put.rp",	0xDA,		0x10,	0,	OP (orr0),		T (normal)},
+	{"put.rf",	0xDA,		0x11,	0,	OP (orr0),		T (normal)},
+	{"put.rv",	0xDA,		0x12,	0,	OP (orr0),		T (normal)},
+	{"put.rs",	0xDA,		0x13,	0,	OP (orr0),		T (normal)},
 
-	{"get.rp",	0xDA,		0x20,	0,	OP (orr0_get),		T (normal)},
-	{"get.rf",	0xDA,		0x21,	0,	OP (orr0_get),		T (normal)},
-	{"get.rv",	0xDA,		0x22,	0,	OP (orr0_get),		T (normal)},
-	{"get.rs",	0xDA,		0x23,	0,	OP (orr0_get),		T (normal)},
+	{"get.rp",	0xDA,		0x20,	0,	OP (orr0),		T (normal)},
+	{"get.rf",	0xDA,		0x21,	0,	OP (orr0),		T (normal)},
+	{"get.rv",	0xDA,		0x22,	0,	OP (orr0),		T (normal)},
+	{"get.rs",	0xDA,		0x23,	0,	OP (orr0),		T (normal)},
 
 	/* nop is 0xDADADADA, DA is 11011010, so minor-opcode is 110110 */
 	{"nop",		0xDA,		0x36,	0,	OP (o000),		T (normal)},

@@ -36,23 +36,6 @@ extern const struct relax_type dadao_relax_table[];
   && (FIX)->fx_r_type != BFD_RELOC_VTABLE_INHERIT		\
   && (FIX)->fx_r_type != BFD_RELOC_VTABLE_ENTRY)
 
-/* Here's where we make all symbols global, when so requested.
-   We must avoid doing that for expression symbols or section symbols,
-   though.  */
-#define tc_frob_symbol(sym, punt)				\
-  do								\
-    {								\
-      if (S_GET_SEGMENT (sym) == reg_section)			\
-	{							\
-	  if (S_GET_NAME (sym)[0] != '$'			\
-	      && S_GET_VALUE (sym) < 256)			\
-	    {							\
-		symbol_mark_used_in_reloc (sym);		\
-	    }							\
-	}							\
-    }								\
-  while (0)
-
 /* No shared lib support, so we don't need to ensure externally
    visible symbols can be overridden.  */
 #define EXTERN_FORCE_RELOC 0

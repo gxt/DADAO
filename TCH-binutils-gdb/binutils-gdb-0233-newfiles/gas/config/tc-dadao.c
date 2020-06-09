@@ -14,9 +14,7 @@
 #include "safe-ctype.h"
 #include "dwarf2dbg.h"
 
-static int get_spec_regno (char *);
 static int get_operands (char *, expressionS *);
-static int get_putget_operands (struct dadao_opcode *, char *, expressionS *);
 static void dd_set_addr_offset(char *, offsetT, int, int);
 static void dd_fill_nops (char *, int);
 
@@ -241,123 +239,6 @@ get_operands (char *s, expressionS *exp)
   return (numexp);
 }
 
-/* Get the value of a special register, or -1 if the name does not match
-   one.  NAME is a null-terminated string.  */
-
-static int
-get_spec_regno (char *name)
-{
-  int i;
-
-  if (name == NULL)
-    return -1;
-
-  /* Well, it's a short array and we'll most often just match the first
-     entry, rJ.  */
-  for (i = 0; dadao_spec_regs[i].name != NULL; i++)
-    if (strcmp (name, dadao_spec_regs[i].name) == 0)
-      return dadao_spec_regs[i].number;
-
-  return -1;
-}
-
-/* For GET and PUT, parse the register names "manually", so we don't use
-   user labels.  */
-static int
-get_putget_operands (struct dadao_opcode *insn, char *operands,
-		     expressionS *exp)
-{
-  expressionS *expp_reg;
-  expressionS *expp_sreg;
-  char *sregp = NULL;
-  char *sregend = operands;
-  char *p = operands;
-  char c = *sregend;
-  int regno;
-
-  /* Skip leading whitespace */
-  while (*p == ' ' || *p == '\t')
-    p++;
-
-  input_line_pointer = p;
-
-  /* Initialize both possible operands to error state, in case we never
-     get further.  */
-  exp[0].X_op = O_illegal;
-  exp[1].X_op = O_illegal;
-
-  if (insn->operands == dadao_operands_orr0_get)
-    {
-      expp_reg = &exp[0];
-      expp_sreg = &exp[1];
-
-      expression (expp_reg);
-
-      p = input_line_pointer;
-
-      /* Skip whitespace */
-      while (*p == ' ' || *p == '\t')
-	p++;
-
-      if (*p == ',')
-	{
-	  p++;
-
-	  /* Skip whitespace */
-	  while (*p == ' ' || *p == '\t')
-	    p++;
-	  sregp = p;
-	  input_line_pointer = sregp;
-	  c = get_symbol_name (&sregp);
-	  sregend = input_line_pointer;
-	  if (c == '"')
-	    ++ input_line_pointer;
-	}
-    }
-  else
-    {
-      expp_sreg = &exp[0];
-      expp_reg = &exp[1];
-
-      c = get_symbol_name (&sregp);
-      sregend = input_line_pointer;
-      restore_line_pointer (c);
-      p = input_line_pointer;
-
-      /* Skip whitespace */
-      while (*p == ' ' || *p == '\t')
-	p++;
-
-      if (*p == ',')
-	{
-	  p++;
-
-	  /* Skip whitespace */
-	  while (*p == ' ' || *p == '\t')
-	    p++;
-
-	  input_line_pointer = p;
-	  expression (expp_reg);
-	}
-      *sregend = 0;
-    }
-
-  regno = get_spec_regno (sregp);
-  *sregend = c;
-
-  /* Let the caller issue errors; we've made sure the operands are
-     invalid.  */
-  if (expp_reg->X_op != O_illegal
-      && expp_reg->X_op != O_absent
-      && regno != -1)
-    {
-      expp_sreg->X_op = O_register;
-      expp_sreg->X_add_number = regno + 256;
-    }
-
-  return 2;
-}
-
 /* Handle DADAO-specific option.  */
 
 int
@@ -397,25 +278,35 @@ md_show_usage (FILE * stream)
 /* Initialize GAS DADAO specifics.  */
 void dadao_md_begin (void)
 {
-  int i;
-  const struct dadao_opcode *opcode;
+	int i;
+	const struct dadao_opcode *opcode;
+	char buf[5];
 
-  dadao_opcode_hash = hash_new ();
+	dadao_opcode_hash = hash_new ();
 
-  for (opcode = dadao_opcodes; opcode->name; opcode++)
-    hash_insert (dadao_opcode_hash, opcode->name, (char *) opcode);
+	for (opcode = dadao_opcodes; opcode->name; opcode++)
+		hash_insert (dadao_opcode_hash, opcode->name, (char *) opcode);
 
-  /* We always insert the ordinary registers 0..255 as registers.  */
-  for (i = 0; i < 256; i++)
-    {
-      char buf[5];
+	for (i = 0; i < 64; i++) {
+		sprintf (buf, "rg%d", i);
+		symbol_table_insert (symbol_new (buf, reg_section, i, &zero_address_frag));
 
-      /* Alternatively, we could diddle with '$' and the following number,
-	 but keeping the registers as symbols helps keep parsing simple.  */
-      sprintf (buf, "$%d", i);
-      symbol_table_insert (symbol_new (buf, reg_section, i,
-				       &zero_address_frag));
-    }
+		sprintf (buf, "rp%d", i);
+		symbol_table_insert (symbol_new (buf, reg_section, i + 64, &zero_address_frag));
+
+		sprintf (buf, "rf%d", i);
+		symbol_table_insert (symbol_new (buf, reg_section, i + 128, &zero_address_frag));
+
+		sprintf (buf, "rv%d", i);
+		symbol_table_insert (symbol_new (buf, reg_section, i + 192, &zero_address_frag));
+
+		sprintf (buf, "rs%d", i);
+		symbol_table_insert (symbol_new (buf, reg_section, i + 256, &zero_address_frag));
+	}
+
+	for (i = 0; dadao_reg_aliases[i].name != NULL; i++)
+		symbol_table_insert (symbol_new (dadao_reg_aliases[i].name, reg_section,
+				dadao_reg_aliases[i].number, &zero_address_frag));
 }
 
 /* Assemble one insn in STR.  */
@@ -436,6 +327,9 @@ void dadao_md_assemble (char *str)
   unsigned int seto_w16 = 0;
   expressionS *exp_left;
   expressionS *exp_right;
+
+	unsigned int regclass_offset_0;
+	unsigned int regclass_offset_1;
 
   /* Move to end of opcode.  */
   for (operands = str;
@@ -467,13 +361,6 @@ void dadao_md_assemble (char *str)
      opcode, so we don't have to iterate over more than one opcode; if the
      syntax does not match, then there's a syntax error.  */
 
-  /* If this is GET or PUT, and we don't do allow those names to be
-     equated, we need to parse the names ourselves, so we don't pick up a
-     user label instead of the special register.  */
-  if (instruction->operands == dadao_operands_orr0_get
-	  || instruction->operands == dadao_operands_orr0_put)
-    n_operands = get_putget_operands (instruction, operands, exp);
-  else
     n_operands = get_operands (operands, exp);
 
   /* We also assume that the length of the instruction is at least 4, the
@@ -543,30 +430,69 @@ void dadao_md_assemble (char *str)
 
 		break;
 
-	case dadao_operands_orr0_get:
-		/* "rb, spec_reg"; GET.
-		   Like with rounding modes, we demand that the special register or
-		   symbol is already defined when we get here at the point of use.  */
+	case dadao_operands_orr0: /* get.xx and put.xx */
 		if (n_operands != 2)
 			DADAO_BAD_INSN("invalid operands to opcode");
 
-		DDOP_EXP_MUST_BE_REG(exp[0]);
+		regclass_offset_0 = 0x00;
+		regclass_offset_1 = 0x00;
 
-		DDOP_SET_FA(opcodep, instruction->minor_opcode);
-		DDOP_SET_FB(opcodep, exp[0].X_add_number);
-		DDOP_SET_FC(opcodep, exp[1].X_add_number - 256);
-		DDOP_SET_FD(opcodep, 0);
-		break;
+		switch (instruction->minor_opcode) {
+		case 0x10:
+			DDOP_EXP_MUST_BE_RP(exp[0]);
+			DDOP_EXP_MUST_BE_RG(exp[1]);
+			regclass_offset_0 = 0x40;
+			break;
 
-	case dadao_operands_orr0_put:
-		/* "spec_reg, rc"; PUT.  */
-		if (n_operands != 2)
+		case 0x11:
+			DDOP_EXP_MUST_BE_RF(exp[0]);
+			DDOP_EXP_MUST_BE_RG(exp[1]);
+			regclass_offset_0 = 0x80;
+			break;
+
+		case 0x12:
+			DDOP_EXP_MUST_BE_RV(exp[0]);
+			DDOP_EXP_MUST_BE_RG(exp[1]);
+			regclass_offset_0 = 0xC0;
+			break;
+
+		case 0x13:
+			DDOP_EXP_MUST_BE_RS(exp[0]);
+			DDOP_EXP_MUST_BE_RG(exp[1]);
+			regclass_offset_0 = 0x100;
+			break;
+
+		case 0x20:
+			DDOP_EXP_MUST_BE_RG(exp[0]);
+			DDOP_EXP_MUST_BE_RP(exp[1]);
+			regclass_offset_1 = 0x40;
+			break;
+
+		case 0x21:
+			DDOP_EXP_MUST_BE_RG(exp[0]);
+			DDOP_EXP_MUST_BE_RF(exp[1]);
+			regclass_offset_1 = 0x80;
+			break;
+
+		case 0x22:
+			DDOP_EXP_MUST_BE_RG(exp[0]);
+			DDOP_EXP_MUST_BE_RV(exp[1]);
+			regclass_offset_1 = 0xC0;
+			break;
+
+		case 0x23:
+			DDOP_EXP_MUST_BE_RG(exp[0]);
+			DDOP_EXP_MUST_BE_RS(exp[1]);
+			regclass_offset_1 = 0x100;
+			break;
+
+		default:
 			DADAO_BAD_INSN("invalid operands to opcode");
+		}
 
-		DDOP_EXP_MUST_BE_REG(exp[1]);
 		DDOP_SET_FA(opcodep, instruction->minor_opcode);
-		DDOP_SET_FB(opcodep, exp[0].X_add_number - 256);
-		DDOP_SET_FC(opcodep, exp[1].X_add_number);
+		DDOP_SET_FB(opcodep, exp[0].X_add_number - regclass_offset_0);
+		DDOP_SET_FC(opcodep, exp[1].X_add_number - regclass_offset_1);
 		DDOP_SET_FD(opcodep, 0);
 		break;
 

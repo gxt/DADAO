@@ -24,18 +24,16 @@
    }								\
  while (0)
 
-#define MAX_REG_NAME_LEN       256
-#define MAX_SPEC_REG_NAME_LEN  32
+#define MAX_REG_NAME_LEN       (256 + 64)
 
 struct dadao_dis_info
  {
    const char *reg_name[MAX_REG_NAME_LEN];
-   const char *spec_reg_name[MAX_SPEC_REG_NAME_LEN];
 
    /* Waste a little memory so we don't have to allocate each separately.
       We could have an array with static contents for these, but on the
       other hand, we don't have to.  */
-   char basic_reg_name[MAX_REG_NAME_LEN][sizeof ("$255")];
+   char basic_reg_name[MAX_REG_NAME_LEN][sizeof ("rg63")];
  };
 
 /* Initialize a target-specific array in INFO.  */
@@ -55,16 +53,34 @@ initialize_dadao_dis_info (struct disassemble_info *info)
   memset (minfop, 0, sizeof (*minfop));
 
   /* Fill in the rest with the canonical names.  */
-  for (i = 0; i < MAX_REG_NAME_LEN; i++)
+  for (i = 0; i < 0x40; i++)
     if (minfop->reg_name[i] == NULL)
       {
-	sprintf (minfop->basic_reg_name[i], "$%ld", i);
+	sprintf (minfop->basic_reg_name[i], "rg%ld", i);
+	minfop->reg_name[i] = minfop->basic_reg_name[i];
+      }
+  for (i = 0x40; i < 0x80; i++)
+    if (minfop->reg_name[i] == NULL)
+      {
+	sprintf (minfop->basic_reg_name[i], "rp%ld", i - 0x40);
+	minfop->reg_name[i] = minfop->basic_reg_name[i];
+      }
+  for (i = 0x80; i < 0xC0; i++)
+    if (minfop->reg_name[i] == NULL)
+      {
+	sprintf (minfop->basic_reg_name[i], "rf%ld", i - 0x80);
+	minfop->reg_name[i] = minfop->basic_reg_name[i];
+      }
+  for (i = 0xC0; i < 0x100; i++)
+    if (minfop->reg_name[i] == NULL)
+      {
+	sprintf (minfop->basic_reg_name[i], "rv%ld", i - 0xC0);
 	minfop->reg_name[i] = minfop->basic_reg_name[i];
       }
 
   /* We assume it's actually a one-to-one mapping of number-to-name.  */
-  for (i = 0; dadao_spec_regs[i].name != NULL; i++)
-    minfop->spec_reg_name[dadao_spec_regs[i].number] = dadao_spec_regs[i].name;
+  for (i = 0; dadao_reg_aliases[i].name != NULL; i++)
+    minfop->reg_name[dadao_reg_aliases[i].number] = dadao_reg_aliases[i].name;
 
   info->private_data = (void *) minfop;
   return TRUE;
@@ -242,14 +258,6 @@ get_reg_name (const struct dadao_dis_info * minfop, unsigned int x)
   return minfop->reg_name[x];
 }
 
-static inline const char *
-get_spec_reg_name (const struct dadao_dis_info * minfop, unsigned int x)
-{
-  if (x >= MAX_SPEC_REG_NAME_LEN)
-    return _("*illegal*");
-  return minfop->spec_reg_name[x];
-}
-
 /* The main disassembly function.  */
 
 int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
@@ -261,6 +269,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	int status;
 	struct dadao_dis_info *minfop;
 	bfd_signed_vma offset;
+	unsigned int rb_off, rc_off;
 
 	status = (*info->read_memory_func) (memaddr, buffer, 4, info);
 	if (status != 0) {
@@ -335,14 +344,22 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 			get_reg_name (minfop, fb), get_reg_name (minfop, fc), fd);
 		break;
 
-	case dadao_operands_orr0_get: /* GET - "rb, spec_reg".  */
-		(*info->fprintf_func) (info->stream, "\t%s, %s",
-			get_reg_name (minfop, fb), get_spec_reg_name (minfop, fc));
-		break;
+	case dadao_operands_orr0:
+		rb_off = rc_off = 0;
 
-	case dadao_operands_orr0_put: /* PUT - "spec_reg, rc".  */
+		switch (opcodep->minor_opcode) {
+		case 0x10:	rb_off = 0x40;	break;
+		case 0x11:	rb_off = 0x80;	break;
+		case 0x12:	rb_off = 0xC0;	break;
+		case 0x13:	rb_off = 0x100;	break;
+		case 0x20:	rc_off = 0x40;	break;
+		case 0x21:	rc_off = 0x80;	break;
+		case 0x22:	rc_off = 0xC0;	break;
+		case 0x23:	rc_off = 0x100;	break;
+		default:	FATAL_DEBUG;
+		}
 		(*info->fprintf_func) (info->stream, "\t%s, %s",
-			get_spec_reg_name (minfop, fb), get_reg_name (minfop, fc));
+			get_reg_name (minfop, fb + rb_off), get_reg_name (minfop, fc + rc_off));
 		break;
 
 	case dadao_operands_rrii_rrri:

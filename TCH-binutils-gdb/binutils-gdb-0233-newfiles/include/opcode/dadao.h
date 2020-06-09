@@ -7,14 +7,14 @@
  *	Guan Xuetao <gxt@pku.edu.cn>
  */
 
-/* We could have just a char*[] table indexed by the register number, but
-   that would not allow for synonyms.  The table is terminated with an
-   entry with a NULL name.  */
-struct dadao_spec_reg
+/* The table is terminated with an entry with a NULL name.  */
+struct dadao_reg_alias
 {
-  const char *name;
-  unsigned int number;
+	const char *name;
+	unsigned int number;
 };
+
+extern const struct dadao_reg_alias dadao_reg_aliases[];
 
 /* General indication of the type of instruction.  */
 enum dadao_insn_type
@@ -38,8 +38,7 @@ enum dadao_operands_type {
 	dadao_operands_iiii_rrii,	/* call/jump insn, "imm24" or "ra, rb, imm12" */
 	dadao_operands_o000,		/* no operand, for nop/ret */
 	dadao_operands_oiii,		/* ONLY "imm18" accepted, for swym/trip/trap/nop */
-	dadao_operands_orr0_get,	/* "rb, spec_reg"; GET.  */
-	dadao_operands_orr0_put,	/* "spec_reg, rc"; PUT.  */
+	dadao_operands_orr0,		/* get/put insn  */
 	dadao_operands_orri,		/* The regular "rb, rc, imm6" */
 	dadao_operands_orri_orrr,	/* The regular "rb, rc, rd", or "rb, rc, imm6" */
 	dadao_operands_orrr,		/* The regular "rb, rc, rd".  */
@@ -60,9 +59,6 @@ struct dadao_opcode
 
 /* Declare the actual tables.  */
 extern const struct dadao_opcode dadao_opcodes[];
-
-/* This one is terminated with an entry with a NULL name.  */
-extern const struct dadao_spec_reg dadao_spec_regs[];
 
 #define	DADAO_BAD_INSN(msg)									\
 	do {											\
@@ -100,6 +96,54 @@ extern const struct dadao_spec_reg dadao_spec_regs[];
  *   FC: 6-bit, [11..6]
  *   FD: 6-bit, [5..0]
  */
+#define DDOP_EXP_MUST_BE_RG(ddop_exp)								\
+	do {											\
+		if (ddop_exp.X_op != O_register)						\
+			DADAO_BAD_INSN("exp should be register");				\
+		if ( (unsigned long long) ddop_exp.X_add_number > 0x3F)				\
+			DADAO_BAD_INSN("rg num is too big");					\
+	} while (0)
+
+#define DDOP_EXP_MUST_BE_RP(ddop_exp)								\
+	do {											\
+		if (ddop_exp.X_op != O_register)						\
+			DADAO_BAD_INSN("exp should be register");				\
+		if ( (unsigned long long) ddop_exp.X_add_number < 0x40)				\
+			DADAO_BAD_INSN("rp num is too small");					\
+		if ( (unsigned long long) ddop_exp.X_add_number > 0x7F)				\
+			DADAO_BAD_INSN("rp num is too big");					\
+	} while (0)
+
+#define DDOP_EXP_MUST_BE_RF(ddop_exp)								\
+	do {											\
+		if (ddop_exp.X_op != O_register)						\
+			DADAO_BAD_INSN("exp should be register");				\
+		if ( (unsigned long long) ddop_exp.X_add_number < 0x80)				\
+			DADAO_BAD_INSN("rf num is too small");					\
+		if ( (unsigned long long) ddop_exp.X_add_number > 0xBF)				\
+			DADAO_BAD_INSN("rf num is too big");					\
+	} while (0)
+
+#define DDOP_EXP_MUST_BE_RV(ddop_exp)								\
+	do {											\
+		if (ddop_exp.X_op != O_register)						\
+			DADAO_BAD_INSN("exp should be register");				\
+		if ( (unsigned long long) ddop_exp.X_add_number < 0xC0)				\
+			DADAO_BAD_INSN("rv num is too small");					\
+		if ( (unsigned long long) ddop_exp.X_add_number > 0xFF)				\
+			DADAO_BAD_INSN("rv num is too big");					\
+	} while (0)
+
+#define DDOP_EXP_MUST_BE_RS(ddop_exp)								\
+	do {											\
+		if (ddop_exp.X_op != O_register)						\
+			DADAO_BAD_INSN("exp should be register");				\
+		if ( (unsigned long long) ddop_exp.X_add_number < 0x100)			\
+			DADAO_BAD_INSN("rs num is too small");					\
+		if ( (unsigned long long) ddop_exp.X_add_number > 0x13F)			\
+			DADAO_BAD_INSN("rs num is too big");					\
+	} while (0)
+
 #define DDOP_EXP_MUST_BE_REG(ddop_exp)								\
 	do {											\
 		if (ddop_exp.X_op != O_register)						\
