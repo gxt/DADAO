@@ -87,6 +87,7 @@ extern const struct dadao_opcode dadao_opcodes[];
 #define	DADAO_INSN_CALL			((unsigned int)(0xD0 << 24))
 #define	DADAO_INSN_JUMP			((unsigned int)(0xD2 << 24))
 
+#define	DADAO_INSN_SWYM			((unsigned int)(0xDA << 24))
 #define	DADAO_INSN_FP			((unsigned int)(0xDB << 24))
 
 /* Dadao bit-field definition:
@@ -142,15 +143,6 @@ extern const struct dadao_opcode dadao_opcodes[];
 			DADAO_BAD_INSN("rs num is too small");					\
 		if ( (unsigned long long) ddop_exp.X_add_number > 0x13F)			\
 			DADAO_BAD_INSN("rs num is too big");					\
-	} while (0)
-
-#define DDOP_EXP_MUST_BE_REG(ddop_exp)								\
-	do {											\
-		if (ddop_exp.X_op != O_register)						\
-			DADAO_BAD_INSN("exp should be register");				\
-		/* FIXME: shoule be 0x3F */							\
-		if ( (unsigned long long) ddop_exp.X_add_number > 0xFF)				\
-			DADAO_BAD_INSN("bit count is too big");					\
 	} while (0)
 
 #define DDOP_EXP_MUST_BE_UIMM(ddop_exp, bit_count)						\

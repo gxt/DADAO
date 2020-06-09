@@ -170,7 +170,7 @@ static void dd_fill_nops (char *opcodep, int n)
   int i;
 
   for (i = 0; i < n; i++)
-    md_number_to_chars (opcodep + i * 4, 0xDADADADA, 4);
+    md_number_to_chars (opcodep + i * 4, DADAO_INSN_SWYM, 4);
 }
 
 /* Get up to four operands, filling them into the exp array.
@@ -384,7 +384,7 @@ void dadao_md_assemble (char *str)
 		if (n_operands != 2)
 			DADAO_BAD_INSN("invalid operands to opcode");
 
-		DDOP_EXP_MUST_BE_REG(exp[0]);
+		DDOP_EXP_MUST_BE_RG(exp[0]);
 
 		if (exp[1].X_op != O_constant)
 			DADAO_BAD_INSN("invalid operands to opcode");
@@ -496,13 +496,13 @@ void dadao_md_assemble (char *str)
 		DDOP_SET_FD(opcodep, 0);
 		break;
 
-	case dadao_operands_orrr: /* rb, rc, rd */
+	case dadao_operands_orrr: /* ONLY fp insns here: rb, rc, rd */
 		if (n_operands != 3)
 			DADAO_BAD_INSN("invalid operands to opcode");
 
-		DDOP_EXP_MUST_BE_REG(exp[0]);
-		DDOP_EXP_MUST_BE_REG(exp[1]);
-		DDOP_EXP_MUST_BE_REG(exp[2]);
+		DDOP_EXP_MUST_BE_RF(exp[0]);
+		DDOP_EXP_MUST_BE_RF(exp[1]);
+		DDOP_EXP_MUST_BE_RF(exp[2]);
 
 		DDOP_SET_FA(opcodep, instruction->minor_opcode);
 		DDOP_SET_FB(opcodep, exp[0].X_add_number);
@@ -515,7 +515,7 @@ void dadao_md_assemble (char *str)
 		if ((n_operands != 2) || (instruction->minor_opcode > 3))
 			DADAO_BAD_INSN("invalid operands to opcode");
 
-		DDOP_EXP_MUST_BE_REG(exp[0]);
+		DDOP_EXP_MUST_BE_RG(exp[0]);
 		DDOP_EXP_MUST_BE_UIMM(exp[1], 16);
 
 		DDOP_SET_FA(opcodep, exp[0].X_add_number);
@@ -537,12 +537,12 @@ void dadao_md_assemble (char *str)
 
 		break;
 
-	case dadao_operands_orri: /* "rb, rc, imm6" */
+	case dadao_operands_orri: /* ONLY fp insns here: "rb, rc, imm6" */
 		if (n_operands != 3)
 			DADAO_BAD_INSN("invalid operands to opcode");
 
-		DDOP_EXP_MUST_BE_REG(exp[0]);
-		DDOP_EXP_MUST_BE_REG(exp[1]);
+		DDOP_EXP_MUST_BE_RF(exp[0]);
+		DDOP_EXP_MUST_BE_RF(exp[1]);
 		DDOP_EXP_MUST_BE_UIMM(exp[2], 6);
 
 		DDOP_SET_FA(opcodep, instruction->minor_opcode);
@@ -556,8 +556,8 @@ void dadao_md_assemble (char *str)
 		if (n_operands != 3)
 			DADAO_BAD_INSN("invalid operands to opcode");
 
-		DDOP_EXP_MUST_BE_REG(exp[0]);
-		DDOP_EXP_MUST_BE_REG(exp[1]);
+		DDOP_EXP_MUST_BE_RG(exp[0]);
+		DDOP_EXP_MUST_BE_RG(exp[1]);
 
 		DDOP_SET_FA(opcodep, instruction->minor_opcode);
 		DDOP_SET_FB(opcodep, exp[0].X_add_number);
@@ -565,7 +565,7 @@ void dadao_md_assemble (char *str)
 
 		switch (exp[2].X_op) {
 		case O_register: /* reg */
-			DDOP_EXP_MUST_BE_REG(exp[2]);
+			DDOP_EXP_MUST_BE_RG(exp[2]);
 			DDOP_SET_FD(opcodep, exp[2].X_add_number);
 			break;
 
@@ -584,15 +584,26 @@ void dadao_md_assemble (char *str)
 		if (n_operands != 3)
 			DADAO_BAD_INSN("invalid operands to opcode");
 
-		DDOP_EXP_MUST_BE_REG(exp[0]);
-		DDOP_EXP_MUST_BE_REG(exp[1]);
+		DDOP_EXP_MUST_BE_RG(exp[0]);
+		switch (instruction->type) {
+		case dadao_type_normal:
+			DDOP_EXP_MUST_BE_RG(exp[1]);
+			break;
+
+		case dadao_type_dref:
+			DDOP_EXP_MUST_BE_RP(exp[1]);
+			break;
+
+		default:
+			DADAO_BAD_INSN("SHOULD NOT BE HERE");
+		}
 
 		DDOP_SET_FA(opcodep, exp[0].X_add_number);
 		DDOP_SET_FB(opcodep, exp[1].X_add_number);
 
 		switch (exp[2].X_op) {
 		case O_register: /* reg */
-			DDOP_EXP_MUST_BE_REG(exp[2]);
+			DDOP_EXP_MUST_BE_RG(exp[2]);
 			DDOP_SET_FC(opcodep, exp[2].X_add_number);
 			DDOP_SET_FD(opcodep, 0);
 			break;
@@ -601,7 +612,7 @@ void dadao_md_assemble (char *str)
 			exp_left = symbol_get_value_expression (exp[2].X_add_symbol);
 			exp_right = symbol_get_value_expression (exp[2].X_op_symbol);
 
-			DDOP_EXP_MUST_BE_REG(exp_left[0]);
+			DDOP_EXP_MUST_BE_RG(exp_left[0]);
 			DDOP_EXP_MUST_BE_UIMM(exp_right[0], 6);
 
 			DDOP_SET_FC(opcodep, exp_left->X_add_number);
@@ -624,11 +635,11 @@ void dadao_md_assemble (char *str)
 		if ((n_operands != 2) || (exp[1].X_op == O_register))
 			DADAO_BAD_INSN("invalid operands to opcode");
 
-		DDOP_EXP_MUST_BE_REG(exp[0]);
-		DDOP_SET_FA(opcodep, exp[0].X_add_number);
-
 		switch (instruction->type) {
 		case dadao_type_condbranch:
+			DDOP_EXP_MUST_BE_RG(exp[0]);
+			DDOP_SET_FA(opcodep, exp[0].X_add_number);
+
 			if (! expand_op)
 				fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_BRCC);
 			else
@@ -637,6 +648,9 @@ void dadao_md_assemble (char *str)
 			break;
 
 		case dadao_type_geta:
+			DDOP_EXP_MUST_BE_RP(exp[0]);
+			DDOP_SET_FA(opcodep, exp[0].X_add_number);
+
 			if (! expand_op)
 				fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_GETA);
 			else
@@ -682,8 +696,8 @@ void dadao_md_assemble (char *str)
 			}
 
 		} else {	/* (n_operands == 3) */
-			DDOP_EXP_MUST_BE_REG(exp[0]);
-			DDOP_EXP_MUST_BE_REG(exp[1]);
+			DDOP_EXP_MUST_BE_RP(exp[0]);
+			DDOP_EXP_MUST_BE_RG(exp[1]);
 			DDOP_EXP_MUST_BE_UIMM(exp[2], 12);
 
 			DDOP_SET_FA(opcodep, exp[0].X_add_number);
