@@ -31,40 +31,40 @@ crtsdat:
 	.dd.o64	 dstart
 	.dd.o64	_end
 
-_start:	setwl	$63, 32
-	put	rG, $63
+_start:	setwl	rg63, 32
+	put.rs	rG, rg63
 
-	geta	$63, crtstxt
-	ldo	$2, $63, 0
-	andnwl	$2, 0x7ff
-	ldo	$3, $63, 8
-	setwl	$4, 2048
+	geta	rg63, crtstxt
+	ldo	rg2, rg63, 0
+	andnwl	rg2, 0x7ff
+	ldo	rg3, rg63, 8
+	setwl	rg4, 2048
 0:
-	addu	$2, $2, $4
-	cmp	$63, $2, $3
-	BN	$63,0b
+	addu	rg2, rg2, rg4
+	cmp	rg63, rg2, rg3
+	BN	rg63,0b
 
-	geta	$63, crtsdat
-	ldo	$2, $63, 0
-	andnwl	$2, 0x7ff
-	ldo	$3, $63, 8
+	geta	rg63, crtsdat
+	ldo	rg2, rg63, 0
+	andnwl	rg2, 0x7ff
+	ldo	rg3, rg63, 8
 0:
-	addu	$2, $2, $4
-	cmp	$63, $2, $3
-	BN	$63,0b
+	addu	rg2, rg2, rg4
+	cmp	rg63, rg2, rg3
+	BN	rg63,0b
 
 # Initialize the stack pointer.  It is supposedly made a global
 # zero-initialized (allowed to change) register in crtn.S; we use the
 # explicit number.
-	geta	$63, stackpp
-	ldo	$62, $63, 0
+	geta	rg63, stackpp
+	ldo	rg62, rg63, 0
 
 	call	_init
 
 # Copy argc and argv from their initial position to argument registers
 # where necessary.
-	or	$39, $0, 0
-	or	$40, $1, 0
+	or	rg39, rg0, 0
+	or	rg40, rg1, 0
 
 	call	main
 	call	exit
@@ -78,21 +78,21 @@ _start:	setwl	$63, 32
 	.section .init,"ax",@progbits
 	.global	_init
 _init:
-	get	$0, rJ
-	bz	$0, 0f
-	setwl	$63, 63
+	get.rs	rg0, rJ
+	bz	rg0, 0f
+	setwl	rg63, 63
 	trap	0
 0:	trap	0
 
 # Register _fini to be executed as the last atexit function.
-	geta	$39, _fini
+	geta	rg39, _fini
 	call	atexit
 
 	.section .fini,"ax",@progbits
 	.global	_fini
 _fini:
-	get	$0, rJ
-	bz	$0, 0f
-	setwl	$63, 63
+	get.rs	rg0, rJ
+	bz	rg0, 0f
+	setwl	rg63, 63
 	trap	0
 0:	trap	0

@@ -11,15 +11,15 @@
 # like in gcc/crtstuff.c.
 
 	.section .init,"ax",@progbits
-	geta	$63, 0f
-	put	rJ, $63
+	geta	rg63, 0f
+	put.rs	rJ, rg63
 	ret
-0:	put	rJ, $0
+0:	put.rs	rJ, rg0
 	ret
 	
 	.section .fini,"ax",@progbits
-	geta	$63, 0f
-	put	rJ, $63
+	geta	rg63, 0f
+	put.rs	rJ, rg63
 	ret
-0:	put	rJ, $0
+0:	put.rs	rJ, rg0
 	ret

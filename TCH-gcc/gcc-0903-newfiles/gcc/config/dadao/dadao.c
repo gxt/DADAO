@@ -484,9 +484,9 @@ static void dd_asm_trampoline_template (FILE *stream)
      static chain is stored at offset 16, and the function address is
      stored at offset 24.  */
 
-  fprintf (stream, "\tgeta	$63, 1f\n");
-  fprintf (stream, "\tldo	$63, $63, 0\n");
-  fprintf (stream, "\tcall	$0, $63, 0\n");
+  fprintf (stream, "\tgeta	rg63, 1f\n");
+  fprintf (stream, "\tldo	rg63, rg63, 0\n");
+  fprintf (stream, "\tcall	rp0, rg63, 0\n");
   fprintf (stream, "1:\t.dd.o64	0\n");
 }
 
@@ -1337,7 +1337,7 @@ dadao_output_register_setting (FILE *stream,
     fprintf (stream, "\t");
 
   if (insn_const_int_ok_for_constraint (value, CONSTRAINT_In))
-    fprintf (stream, "subu	%s, $0, %" PRId64, reg_names[regno], -value);
+    fprintf (stream, "subu	%s, zero, %" PRId64, reg_names[regno], -value);
   else if (dadao_shiftable_wyde_value ((uint64_t) value))
     {
       /* First, the one-insn cases.  */
@@ -1357,7 +1357,7 @@ dadao_output_register_setting (FILE *stream,
 					  value);
       fprintf (stream, " %s,", reg_names[regno]);
       dadao_output_shifted_value (stream, -(uint64_t) value);
-      fprintf (stream, "\n\tsubu	%s, $0, %s", reg_names[regno],
+      fprintf (stream, "\n\tsubu	%s, zero, %s", reg_names[regno],
 	       reg_names[regno]);
     }
   else if (dadao_shiftable_wyde_value (~(uint64_t) value))
