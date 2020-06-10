@@ -10,13 +10,19 @@
 	"nop")
 
 (define_insn "mov<mode>"
-  [(set (match_operand:QHSD 0 "register_operand" "= Rg, Rs, Rg")
-        (match_operand:QHSD 1 "register_operand" "  Rg, Rg, Rs"))]
+  [(set (match_operand:QHSD 0 "register_operand" "= Rg, Rp, Rg, Rf, Rg, Rv, Rg, Rs, Rg")
+        (match_operand:QHSD 1 "register_operand" "  Rg, Rg, Rp, Rg, Rf, Rg, Rv, Rg, Rs"))]
 	""
 	"@
 	or	%0, %1, 0
-	put	%0, %1
-	get	%0, %1")
+	put.rp	%0, %1
+	get.rp	%0, %1
+	put.rf	%0, %1
+	get.rf	%0, %1
+	put.rv	%0, %1
+	get.rv	%0, %1
+	put.rs	%0, %1
+	get.rs	%0, %1")
 
 ;; seto is pseudo insn, so we place ? before Rg
 (define_insn "mov_ri<mode>"
@@ -25,7 +31,7 @@
 	""
 	"@
 	%s1	%0, %v1
-	subu	%0, $0, %n1
+	subu	%0, zero, %n1
 	seto	%0, %1")
 
 (define_insn "adddi3"
