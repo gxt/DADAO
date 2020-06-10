@@ -631,7 +631,7 @@ void dadao_md_assemble (char *str)
 		}
 		break;
 
-	case dadao_operands_riii: /* ONLY geta or conditional branch be here, operand "ra, imm18" */
+	case dadao_operands_riii: /* operand "ra, imm18" */
 		if ((n_operands != 2) || (exp[1].X_op == O_register))
 			DADAO_BAD_INSN("invalid operands to opcode");
 
@@ -656,6 +656,16 @@ void dadao_md_assemble (char *str)
 			else
 				frag_var (rs_machine_dependent, DD_INSN_BYTES(3), 0, ENCODE_RELAX (STATE_GETA, STATE_UNDF),
 					exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
+			break;
+
+		case dadao_type_regp:
+			DDOP_EXP_MUST_BE_RP(exp[0]);
+			DDOP_EXP_MUST_BE_UIMM(exp[1], 18);
+
+			DDOP_SET_FA(opcodep, exp[0].X_add_number);
+			DDOP_SET_FB(opcodep, (exp[1].X_add_number >> 12) & 63);
+			DDOP_SET_FC(opcodep, (exp[1].X_add_number >> 6) & 63);
+			DDOP_SET_FD(opcodep, (exp[1].X_add_number) & 63);
 			break;
 
 		default:

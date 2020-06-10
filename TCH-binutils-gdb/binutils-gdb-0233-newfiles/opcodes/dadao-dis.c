@@ -383,14 +383,23 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 				get_reg_name (minfop, fb), get_reg_name (minfop, fc), get_reg_name (minfop, fd));
 		break;
 
-	case dadao_operands_riii: /* geta or condbranches - "ra, imm18".  */
-		offset = (fb << 14) | (fc << 8) | (fd << 2);
-		if (offset & 0x80000)		offset -= 0x100000;	/* backward */
+	case dadao_operands_riii: /* "ra, imm18".  */
+		switch (opcodep->type) {
+		case dadao_type_geta:
+		case dadao_type_condbranch:
+			offset = (fb << 14) | (fc << 8) | (fd << 2);
+			if (offset & 0x80000)		offset -= 0x100000;	/* backward */
 
-		info->target = memaddr + 4 + offset;
+			info->target = memaddr + 4 + offset;
 
-		(*info->fprintf_func) (info->stream, "\t%s, ", get_reg_name (minfop, fa));
-		(*info->print_address_func) (memaddr + 4 + offset, info);
+			(*info->fprintf_func) (info->stream, "\t%s, ", get_reg_name (minfop, fa));
+			(*info->print_address_func) (memaddr + 4 + offset, info);
+			break;
+
+		case dadao_type_regp:
+			(*info->fprintf_func) (info->stream, "\t%s, 0x%x", get_reg_name (minfop, fa), (fb << 12) | (fc << 6) | fd);
+			break;
+		}
 		break;
 
 	default:
