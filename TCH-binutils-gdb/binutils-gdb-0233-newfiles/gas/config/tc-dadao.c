@@ -438,49 +438,49 @@ void dadao_md_assemble (char *str)
 		regclass_offset_1 = 0x00;
 
 		switch (instruction->minor_opcode) {
-		case 0x10:
+		case 0x11:
 			DDOP_EXP_MUST_BE_RP(exp[0]);
 			DDOP_EXP_MUST_BE_RG(exp[1]);
 			regclass_offset_0 = 0x40;
 			break;
 
-		case 0x11:
+		case 0x12:
 			DDOP_EXP_MUST_BE_RF(exp[0]);
 			DDOP_EXP_MUST_BE_RG(exp[1]);
 			regclass_offset_0 = 0x80;
 			break;
 
-		case 0x12:
+		case 0x13:
 			DDOP_EXP_MUST_BE_RV(exp[0]);
 			DDOP_EXP_MUST_BE_RG(exp[1]);
 			regclass_offset_0 = 0xC0;
 			break;
 
-		case 0x13:
+		case 0x14:
 			DDOP_EXP_MUST_BE_RS(exp[0]);
 			DDOP_EXP_MUST_BE_RG(exp[1]);
 			regclass_offset_0 = 0x100;
 			break;
 
-		case 0x20:
+		case 0x21:
 			DDOP_EXP_MUST_BE_RG(exp[0]);
 			DDOP_EXP_MUST_BE_RP(exp[1]);
 			regclass_offset_1 = 0x40;
 			break;
 
-		case 0x21:
+		case 0x22:
 			DDOP_EXP_MUST_BE_RG(exp[0]);
 			DDOP_EXP_MUST_BE_RF(exp[1]);
 			regclass_offset_1 = 0x80;
 			break;
 
-		case 0x22:
+		case 0x23:
 			DDOP_EXP_MUST_BE_RG(exp[0]);
 			DDOP_EXP_MUST_BE_RV(exp[1]);
 			regclass_offset_1 = 0xC0;
 			break;
 
-		case 0x23:
+		case 0x24:
 			DDOP_EXP_MUST_BE_RG(exp[0]);
 			DDOP_EXP_MUST_BE_RS(exp[1]);
 			regclass_offset_1 = 0x100;

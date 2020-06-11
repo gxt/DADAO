@@ -348,14 +348,14 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		rb_off = rc_off = 0;
 
 		switch (opcodep->minor_opcode) {
-		case 0x10:	rb_off = 0x40;	break;
-		case 0x11:	rb_off = 0x80;	break;
-		case 0x12:	rb_off = 0xC0;	break;
-		case 0x13:	rb_off = 0x100;	break;
-		case 0x20:	rc_off = 0x40;	break;
-		case 0x21:	rc_off = 0x80;	break;
-		case 0x22:	rc_off = 0xC0;	break;
-		case 0x23:	rc_off = 0x100;	break;
+		case 0x11:	rb_off = 0x40;	break;
+		case 0x12:	rb_off = 0x80;	break;
+		case 0x13:	rb_off = 0xC0;	break;
+		case 0x14:	rb_off = 0x100;	break;
+		case 0x21:	rc_off = 0x40;	break;
+		case 0x22:	rc_off = 0x80;	break;
+		case 0x23:	rc_off = 0xC0;	break;
+		case 0x24:	rc_off = 0x100;	break;
 		default:	FATAL_DEBUG;
 		}
 		(*info->fprintf_func) (info->stream, "\t%s, %s",

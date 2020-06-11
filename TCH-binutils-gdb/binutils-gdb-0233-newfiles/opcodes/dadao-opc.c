@@ -126,15 +126,15 @@ const struct dadao_opcode dadao_opcodes[] =
 
 	{"swym",	0xDA,		0,	0,	OP (oiii),		T (normal)},
 
-	{"put.rp",	0xDA,		0x10,	0,	OP (orr0),		T (normal)},
-	{"put.rf",	0xDA,		0x11,	0,	OP (orr0),		T (normal)},
-	{"put.rv",	0xDA,		0x12,	0,	OP (orr0),		T (normal)},
-	{"put.rs",	0xDA,		0x13,	0,	OP (orr0),		T (normal)},
+	{"put.rp",	0xDA,		0x11,	0,	OP (orr0),		T (normal)},
+	{"put.rf",	0xDA,		0x12,	0,	OP (orr0),		T (normal)},
+	{"put.rv",	0xDA,		0x13,	0,	OP (orr0),		T (normal)},
+	{"put.rs",	0xDA,		0x14,	0,	OP (orr0),		T (normal)},
 
-	{"get.rp",	0xDA,		0x20,	0,	OP (orr0),		T (normal)},
-	{"get.rf",	0xDA,		0x21,	0,	OP (orr0),		T (normal)},
-	{"get.rv",	0xDA,		0x22,	0,	OP (orr0),		T (normal)},
-	{"get.rs",	0xDA,		0x23,	0,	OP (orr0),		T (normal)},
+	{"get.rp",	0xDA,		0x21,	0,	OP (orr0),		T (normal)},
+	{"get.rf",	0xDA,		0x22,	0,	OP (orr0),		T (normal)},
+	{"get.rv",	0xDA,		0x23,	0,	OP (orr0),		T (normal)},
+	{"get.rs",	0xDA,		0x24,	0,	OP (orr0),		T (normal)},
 
 	/* nop is 0xDADADADA, DA is 11011010, so minor-opcode is 110110 */
 	{"nop",		0xDA,		0x36,	0,	OP (o000),		T (normal)},
