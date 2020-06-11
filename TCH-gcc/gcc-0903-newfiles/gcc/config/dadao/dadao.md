@@ -142,7 +142,7 @@
 (define_insn "iordi3"
   [(set (match_operand:DI 0 "register_operand" "=r,r")
 	(ior:DI (match_operand:DI 1 "register_operand" "%r,0")
-		(match_operand:DI 2 "dadao_reg_or_constant_operand" "rTti,IwS")))]
+		(match_operand:DI 2 "dadao_reg_or_constant_operand" "rTti,Iw")))]
   ""
   "@
 	or	%0, %1, %2

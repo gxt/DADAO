@@ -88,13 +88,6 @@
   (and (not (match_code "const_int,const_double"))
        (match_test "dadao_constant_address_p (op)")))
 
-;; FIXME: L (or S) is redundant.
-
-(define_constraint "S"
-  "@internal"
-  (and (match_code "const_int,const_double")
-       (match_test "dadao_shiftable_wyde_value (dadao_intval (op))")))
-
 ;; FIXME: N (or Ttt) is redundant.
 
 (define_constraint "Ttt"
