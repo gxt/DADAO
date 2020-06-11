@@ -126,6 +126,11 @@ const struct dadao_opcode dadao_opcodes[] =
 
 	{"swym",	0xDA,		0,	0,	OP (oiii),		T (normal)},
 
+	{"mov.rp",	0xDA,		1,	0,	OP (orr0),		T (normal)},
+	{"mov.rf",	0xDA,		2,	0,	OP (orr0),		T (normal)},
+	{"mov.rv",	0xDA,		3,	0,	OP (orr0),		T (normal)},
+	{"mov.rs",	0xDA,		4,	0,	OP (orr0),		T (normal)},
+
 	{"put.rp",	0xDA,		0x11,	0,	OP (orr0),		T (normal)},
 	{"put.rf",	0xDA,		0x12,	0,	OP (orr0),		T (normal)},
 	{"put.rv",	0xDA,		0x13,	0,	OP (orr0),		T (normal)},

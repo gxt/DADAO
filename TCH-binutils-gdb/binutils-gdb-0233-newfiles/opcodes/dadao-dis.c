@@ -348,6 +348,10 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		rb_off = rc_off = 0;
 
 		switch (opcodep->minor_opcode) {
+		case 0x1:	rb_off = rc_off = 0x40;		break;
+		case 0x2:	rb_off = rc_off = 0x80;		break;
+		case 0x3:	rb_off = rc_off = 0xC0;		break;
+		case 0x4:	rb_off = rc_off = 0x100;	break;
 		case 0x11:	rb_off = 0x40;	break;
 		case 0x12:	rb_off = 0x80;	break;
 		case 0x13:	rb_off = 0xC0;	break;
