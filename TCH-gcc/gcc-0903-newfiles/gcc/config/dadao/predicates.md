@@ -3,6 +3,42 @@
 ;; Operand and operator predicates for the GCC DADAO port.
 ;; Copyright (C) 2020-2033 Guan Xuetao (AT) Peking Univ.
 
+;; register class operands
+(define_predicate "rg_class_operand"
+  (match_code "reg, subreg")
+{
+	if (GET_CODE(op) == SUBREG)	op = SUBREG_REG(op);
+	return (REG_P(op) && (REGNO_REG_CLASS(REGNO(op)) == GENERAL_REGS));
+})
+
+(define_predicate "rp_class_operand"
+  (match_code "reg, subreg")
+{
+	if (GET_CODE(op) == SUBREG)	op = SUBREG_REG(op);
+	return (REG_P(op) && (REGNO_REG_CLASS(REGNO(op)) == POINTER_REGS));
+})
+
+(define_predicate "rf_class_operand"
+  (match_code "reg, subreg")
+{
+	if (GET_CODE(op) == SUBREG)	op = SUBREG_REG(op);
+	return (REG_P(op) && (REGNO_REG_CLASS(REGNO(op)) == FLOATING_REGS));
+})
+
+(define_predicate "rv_class_operand"
+  (match_code "reg, subreg")
+{
+	if (GET_CODE(op) == SUBREG)	op = SUBREG_REG(op);
+	return (REG_P(op) && (REGNO_REG_CLASS(REGNO(op)) == VECTOR_REGS));
+})
+
+(define_predicate "rs_class_operand"
+  (match_code "reg, subreg")
+{
+	if (GET_CODE(op) == SUBREG)	op = SUBREG_REG(op);
+	return (REG_P(op) && (REGNO_REG_CLASS(REGNO(op)) == SPECIAL_REGS));
+})
+
 ;; TODO: ri add shift-imm handler
 (define_predicate "dd_ii_ri_operand"
   (ior (match_operand 0 "register_operand")
