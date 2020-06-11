@@ -35,7 +35,7 @@
 (include "dadao-generic.md")
 (include "dadao-rg.md")
 (include "dadao-rp.md")
-(include "dadao-fp.md")
+(include "dadao-rf.md")
 
 ;; FIXME: Can we remove the reg-to-reg for smaller modes?  Shouldn't they
 ;; be synthesized ok?
