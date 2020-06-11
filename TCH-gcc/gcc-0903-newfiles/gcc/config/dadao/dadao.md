@@ -208,14 +208,14 @@
   "! TARGET_KNUTH_DIVISION"
   "@
 	setwl	%0, 1
-	xor	$63, %1, %2	\;\
-	subu	%0, $0, %2	\;\
+	xor	rg63, %1, %2	\;\
+	subu	%0, zero, %2	\;\
 	csn	%2, %2, %0	\;\
-	subu	%0, $0, %1	\;\
+	subu	%0, zero, %1	\;\
 	csn	%1, %1, %0	\;\
 	divu	%0, %1, %2	\;\
-	subu	%1, $0, %0	\;\
-	csn	%0, $63, %1")
+	subu	%1, zero, %0	\;\
+	csn	%0, rg63, %1")
 
 (define_expand "moddi3"
   [(parallel
@@ -240,14 +240,14 @@
   "! TARGET_KNUTH_DIVISION"
   "@
 	setwl	%0, 0
-	subu	%0, $0, %2	\;\
+	subu	%0, zero, %2	\;\
 	csn	%2, %2, %0	\;\
-	subu	$63, $0, %1	\;\
-	csn	%1, %1, $63	\;\
+	subu	rg63, zero, %1	\;\
+	csn	%1, %1, rg63	\;\
 	divu	%1, %1, %2	\;\
 	get	%0, rR\;\
-	subu	%2, $0, %0	\;\
-	csnn	%0, $63, %2")
+	subu	%2, zero, %0	\;\
+	csnn	%0, rg63, %2")
 
 (define_insn "ashldi3"
   [(set (match_operand:DI 0 "register_operand" "=r")
@@ -277,7 +277,7 @@
   [(set (match_operand:DI 0 "register_operand" "=r")
 	(neg:DI (match_operand:DI 1 "register_operand" "r")))]
   ""
-	"subu	%0, $0, %1")
+	"subu	%0, zero, %1")
 
 ;; FIXME: define_expand for ffssi2? (not ffsdi2 since int is SImode).
 
@@ -617,14 +617,14 @@
 (define_insn "indirect_jump"
   [(set (pc) (match_operand 0 "address_operand" "p"))]
   ""
-	"jump	$63, %a0")
+	"jump	rp63, %a0")
 
 ;; FIXME: This is just a jump, and should be expanded to one.
 (define_insn "tablejump"
   [(set (pc) (match_operand:DI 0 "address_operand" "p"))
    (use (label_ref (match_operand 1 "" "")))]
   ""
-	"jump	$63, %a0")
+	"jump	rp63, %a0")
 
 ;; The only peculiar thing is that the register stack has to be unwound at
 ;; nonlocal_goto_receiver.  At each function that has a nonlocal label, we
@@ -669,11 +669,11 @@
 {
   rtx my_operands[3];
   const char *my_template
-    = "	geta	$63, 0f\;\
-	put	rJ, $63\;\
-	ldo	$63, %a0, 0\n\
+    = "	geta	rg63, 0f\;\
+	put	rJ, rg63\;\
+	ldo	rg63, %a0, 0\n\
 0:\;	get	%1, rO\;\
-	cmpu	%1, %1, $63	\;\
+	cmpu	%1, %1, rg63	\;\
 	bnp	%1, 1f\;\
 	ret\n1:";
 
