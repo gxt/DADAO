@@ -33,6 +33,7 @@
 (include "constraints.md")
 
 (include "dadao-generic.md")
+(include "dadao-rg.md")
 (include "dadao-fp.md")
 
 ;; FIXME: Can we remove the reg-to-reg for smaller modes?  Shouldn't they
