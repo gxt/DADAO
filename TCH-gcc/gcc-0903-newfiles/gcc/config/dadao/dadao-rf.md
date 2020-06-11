@@ -33,44 +33,44 @@
    %r0%I1")
 
 (define_insn "adddf3"
-  [(set (match_operand:DF 0 "register_operand" "=r")
-	(plus:DF (match_operand:DF 1 "register_operand" "%r")
-		 (match_operand:DF 2 "register_operand" "r")))]
+  [(set (match_operand:DF 0 "rf_class_operand" "=r")
+	(plus:DF (match_operand:DF 1 "rf_class_operand" "%r")
+		 (match_operand:DF 2 "rf_class_operand" "r")))]
   ""
 	"fadd	%0, %1, %2")
 
 (define_insn "subdf3"
-  [(set (match_operand:DF 0 "register_operand" "=r")
-	(minus:DF (match_operand:DF 1 "register_operand" "r")
-		  (match_operand:DF 2 "register_operand" "r")))]
+  [(set (match_operand:DF 0 "rf_class_operand" "=r")
+	(minus:DF (match_operand:DF 1 "rf_class_operand" "r")
+		  (match_operand:DF 2 "rf_class_operand" "r")))]
   ""
 	"fsub	%0, %1, %2")
 
 (define_insn "muldf3"
-  [(set (match_operand:DF 0 "register_operand" "=r")
-	(mult:DF (match_operand:DF 1 "register_operand" "r")
-		 (match_operand:DF 2 "register_operand" "r")))]
+  [(set (match_operand:DF 0 "rf_class_operand" "=r")
+	(mult:DF (match_operand:DF 1 "rf_class_operand" "r")
+		 (match_operand:DF 2 "rf_class_operand" "r")))]
   ""
 	"fmul	%0, %1, %2")
 
 (define_insn "divdf3"
-  [(set (match_operand:DF 0 "register_operand" "=r")
-	(div:DF (match_operand:DF 1 "register_operand" "r")
-		(match_operand:DF 2 "register_operand" "r")))]
+  [(set (match_operand:DF 0 "rf_class_operand" "=r")
+	(div:DF (match_operand:DF 1 "rf_class_operand" "r")
+		(match_operand:DF 2 "rf_class_operand" "r")))]
   ""
 	"fdiv	%0, %1, %2")
 
 ;; FIXME: Is "frem" doing the right operation for moddf3?
 (define_insn "moddf3"
-  [(set (match_operand:DF 0 "register_operand" "=r")
-	(mod:DF (match_operand:DF 1 "register_operand" "r")
-		(match_operand:DF 2 "register_operand" "r")))]
+  [(set (match_operand:DF 0 "rf_class_operand" "=r")
+	(mod:DF (match_operand:DF 1 "rf_class_operand" "r")
+		(match_operand:DF 2 "rf_class_operand" "r")))]
   ""
 	"frem	%0, %1, %2")
 
 (define_expand "negdf2"
-  [(parallel [(set (match_operand:DF 0 "register_operand" "=r")
-                   (neg:DF (match_operand:DF 1 "register_operand" "r")))
+  [(parallel [(set (match_operand:DF 0 "rf_class_operand" "=r")
+                   (neg:DF (match_operand:DF 1 "rf_class_operand" "r")))
               (use (match_dup 2))])]
   ""
 {
@@ -79,49 +79,49 @@
 })
 
 (define_insn "*expanded_negdf2"
-  [(set (match_operand:DF 0 "register_operand" "=r")
-        (neg:DF (match_operand:DF 1 "register_operand" "r")))
-   (use (match_operand:DI 2 "register_operand" "r"))]
+  [(set (match_operand:DF 0 "rf_class_operand" "=r")
+        (neg:DF (match_operand:DF 1 "rf_class_operand" "r")))
+   (use (match_operand:DI 2 "rf_class_operand" "r"))]
   ""
 	"xor	%0, %1, %2")
 
 ;; FIXME: define_expand for absdi2?
 
 (define_insn "absdf2"
-  [(set (match_operand:DF 0 "register_operand" "=r")
-	(abs:DF (match_operand:DF 1 "register_operand" "0")))]
+  [(set (match_operand:DF 0 "rf_class_operand" "=r")
+	(abs:DF (match_operand:DF 1 "rf_class_operand" "0")))]
   ""
 	"andnwh	%0, 0x8000")
 
 (define_insn "sqrtdf2"
-  [(set (match_operand:DF 0 "register_operand" "=r")
-	(sqrt:DF (match_operand:DF 1 "register_operand" "r")))]
+  [(set (match_operand:DF 0 "rf_class_operand" "=r")
+	(sqrt:DF (match_operand:DF 1 "rf_class_operand" "r")))]
   ""
 	"fsqrt	%0, %1, 0")
 
 (define_insn "*fcmp"
-  [(set (match_operand:CC_FP 0 "register_operand" "=r")
+  [(set (match_operand:CC_FP 0 "rf_class_operand" "=r")
 	(compare:CC_FP
-	 (match_operand:DF 1 "register_operand" "r")
-	 (match_operand:DF 2 "register_operand" "r")))]
+	 (match_operand:DF 1 "rf_class_operand" "r")
+	 (match_operand:DF 2 "rf_class_operand" "r")))]
   ""
 	"fcmp%e0	%0, %1, %2")
 
 ;; FIXME: for -mieee, add fsub %0,%1,%1\;fsub %0,%2,%2 before to
 ;; make signalling compliant.
 (define_insn "*feql"
-  [(set (match_operand:CC_FPEQ 0 "register_operand" "=r")
+  [(set (match_operand:CC_FPEQ 0 "rf_class_operand" "=r")
 	(compare:CC_FPEQ
-	 (match_operand:DF 1 "register_operand" "r")
-	 (match_operand:DF 2 "register_operand" "r")))]
+	 (match_operand:DF 1 "rf_class_operand" "r")
+	 (match_operand:DF 2 "rf_class_operand" "r")))]
   ""
 	"feql%e0	%0, %1, %2")
 
 (define_insn "*fun"
-  [(set (match_operand:CC_FUN 0 "register_operand" "=r")
+  [(set (match_operand:CC_FUN 0 "rf_class_operand" "=r")
 	(compare:CC_FUN
-	 (match_operand:DF 1 "register_operand" "r")
-	 (match_operand:DF 2 "register_operand" "r")))]
+	 (match_operand:DF 1 "rf_class_operand" "r")
+	 (match_operand:DF 2 "rf_class_operand" "r")))]
   ""
 	"fun%e0	%0, %1, %2")
 
@@ -161,7 +161,7 @@
 (define_insn "*floatdisf2_real"
   [(set (match_operand:SF 0 "memory_operand" "=m")
 	(float:SF
-	 (match_operand:DI 1 "register_operand" "r")))
+	 (match_operand:DI 1 "rf_class_operand" "r")))
    (clobber (match_scratch:DI 2 "=&r"))]
   ""
 	"sflot	%2, %1, 0\;\
@@ -196,7 +196,7 @@
 (define_insn "*floatunsdisf2_real"
   [(set (match_operand:SF 0 "memory_operand" "=m")
 	(unsigned_float:SF
-	 (match_operand:DI 1 "register_operand" "r")))
+	 (match_operand:DI 1 "rf_class_operand" "r")))
    (clobber (match_scratch:DI 2 "=&r"))]
   ""
 	"sflotu	%2, %1, 0\;\
@@ -205,22 +205,22 @@
 ;; Note that this will (somewhat unexpectedly) create an inexact
 ;; exception if rounding is necessary - has to be masked off in crt0?
 (define_insn "floatdidf2"
-  [(set (match_operand:DF 0 "register_operand" "=r")
+  [(set (match_operand:DF 0 "rf_class_operand" "=r")
 	(float:DF
-	 (match_operand:DI 1 "register_operand" "r")))]
+	 (match_operand:DI 1 "rf_class_operand" "r")))]
   ""
 	"flot	%0, %1, 0")
 
 (define_insn "floatunsdidf2"
-  [(set (match_operand:DF 0 "register_operand" "=r")
+  [(set (match_operand:DF 0 "rf_class_operand" "=r")
 	(unsigned_float:DF
-	 (match_operand:DI 1 "register_operand" "r")))]
+	 (match_operand:DI 1 "rf_class_operand" "r")))]
   ""
 	"flotu	%0, %1, 0")
 
 (define_insn "ftruncdf2"
-  [(set (match_operand:DF 0 "register_operand" "=r")
-	(fix:DF (match_operand:DF 1 "register_operand" "r")))]
+  [(set (match_operand:DF 0 "rf_class_operand" "=r")
+	(fix:DF (match_operand:DF 1 "rf_class_operand" "r")))]
   ""
   ;; ROUND_OFF
 	"fint	%0, %1, 1")
@@ -228,16 +228,16 @@
 ;; Note that this will (somewhat unexpectedly) create an inexact
 ;; exception if rounding is necessary - has to be masked off in crt0?
 (define_insn "fix_truncdfdi2"
-  [(set (match_operand:DI 0 "register_operand" "=r")
-	(fix:DI (fix:DF (match_operand:DF 1 "register_operand" "r"))))]
+  [(set (match_operand:DI 0 "rf_class_operand" "=r")
+	(fix:DI (fix:DF (match_operand:DF 1 "rf_class_operand" "r"))))]
   ""
   ;; ROUND_OFF
 	"fix	%0, %1, 1")
 
 (define_insn "fixuns_truncdfdi2"
-  [(set (match_operand:DI 0 "register_operand" "=r")
+  [(set (match_operand:DI 0 "rf_class_operand" "=r")
 	(unsigned_fix:DI
-	 (fix:DF (match_operand:DF 1 "register_operand" "r"))))]
+	 (fix:DF (match_operand:DF 1 "rf_class_operand" "r"))))]
   ""
   ;; ROUND_OFF
 	"fixu	%0, %1, 1")
@@ -250,7 +250,7 @@
 ;; FIXME: Perhaps with TARGET_SECONDARY_MEMORY_NEEDED?
 (define_expand "truncdfsf2"
   [(set (match_operand:SF 0 "nonimmediate_operand")
-	(float_truncate:SF (match_operand:DF 1 "register_operand")))]
+	(float_truncate:SF (match_operand:DF 1 "rf_class_operand")))]
   ""
   "
 {
@@ -278,13 +278,13 @@
 
 (define_insn "*truncdfsf2_real"
   [(set (match_operand:SF 0 "memory_operand" "=m")
-	(float_truncate:SF (match_operand:DF 1 "register_operand" "r")))]
+	(float_truncate:SF (match_operand:DF 1 "rf_class_operand" "r")))]
   ""
 	"stsf	%1, %0")
 
 ;; Same comment as for truncdfsf2.
 (define_expand "extendsfdf2"
-  [(set (match_operand:DF 0 "register_operand")
+  [(set (match_operand:DF 0 "rf_class_operand")
 	(float_extend:DF (match_operand:SF 1 "nonimmediate_operand")))]
   ""
   "
@@ -310,7 +310,7 @@
 }")
 
 (define_insn "*extendsfdf2_real"
-  [(set (match_operand:DF 0 "register_operand" "=r")
+  [(set (match_operand:DF 0 "rf_class_operand" "=r")
 	(float_extend:DF (match_operand:SF 1 "memory_operand" "m")))]
   ""
 	"ldsf	%0, %1")
@@ -325,7 +325,7 @@
 
 (define_expand "movdfcc"
   [(set (match_dup 4) (match_dup 5))
-   (set (match_operand:DF 0 "register_operand" "")
+   (set (match_operand:DF 0 "rf_class_operand" "")
 	(if_then_else:DF
 	 (match_operand 1 "comparison_operator" "")
 	 (match_operand:DF 2 "dadao_reg_or_0_operand" "")
@@ -347,11 +347,11 @@
 
 (define_insn "*movdfcc_real_foldable"
   [(set
-    (match_operand:DF 0 "register_operand"	"=r  ,r  ,r  ,r")
+    (match_operand:DF 0 "rf_class_operand"	"=r  ,r  ,r  ,r")
     (if_then_else:DF
      (match_operator
       2 "dadao_foldable_comparison_operator"
-      [(match_operand:DI 3 "register_operand"	 "r  ,r  ,r  ,r")
+      [(match_operand:DI 3 "rf_class_operand"	 "r  ,r  ,r  ,r")
       (const_int 0)])
      (match_operand:DF 1 "dadao_reg_or_0_operand" "rGM,0  ,rGM,GM")
      (match_operand:DF 4 "dadao_reg_or_0_operand" "0  ,rGM,GM ,rGM")))]
@@ -364,7 +364,7 @@
 
 (define_insn "*movdfcc_real_reversible"
   [(set
-    (match_operand:DF 0 "register_operand"	"=r  ,r  ,r  ,r")
+    (match_operand:DF 0 "rf_class_operand"	"=r  ,r  ,r  ,r")
     (if_then_else:DF
      (match_operator
       2 "dadao_comparison_operator"
@@ -381,7 +381,7 @@
 
 (define_insn "*movdfcc_real_nonreversible"
   [(set
-    (match_operand:DF 0 "register_operand"	"=r  ,r")
+    (match_operand:DF 0 "rf_class_operand"	"=r  ,r")
     (if_then_else:DF
      (match_operator
       2 "dadao_comparison_operator"
@@ -397,8 +397,8 @@
 (define_expand "cbranchdf4"
   [(set (match_dup 4)
         (match_op_dup 5
-         [(match_operand:DF 1 "register_operand" "")
-          (match_operand:DF 2 "register_operand" "")]))
+         [(match_operand:DF 1 "rf_class_operand" "")
+          (match_operand:DF 2 "rf_class_operand" "")]))
    (set (pc)
         (if_then_else
               (match_operator 0 "float_comparison_operator"
