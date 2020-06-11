@@ -172,7 +172,7 @@
   [(set (match_operand:DI 0 "register_operand" "=r")
 	(div:DI (match_operand:DI 1 "register_operand" "r")
 		(match_operand:DI 2 "dd_ii_ri_operand" "rId")))
-   (set (match_operand:DI 3 "register_operand" "=y")
+   (set (match_operand:DI 3 "register_operand" "=Sy")
 	(mod:DI (match_dup 1) (match_dup 2)))]
   ;; Do the library stuff later.
   "TARGET_KNUTH_DIVISION"
@@ -182,7 +182,7 @@
   [(set (match_operand:DI 0 "register_operand" "=r")
 	(udiv:DI (match_operand:DI 1 "register_operand" "r")
 		 (match_operand:DI 2 "dd_ii_ri_operand" "rId")))
-   (set (match_operand:DI 3 "register_operand" "=y")
+   (set (match_operand:DI 3 "register_operand" "=Sy")
 	(umod:DI (match_dup 1) (match_dup 2)))]
   ""
 	"divu	%0, %1, %2")

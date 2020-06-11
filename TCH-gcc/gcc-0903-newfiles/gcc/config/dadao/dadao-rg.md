@@ -35,6 +35,6 @@
   [(set      (match_operand:DI 0 "rg_class_operand" "=   Rg")
     (mult:DI (match_operand:DI 1 "rg_class_operand" "%   Rg")
              (match_operand:DI 2 "dd_ii_ri_operand" "  RgId")))
-   (clobber  (match_scratch:DI 3                    "=    z"))]
+   (clobber  (match_scratch:DI 3                    "=   Sz"))]
 	""
 	"mulu	%0, %1, %2")

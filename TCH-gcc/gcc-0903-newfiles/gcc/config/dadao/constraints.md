@@ -7,6 +7,7 @@
 ;;   2020:
 ;;	Guan Xuetao <gxt@pku.edu.cn>
 
+;; Register class constrains
 (define_register_constraint "Rg" "GENERAL_REGS"
 	"General registers")
 
@@ -22,6 +23,7 @@
 (define_register_constraint "Rs" "SPECIAL_REGS"
 	"Special registers")
 
+;; Immediate constrains
 (define_constraint "Iw"
 	"Shiftable wyde integer"
 	(and (match_code "const_int")
@@ -42,12 +44,14 @@
 	(and (match_code "const_int")
 	     (match_test "IN_RANGE (ival, -0x40000, 0x3FFFF)")))
 
-(define_register_constraint "y" "REMAINDER_REG"
-  "@internal")
+;; Special register constrains
+(define_register_constraint "Sy" "REMAINDER_REG"
+	"@internal")
 
-(define_register_constraint "z" "HIMULT_REG"
-  "@internal")
+(define_register_constraint "Sz" "HIMULT_REG"
+	"@internal")
 
+;; Unhandled
 (define_constraint "Tti"
   "A 8-bit unsigned integer"
   (and (match_code "const_int")
