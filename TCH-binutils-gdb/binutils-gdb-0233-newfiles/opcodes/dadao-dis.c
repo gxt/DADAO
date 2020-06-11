@@ -403,6 +403,9 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		case dadao_type_regp:
 			(*info->fprintf_func) (info->stream, "\t%s, 0x%x", get_reg_name (minfop, fa), (fb << 12) | (fc << 6) | fd);
 			break;
+
+		default:
+			FATAL_DEBUG;
 		}
 		break;
 
