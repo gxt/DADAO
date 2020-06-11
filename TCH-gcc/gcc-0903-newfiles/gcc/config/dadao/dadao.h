@@ -134,19 +134,19 @@ struct GTY(()) machine_function
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	/* 64 ~ 127 */					\
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	/* 128 ~ 191 */					\
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	/* 192 ~ 255 */					\
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
-	1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, \
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	/* 256 ~ 287 */					\
 	1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
@@ -161,12 +161,12 @@ struct GTY(()) machine_function
 	/* 64 ~ 127 */					\
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	\
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	/* 128 ~ 191 */					\
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	\
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	/* 192 ~ 255 */					\
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
@@ -222,34 +222,31 @@ enum reg_class {
 /* Note that the contents of each item is always 32 bits.  */
 #define REG_CLASS_CONTENTS {							\
 	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	0},	\
-	{~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	0},	\
-	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	0},	\
-	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	0},	\
-	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	0},	\
+	{~0,	~0,	 0,	 0,	 0,	 0,	 0,	 0,	0},	\
+	{ 0,	 0,	~0,	~0,	 0,	 0,	 0,	 0,	0},	\
+	{ 0,	 0,	 0,	 0,	~0,	~0,	 0,	 0,	0},	\
+	{ 0,	 0,	 0,	 0,	 0,	 0,	~0,	~0,	0},	\
 	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	0x10},	\
 	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	4},	\
 	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	~0},	\
 	{~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0}}
 
-#define REGNO_REG_CLASS(REGNO)						\
- ((REGNO) <= DADAO_LAST_GENERAL_REGISTER				\
-  || (REGNO) == DADAO_ARG_POINTER_REGNUM				\
-  ? GENERAL_REGS							\
-  : (REGNO) == DADAO_REMAINDER_REGNUM ? REMAINDER_REG			\
-  : (REGNO) == DADAO_HIMULT_REGNUM ? HIMULT_REG : SPECIAL_REGS)
+#define REGNO_REG_CLASS(REGNO)							\
+	( (REGNO) < 64 ? GENERAL_REGS						\
+	: (REGNO) < 128 ? POINTER_REGS						\
+	: (REGNO) < 192 ? FLOATING_REGS						\
+	: (REGNO) < 255 ? VECTOR_REGS						\
+	: (REGNO) == DADAO_ARG_POINTER_REGNUM ? GENERAL_REGS			\
+	: (REGNO) == DADAO_REMAINDER_REGNUM ? REMAINDER_REG			\
+	: (REGNO) == DADAO_HIMULT_REGNUM ? HIMULT_REG : SPECIAL_REGS)
 
-#define BASE_REG_CLASS		GENERAL_REGS
-#define INDEX_REG_CLASS		GENERAL_REGS
+#define BASE_REG_CLASS				POINTER_REGS
+#define INDEX_REG_CLASS				GENERAL_REGS
 
-#define REGNO_OK_FOR_BASE_P(REGNO)					\
- ((REGNO) <= DADAO_LAST_GENERAL_REGISTER				\
-  || (REGNO) == DADAO_ARG_POINTER_REGNUM				\
-  || (reg_renumber[REGNO] > 0						\
-      && reg_renumber[REGNO] <= DADAO_LAST_GENERAL_REGISTER))
+#define REGNO_OK_FOR_BASE_P(REGNO)		((REGNO) < 128 && (REGNO) >= 64)
+#define REGNO_OK_FOR_INDEX_P(REGNO)		((REGNO) < 64)
 
-#define REGNO_OK_FOR_INDEX_P(REGNO) REGNO_OK_FOR_BASE_P (REGNO)
-
-#define CLASS_MAX_NREGS(CLASS, MODE)				targetm.hard_regno_nregs (CLASS, MODE)
+#define CLASS_MAX_NREGS(CLASS, MODE)		targetm.hard_regno_nregs (CLASS, MODE)
 
 /* XXX gccint 18.9 Node: Stack Layout and Calling Conventions */
 
