@@ -83,14 +83,14 @@
 ;; we treat them as signed entities; see dadao-modes.def.  The following
 ;; expanders should cover all MODE_CC modes, and expand for this pattern.
 (define_insn "*movcc_expanded"
-  [(set (match_operand 0 "nonimmediate_operand" "=r,Rs,r,r,m")
-	(match_operand 1 "nonimmediate_operand"  "r,r,Rs,m,r"))]
-  "GET_MODE_CLASS (GET_MODE (operands[0])) == MODE_CC
-   && GET_MODE_CLASS (GET_MODE (operands[1])) == MODE_CC"
+  [(set (match_operand 0 "nonimmediate_operand" "=Rg,Rs,Rg,Rg,m")
+	(match_operand 1 "nonimmediate_operand"  "Rg,Rg,Rs,m,Rg"))]
+	"GET_MODE_CLASS (GET_MODE (operands[0])) == MODE_CC
+	&& GET_MODE_CLASS (GET_MODE (operands[1])) == MODE_CC"
   "@
 	or	%0, %1, 0
-	put	%0, %1
-	get	%0, %1
+	put.rs	%0, %1
+	get.rs	%0, %1
 	ldt	%0, %1
 	stt	%1, %0")
 
