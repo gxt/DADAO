@@ -619,7 +619,7 @@ void dadao_md_assemble (char *str)
 			break;
 
 		case dadao_type_dref:
-			DDOP_EXP_MUST_BE_RP(exp[1]);
+			DDOP_EXP_MUST_BE_RGRP(exp[1]);
 			break;
 
 		default:
@@ -734,8 +734,8 @@ void dadao_md_assemble (char *str)
 			}
 
 		} else {	/* (n_operands == 3) */
-			DDOP_EXP_MUST_BE_RP(exp[0]);
-			DDOP_EXP_MUST_BE_RG(exp[1]);
+			DDOP_EXP_MUST_BE_RGRP(exp[0]);
+			DDOP_EXP_MUST_BE_RGRP(exp[1]);
 			DDOP_EXP_MUST_BE_UIMM(exp[2], 12);
 
 			DDOP_SET_FA(opcodep, exp[0].X_add_number);

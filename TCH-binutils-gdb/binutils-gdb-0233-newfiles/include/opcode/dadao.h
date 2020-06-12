@@ -98,6 +98,14 @@ extern const struct dadao_opcode dadao_opcodes[];
  *   FC: 6-bit, [11..6]
  *   FD: 6-bit, [5..0]
  */
+#define DDOP_EXP_MUST_BE_RGRP(ddop_exp)								\
+	do {											\
+		if (ddop_exp.X_op != O_register)						\
+			DADAO_BAD_INSN("exp should be register");				\
+		as_warn_where(__FILE__, __LINE__, "(%s %s) FIXME to specify rg or rp",		\
+			 instruction->name, operands);						\
+	} while (0)
+
 #define DDOP_EXP_MUST_BE_RG(ddop_exp)								\
 	do {											\
 		if (ddop_exp.X_op != O_register)						\
