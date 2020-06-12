@@ -151,7 +151,17 @@ extern const struct dadao_opcode dadao_opcodes[];
 		if (ddop_exp.X_op != O_constant)						\
 			DADAO_BAD_INSN("exp should be const");					\
 		if ( (unsigned long long) ddop_exp.X_add_number > ((1 << (bit_count)) - 1))	\
-			DADAO_BAD_INSN("bit count is too big");					\
+			DADAO_BAD_INSN("unsigned imm is too big");				\
+	} while (0)
+
+#define DDOP_EXP_MUST_BE_SIMM(ddop_exp, bit_count)						\
+	do {											\
+		if (ddop_exp.X_op != O_constant)						\
+			DADAO_BAD_INSN("exp should be const");					\
+		if ( ddop_exp.X_add_number > ((1 << ((bit_count) - 1)) - 1))			\
+			DADAO_BAD_INSN("signed imm is too big (positive)");			\
+		if ( ddop_exp.X_add_number < -(1 << ((bit_count) - 1)))				\
+			DADAO_BAD_INSN("signed imm is too big (negative)");			\
 	} while (0)
 
 #define	DDOP_SET_INSN_ALTMODE(ddop_insn_p)							\

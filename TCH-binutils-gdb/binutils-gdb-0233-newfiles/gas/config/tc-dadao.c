@@ -688,7 +688,7 @@ void dadao_md_assemble (char *str)
 
 		case dadao_type_regp:
 			DDOP_EXP_MUST_BE_RP(exp[0]);
-			DDOP_EXP_MUST_BE_UIMM(exp[1], 18);
+			DDOP_EXP_MUST_BE_SIMM(exp[1], 18);
 
 			DDOP_SET_FA(opcodep, exp[0].X_add_number);
 			DDOP_SET_FB(opcodep, (exp[1].X_add_number >> 12) & 63);
