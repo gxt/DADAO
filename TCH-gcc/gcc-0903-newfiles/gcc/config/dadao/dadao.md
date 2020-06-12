@@ -141,29 +141,29 @@
 ;; the remainder must follow the sign of the dividend.
 
 (define_insn "divmoddi4"
-  [(set (match_operand:DI 0 "register_operand" "=r")
-	(div:DI (match_operand:DI 1 "register_operand" "r")
-		(match_operand:DI 2 "dd_ii_ri_operand" "rId")))
-   (set (match_operand:DI 3 "register_operand" "=Sy")
+  [(set (match_operand:DI 0 "rg_class_operand" "=Rg")
+	(div:DI (match_operand:DI 1 "rg_class_operand" "Rg")
+		(match_operand:DI 2 "dd_ii_ri_operand" "RgId")))
+   (set (match_operand:DI 3 "rg_class_operand" "=Sy")
 	(mod:DI (match_dup 1) (match_dup 2)))]
   ;; Do the library stuff later.
   "TARGET_KNUTH_DIVISION"
 	"div	%0, %1, %2")
 
 (define_insn "udivmoddi4"
-  [(set (match_operand:DI 0 "register_operand" "=r")
-	(udiv:DI (match_operand:DI 1 "register_operand" "r")
-		 (match_operand:DI 2 "dd_ii_ri_operand" "rId")))
-   (set (match_operand:DI 3 "register_operand" "=Sy")
+  [(set (match_operand:DI 0 "rg_class_operand" "=Rg")
+	(udiv:DI (match_operand:DI 1 "rg_class_operand" "Rg")
+		 (match_operand:DI 2 "dd_ii_ri_operand" "RgId")))
+   (set (match_operand:DI 3 "rg_class_operand" "=Sy")
 	(umod:DI (match_dup 1) (match_dup 2)))]
   ""
 	"divu	%0, %1, %2")
 
 (define_expand "divdi3"
   [(parallel
-    [(set (match_operand:DI 0 "register_operand" "=&r")
-	  (div:DI (match_operand:DI 1 "register_operand" "r")
-		  (match_operand:DI 2 "register_operand" "r")))
+    [(set (match_operand:DI 0 "rg_class_operand" "=&Rg")
+	  (div:DI (match_operand:DI 1 "rg_class_operand" "Rg")
+		  (match_operand:DI 2 "rg_class_operand" "Rg")))
      (clobber (scratch:DI))
      (clobber (scratch:DI))
      (clobber (reg:DI DADAO_rR_REGNUM))])]
@@ -173,9 +173,9 @@
 ;; The %2-is-%1-case is there just to make sure things don't fail.  Could
 ;; presumably happen with optimizations off; no evidence.
 (define_insn "*divdi3_nonknuth"
-  [(set (match_operand:DI 0 "register_operand" "=&r,&r")
-	(div:DI (match_operand:DI 1 "register_operand" "r,r")
-		(match_operand:DI 2 "register_operand" "1,r")))
+  [(set (match_operand:DI 0 "rg_class_operand" "=&Rg,&Rg")
+	(div:DI (match_operand:DI 1 "rg_class_operand" "Rg,Rg")
+		(match_operand:DI 2 "rg_class_operand" "1,Rg")))
    (clobber (match_scratch:DI 3 "=1,1"))
    (clobber (match_scratch:DI 4 "=2,2"))
    (clobber (reg:DI DADAO_rR_REGNUM))]
@@ -193,9 +193,9 @@
 
 (define_expand "moddi3"
   [(parallel
-    [(set (match_operand:DI 0 "register_operand" "=&r")
-	  (mod:DI (match_operand:DI 1 "register_operand" "r")
-		  (match_operand:DI 2 "register_operand" "r")))
+    [(set (match_operand:DI 0 "rg_class_operand" "=&Rg")
+	  (mod:DI (match_operand:DI 1 "rg_class_operand" "Rg")
+		  (match_operand:DI 2 "rg_class_operand" "Rg")))
      (clobber (scratch:DI))
      (clobber (scratch:DI))
      (clobber (reg:DI DADAO_rR_REGNUM))])]
@@ -205,9 +205,9 @@
 ;; The %2-is-%1-case is there just to make sure things don't fail.  Could
 ;; presumably happen with optimizations off; no evidence.
 (define_insn "*moddi3_nonknuth"
-  [(set (match_operand:DI 0 "register_operand" "=&r,&r")
-	(mod:DI (match_operand:DI 1 "register_operand" "r,r")
-		(match_operand:DI 2 "register_operand" "1,r")))
+  [(set (match_operand:DI 0 "rg_class_operand" "=&Rg,&Rg")
+	(mod:DI (match_operand:DI 1 "rg_class_operand" "Rg,Rg")
+		(match_operand:DI 2 "rg_class_operand" "1,Rg")))
    (clobber (match_scratch:DI 3 "=1,1"))
    (clobber (match_scratch:DI 4 "=2,2"))
    (clobber (reg:DI DADAO_rR_REGNUM))]
