@@ -6,7 +6,7 @@
 
 (define_insn "addrp"
   [(set      (match_operand:DI 0 "rp_class_operand" "= Rp")
-    (plus:DI (match_operand:DI 1 "rp_class_operand" "% 0")
-             (match_operand:DI 2 "dd_ii_ri_operand" "  It")))]
+    (plus:DI (match_operand:DI 1 "rp_class_operand" "%  0")
+             (match_operand:DI 2 "immediate_operand" " It")))]
 	""
 	"add.rp	%0, %2")
