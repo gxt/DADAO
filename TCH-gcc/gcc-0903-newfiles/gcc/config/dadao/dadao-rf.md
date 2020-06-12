@@ -100,7 +100,7 @@
 	"fsqrt	%0, %1, 0")
 
 (define_insn "*fcmp"
-  [(set            (match_operand:CC_FP 0 "rg_class_operand" "= Rg")
+  [(set            (match_operand:CC_FP 0 "register_operand" "=  r")
     (compare:CC_FP (match_operand:DF    1 "rf_class_operand" "  Rf")
                    (match_operand:DF    2 "rf_class_operand" "  Rf")))]
 	""
@@ -109,14 +109,14 @@
 ;; FIXME: for -mieee, add fsub %0,%1,%1\;fsub %0,%2,%2 before to
 ;; make signalling compliant.
 (define_insn "*feql"
-  [(set              (match_operand:CC_FPEQ 0 "rg_class_operand" "= Rg")
+  [(set              (match_operand:CC_FPEQ 0 "register_operand" "=  r")
     (compare:CC_FPEQ (match_operand:DF      1 "rf_class_operand" "  Rf")
                      (match_operand:DF      2 "rf_class_operand" "  Rf")))]
 	""
 	"feql%e0	%0, %1, %2")
 
 (define_insn "*fun"
-  [(set             (match_operand:CC_FUN 0 "rf_class_operand" "= Rg")
+  [(set             (match_operand:CC_FUN 0 "register_operand" "=  r")
     (compare:CC_FUN (match_operand:DF     1 "rf_class_operand" "  Rf")
                     (match_operand:DF     2 "rf_class_operand" "  Rf")))]
 	""
