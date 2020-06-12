@@ -66,7 +66,7 @@
 
 ;; We assume all "s" are addresses.  Does that hold?
 (define_insn "*movdi"
-  [(set (match_operand:DI 0 "nonimmediate_operand" "=r,m,  r,r")
+  [(set (match_operand:DI 0 "nonimmediate_operand" "=r,m,  Rp,Rp")
 	(match_operand:DI 1 "general_operand"	    "m,r,Ttr,s"))]
   ""
   "@
@@ -563,7 +563,7 @@
 ;; As of r190682 still so: newlib/libc/stdlib/dtoa.c ICEs if "p" is used.
 (define_insn "*call_real"
   [(call (mem:SI
-	  (match_operand:DI 0 "dadao_symbolic_or_address_operand" "s,rU"))
+	  (match_operand:DI 0 "dadao_symbolic_or_address_operand" "s,RpU"))
 	 (match_operand 1 "" ""))
    (use (match_operand 2 "" ""))
    (clobber (reg:DI DADAO_rJ_REGNUM))]
@@ -575,7 +575,7 @@
 (define_insn "*call_value_real"
   [(set (match_operand 0 "register_operand" "=r,r")
 	(call (mem:SI
-	       (match_operand:DI 1 "dadao_symbolic_or_address_operand" "s,rU"))
+	       (match_operand:DI 1 "dadao_symbolic_or_address_operand" "s,RpU"))
 	      (match_operand 2 "" "")))
   (use (match_operand 3 "" ""))
   (clobber (reg:DI DADAO_rJ_REGNUM))]
