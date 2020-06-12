@@ -671,6 +671,34 @@ void dadao_md_assemble (char *str)
 		}
 		break;
 
+	case dadao_operands_orii_orrr:
+		if (instruction->type != dadao_type_regp)
+			DADAO_BAD_INSN("invalid operands to opcode");
+
+		DDOP_EXP_MUST_BE_RP(exp[0]);
+		DDOP_SET_FA(opcodep, instruction->minor_opcode);
+		DDOP_SET_FB(opcodep, exp[0].X_add_number);
+
+		switch (n_operands) {
+		case 2: /* imm12 */
+			DDOP_SET_INSN_ALTMODE(opcodep);
+			DDOP_EXP_MUST_BE_SIMM(exp[1], 12);
+			DDOP_SET_FC(opcodep, (exp[1].X_add_number >> 6) & 63);
+			DDOP_SET_FD(opcodep, (exp[1].X_add_number) & 63);
+			break;
+
+		case 3: /* rc, rd */
+			DDOP_EXP_MUST_BE_RP(exp[1]);
+			DDOP_EXP_MUST_BE_RG(exp[2]);
+			DDOP_SET_FC(opcodep, exp[1].X_add_number);
+			DDOP_SET_FD(opcodep, exp[2].X_add_number);
+			break;
+
+		default:
+			DADAO_BAD_INSN("invalid operands to opcode");
+		}
+		break;
+
 	case dadao_operands_riii: /* operand "ra, imm18" */
 		if ((n_operands != 2) || (exp[1].X_op == O_register))
 			DADAO_BAD_INSN("invalid operands to opcode");
@@ -696,16 +724,6 @@ void dadao_md_assemble (char *str)
 			else
 				frag_var (rs_machine_dependent, DD_INSN_BYTES(3), 0, ENCODE_RELAX (STATE_GETA, STATE_UNDF),
 					exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
-			break;
-
-		case dadao_type_regp:
-			DDOP_EXP_MUST_BE_RP(exp[0]);
-			DDOP_EXP_MUST_BE_SIMM(exp[1], 18);
-
-			DDOP_SET_FA(opcodep, exp[0].X_add_number);
-			DDOP_SET_FB(opcodep, (exp[1].X_add_number >> 12) & 63);
-			DDOP_SET_FC(opcodep, (exp[1].X_add_number >> 6) & 63);
-			DDOP_SET_FD(opcodep, (exp[1].X_add_number) & 63);
 			break;
 
 		default:

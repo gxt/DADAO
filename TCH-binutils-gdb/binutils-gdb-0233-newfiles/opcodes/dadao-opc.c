@@ -85,6 +85,8 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"sru",		0x3E,		3,	1,	OP (orri_orrr),		T (normal)},
 	{"not",		0x3E,		4,	1,	OP (orri_orrr),		T (normal)},
 
+	{"add.rp",	0x3E,		0x10,	1,	OP (orii_orrr),		T (regp)},
+
 	{"csn",		0x40,		0,	1,	OP (rrii_rrri),		T (normal)},
 	{"csz",		0x42,		0,	1,	OP (rrii_rrri),		T (normal)},
 	{"csp",		0x44,		0,	1,	OP (rrii_rrri),		T (normal)},
@@ -118,8 +120,6 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"bod",		0xC6,		0,	0,	OP (riii),		T (condbranch)},
 	{"bev",		0xC7,		0,	0,	OP (riii),		T (condbranch)},
 	{"geta",	I (GETA),	0,	0,	OP (riii),		T (geta)},
-
-	{"add.rp",	0xCB,		0,	0,	OP (riii),		T (regp)},
 
 	{"call",	I (CALL),	0,	1,	OP (iiii_rrii),		T (jsr)},
 	{"jump",	I (JUMP),	0,	1,	OP (iiii_rrii),		T (branch)},
