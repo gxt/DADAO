@@ -17,7 +17,7 @@
 (define_insn "adddi3"
   [(set      (match_operand:DI 0 "rg_class_operand" "=   Rg, Rg, Rg")
     (plus:DI (match_operand:DI 1 "rg_class_operand" "%   Rg, Rg,  0")
-             (match_operand:DI 2 "dd_ii_ri_operand" "  RgId, In, Iw")))]
+             (match_operand:DI 2 "dd_ii_ri_operand" "  IdRg, In, Iw")))]
 	""
 	"@
 	addu	%0, %1, %2
@@ -34,7 +34,7 @@
 (define_insn "muldi3"
   [(set      (match_operand:DI 0 "rg_class_operand" "=   Rg")
     (mult:DI (match_operand:DI 1 "rg_class_operand" "%   Rg")
-             (match_operand:DI 2 "dd_ii_ri_operand" "  RgId")))
+             (match_operand:DI 2 "dd_ii_ri_operand" "  IdRg")))
    (clobber  (match_scratch:DI 3                    "=   Sz"))]
 	""
 	"mulu	%0, %1, %2")
@@ -42,21 +42,21 @@
 (define_insn "anddi3"
   [(set     (match_operand:DI 0 "rg_class_operand" "=   Rg")
     (and:DI (match_operand:DI 1 "rg_class_operand" "%   Rg")
-            (match_operand:DI 2 "dd_ii_ri_operand" "  RgId")))]
+            (match_operand:DI 2 "dd_ii_ri_operand" "  IdRg")))]
 	""
 	"and	%0, %1, %2")
 
 (define_insn "iordi3"
   [(set     (match_operand:DI 0 "rg_class_operand" "=   Rg")
     (ior:DI (match_operand:DI 1 "rg_class_operand" "%   Rg")
-            (match_operand:DI 2 "dd_ii_ri_operand" "  RgId")))]
+            (match_operand:DI 2 "dd_ii_ri_operand" "  IdRg")))]
 	""
 	"or	%0, %1, %2")
 
 (define_insn "xordi3"
   [(set     (match_operand:DI 0 "rg_class_operand" "=   Rg")
     (xor:DI (match_operand:DI 1 "rg_class_operand" "%   Rg")
-            (match_operand:DI 2 "dd_ii_ri_operand" "  RgId")))]
+            (match_operand:DI 2 "dd_ii_ri_operand" "  IdRg")))]
 	""
 	"xor	%0, %1, %2")
 
