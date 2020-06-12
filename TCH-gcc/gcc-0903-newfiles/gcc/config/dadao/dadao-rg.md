@@ -48,14 +48,47 @@
 
 (define_insn "iordi3"
   [(set     (match_operand:DI 0 "rg_class_operand" "=   Rg")
-    (and:DI (match_operand:DI 1 "rg_class_operand" "%   Rg")
+    (ior:DI (match_operand:DI 1 "rg_class_operand" "%   Rg")
             (match_operand:DI 2 "dd_ii_ri_operand" "  RgId")))]
 	""
 	"or	%0, %1, %2")
 
 (define_insn "xordi3"
   [(set     (match_operand:DI 0 "rg_class_operand" "=   Rg")
-    (and:DI (match_operand:DI 1 "rg_class_operand" "%   Rg")
+    (xor:DI (match_operand:DI 1 "rg_class_operand" "%   Rg")
             (match_operand:DI 2 "dd_ii_ri_operand" "  RgId")))]
 	""
 	"xor	%0, %1, %2")
+
+(define_insn "ashldi3"
+  [(set        (match_operand:DI 0 "rg_class_operand" "=   Rg")
+    (ashift:DI (match_operand:DI 1 "rg_class_operand" "    Rg")
+               (match_operand:DI 2 "dd_rg_u6_operand" "  IsRg")))]
+	""
+	"slu	%0, %1, %2")
+
+(define_insn "ashrdi3"
+  [(set          (match_operand:DI 0 "rg_class_operand" "=   Rg")
+    (ashiftrt:DI (match_operand:DI 1 "rg_class_operand" "    Rg")
+                 (match_operand:DI 2 "dd_rg_u6_operand" "  IsRg")))]
+	""
+	"sr	%0, %1, %2")
+
+(define_insn "lshrdi3"
+  [(set          (match_operand:DI 0 "rg_class_operand" "=   Rg")
+    (lshiftrt:DI (match_operand:DI 1 "rg_class_operand" "    Rg")
+                 (match_operand:DI 2 "dd_rg_u6_operand" "  IsRg")))]
+	""
+	"sru	%0, %1, %2")
+
+(define_insn "negdi2"
+  [(set     (match_operand:DI 0 "rg_class_operand" "= Rg")
+    (neg:DI (match_operand:DI 1 "rg_class_operand" "  Rg")))]
+	""
+	"subu	%0, zero, %1")
+
+(define_insn "one_cmpldi2"
+  [(set     (match_operand:DI 0 "rg_class_operand" "= Rg")
+    (not:DI (match_operand:DI 1 "rg_class_operand" "  Rg")))]
+	""
+	"not	%0, %1, zero")

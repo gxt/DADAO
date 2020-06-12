@@ -34,6 +34,11 @@
 	(and (match_code "const_int")
 	     (match_test "IN_RANGE (ival, -4095, 0)")))
 
+(define_constraint "Is"
+	"A 6-bit unsigned integer"
+	(and (match_code "const_int")
+	     (match_test "IN_RANGE (ival, 0, 0x1F)")))
+
 (define_constraint "Id"
 	"A 12-bit unsigned integer"
 	(and (match_code "const_int")

@@ -222,45 +222,7 @@
 	get	%0, rR\;\
 	subu	%2, zero, %0	\;\
 	csnn	%0, rg63, %2")
-
-(define_insn "ashldi3"
-  [(set (match_operand:DI 0 "register_operand" "=r")
-	(ashift:DI
-	 (match_operand:DI 1 "register_operand" "r")
-	 (match_operand:DI 2 "dadao_reg_or_8bit_operand" "rTti")))]
-  ""
-	"slu	%0, %1, %2")
 
-(define_insn "ashrdi3"
-  [(set (match_operand:DI 0 "register_operand" "=r")
-	(ashiftrt:DI
-	 (match_operand:DI 1 "register_operand" "r")
-	 (match_operand:DI 2 "dadao_reg_or_8bit_operand" "rTti")))]
-  ""
-	"sr	%0, %1, %2")
-
-(define_insn "lshrdi3"
-  [(set (match_operand:DI 0 "register_operand" "=r")
-	(lshiftrt:DI
-	 (match_operand:DI 1 "register_operand" "r")
-	 (match_operand:DI 2 "dadao_reg_or_8bit_operand" "rTti")))]
-  ""
-	"sru	%0, %1, %2")
-
-(define_insn "negdi2"
-  [(set (match_operand:DI 0 "register_operand" "=r")
-	(neg:DI (match_operand:DI 1 "register_operand" "r")))]
-  ""
-	"subu	%0, zero, %1")
-
-;; FIXME: define_expand for ffssi2? (not ffsdi2 since int is SImode).
-
-(define_insn "one_cmpldi2"
-  [(set (match_operand:DI 0 "register_operand" "=r")
-	(not:DI (match_operand:DI 1 "register_operand" "r")))]
-  ""
-	"not	%0, %1, 0")
-
 ;; When the user-patterns expand, the resulting insns will match the
 ;; patterns below.
 

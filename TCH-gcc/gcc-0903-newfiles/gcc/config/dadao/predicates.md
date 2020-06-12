@@ -45,6 +45,11 @@
        (and (match_code "const_int")
             (match_test "satisfies_constraint_Id(op)"))))
 
+(define_predicate "dd_rg_u6_operand"
+  (ior (match_operand 0 "rg_class_operand")
+       (and (match_code "const_int")
+            (match_test "satisfies_constraint_Is(op)"))))
+
 ;; Return 1 if OP is a valid comparison operator for "cbranch" instructions.
 ;; LE and GE are further lowered by the cbranchdf4 pattern.
 (define_predicate "float_comparison_operator"
