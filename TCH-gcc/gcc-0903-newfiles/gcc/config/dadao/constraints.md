@@ -44,6 +44,11 @@
 	(and (match_code "const_int")
 	     (match_test "IN_RANGE (ival, 0, 4095)")))
 
+(define_constraint "Ie"
+	"A 12-bit signed integer"
+	(and (match_code "const_int")
+	     (match_test "IN_RANGE (ival, -0x800, 0x7FF)")))
+
 (define_constraint "It"
 	"A 18-bit signed integer"
 	(and (match_code "const_int")
