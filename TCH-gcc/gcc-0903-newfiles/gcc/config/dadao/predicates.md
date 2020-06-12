@@ -50,6 +50,11 @@
        (and (match_code "const_int")
             (match_test "satisfies_constraint_Is(op)"))))
 
+(define_predicate "dd_rf_u6_operand"
+  (ior (match_operand 0 "rf_class_operand")
+       (and (match_code "const_int")
+            (match_test "satisfies_constraint_Is(op)"))))
+
 ;; Return 1 if OP is a valid comparison operator for "cbranch" instructions.
 ;; LE and GE are further lowered by the cbranchdf4 pattern.
 (define_predicate "float_comparison_operator"
@@ -167,9 +172,9 @@
 
 ;; True if this is a register or 0 (int or float).
 
-(define_predicate "dadao_reg_or_0_operand"
+(define_predicate "dadao_rf_or_0_operand"
   (ior
-   (match_operand 0 "register_operand")
+   (match_operand 0 "rf_class_operand")
    (ior
     (and (match_code "const_int")
 	 (match_test "op == const0_rtx"))

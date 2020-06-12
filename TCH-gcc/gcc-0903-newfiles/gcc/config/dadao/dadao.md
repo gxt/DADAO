@@ -320,7 +320,7 @@
       [(match_operand 3 "dadao_reg_cc_operand"	    "Rg,Rg")
       (const_int 0)])
      (match_operand:DI 1 "dd_ii_ri_operand" "IdRg,IdRg")
-     (match_operand:DI 4 "dadao_reg_or_0_operand" "0 ,GM")))]
+     (match_operand:DI 4 "dadao_rf_or_0_operand" "0 ,GM")))]
   "!REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
 	cs%d2	%0, %3, %1
