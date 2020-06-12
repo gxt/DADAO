@@ -528,7 +528,19 @@ void dadao_md_assemble (char *str)
 		if (n_operands != 3)
 			DADAO_BAD_INSN("invalid operands to opcode");
 
-		DDOP_EXP_MUST_BE_RF(exp[0]);
+		switch (instruction->type) {
+		case dadao_type_regf:
+			DDOP_EXP_MUST_BE_RF(exp[0]);
+			break;
+
+		case dadao_type_regf_cc:
+			DDOP_EXP_MUST_BE_RG(exp[0]);
+			break;
+
+		default:
+			DADAO_BAD_INSN("SHOULD NOT BE HERE");
+		}
+
 		DDOP_EXP_MUST_BE_RF(exp[1]);
 		DDOP_EXP_MUST_BE_RF(exp[2]);
 

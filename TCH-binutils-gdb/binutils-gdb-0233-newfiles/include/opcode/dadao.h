@@ -25,6 +25,8 @@ enum dadao_insn_type
 	dadao_type_branch,
 	dadao_type_geta,
 	dadao_type_regp,
+	dadao_type_regf,
+	dadao_type_regf_cc,
 	dadao_type_dref,
 	dadao_type_jsr
  };
