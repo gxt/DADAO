@@ -234,9 +234,8 @@
 ;;  FIXME: Perhaps a peep2 changing CCcode to a new code, that
 ;; gets folded here.
 (define_insn "*cmpdi_folded"
-  [(set (match_operand:CC 0 "register_operand" "=r")
-	(compare:CC
-	 (match_operand:DI 1 "register_operand" "r")
+  [(set         (match_operand:CC 0 "rg_class_operand" "= Rg")
+    (compare:CC (match_operand:DI 1 "rg_class_operand" "  Rg")
 	 (const_int 0)))]
   ;; FIXME: Can we test equivalence any other way?
   ;; FIXME: Can we fold any other way?
@@ -246,28 +245,26 @@
 	"cmp	%0, %1, 0")
 
 (define_insn "*cmps"
-  [(set (match_operand:CC 0 "register_operand" "=r")
-	(compare:CC
-	 (match_operand:DI 1 "register_operand" "r")
-	 (match_operand:DI 2 "dd_ii_ri_operand" "rId")))]
-  ""
+  [(set         (match_operand:CC 0 "rg_class_operand" "=   Rg")
+    (compare:CC (match_operand:DI 1 "rg_class_operand" "    Rg")
+                (match_operand:DI 2 "dd_ii_ri_operand" "  IdRg")))]
+	""
 	"cmp	%0, %1, %2")
 
 (define_insn "*cmpu"
-  [(set (match_operand:CC_UNS 0 "register_operand" "=r")
-	(compare:CC_UNS
-	 (match_operand:DI 1 "register_operand" "r")
-	 (match_operand:DI 2 "dd_ii_ri_operand" "rId")))]
-  ""
+  [(set             (match_operand:CC_UNS 0 "rg_class_operand" "=   Rg")
+    (compare:CC_UNS (match_operand:DI     1 "rg_class_operand" "    Rg")
+                    (match_operand:DI     2 "dd_ii_ri_operand" "  IdRg")))]
+	""
 	"cmpu	%0, %1, %2")
 
 (define_expand "movdicc"
   [(set (match_dup 4) (match_dup 5))
-   (set (match_operand:DI 0 "register_operand" "")
+   (set (match_operand:DI 0 "rg_class_operand" "")
 	(if_then_else:DI
 	 (match_operand 1 "comparison_operator" "")
-	 (match_operand:DI 2 "dadao_reg_or_8bit_operand" "")
-	 (match_operand:DI 3 "dadao_reg_or_8bit_operand" "")))]
+	 (match_operand:DI 2 "dd_ii_ri_operand" "")
+	 (match_operand:DI 3 "dd_ii_ri_operand" "")))]
   ""
   "
 {
@@ -285,13 +282,13 @@
 
 ;; FIXME: Is this the right way to do "folding" of CCmode -> DImode?
 (define_insn "*movdicc_real_foldable"
-  [(set (match_operand:DI 0 "register_operand" "=r,r,r,r")
+  [(set (match_operand:DI 0 "rg_class_operand" "=Rg,Rg,Rg,Rg")
 	(if_then_else:DI
 	 (match_operator 2 "dadao_foldable_comparison_operator"
-			 [(match_operand:DI 3 "register_operand" "r,r,r,r")
+			 [(match_operand:DI 3 "rg_class_operand" "Rg,Rg,Rg,Rg")
 			  (const_int 0)])
-	 (match_operand:DI 1 "dadao_reg_or_8bit_operand" "rTti,0 ,rTti,GM")
-	 (match_operand:DI 4 "dadao_reg_or_8bit_operand" "0 ,rTti,GM,rTti")))]
+	 (match_operand:DI 1 "dd_ii_ri_operand" "IdRg,0 ,IdRg,GM")
+	 (match_operand:DI 4 "dd_ii_ri_operand" "0 ,IdRg,GM,IdRg")))]
   ""
   "@
 	cs%d2	%0, %3, %1
@@ -301,14 +298,13 @@
 
 (define_insn "*movdicc_real_reversible"
   [(set
-    (match_operand:DI 0 "register_operand"	   "=r ,r ,r ,r")
+    (match_operand:DI 0 "rg_class_operand"	   "=Rg,Rg,Rg,Rg")
     (if_then_else:DI
-     (match_operator
-      2 "dadao_comparison_operator"
-      [(match_operand 3 "dadao_reg_cc_operand"	    "r ,r ,r ,r")
+     (match_operator 2 "dadao_comparison_operator"
+      [(match_operand 3 "dadao_reg_cc_operand"	    "Rg,Rg,Rg,Rg")
       (const_int 0)])
-     (match_operand:DI 1 "dadao_reg_or_8bit_operand" "rTti,0 ,rTti,GM")
-     (match_operand:DI 4 "dadao_reg_or_8bit_operand" "0 ,rTti,GM,rTti")))]
+     (match_operand:DI 1 "dd_ii_ri_operand" "IdRg,0 ,IdRg,GM")
+     (match_operand:DI 4 "dd_ii_ri_operand" "0 ,IdRg,GM,IdRg")))]
   "REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
 	cs%d2	%0, %3, %1
@@ -318,13 +314,12 @@
 
 (define_insn "*movdicc_real_nonreversible"
   [(set
-    (match_operand:DI 0 "register_operand"	   "=r ,r")
+    (match_operand:DI 0 "rg_class_operand"	   "=Rg,Rg")
     (if_then_else:DI
-     (match_operator
-      2 "dadao_comparison_operator"
-      [(match_operand 3 "dadao_reg_cc_operand"	    "r ,r")
+     (match_operator 2 "dadao_comparison_operator"
+      [(match_operand 3 "dadao_reg_cc_operand"	    "Rg,Rg")
       (const_int 0)])
-     (match_operand:DI 1 "dadao_reg_or_8bit_operand" "rTti,rTti")
+     (match_operand:DI 1 "dd_ii_ri_operand" "IdRg,IdRg")
      (match_operand:DI 4 "dadao_reg_or_0_operand" "0 ,GM")))]
   "!REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
@@ -337,8 +332,8 @@
 (define_expand "cbranchdi4"
   [(set (match_dup 4)
         (match_op_dup 5
-         [(match_operand:DI 1 "register_operand" "")
-          (match_operand:DI 2 "dadao_reg_or_8bit_operand" "")]))
+         [(match_operand:DI 1 "rg_class_operand" "")
+          (match_operand:DI 2 "dd_ii_ri_operand" "")]))
    (set (pc)
         (if_then_else
               (match_operator 0 "ordered_comparison_operator"
@@ -365,47 +360,47 @@
   [(set (pc)
 	(if_then_else
 	 (match_operator 1 "dadao_foldable_comparison_operator"
-			 [(match_operand:DI 2 "register_operand" "r")
+			 [(match_operand:DI 2 "rg_class_operand" "Rg")
 			  (const_int 0)])
 	 (label_ref (match_operand 0 "" ""))
 	 (pc)))]
   ""
-  "B%d1 %2,%0")
+	"b%d1	%2, %0")
 
 (define_insn "*bCC"
   [(set (pc)
 	(if_then_else
 	 (match_operator 1 "dadao_comparison_operator"
-			 [(match_operand 2 "dadao_reg_cc_operand" "r")
+			 [(match_operand 2 "dadao_reg_cc_operand" "Rg")
 			  (const_int 0)])
 	 (label_ref (match_operand 0 "" ""))
 	 (pc)))]
   ""
-  "B%d1 %2,%0")
+	"b%d1	%2, %0")
 
 (define_insn "*bCC_inverted_foldable"
   [(set (pc)
 	(if_then_else
 	 (match_operator 1 "dadao_foldable_comparison_operator"
-			 [(match_operand:DI 2 "register_operand" "r")
+			 [(match_operand:DI 2 "rg_class_operand" "Rg")
 			  (const_int 0)])
 		      (pc)
 		      (label_ref (match_operand 0 "" ""))))]
 ;; REVERSIBLE_CC_MODE is checked by dadao_foldable_comparison_operator.
   ""
-  "B%D1 %2,%0")
+	"b%D1	%2, %0")
 
 (define_insn "*bCC_inverted"
   [(set (pc)
 	(if_then_else
 	 (match_operator 1 "dadao_comparison_operator"
-			 [(match_operand 2 "dadao_reg_cc_operand" "r")
+			 [(match_operand 2 "dadao_reg_cc_operand" "Rg")
 			  (const_int 0)])
 	 (pc)
 	 (label_ref (match_operand 0 "" ""))))]
   "REVERSIBLE_CC_MODE (GET_MODE (operands[2]))"
-  "B%D1 %2,%0")
-
+	"b%D1	%2, %0")
+
 (define_expand "call"
   [(parallel [(call (match_operand:SI 0 "memory_operand" "")
 		    (match_operand 1 "general_operand" ""))
@@ -606,9 +601,9 @@
   rtx my_operands[3];
   const char *my_template
     = "	geta	rg63, 0f\;\
-	put	rJ, rg63\;\
+	put.rs	rJ, rg63\;\
 	ldo	rg63, %a0, 0\n\
-0:\;	get	%1, rO\;\
+0:\;	get.rs	%1, rO\;\
 	cmpu	%1, %1, rg63	\;\
 	bnp	%1, 1f\;\
 	ret\n1:";
