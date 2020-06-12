@@ -127,34 +127,6 @@
 ;; FIXME: Should we define_expand for smin, smax, umin, umax using a
 ;; nifty conditional sequence?
 
-;; FIXME: The cuter andn combinations don't get here, presumably because
-;; they ended up in the constant pool.  Check: still?
-(define_insn "anddi3"
-  [(set (match_operand:DI 0 "register_operand" "=r,r")
-	(and:DI
-	 (match_operand:DI 1 "register_operand" "%r,0")
-	 (match_operand:DI 2 "dadao_reg_or_constant_operand" "rTti,NTtt")))]
-  ""
-  "@
-	and	%0, %1, %2
-   %A2 %0,%V2")
-
-(define_insn "iordi3"
-  [(set (match_operand:DI 0 "register_operand" "=r,r")
-	(ior:DI (match_operand:DI 1 "register_operand" "%r,0")
-		(match_operand:DI 2 "dadao_reg_or_constant_operand" "rTti,Iw")))]
-  ""
-  "@
-	or	%0, %1, %2
-   %o2 %0,%v2")
-
-(define_insn "xordi3"
-  [(set (match_operand:DI 0 "register_operand" "=r")
-	(xor:DI (match_operand:DI 1 "register_operand" "%r")
-		(match_operand:DI 2 "dadao_reg_or_8bit_operand" "rTti")))]
-  ""
-	"xor	%0, %1, %2")
-
 ;; FIXME:  When TImode works for other reasons (like cross-compiling from
 ;; a 32-bit host), add back umulditi3 and umuldi3_highpart here.
 
