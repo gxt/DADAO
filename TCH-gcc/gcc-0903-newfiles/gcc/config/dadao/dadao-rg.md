@@ -92,3 +92,10 @@
     (not:DI (match_operand:DI 1 "rg_class_operand" "  Rg")))]
 	""
 	"not	%0, %1, zero")
+
+(define_insn "*nor"
+  [(set             (match_operand:DI 0 "rg_class_operand" "=   Rg")
+    (and:DI (not:DI (match_operand:DI 1 "rg_class_operand" "%   Rg"))
+            (not:DI (match_operand:DI 2 "dd_ii_ri_operand" "  IdRg"))))]
+	""
+	"or	%0, %1, %2	\;	not	%0, %0, 0")

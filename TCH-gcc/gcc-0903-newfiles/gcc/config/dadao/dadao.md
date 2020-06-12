@@ -639,14 +639,6 @@
   return "";
 })
 
-(define_insn "*nor"
-  [(set (match_operand:DI 0 "register_operand" "=r")
-	(and:DI
-	 (not:DI (match_operand:DI 1 "register_operand" "%r"))
-	 (not:DI (match_operand:DI 2 "dadao_reg_or_8bit_operand" "rTti"))))]
-  ""
-	"or	%0, %1, %2	\;	not	%0, %0, 0")
-
 ;; Local Variables:
 ;; mode: lisp
 ;; indent-tabs-mode: t
