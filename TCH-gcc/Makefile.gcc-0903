@@ -123,7 +123,7 @@ gcc-0903-tags:
 	@cd $(GCC_0903_SOURCE) &&							\
 		ctags --recurse --exclude=testsuite --languages=C,C++			\
 			./fixincludes							\
-			./gcc								\
+			./gcc $(GCC_0903_BUILD)/gcc					\
 			./include ./intl						\
 			./libbacktrace ./libcc1 ./libcpp ./libdecnumber ./libiberty	\
 			./libgcc ./libquadmath						\
