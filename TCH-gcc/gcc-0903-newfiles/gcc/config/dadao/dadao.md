@@ -234,7 +234,7 @@
 ;;  FIXME: Perhaps a peep2 changing CCcode to a new code, that
 ;; gets folded here.
 (define_insn "*cmpdi_folded"
-  [(set         (match_operand:CC 0 "register_operand" "=  r")
+  [(set         (match_operand:CC 0 "rg_class_operand" "= Rg")
     (compare:CC (match_operand:DI 1 "rg_class_operand" "  Rg")
 	 (const_int 0)))]
   ;; FIXME: Can we test equivalence any other way?
@@ -245,14 +245,14 @@
 	"cmp	%0, %1, 0")
 
 (define_insn "*cmps"
-  [(set         (match_operand:CC 0 "register_operand" "=    r")
+  [(set         (match_operand:CC 0 "rg_class_operand" "=   Rg")
     (compare:CC (match_operand:DI 1 "rg_class_operand" "    Rg")
                 (match_operand:DI 2 "dd_ii_ri_operand" "  IdRg")))]
 	""
 	"cmp	%0, %1, %2")
 
 (define_insn "*cmpu"
-  [(set             (match_operand:CC_UNS 0 "register_operand" "=    r")
+  [(set             (match_operand:CC_UNS 0 "rg_class_operand" "=   Rg")
     (compare:CC_UNS (match_operand:DI     1 "rg_class_operand" "    Rg")
                     (match_operand:DI     2 "dd_ii_ri_operand" "  IdRg")))]
 	""

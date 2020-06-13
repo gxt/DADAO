@@ -7,36 +7,46 @@
 (define_predicate "rg_class_operand"
   (match_code "reg, subreg")
 {
-	if (GET_CODE(op) == SUBREG)	op = SUBREG_REG(op);
-	return (REG_P(op) && (REGNO_REG_CLASS(REGNO(op)) == GENERAL_REGS));
+	if (!register_operand(op, mode))	return 0;
+	if (GET_CODE(op) == SUBREG)		op = SUBREG_REG(op);
+	if (!HARD_REGISTER_P(op))		return 1;
+	return (REGNO_REG_CLASS(REGNO(op)) == GENERAL_REGS);
 })
 
 (define_predicate "rp_class_operand"
   (match_code "reg, subreg")
 {
-	if (GET_CODE(op) == SUBREG)	op = SUBREG_REG(op);
-	return (REG_P(op) && (REGNO_REG_CLASS(REGNO(op)) == POINTER_REGS));
+	if (!register_operand(op, mode))	return 0;
+	if (GET_CODE(op) == SUBREG)		op = SUBREG_REG(op);
+	if (!HARD_REGISTER_P(op))		return 1;
+	return (REGNO_REG_CLASS(REGNO(op)) == POINTER_REGS);
 })
 
 (define_predicate "rf_class_operand"
   (match_code "reg, subreg")
 {
-	if (GET_CODE(op) == SUBREG)	op = SUBREG_REG(op);
-	return (REG_P(op) && (REGNO_REG_CLASS(REGNO(op)) == FLOATING_REGS));
+	if (!register_operand(op, mode))	return 0;
+	if (GET_CODE(op) == SUBREG)		op = SUBREG_REG(op);
+	if (!HARD_REGISTER_P(op))		return 1;
+	return (REGNO_REG_CLASS(REGNO(op)) == FLOATING_REGS);
 })
 
 (define_predicate "rv_class_operand"
   (match_code "reg, subreg")
 {
-	if (GET_CODE(op) == SUBREG)	op = SUBREG_REG(op);
-	return (REG_P(op) && (REGNO_REG_CLASS(REGNO(op)) == VECTOR_REGS));
+	if (!register_operand(op, mode))	return 0;
+	if (GET_CODE(op) == SUBREG)		op = SUBREG_REG(op);
+	if (!HARD_REGISTER_P(op))		return 1;
+	return (REGNO_REG_CLASS(REGNO(op)) == VECTOR_REGS);
 })
 
 (define_predicate "rs_class_operand"
   (match_code "reg, subreg")
 {
-	if (GET_CODE(op) == SUBREG)	op = SUBREG_REG(op);
-	return (REG_P(op) && (REGNO_REG_CLASS(REGNO(op)) == SPECIAL_REGS));
+	if (!register_operand(op, mode))	return 0;
+	if (GET_CODE(op) == SUBREG)		op = SUBREG_REG(op);
+	if (!HARD_REGISTER_P(op))		return 1;
+	return (REGNO_REG_CLASS(REGNO(op)) == SPECIAL_REGS);
 })
 
 ;; TODO: ri add shift-imm handler
@@ -133,7 +143,7 @@
 ;; True if this is a register with a condition-code mode.
 
 (define_predicate "dadao_reg_cc_operand"
-  (and (match_operand 0 "register_operand")
+  (and (match_operand 0 "rg_class_operand")
        (ior (match_test "GET_MODE (op) == CCmode")
 	    (ior (match_test "GET_MODE (op) == CC_UNSmode")
 		 (ior (match_test "GET_MODE (op) == CC_FPmode")
@@ -170,7 +180,7 @@
 ;; doesn't seem to be worth it at the moment.
 
 (define_predicate "dadao_reg_or_constant_operand"
-  (ior (match_operand 0 "register_operand")
+  (ior (match_operand 0 "rg_class_operand")
        (ior (match_code "const_int")
 	    (and (match_code "const_double")
 		 (match_test "GET_MODE (op) == VOIDmode")))))
@@ -193,7 +203,7 @@
 
 (define_predicate "dadao_reg_or_8bit_operand"
   (ior
-   (match_operand 0 "register_operand")
+   (match_operand 0 "rg_class_operand")
    (and (match_code "const_int")
 	(match_test "satisfies_constraint_Tti (op)"))))
 
