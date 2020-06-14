@@ -583,56 +583,34 @@ int dadao_constant_address_p (rtx x)
 static bool dd_legitimate_address_p (machine_mode mode ATTRIBUTE_UNUSED,
 			   rtx x, bool strict_checking)
 {
-#define DADAO_REG_OK(X)							\
-  ((strict_checking							\
-    && (REGNO (X) <= DADAO_LAST_GENERAL_REGISTER				\
-	|| (reg_renumber[REGNO (X)] > 0					\
-	    && reg_renumber[REGNO (X)] <= DADAO_LAST_GENERAL_REGISTER)))	\
-   || (!strict_checking							\
-       && (REGNO (X) <= DADAO_LAST_GENERAL_REGISTER			\
-	   || REGNO (X) >= FIRST_PSEUDO_REGISTER			\
-	   || REGNO (X) == ARG_POINTER_REGNUM)))
+#define	_DD_LEGITIMATE_ADDR_RC(X, XC)	( REG_P(X) &&				\
+	( (REGNO_REG_CLASS(REGNO(X)) == XC) ||					\
+	( !strict_checking && (REGNO (X) >= FIRST_PSEUDO_REGISTER)) ||		\
+	( strict_checking && (REGNO_REG_CLASS(reg_renumber[REGNO(X)]) == XC))))
 
-  /* We only accept:
-     (mem reg)
-     (mem (plus reg reg))
-     (mem (plus reg 0..255)).
-   */
+	/* (mem rp) */
+	if (_DD_LEGITIMATE_ADDR_RC(x, POINTER_REGS))
+		return 1;
 
+	if (GET_CODE(x) == PLUS) {
+		rtx x1 = XEXP (x, 0);
+		rtx x2 = XEXP (x, 1);
 
-    /* (mem reg) */
-  if (REG_P (x) && DADAO_REG_OK (x))
-    return 1;
+		/* (mem (plus (rp) (?))) */
+		if (!_DD_LEGITIMATE_ADDR_RC(x1, POINTER_REGS))
+			return 0;
 
-  if (GET_CODE(x) == PLUS)
-    {
-      rtx x1 = XEXP (x, 0);
-      rtx x2 = XEXP (x, 1);
+		/* (mem (plus (rp) (rg))) */
+		if (_DD_LEGITIMATE_ADDR_RC(x2, GENERAL_REGS))
+			return 1;
 
-      /* Try swapping the order.  FIXME: Do we need this?  */
-      if (! REG_P (x1))
-	{
-	  rtx tem = x1;
-	  x1 = x2;
-	  x2 = tem;
+		/* (mem (plus (rp) (-0x800, 0x7FF))) */
+		if (satisfies_constraint_Ie (x2))
+			return 1;
 	}
 
-      /* (mem (plus (reg?) (?))) */
-      if (!REG_P (x1) || !DADAO_REG_OK (x1))
 	return 0;
-
-      /* (mem (plus (reg) (reg?))) */
-      if (REG_P (x2) && DADAO_REG_OK (x2))
-	return 1;
-
-      /* (mem (plus (reg) (0..255?))) */
-      if (satisfies_constraint_Tti (x2))
-	return 1;
-
-      return 0;
-    }
-
-  return 0;
+#undef	_DD_LEGITIMATE_ADDR_RC
 }
 
 #undef	TARGET_LEGITIMATE_ADDRESS_P
