@@ -387,14 +387,6 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 				get_reg_name (minfop, fb), get_reg_name (minfop, fc), get_reg_name (minfop, fd));
 		break;
 
-	case dadao_operands_orii_orrr:
-		if (insn & DADAO_INSN_ALTMODE)
-			(*info->fprintf_func) (info->stream, "\t%s, 0x%x", get_reg_name (minfop, fb), (fc << 6) | fd);
-		else
-			(*info->fprintf_func) (info->stream, "\t%s, %s, %s",
-				get_reg_name (minfop, fb), get_reg_name (minfop, fc), get_reg_name (minfop, fd));
-		break;
-
 	case dadao_operands_riii: /* "ra, imm18".  */
 		switch (opcodep->type) {
 		case dadao_type_geta:

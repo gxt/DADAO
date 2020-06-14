@@ -44,7 +44,6 @@ enum dadao_operands_type {
 	dadao_operands_orr0,		/* get/put insn  */
 	dadao_operands_orri,		/* The regular "rb, rc, imm6" */
 	dadao_operands_orri_orrr,	/* The regular "rb, rc, rd", or "rb, rc, imm6" */
-	dadao_operands_orii_orrr,	/* The regular "rb, rc, rd", or "rb, imm12" */
 	dadao_operands_orrr,		/* The regular "rb, rc, rd".  */
 	dadao_operands_riii,		/* The regular "ra, imm18" */
 	dadao_operands_rjii,		/* The regular "ra, imm16", 2-bit in fc used to indicate WH/WJ/WK/WL */

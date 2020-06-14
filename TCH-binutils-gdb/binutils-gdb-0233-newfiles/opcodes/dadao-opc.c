@@ -46,6 +46,8 @@ const struct dadao_reg_alias dadao_reg_aliases[] =
 
 const struct dadao_opcode dadao_opcodes[] =
  {
+	{"add.rp",	0x10,		0,	1,	OP (rrii_rrri),		T (regp)},
+
 	{"add",		0x20,		0,	1,	OP (rrii_rrri),		T (normal)},
 	{"addu",	0x22,		0,	1,	OP (rrii_rrri),		T (normal)},
 	{"sub",		0x24,		0,	1,	OP (rrii_rrri),		T (normal)},
@@ -85,8 +87,6 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"sr",		0x3E,		2,	1,	OP (orri_orrr),		T (normal)},
 	{"sru",		0x3E,		3,	1,	OP (orri_orrr),		T (normal)},
 	{"not",		0x3E,		4,	1,	OP (orri_orrr),		T (normal)},
-
-	{"add.rp",	0x3E,		0x10,	1,	OP (orii_orrr),		T (regp)},
 
 	{"csn",		0x40,		0,	1,	OP (rrii_rrri),		T (normal)},
 	{"csz",		0x42,		0,	1,	OP (rrii_rrri),		T (normal)},
