@@ -7,7 +7,7 @@
 ;;   2020:
 ;;	Guan Xuetao <gxt@pku.edu.cn>
 
-;; Register class constrains
+;; Register class constraints
 (define_register_constraint "Rg" "GENERAL_REGS"
 	"General registers")
 
@@ -23,7 +23,23 @@
 (define_register_constraint "Rs" "SPECIAL_REGS"
 	"Special registers")
 
-;; Immediate constrains
+;; Special register constraints
+(define_register_constraint "Sy" "REMAINDER_REG"
+	"@internal")
+
+(define_register_constraint "Sz" "HIMULT_REG"
+	"@internal")
+
+(define_constraint "Sf"
+	"@internal"
+	(match_operand 0 "frame_pointer_operand"))
+
+;; Immediate constraints
+;; s: single 6-bit data
+;; d: double 6-bit data
+;; t: triple 6-bit data
+;; z: zero
+;; w: wyde-size data
 (define_constraint "Id"
 	"A 12-bit signed integer"
 	(and (match_code "const_int")
@@ -39,14 +55,14 @@
 	(and (match_code "const_int")
 	     (match_test "ival == 0")))
 
-;; Negative immediate constrains
+;; Negative immediate constraints
 (define_constraint "Nd"
 	"Negative 12-bit integer"
 	(and (match_code "const_int")
 	     (match_test "IN_RANGE (ival, -4095, 0)")))
 
 
-;; Unsigned immediate constrains
+;; Unsigned immediate constraints
 (define_constraint "Us"
 	"A 6-bit unsigned integer"
 	(and (match_code "const_int")
@@ -62,30 +78,20 @@
 	(and (match_code "const_int")
 	     (match_test "dadao_shiftable_wyde_value (ival)")))
 
-;; Floating Point immediate constraint
+;; Floating Point immediate constraints
 ;; FIXME: Iz (or Gz) is redundant.
 (define_constraint "Gz"
 	"Floating-point zero."
 	(and (match_code "const_double")
 	     (match_test "op == CONST0_RTX (mode)")))
 
-;; Special register constrains
-(define_register_constraint "Sy" "REMAINDER_REG"
-	"@internal")
-
-(define_register_constraint "Sz" "HIMULT_REG"
-	"@internal")
-
-(define_constraint "Sf"
-	"@internal"
-	(match_operand 0 "frame_pointer_operand"))
-
+;; Address constraints
 (define_constraint "Ai"
-  "@internal"
-  (and (not (match_code "const_int,const_double"))
-       (match_test "dadao_constant_address_p (op)")))
+	"@internal"
+	(and (not (match_code "const_int,const_double"))
+	          (match_test "dadao_constant_address_p (op)")))
 
 (define_address_constraint "Au"
-  "@internal"
-  (match_operand 0 "dadao_address_operand"))
+	"@internal"
+	(match_operand 0 "dadao_address_operand"))
 
