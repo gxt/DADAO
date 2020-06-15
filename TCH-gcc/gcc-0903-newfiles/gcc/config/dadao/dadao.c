@@ -605,7 +605,7 @@ static bool dd_legitimate_address_p (machine_mode mode ATTRIBUTE_UNUSED,
 			return 1;
 
 		/* (mem (plus (rp) (-0x800, 0x7FF))) */
-		if (satisfies_constraint_Ie (x2))
+		if (satisfies_constraint_Id (x2))
 			return 1;
 	}
 

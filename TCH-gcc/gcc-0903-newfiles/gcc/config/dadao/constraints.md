@@ -24,7 +24,7 @@
 	"Special registers")
 
 ;; Immediate constrains
-(define_constraint "Ie"
+(define_constraint "Id"
 	"A 12-bit signed integer"
 	(and (match_code "const_int")
 	     (match_test "IN_RANGE (ival, -0x800, 0x7FF)")))

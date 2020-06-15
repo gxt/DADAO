@@ -58,7 +58,7 @@
 (define_predicate "dd_rg_s12_operand"
   (ior (match_operand 0 "rg_class_operand")
        (and (match_code "const_int")
-            (match_test "satisfies_constraint_Ie(op)"))))
+            (match_test "satisfies_constraint_Id(op)"))))
 
 (define_predicate "dd_rg_u6_operand"
   (ior (match_operand 0 "rg_class_operand")
