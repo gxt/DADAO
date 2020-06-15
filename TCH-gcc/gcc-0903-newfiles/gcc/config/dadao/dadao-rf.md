@@ -350,8 +350,8 @@
       2 "dadao_foldable_comparison_operator"
       [(match_operand:DI 3 "rf_class_operand"	 "Rf  ,Rf  ,Rf  ,Rf")
       (const_int 0)])
-     (match_operand:DF 1 "dadao_rf_or_0_operand" "RfGM,0  ,RfGM,GM")
-     (match_operand:DF 4 "dadao_rf_or_0_operand" "0  ,RfGM,GM ,RfGM")))]
+     (match_operand:DF 1 "dadao_rf_or_0_operand" "RfGIz,0  ,RfGIz,GIz")
+     (match_operand:DF 4 "dadao_rf_or_0_operand" "0  ,RfGIz,GIz ,RfGIz")))]
   ""
   "@
 	cs%d2	%0, %3, %1
@@ -367,8 +367,8 @@
       2 "dadao_comparison_operator"
       [(match_operand 3 "dadao_reg_cc_operand"	 "Rg,Rg,Rg,Rg")
       (const_int 0)])
-     (match_operand:DF 1 "dadao_rf_or_0_operand" "RfGM,0  ,RfGM,GM")
-     (match_operand:DF 4 "dadao_rf_or_0_operand" "0  ,RfGM,GM ,RfGM")))]
+     (match_operand:DF 1 "dadao_rf_or_0_operand" "RfGIz,0  ,RfGIz,GIz")
+     (match_operand:DF 4 "dadao_rf_or_0_operand" "0  ,RfGIz,GIz ,RfGIz")))]
   "REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
 	cs%d2	%0, %3, %1
@@ -384,8 +384,8 @@
       2 "dadao_comparison_operator"
       [(match_operand 3 "dadao_reg_cc_operand"	 "Rf ,Rf")
       (const_int 0)])
-     (match_operand:DF 1 "dadao_rf_or_0_operand" "RfGM,RfGM")
-     (match_operand:DF 4 "dadao_rf_or_0_operand" "0  ,GM")))]
+     (match_operand:DF 1 "dadao_rf_or_0_operand" "RfGIz,RfGIz")
+     (match_operand:DF 4 "dadao_rf_or_0_operand" "0  ,GIz")))]
   "!REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
 	cs%d2	%0, %3, %1

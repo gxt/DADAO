@@ -54,6 +54,11 @@
 	(and (match_code "const_int")
 	     (match_test "IN_RANGE (ival, -0x40000, 0x3FFFF)")))
 
+(define_constraint "Iz"
+	"The value 0."
+	(and (match_code "const_int")
+	     (match_test "ival == 0")))
+
 ;; Special register constrains
 (define_register_constraint "Sy" "REMAINDER_REG"
 	"@internal")
@@ -72,11 +77,6 @@
   (and (match_code "const_int")
        (match_test "IN_RANGE (ival, 0, 65535)")))
 
-(define_constraint "M"
-  "The value 0."
-  (and (match_code "const_int")
-       (match_test "ival == 0")))
-
 (define_constraint "N"
   "@internal"
   (and (match_code "const_int")
@@ -90,8 +90,7 @@
 	    (match_test "ival == 9")
 	    (match_test "ival == 17"))))
 
-;; FIXME: M (or G) is redundant.
-
+;; FIXME: Iz (or G) is redundant.
 (define_constraint "G"
   "Floating-point zero."
   (and (match_code "const_double")
