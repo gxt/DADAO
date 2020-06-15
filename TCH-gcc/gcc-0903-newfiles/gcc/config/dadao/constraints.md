@@ -74,14 +74,6 @@
 	(match_operand 0 "frame_pointer_operand"))
 
 ;; Unhandled
-(define_constraint "O"
-  "The value 3, 5, 9, or 17."
-  (and (match_code "const_int")
-       (ior (match_test "ival == 3")
-	    (match_test "ival == 5")
-	    (match_test "ival == 9")
-	    (match_test "ival == 17"))))
-
 ;; FIXME: Iz (or G) is redundant.
 (define_constraint "G"
   "Floating-point zero."
