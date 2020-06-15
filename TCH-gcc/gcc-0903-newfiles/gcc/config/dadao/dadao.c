@@ -1432,7 +1432,7 @@ dadao_emit_sp_add (HOST_WIDE_INT offset)
     {
       /* Positive adjustments are in the epilogue only.  Don't mark them
 	 as "frame-related" for unwind info.  */
-      if (insn_const_int_ok_for_constraint (offset, CONSTRAINT_Iw))
+      if (insn_const_int_ok_for_constraint (offset, CONSTRAINT_Uw))
 	emit_insn (gen_adddi3 (stack_pointer_rtx,
 			       stack_pointer_rtx,
 			       GEN_INT (offset)));

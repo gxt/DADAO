@@ -24,11 +24,6 @@
 	"Special registers")
 
 ;; Immediate constrains
-(define_constraint "Iw"
-	"Shiftable wyde integer"
-	(and (match_code "const_int")
-	     (match_test "dadao_shiftable_wyde_value (ival)")))
-
 (define_constraint "Ie"
 	"A 12-bit signed integer"
 	(and (match_code "const_int")
@@ -61,6 +56,11 @@
 	"A 12-bit unsigned integer"
 	(and (match_code "const_int")
 	     (match_test "IN_RANGE (ival, 0, 4095)")))
+
+(define_constraint "Uw"
+	"Shiftable wyde integer"
+	(and (match_code "const_int")
+	     (match_test "dadao_shiftable_wyde_value (ival)")))
 
 ;; Special register constrains
 (define_register_constraint "Sy" "REMAINDER_REG"
