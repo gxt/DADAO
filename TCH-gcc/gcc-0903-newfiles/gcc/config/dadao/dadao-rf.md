@@ -22,7 +22,7 @@
 	ldsf	%0, %1
 	stsf	%1, %0
 	seto	%0, %1
-	seto	datao, %1	\;	put.rf	%0, datao")
+	seto	datao1, %1	\;	put.rf	%0, datao1")
 
 (define_insn "adddf3"
   [(set      (match_operand:DF 0 "rf_class_operand" "= Rf")
@@ -335,53 +335,41 @@
 }")
 
 (define_insn "*movdfcc_real_foldable"
-  [(set
-    (match_operand:DF 0 "rf_class_operand"	"=Rf  ,Rf  ,Rf  ,Rf")
-    (if_then_else:DF
-     (match_operator
-      2 "dadao_foldable_comparison_operator"
-      [(match_operand:DI 3 "rf_class_operand"	 "Rf  ,Rf  ,Rf  ,Rf")
-      (const_int 0)])
+  [(set (match_operand:DF 0 "rf_class_operand"	"=Rf  ,Rf  ,Rf  ,Rf")
+    (if_then_else:DF (match_operator 2 "dadao_foldable_comparison_operator"
+      [(match_operand:DI 3 "rg_class_operand"	 "Rg  ,Rg  ,Rg  ,Rg") (const_int 0)])
      (match_operand:DF 1 "dadao_rf_or_0_operand" "RfGzIz,0  ,RfGzIz,GzIz")
      (match_operand:DF 4 "dadao_rf_or_0_operand" "0  ,RfGzIz,GzIz ,RfGzIz")))]
   ""
   "@
-	cs%d2	%0, %3, %1
-	cs%D2	%0, %3, %4
-	xor	%0, %0, %0	\;	cs%d2	%0, %3, %1
-	xor	%0, %0, %0	\;	cs%D2	%0, %3, %4")
+	get.rf	datao1, %0	\;	get.rf	datao2, %1	\;	cs%d2	datao1, %3, datao2	\;	put.rf	%0, datao1
+	get.rf	datao1, %0	\;	get.rf	datao2, %4	\;	cs%D2	datao1, %3, datao2	\;	put.rf	%0, datao1
+	seto	datao1, 0	\;	get.rf	datao2, %1	\;	cs%d2	datao1, %3, datao2	\;	put.rf	%0, datao1
+	seto	datao1, 0	\;	get.rf	datao2, %4	\;	cs%D2	datao1, %3, datao2	\;	put.rf	%0, datao1")
 
 (define_insn "*movdfcc_real_reversible"
-  [(set
-    (match_operand:DF 0 "rf_class_operand"	"=Rf,Rf,Rf,Rf")
-    (if_then_else:DF
-     (match_operator
-      2 "dadao_comparison_operator"
-      [(match_operand 3 "dadao_reg_cc_operand"	 "Rg,Rg,Rg,Rg")
-      (const_int 0)])
+  [(set (match_operand:DF 0 "rf_class_operand"	"=Rf,Rf,Rf,Rf")
+    (if_then_else:DF (match_operator 2 "dadao_comparison_operator"
+      [(match_operand 3 "dadao_reg_cc_operand"	 "Rg,Rg,Rg,Rg") (const_int 0)])
      (match_operand:DF 1 "dadao_rf_or_0_operand" "RfGzIz,0  ,RfGzIz,GzIz")
      (match_operand:DF 4 "dadao_rf_or_0_operand" "0  ,RfGzIz,GzIz ,RfGzIz")))]
   "REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
-	cs%d2	%0, %3, %1
-	cs%D2	%0, %3, %4
-	xor	%0, %0, %0	\;	cs%d2	%0, %3, %1
-	xor	%0, %0, %0	\;	cs%D2	%0, %3, %4")
+	get.rf	datao1, %0	\;	get.rf	datao2, %1	\;	cs%d2	datao1, %3, datao2	\;	put.rf	%0, datao1
+	get.rf	datao1, %0	\;	get.rf	datao2, %4	\;	cs%D2	datao1, %3, datao2	\;	put.rf	%0, datao1
+	seto	datao1, 0	\;	get.rf	datao2, %1	\;	cs%d2	datao1, %3, datao2	\;	put.rf	%0, datao1
+	seto	datao1, 0	\;	get.rf	datao2, %4	\;	cs%D2	datao1, %3, datao2	\;	put.rf	%0, datao1")
 
 (define_insn "*movdfcc_real_nonreversible"
-  [(set
-    (match_operand:DF 0 "rf_class_operand"	"=Rf  ,Rf")
-    (if_then_else:DF
-     (match_operator
-      2 "dadao_comparison_operator"
-      [(match_operand 3 "dadao_reg_cc_operand"	 "Rf ,Rf")
-      (const_int 0)])
+  [(set (match_operand:DF 0 "rf_class_operand"	"=Rf  ,Rf")
+    (if_then_else:DF (match_operator 2 "dadao_comparison_operator"
+      [(match_operand 3 "dadao_reg_cc_operand"	 "Rg ,Rg") (const_int 0)])
      (match_operand:DF 1 "dadao_rf_or_0_operand" "RfGzIz,RfGzIz")
      (match_operand:DF 4 "dadao_rf_or_0_operand" "0  ,GzIz")))]
   "!REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
-	cs%d2	%0, %3, %1
-	xor	%0, %0, %0	\;	cs%d2	%0, %3, %1")
+	get.rf	datao1, %0	\;	get.rf	datao2, %1	\;	cs%d2	datao1, %3, datao2	\;	put.rf	%0, datao1
+	seto	datao1, 0	\;	get.rf	datao2, %1	\;	cs%d2	datao1, %3, datao2	\;	put.rf	%0, datao1")
 
 (define_expand "cbranchdf4"
   [(set (match_dup 4)
