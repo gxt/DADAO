@@ -6,31 +6,23 @@
 
 ;; Note that we move around the float as a collection of bits; no
 ;; conversion to double.
-(define_insn "movsf"
- [(set (match_operand:SF 0 "nonimmediate_operand" "=Rf,r,Rs,r,r,m,??r")
-       (match_operand:SF 1 "general_operand"	   "r,Gz,r,Rs,m,r,F"))]
-  ""
-  "@
-	or	%0, %1, 0
-	setwl	%0, 0
-	put	%0, %1
-	get	%0, %1
-	ldt	%0, %1
-	stt	%1, %0
-   %r0%I1")
 
-(define_insn "movdf"
-  [(set (match_operand:DF 0 "nonimmediate_operand" "=Rf,r,Rs,r,r,m,??r")
-	(match_operand:DF 1 "general_operand"	    "r,Gz,r,Rs,m,r,F"))]
-  ""
-  "@
+(define_mode_iterator	SFDF	[SF DF])
+
+(define_insn "mov<mode>"
+ [(set (match_operand:SFDF 0 "nonimmediate_operand" "= Rg, Rg, Rf, Rf, Rf, Rf,  m, ??Rg, ??Rf")
+       (match_operand:SFDF 1 "general_operand"	    "  Rg, Rf, Rg, Rf, Gz,  m, Rf,    F,    F"))]
+	""
+	"@
 	or	%0, %1, 0
-	setwl	%0, 0
-	put	%0, %1
-	get	%0, %1
-	ldo	%0, %1
-	sto	%1, %0
-   %r0%I1")
+	get.rf	%0, %1
+	put.rf	%0, %1
+	mov.rf	%0, %1
+	put.rf	%0, zero
+	ldsf	%0, %1
+	stsf	%1, %0
+	seto	%0, %1
+	seto	datao, %1	\;	put.rf	%0, datao")
 
 (define_insn "adddf3"
   [(set      (match_operand:DF 0 "rf_class_operand" "= Rf")
