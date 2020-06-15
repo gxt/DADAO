@@ -104,13 +104,13 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"ldbu",	0x88,		0,	1,	OP (rrii_rrri),		T (dref)},
 	{"ldwu",	0x8A,		0,	1,	OP (rrii_rrri),		T (dref)},
 	{"ldtu",	0x8C,		0,	1,	OP (rrii_rrri),		T (dref)},
-	{"ldsf",	0x8E,		0,	1,	OP (rrii_rrri),		T (dref)},
+	{"ldsf",	0x8E,		0,	1,	OP (rrii_rrri),		T (regf_dref)},
 
 	{"stb",		0x90,		0,	1,	OP (rrii_rrri),		T (dref)},
 	{"stw",		0x92,		0,	1,	OP (rrii_rrri),		T (dref)},
 	{"stt",		0x94,		0,	1,	OP (rrii_rrri),		T (dref)},
 	{"sto",		0x96,		0,	1,	OP (rrii_rrri),		T (dref)},
-	{"stsf",	0x9E,		0,	1,	OP (rrii_rrri),		T (dref)},
+	{"stsf",	0x9E,		0,	1,	OP (rrii_rrri),		T (regf_dref)},
 
 	{"bn",		0xC0,		0,	0,	OP (riii),		T (condbranch)},
 	{"bnn",		0xC1,		0,	0,	OP (riii),		T (condbranch)},

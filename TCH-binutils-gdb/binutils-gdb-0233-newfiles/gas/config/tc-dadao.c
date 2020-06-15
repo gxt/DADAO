@@ -645,6 +645,12 @@ void dadao_md_assemble (char *str)
 			DDOP_EXP_MUST_BE_RP(exp[1]);
 			break;
 
+		case dadao_type_regf_dref:
+			flag_imm_signd = 1;
+			DDOP_EXP_MUST_BE_RF(exp[0]);
+			DDOP_EXP_MUST_BE_RP(exp[1]);
+			break;
+
 		case dadao_type_dref:
 			flag_imm_signd = 1;
 			DDOP_EXP_MUST_BE_RG(exp[0]);
