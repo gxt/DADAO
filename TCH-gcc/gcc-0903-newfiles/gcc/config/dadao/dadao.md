@@ -67,7 +67,7 @@
 ;; We assume all "s" are addresses.  Does that hold?
 (define_insn "*movdi"
   [(set (match_operand:DI 0 "nonimmediate_operand" "=r,m,  Rp,Rp")
-	(match_operand:DI 1 "general_operand"	    "m,r,Ttr,s"))]
+	(match_operand:DI 1 "general_operand"	    "m,r,Ai,s"))]
   ""
   "@
 	ldo	%0, %1

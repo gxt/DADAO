@@ -88,7 +88,7 @@
   (and (match_code "const_double")
        (match_test "op == CONST0_RTX (mode)")))
 
-(define_constraint "Ttr"
+(define_constraint "Ai"
   "@internal"
   (and (not (match_code "const_int,const_double"))
        (match_test "dadao_constant_address_p (op)")))
