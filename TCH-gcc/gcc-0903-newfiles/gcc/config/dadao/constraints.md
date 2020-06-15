@@ -74,11 +74,6 @@
 	(match_operand 0 "frame_pointer_operand"))
 
 ;; Unhandled
-(define_constraint "J"
-  "A 16-bit unsigned integer."
-  (and (match_code "const_int")
-       (match_test "IN_RANGE (ival, 0, 65535)")))
-
 (define_constraint "O"
   "The value 3, 5, 9, or 17."
   (and (match_code "const_int")
