@@ -20,7 +20,8 @@ extern const struct dadao_reg_alias dadao_reg_aliases[];
 enum dadao_insn_type
  {
 	dadao_type_normal,
-	dadao_type_pseudo,
+	dadao_type_uimm,
+	dadao_type_simm,
 	dadao_type_condbranch,
 	dadao_type_branch,
 	dadao_type_geta,
@@ -28,7 +29,8 @@ enum dadao_insn_type
 	dadao_type_regf,
 	dadao_type_regf_cc,
 	dadao_type_dref,
-	dadao_type_jsr
+	dadao_type_jsr,
+	dadao_type_pseudo,
  };
 
 /* Type of operands an instruction takes.  Use when parsing assembly code

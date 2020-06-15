@@ -627,8 +627,14 @@ void dadao_md_assemble (char *str)
 			DADAO_BAD_INSN("invalid operands to opcode");
 
 		switch (instruction->type) {
-		case dadao_type_normal:
+		case dadao_type_uimm:
 			flag_imm_signd = 0;
+			DDOP_EXP_MUST_BE_RG(exp[0]);
+			DDOP_EXP_MUST_BE_RG(exp[1]);
+			break;
+
+		case dadao_type_simm:
+			flag_imm_signd = 1;
 			DDOP_EXP_MUST_BE_RG(exp[0]);
 			DDOP_EXP_MUST_BE_RG(exp[1]);
 			break;
