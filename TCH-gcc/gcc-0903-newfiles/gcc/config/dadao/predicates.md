@@ -199,14 +199,6 @@
      (match_test
       "op == CONST0_RTX (mode == VOIDmode ? GET_MODE (op) : mode)")))))
 
-;; True if this is a register or an int 0..255.
-
-(define_predicate "dadao_reg_or_8bit_operand"
-  (ior
-   (match_operand 0 "rg_class_operand")
-   (and (match_code "const_int")
-	(match_test "satisfies_constraint_Tti (op)"))))
-
 ;; True if this is a memory address, possibly strictly.
 ;; See also comment above the "*call_real" pattern.
 

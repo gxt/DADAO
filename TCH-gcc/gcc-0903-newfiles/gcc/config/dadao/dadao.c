@@ -982,7 +982,7 @@ static void dd_print_operand_address (FILE *stream, machine_mode /*mode*/, rtx x
 	      fprintf (stream, "%s", reg_names[DADAO_OUTPUT_REGNO (REGNO (x2))]);
 	      return;
 	    }
-	  else if (satisfies_constraint_Tti (x2))
+	  else if (satisfies_constraint_Id (x2))
 	    {
 	      output_addr_const (stream, x2);
 	      return;

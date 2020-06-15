@@ -74,11 +74,6 @@
 	(match_operand 0 "frame_pointer_operand"))
 
 ;; Unhandled
-(define_constraint "Tti"
-  "A 8-bit unsigned integer"
-  (and (match_code "const_int")
-       (match_test "IN_RANGE (ival, 0, 255)")))
-
 (define_constraint "J"
   "A 16-bit unsigned integer."
   (and (match_code "const_int")
