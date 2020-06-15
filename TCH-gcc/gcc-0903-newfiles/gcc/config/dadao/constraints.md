@@ -69,6 +69,10 @@
 (define_register_constraint "Sz" "HIMULT_REG"
 	"@internal")
 
+(define_constraint "Sf"
+	"@internal"
+	(match_operand 0 "frame_pointer_operand"))
+
 ;; Unhandled
 (define_constraint "Tti"
   "A 8-bit unsigned integer"
@@ -103,6 +107,3 @@
   "@internal"
   (match_operand 0 "dadao_address_operand"))
 
-(define_constraint "Yf"
-  "@internal"
-  (match_operand 0 "frame_pointer_operand"))

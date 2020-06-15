@@ -593,7 +593,7 @@
 ;; address and re-use them after the register stack unwind, so it's best
 ;; to form the address ourselves.
 (define_insn "*nonlocal_goto_receiver_expanded"
-  [(unspec_volatile [(match_operand:DI 1 "frame_pointer_operand" "Yf")] 1)
+  [(unspec_volatile [(match_operand:DI 1 "frame_pointer_operand" "Sf")] 1)
    (clobber (match_scratch:DI 0 "=&r"))
    (clobber (reg:DI DADAO_rJ_REGNUM))]
   ""
