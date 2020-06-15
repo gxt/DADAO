@@ -487,12 +487,12 @@
 ;; Sorry, I have not dug deeper.  If symbolic addresses are used
 ;; rarely compared to addresses in registers, disparaging the
 ;; first ("p") alternative by adding ? in the first operand
-;; might do the trick.  We define 'U' as a synonym to 'p', but without the
+;; might do the trick.  We define 'Au' as a synonym to 'p', but without the
 ;; caveats (and very small advantages) of 'p'.
 ;; As of r190682 still so: newlib/libc/stdlib/dtoa.c ICEs if "p" is used.
 (define_insn "*call_real"
   [(call (mem:SI
-	  (match_operand:DI 0 "dadao_symbolic_or_address_operand" "s,RpU"))
+	  (match_operand:DI 0 "dadao_symbolic_or_address_operand" "s,RpAu"))
 	 (match_operand 1 "" ""))
    (use (match_operand 2 "" ""))
    (clobber (reg:DI DADAO_rJ_REGNUM))]
@@ -504,7 +504,7 @@
 (define_insn "*call_value_real"
   [(set (match_operand 0 "register_operand" "=r,r")
 	(call (mem:SI
-	       (match_operand:DI 1 "dadao_symbolic_or_address_operand" "s,RpU"))
+	       (match_operand:DI 1 "dadao_symbolic_or_address_operand" "s,RpAu"))
 	      (match_operand 2 "" "")))
   (use (match_operand 3 "" ""))
   (clobber (reg:DI DADAO_rJ_REGNUM))]
