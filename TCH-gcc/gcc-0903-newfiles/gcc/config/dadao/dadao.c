@@ -1214,13 +1214,13 @@ dadao_expand_prologue (void)
 	 and unwind it at eh_return (preferred) or at the landing pad.
 	 Then saves to $0..$G-1 could be specified through that register.  */
 
-      emit_move_insn (gen_rtx_REG (DImode, 255),
+      emit_move_insn (gen_rtx_REG (DImode, 63),
 		      gen_rtx_REG (DImode,
 				   DADAO_rO_REGNUM));
       emit_move_insn (gen_rtx_MEM (DImode,
 				   plus_constant (Pmode, stack_pointer_rtx,
 						  offset)),
-		      gen_rtx_REG (DImode, 255));
+		      gen_rtx_REG (DImode, 63));
       offset -= 8;
     }
 
@@ -1421,7 +1421,7 @@ dadao_emit_sp_add (HOST_WIDE_INT offset)
 				      GEN_INT (offset)));
       else
 	{
-	  rtx tmpr = gen_rtx_REG (DImode, 255);
+	  rtx tmpr = gen_rtx_REG (DImode, 63);
 	  RTX_FRAME_RELATED_P (emit_move_insn (tmpr, GEN_INT (offset))) = 1;
 	  insn = emit_insn (gen_adddi3 (stack_pointer_rtx,
 					stack_pointer_rtx, tmpr));
@@ -1438,7 +1438,7 @@ dadao_emit_sp_add (HOST_WIDE_INT offset)
 			       GEN_INT (offset)));
       else
 	{
-	  rtx tmpr = gen_rtx_REG (DImode, 255);
+	  rtx tmpr = gen_rtx_REG (DImode, 63);
 	  emit_move_insn (tmpr, GEN_INT (offset));
 	  insn = emit_insn (gen_adddi3 (stack_pointer_rtx,
 					stack_pointer_rtx, tmpr));
