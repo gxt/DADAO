@@ -29,11 +29,6 @@
 	(and (match_code "const_int")
 	     (match_test "dadao_shiftable_wyde_value (ival)")))
 
-(define_constraint "In"
-	"An integer between -4095 and 0."
-	(and (match_code "const_int")
-	     (match_test "IN_RANGE (ival, -4095, 0)")))
-
 (define_constraint "Ie"
 	"A 12-bit signed integer"
 	(and (match_code "const_int")
@@ -48,6 +43,13 @@
 	"The value 0."
 	(and (match_code "const_int")
 	     (match_test "ival == 0")))
+
+;; Negative immediate constrains
+(define_constraint "Nd"
+	"Negative 12-bit integer"
+	(and (match_code "const_int")
+	     (match_test "IN_RANGE (ival, -4095, 0)")))
+
 
 ;; Unsigned immediate constrains
 (define_constraint "Us"
@@ -77,11 +79,6 @@
   "A 16-bit unsigned integer."
   (and (match_code "const_int")
        (match_test "IN_RANGE (ival, 0, 65535)")))
-
-(define_constraint "N"
-  "@internal"
-  (and (match_code "const_int")
-       (match_test "dadao_shiftable_wyde_value (~ival)")))
 
 (define_constraint "O"
   "The value 3, 5, 9, or 17."
