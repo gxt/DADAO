@@ -8,7 +8,7 @@
 ;; conversion to double.
 (define_insn "movsf"
  [(set (match_operand:SF 0 "nonimmediate_operand" "=Rf,r,Rs,r,r,m,??r")
-       (match_operand:SF 1 "general_operand"	   "r,G,r,Rs,m,r,F"))]
+       (match_operand:SF 1 "general_operand"	   "r,Gz,r,Rs,m,r,F"))]
   ""
   "@
 	or	%0, %1, 0
@@ -21,7 +21,7 @@
 
 (define_insn "movdf"
   [(set (match_operand:DF 0 "nonimmediate_operand" "=Rf,r,Rs,r,r,m,??r")
-	(match_operand:DF 1 "general_operand"	    "r,G,r,Rs,m,r,F"))]
+	(match_operand:DF 1 "general_operand"	    "r,Gz,r,Rs,m,r,F"))]
   ""
   "@
 	or	%0, %1, 0
@@ -350,8 +350,8 @@
       2 "dadao_foldable_comparison_operator"
       [(match_operand:DI 3 "rf_class_operand"	 "Rf  ,Rf  ,Rf  ,Rf")
       (const_int 0)])
-     (match_operand:DF 1 "dadao_rf_or_0_operand" "RfGIz,0  ,RfGIz,GIz")
-     (match_operand:DF 4 "dadao_rf_or_0_operand" "0  ,RfGIz,GIz ,RfGIz")))]
+     (match_operand:DF 1 "dadao_rf_or_0_operand" "RfGzIz,0  ,RfGzIz,GzIz")
+     (match_operand:DF 4 "dadao_rf_or_0_operand" "0  ,RfGzIz,GzIz ,RfGzIz")))]
   ""
   "@
 	cs%d2	%0, %3, %1
@@ -367,8 +367,8 @@
       2 "dadao_comparison_operator"
       [(match_operand 3 "dadao_reg_cc_operand"	 "Rg,Rg,Rg,Rg")
       (const_int 0)])
-     (match_operand:DF 1 "dadao_rf_or_0_operand" "RfGIz,0  ,RfGIz,GIz")
-     (match_operand:DF 4 "dadao_rf_or_0_operand" "0  ,RfGIz,GIz ,RfGIz")))]
+     (match_operand:DF 1 "dadao_rf_or_0_operand" "RfGzIz,0  ,RfGzIz,GzIz")
+     (match_operand:DF 4 "dadao_rf_or_0_operand" "0  ,RfGzIz,GzIz ,RfGzIz")))]
   "REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
 	cs%d2	%0, %3, %1
@@ -384,8 +384,8 @@
       2 "dadao_comparison_operator"
       [(match_operand 3 "dadao_reg_cc_operand"	 "Rf ,Rf")
       (const_int 0)])
-     (match_operand:DF 1 "dadao_rf_or_0_operand" "RfGIz,RfGIz")
-     (match_operand:DF 4 "dadao_rf_or_0_operand" "0  ,GIz")))]
+     (match_operand:DF 1 "dadao_rf_or_0_operand" "RfGzIz,RfGzIz")
+     (match_operand:DF 4 "dadao_rf_or_0_operand" "0  ,GzIz")))]
   "!REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
 	cs%d2	%0, %3, %1

@@ -62,6 +62,13 @@
 	(and (match_code "const_int")
 	     (match_test "dadao_shiftable_wyde_value (ival)")))
 
+;; Floating Point immediate constraint
+;; FIXME: Iz (or Gz) is redundant.
+(define_constraint "Gz"
+	"Floating-point zero."
+	(and (match_code "const_double")
+	     (match_test "op == CONST0_RTX (mode)")))
+
 ;; Special register constrains
 (define_register_constraint "Sy" "REMAINDER_REG"
 	"@internal")
@@ -72,13 +79,6 @@
 (define_constraint "Sf"
 	"@internal"
 	(match_operand 0 "frame_pointer_operand"))
-
-;; Unhandled
-;; FIXME: Iz (or G) is redundant.
-(define_constraint "G"
-  "Floating-point zero."
-  (and (match_code "const_double")
-       (match_test "op == CONST0_RTX (mode)")))
 
 (define_constraint "Ai"
   "@internal"
