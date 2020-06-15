@@ -623,7 +623,7 @@
       int64_t offs = INTVAL (XEXP (operands[1], 1));
       offs += DADAO_fp_rO_OFFSET;
 
-      if (insn_const_int_ok_for_constraint (offs, CONSTRAINT_Tti))
+      if (insn_const_int_ok_for_constraint (offs, CONSTRAINT_Id))
 	my_operands[0]
 	  = gen_rtx_PLUS (Pmode, stack_pointer_rtx, GEN_INT (offs));
       else
