@@ -34,16 +34,6 @@
 	(and (match_code "const_int")
 	     (match_test "IN_RANGE (ival, -4095, 0)")))
 
-(define_constraint "Is"
-	"A 6-bit unsigned integer"
-	(and (match_code "const_int")
-	     (match_test "IN_RANGE (ival, 0, 0x1F)")))
-
-(define_constraint "Id"
-	"A 12-bit unsigned integer"
-	(and (match_code "const_int")
-	     (match_test "IN_RANGE (ival, 0, 4095)")))
-
 (define_constraint "Ie"
 	"A 12-bit signed integer"
 	(and (match_code "const_int")
@@ -58,6 +48,17 @@
 	"The value 0."
 	(and (match_code "const_int")
 	     (match_test "ival == 0")))
+
+;; Unsigned immediate constrains
+(define_constraint "Us"
+	"A 6-bit unsigned integer"
+	(and (match_code "const_int")
+	     (match_test "IN_RANGE (ival, 0, 0x1F)")))
+
+(define_constraint "Ud"
+	"A 12-bit unsigned integer"
+	(and (match_code "const_int")
+	     (match_test "IN_RANGE (ival, 0, 4095)")))
 
 ;; Special register constrains
 (define_register_constraint "Sy" "REMAINDER_REG"
