@@ -99,13 +99,6 @@
   (and (not (match_code "const_int,const_double"))
        (match_test "dadao_constant_address_p (op)")))
 
-;; FIXME: N (or Ttt) is redundant.
-
-(define_constraint "Ttt"
-  "@internal"
-  (and (match_code "const_int,const_double")
-       (match_test "dadao_shiftable_wyde_value (~dadao_intval (op))")))
-
 (define_address_constraint "Au"
   "@internal"
   (match_operand 0 "dadao_address_operand"))
