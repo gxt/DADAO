@@ -10,8 +10,8 @@
 (define_mode_iterator	SFDF	[SF DF])
 
 (define_insn "mov<mode>"
- [(set (match_operand:SFDF 0 "nonimmediate_operand" "= Rg, Rg, Rf, Rf, Rf, Rf,  m, ??Rg, ??Rf")
-       (match_operand:SFDF 1 "general_operand"	    "  Rg, Rf, Rg, Rf, Gz,  m, Rf,    F,    F"))]
+ [(set (match_operand:SFDF 0 "nonimmediate_operand" "= Rg, Rg, Rf, Rf, Rf, Rg, Rf,  m,  m, ??Rg, ??Rf")
+       (match_operand:SFDF 1 "general_operand"      "  Rg, Rf, Rg, Rf, Gz,  m,  m, Rg, Rf,    F,    F"))]
 	""
 	"@
 	or	%0, %1, 0
@@ -19,7 +19,9 @@
 	put.rf	%0, %1
 	mov.rf	%0, %1
 	put.rf	%0, zero
+	ldt	%0, %1
 	ldsf	%0, %1
+	stt	%1, %0
 	stsf	%1, %0
 	seto	%0, %1
 	seto	datao1, %1	\;	put.rf	%0, datao1")
@@ -70,12 +72,12 @@
   operands[2] = force_reg (DImode, GEN_INT ((HOST_WIDE_INT) 1 << 63));
 })
 
-;; (define_insn "*expanded_negdf2"
-;;   [(set     (match_operand:DF 0 "rf_class_operand" "= Rf")
-;;     (neg:DF (match_operand:DF 1 "rf_class_operand" "  Rf")))
-;;       (use  (match_operand:DI 2 "rf_class_operand" "  Rf"))]
-;; 	""
-;; 	"xor	%0, %1, %2")
+(define_insn "*expanded_negdf2"
+  [(set     (match_operand:DF 0 "rf_class_operand" "= Rf")
+    (neg:DF (match_operand:DF 1 "rf_class_operand" "  Rf")))
+      (use  (match_operand:DI 2 "rf_class_operand" "  Rf"))]
+	""
+	"get.rf	datao1, %1	\;	get.rf	datao2, %2	\;	xor	datao3, datao1, datao2	\;	put.rf	%0, datao3")
 
 ;; FIXME: define_expand for absdi2?
 
