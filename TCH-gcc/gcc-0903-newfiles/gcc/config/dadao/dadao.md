@@ -143,7 +143,7 @@
 (define_insn "divmoddi4"
   [(set (match_operand:DI 0 "rg_class_operand" "=Rg")
 	(div:DI (match_operand:DI 1 "rg_class_operand" "Rg")
-		(match_operand:DI 2 "dd_ii_ri_operand" "UdRg")))
+		(match_operand:DI 2 "dd_ii_ri_operand" "JdRg")))
    (set (match_operand:DI 3 "rg_class_operand" "=Sy")
 	(mod:DI (match_dup 1) (match_dup 2)))]
   ;; Do the library stuff later.
@@ -153,7 +153,7 @@
 (define_insn "udivmoddi4"
   [(set (match_operand:DI 0 "rg_class_operand" "=Rg")
 	(udiv:DI (match_operand:DI 1 "rg_class_operand" "Rg")
-		 (match_operand:DI 2 "dd_ii_ri_operand" "UdRg")))
+		 (match_operand:DI 2 "dd_ii_ri_operand" "JdRg")))
    (set (match_operand:DI 3 "rg_class_operand" "=Sy")
 	(umod:DI (match_dup 1) (match_dup 2)))]
   ""
@@ -247,14 +247,14 @@
 (define_insn "*cmps"
   [(set         (match_operand:CC 0 "rg_class_operand" "=   Rg")
     (compare:CC (match_operand:DI 1 "rg_class_operand" "    Rg")
-                (match_operand:DI 2 "dd_ii_ri_operand" "  UdRg")))]
+                (match_operand:DI 2 "dd_ii_ri_operand" "  JdRg")))]
 	""
 	"cmp	%0, %1, %2")
 
 (define_insn "*cmpu"
   [(set             (match_operand:CC_UNS 0 "rg_class_operand" "=   Rg")
     (compare:CC_UNS (match_operand:DI     1 "rg_class_operand" "    Rg")
-                    (match_operand:DI     2 "dd_ii_ri_operand" "  UdRg")))]
+                    (match_operand:DI     2 "dd_ii_ri_operand" "  JdRg")))]
 	""
 	"cmpu	%0, %1, %2")
 
@@ -287,8 +287,8 @@
 	 (match_operator 2 "dadao_foldable_comparison_operator"
 			 [(match_operand:DI 3 "rg_class_operand" "Rg,Rg,Rg,Rg")
 			  (const_int 0)])
-	 (match_operand:DI 1 "dd_ii_ri_operand" "UdRg,0 ,UdRg,GzIz")
-	 (match_operand:DI 4 "dd_ii_ri_operand" "0 ,UdRg,GzIz,UdRg")))]
+	 (match_operand:DI 1 "dd_ii_ri_operand" "JdRg,0 ,JdRg,GzIz")
+	 (match_operand:DI 4 "dd_ii_ri_operand" "0 ,JdRg,GzIz,JdRg")))]
   ""
   "@
 	cs%d2	%0, %3, %1
@@ -303,8 +303,8 @@
      (match_operator 2 "dadao_comparison_operator"
       [(match_operand 3 "dadao_reg_cc_operand"	    "Rg,Rg,Rg,Rg")
       (const_int 0)])
-     (match_operand:DI 1 "dd_ii_ri_operand" "UdRg,0 ,UdRg,GzIz")
-     (match_operand:DI 4 "dd_ii_ri_operand" "0 ,UdRg,GzIz,UdRg")))]
+     (match_operand:DI 1 "dd_ii_ri_operand" "JdRg,0 ,JdRg,GzIz")
+     (match_operand:DI 4 "dd_ii_ri_operand" "0 ,JdRg,GzIz,JdRg")))]
   "REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
 	cs%d2	%0, %3, %1
@@ -319,7 +319,7 @@
      (match_operator 2 "dadao_comparison_operator"
       [(match_operand 3 "dadao_reg_cc_operand"	    "Rg,Rg")
       (const_int 0)])
-     (match_operand:DI 1 "dd_ii_ri_operand" "UdRg,UdRg")
+     (match_operand:DI 1 "dd_ii_ri_operand" "JdRg,JdRg")
      (match_operand:DI 4 "dadao_rf_or_0_operand" "0 ,GzIz")))]
   "!REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@

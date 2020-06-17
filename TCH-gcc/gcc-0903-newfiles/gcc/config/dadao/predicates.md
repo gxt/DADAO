@@ -53,7 +53,7 @@
 (define_predicate "dd_ii_ri_operand"
   (ior (match_operand 0 "rg_class_operand")
        (and (match_code "const_int")
-            (match_test "satisfies_constraint_Ud(op)"))))
+            (match_test "satisfies_constraint_Jd(op)"))))
 
 (define_predicate "dd_rg_s12_operand"
   (ior (match_operand 0 "rg_class_operand")
@@ -63,12 +63,12 @@
 (define_predicate "dd_rg_u6_operand"
   (ior (match_operand 0 "rg_class_operand")
        (and (match_code "const_int")
-            (match_test "satisfies_constraint_Us(op)"))))
+            (match_test "satisfies_constraint_Js(op)"))))
 
 (define_predicate "dd_rf_u6_operand"
   (ior (match_operand 0 "rf_class_operand")
        (and (match_code "const_int")
-            (match_test "satisfies_constraint_Us(op)"))))
+            (match_test "satisfies_constraint_Js(op)"))))
 
 ;; Return 1 if OP is a valid comparison operator for "cbranch" instructions.
 ;; LE and GE are further lowered by the cbranchdf4 pattern.

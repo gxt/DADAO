@@ -126,7 +126,7 @@
 (define_expand "floatdisf2"
   [(parallel [(set (match_operand:SF 0 "nonimmediate_operand" "=Rfm")
 		   (float:SF
-		    (match_operand:DI 1 "dd_rf_u6_operand" "UsRf")))
+		    (match_operand:DI 1 "dd_rf_u6_operand" "JsRf")))
 	      ;; Let's use a DI scratch, since SF don't generally get into
 	      ;; registers.  Dunno what's best; it's really a DF, but that
 	      ;; doesn't logically follow from operands in the pattern.
@@ -161,7 +161,7 @@
 (define_expand "floatunsdisf2"
   [(parallel [(set (match_operand:SF 0 "nonimmediate_operand" "=Rfm")
 		   (unsigned_float:SF
-		    (match_operand:DI 1 "dd_rf_u6_operand" "UsRf")))
+		    (match_operand:DI 1 "dd_rf_u6_operand" "JsRf")))
 	      ;; Let's use a DI scratch, since SF don't generally get into
 	      ;; registers.  Dunno what's best; it's really a DF, but that
 	      ;; doesn't logically follow from operands in the pattern.

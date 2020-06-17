@@ -50,6 +50,11 @@
 	(and (match_code "const_int")
 	     (match_test "IN_RANGE (ival, -0x40000, 0x3FFFF)")))
 
+(define_constraint "Iw"
+	"Shiftable wyde integer"
+	(and (match_code "const_int")
+	     (match_test "dadao_shiftable_wyde_value (ival)")))
+
 (define_constraint "Iz"
 	"The value 0."
 	(and (match_code "const_int")
@@ -62,21 +67,16 @@
 	     (match_test "IN_RANGE (ival, -4095, 0)")))
 
 
-;; Unsigned immediate constraints
-(define_constraint "Us"
+;; Unsigned immediate constraints (DONT use U as prefix, since constraint type ERROR)
+(define_constraint "Js"
 	"A 6-bit unsigned integer"
 	(and (match_code "const_int")
 	     (match_test "IN_RANGE (ival, 0, 0x1F)")))
 
-(define_constraint "Ud"
+(define_constraint "Jd"
 	"A 12-bit unsigned integer"
 	(and (match_code "const_int")
 	     (match_test "IN_RANGE (ival, 0, 4095)")))
-
-(define_constraint "Uw"
-	"Shiftable wyde integer"
-	(and (match_code "const_int")
-	     (match_test "dadao_shiftable_wyde_value (ival)")))
 
 ;; Floating Point immediate constraints
 ;; FIXME: Iz (or Gz) is redundant.
