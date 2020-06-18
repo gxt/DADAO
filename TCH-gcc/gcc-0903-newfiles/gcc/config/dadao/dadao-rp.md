@@ -30,3 +30,19 @@
              (match_operand:DI 2 "immediate_operand" "   i")))]
 	""
 	"get.rp	datao1, %1	\;	seto	%0, %2	\;	add	%0, datao1, %0")
+
+;; TODO: SHOULD removed lator
+(define_insn "*addrp2rp"
+  [(set      (match_operand:DI 0 "rp_class_operand" "= Rp")
+    (plus:DI (match_operand:DI 1 "rp_class_operand" "%  0")
+             (match_operand:DI 2 "rp_class_operand" "  Rp")))]
+	""
+	"get.rp	datao1, %1	\;	add.rp	%0, %0, datao1")
+
+;; TODO: SHOULD removed lator, handling condition: imm beyond s12
+(define_insn "*addrp2rp_2"
+  [(set      (match_operand:DI 0 "rp_class_operand"  "= Rp")
+    (plus:DI (match_operand:DI 1 "rp_class_operand"  "% Rp")
+             (match_operand:DI 2 "immediate_operand" "   i")))]
+	""
+	"seto	datao1, %2	\;	add.rp	%0, %1, datao1")
