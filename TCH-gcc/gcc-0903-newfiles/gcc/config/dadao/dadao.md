@@ -40,16 +40,16 @@
 ;; FIXME: Can we remove the reg-to-reg for smaller modes?  Shouldn't they
 ;; be synthesized ok?
 (define_insn "*movqi"
-  [(set (match_operand:QI 0 "nonimmediate_operand" "=r,m")
-        (match_operand:QI 1 "general_operand"       "m,r"))]
+  [(set (match_operand:QI 0 "nonimmediate_operand" "=Rg,m")
+        (match_operand:QI 1 "general_operand"       "m,Rg"))]
   ""
   "@
 	ldb%U0	%0, %1
 	stb	%1, %0")
 
 (define_insn "*movhi"
-  [(set (match_operand:HI 0 "nonimmediate_operand" "=r,m")
-        (match_operand:HI 1 "general_operand"       "m,r"))]
+  [(set (match_operand:HI 0 "nonimmediate_operand" "=Rg,m")
+        (match_operand:HI 1 "general_operand"       "m,Rg"))]
   ""
   "@
 	ldw%U0	%0, %1
@@ -57,8 +57,8 @@
 
 ;; gcc.c-torture/compile/920428-2.c fails if there's no "n".
 (define_insn "*movsi"
-  [(set (match_operand:SI 0 "nonimmediate_operand" "=r,m")
-        (match_operand:SI 1 "general_operand"       "m,r"))]
+  [(set (match_operand:SI 0 "nonimmediate_operand" "=Rg,m")
+        (match_operand:SI 1 "general_operand"       "m,Rg"))]
   ""
   "@
 	ldt%U0	%0, %1
@@ -66,12 +66,14 @@
 
 ;; We assume all "s" are addresses.  Does that hold?
 (define_insn "*movdi"
-  [(set (match_operand:DI 0 "nonimmediate_operand" "=r,m,  Rp,Rp")
-	(match_operand:DI 1 "general_operand"	    "m,r,Ai,s"))]
+  [(set (match_operand:DI 0 "nonimmediate_operand" "= Rg,  m, Rp,  m, Rp, Rp")
+	(match_operand:DI 1 "general_operand"      "   m, Rg,  m, Rp, Ai,  s"))]
   ""
   "@
 	ldo	%0, %1
 	sto	%1, %0
+	ldo	datao1, %1	\;	put.rp	%0, datao1
+	get.rp	datao1, %1	\;	sto	datao1, %0
 	geta	%0, %1
 	geta	%0, %1")
 
@@ -548,14 +550,14 @@
 (define_insn "indirect_jump"
   [(set (pc) (match_operand 0 "address_operand" "p"))]
   ""
-	"jump	rp63, %a0")
+	"jump	rg63, %a0")
 
 ;; FIXME: This is just a jump, and should be expanded to one.
 (define_insn "tablejump"
   [(set (pc) (match_operand:DI 0 "address_operand" "p"))
    (use (label_ref (match_operand 1 "" "")))]
   ""
-	"jump	rp63, %a0")
+	"jump	rg63, %a0")
 
 ;; The only peculiar thing is that the register stack has to be unwound at
 ;; nonlocal_goto_receiver.  At each function that has a nonlocal label, we
