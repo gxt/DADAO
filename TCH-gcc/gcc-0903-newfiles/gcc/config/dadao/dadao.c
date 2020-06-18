@@ -916,19 +916,9 @@ static void dd_print_operand (FILE *stream, rtx x, int code)
       output_address (GET_MODE (modified_x), XEXP (modified_x, 0));
       return;
 
-    case CONST_INT:
-      /* For -2147483648, dadaoal complains that the constant does not fit
-	 in 4 bytes, so let's output it as hex.  Take care to handle hosts
-	 where HOST_WIDE_INT is longer than an int.
-
-	 Print small constants +-255 using decimal.  */
-
-      if (INTVAL (modified_x) > -256 && INTVAL (modified_x) < 256)
-	fprintf (stream, "%d", (int) (INTVAL (modified_x)));
-      else
-	fprintf (stream, "0x%x",
-		 (int) (INTVAL (modified_x)) & (unsigned int) ~0);
-      return;
+	case CONST_INT:
+		fprintf (stream, HOST_WIDE_INT_PRINT_DEC, INTVAL (modified_x));
+		return;
 
     case CONST_DOUBLE:
       /* Do somewhat as CONST_INT.  */
