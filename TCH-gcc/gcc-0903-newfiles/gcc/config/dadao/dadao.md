@@ -255,6 +255,13 @@
 	""
 	"cmp	%0, %1, %2")
 
+(define_insn "*cmps2"
+  [(set         (match_operand:CC 0 "rg_class_operand" "= Rg")
+    (compare:CC (match_operand:DI 1 "rg_class_operand" "  Rg")
+                (match_operand:DI 2 "immediate_operand" "  i")))]
+	""
+	"seto	datao1, %2	\;	cmp	%0, %1, datao1")
+
 (define_insn "*cmpu"
   [(set             (match_operand:CC_UNS 0 "rg_class_operand" "=   Rg")
     (compare:CC_UNS (match_operand:DI     1 "rg_class_operand" "    Rg")
