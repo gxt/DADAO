@@ -66,8 +66,8 @@
 
 ;; We assume all "s" are addresses.  Does that hold?
 (define_insn "*movdi"
-  [(set (match_operand:DI 0 "nonimmediate_operand" "= Rg,  m, Rp,  m, Rp, Rp")
-	(match_operand:DI 1 "general_operand"      "   m, Rg,  m, Rp, Ai,  s"))]
+  [(set (match_operand:DI 0 "nonimmediate_operand" "= Rg,  m, Rp,  m, Rp, Rp, Rg, Rg")
+	(match_operand:DI 1 "general_operand"      "   m, Rg,  m, Rp, Ai,  s, Ai,  s"))]
   ""
   "@
 	ldo	%0, %1
@@ -75,7 +75,9 @@
 	ldo	datao1, %1	\;	put.rp	%0, datao1
 	get.rp	datao1, %1	\;	sto	datao1, %0
 	geta	%0, %1
-	geta	%0, %1")
+	geta	%0, %1
+	geta	rp63, %1	\;	get.rp	%0, rp63
+	geta	rp63, %1	\;	get.rp	%0, rp63")
 
 ;; We need to be able to move around the values used as condition codes.
 ;; First spotted as reported in
