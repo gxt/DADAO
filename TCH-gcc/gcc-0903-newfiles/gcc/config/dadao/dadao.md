@@ -251,7 +251,7 @@
 (define_insn "*cmps"
   [(set         (match_operand:CC 0 "rg_class_operand" "=   Rg")
     (compare:CC (match_operand:DI 1 "rg_class_operand" "    Rg")
-                (match_operand:DI 2 "dd_ii_ri_operand" "  JdRg")))]
+                (match_operand:DI 2 "dd_rg_s12_operand" "  IdRg")))]
 	""
 	"cmp	%0, %1, %2")
 
