@@ -22,3 +22,11 @@
 	"@
 	get.rp	datao1, %1	\;	add	%0, datao1, %2
 	get.rp	datao1, %1	\;	add	%0, datao1, %2")
+
+;; TODO: SHOULD removed lator, handling condition: imm beyond s12
+(define_insn "*addrp2rg_2"
+  [(set      (match_operand:DI 0 "rg_class_operand"  "= Rg")
+    (plus:DI (match_operand:DI 1 "rp_class_operand"  "% Rp")
+             (match_operand:DI 2 "immediate_operand" "   i")))]
+	""
+	"get.rp	datao1, %1	\;	seto	%0, %2	\;	add	%0, datao1, %0")
