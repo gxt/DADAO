@@ -39,7 +39,7 @@ setjmp:
 longjmp:
 # Reset arg2 to 1 if it is 0 (see longjmp(2)) and store it in jmp_buf.
 # Save arg1 in a global register, since it will be destroyed by the POPs
-	csz	arg2, arg2, 1
+	cs.z	arg2, arg2, 1
 	sto	arg2, rp63, 32
 	or	rg59, arg1, 0
 
