@@ -192,12 +192,12 @@
 	setwl	%0, 1
 	xor	rg63, %1, %2	\;\
 	subu	%0, zero, %2	\;\
-	csn	%2, %2, %0	\;\
+	cs.n	%2, %2, %0	\;\
 	subu	%0, zero, %1	\;\
-	csn	%1, %1, %0	\;\
+	cs.n	%1, %1, %0	\;\
 	divu	%0, %1, %2	\;\
 	subu	%1, zero, %0	\;\
-	csn	%0, rg63, %1")
+	cs.n	%0, rg63, %1")
 
 (define_expand "moddi3"
   [(parallel
@@ -223,13 +223,13 @@
   "@
 	setwl	%0, 0
 	subu	%0, zero, %2	\;\
-	csn	%2, %2, %0	\;\
+	cs.n	%2, %2, %0	\;\
 	subu	rg63, zero, %1	\;\
-	csn	%1, %1, rg63	\;\
+	cs.n	%1, %1, rg63	\;\
 	divu	%1, %1, %2	\;\
 	get.rs	%0, rR\;\
 	subu	%2, zero, %0	\;\
-	csnn	%0, rg63, %2")
+	cs.nn	%0, rg63, %2")
 
 ;; When the user-patterns expand, the resulting insns will match the
 ;; patterns below.
@@ -306,10 +306,10 @@
 	 (match_operand:DI 4 "dd_ii_ri_operand" "0 ,JdRg,GzIz,JdRg")))]
   ""
   "@
-	cs%d2	%0, %3, %1
-	cs%D2	%0, %3, %4
-	xor	%0, %0, %0	\;	cs%d2	%0, %3, %1
-	xor	%0, %0, %0	\;	cs%D2	%0, %3, %4")
+	cs.%d2	%0, %3, %1
+	cs.%D2	%0, %3, %4
+	xor	%0, %0, %0	\;	cs.%d2	%0, %3, %1
+	xor	%0, %0, %0	\;	cs.%D2	%0, %3, %4")
 
 (define_insn "*movdicc_real_reversible"
   [(set
@@ -322,10 +322,10 @@
      (match_operand:DI 4 "dd_ii_ri_operand" "0 ,JdRg,GzIz,JdRg")))]
   "REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
-	cs%d2	%0, %3, %1
-	cs%D2	%0, %3, %4
-	xor	%0, %0, %0	\;	cs%d2	%0, %3, %1
-	xor	%0, %0, %0	\;	cs%D2	%0, %3, %4")
+	cs.%d2	%0, %3, %1
+	cs.%D2	%0, %3, %4
+	xor	%0, %0, %0	\;	cs.%d2	%0, %3, %1
+	xor	%0, %0, %0	\;	cs.%D2	%0, %3, %4")
 
 (define_insn "*movdicc_real_nonreversible"
   [(set
@@ -338,8 +338,8 @@
      (match_operand:DI 4 "dadao_rf_or_0_operand" "0 ,GzIz")))]
   "!REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
-	cs%d2	%0, %3, %1
-	xor	%0, %0, %0	\;	cs%d2	%0, %3, %1")
+	cs.%d2	%0, %3, %1
+	xor	%0, %0, %0	\;	cs.%d2	%0, %3, %1")
 
 ;; FIXME: scc insns will probably help, I just skip them
 ;; right now.  Revisit.

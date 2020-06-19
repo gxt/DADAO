@@ -344,10 +344,10 @@
      (match_operand:DF 4 "dadao_rf_or_0_operand" "0  ,RfGzIz,GzIz ,RfGzIz")))]
   ""
   "@
-	get.rf	datao1, %0	\;	get.rf	datao2, %1	\;	cs%d2	datao1, %3, datao2	\;	put.rf	%0, datao1
-	get.rf	datao1, %0	\;	get.rf	datao2, %4	\;	cs%D2	datao1, %3, datao2	\;	put.rf	%0, datao1
-	seto	datao1, 0	\;	get.rf	datao2, %1	\;	cs%d2	datao1, %3, datao2	\;	put.rf	%0, datao1
-	seto	datao1, 0	\;	get.rf	datao2, %4	\;	cs%D2	datao1, %3, datao2	\;	put.rf	%0, datao1")
+	get.rf	datao1, %0	\;	get.rf	datao2, %1	\;	cs.%d2	datao1, %3, datao2	\;	put.rf	%0, datao1
+	get.rf	datao1, %0	\;	get.rf	datao2, %4	\;	cs.%D2	datao1, %3, datao2	\;	put.rf	%0, datao1
+	seto	datao1, 0	\;	get.rf	datao2, %1	\;	cs.%d2	datao1, %3, datao2	\;	put.rf	%0, datao1
+	seto	datao1, 0	\;	get.rf	datao2, %4	\;	cs.%D2	datao1, %3, datao2	\;	put.rf	%0, datao1")
 
 (define_insn "*movdfcc_real_reversible"
   [(set (match_operand:DF 0 "rf_class_operand"	"=Rf,Rf,Rf,Rf")
@@ -357,10 +357,10 @@
      (match_operand:DF 4 "dadao_rf_or_0_operand" "0  ,RfGzIz,GzIz ,RfGzIz")))]
   "REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
-	get.rf	datao1, %0	\;	get.rf	datao2, %1	\;	cs%d2	datao1, %3, datao2	\;	put.rf	%0, datao1
-	get.rf	datao1, %0	\;	get.rf	datao2, %4	\;	cs%D2	datao1, %3, datao2	\;	put.rf	%0, datao1
-	seto	datao1, 0	\;	get.rf	datao2, %1	\;	cs%d2	datao1, %3, datao2	\;	put.rf	%0, datao1
-	seto	datao1, 0	\;	get.rf	datao2, %4	\;	cs%D2	datao1, %3, datao2	\;	put.rf	%0, datao1")
+	get.rf	datao1, %0	\;	get.rf	datao2, %1	\;	cs.%d2	datao1, %3, datao2	\;	put.rf	%0, datao1
+	get.rf	datao1, %0	\;	get.rf	datao2, %4	\;	cs.%D2	datao1, %3, datao2	\;	put.rf	%0, datao1
+	seto	datao1, 0	\;	get.rf	datao2, %1	\;	cs.%d2	datao1, %3, datao2	\;	put.rf	%0, datao1
+	seto	datao1, 0	\;	get.rf	datao2, %4	\;	cs.%D2	datao1, %3, datao2	\;	put.rf	%0, datao1")
 
 (define_insn "*movdfcc_real_nonreversible"
   [(set (match_operand:DF 0 "rf_class_operand"	"=Rf  ,Rf")
@@ -370,8 +370,8 @@
      (match_operand:DF 4 "dadao_rf_or_0_operand" "0  ,GzIz")))]
   "!REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
-	get.rf	datao1, %0	\;	get.rf	datao2, %1	\;	cs%d2	datao1, %3, datao2	\;	put.rf	%0, datao1
-	seto	datao1, 0	\;	get.rf	datao2, %1	\;	cs%d2	datao1, %3, datao2	\;	put.rf	%0, datao1")
+	get.rf	datao1, %0	\;	get.rf	datao2, %1	\;	cs.%d2	datao1, %3, datao2	\;	put.rf	%0, datao1
+	seto	datao1, 0	\;	get.rf	datao2, %1	\;	cs.%d2	datao1, %3, datao2	\;	put.rf	%0, datao1")
 
 (define_expand "cbranchdf4"
   [(set (match_dup 4)
