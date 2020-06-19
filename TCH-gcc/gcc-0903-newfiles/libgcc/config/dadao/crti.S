@@ -40,7 +40,7 @@ _start:
 0:
 	addu	rg2, rg2, rg4
 	cmp	rg63, rg2, rg3
-	BN	rg63,0b
+	br.n	rg63, 0b
 
 	geta	rp63, crtsdat
 	ldo	rg2, rp63, 0
@@ -49,7 +49,7 @@ _start:
 0:
 	addu	rg2, rg2, rg4
 	cmp	rg63, rg2, rg3
-	BN	rg63,0b
+	br.n	rg63,0b
 
 # Initialize the stack pointer.  It is supposedly made a global
 # zero-initialized (allowed to change) register in crtn.S; we use the
@@ -77,7 +77,7 @@ _start:
 	.global	_init
 _init:
 	get.rs	rg0, rJ
-	bz	rg0, 0f
+	br.z	rg0, 0f
 	setwl	rg63, 63
 	trap	0
 0:	trap	0
@@ -90,7 +90,7 @@ _init:
 	.global	_fini
 _fini:
 	get.rs	rg0, rJ
-	bz	rg0, 0f
+	br.z	rg0, 0f
 	setwl	rg63, 63
 	trap	0
 0:	trap	0

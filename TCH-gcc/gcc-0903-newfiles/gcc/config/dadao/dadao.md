@@ -380,7 +380,7 @@
 	 (label_ref (match_operand 0 "" ""))
 	 (pc)))]
   ""
-	"b%d1	%2, %0")
+	"br.%d1	%2, %0")
 
 (define_insn "*bCC"
   [(set (pc)
@@ -391,7 +391,7 @@
 	 (label_ref (match_operand 0 "" ""))
 	 (pc)))]
   ""
-	"b%d1	%2, %0")
+	"br.%d1	%2, %0")
 
 (define_insn "*bCC_inverted_foldable"
   [(set (pc)
@@ -403,7 +403,7 @@
 		      (label_ref (match_operand 0 "" ""))))]
 ;; REVERSIBLE_CC_MODE is checked by dadao_foldable_comparison_operator.
   ""
-	"b%D1	%2, %0")
+	"br.%D1	%2, %0")
 
 (define_insn "*bCC_inverted"
   [(set (pc)
@@ -414,7 +414,7 @@
 	 (pc)
 	 (label_ref (match_operand 0 "" ""))))]
   "REVERSIBLE_CC_MODE (GET_MODE (operands[2]))"
-	"b%D1	%2, %0")
+	"br.%D1	%2, %0")
 
 (define_expand "call"
   [(parallel [(call (match_operand:SI 0 "memory_operand" "")
@@ -620,7 +620,7 @@
 	ldo	rg63, %a0, 0\n\
 0:\;	get.rs	%1, rO\;\
 	cmpu	%1, %1, rg63	\;\
-	bnp	%1, 1f\;\
+	br.np	%1, 1f\;\
 	ret\n1:";
 
   my_operands[1] = operands[0];
