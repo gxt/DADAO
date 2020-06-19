@@ -44,7 +44,7 @@
         (match_operand:QI 1 "general_operand"       "m,Rg"))]
   ""
   "@
-	ldb%U0	%0, %1
+	ldb	%0, %1
 	stb	%1, %0")
 
 (define_insn "*movhi"
@@ -52,7 +52,7 @@
         (match_operand:HI 1 "general_operand"       "m,Rg"))]
   ""
   "@
-	ldw%U0	%0, %1
+	ldw	%0, %1
 	stw	%1, %0")
 
 ;; gcc.c-torture/compile/920428-2.c fails if there's no "n".
@@ -61,9 +61,9 @@
         (match_operand:SI 1 "general_operand"       "m,Rg,m,Rp"))]
   ""
   "@
-	ldt%U0	%0, %1
+	ldt	%0, %1
 	stt	%1, %0
-	ldt%U0	datao1, %1	\;	put.rp	%0, datao1
+	ldt	datao1, %1	\;	put.rp	%0, datao1
 	get.rp	datao1, %1	\;	stt	datao1, %0")
 
 ;; We assume all "s" are addresses.  Does that hold?

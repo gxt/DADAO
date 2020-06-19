@@ -12,10 +12,6 @@ mepsilon
 Target Report Mask(FCMP_EPSILON)
 Use epsilon-respecting floating point compare instructions.
 
-mzero-extend
-Target Report Mask(ZERO_EXTEND)
-Use zero-extending memory loads, not sign-extending ones.
-
 mknuthdiv
 Target Report Mask(KNUTH_DIVISION)
 Generate divide results with reminder having the same sign as the divisor (not the dividend).

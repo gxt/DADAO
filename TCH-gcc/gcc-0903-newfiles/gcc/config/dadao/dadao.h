@@ -544,8 +544,8 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 
 /* We have a choice, which makes this yet another parameter to tweak.  The
    gut feeling is currently that SIGN_EXTEND wins; "int" is more frequent
-   than "unsigned int", and we have signed characters.  FIXME: measure.  */
-#define	LOAD_EXTEND_OP(MODE)			(TARGET_ZERO_EXTEND ? ZERO_EXTEND : SIGN_EXTEND)
+   than "unsigned int", and we have signed characters. */
+#define	LOAD_EXTEND_OP(MODE)			SIGN_EXTEND
 
 #define	MOVE_MAX				8
 

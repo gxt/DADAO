@@ -874,12 +874,6 @@ static void dd_print_operand (FILE *stream, rtx x, int code)
 				    dadao_intval (x), 0);
       return;
 
-    case 'U':
-      /* An U for unsigned, if TARGET_ZERO_EXTEND.  Ignore the operand.  */
-      if (TARGET_ZERO_EXTEND)
-	putc ('U', stream);
-      return;
-
     case 'v':
       dadao_output_shifted_value (stream, (int64_t) dadao_intval (x));
       return;
