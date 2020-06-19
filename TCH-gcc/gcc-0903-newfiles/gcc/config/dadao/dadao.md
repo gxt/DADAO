@@ -57,12 +57,14 @@
 
 ;; gcc.c-torture/compile/920428-2.c fails if there's no "n".
 (define_insn "*movsi"
-  [(set (match_operand:SI 0 "nonimmediate_operand" "=Rg,m")
-        (match_operand:SI 1 "general_operand"       "m,Rg"))]
+  [(set (match_operand:SI 0 "nonimmediate_operand" "=Rg,m,Rp,m")
+        (match_operand:SI 1 "general_operand"       "m,Rg,m,Rp"))]
   ""
   "@
 	ldt%U0	%0, %1
-	stt	%1, %0")
+	stt	%1, %0
+	ldt%U0	datao1, %1	\;	put.rp	%0, datao1
+	get.rp	datao1, %1	\;	stt	datao1, %0")
 
 ;; We assume all "s" are addresses.  Does that hold?
 (define_insn "*movdi"
@@ -223,7 +225,7 @@
 	subu	rg63, zero, %1	\;\
 	csn	%1, %1, rg63	\;\
 	divu	%1, %1, %2	\;\
-	get	%0, rR\;\
+	get.rs	%0, rR\;\
 	subu	%2, zero, %0	\;\
 	csnn	%0, rg63, %2")
 
