@@ -74,8 +74,8 @@
   "@
 	ldo	%0, %1
 	sto	%1, %0
-	ldo	datao1, %1	\;	put.rp	%0, datao1
-	get.rp	datao1, %1	\;	sto	datao1, %0
+	ldo.rp	%0, %1
+	sto.rp	%1, %0
 	geta	%0, %1
 	geta	%0, %1
 	geta	rp63, %1	\;	get.rp	%0, rp63
