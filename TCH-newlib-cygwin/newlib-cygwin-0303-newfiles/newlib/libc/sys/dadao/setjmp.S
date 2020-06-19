@@ -56,7 +56,7 @@ longjmp:
 0:
 	get.rs	rg60, rO
 	cmpu	rg60, rg60, rg63
-	bnp	rg60, 1f
+	br.np	rg60, 1f
 	ldo	outret, rp59, 32
 	ret
 1:
