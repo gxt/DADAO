@@ -17,10 +17,9 @@
 #define	DADAO_REG_RS_START			0x100
 
 #define	DADAO_MAX_ARGS_IN_REGS			16
+#define	DADAO_EH_RETURN_DATA_REGNUM		(DADAO_REG_RG_START + 0x04)
 #define	DADAO_FIRST_ARG_REGNUM			(DADAO_REG_RG_START + 0x10)
 #define	DADAO_RETURN_VALUE_REGNUM		(DADAO_REG_RG_START + 0x1F)
-#define	DADAO_EH_RETURN_DATA_REGNUM		(DADAO_REG_RG_START + 0x30)
-#define	DADAO_EH_RETURN_HANDLER_REGNUM		(DADAO_REG_RG_START + 0x34)
 
 /* FIXME: This one isn't fully implemented yet.  Return values larger than
    one register are passed by reference in DADAO_STRUCT_VALUE_REGNUM by the
@@ -29,6 +28,7 @@
 #define	DADAO_STACK_POINTER_REGNUM		(DADAO_REG_RP_START + 0x01)
 #define	DADAO_FRAME_POINTER_REGNUM		(DADAO_REG_RP_START + 0x02)
 #define DADAO_ARG_POINTER_REGNUM		(DADAO_REG_RP_START + 0x03)
+#define	DADAO_EH_RETURN_HANDLER_REGNUM		(DADAO_REG_RP_START + 0x04)
 #define	DADAO_STRUCT_VALUE_REGNUM		(DADAO_REG_RP_START + 0x3F)
 
 #define DADAO_INCOMING_RETURN_ADDRESS_REGNUM DADAO_rJ_REGNUM
@@ -127,20 +127,20 @@ struct GTY(()) machine_function
 
 #define FIXED_REGISTERS {				\
 	/* 0 ~ 63 */					\
-	1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
+	1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, \
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
 	/* 64 ~ 127 */					\
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+	1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, \
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
 	/* 128 ~ 191 */					\
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+	1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, \
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
 	/* 192 ~ 255 */					\
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
@@ -158,17 +158,17 @@ struct GTY(()) machine_function
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	\
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	\
 	/* 64 ~ 127 */					\
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	\
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	\
 	/* 128 ~ 191 */					\
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	\
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	\
 	/* 192 ~ 255 */					\
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
