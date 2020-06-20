@@ -249,8 +249,10 @@ enum reg_class {
 #define BASE_REG_CLASS				POINTER_REGS
 #define INDEX_REG_CLASS				GENERAL_REGS
 
-#define REGNO_OK_FOR_BASE_P(REGNO)		((REGNO) < 128 && (REGNO) >= 64)
-#define REGNO_OK_FOR_INDEX_P(REGNO)		((REGNO) < 64)
+#define REGNO_OK_FOR_BASE_P(REGNO)		((REGNO_REG_CLASS(REGNO) == POINTER_REGS)	\
+		|| (reg_renumber && (REGNO_REG_CLASS(reg_renumber[REGNO]) == POINTER_REGS)))
+#define REGNO_OK_FOR_INDEX_P(REGNO)		((REGNO_REG_CLASS(REGNO) == GENERAL_REGS)	\
+		|| (reg_renumber && (REGNO_REG_CLASS(reg_renumber[REGNO]) == GENERAL_REGS)))
 
 #define CLASS_MAX_NREGS(CLASS, MODE)		targetm.hard_regno_nregs (CLASS, MODE)
 
