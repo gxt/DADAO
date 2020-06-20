@@ -797,39 +797,6 @@ static void dd_print_operand (FILE *stream, rtx x, int code)
       fprintf (stream, "%d", (int) (INTVAL (x) & 0xff));
       return;
 
-    case 'H':
-      /* Highpart.  Must be general register, and not the last one, as
-	 that one cannot be part of a consecutive register pair.  */
-      if (regno > DADAO_LAST_GENERAL_REGISTER - 1)
-	internal_error ("DADAO Internal: Bad register: %d", regno);
-
-      /* This is big-endian, so the high-part is the first one.  */
-      fprintf (stream, "%s", reg_names[DADAO_OUTPUT_REGNO (regno)]);
-      return;
-
-    case 'L':
-      /* Lowpart.  Must be CONST_INT or general register, and not the last
-	 one, as that one cannot be part of a consecutive register pair.  */
-      if (GET_CODE (x) == CONST_INT)
-	{
-	  fprintf (stream, "0x%lx", (unsigned long) (INTVAL (x)
-				    & ((unsigned int) 0x7fffffff * 2 + 1)));
-	  return;
-	}
-
-      if (GET_CODE (x) == SYMBOL_REF)
-	{
-	  output_addr_const (stream, x);
-	  return;
-	}
-
-      if (regno > DADAO_LAST_GENERAL_REGISTER - 1)
-	internal_error ("DADAO Internal: Bad register: %d", regno);
-
-      /* This is big-endian, so the low-part is + 1.  */
-      fprintf (stream, "%s", reg_names[DADAO_OUTPUT_REGNO (regno) + 1]);
-      return;
-
       /* Can't use 'a' because that's a generic modifier for address
 	 output.  */
     case 'A':
