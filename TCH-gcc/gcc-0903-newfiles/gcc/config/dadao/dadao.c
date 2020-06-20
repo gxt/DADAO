@@ -683,7 +683,10 @@ static int dd_register_move_cost (machine_mode mode ATTRIBUTE_UNUSED,
 			 reg_class_t from,
 			 reg_class_t to)
 {
-  return (from == GENERAL_REGS && from == to) ? 2 : 3;
+	if ((from == GENERAL_REGS) && (to == GENERAL_REGS))	return 2;
+	if ((from == GENERAL_REGS) || (to == GENERAL_REGS))	return 4;
+
+	return 6;
 }
 
 #undef	TARGET_REGISTER_MOVE_COST
