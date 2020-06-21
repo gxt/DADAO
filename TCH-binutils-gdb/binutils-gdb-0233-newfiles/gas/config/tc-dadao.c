@@ -535,7 +535,7 @@ void dadao_md_assemble (char *str)
 			DDOP_EXP_MUST_BE_RF(exp[0]);
 			break;
 
-		case dadao_type_regf_cc:
+		case dadao_type_regf_fbrg:
 			DDOP_EXP_MUST_BE_RG(exp[0]);
 			break;
 
@@ -583,8 +583,26 @@ void dadao_md_assemble (char *str)
 		if (n_operands != 3)
 			DADAO_BAD_INSN("invalid operands to opcode");
 
-		DDOP_EXP_MUST_BE_RF(exp[0]);
-		DDOP_EXP_MUST_BE_RF(exp[1]);
+		switch (instruction->type) {
+		case dadao_type_regf:
+			DDOP_EXP_MUST_BE_RF(exp[0]);
+			DDOP_EXP_MUST_BE_RF(exp[1]);
+			break;
+
+		case dadao_type_regf_fbrg:
+			DDOP_EXP_MUST_BE_RG(exp[0]);
+			DDOP_EXP_MUST_BE_RF(exp[1]);
+			break;
+
+		case dadao_type_regf_fcrg:
+			DDOP_EXP_MUST_BE_RF(exp[0]);
+			DDOP_EXP_MUST_BE_RG(exp[1]);
+			break;
+
+		default:
+			DADAO_BAD_INSN("SHOULD NOT BE HERE");
+		}
+
 		DDOP_EXP_MUST_BE_UIMM(exp[2], 6);
 
 		DDOP_SET_FA(opcodep, instruction->minor_opcode);

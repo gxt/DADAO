@@ -153,12 +153,12 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"trip",	0xDA,		0x38,	0,	OP (oiii),		T (jsr)},
 	{"trap",	0xDA,		0x3F,	0,	OP (oiii),		T (jsr)},
 
-	{"fcmp",	I (FP),		1,	0,	OP (orrr),		T (regf_cc)},
-	{"fun",		I (FP),		2,	0,	OP (orrr),		T (regf_cc)},
-	{"feql",	I (FP),		3,	0,	OP (orrr),		T (regf_cc)},
-	{"fcmpe",	I (FP),		17,	0,	OP (orrr),		T (regf_cc)},
-	{"fune",	I (FP),		18,	0,	OP (orrr),		T (regf_cc)},
-	{"feqle",	I (FP),		19,	0,	OP (orrr),		T (regf_cc)},
+	{"fcmp",	I (FP),		1,	0,	OP (orrr),		T (regf_fbrg)},
+	{"fun",		I (FP),		2,	0,	OP (orrr),		T (regf_fbrg)},
+	{"feql",	I (FP),		3,	0,	OP (orrr),		T (regf_fbrg)},
+	{"fcmpe",	I (FP),		17,	0,	OP (orrr),		T (regf_fbrg)},
+	{"fune",	I (FP),		18,	0,	OP (orrr),		T (regf_fbrg)},
+	{"feqle",	I (FP),		19,	0,	OP (orrr),		T (regf_fbrg)},
 
 	{"fadd",	I (FP),		4,	0,	OP (orrr),		T (regf)},
 	{"fsub",	I (FP),		6,	0,	OP (orrr),		T (regf)},
@@ -166,15 +166,15 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"fdiv",	I (FP),		20,	0,	OP (orrr),		T (regf)},
 	{"frem",	I (FP),		22,	0,	OP (orrr),		T (regf)},
 
-	{"fix",		I (FP),		5,	0,	OP (orri),		T (normal)},
-	{"fixu",	I (FP),		7,	0,	OP (orri),		T (normal)},
-	{"fsqrt",	I (FP),		21,	0,	OP (orri),		T (normal)},
-	{"fint",	I (FP),		23,	0,	OP (orri),		T (normal)},
+	{"fix",		I (FP),		5,	0,	OP (orri),		T (regf_fbrg)},
+	{"fixu",	I (FP),		7,	0,	OP (orri),		T (regf_fbrg)},
+	{"fsqrt",	I (FP),		21,	0,	OP (orri),		T (regf)},
+	{"fint",	I (FP),		23,	0,	OP (orri),		T (regf)},
 
-	{"flot",	I (FP),		8,	0,	OP (orri),		T (normal)},
-	{"flotu",	I (FP),		10,	0,	OP (orri),		T (normal)},
-	{"sflot",	I (FP),		12,	0,	OP (orri),		T (normal)},
-	{"sflotu",	I (FP),		14,	0,	OP (orri),		T (normal)},
+	{"flot",	I (FP),		8,	0,	OP (orri),		T (regf_fcrg)},
+	{"flotu",	I (FP),		10,	0,	OP (orri),		T (regf_fcrg)},
+	{"sflot",	I (FP),		12,	0,	OP (orri),		T (regf_fcrg)},
+	{"sflotu",	I (FP),		14,	0,	OP (orri),		T (regf_fcrg)},
 
 	{"seto",	~0,		0,	0,	OP (ps_seto),		T (pseudo)},
 
