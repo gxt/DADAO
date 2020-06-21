@@ -131,28 +131,6 @@ static machine_mode dd_promote_function_mode (const_tree type ATTRIBUTE_UNUSED,
 
 /* XXX gccint 18.8 Node: Register Classes */
 
-/* We need to extend the reload class of REMAINDER_REG and HIMULT_REG.  */
-static reg_class_t dd_preferred_reload_class (rtx x, reg_class_t rclass)
-{
-  /* FIXME: Revisit.  */
-  return GET_CODE (x) == MOD && GET_MODE (x) == DImode
-    ? REMAINDER_REG : rclass;
-}
-
-#undef	TARGET_PREFERRED_RELOAD_CLASS
-#define	TARGET_PREFERRED_RELOAD_CLASS		dd_preferred_reload_class
-
-/* We need to extend the reload class of REMAINDER_REG and HIMULT_REG.  */
-static reg_class_t dd_preferred_output_reload_class (rtx x, reg_class_t rclass)
-{
-  /* FIXME: Revisit.  */
-  return GET_CODE (x) == MOD && GET_MODE (x) == DImode
-    ? REMAINDER_REG : rclass;
-}
-
-#undef	TARGET_PREFERRED_OUTPUT_RELOAD_CLASS
-#define	TARGET_PREFERRED_OUTPUT_RELOAD_CLASS	dd_preferred_output_reload_class
-
 /* We need to reload regs of REMAINDER_REG and HIMULT_REG elsewhere.  */
 static reg_class_t dd_secondary_reload (bool in_p ATTRIBUTE_UNUSED,
 		rtx x ATTRIBUTE_UNUSED, reg_class_t rclass,
