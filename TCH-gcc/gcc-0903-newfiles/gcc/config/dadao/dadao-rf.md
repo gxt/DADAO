@@ -152,7 +152,7 @@
 (define_insn "*floatdisf2_real"
   [(set (match_operand:SF 0 "memory_operand" "=m")
 	(float:SF
-	 (match_operand:DI 1 "rf_class_operand" "Rf")))
+	 (match_operand:DI 1 "rg_class_operand" "Rg")))
    (clobber (match_scratch:DI 2 "=&Rf"))]
   ""
 	"sflot	%2, %1, 0\;\
@@ -187,7 +187,7 @@
 (define_insn "*floatunsdisf2_real"
   [(set (match_operand:SF 0 "memory_operand" "=m")
 	(unsigned_float:SF
-	 (match_operand:DI 1 "rf_class_operand" "Rf")))
+	 (match_operand:DI 1 "rg_class_operand" "Rg")))
    (clobber (match_scratch:DI 2 "=&Rf"))]
   ""
 	"sflotu	%2, %1, 0\;\
@@ -198,14 +198,14 @@
 (define_insn "floatdidf2"
   [(set (match_operand:DF 0 "rf_class_operand" "=Rf")
 	(float:DF
-	 (match_operand:DI 1 "rf_class_operand" "Rf")))]
+	 (match_operand:DI 1 "rg_class_operand" "Rg")))]
   ""
 	"flot	%0, %1, 0")
 
 (define_insn "floatunsdidf2"
   [(set (match_operand:DF 0 "rf_class_operand" "=Rf")
 	(unsigned_float:DF
-	 (match_operand:DI 1 "rf_class_operand" "Rf")))]
+	 (match_operand:DI 1 "rg_class_operand" "Rg")))]
   ""
 	"flotu	%0, %1, 0")
 
@@ -219,14 +219,14 @@
 ;; Note that this will (somewhat unexpectedly) create an inexact
 ;; exception if rounding is necessary - has to be masked off in crt0?
 (define_insn "fix_truncdfdi2"
-  [(set (match_operand:DI 0 "rf_class_operand" "=Rf")
+  [(set (match_operand:DI 0 "rg_class_operand" "=Rg")
 	(fix:DI (fix:DF (match_operand:DF 1 "rf_class_operand" "Rf"))))]
   ""
   ;; ROUND_OFF
 	"fix	%0, %1, 1")
 
 (define_insn "fixuns_truncdfdi2"
-  [(set (match_operand:DI 0 "rf_class_operand" "=Rf")
+  [(set (match_operand:DI 0 "rg_class_operand" "=Rg")
 	(unsigned_fix:DI
 	 (fix:DF (match_operand:DF 1 "rf_class_operand" "Rf"))))]
   ""
