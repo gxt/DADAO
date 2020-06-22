@@ -55,9 +55,10 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"sub",		0x24,		0,	1,	OP (rrii_rrri),		T (simm)},
 	{"subu",	0x26,		0,	1,	OP (rrii_rrri),		T (uimm)},
 	{"mul",		0x28,		0,	1,	OP (rrii_rrri),		T (simm)},
-	{"mulu",	0x2A,		0,	1,	OP (rrii_rrri),		T (uimm)},
-	{"div",		0x2C,		0,	1,	OP (rrii_rrri),		T (simm)},
-	{"divu",	0x2E,		0,	1,	OP (rrii_rrri),		T (uimm)},
+
+	{"mulu",	0x2D,		0,	0,	OP (rrrr),		T (normal)},
+	{"div",		0x2E,		0,	0,	OP (rrrr),		T (normal)},
+	{"divu",	0x2F,		0,	0,	OP (rrrr),		T (normal)},
 
 	{"cmp",		0x30,		0,	1,	OP (rrii_rrri),		T (simm)},
 	{"cmpu",	0x32,		0,	1,	OP (rrii_rrri),		T (uimm)},

@@ -405,6 +405,12 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		}
 		break;
 
+	case dadao_operands_rrrr:
+		(*info->fprintf_func) (info->stream, "\t%s, %s, %s, %s",
+			get_reg_name (minfop, fa), get_reg_name (minfop, fb),
+			get_reg_name (minfop, fc), get_reg_name (minfop, fd));
+		break;
+
 	default:
 		(*info->fprintf_func) (info->stream, "*unknown operands type: %d for insn %08lx",
 			opcodep->operands, insn);

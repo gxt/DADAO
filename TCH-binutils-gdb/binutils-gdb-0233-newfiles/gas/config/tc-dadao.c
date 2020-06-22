@@ -716,6 +716,21 @@ void dadao_md_assemble (char *str)
 		}
 		break;
 
+	case dadao_operands_rrrr:
+		if (n_operands != 4)
+			DADAO_BAD_INSN("invalid operands to opcode");
+
+		DDOP_EXP_MUST_BE_RG(exp[0]);
+		DDOP_EXP_MUST_BE_RG(exp[1]);
+		DDOP_EXP_MUST_BE_RG(exp[2]);
+		DDOP_EXP_MUST_BE_RG(exp[3]);
+
+		DDOP_SET_FA(opcodep, exp[0].X_add_number);
+		DDOP_SET_FB(opcodep, exp[1].X_add_number);
+		DDOP_SET_FC(opcodep, exp[2].X_add_number);
+		DDOP_SET_FD(opcodep, exp[3].X_add_number);
+		break;
+
 	case dadao_operands_riii: /* operand "ra, imm18" */
 		if ((n_operands != 2) || (exp[1].X_op == O_register))
 			DADAO_BAD_INSN("invalid operands to opcode");
