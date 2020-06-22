@@ -20,7 +20,6 @@
 
 (define_constants
   [(DADAO_rJ_REGNUM 259)
-   (DADAO_rR_REGNUM 260)
    (DADAO_fp_rO_OFFSET -24)]
 )
 

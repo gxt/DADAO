@@ -131,14 +131,12 @@ static machine_mode dd_promote_function_mode (const_tree type ATTRIBUTE_UNUSED,
 
 /* XXX gccint 18.8 Node: Register Classes */
 
-/* We need to reload regs of REMAINDER_REG and HIMULT_REG elsewhere.  */
 static reg_class_t dd_secondary_reload (bool in_p ATTRIBUTE_UNUSED,
 		rtx x ATTRIBUTE_UNUSED, reg_class_t rclass,
 		machine_mode reload_mode ATTRIBUTE_UNUSED,
 		secondary_reload_info *sri ATTRIBUTE_UNUSED)
 {
-	if (rclass == REMAINDER_REG || rclass == HIMULT_REG || rclass == SPECIAL_REGS)
-		return GENERAL_REGS;
+	if (rclass == SPECIAL_REGS)	return GENERAL_REGS;
 
 	return NO_REGS;
 }

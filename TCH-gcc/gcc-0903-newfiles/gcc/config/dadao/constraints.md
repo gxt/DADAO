@@ -24,12 +24,6 @@
 	"Special registers")
 
 ;; Special register constraints
-(define_register_constraint "Sy" "REMAINDER_REG"
-	"@internal")
-
-(define_register_constraint "Sz" "HIMULT_REG"
-	"@internal")
-
 (define_constraint "Sf"
 	"@internal"
 	(match_operand 0 "frame_pointer_operand"))

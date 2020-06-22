@@ -32,8 +32,6 @@
 #define	DADAO_STRUCT_VALUE_REGNUM		(DADAO_REG_RP_START + 0x3F)
 
 #define DADAO_INCOMING_RETURN_ADDRESS_REGNUM	DADAO_rJ_REGNUM
-#define DADAO_REMAINDER_REGNUM			DADAO_rR_REGNUM
-#define DADAO_HIMULT_REGNUM			(DADAO_REG_RS_START + 2)
 #define DADAO_rO_REGNUM				(DADAO_REG_RS_START + 6)
 
 #define DADAO_FUNCTION_ARG_SIZE(MODE, TYPE) \
@@ -203,8 +201,6 @@ enum reg_class {
 	POINTER_REGS,
 	FLOATING_REGS,
 	VECTOR_REGS,
-	REMAINDER_REG,
-	HIMULT_REG,
 	SPECIAL_REGS,
 	ALL_REGS,
 	LIM_REG_CLASSES };
@@ -217,8 +213,6 @@ enum reg_class {
 	"POINTER_REGS",				\
 	"FLOATING_REGS",			\
 	"VECTOR_REGS",				\
-	"REMAINDER_REG",			\
-	"HIMULT_REG",				\
 	"SPECIAL_REGS",				\
 	"ALL_REGS"}
 
@@ -230,8 +224,6 @@ enum reg_class {
 	{ 0,	 0,	~0,	~0,	 0,	 0,	 0,	 0,	 0,	 0},	\
 	{ 0,	 0,	 0,	 0,	~0,	~0,	 0,	 0,	 0,	 0},	\
 	{ 0,	 0,	 0,	 0,	 0,	 0,	~0,	~0,	 0,	 0},	\
-	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	0x10,	 0},	\
-	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	 4,	 0},	\
 	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	~0,	~0},	\
 	{~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0}}
 
@@ -240,9 +232,7 @@ enum reg_class {
 	: (REGNO) < 0x40			? GENERAL_REGS			\
 	: (REGNO) < 0x80			? POINTER_REGS			\
 	: (REGNO) < 0xC0			? FLOATING_REGS			\
-	: (REGNO) < 0x100			? VECTOR_REGS			\
-	: (REGNO) == DADAO_REMAINDER_REGNUM	? REMAINDER_REG			\
-	: (REGNO) == DADAO_HIMULT_REGNUM	? HIMULT_REG : SPECIAL_REGS)
+	: (REGNO) < 0x100			? VECTOR_REGS : SPECIAL_REGS)
 
 #define BASE_REG_CLASS				POINTER_REGS
 #define INDEX_REG_CLASS				GENERAL_REGS
@@ -450,7 +440,7 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 	"rv40", "rv41", "rv42", "rv43", "rv44", "rv45", "rv46", "rv47",		\
 	"rv48", "rv49", "rv50", "rv51", "rv52", "rv53", "rv54", "rv55",		\
 	"rv56", "rv57", "rv58", "rv59", "rv60", "rv61", "rv62", "rv63",		\
-	"rD",  "rE",  "rH",  "rJ",  "rR",  "rs5", "rO", "rs7",			\
+	"rs0",  "rE",  "rs2",  "rJ",  "rs4",  "rs5", "rO", "rs7",		\
 	"rs8", "rs9", "rs10", "rs11", "rs12", "rs13", "rs14", "rs15",		\
 	"rs16", "rs17", "rs18", "rs19", "rs20", "rs21", "rs22", "rs23",		\
 	"rs24", "rs25", "rs26", "rs27", "rs28", "rs29", "rs30", "rs31",		\
@@ -461,9 +451,7 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 
 #define	ADDITIONAL_REGISTER_NAMES {		\
 	{"sp", STACK_POINTER_REGNUM},		\
-	{"rD", 256},				\
 	{"rE", 257},				\
-	{"rH", 258},				\
 	{"rJ", DADAO_rJ_REGNUM},		\
 	{"rO", DADAO_rO_REGNUM}}
 
