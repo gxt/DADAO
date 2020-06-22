@@ -39,6 +39,24 @@
 	""
 	"mulu	%0, %1, %2")
 
+(define_insn "divmoddi4"
+  [(set     (match_operand:DI 0 "rg_class_operand" "=   Rg")
+    (div:DI (match_operand:DI 1 "rg_class_operand" "    Rg")
+            (match_operand:DI 2 "dd_ii_ri_operand" "  JdRg")))
+   (set     (match_operand:DI 3 "rg_class_operand" "=   Sy")
+            (mod:DI (match_dup 1) (match_dup 2)))]
+	""
+	"div	%0, %1, %2")
+
+(define_insn "udivmoddi4"
+  [(set      (match_operand:DI 0 "rg_class_operand" "=   Rg")
+    (udiv:DI (match_operand:DI 1 "rg_class_operand" "    Rg")
+             (match_operand:DI 2 "dd_ii_ri_operand" "  JdRg")))
+   (set      (match_operand:DI 3 "rg_class_operand" "=   Sy")
+             (umod:DI (match_dup 1) (match_dup 2)))]
+	""
+	"divu	%0, %1, %2")
+
 (define_insn "anddi3"
   [(set     (match_operand:DI 0 "rg_class_operand" "=   Rg")
     (and:DI (match_operand:DI 1 "rg_class_operand" "%   Rg")

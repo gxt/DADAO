@@ -106,25 +106,6 @@
 	geta	rp63, %1	\;	get.rp	%0, rp63
 	geta	rp63, %1	\;	get.rp	%0, rp63")
 
-(define_insn "divmoddi4"
-  [(set (match_operand:DI 0 "rg_class_operand" "=Rg")
-	(div:DI (match_operand:DI 1 "rg_class_operand" "Rg")
-		(match_operand:DI 2 "dd_ii_ri_operand" "JdRg")))
-   (set (match_operand:DI 3 "rg_class_operand" "=Sy")
-	(mod:DI (match_dup 1) (match_dup 2)))]
-  ;; Do the library stuff later.
-  ""
-	"div	%0, %1, %2")
-
-(define_insn "udivmoddi4"
-  [(set (match_operand:DI 0 "rg_class_operand" "=Rg")
-	(udiv:DI (match_operand:DI 1 "rg_class_operand" "Rg")
-		 (match_operand:DI 2 "dd_ii_ri_operand" "JdRg")))
-   (set (match_operand:DI 3 "rg_class_operand" "=Sy")
-	(umod:DI (match_dup 1) (match_dup 2)))]
-  ""
-	"divu	%0, %1, %2")
-
 (define_expand "call"
   [(parallel [(call (match_operand:SI 0 "memory_operand" "")
 		    (match_operand 1 "general_operand" ""))
