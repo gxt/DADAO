@@ -23,11 +23,8 @@ const struct dadao_reg_alias dadao_reg_aliases[] =
 	{"sp", 0x40 + 1},
 	{"fp", 0x40 + 2},
 	/* Special registers */
-	{"rD", 0x100 + 1},
 	{"rE", 0x100 + 2},
-	{"rH", 0x100 + 3},
 	{"rJ", 0x100 + 4},
-	{"rR", 0x100 + 6},
 	{"rO", 0x100 + 10},
 
 	{NULL, 0}
