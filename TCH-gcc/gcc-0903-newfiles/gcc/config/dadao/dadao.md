@@ -156,22 +156,6 @@
   ""
   "")
 
-;; FIXME: Should we define_expand for smin, smax, umin, umax using a
-;; nifty conditional sequence?
-
-;; FIXME:  When TImode works for other reasons (like cross-compiling from
-;; a 32-bit host), add back umulditi3 and umuldi3_highpart here.
-
-;; FIXME: Check what's really reasonable for the mod part.
-
-;; One day we might persuade GCC to expand divisions with constants the
-;; way DADAO does; giving the remainder the sign of the divisor.  But even
-;; then, it might be good to have an option to divide the way "everybody
-;; else" does.  Perhaps then, this option can be on by default.  However,
-;; it's not likely to happen because major (C, C++, Fortran) language
-;; standards in effect at 2002-04-29 reportedly demand that the sign of
-;; the remainder must follow the sign of the dividend.
-
 (define_insn "divmoddi4"
   [(set (match_operand:DI 0 "rg_class_operand" "=Rg")
 	(div:DI (match_operand:DI 1 "rg_class_operand" "Rg")
@@ -179,7 +163,7 @@
    (set (match_operand:DI 3 "rg_class_operand" "=Sy")
 	(mod:DI (match_dup 1) (match_dup 2)))]
   ;; Do the library stuff later.
-  "TARGET_KNUTH_DIVISION"
+  ""
 	"div	%0, %1, %2")
 
 (define_insn "udivmoddi4"
@@ -190,70 +174,6 @@
 	(umod:DI (match_dup 1) (match_dup 2)))]
   ""
 	"divu	%0, %1, %2")
-
-(define_expand "divdi3"
-  [(parallel
-    [(set (match_operand:DI 0 "rg_class_operand" "=&Rg")
-	  (div:DI (match_operand:DI 1 "rg_class_operand" "Rg")
-		  (match_operand:DI 2 "rg_class_operand" "Rg")))
-     (clobber (scratch:DI))
-     (clobber (scratch:DI))
-     (clobber (reg:DI DADAO_rR_REGNUM))])]
-  "! TARGET_KNUTH_DIVISION"
-  "")
-
-;; The %2-is-%1-case is there just to make sure things don't fail.  Could
-;; presumably happen with optimizations off; no evidence.
-(define_insn "*divdi3_nonknuth"
-  [(set (match_operand:DI 0 "rg_class_operand" "=&Rg,&Rg")
-	(div:DI (match_operand:DI 1 "rg_class_operand" "Rg,Rg")
-		(match_operand:DI 2 "rg_class_operand" "1,Rg")))
-   (clobber (match_scratch:DI 3 "=1,1"))
-   (clobber (match_scratch:DI 4 "=2,2"))
-   (clobber (reg:DI DADAO_rR_REGNUM))]
-  "! TARGET_KNUTH_DIVISION"
-  "@
-	setwl	%0, 1
-	xor	rg63, %1, %2	\;\
-	subu	%0, zero, %2	\;\
-	cs.n	%2, %2, %0	\;\
-	subu	%0, zero, %1	\;\
-	cs.n	%1, %1, %0	\;\
-	divu	%0, %1, %2	\;\
-	subu	%1, zero, %0	\;\
-	cs.n	%0, rg63, %1")
-
-(define_expand "moddi3"
-  [(parallel
-    [(set (match_operand:DI 0 "rg_class_operand" "=&Rg")
-	  (mod:DI (match_operand:DI 1 "rg_class_operand" "Rg")
-		  (match_operand:DI 2 "rg_class_operand" "Rg")))
-     (clobber (scratch:DI))
-     (clobber (scratch:DI))
-     (clobber (reg:DI DADAO_rR_REGNUM))])]
-  "! TARGET_KNUTH_DIVISION"
-  "")
-
-;; The %2-is-%1-case is there just to make sure things don't fail.  Could
-;; presumably happen with optimizations off; no evidence.
-(define_insn "*moddi3_nonknuth"
-  [(set (match_operand:DI 0 "rg_class_operand" "=&Rg,&Rg")
-	(mod:DI (match_operand:DI 1 "rg_class_operand" "Rg,Rg")
-		(match_operand:DI 2 "rg_class_operand" "1,Rg")))
-   (clobber (match_scratch:DI 3 "=1,1"))
-   (clobber (match_scratch:DI 4 "=2,2"))
-   (clobber (reg:DI DADAO_rR_REGNUM))]
-  "! TARGET_KNUTH_DIVISION"
-  "@
-	setwl	%0, 0
-	subu	%0, zero, %2	\;\
-	cs.n	%2, %2, %0	\;\
-	subu	rg63, zero, %1	\;\
-	cs.n	%1, %1, rg63	\;\
-	divu	%1, %1, %2	\;\
-	get.rs	%0, rR\;\
-	subu	%2, zero, %0	\;\
-	cs.nn	%0, rg63, %2")
 
 ;; When the user-patterns expand, the resulting insns will match the
 ;; patterns below.

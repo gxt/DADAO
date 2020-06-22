@@ -12,10 +12,6 @@ mepsilon
 Target Report Mask(FCMP_EPSILON)
 Use epsilon-respecting floating point compare instructions.
 
-mknuthdiv
-Target Report Mask(KNUTH_DIVISION)
-Generate divide results with reminder having the same sign as the divisor (not the dividend).
-
 mno-set-program-start
 Target Report RejectNegative
 Do not provide a default start-address 0x400000 of the program.
