@@ -4,6 +4,16 @@
 ;; Copyright (C) 2020-2033 Guan Xuetao (AT) Peking Univ.
 ;; Contributed by Guan Xuetao <gxt@pku.edu.cn>
 
+(define_code_iterator RG_ARITH [and ior xor])
+(define_code_attr rg_arith_insn [(and "and") (ior "or") (xor "xor")])
+
+(define_insn "<code>di3"
+  [(set          (match_operand:DI 0 "rg_class_operand" "=   Rg")
+    (RG_ARITH:DI (match_operand:DI 1 "rg_class_operand" "%   Rg")
+                 (match_operand:DI 2 "dd_ii_ri_operand" "  JdRg")))]
+	""
+	"<rg_arith_insn>	%0, %1, %2")
+
 ;; seto is pseudo insn, so we place ? before Rg
 (define_insn "mov_ri<mode>"
   [(set (match_operand:QHSD 0 "rg_class_operand"  "= Rg, Rg, ??Rg")
@@ -57,27 +67,6 @@
              (umod:DI (match_dup 1) (match_dup 2)))]
 	""
 	"divu	%0, %1, %2, %3")
-
-(define_insn "anddi3"
-  [(set     (match_operand:DI 0 "rg_class_operand" "=   Rg")
-    (and:DI (match_operand:DI 1 "rg_class_operand" "%   Rg")
-            (match_operand:DI 2 "dd_ii_ri_operand" "  JdRg")))]
-	""
-	"and	%0, %1, %2")
-
-(define_insn "iordi3"
-  [(set     (match_operand:DI 0 "rg_class_operand" "=   Rg")
-    (ior:DI (match_operand:DI 1 "rg_class_operand" "%   Rg")
-            (match_operand:DI 2 "dd_ii_ri_operand" "  JdRg")))]
-	""
-	"or	%0, %1, %2")
-
-(define_insn "xordi3"
-  [(set     (match_operand:DI 0 "rg_class_operand" "=   Rg")
-    (xor:DI (match_operand:DI 1 "rg_class_operand" "%   Rg")
-            (match_operand:DI 2 "dd_ii_ri_operand" "  JdRg")))]
-	""
-	"xor	%0, %1, %2")
 
 (define_insn "ashldi3"
   [(set        (match_operand:DI 0 "rg_class_operand" "=   Rg")
