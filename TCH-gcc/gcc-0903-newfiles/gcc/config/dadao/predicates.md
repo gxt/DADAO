@@ -91,14 +91,14 @@
   if (mode == VOIDmode)
     mode = GET_MODE (XEXP (op, 0));
 
-  return ((mode == CCmode || mode == DImode)
+  return ((mode == CCSSmode || mode == DImode)
 	  && (code == NE || code == EQ || code == GE || code == GT
 	      || code == LE || code == LT))
     /* FIXME: This may be a stupid trick.  What happens when GCC wants to
        reverse the condition?  Can it do that by itself?  Maybe it can
        even reverse the condition to fit a foldable one in the first
        place?  */
-    || (mode == CC_UNSmode && (code == GTU || code == LEU));
+    || (mode == CCUUmode && (code == GTU || code == LEU));
 })
 
 ;; Like comparison_operator, but only true if this comparison operator is
@@ -130,9 +130,9 @@
 	&& (code == GT || code == LT))
     || (mode == CC_FPEQmode
 	&& (code == NE || code == EQ))
-    || (mode == CC_UNSmode
+    || (mode == CCUUmode
 	&& (code == GEU || code == GTU || code == LEU || code == LTU))
-    || (mode == CCmode
+    || (mode == CCSSmode
 	&& (code == NE || code == EQ || code == GE || code == GT
 	    || code == LE || code == LT))
     || (mode == DImode
@@ -144,8 +144,8 @@
 
 (define_predicate "dadao_reg_cc_operand"
   (and (match_operand 0 "rg_class_operand")
-       (ior (match_test "GET_MODE (op) == CCmode")
-	    (ior (match_test "GET_MODE (op) == CC_UNSmode")
+       (ior (match_test "GET_MODE (op) == CCSSmode")
+	    (ior (match_test "GET_MODE (op) == CCUUmode")
 		 (ior (match_test "GET_MODE (op) == CC_FPmode")
 		      (ior (match_test "GET_MODE (op) == CC_FPEQmode")
 			   (match_test "GET_MODE (op) == CC_FUNmode")))))))

@@ -620,7 +620,7 @@ static bool dd_legitimate_constant_p (machine_mode mode ATTRIBUTE_UNUSED, rtx x)
 /* SELECT_CC_MODE.  */
 machine_mode dadao_select_cc_mode (RTX_CODE op, rtx x, rtx y ATTRIBUTE_UNUSED)
 {
-  /* We use CCmode, CC_UNSmode, CC_FPmode, CC_FPEQmode and CC_FUNmode to
+  /* We use CCSSmode, CCUUmode, CC_FPmode, CC_FPEQmode and CC_FUNmode to
      output different compare insns.  Note that we do not check the
      validity of the comparison here.  */
 
@@ -637,9 +637,9 @@ machine_mode dadao_select_cc_mode (RTX_CODE op, rtx x, rtx y ATTRIBUTE_UNUSED)
     }
 
   if (op == GTU || op == LTU || op == GEU || op == LEU)
-    return CC_UNSmode;
+    return CCUUmode;
 
-  return CCmode;
+  return CCSSmode;
 }
 
 /* REVERSIBLE_CC_MODE.  */
@@ -1544,8 +1544,8 @@ dadao_output_condition (FILE *stream, const_rtx x, int reversed)
     = {{E_CC_FUNmode, cc_fun_convs},
        {E_CC_FPmode, cc_fp_convs},
        {E_CC_FPEQmode, cc_fpeq_convs},
-       {E_CC_UNSmode, cc_uns_convs},
-       {E_CCmode, cc_signed_convs},
+       {E_CCUUmode, cc_uns_convs},
+       {E_CCSSmode, cc_signed_convs},
        {E_DImode, cc_di_convs}};
 
   size_t i;

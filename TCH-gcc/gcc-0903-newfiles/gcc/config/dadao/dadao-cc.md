@@ -25,15 +25,15 @@
 	ldt	%0, %1
 	stt	%1, %0")
 
-(define_expand "movcc"
-  [(set (match_operand:CC 0 "nonimmediate_operand" "")
-	(match_operand:CC 1 "nonimmediate_operand" ""))]
+(define_expand "movccss"
+  [(set (match_operand:CCSS 0 "nonimmediate_operand" "")
+	(match_operand:CCSS 1 "nonimmediate_operand" ""))]
   ""
   "")
 
-(define_expand "movcc_uns"
-  [(set (match_operand:CC_UNS 0 "nonimmediate_operand" "")
-	(match_operand:CC_UNS 1 "nonimmediate_operand" ""))]
+(define_expand "movccuu"
+  [(set (match_operand:CCUU 0 "nonimmediate_operand" "")
+	(match_operand:CCUU 1 "nonimmediate_operand" ""))]
   ""
   "")
 
@@ -55,32 +55,32 @@
   ""
   "")
 
-(define_insn "*cmps"
-  [(set         (match_operand:CC 0 "rg_class_operand" "=   Rg")
-    (compare:CC (match_operand:DI 1 "rg_class_operand" "    Rg")
-                (match_operand:DI 2 "dd_rg_s12_operand" "  IdRg")))]
+(define_insn "*cmpss"
+  [(set           (match_operand:CCSS 0 "rg_class_operand"  "=   Rg")
+    (compare:CCSS (match_operand:DI   1 "rg_class_operand"  "    Rg")
+                  (match_operand:DI   2 "dd_rg_s12_operand" "  IdRg")))]
 	""
 	"cmp	%0, %1, %2")
 
-(define_insn "*cmps2"
-  [(set         (match_operand:CC 0 "rg_class_operand" "= Rg")
-    (compare:CC (match_operand:DI 1 "rg_class_operand" "  Rg")
-                (match_operand:DI 2 "immediate_operand" "  i")))]
+(define_insn "*cmpss2"
+  [(set           (match_operand:CCSS 0 "rg_class_operand"  "= Rg")
+    (compare:CCSS (match_operand:DI   1 "rg_class_operand"  "  Rg")
+                  (match_operand:DI   2 "immediate_operand" "   i")))]
 	""
 	"seto	datao1, %2	\;	cmp	%0, %1, datao1")
 
-(define_insn "*cmpu"
-  [(set             (match_operand:CC_UNS 0 "rg_class_operand" "=   Rg")
-    (compare:CC_UNS (match_operand:DI     1 "rg_class_operand" "    Rg")
-                    (match_operand:DI     2 "dd_rg_u12_operand" "  JdRg")))]
+(define_insn "*cmpuu"
+  [(set           (match_operand:CCUU 0 "rg_class_operand"  "=   Rg")
+    (compare:CCUU (match_operand:DI   1 "rg_class_operand"  "    Rg")
+                  (match_operand:DI   2 "dd_rg_u12_operand" "  JdRg")))]
 	""
 	"cmpu	%0, %1, %2")
 
 (define_expand "movdicc"
   [(set (match_dup 4) (match_dup 5))
-   (set (match_operand:DI 0 "rg_class_operand" "")
+   (set  (match_operand:DI 0 "rg_class_operand" "")
 	(if_then_else:DI
-	 (match_operand 1 "comparison_operator" "")
+	 (match_operand    1 "comparison_operator" "")
 	 (match_operand:DI 2 "dd_rg_u12_operand" "")
 	 (match_operand:DI 3 "dd_rg_u12_operand" "")))]
   ""

@@ -5,6 +5,8 @@
 
 /* Node: Condition Code */
 
+/* NOTE: bytesize of all MODE_CC are 4 */
+
 /* Like other non-CC0 ports, DADAO need to code which combination of
    comparison insn and branch insn or conditional-set insn to use into the
    condition mode.  The CC mode depends partly on which condition is used
@@ -13,10 +15,11 @@
 /* The "usual" CC mode is used for a signed operands integer comparison,
    where the CMP insn is used and the result is (integer) -1, 0 or 1 for
    respectively a < b, a == b and a > b.  */
+CC_MODE (CCSS);
 
-/* The CC_UNS mode is for an unsigned operands integer comparison using
+/* The CCUU mode is for an unsigned operands integer comparison using
    the CMPU insn.  Result values correspond to those in CCmode.  */
-CC_MODE (CC_UNS);
+CC_MODE (CCUU);
 
 /* The CC_FP mode is for a non-equality floating-point comparison, using
    the FCMP or FCMPE insn.  The result is (integer) -1 or 1 for
