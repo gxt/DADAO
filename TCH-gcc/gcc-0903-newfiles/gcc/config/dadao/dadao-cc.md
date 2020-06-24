@@ -93,7 +93,7 @@
 (define_insn "*cmpu"
   [(set             (match_operand:CC_UNS 0 "rg_class_operand" "=   Rg")
     (compare:CC_UNS (match_operand:DI     1 "rg_class_operand" "    Rg")
-                    (match_operand:DI     2 "dd_ii_ri_operand" "  JdRg")))]
+                    (match_operand:DI     2 "dd_rg_u12_operand" "  JdRg")))]
 	""
 	"cmpu	%0, %1, %2")
 
@@ -102,8 +102,8 @@
    (set (match_operand:DI 0 "rg_class_operand" "")
 	(if_then_else:DI
 	 (match_operand 1 "comparison_operator" "")
-	 (match_operand:DI 2 "dd_ii_ri_operand" "")
-	 (match_operand:DI 3 "dd_ii_ri_operand" "")))]
+	 (match_operand:DI 2 "dd_rg_u12_operand" "")
+	 (match_operand:DI 3 "dd_rg_u12_operand" "")))]
   ""
   "
 {
@@ -126,8 +126,8 @@
 	 (match_operator 2 "dadao_foldable_comparison_operator"
 			 [(match_operand:DI 3 "rg_class_operand" "Rg,Rg,Rg,Rg")
 			  (const_int 0)])
-	 (match_operand:DI 1 "dd_ii_ri_operand" "JdRg,0 ,JdRg,GzIz")
-	 (match_operand:DI 4 "dd_ii_ri_operand" "0 ,JdRg,GzIz,JdRg")))]
+	 (match_operand:DI 1 "dd_rg_u12_operand" "JdRg,0 ,JdRg,GzIz")
+	 (match_operand:DI 4 "dd_rg_u12_operand" "0 ,JdRg,GzIz,JdRg")))]
   ""
   "@
 	cs.%d2	%0, %3, %1
@@ -142,8 +142,8 @@
      (match_operator 2 "dadao_comparison_operator"
       [(match_operand 3 "dadao_reg_cc_operand"	    "Rg,Rg,Rg,Rg")
       (const_int 0)])
-     (match_operand:DI 1 "dd_ii_ri_operand" "JdRg,0 ,JdRg,GzIz")
-     (match_operand:DI 4 "dd_ii_ri_operand" "0 ,JdRg,GzIz,JdRg")))]
+     (match_operand:DI 1 "dd_rg_u12_operand" "JdRg,0 ,JdRg,GzIz")
+     (match_operand:DI 4 "dd_rg_u12_operand" "0 ,JdRg,GzIz,JdRg")))]
   "REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
 	cs.%d2	%0, %3, %1
@@ -158,7 +158,7 @@
      (match_operator 2 "dadao_comparison_operator"
       [(match_operand 3 "dadao_reg_cc_operand"	    "Rg,Rg")
       (const_int 0)])
-     (match_operand:DI 1 "dd_ii_ri_operand" "JdRg,JdRg")
+     (match_operand:DI 1 "dd_rg_u12_operand" "JdRg,JdRg")
      (match_operand:DI 4 "dadao_rf_or_0_operand" "0 ,GzIz")))]
   "!REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
@@ -172,7 +172,7 @@
   [(set (match_dup 4)
         (match_op_dup 5
          [(match_operand:DI 1 "rg_class_operand" "")
-          (match_operand:DI 2 "dd_ii_ri_operand" "")]))
+          (match_operand:DI 2 "dd_rg_u12_operand" "")]))
    (set (pc)
         (if_then_else
               (match_operator 0 "ordered_comparison_operator"

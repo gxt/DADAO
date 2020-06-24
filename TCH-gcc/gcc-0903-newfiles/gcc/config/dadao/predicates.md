@@ -50,7 +50,7 @@
 })
 
 ;; TODO: ri add shift-imm handler
-(define_predicate "dd_ii_ri_operand"
+(define_predicate "dd_rg_u12_operand"
   (ior (match_operand 0 "rg_class_operand")
        (and (match_code "const_int")
             (match_test "satisfies_constraint_Jd(op)"))))
