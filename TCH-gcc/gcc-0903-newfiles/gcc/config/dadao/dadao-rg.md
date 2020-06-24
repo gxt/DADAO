@@ -4,9 +4,6 @@
 ;; Copyright (C) 2020-2033 Guan Xuetao (AT) Peking Univ.
 ;; Contributed by Guan Xuetao <gxt@pku.edu.cn>
 
-(define_code_iterator RG_ARITH [and ior xor])
-(define_code_attr rg_arith_insn [(and "and") (ior "or") (xor "xor")])
-
 (define_insn "<code>di3"
   [(set          (match_operand:DI 0 "rg_class_operand" "=   Rg")
     (RG_ARITH:DI (match_operand:DI 1 "rg_class_operand" "%   Rg")

@@ -23,11 +23,7 @@
    (DADAO_fp_rO_OFFSET -24)]
 )
 
-(define_mode_iterator	QHSD	[QI HI SI DI])
-(define_mode_attr	bwto	[(QI "b") (HI "w") (SI "t") (DI "o")])
-
-;; Operand and operator predicates.
-
+(include "iterators.md")
 (include "predicates.md")
 (include "constraints.md")
 
