@@ -175,16 +175,6 @@
     }
 })
 
-;; True if this is a register or CONST_INT (or CONST_DOUBLE for DImode).
-;; We could narrow the value down with a couple of predicates, but that
-;; doesn't seem to be worth it at the moment.
-
-(define_predicate "dadao_reg_or_constant_operand"
-  (ior (match_operand 0 "rg_class_operand")
-       (ior (match_code "const_int")
-	    (and (match_code "const_double")
-		 (match_test "GET_MODE (op) == VOIDmode")))))
-
 ;; True if this is a register or 0 (int or float).
 
 (define_predicate "dadao_rf_or_0_operand"
