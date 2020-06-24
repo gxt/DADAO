@@ -75,32 +75,6 @@
 (define_predicate "float_comparison_operator"
   (match_code "ne, eq, le, ge, lt, gt, ordered, unordered"))
 
-;; True if this is a foldable comparison operator
-;; - one where a the result of (compare:CC (reg) (const_int 0)) can be
-;; replaced by (reg).  */
-
-(define_predicate "dadao_foldable_comparison_operator"
-  (match_code "ne, eq, ge, gt, le, lt, gtu, leu")
-{
-  RTX_CODE code = GET_CODE (op);
-
-  if (mode == VOIDmode)
-    mode = GET_MODE (op);
-
-  /* This little bit is why the body of this predicate is kept as C.  */
-  if (mode == VOIDmode)
-    mode = GET_MODE (XEXP (op, 0));
-
-  return ((mode == CCSSmode || mode == DImode)
-	  && (code == NE || code == EQ || code == GE || code == GT
-	      || code == LE || code == LT))
-    /* FIXME: This may be a stupid trick.  What happens when GCC wants to
-       reverse the condition?  Can it do that by itself?  Maybe it can
-       even reverse the condition to fit a foldable one in the first
-       place?  */
-    || (mode == CCUUmode && (code == GTU || code == LEU));
-})
-
 ;; Like comparison_operator, but only true if this comparison operator is
 ;; applied to a valid mode.  Needed to avoid jump.c generating invalid
 ;; code with -ffast-math (gcc.dg/20001228-1.c).

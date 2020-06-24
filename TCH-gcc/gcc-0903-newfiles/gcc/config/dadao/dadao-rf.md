@@ -336,38 +336,23 @@
   operands[1] = gen_rtx_fmt_ee (code, VOIDmode, operands[4], const0_rtx);
 }")
 
-(define_insn "*movdfcc_real_foldable"
-  [(set (match_operand:DF 0 "rf_class_operand"	"=Rf  ,Rf  ,Rf  ,Rf")
-    (if_then_else:DF (match_operator 2 "dadao_foldable_comparison_operator"
-      [(match_operand:DI 3 "rg_class_operand"	 "Rg  ,Rg  ,Rg  ,Rg") (const_int 0)])
-     (match_operand:DF 1 "dadao_rf_or_0_operand" "RfGzIz,0  ,RfGzIz,GzIz")
-     (match_operand:DF 4 "dadao_rf_or_0_operand" "0  ,RfGzIz,GzIz ,RfGzIz")))]
-  ""
-  "@
-	get.rf	datao1, %0	\;	get.rf	datao2, %1	\;	cs.%d2	datao1, %3, datao2	\;	put.rf	%0, datao1
-	get.rf	datao1, %0	\;	get.rf	datao2, %4	\;	cs.%D2	datao1, %3, datao2	\;	put.rf	%0, datao1
-	seto	datao1, 0	\;	get.rf	datao2, %1	\;	cs.%d2	datao1, %3, datao2	\;	put.rf	%0, datao1
-	seto	datao1, 0	\;	get.rf	datao2, %4	\;	cs.%D2	datao1, %3, datao2	\;	put.rf	%0, datao1")
-
 (define_insn "*movdfcc_real_reversible"
-  [(set (match_operand:DF 0 "rf_class_operand"	"=Rf,Rf,Rf,Rf")
+  [(set (match_operand:DF 0 "rf_class_operand"	"=Rf,Rf")
     (if_then_else:DF (match_operator 2 "dadao_comparison_operator"
-      [(match_operand 3 "dadao_reg_cc_operand"	 "Rg,Rg,Rg,Rg") (const_int 0)])
-     (match_operand:DF 1 "dadao_rf_or_0_operand" "RfGzIz,0  ,RfGzIz,GzIz")
-     (match_operand:DF 4 "dadao_rf_or_0_operand" "0  ,RfGzIz,GzIz ,RfGzIz")))]
+      [(match_operand 3 "dadao_reg_cc_operand"	 "Rg,Rg") (const_int 0)])
+     (match_operand:DF 1 "rf_class_operand" "Rf,0")
+     (match_operand:DF 4 "rf_class_operand" "0,Rf")))]
   "REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
 	get.rf	datao1, %0	\;	get.rf	datao2, %1	\;	cs.%d2	datao1, %3, datao2	\;	put.rf	%0, datao1
-	get.rf	datao1, %0	\;	get.rf	datao2, %4	\;	cs.%D2	datao1, %3, datao2	\;	put.rf	%0, datao1
-	seto	datao1, 0	\;	get.rf	datao2, %1	\;	cs.%d2	datao1, %3, datao2	\;	put.rf	%0, datao1
-	seto	datao1, 0	\;	get.rf	datao2, %4	\;	cs.%D2	datao1, %3, datao2	\;	put.rf	%0, datao1")
+	get.rf	datao1, %0	\;	get.rf	datao2, %4	\;	cs.%D2	datao1, %3, datao2	\;	put.rf	%0, datao1")
 
 (define_insn "*movdfcc_real_nonreversible"
-  [(set (match_operand:DF 0 "rf_class_operand"	"=Rf  ,Rf")
+  [(set (match_operand:DF 0 "rf_class_operand"	"=Rf, Rf")
     (if_then_else:DF (match_operator 2 "dadao_comparison_operator"
-      [(match_operand 3 "dadao_reg_cc_operand"	 "Rg ,Rg") (const_int 0)])
-     (match_operand:DF 1 "dadao_rf_or_0_operand" "RfGzIz,RfGzIz")
-     (match_operand:DF 4 "dadao_rf_or_0_operand" "0  ,GzIz")))]
+      [(match_operand 3 "dadao_reg_cc_operand"	 "Rg, Rg") (const_int 0)])
+     (match_operand:DF 1 "rf_class_operand"      "Rf, Rf")
+     (match_operand:DF 4 "dadao_rf_or_0_operand" "0 ,GzIz")))]
   "!REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
   "@
 	get.rf	datao1, %0	\;	get.rf	datao2, %1	\;	cs.%d2	datao1, %3, datao2	\;	put.rf	%0, datao1

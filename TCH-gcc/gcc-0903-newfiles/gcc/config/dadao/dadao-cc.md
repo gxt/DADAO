@@ -98,22 +98,6 @@
   operands[1] = gen_rtx_fmt_ee (code, VOIDmode, operands[4], const0_rtx);
 }")
 
-;; FIXME: Is this the right way to do "folding" of CCmode -> DImode?
-(define_insn "*movdicc_real_foldable"
-  [(set (match_operand:DI 0 "rg_class_operand" "=Rg,Rg,Rg,Rg")
-	(if_then_else:DI
-	 (match_operator 2 "dadao_foldable_comparison_operator"
-			 [(match_operand:DI 3 "rg_class_operand" "Rg,Rg,Rg,Rg")
-			  (const_int 0)])
-	 (match_operand:DI 1 "dd_rg_u12_operand" "JdRg,0 ,JdRg,GzIz")
-	 (match_operand:DI 4 "dd_rg_u12_operand" "0 ,JdRg,GzIz,JdRg")))]
-  ""
-  "@
-	cs.%d2	%0, %3, %1
-	cs.%D2	%0, %3, %4
-	xor	%0, %0, %0	\;	cs.%d2	%0, %3, %1
-	xor	%0, %0, %0	\;	cs.%D2	%0, %3, %4")
-
 (define_insn "*movdicc_real_reversible"
   [(set
     (match_operand:DI 0 "rg_class_operand"	   "=Rg,Rg,Rg,Rg")
@@ -170,21 +154,6 @@
 }")
 
 
-;; FIXME: we can emit an unordered-or-*not*-equal compare in one insn, but
-;; there's no RTL code for it.  Maybe revisit in future.
-
-;; FIXME: Odd/Even matchers?
-(define_insn "*bCC_foldable"
-  [(set (pc)
-	(if_then_else
-	 (match_operator 1 "dadao_foldable_comparison_operator"
-			 [(match_operand:DI 2 "rg_class_operand" "Rg")
-			  (const_int 0)])
-	 (label_ref (match_operand 0 "" ""))
-	 (pc)))]
-  ""
-	"br.%d1	%2, %0")
-
 (define_insn "*bCC"
   [(set (pc)
 	(if_then_else
@@ -195,18 +164,6 @@
 	 (pc)))]
   ""
 	"br.%d1	%2, %0")
-
-(define_insn "*bCC_inverted_foldable"
-  [(set (pc)
-	(if_then_else
-	 (match_operator 1 "dadao_foldable_comparison_operator"
-			 [(match_operand:DI 2 "rg_class_operand" "Rg")
-			  (const_int 0)])
-		      (pc)
-		      (label_ref (match_operand 0 "" ""))))]
-;; REVERSIBLE_CC_MODE is checked by dadao_foldable_comparison_operator.
-  ""
-	"br.%D1	%2, %0")
 
 (define_insn "*bCC_inverted"
   [(set (pc)
