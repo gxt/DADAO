@@ -65,26 +65,12 @@
 	""
 	"divu	%0, %1, %2, %3")
 
-(define_insn "ashldi3"
-  [(set        (match_operand:DI 0 "rg_class_operand" "=   Rg")
-    (ashift:DI (match_operand:DI 1 "rg_class_operand" "    Rg")
-               (match_operand:DI 2 "dd_rg_u6_operand" "  JsRg")))]
-	""
-	"slu	%0, %1, %2")
-
-(define_insn "ashrdi3"
+(define_insn "<rg_shift_name>di3"
   [(set          (match_operand:DI 0 "rg_class_operand" "=   Rg")
-    (ashiftrt:DI (match_operand:DI 1 "rg_class_operand" "    Rg")
+    (RG_SHIFT:DI (match_operand:DI 1 "rg_class_operand" "    Rg")
                  (match_operand:DI 2 "dd_rg_u6_operand" "  JsRg")))]
 	""
-	"sr	%0, %1, %2")
-
-(define_insn "lshrdi3"
-  [(set          (match_operand:DI 0 "rg_class_operand" "=   Rg")
-    (lshiftrt:DI (match_operand:DI 1 "rg_class_operand" "    Rg")
-                 (match_operand:DI 2 "dd_rg_u6_operand" "  JsRg")))]
-	""
-	"sru	%0, %1, %2")
+	"<rg_shift_insn>	%0, %1, %2")
 
 (define_insn "negdi2"
   [(set     (match_operand:DI 0 "rg_class_operand" "= Rg")

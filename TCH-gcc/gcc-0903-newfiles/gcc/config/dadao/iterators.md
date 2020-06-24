@@ -9,3 +9,7 @@
 
 (define_code_iterator RG_ARITH [and ior xor])
 (define_code_attr rg_arith_insn [(and "and") (ior "or") (xor "xor")])
+
+(define_code_iterator RG_SHIFT [ashift ashiftrt lshiftrt])
+(define_code_attr rg_shift_name [(ashift "ashl") (ashiftrt "ashr") (lshiftrt "lshr")])
+(define_code_attr rg_shift_insn [(ashift "slu")  (ashiftrt "sr")   (lshiftrt "sru")])
