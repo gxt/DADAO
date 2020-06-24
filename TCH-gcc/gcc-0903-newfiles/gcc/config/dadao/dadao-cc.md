@@ -55,27 +55,6 @@
   ""
   "")
 
-;; When the user-patterns expand, the resulting insns will match the
-;; patterns below.
-
-;; We can fold the signed-compare where the register value is
-;; already equal to (compare:CCTYPE (reg) (const_int 0)).
-;;  We can't do that at all for floating-point, due to NaN, +0.0
-;; and -0.0, and we can only do it for the non/zero test of
-;; unsigned, so that has to be done another way.
-;;  FIXME: Perhaps a peep2 changing CCcode to a new code, that
-;; gets folded here.
-(define_insn "*cmpdi_folded"
-  [(set         (match_operand:CC 0 "rg_class_operand" "= Rg")
-    (compare:CC (match_operand:DI 1 "rg_class_operand" "  Rg")
-	 (const_int 0)))]
-  ;; FIXME: Can we test equivalence any other way?
-  ;; FIXME: Can we fold any other way?
-  "REG_P (operands[0]) && REG_P (operands[1])
-   && REGNO (operands[1]) == REGNO (operands[0])"
-  ;; DADAO FIXME: remove folded label and %% prefix
-	"cmp	%0, %1, 0")
-
 (define_insn "*cmps"
   [(set         (match_operand:CC 0 "rg_class_operand" "=   Rg")
     (compare:CC (match_operand:DI 1 "rg_class_operand" "    Rg")
