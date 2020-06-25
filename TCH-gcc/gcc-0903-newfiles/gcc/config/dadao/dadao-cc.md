@@ -15,8 +15,8 @@
   [(set (match_operand 0 "nonimmediate_operand" "=Rg,Rs,Rg,Rp,Rg,Rg,m")
 	(match_operand 1 "nonimmediate_operand"  "Rg,Rg,Rs,Rg,Rp,m,Rg"))]
 	"GET_MODE_CLASS (GET_MODE (operands[0])) == MODE_CC
-	&& GET_MODE_CLASS (GET_MODE (operands[1])) == MODE_CC"
-  "@
+		&& GET_MODE_CLASS (GET_MODE (operands[1])) == MODE_CC"
+	"@
 	or	%0, %1, 0
 	put.rs	%0, %1
 	get.rs	%0, %1
@@ -58,7 +58,7 @@
     (if_then_else:DI (match_operand    1 "ordered_comparison_operator" "")
                      (match_operand:DI 2 "rg_class_operand" "")
                      (match_operand:DI 3 "rg_class_operand" "")))]
-  ""
+	""
 {
 	enum rtx_code code = GET_CODE (operands[1]);
 
