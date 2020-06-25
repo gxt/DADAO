@@ -73,16 +73,6 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"incwj",	I (INCW),	W (WJ),	0,	OP (rjii),		T (normal)},
 	{"incwh",	I (INCW),	W (WH),	0,	OP (rjii),		T (normal)},
 
-	{"orwl",	I (ORW),	W (WL),	0,	OP (rjii),		T (normal)},
-	{"orwk",	I (ORW),	W (WK),	0,	OP (rjii),		T (normal)},
-	{"orwj",	I (ORW),	W (WJ),	0,	OP (rjii),		T (normal)},
-	{"orwh",	I (ORW),	W (WH),	0,	OP (rjii),		T (normal)},
-
-	{"andnwl",	I (ANDNW),	W (WL),	0,	OP (rjii),		T (normal)},
-	{"andnwk",	I (ANDNW),	W (WK),	0,	OP (rjii),		T (normal)},
-	{"andnwj",	I (ANDNW),	W (WJ),	0,	OP (rjii),		T (normal)},
-	{"andnwh",	I (ANDNW),	W (WH),	0,	OP (rjii),		T (normal)},
-
 	{"slu",		0x3E,		1,	1,	OP (orri_orrr),		T (normal)},
 	{"sr",		0x3E,		2,	1,	OP (orri_orrr),		T (normal)},
 	{"sru",		0x3E,		3,	1,	OP (orri_orrr),		T (normal)},
