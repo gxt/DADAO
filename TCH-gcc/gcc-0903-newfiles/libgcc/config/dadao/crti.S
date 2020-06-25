@@ -34,7 +34,7 @@ crtsdat:
 _start:
 	geta	rp63, crtstxt
 	ldo	rg2, rp63, 0
-	andnwl	rg2, 0x7ff
+#	andnwl	rg2, 0x7ff
 	ldo	rg3, rp63, 8
 	setwl	rg4, 2048
 0:
@@ -44,7 +44,7 @@ _start:
 
 	geta	rp63, crtsdat
 	ldo	rg2, rp63, 0
-	andnwl	rg2, 0x7ff
+#	andnwl	rg2, 0x7ff
 	ldo	rg3, rp63, 8
 0:
 	addu	rg2, rg2, rg4

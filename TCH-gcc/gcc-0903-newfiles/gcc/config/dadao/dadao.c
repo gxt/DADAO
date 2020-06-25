@@ -773,18 +773,8 @@ static void dd_print_operand (FILE *stream, rtx x, int code)
       fprintf (stream, "%d", (int) (INTVAL (x) & 0xff));
       return;
 
-      /* Can't use 'a' because that's a generic modifier for address
-	 output.  */
-    case 'A':
-      dadao_output_shiftvalue_op_from_str (stream, "andn", ~(uint64_t) dadao_intval (x));
-      return;
-
     case 'i':
       dadao_output_shiftvalue_op_from_str (stream, "inc", (uint64_t) dadao_intval (x));
-      return;
-
-    case 'o':
-      dadao_output_shiftvalue_op_from_str (stream, "or", (uint64_t) dadao_intval (x));
       return;
 
     case 's':
