@@ -153,17 +153,34 @@
                                 operands[1], operands[2]);
 }")
 
-
-(define_insn "*bCC"
+(define_insn "*br_fp"
   [(set (pc)
 	(if_then_else
 	 (match_operator 1 "dadao_comparison_operator"
-			 [(match_operand 2 "dadao_reg_cc_operand" "Rg")
+			 [(match_operand 2 "dadao_reg_ccfp_operand" "Rg")
 			  (const_int 0)])
 	 (label_ref (match_operand 0 "" ""))
 	 (pc)))]
-  ""
+	""
 	"br.%d1	%2, %0")
+
+(define_insn "*br_ss_<ccss_type_insn>"
+  [(set (pc)
+    (if_then_else
+      (CCSS_TYPE (match_operand:CCSS 1 "rg_class_operand" "Rg") (const_int 0))
+      (label_ref (match_operand 0 "" ""))
+      (pc)))]
+	""
+	"br.<ccss_type_insn>	%1, %0")
+
+(define_insn "*br_uu_<ccuu_type_insn>"
+  [(set (pc)
+    (if_then_else
+      (CCUU_TYPE (match_operand:CCUU 1 "rg_class_operand" "Rg") (const_int 0))
+      (label_ref (match_operand 0 "" ""))
+      (pc)))]
+	""
+	"br.<ccuu_type_insn>	%1, %0")
 
 (define_insn "*bCC_inverted"
   [(set (pc)

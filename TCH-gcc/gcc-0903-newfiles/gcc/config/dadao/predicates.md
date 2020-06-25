@@ -124,6 +124,12 @@
 		      (ior (match_test "GET_MODE (op) == CC_FPEQmode")
 			   (match_test "GET_MODE (op) == CC_FUNmode")))))))
 
+(define_predicate "dadao_reg_ccfp_operand"
+  (and (match_operand 0 "rg_class_operand")
+	 (ior (match_test "GET_MODE (op) == CC_FPmode")
+	      (ior (match_test "GET_MODE (op) == CC_FPEQmode")
+		   (match_test "GET_MODE (op) == CC_FUNmode")))))
+
 ;; True if this is an address_operand or a symbolic operand.
 
 (define_predicate "dadao_symbolic_or_address_operand"
