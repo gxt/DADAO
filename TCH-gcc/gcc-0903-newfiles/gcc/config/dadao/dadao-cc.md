@@ -79,13 +79,12 @@
 (define_expand "movdicc"
   [(set (match_dup 4) (match_dup 5))
    (set              (match_operand:DI 0 "rg_class_operand" "")
-    (if_then_else:DI (match_operand    1 "comparison_operator" "")
+    (if_then_else:DI (match_operand    1 "ordered_comparison_operator" "")
                      (match_operand:DI 2 "rg_class_operand" "")
                      (match_operand:DI 3 "rg_class_operand" "")))]
   ""
 {
 	enum rtx_code code = GET_CODE (operands[1]);
-	if (code == LE || code == GE)	FAIL;
 
 	operands[4] = dadao_gen_compare_reg (code,
 			XEXP (operands[1], 0), XEXP (operands[1], 1));
@@ -113,30 +112,19 @@
 	""
 	"cs.<ccuu_type_insn>	%0, %2, %1, %3")
 
-;; FIXME: scc insns will probably help, I just skip them
-;; right now.  Revisit.
-
 (define_expand "cbranchdi4"
   [(set (match_dup 4)
-        (match_op_dup 5
-         [(match_operand:DI 1 "rg_class_operand" "")
-          (match_operand:DI 2 "dd_rg_u12_operand" "")]))
+        (match_op_dup 5 [(match_operand:DI 1 "rg_class_operand" "")
+                         (match_operand:DI 2 "dd_rg_u12_operand" "")]))
    (set (pc)
-        (if_then_else
-              (match_operator 0 "ordered_comparison_operator"
-               [(match_dup 4)
-                (const_int 0)])
-              (label_ref (match_operand 3 "" ""))
-              (pc)))]
-  ""
-  "
+     (if_then_else (match_operator 0 "ordered_comparison_operator" [(match_dup 4) (const_int 0)])
+                   (label_ref (match_operand 3 "" ""))
+                   (pc)))]
+	""
 {
-  operands[4] = dadao_gen_compare_reg (GET_CODE (operands[0]),
-                                      operands[1], operands[2]);
-  operands[5] = gen_rtx_fmt_ee (COMPARE,
-                                GET_MODE (operands[4]),
-                                operands[1], operands[2]);
-}")
+	operands[4] = dadao_gen_compare_reg (GET_CODE (operands[0]), operands[1], operands[2]);
+	operands[5] = gen_rtx_fmt_ee (COMPARE, GET_MODE (operands[4]), operands[1], operands[2]);
+})
 
 (define_insn "*br_ss_<ccss_type_insn>"
   [(set (pc)
@@ -158,23 +146,20 @@
 
 (define_insn "*br_fp"
   [(set (pc)
-	(if_then_else
-	 (match_operator 1 "dadao_comparison_operator"
-			 [(match_operand 2 "dadao_reg_ccfp_operand" "Rg")
-			  (const_int 0)])
-	 (label_ref (match_operand 0 "" ""))
-	 (pc)))]
+    (if_then_else
+      (match_operator 1 "dadao_comparison_operator"
+        [(match_operand 2 "dadao_reg_ccfp_operand" "Rg") (const_int 0)])
+      (label_ref (match_operand 0 "" ""))
+      (pc)))]
 	""
 	"br.%d1	%2, %0")
 
 (define_insn "*br_fp_inverted"
   [(set (pc)
-	(if_then_else
-	 (match_operator 1 "dadao_comparison_operator"
-			 [(match_operand 2 "dadao_reg_ccfp_operand" "Rg")
-			  (const_int 0)])
-	 (pc)
-	 (label_ref (match_operand 0 "" ""))))]
-  "REVERSIBLE_CC_MODE (GET_MODE (operands[2]))"
+    (if_then_else
+      (match_operator 1 "dadao_comparison_operator"
+        [(match_operand 2 "dadao_reg_ccfp_operand" "Rg") (const_int 0)])
+      (pc)
+      (label_ref (match_operand 0 "" ""))))]
+	"REVERSIBLE_CC_MODE (GET_MODE (operands[2]))"
 	"br.%D1	%2, %0")
-
