@@ -7,6 +7,8 @@
 (define_mode_iterator	QHSD	[QI HI SI DI])
 (define_mode_attr	bwto	[(QI "b") (HI "w") (SI "t") (DI "o")])
 
+(define_mode_iterator	CC_ANY	[CCSS CCUU CC_FP CC_FPEQ CC_FUN])
+
 (define_code_iterator RG_ARITH [and ior xor])
 (define_code_attr rg_arith_insn [(and "and") (ior "or") (xor "xor")])
 

@@ -25,35 +25,11 @@
 	ldt	%0, %1
 	stt	%1, %0")
 
-(define_expand "movccss"
-  [(set (match_operand:CCSS 0 "nonimmediate_operand" "")
-	(match_operand:CCSS 1 "nonimmediate_operand" ""))]
-  ""
-  "")
-
-(define_expand "movccuu"
-  [(set (match_operand:CCUU 0 "nonimmediate_operand" "")
-	(match_operand:CCUU 1 "nonimmediate_operand" ""))]
-  ""
-  "")
-
-(define_expand "movcc_fp"
-  [(set (match_operand:CC_FP 0 "nonimmediate_operand" "")
-	(match_operand:CC_FP 1 "nonimmediate_operand" ""))]
-  ""
-  "")
-
-(define_expand "movcc_fpeq"
-  [(set (match_operand:CC_FPEQ 0 "nonimmediate_operand" "")
-	(match_operand:CC_FPEQ 1 "nonimmediate_operand" ""))]
-  ""
-  "")
-
-(define_expand "movcc_fun"
-  [(set (match_operand:CC_FUN 0 "nonimmediate_operand" "")
-	(match_operand:CC_FUN 1 "nonimmediate_operand" ""))]
-  ""
-  "")
+(define_expand "mov<mode>"
+  [(set (match_operand:CC_ANY 0 "nonimmediate_operand" "")
+	(match_operand:CC_ANY 1 "nonimmediate_operand" ""))]
+	""
+	"")
 
 (define_insn "*cmpss"
   [(set           (match_operand:CCSS 0 "rg_class_operand"  "=   Rg")
