@@ -78,55 +78,40 @@
 
 (define_expand "movdicc"
   [(set (match_dup 4) (match_dup 5))
-   (set  (match_operand:DI 0 "rg_class_operand" "")
-	(if_then_else:DI
-	 (match_operand    1 "comparison_operator" "")
-	 (match_operand:DI 2 "dd_rg_u12_operand" "")
-	 (match_operand:DI 3 "dd_rg_u12_operand" "")))]
+   (set              (match_operand:DI 0 "rg_class_operand" "")
+    (if_then_else:DI (match_operand    1 "comparison_operator" "")
+                     (match_operand:DI 2 "rg_class_operand" "")
+                     (match_operand:DI 3 "rg_class_operand" "")))]
   ""
-  "
 {
-  enum rtx_code code = GET_CODE (operands[1]);
-  if (code == LE || code == GE)
-    FAIL;
+	enum rtx_code code = GET_CODE (operands[1]);
+	if (code == LE || code == GE)	FAIL;
 
-  operands[4] = dadao_gen_compare_reg (code, XEXP (operands[1], 0),
-				      XEXP (operands[1], 1));
-  operands[5] = gen_rtx_COMPARE (GET_MODE (operands[4]),
-				 XEXP (operands[1], 0),
-				 XEXP (operands[1], 1));
-  operands[1] = gen_rtx_fmt_ee (code, VOIDmode, operands[4], const0_rtx);
-}")
+	operands[4] = dadao_gen_compare_reg (code,
+			XEXP (operands[1], 0), XEXP (operands[1], 1));
+	operands[5] = gen_rtx_COMPARE (GET_MODE (operands[4]),
+			XEXP (operands[1], 0), XEXP (operands[1], 1));
 
-(define_insn "*movdicc_real_reversible"
-  [(set
-    (match_operand:DI 0 "rg_class_operand"	   "=Rg,Rg,Rg,Rg")
+	operands[1] = gen_rtx_fmt_ee (code, VOIDmode, operands[4], const0_rtx);
+})
+
+(define_insn "*movdicc_<ccss_type_insn>"
+  [(set (match_operand:DI       0 "rg_class_operand" "= Rg")
     (if_then_else:DI
-     (match_operator 2 "dadao_comparison_operator"
-      [(match_operand 3 "rg_class_operand"	    "Rg,Rg,Rg,Rg")
-      (const_int 0)])
-     (match_operand:DI 1 "dd_rg_u12_operand" "JdRg,0 ,JdRg,GzIz")
-     (match_operand:DI 4 "dd_rg_u12_operand" "0 ,JdRg,GzIz,JdRg")))]
-  "REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
-  "@
-	cs.%d2	%0, %3, %1
-	cs.%D2	%0, %3, %4
-	xor	%0, %0, %0	\;	cs.%d2	%0, %3, %1
-	xor	%0, %0, %0	\;	cs.%D2	%0, %3, %4")
+      (CCSS_TYPE (match_operand 2 "rg_class_operand" "  Rg") (const_int 0))
+      (match_operand:DI         1 "rg_class_operand" "  Rg")
+      (match_operand:DI         3 "rg_class_operand" "  Rg")))]
+	""
+	"cs.<ccss_type_insn>	%0, %2, %1, %3")
 
-(define_insn "*movdicc_real_nonreversible"
-  [(set
-    (match_operand:DI 0 "rg_class_operand"	   "=Rg,Rg")
+(define_insn "*movdicc_<ccuu_type_insn>"
+  [(set (match_operand:DI       0 "rg_class_operand" "= Rg")
     (if_then_else:DI
-     (match_operator 2 "dadao_comparison_operator"
-      [(match_operand 3 "rg_class_operand"	    "Rg,Rg")
-      (const_int 0)])
-     (match_operand:DI 1 "dd_rg_u12_operand" "JdRg,JdRg")
-     (match_operand:DI 4 "dadao_rf_or_0_operand" "0 ,GzIz")))]
-  "!REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
-  "@
-	cs.%d2	%0, %3, %1
-	xor	%0, %0, %0	\;	cs.%d2	%0, %3, %1")
+      (CCUU_TYPE (match_operand 2 "rg_class_operand" "  Rg") (const_int 0))
+      (match_operand:DI         1 "rg_class_operand" "  Rg")
+      (match_operand:DI         3 "rg_class_operand" "  Rg")))]
+	""
+	"cs.<ccuu_type_insn>	%0, %2, %1, %3")
 
 ;; FIXME: scc insns will probably help, I just skip them
 ;; right now.  Revisit.

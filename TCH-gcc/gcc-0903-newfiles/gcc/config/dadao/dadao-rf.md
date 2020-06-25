@@ -306,58 +306,6 @@
   ""
 	"ldt.rf	%0, %1")
 
-;; Neither sign-extend nor zero-extend are necessary; gcc knows how to
-;; synthesize using shifts or and, except with a memory source and not
-;; completely optimal.  FIXME: Actually, other bugs surface when those
-;; patterns are defined; fix later.
-
-;; There are no sane values with the bit-patterns of (int) 0..255 except
-;; 0 to use in movdfcc.
-
-(define_expand "movdfcc"
-  [(set (match_dup 4) (match_dup 5))
-   (set (match_operand:DF 0 "rf_class_operand" "")
-	(if_then_else:DF
-	 (match_operand 1 "comparison_operator" "")
-	 (match_operand:DF 2 "dadao_rf_or_0_operand" "")
-	 (match_operand:DF 3 "dadao_rf_or_0_operand" "")))]
-  ""
-  "
-{
-  enum rtx_code code = GET_CODE (operands[1]);
-  if (code == LE || code == GE)
-    FAIL;
-
-  operands[4] = dadao_gen_compare_reg (code, XEXP (operands[1], 0),
-				      XEXP (operands[1], 1));
-  operands[5] = gen_rtx_COMPARE (GET_MODE (operands[4]),
-				 XEXP (operands[1], 0),
-				 XEXP (operands[1], 1));
-  operands[1] = gen_rtx_fmt_ee (code, VOIDmode, operands[4], const0_rtx);
-}")
-
-(define_insn "*movdfcc_real_reversible"
-  [(set (match_operand:DF 0 "rf_class_operand"	"=Rf,Rf")
-    (if_then_else:DF (match_operator 2 "dadao_comparison_operator"
-      [(match_operand 3 "dadao_reg_ccfp_operand" "Rg,Rg") (const_int 0)])
-     (match_operand:DF 1 "rf_class_operand" "Rf,0")
-     (match_operand:DF 4 "rf_class_operand" "0,Rf")))]
-  "REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
-  "@
-	get.rf	datao1, %0	\;	get.rf	datao2, %1	\;	cs.%d2	datao1, %3, datao2	\;	put.rf	%0, datao1
-	get.rf	datao1, %0	\;	get.rf	datao2, %4	\;	cs.%D2	datao1, %3, datao2	\;	put.rf	%0, datao1")
-
-(define_insn "*movdfcc_real_nonreversible"
-  [(set (match_operand:DF 0 "rf_class_operand"	"=Rf, Rf")
-    (if_then_else:DF (match_operator 2 "dadao_comparison_operator"
-      [(match_operand 3 "dadao_reg_ccfp_operand" "Rg, Rg") (const_int 0)])
-     (match_operand:DF 1 "rf_class_operand"      "Rf, Rf")
-     (match_operand:DF 4 "dadao_rf_or_0_operand" "0 ,GzIz")))]
-  "!REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
-  "@
-	get.rf	datao1, %0	\;	get.rf	datao2, %1	\;	cs.%d2	datao1, %3, datao2	\;	put.rf	%0, datao1
-	seto	datao1, 0	\;	get.rf	datao2, %1	\;	cs.%d2	datao1, %3, datao2	\;	put.rf	%0, datao1")
-
 (define_expand "cbranchdf4"
   [(set (match_dup 4)
         (match_op_dup 5
