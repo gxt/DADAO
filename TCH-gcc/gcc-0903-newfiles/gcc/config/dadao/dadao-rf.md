@@ -339,7 +339,7 @@
 (define_insn "*movdfcc_real_reversible"
   [(set (match_operand:DF 0 "rf_class_operand"	"=Rf,Rf")
     (if_then_else:DF (match_operator 2 "dadao_comparison_operator"
-      [(match_operand 3 "dadao_reg_cc_operand"	 "Rg,Rg") (const_int 0)])
+      [(match_operand 3 "dadao_reg_ccfp_operand" "Rg,Rg") (const_int 0)])
      (match_operand:DF 1 "rf_class_operand" "Rf,0")
      (match_operand:DF 4 "rf_class_operand" "0,Rf")))]
   "REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
@@ -350,7 +350,7 @@
 (define_insn "*movdfcc_real_nonreversible"
   [(set (match_operand:DF 0 "rf_class_operand"	"=Rf, Rf")
     (if_then_else:DF (match_operator 2 "dadao_comparison_operator"
-      [(match_operand 3 "dadao_reg_cc_operand"	 "Rg, Rg") (const_int 0)])
+      [(match_operand 3 "dadao_reg_ccfp_operand" "Rg, Rg") (const_int 0)])
      (match_operand:DF 1 "rf_class_operand"      "Rf, Rf")
      (match_operand:DF 4 "dadao_rf_or_0_operand" "0 ,GzIz")))]
   "!REVERSIBLE_CC_MODE (GET_MODE (operands[3]))"
