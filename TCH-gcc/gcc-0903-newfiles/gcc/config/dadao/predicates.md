@@ -115,15 +115,6 @@
 })
 
 ;; True if this is a register with a condition-code mode.
-
-(define_predicate "dadao_reg_cc_operand"
-  (and (match_operand 0 "rg_class_operand")
-       (ior (match_test "GET_MODE (op) == CCSSmode")
-	    (ior (match_test "GET_MODE (op) == CCUUmode")
-		 (ior (match_test "GET_MODE (op) == CC_FPmode")
-		      (ior (match_test "GET_MODE (op) == CC_FPEQmode")
-			   (match_test "GET_MODE (op) == CC_FUNmode")))))))
-
 (define_predicate "dadao_reg_ccfp_operand"
   (and (match_operand 0 "rg_class_operand")
 	 (ior (match_test "GET_MODE (op) == CC_FPmode")

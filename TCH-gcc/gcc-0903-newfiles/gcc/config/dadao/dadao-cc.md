@@ -103,7 +103,7 @@
     (match_operand:DI 0 "rg_class_operand"	   "=Rg,Rg,Rg,Rg")
     (if_then_else:DI
      (match_operator 2 "dadao_comparison_operator"
-      [(match_operand 3 "dadao_reg_cc_operand"	    "Rg,Rg,Rg,Rg")
+      [(match_operand 3 "rg_class_operand"	    "Rg,Rg,Rg,Rg")
       (const_int 0)])
      (match_operand:DI 1 "dd_rg_u12_operand" "JdRg,0 ,JdRg,GzIz")
      (match_operand:DI 4 "dd_rg_u12_operand" "0 ,JdRg,GzIz,JdRg")))]
@@ -119,7 +119,7 @@
     (match_operand:DI 0 "rg_class_operand"	   "=Rg,Rg")
     (if_then_else:DI
      (match_operator 2 "dadao_comparison_operator"
-      [(match_operand 3 "dadao_reg_cc_operand"	    "Rg,Rg")
+      [(match_operand 3 "rg_class_operand"	    "Rg,Rg")
       (const_int 0)])
      (match_operand:DI 1 "dd_rg_u12_operand" "JdRg,JdRg")
      (match_operand:DI 4 "dadao_rf_or_0_operand" "0 ,GzIz")))]
