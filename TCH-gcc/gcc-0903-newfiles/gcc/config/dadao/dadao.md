@@ -57,49 +57,17 @@
 	get.rv	%0, %1
 	get.rs	%0, %1")
 
-;; FIXME: Can we remove the reg-to-reg for smaller modes?  Shouldn't they
-;; be synthesized ok?
-(define_insn "*movqi"
-  [(set (match_operand:QI 0 "nonimmediate_operand" "=Rg,m")
-        (match_operand:QI 1 "general_operand"       "m,Rg"))]
-  ""
-  "@
-	ldb	%0, %1
-	stb	%1, %0")
+(define_insn "dd_ld_<mode>"
+  [(set (match_operand:QHSD 0 "rg_class_operand" "= Rg")
+        (match_operand:QHSD 1 "memory_operand"   "   m"))]
+	""
+	"ld<bwto>	%0, %1")
 
-(define_insn "*movhi"
-  [(set (match_operand:HI 0 "nonimmediate_operand" "=Rg,m")
-        (match_operand:HI 1 "general_operand"       "m,Rg"))]
-  ""
-  "@
-	ldw	%0, %1
-	stw	%1, %0")
-
-;; gcc.c-torture/compile/920428-2.c fails if there's no "n".
-(define_insn "*movsi"
-  [(set (match_operand:SI 0 "nonimmediate_operand" "=Rg,m,Rp,m")
-        (match_operand:SI 1 "general_operand"       "m,Rg,m,Rp"))]
-  ""
-  "@
-	ldt	%0, %1
-	stt	%1, %0
-	ldt	datao1, %1	\;	put.rp	%0, datao1
-	get.rp	datao1, %1	\;	stt	datao1, %0")
-
-;; We assume all "s" are addresses.  Does that hold?
-(define_insn "*movdi"
-  [(set (match_operand:DI 0 "nonimmediate_operand" "= Rg,  m, Rp,  m, Rp, Rp, Rg, Rg")
-	(match_operand:DI 1 "general_operand"      "   m, Rg,  m, Rp, Ai,  s, Ai,  s"))]
-  ""
-  "@
-	ldo	%0, %1
-	sto	%1, %0
-	ldo.rp	%0, %1
-	sto.rp	%1, %0
-	geta	%0, %1
-	geta	%0, %1
-	geta	rp63, %1	\;	get.rp	%0, rp63
-	geta	rp63, %1	\;	get.rp	%0, rp63")
+(define_insn "dd_st_<mode>"
+  [(set (match_operand:QHSD 0 "memory_operand"   "=  m")
+        (match_operand:QHSD 1 "rg_class_operand" "  Rg"))]
+	""
+	"st<bwto>	%1, %0")
 
 (define_expand "call"
   [(parallel [(call (match_operand:SI 0 "memory_operand" "")

@@ -13,6 +13,26 @@
 	add.rp	%0, %1, %2
 	add.rp	%0, %1, %2")
 
+(define_insn "dd_ld_rp"
+  [(set (match_operand:DI 0 "rp_class_operand" "= Rp")
+        (match_operand:DI 1 "memory_operand"   "   m"))]
+	""
+	"ldo.rp	%0, %1")
+
+(define_insn "dd_st_rp"
+  [(set (match_operand:DI 0 "memory_operand"   "=  m")
+        (match_operand:DI 1 "rp_class_operand" "  Rp"))]
+	""
+	"sto.rp	%1, %0")
+
+(define_insn "dd_get_addr"
+  [(set (match_operand:DI 0 "rp_class_operand"  "= Rp, Rp")
+        (match_operand:DI 1 "immediate_operand" "   s, Ai"))]
+	""
+	"@
+	geta	%0, %1
+	geta	%0, %1")
+
 ;; TODO: SHOULD removed lator
 (define_insn "*addrp2rg"
   [(set      (match_operand:DI 0 "rg_class_operand"  "= Rg, Rg")
