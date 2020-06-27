@@ -32,7 +32,7 @@ crtsdat:
 	.dd.o64	_end
 
 _start:
-	geta	rp63, crtstxt
+	geta	rg63, crtstxt
 	ldo	rg2, rp63, 0
 #	andnwl	rg2, 0x7ff
 	ldo	rg3, rp63, 8
@@ -42,7 +42,7 @@ _start:
 	cmp	rg63, rg2, rg3
 	br.n	rg63, 0b
 
-	geta	rp63, crtsdat
+	geta	rg63, crtsdat
 	ldo	rg2, rp63, 0
 #	andnwl	rg2, 0x7ff
 	ldo	rg3, rp63, 8
@@ -54,7 +54,7 @@ _start:
 # Initialize the stack pointer.  It is supposedly made a global
 # zero-initialized (allowed to change) register in crtn.S; we use the
 # explicit number.
-	geta	rp63, stackpp
+	geta	rg63, stackpp
 	ldo	rg62, rp63, 0
 
 	call	_init
@@ -83,7 +83,7 @@ _init:
 0:	trap	0
 
 # Register _fini to be executed as the last atexit function.
-	geta	rp39, _fini
+	geta	rg39, _fini
 	call	atexit
 
 	.section .fini,"ax",@progbits
