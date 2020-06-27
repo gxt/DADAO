@@ -71,20 +71,20 @@
 })
 
 (define_insn "*movdicc_<ccss_type_insn>"
-  [(set (match_operand:DI       0 "rg_class_operand" "= Rg")
+  [(set (match_operand:DI            0 "rg_class_operand" "= Rg")
     (if_then_else:DI
-      (CCSS_TYPE (match_operand 2 "rg_class_operand" "  Rg") (const_int 0))
-      (match_operand:DI         1 "rg_class_operand" "  Rg")
-      (match_operand:DI         3 "rg_class_operand" "  Rg")))]
+      (CCSS_TYPE (match_operand:CCSS 2 "rg_class_operand" "  Rg") (const_int 0))
+      (match_operand:DI              1 "rg_class_operand" "  Rg")
+      (match_operand:DI              3 "rg_class_operand" "  Rg")))]
 	""
 	"cs.<ccss_type_insn>	%0, %2, %1, %3")
 
 (define_insn "*movdicc_<ccuu_type_insn>"
-  [(set (match_operand:DI       0 "rg_class_operand" "= Rg")
+  [(set (match_operand:DI            0 "rg_class_operand" "= Rg")
     (if_then_else:DI
-      (CCUU_TYPE (match_operand 2 "rg_class_operand" "  Rg") (const_int 0))
-      (match_operand:DI         1 "rg_class_operand" "  Rg")
-      (match_operand:DI         3 "rg_class_operand" "  Rg")))]
+      (CCUU_TYPE (match_operand:CCUU 2 "rg_class_operand" "  Rg") (const_int 0))
+      (match_operand:DI              1 "rg_class_operand" "  Rg")
+      (match_operand:DI              3 "rg_class_operand" "  Rg")))]
 	""
 	"cs.<ccuu_type_insn>	%0, %2, %1, %3")
 
