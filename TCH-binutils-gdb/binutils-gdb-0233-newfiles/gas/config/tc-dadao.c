@@ -748,7 +748,7 @@ void dadao_md_assemble (char *str)
 			break;
 
 		case dadao_type_geta:
-			DDOP_EXP_MUST_BE_RP(exp[0]);
+			DDOP_EXP_MUST_BE_RG(exp[0]);
 			DDOP_SET_FA(opcodep, exp[0].X_add_number);
 
 			if (! expand_op)
