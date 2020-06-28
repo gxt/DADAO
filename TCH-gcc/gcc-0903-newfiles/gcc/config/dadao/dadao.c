@@ -187,7 +187,7 @@ void dadao_setup_frame_addresses (void)
 rtx dadao_return_addr_rtx (int count, rtx frame ATTRIBUTE_UNUSED)
 {
   return count == 0
-    ? get_hard_reg_initial_val (Pmode, DADAO_INCOMING_RETURN_ADDRESS_REGNUM)
+    ? get_hard_reg_initial_val (Pmode, DADAO_RETURN_ADDRESS_REGNUM)
     : NULL_RTX;
 }
 

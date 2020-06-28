@@ -29,9 +29,9 @@
 #define	DADAO_FRAME_POINTER_REGNUM		(DADAO_REG_RP_START + 0x02)
 #define DADAO_ARG_POINTER_REGNUM		(DADAO_REG_RP_START + 0x03)
 #define	DADAO_EH_RETURN_HANDLER_REGNUM		(DADAO_REG_RP_START + 0x04)
+#define	DADAO_RETURN_ADDRESS_REGNUM		(DADAO_REG_RP_START + 0x3E)
 #define	DADAO_STRUCT_VALUE_REGNUM		(DADAO_REG_RP_START + 0x3F)
 
-#define DADAO_INCOMING_RETURN_ADDRESS_REGNUM	DADAO_rJ_REGNUM
 #define DADAO_rO_REGNUM				(DADAO_REG_RS_START + 6)
 
 #define DADAO_FUNCTION_ARG_SIZE(MODE, TYPE) \
@@ -145,7 +145,7 @@ struct GTY(()) machine_function
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	/* 256 ~ 319 */					\
-	1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
@@ -258,8 +258,7 @@ enum reg_class {
 
 #define RETURN_ADDR_RTX(COUNT, FRAME)		dadao_return_addr_rtx (COUNT, FRAME)
 
-/* It's in rJ before we store it somewhere.  */
-#define INCOMING_RETURN_ADDR_RTX		gen_rtx_REG (Pmode, DADAO_INCOMING_RETURN_ADDRESS_REGNUM)
+#define INCOMING_RETURN_ADDR_RTX		gen_rtx_REG (Pmode, DADAO_RETURN_ADDRESS_REGNUM)
 
 /* XXX gccint 18.9.2 Node: Exception Handling Support */
 #define	EH_RETURN_DATA_REGNO(N)			(((N) < 4) ? (DADAO_EH_RETURN_DATA_REGNUM + (N)) : INVALID_REGNUM)
@@ -317,7 +316,7 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
    initial-value machinery restores it.  FIXME: Some targets
    conditionalize on "reload_completed &&".  Investigate difference.
    FIXME: Not needed if nonlocal_goto_stack_level.  */
-#define EPILOGUE_USES(REGNO)		((REGNO) == DADAO_INCOMING_RETURN_ADDRESS_REGNUM)
+#define EPILOGUE_USES(REGNO)			((REGNO) == DADAO_RETURN_ADDRESS_REGNUM)
 
 /* XXX gccint 18.9.12 Node: Generating Code for Profiling */
 
@@ -440,7 +439,7 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 	"rv40", "rv41", "rv42", "rv43", "rv44", "rv45", "rv46", "rv47",		\
 	"rv48", "rv49", "rv50", "rv51", "rv52", "rv53", "rv54", "rv55",		\
 	"rv56", "rv57", "rv58", "rv59", "rv60", "rv61", "rv62", "rv63",		\
-	"rs0",  "rE",  "rs2",  "rJ",  "rs4",  "rs5", "rO", "rs7",		\
+	"rs0",  "rE",  "rs2",  "rs3",  "rs4",  "rs5", "rO", "rs7",		\
 	"rs8", "rs9", "rs10", "rs11", "rs12", "rs13", "rs14", "rs15",		\
 	"rs16", "rs17", "rs18", "rs19", "rs20", "rs21", "rs22", "rs23",		\
 	"rs24", "rs25", "rs26", "rs27", "rs28", "rs29", "rs30", "rs31",		\
@@ -452,7 +451,6 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 #define	ADDITIONAL_REGISTER_NAMES {		\
 	{"sp", STACK_POINTER_REGNUM},		\
 	{"rE", 257},				\
-	{"rJ", DADAO_rJ_REGNUM},		\
 	{"rO", DADAO_rO_REGNUM}}
 
 /* PRINT_OPERAND:		see TARGET_PRINT_OPERAND */

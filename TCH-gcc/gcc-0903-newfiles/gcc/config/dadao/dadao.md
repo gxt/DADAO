@@ -19,7 +19,7 @@
 ;; before bigger modes.
 
 (define_constants
-  [(DADAO_rJ_REGNUM 259)
+  [(DD_RA_REG		126)
    (DADAO_fp_rO_OFFSET -24)]
 )
 
@@ -99,8 +99,7 @@
      in the call, and we set it back after every call (all but one setting
      will be optimized away), integrity is maintained.  */
   operands[3]
-    = dadao_get_hard_reg_initial_val (Pmode,
-				     DADAO_INCOMING_RETURN_ADDRESS_REGNUM);
+    = dadao_get_hard_reg_initial_val (Pmode, DADAO_RETURN_ADDRESS_REGNUM);
 
   /* FIXME: There's a bug in gcc which causes NULL to be passed as
      operand[2] when we get out of registers, which later confuses gcc.
@@ -109,7 +108,7 @@
   if (operands[2] == NULL_RTX)
     operands[2] = const0_rtx;
 
-  operands[4] = gen_rtx_REG (DImode, DADAO_INCOMING_RETURN_ADDRESS_REGNUM);
+  operands[4] = gen_rtx_REG (DImode, DADAO_RETURN_ADDRESS_REGNUM);
 }")
 
 (define_expand "call_value"
@@ -136,8 +135,7 @@
      in the call, and we set it back after every call (all but one setting
      will be optimized away), integrity is maintained.  */
   operands[4]
-    = dadao_get_hard_reg_initial_val (Pmode,
-				     DADAO_INCOMING_RETURN_ADDRESS_REGNUM);
+    = dadao_get_hard_reg_initial_val (Pmode, DADAO_RETURN_ADDRESS_REGNUM);
 
   /* FIXME: See 'call'.  */
   if (operands[3] == NULL_RTX)
@@ -147,7 +145,7 @@
      *next* argument register, not the number of arguments in registers.
      (There used to be code here where that mattered.)  */
 
-  operands[5] = gen_rtx_REG (DImode, DADAO_INCOMING_RETURN_ADDRESS_REGNUM);
+  operands[5] = gen_rtx_REG (DImode, DADAO_RETURN_ADDRESS_REGNUM);
 }")
 
 ;; Don't use 'p' here.  A 'p' must stand first in constraints, or reload
@@ -170,7 +168,7 @@
 	  (match_operand:DI 0 "dadao_symbolic_or_address_operand" "s,RpAu"))
 	 (match_operand 1 "" ""))
    (use (match_operand 2 "" ""))
-   (clobber (reg:DI DADAO_rJ_REGNUM))]
+   (clobber (reg:DI DD_RA_REG))]
   ""
   "@
 	call	%0
@@ -182,7 +180,7 @@
 	       (match_operand:DI 1 "dadao_symbolic_or_address_operand" "s,RpAu"))
 	      (match_operand 2 "" "")))
   (use (match_operand 3 "" ""))
-  (clobber (reg:DI DADAO_rJ_REGNUM))]
+  (clobber (reg:DI DD_RA_REG))]
   ""
   "@
 	call	%1
@@ -243,14 +241,13 @@
 (define_expand "nonlocal_goto_receiver"
   [(parallel [(unspec_volatile [(match_dup 1)] 1)
 	      (clobber (scratch:DI))
-	      (clobber (reg:DI DADAO_rJ_REGNUM))])
-   (set (reg:DI DADAO_rJ_REGNUM) (match_dup 0))]
+	      (clobber (reg:DI DD_RA_REG))])
+   (set (reg:DI DD_RA_REG) (match_dup 0))]
   ""
   "
 {
   operands[0]
-    = dadao_get_hard_reg_initial_val (Pmode,
-				     DADAO_INCOMING_RETURN_ADDRESS_REGNUM);
+    = dadao_get_hard_reg_initial_val (Pmode, DADAO_RETURN_ADDRESS_REGNUM);
 
   /* We need the frame-pointer to be live or the equivalent
      expression, so refer to it in the pattern.  We can't use a MEM
@@ -270,13 +267,13 @@
 (define_insn "*nonlocal_goto_receiver_expanded"
   [(unspec_volatile [(match_operand:DI 1 "frame_pointer_operand" "Sf")] 1)
    (clobber (match_scratch:DI 0 "=&r"))
-   (clobber (reg:DI DADAO_rJ_REGNUM))]
+   (clobber (reg:DI DD_RA_REG))]
   ""
 {
   rtx my_operands[3];
   const char *my_template
     = "	geta	rg63, 0f\;\
-	put.rs	rJ, rg63\;\
+	put.rp	rp62, rg63\;\
 	ldo	rg63, %a0, 0\n\
 0:\;	get.rs	%1, rO\;\
 	cmpu	%1, %1, rg63	\;\
