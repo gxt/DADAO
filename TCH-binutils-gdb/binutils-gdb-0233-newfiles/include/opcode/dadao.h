@@ -150,16 +150,6 @@ extern const struct dadao_opcode dadao_opcodes[];
 			DADAO_BAD_INSN("rv num is too big");					\
 	} while (0)
 
-#define DDOP_EXP_MUST_BE_RS(ddop_exp)								\
-	do {											\
-		if (ddop_exp.X_op != O_register)						\
-			DADAO_BAD_INSN("exp should be register");				\
-		if ( (unsigned long long) ddop_exp.X_add_number < 0x100)			\
-			DADAO_BAD_INSN("rs num is too small");					\
-		if ( (unsigned long long) ddop_exp.X_add_number > 0x13F)			\
-			DADAO_BAD_INSN("rs num is too big");					\
-	} while (0)
-
 #define DDOP_EXP_MUST_BE_UIMM(ddop_exp, bit_count)						\
 	do {											\
 		if (ddop_exp.X_op != O_constant)						\

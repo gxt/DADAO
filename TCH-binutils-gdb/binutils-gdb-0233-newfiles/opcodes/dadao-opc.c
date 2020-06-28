@@ -22,10 +22,6 @@ const struct dadao_reg_alias dadao_reg_aliases[] =
 	{"pc", 0x40 + 0},
 	{"sp", 0x40 + 1},
 	{"fp", 0x40 + 2},
-	/* Special registers */
-	{"rE", 0x100 + 2},
-	{"rJ", 0x100 + 4},
-	{"rO", 0x100 + 10},
 
 	{NULL, 0}
  };
@@ -122,17 +118,14 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"mov.rp",	0xDA,		1,	0,	OP (orr0),		T (normal)},
 	{"mov.rf",	0xDA,		2,	0,	OP (orr0),		T (normal)},
 	{"mov.rv",	0xDA,		3,	0,	OP (orr0),		T (normal)},
-	{"mov.rs",	0xDA,		4,	0,	OP (orr0),		T (normal)},
 
 	{"put.rp",	0xDA,		0x11,	0,	OP (orr0),		T (normal)},
 	{"put.rf",	0xDA,		0x12,	0,	OP (orr0),		T (normal)},
 	{"put.rv",	0xDA,		0x13,	0,	OP (orr0),		T (normal)},
-	{"put.rs",	0xDA,		0x14,	0,	OP (orr0),		T (normal)},
 
 	{"get.rp",	0xDA,		0x21,	0,	OP (orr0),		T (normal)},
 	{"get.rf",	0xDA,		0x22,	0,	OP (orr0),		T (normal)},
 	{"get.rv",	0xDA,		0x23,	0,	OP (orr0),		T (normal)},
-	{"get.rs",	0xDA,		0x24,	0,	OP (orr0),		T (normal)},
 
 	/* nop is 0xDADADADA, DA is 11011010, so minor-opcode is 110110 */
 	{"nop",		0xDA,		0x36,	0,	OP (o000),		T (normal)},

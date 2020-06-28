@@ -299,9 +299,6 @@ void dadao_md_begin (void)
 
 		sprintf (buf, "rv%d", i);
 		symbol_table_insert (symbol_new (buf, reg_section, i + 192, &zero_address_frag));
-
-		sprintf (buf, "rs%d", i);
-		symbol_table_insert (symbol_new (buf, reg_section, i + 256, &zero_address_frag));
 	}
 
 	for (i = 0; dadao_reg_aliases[i].name != NULL; i++)
@@ -461,13 +458,6 @@ void dadao_md_assemble (char *str)
 			regclass_offset_1 = 0xC0;
 			break;
 
-		case 4:
-			DDOP_EXP_MUST_BE_RS(exp[0]);
-			DDOP_EXP_MUST_BE_RS(exp[1]);
-			regclass_offset_0 = 0x100;
-			regclass_offset_1 = 0x100;
-			break;
-
 		case 0x11:
 			DDOP_EXP_MUST_BE_RP(exp[0]);
 			DDOP_EXP_MUST_BE_RG(exp[1]);
@@ -486,12 +476,6 @@ void dadao_md_assemble (char *str)
 			regclass_offset_0 = 0xC0;
 			break;
 
-		case 0x14:
-			DDOP_EXP_MUST_BE_RS(exp[0]);
-			DDOP_EXP_MUST_BE_RG(exp[1]);
-			regclass_offset_0 = 0x100;
-			break;
-
 		case 0x21:
 			DDOP_EXP_MUST_BE_RG(exp[0]);
 			DDOP_EXP_MUST_BE_RP(exp[1]);
@@ -508,12 +492,6 @@ void dadao_md_assemble (char *str)
 			DDOP_EXP_MUST_BE_RG(exp[0]);
 			DDOP_EXP_MUST_BE_RV(exp[1]);
 			regclass_offset_1 = 0xC0;
-			break;
-
-		case 0x24:
-			DDOP_EXP_MUST_BE_RG(exp[0]);
-			DDOP_EXP_MUST_BE_RS(exp[1]);
-			regclass_offset_1 = 0x100;
 			break;
 
 		default:
