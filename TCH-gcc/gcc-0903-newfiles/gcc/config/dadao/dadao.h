@@ -17,6 +17,7 @@
 #define	DADAO_REG_RS_START			0x100
 
 #define	DADAO_MAX_ARGS_IN_REGS			16
+#define	DADAO_CONST_ZERO_REGNUM			(DADAO_REG_RG_START + 0x00)
 #define	DADAO_EH_RETURN_DATA_REGNUM		(DADAO_REG_RG_START + 0x04)
 #define	DADAO_FIRST_ARG_REGNUM			(DADAO_REG_RG_START + 0x10)
 #define	DADAO_RETURN_VALUE_REGNUM		(DADAO_REG_RG_START + 0x1F)
@@ -31,8 +32,6 @@
 #define	DADAO_EH_RETURN_HANDLER_REGNUM		(DADAO_REG_RP_START + 0x04)
 #define	DADAO_RETURN_ADDRESS_REGNUM		(DADAO_REG_RP_START + 0x3E)
 #define	DADAO_STRUCT_VALUE_REGNUM		(DADAO_REG_RP_START + 0x3F)
-
-#define DADAO_rO_REGNUM				(DADAO_REG_RS_START + 6)
 
 #define DADAO_FUNCTION_ARG_SIZE(MODE, TYPE) \
  ((MODE) != BLKmode ? GET_MODE_SIZE (MODE) : int_size_in_bytes (TYPE))
@@ -439,7 +438,7 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 	"rv40", "rv41", "rv42", "rv43", "rv44", "rv45", "rv46", "rv47",		\
 	"rv48", "rv49", "rv50", "rv51", "rv52", "rv53", "rv54", "rv55",		\
 	"rv56", "rv57", "rv58", "rv59", "rv60", "rv61", "rv62", "rv63",		\
-	"rs0",  "rE",  "rs2",  "rs3",  "rs4",  "rs5", "rO", "rs7",		\
+	"rs0",  "rE",  "rs2",  "rs3",  "rs4",  "rs5", "rs6", "rs7",		\
 	"rs8", "rs9", "rs10", "rs11", "rs12", "rs13", "rs14", "rs15",		\
 	"rs16", "rs17", "rs18", "rs19", "rs20", "rs21", "rs22", "rs23",		\
 	"rs24", "rs25", "rs26", "rs27", "rs28", "rs29", "rs30", "rs31",		\
@@ -449,9 +448,10 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 	"rs56", "rs57", "rs58", "rs59", "rs60", "rs61", "rs62", "rs63"}
 
 #define	ADDITIONAL_REGISTER_NAMES {		\
+	{"zero", DADAO_CONST_ZERO_REGNUM},	\
 	{"sp", STACK_POINTER_REGNUM},		\
-	{"rE", 257},				\
-	{"rO", DADAO_rO_REGNUM}}
+	{"fp", FRAME_POINTER_REGNUM},		\
+	{"pc", PC_REGNUM}}
 
 /* PRINT_OPERAND:		see TARGET_PRINT_OPERAND */
 /* PRINT_OPERAND_ADDRESS:	see TARGET_PRINT_OPERAND_ADDRESS */

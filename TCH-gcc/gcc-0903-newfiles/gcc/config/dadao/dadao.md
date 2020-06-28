@@ -20,7 +20,7 @@
 
 (define_constants
   [(DD_RA_REG		126)
-   (DADAO_fp_rO_OFFSET -24)]
+   (DADAO_fp_rO_OFFSET	-24)]
 )
 
 (include "iterators.md")
@@ -272,13 +272,10 @@
 {
   rtx my_operands[3];
   const char *my_template
-    = "	geta	rg63, 0f\;\
-	put.rp	rp62, rg63\;\
-	ldo	rg63, %a0, 0\n\
-0:\;	get.rs	%1, rO\;\
-	cmpu	%1, %1, rg63	\;\
-	br.np	%1, 1f\;\
-	ret\n1:";
+    = "	geta	rg63, 0f	\;\
+	put.rp	rp62, rg63	\;\
+	ldo	rg63, %a0, 0	\;\
+0:	ret";
 
   my_operands[1] = operands[0];
   my_operands[2] = GEN_INT (-DADAO_fp_rO_OFFSET);

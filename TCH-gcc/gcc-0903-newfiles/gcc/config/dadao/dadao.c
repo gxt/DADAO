@@ -1132,7 +1132,7 @@ dadao_expand_prologue (void)
 	 like stack-pointer offsets.  Better: some hook into dwarf2out.c
 	 to produce DW_CFA_expression:s that specify the increment of rO,
 	 and unwind it at eh_return (preferred) or at the landing pad.
-	 Then saves to $0..$G-1 could be specified through that register.  */
+	 Then saves to $0..$G-1 could be specified through that register.
 
       emit_move_insn (gen_rtx_REG (DImode, 63),
 		      gen_rtx_REG (DImode,
@@ -1141,7 +1141,7 @@ dadao_expand_prologue (void)
 				   plus_constant (Pmode, stack_pointer_rtx,
 						  offset)),
 		      gen_rtx_REG (DImode, 63));
-      offset -= 8;
+      offset -= 8;  */
     }
 
   /* After the return-address and the frame-pointer, we have the local
