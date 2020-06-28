@@ -120,7 +120,7 @@ struct GTY(()) machine_function
 /* XXX gccint 18.7 Node: Register Usage */
 
 /* XXX gccint 18.7.1 Node: Basic Characteristics of Registers */
-#define	FIRST_PSEUDO_REGISTER		(64 * 5)
+#define	FIRST_PSEUDO_REGISTER		(64 * 4)
 
 #define FIXED_REGISTERS {				\
 	/* 0 ~ 63 */					\
@@ -139,11 +139,6 @@ struct GTY(()) machine_function
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
 	/* 192 ~ 255 */					\
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
-	/* 256 ~ 319 */					\
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
@@ -167,11 +162,6 @@ struct GTY(()) machine_function
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	\
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	\
 	/* 192 ~ 255 */					\
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
-	/* 256 ~ 319 */					\
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, \
@@ -200,7 +190,6 @@ enum reg_class {
 	POINTER_REGS,
 	FLOATING_REGS,
 	VECTOR_REGS,
-	SPECIAL_REGS,
 	ALL_REGS,
 	LIM_REG_CLASSES };
 
@@ -212,26 +201,23 @@ enum reg_class {
 	"POINTER_REGS",				\
 	"FLOATING_REGS",			\
 	"VECTOR_REGS",				\
-	"SPECIAL_REGS",				\
 	"ALL_REGS"}
 
 /* Note that the contents of each item is always 32 bits.  */
-#define REG_CLASS_CONTENTS {								\
-	/* Rg	Rg	Rp	Rp	Rf	Rf	Rv	Rv	Rs	Rs */	\
-	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0},	\
-	{~0,	~0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0},	\
-	{ 0,	 0,	~0,	~0,	 0,	 0,	 0,	 0,	 0,	 0},	\
-	{ 0,	 0,	 0,	 0,	~0,	~0,	 0,	 0,	 0,	 0},	\
-	{ 0,	 0,	 0,	 0,	 0,	 0,	~0,	~0,	 0,	 0},	\
-	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0,	~0,	~0},	\
-	{~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0}}
+#define REG_CLASS_CONTENTS {							\
+	/* Rg	Rg	Rp	Rp	Rf	Rf	Rv	Rv */		\
+	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0},		\
+	{~0,	~0,	 0,	 0,	 0,	 0,	 0,	 0},		\
+	{ 0,	 0,	~0,	~0,	 0,	 0,	 0,	 0},		\
+	{ 0,	 0,	 0,	 0,	~0,	~0,	 0,	 0},		\
+	{ 0,	 0,	 0,	 0,	 0,	 0,	~0,	~0},		\
+	{~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0}}
 
 #define REGNO_REG_CLASS(REGNO)							\
 	( (REGNO) >= FIRST_PSEUDO_REGISTER	? NO_REGS			\
 	: (REGNO) < 0x40			? GENERAL_REGS			\
 	: (REGNO) < 0x80			? POINTER_REGS			\
-	: (REGNO) < 0xC0			? FLOATING_REGS			\
-	: (REGNO) < 0x100			? VECTOR_REGS : SPECIAL_REGS)
+	: (REGNO) < 0xC0			? FLOATING_REGS : VECTOR_REGS)
 
 #define BASE_REG_CLASS				POINTER_REGS
 #define INDEX_REG_CLASS				GENERAL_REGS
@@ -437,15 +423,7 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 	"rv32", "rv33", "rv34", "rv35", "rv36", "rv37", "rv38", "rv39",		\
 	"rv40", "rv41", "rv42", "rv43", "rv44", "rv45", "rv46", "rv47",		\
 	"rv48", "rv49", "rv50", "rv51", "rv52", "rv53", "rv54", "rv55",		\
-	"rv56", "rv57", "rv58", "rv59", "rv60", "rv61", "rv62", "rv63",		\
-	"rs0",  "rE",  "rs2",  "rs3",  "rs4",  "rs5", "rs6", "rs7",		\
-	"rs8", "rs9", "rs10", "rs11", "rs12", "rs13", "rs14", "rs15",		\
-	"rs16", "rs17", "rs18", "rs19", "rs20", "rs21", "rs22", "rs23",		\
-	"rs24", "rs25", "rs26", "rs27", "rs28", "rs29", "rs30", "rs31",		\
-	"rs32", "rs33", "rs34", "rs35", "rs36", "rs37", "rs38", "rs39",		\
-	"rs40", "rs41", "rs42", "rs43", "rs44", "rs45", "rs46", "rs47",		\
-	"rs48", "rs49", "rs50", "rs51", "rs52", "rs53", "rs54", "rs55",		\
-	"rs56", "rs57", "rs58", "rs59", "rs60", "rs61", "rs62", "rs63"}
+	"rv56", "rv57", "rv58", "rv59", "rv60", "rv61", "rv62", "rv63"}
 
 #define	ADDITIONAL_REGISTER_NAMES {		\
 	{"zero", DADAO_CONST_ZERO_REGNUM},	\

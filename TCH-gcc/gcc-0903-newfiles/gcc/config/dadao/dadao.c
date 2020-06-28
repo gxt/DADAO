@@ -136,8 +136,6 @@ static reg_class_t dd_secondary_reload (bool in_p ATTRIBUTE_UNUSED,
 		machine_mode reload_mode ATTRIBUTE_UNUSED,
 		secondary_reload_info *sri ATTRIBUTE_UNUSED)
 {
-	if (rclass == SPECIAL_REGS)	return GENERAL_REGS;
-
 	return NO_REGS;
 }
 
@@ -652,9 +650,6 @@ int dadao_reversible_cc_mode (machine_mode mode)
 
 /* XXX gccint 18.16 Node: Describing Relative Costs of Operations */
 
-/* TARGET_REGISTER_MOVE_COST.
-   The special registers can only move to and from general regs, and we
-   need to check that their constraints match, so say 3 for them.  */
 static int dd_register_move_cost (machine_mode mode ATTRIBUTE_UNUSED,
 			 reg_class_t from,
 			 reg_class_t to)

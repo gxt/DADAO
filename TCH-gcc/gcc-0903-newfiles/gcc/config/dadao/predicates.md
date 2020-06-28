@@ -40,15 +40,6 @@
 	return (REGNO_REG_CLASS(REGNO(op)) == VECTOR_REGS);
 })
 
-(define_predicate "rs_class_operand"
-  (match_code "reg, subreg")
-{
-	if (!register_operand(op, mode))	return 0;
-	if (GET_CODE(op) == SUBREG)		op = SUBREG_REG(op);
-	if (!HARD_REGISTER_P(op))		return 1;
-	return (REGNO_REG_CLASS(REGNO(op)) == SPECIAL_REGS);
-})
-
 ;; TODO: ri add shift-imm handler
 (define_predicate "dd_rg_u12_operand"
   (ior (match_operand 0 "rg_class_operand")

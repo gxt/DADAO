@@ -20,10 +20,6 @@
 (define_register_constraint "Rv" "VECTOR_REGS"
 	"Vector registers")
 
-(define_register_constraint "Rs" "SPECIAL_REGS"
-	"Special registers")
-
-;; Special register constraints
 (define_constraint "Sf"
 	"@internal"
 	(match_operand 0 "frame_pointer_operand"))
