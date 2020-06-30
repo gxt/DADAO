@@ -12,14 +12,12 @@
 
 	.section .init,"ax",@progbits
 	geta	rg63, 0f
-	put.rs	rJ, rg63
+#	put.rs	rJ, rg63
 	ret
-0:	put.rs	rJ, rg0
-	ret
-	
+0:
+
 	.section .fini,"ax",@progbits
 	geta	rg63, 0f
-	put.rs	rJ, rg63
+#	put.rs	rJ, rg63
 	ret
-0:	put.rs	rJ, rg0
-	ret
+0:

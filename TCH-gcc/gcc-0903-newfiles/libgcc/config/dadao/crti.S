@@ -76,7 +76,7 @@ _start:
 	.section .init,"ax",@progbits
 	.global	_init
 _init:
-	get.rs	rg0, rJ
+#	get.rs	rg0, rJ
 	br.z	rg0, 0f
 	setwl	rg63, 63
 	trap	0
@@ -89,7 +89,7 @@ _init:
 	.section .fini,"ax",@progbits
 	.global	_fini
 _fini:
-	get.rs	rg0, rJ
+#	get.rs	rg0, rJ
 	br.z	rg0, 0f
 	setwl	rg63, 63
 	trap	0
