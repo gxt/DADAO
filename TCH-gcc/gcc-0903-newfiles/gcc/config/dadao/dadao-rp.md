@@ -33,6 +33,14 @@
 	geta	%0, %1
 	geta	%0, %1")
 
+(define_insn "dd_get_addr"
+  [(set (match_operand:DI 0 "rp_class_operand"  "= Rp, Rp")
+        (match_operand:DI 1 "immediate_operand" "   s, Ai"))]
+	""
+	"@
+	geta	datao1, %1	\;	add.rp	%0, rp0, datao1
+	geta	datao1, %1	\;	add.rp	%0, rp0, datao1")
+
 ;; TODO: SHOULD removed lator
 (define_insn "*addrp2rg"
   [(set      (match_operand:DI 0 "rg_class_operand"  "= Rg, Rg")
