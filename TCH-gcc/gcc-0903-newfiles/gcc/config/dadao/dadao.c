@@ -127,7 +127,20 @@ static machine_mode dd_promote_function_mode (const_tree type ATTRIBUTE_UNUSED,
 /* (empty) */
 
 /* XXX gccint 18.7 Node: Register Usage */
-/* (empty) */
+
+static bool dd_hard_regno_mode_ok (unsigned int regno, machine_mode mode)
+{
+	if (REGNO_REG_CLASS(regno) == POINTER_REGS)
+		return (mode == Pmode);
+
+	if (REGNO_REG_CLASS(regno) == FLOATING_REGS)
+		return (GET_MODE_CLASS (mode) == MODE_FLOAT);
+
+	return (REGNO_REG_CLASS(regno) == GENERAL_REGS);
+}
+
+#undef	TARGET_HARD_REGNO_MODE_OK
+#define	TARGET_HARD_REGNO_MODE_OK		dd_hard_regno_mode_ok
 
 /* XXX gccint 18.8 Node: Register Classes */
 
