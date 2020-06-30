@@ -39,7 +39,7 @@
 (define_insn "*cmpss2"
   [(set           (match_operand:CCSS 0 "rg_class_operand"  "= Rg")
     (compare:CCSS (match_operand:DI   1 "rg_class_operand"  "  Rg")
-                  (match_operand:DI   2 "immediate_operand" "   i")))]
+                  (match_operand:DI   2 "const_int_operand" "   i")))]
 	""
 	"seto	datao1, %2	\;	cmp	%0, %1, datao1")
 
