@@ -579,22 +579,23 @@ static bool dd_legitimate_address_p (machine_mode mode ATTRIBUTE_UNUSED,
 	if (_DD_LEGITIMATE_ADDR_RC(x, POINTER_REGS))
 		return 1;
 
-	if (GET_CODE(x) == PLUS) {
-		rtx x1 = XEXP (x, 0);
-		rtx x2 = XEXP (x, 1);
+	if (GET_CODE(x) != PLUS)
+		return 0;
 
-		/* (mem (plus (rp) (?))) */
-		if (!_DD_LEGITIMATE_ADDR_RC(x1, POINTER_REGS))
-			return 0;
+	rtx x1 = XEXP (x, 0);
+	rtx x2 = XEXP (x, 1);
 
-		/* (mem (plus (rp) (rg))) */
-		if (_DD_LEGITIMATE_ADDR_RC(x2, GENERAL_REGS))
-			return 1;
+	/* (mem (plus (rp) (rg))) */
+	if (_DD_LEGITIMATE_ADDR_RC(x1, POINTER_REGS) && _DD_LEGITIMATE_ADDR_RC(x2, GENERAL_REGS))
+		return 1;
 
-		/* (mem (plus (rp) (-0x800, 0x7FF))) */
-		if (satisfies_constraint_Id (x2))
-			return 1;
-	}
+	/* (mem (plus (rp) (-0x800, 0x7FF))) */
+	if (_DD_LEGITIMATE_ADDR_RC(x1, POINTER_REGS) && satisfies_constraint_Id (x2))
+		return 1;
+
+	/* (mem (plus (rg) (rp))) */
+	if (_DD_LEGITIMATE_ADDR_RC(x2, POINTER_REGS) && _DD_LEGITIMATE_ADDR_RC(x1, GENERAL_REGS))
+		return 1;
 
 	return 0;
 #undef	_DD_LEGITIMATE_ADDR_RC
@@ -890,35 +891,38 @@ static void dd_print_operand (FILE *stream, rtx x, int code)
 /* TARGET_PRINT_OPERAND_ADDRESS.  */
 static void dd_print_operand_address (FILE *stream, machine_mode /*mode*/, rtx x)
 {
-  if (REG_P (x))
-    {
-      /* I find the generated assembly code harder to read without the ",0".  */
-      fprintf (stream, "%s, 0", reg_names[DADAO_OUTPUT_REGNO (REGNO (x))]);
-      return;
-    }
-  else if (GET_CODE (x) == PLUS)
-    {
-      rtx x1 = XEXP (x, 0);
-      rtx x2 = XEXP (x, 1);
+	if (REG_P (x)) {
+		/* (mem rp) */
+		fprintf (stream, "%s, 0", reg_names[DADAO_OUTPUT_REGNO (REGNO (x))]);
+		return;
+	} else if (GET_CODE (x) == PLUS) {
+		rtx x1 = XEXP (x, 0);
+		rtx x2 = XEXP (x, 1);
 
-      if (REG_P (x1))
-	{
-	  fprintf (stream, "%s, ", reg_names[DADAO_OUTPUT_REGNO (REGNO (x1))]);
+#define	_DD_REG_CLASS(X, XC)	( REG_P(X) && (REGNO_REG_CLASS(REGNO(X)) == XC))
+		/* (mem (plus (rp) (rg))) */
+		if (_DD_REG_CLASS(x1, POINTER_REGS) && _DD_REG_CLASS(x2, GENERAL_REGS)) {
+			fprintf (stream, "%s, %s", reg_names[DADAO_OUTPUT_REGNO (REGNO (x1))],
+						reg_names[DADAO_OUTPUT_REGNO (REGNO (x2))]);
+			return;
+		}
 
-	  if (REG_P (x2))
-	    {
-	      fprintf (stream, "%s", reg_names[DADAO_OUTPUT_REGNO (REGNO (x2))]);
-	      return;
-	    }
-	  else if (satisfies_constraint_Id (x2))
-	    {
-	      output_addr_const (stream, x2);
-	      return;
-	    }
+		/* (mem (plus (rg) (rp))) */
+		if (_DD_REG_CLASS(x2, POINTER_REGS) && _DD_REG_CLASS(x1, GENERAL_REGS)) {
+			fprintf (stream, "%s, %s", reg_names[DADAO_OUTPUT_REGNO (REGNO (x2))],
+						reg_names[DADAO_OUTPUT_REGNO (REGNO (x1))]);
+			return;
+		}
+
+		/* (mem (plus (rp) (-0x800, 0x7FF))) */
+		if (_DD_REG_CLASS(x1, POINTER_REGS) && satisfies_constraint_Id (x2)) {
+			fprintf (stream, "%s, ", reg_names[DADAO_OUTPUT_REGNO (REGNO (x1))]);
+			output_addr_const (stream, x2);
+			return;
+		}
+#undef	_DD_REG_CLASS
 	}
-    }
-
-  fatal_insn ("DADAO Internal: This is not a recognized address", x);
+	fatal_insn ("DADAO Internal: This is not a recognized address", x);
 }
 
 #undef	TARGET_PRINT_OPERAND_ADDRESS
