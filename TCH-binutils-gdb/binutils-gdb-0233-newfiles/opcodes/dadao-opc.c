@@ -41,23 +41,17 @@ const struct dadao_reg_alias dadao_reg_aliases[] =
 
 const struct dadao_opcode dadao_opcodes[] =
  {
-	{"add.rp",	0x10,		0,	1,	OP (rrii_rrri),		T (regp)},
-
 	{"add",		0x20,		0,	1,	OP (rrii_rrri),		T (simm)},
 	{"addu",	0x22,		0,	1,	OP (rrii_rrri),		T (uimm)},
 	{"sub",		0x24,		0,	1,	OP (rrii_rrri),		T (simm)},
 	{"subu",	0x26,		0,	1,	OP (rrii_rrri),		T (uimm)},
-	{"mul",		0x28,		0,	1,	OP (rrii_rrri),		T (simm)},
 
-	{"mulu",	0x2D,		0,	0,	OP (rrrr),		T (normal)},
-	{"div",		0x2E,		0,	0,	OP (rrrr),		T (normal)},
-	{"divu",	0x2F,		0,	0,	OP (rrrr),		T (normal)},
+	{"add.rp",	0x28,		0,	1,	OP (rrii_rrri),		T (regp)},
 
-	{"cmp",		0x30,		0,	1,	OP (rrii_rrri),		T (simm)},
-	{"cmpu",	0x32,		0,	1,	OP (rrii_rrri),		T (uimm)},
-	{"or",		0x34,		0,	1,	OP (rrii_rrri),		T (uimm)},
-	{"and",		0x36,		0,	1,	OP (rrii_rrri),		T (uimm)},
-	{"xor",		0x38,		0,	1,	OP (rrii_rrri),		T (uimm)},
+	{"mul",		0x30,		0,	1,	OP (rrii_rrri),		T (simm)},
+	{"mulu",	0x35,		0,	0,	OP (rrrr),		T (normal)},
+	{"div",		0x36,		0,	0,	OP (rrrr),		T (normal)},
+	{"divu",	0x37,		0,	0,	OP (rrrr),		T (normal)},
 
 	{"setwl",	I (SETW),	W (WL),	0,	OP (rjii),		T (normal)},
 	{"setwk",	I (SETW),	W (WK),	0,	OP (rjii),		T (normal)},
@@ -74,21 +68,28 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"sru",		0x3E,		3,	1,	OP (orri_orrr),		T (normal)},
 	{"not",		0x3E,		4,	1,	OP (orri_orrr),		T (normal)},
 
-	{"cs.n",	0x40,		0,	0,	OP (rrrr),		T (normal)},
-	{"cs.nn",	0x41,		0,	0,	OP (rrrr),		T (normal)},
-	{"cs.z",	0x42,		0,	0,	OP (rrrr),		T (normal)},
-	{"cs.nz",	0x43,		0,	0,	OP (rrrr),		T (normal)},
-	{"cs.p",	0x44,		0,	0,	OP (rrrr),		T (normal)},
-	{"cs.np",	0x45,		0,	0,	OP (rrrr),		T (normal)},
-	{"cs.od",	0x46,		0,	0,	OP (rrrr),		T (normal)},
-	{"cs.ev",	0x47,		0,	0,	OP (rrrr),		T (normal)},
+	{"or",		0x40,		0,	1,	OP (rrii_rrri),		T (uimm)},
+	{"and",		0x42,		0,	1,	OP (rrii_rrri),		T (uimm)},
+	{"xor",		0x44,		0,	1,	OP (rrii_rrri),		T (uimm)},
+
+	{"cs.n",	0x60,		0,	0,	OP (rrrr),		T (normal)},
+	{"cs.nn",	0x61,		0,	0,	OP (rrrr),		T (normal)},
+	{"cs.z",	0x62,		0,	0,	OP (rrrr),		T (normal)},
+	{"cs.nz",	0x63,		0,	0,	OP (rrrr),		T (normal)},
+	{"cs.p",	0x64,		0,	0,	OP (rrrr),		T (normal)},
+	{"cs.np",	0x65,		0,	0,	OP (rrrr),		T (normal)},
+	{"cs.od",	0x66,		0,	0,	OP (rrrr),		T (normal)},
+	{"cs.ev",	0x67,		0,	0,	OP (rrrr),		T (normal)},
+
+	{"cmp",		0x70,		0,	1,	OP (rrii_rrri),		T (simm)},
+	{"cmpu",	0x72,		0,	1,	OP (rrii_rrri),		T (uimm)},
 
 	{"ldb",		0x80,		0,	1,	OP (rrii_rrri),		T (dref)},
 	{"ldw",		0x82,		0,	1,	OP (rrii_rrri),		T (dref)},
 	{"ldt",		0x84,		0,	1,	OP (rrii_rrri),		T (dref)},
 	{"ldo",		0x86,		0,	1,	OP (rrii_rrri),		T (dref)},
 	{"ldo.rp",	0x88,		0,	1,	OP (rrii_rrri),		T (regp_dref)},
-	{"ldt.rf",	0x8C,		0,	1,	OP (rrii_rrri),		T (regf_dref)},
+	{"ldt.rf",	0x8A,		0,	1,	OP (rrii_rrri),		T (regf_dref)},
 	{"ldbu",	0x90,		0,	1,	OP (rrii_rrri),		T (dref)},
 	{"ldwu",	0x92,		0,	1,	OP (rrii_rrri),		T (dref)},
 	{"ldtu",	0x94,		0,	1,	OP (rrii_rrri),		T (dref)},
@@ -98,7 +99,7 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"stt",		0xA4,		0,	1,	OP (rrii_rrri),		T (dref)},
 	{"sto",		0xA6,		0,	1,	OP (rrii_rrri),		T (dref)},
 	{"sto.rp",	0xA8,		0,	1,	OP (rrii_rrri),		T (regp_dref)},
-	{"stt.rf",	0xAC,		0,	1,	OP (rrii_rrri),		T (regf_dref)},
+	{"stt.rf",	0xAA,		0,	1,	OP (rrii_rrri),		T (regf_dref)},
 
 	{"br.n",	0xC0,		0,	0,	OP (riii),		T (condbranch)},
 	{"br.nn",	0xC1,		0,	0,	OP (riii),		T (condbranch)},
