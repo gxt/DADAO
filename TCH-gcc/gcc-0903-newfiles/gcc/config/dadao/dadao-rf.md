@@ -75,9 +75,9 @@
 (define_insn "*expanded_negdf2"
   [(set     (match_operand:DF 0 "rf_class_operand" "= Rf")
     (neg:DF (match_operand:DF 1 "rf_class_operand" "  Rf")))
-      (use  (match_operand:DI 2 "rf_class_operand" "  Rf"))]
+      (use  (match_operand:DI 2 "rg_class_operand" "  Rg"))]
 	""
-	"get.rf	datao1, %1	\;	get.rf	datao2, %2	\;	xor	datao3, datao1, datao2	\;	put.rf	%0, datao3")
+	"get.rf	datao1, %1	\;	xor	datao1, datao1, %2	\;	put.rf	%0, datao1")
 
 ;; FIXME: define_expand for absdi2?
 
@@ -126,11 +126,11 @@
 (define_expand "floatdisf2"
   [(parallel [(set (match_operand:SF 0 "nonimmediate_operand" "=Rfm")
 		   (float:SF
-		    (match_operand:DI 1 "dd_rf_u6_operand" "JsRf")))
+		    (match_operand:DI 1 "rg_class_operand" "Rg")))
 	      ;; Let's use a DI scratch, since SF don't generally get into
 	      ;; registers.  Dunno what's best; it's really a DF, but that
 	      ;; doesn't logically follow from operands in the pattern.
-	      (clobber (match_scratch:DI 2 "=&Rf"))])]
+	      (clobber (match_scratch:DF 2 "=&Rf"))])]
   ""
   "
 {
@@ -153,7 +153,7 @@
   [(set (match_operand:SF 0 "memory_operand" "=m")
 	(float:SF
 	 (match_operand:DI 1 "rg_class_operand" "Rg")))
-   (clobber (match_scratch:DI 2 "=&Rf"))]
+   (clobber (match_scratch:DF 2 "=&Rf"))]
   ""
 	"sflot	%2, %1, 0\;\
 	stt.rf	%2, %0")
@@ -161,11 +161,11 @@
 (define_expand "floatunsdisf2"
   [(parallel [(set (match_operand:SF 0 "nonimmediate_operand" "=Rfm")
 		   (unsigned_float:SF
-		    (match_operand:DI 1 "dd_rf_u6_operand" "JsRf")))
+		    (match_operand:DI 1 "rg_class_operand" "Rg")))
 	      ;; Let's use a DI scratch, since SF don't generally get into
 	      ;; registers.  Dunno what's best; it's really a DF, but that
 	      ;; doesn't logically follow from operands in the pattern.
-	      (clobber (scratch:DI))])]
+	      (clobber (scratch:DF))])]
   ""
   "
 {
@@ -188,7 +188,7 @@
   [(set (match_operand:SF 0 "memory_operand" "=m")
 	(unsigned_float:SF
 	 (match_operand:DI 1 "rg_class_operand" "Rg")))
-   (clobber (match_scratch:DI 2 "=&Rf"))]
+   (clobber (match_scratch:DF 2 "=&Rf"))]
   ""
 	"sflotu	%2, %1, 0\;\
 	stt.rf	%2, %0")
