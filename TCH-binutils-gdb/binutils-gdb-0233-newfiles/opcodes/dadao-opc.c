@@ -158,6 +158,51 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"sflot",	I (FP),		12,	0,	OP (orri),		T (regf_fcrg)},
 	{"sflotu",	I (FP),		14,	0,	OP (orri),		T (regf_fcrg)},
 
+	/* floating point instructions (single precision) */
+	{"ft.add",	I (FT),		1,	0,	OP (orrr),		T (regf)},
+	{"ft.sub",	I (FT),		2,	0,	OP (orrr),		T (regf)},
+	{"ft.mul",	I (FT),		3,	0,	OP (orrr),		T (regf)},
+	{"ft.div",	I (FT),		4,	0,	OP (orrr),		T (regf)},
+
+	{"ft.abs",	I (FT),		8,	0,	OP (orr0),		T (regf)},
+	{"ft.neg",	I (FT),		9,	0,	OP (orr0),		T (regf)},
+
+	{"ft.f2i",	I (FT),		10,	0,	OP (orr0),		T (regf)},
+	{"ft.i2f",	I (FT),		11,	0,	OP (orr0),		T (regf)},
+	{"ft.2fo",	I (FT),		12,	0,	OP (orr0),		T (regf)},
+
+	{"ftc.un",	I (FT),		32,	0,	OP (orrr),		T (regf)},
+	{"ftc.or",	I (FT),		33,	0,	OP (orrr),		T (regf)},
+	{"ftc.eq",	I (FT),		34,	0,	OP (orrr),		T (regf)},
+	{"ftc.ne",	I (FT),		35,	0,	OP (orrr),		T (regf)},
+	{"ftc.lt",	I (FT),		36,	0,	OP (orrr),		T (regf)},
+	{"ftc.le",	I (FT),		37,	0,	OP (orrr),		T (regf)},
+	{"ftc.gt",	I (FT),		38,	0,	OP (orrr),		T (regf)},
+	{"ftc.ge",	I (FT),		39,	0,	OP (orrr),		T (regf)},
+
+	/* floating point instructions (double precision) */
+	{"fo.add",	I (FO),		1,	0,	OP (orrr),		T (regf)},
+	{"fo.sub",	I (FO),		2,	0,	OP (orrr),		T (regf)},
+	{"fo.mul",	I (FO),		3,	0,	OP (orrr),		T (regf)},
+	{"fo.div",	I (FO),		4,	0,	OP (orrr),		T (regf)},
+
+	{"fo.abs",	I (FO),		8,	0,	OP (orr0),		T (regf)},
+	{"fo.neg",	I (FO),		9,	0,	OP (orr0),		T (regf)},
+
+	{"fo.f2i",	I (FO),		10,	0,	OP (orr0),		T (regf)},
+	{"fo.i2f",	I (FO),		11,	0,	OP (orr0),		T (regf)},
+	{"fo.2ft",	I (FO),		12,	0,	OP (orr0),		T (regf)},
+
+	{"foc.un",	I (FO),		32,	0,	OP (orrr),		T (regf)},
+	{"foc.or",	I (FO),		33,	0,	OP (orrr),		T (regf)},
+	{"foc.eq",	I (FO),		34,	0,	OP (orrr),		T (regf)},
+	{"foc.ne",	I (FO),		35,	0,	OP (orrr),		T (regf)},
+	{"foc.lt",	I (FO),		36,	0,	OP (orrr),		T (regf)},
+	{"foc.le",	I (FO),		37,	0,	OP (orrr),		T (regf)},
+	{"foc.gt",	I (FO),		38,	0,	OP (orrr),		T (regf)},
+	{"foc.ge",	I (FO),		39,	0,	OP (orrr),		T (regf)},
+
+	/* pseudo instructions */
 	{"seto",	~0,		0,	0,	OP (ps_seto),		T (pseudo)},
 
 	{NULL,		~0,		0,	0,	OP (none),		T (normal)}
