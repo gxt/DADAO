@@ -45,13 +45,13 @@
 	"@
 	or	%0, %1, 0
 	mov.rp	%0, %1
-	mov.rf	%0, %1
+	fo_mov	%0, %1
 	mov.rv	%0, %1
 	put.rp	%0, %1
-	put.rf	%0, %1
+	fo_put	%0, %1
 	put.rv	%0, %1
 	get.rp	%0, %1
-	get.rf	%0, %1
+	fo_get	%0, %1
 	get.rv	%0, %1")
 
 (define_insn "dd_ld_<mode>"
