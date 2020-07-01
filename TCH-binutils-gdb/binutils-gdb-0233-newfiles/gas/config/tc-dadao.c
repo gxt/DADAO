@@ -433,6 +433,33 @@ void dadao_md_assemble (char *str)
 		if (n_operands != 2)
 			DADAO_BAD_INSN("invalid operands to opcode");
 
+		switch (instruction->type) {
+		case dadao_type_regf:
+			DDOP_EXP_MUST_BE_RF(exp[0]);
+			DDOP_EXP_MUST_BE_RF(exp[1]);
+			break;
+
+		case dadao_type_regf_fbrg:
+			DDOP_EXP_MUST_BE_RG(exp[0]);
+			DDOP_EXP_MUST_BE_RF(exp[1]);
+			break;
+
+		case dadao_type_regf_fcrg:
+			DDOP_EXP_MUST_BE_RF(exp[0]);
+			DDOP_EXP_MUST_BE_RG(exp[1]);
+			break;
+
+		default:
+			goto dadao_operands_orr0_normal;
+		}
+
+		DDOP_SET_FA(opcodep, instruction->minor_opcode);
+		DDOP_SET_FB(opcodep, exp[0].X_add_number);
+		DDOP_SET_FC(opcodep, exp[1].X_add_number);
+		DDOP_SET_FD(opcodep, 0);
+		break;
+
+dadao_operands_orr0_normal:
 		regclass_offset_0 = 0x00;
 		regclass_offset_1 = 0x00;
 
@@ -442,13 +469,6 @@ void dadao_md_assemble (char *str)
 			DDOP_EXP_MUST_BE_RP(exp[1]);
 			regclass_offset_0 = 0x40;
 			regclass_offset_1 = 0x40;
-			break;
-
-		case 2:
-			DDOP_EXP_MUST_BE_RF(exp[0]);
-			DDOP_EXP_MUST_BE_RF(exp[1]);
-			regclass_offset_0 = 0x80;
-			regclass_offset_1 = 0x80;
 			break;
 
 		case 3:
@@ -464,12 +484,6 @@ void dadao_md_assemble (char *str)
 			regclass_offset_0 = 0x40;
 			break;
 
-		case 0x12:
-			DDOP_EXP_MUST_BE_RF(exp[0]);
-			DDOP_EXP_MUST_BE_RG(exp[1]);
-			regclass_offset_0 = 0x80;
-			break;
-
 		case 0x13:
 			DDOP_EXP_MUST_BE_RV(exp[0]);
 			DDOP_EXP_MUST_BE_RG(exp[1]);
@@ -480,12 +494,6 @@ void dadao_md_assemble (char *str)
 			DDOP_EXP_MUST_BE_RG(exp[0]);
 			DDOP_EXP_MUST_BE_RP(exp[1]);
 			regclass_offset_1 = 0x40;
-			break;
-
-		case 0x22:
-			DDOP_EXP_MUST_BE_RG(exp[0]);
-			DDOP_EXP_MUST_BE_RF(exp[1]);
-			regclass_offset_1 = 0x80;
 			break;
 
 		case 0x23:

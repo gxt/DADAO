@@ -117,15 +117,12 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"swym",	0xDA,		0,	0,	OP (oiii),		T (normal)},
 
 	{"mov.rp",	0xDA,		1,	0,	OP (orr0),		T (normal)},
-	{"mov.rf",	0xDA,		2,	0,	OP (orr0),		T (normal)},
 	{"mov.rv",	0xDA,		3,	0,	OP (orr0),		T (normal)},
 
 	{"put.rp",	0xDA,		0x11,	0,	OP (orr0),		T (normal)},
-	{"put.rf",	0xDA,		0x12,	0,	OP (orr0),		T (normal)},
 	{"put.rv",	0xDA,		0x13,	0,	OP (orr0),		T (normal)},
 
 	{"get.rp",	0xDA,		0x21,	0,	OP (orr0),		T (normal)},
-	{"get.rf",	0xDA,		0x22,	0,	OP (orr0),		T (normal)},
 	{"get.rv",	0xDA,		0x23,	0,	OP (orr0),		T (normal)},
 
 	/* nop is 0xDADADADA, DA is 11011010, so minor-opcode is 110110 */
@@ -142,29 +139,27 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"fune",	I (FP),		18,	0,	OP (orrr),		T (regf_fbrg)},
 	{"feqle",	I (FP),		19,	0,	OP (orrr),		T (regf_fbrg)},
 
-	{"fix",		I (FP),		5,	0,	OP (orri),		T (regf_fbrg)},
-	{"fixu",	I (FP),		7,	0,	OP (orri),		T (regf_fbrg)},
-	{"fsqrt",	I (FP),		21,	0,	OP (orri),		T (regf)},
 	{"fint",	I (FP),		23,	0,	OP (orri),		T (regf)},
-
-	{"flot",	I (FP),		8,	0,	OP (orri),		T (regf_fcrg)},
-	{"flotu",	I (FP),		10,	0,	OP (orri),		T (regf_fcrg)},
-	{"sflot",	I (FP),		12,	0,	OP (orri),		T (regf_fcrg)},
-	{"sflotu",	I (FP),		14,	0,	OP (orri),		T (regf_fcrg)},
 
 	/* floating point instructions (single precision) */
 	{"ft_add",	I (FT),		1,	0,	OP (orrr),		T (regf)},
 	{"ft_sub",	I (FT),		2,	0,	OP (orrr),		T (regf)},
 	{"ft_mul",	I (FT),		3,	0,	OP (orrr),		T (regf)},
 	{"ft_div",	I (FT),		4,	0,	OP (orrr),		T (regf)},
-	{"ft_rem",	I (FT),		5,	0,	OP (orrr),		T (regf)},
 
-	{"ft.abs",	I (FT),		8,	0,	OP (orr0),		T (regf)},
-	{"ft.neg",	I (FT),		9,	0,	OP (orr0),		T (regf)},
+	{"ft_abs",	I (FT),		8,	0,	OP (orr0),		T (regf)},
+	{"ft_neg",	I (FT),		9,	0,	OP (orr0),		T (regf)},
+	{"ft_sqrt",	I (FT),		10,	0,	OP (orr0),		T (regf)},
 
-	{"ft.f2i",	I (FT),		10,	0,	OP (orr0),		T (regf)},
-	{"ft.i2f",	I (FT),		11,	0,	OP (orr0),		T (regf)},
-	{"ft.2fo",	I (FT),		12,	0,	OP (orr0),		T (regf)},
+	{"ft_mov",	I (FT),		11,	0,	OP (orr0),		T (regf)},
+	{"ft_get",	I (FT),		12,	0,	OP (orr0),		T (regf_fbrg)},
+	{"ft_put",	I (FT),		13,	0,	OP (orr0),		T (regf_fcrg)},
+
+	{"ft_2fo",	I (FT),		14,	0,	OP (orr0),		T (regf)},
+	{"ft_i2f",	I (FT),		15,	0,	OP (orr0),		T (regf_fbrg)},
+	{"ft_u2f",	I (FT),		16,	0,	OP (orr0),		T (regf_fbrg)},
+	{"ft_f2i",	I (FT),		17,	0,	OP (orr0),		T (regf_fcrg)},
+	{"ft_f2u",	I (FT),		18,	0,	OP (orr0),		T (regf_fcrg)},
 
 	{"ftc.un",	I (FT),		32,	0,	OP (orrr),		T (regf)},
 	{"ftc.or",	I (FT),		33,	0,	OP (orrr),		T (regf)},
@@ -180,14 +175,20 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"fo_sub",	I (FO),		2,	0,	OP (orrr),		T (regf)},
 	{"fo_mul",	I (FO),		3,	0,	OP (orrr),		T (regf)},
 	{"fo_div",	I (FO),		4,	0,	OP (orrr),		T (regf)},
-	{"fo_rem",	I (FO),		5,	0,	OP (orrr),		T (regf)},
 
-	{"fo.abs",	I (FO),		8,	0,	OP (orr0),		T (regf)},
-	{"fo.neg",	I (FO),		9,	0,	OP (orr0),		T (regf)},
+	{"fo_abs",	I (FO),		8,	0,	OP (orr0),		T (regf)},
+	{"fo_neg",	I (FO),		9,	0,	OP (orr0),		T (regf)},
+	{"fo_sqrt",	I (FO),		10,	0,	OP (orr0),		T (regf)},
 
-	{"fo.f2i",	I (FO),		10,	0,	OP (orr0),		T (regf)},
-	{"fo.i2f",	I (FO),		11,	0,	OP (orr0),		T (regf)},
-	{"fo.2ft",	I (FO),		12,	0,	OP (orr0),		T (regf)},
+	{"fo_mov",	I (FO),		11,	0,	OP (orr0),		T (regf)},
+	{"fo_get",	I (FO),		12,	0,	OP (orr0),		T (regf_fbrg)},
+	{"fo_put",	I (FO),		13,	0,	OP (orr0),		T (regf_fcrg)},
+
+	{"fo_2ft",	I (FO),		14,	0,	OP (orr0),		T (regf)},
+	{"fo_i2f",	I (FO),		15,	0,	OP (orr0),		T (regf_fbrg)},
+	{"fo_u2f",	I (FO),		16,	0,	OP (orr0),		T (regf_fbrg)},
+	{"fo_f2i",	I (FO),		17,	0,	OP (orr0),		T (regf_fcrg)},
+	{"fo_f2u",	I (FO),		18,	0,	OP (orr0),		T (regf_fcrg)},
 
 	{"foc.un",	I (FO),		32,	0,	OP (orrr),		T (regf)},
 	{"foc.or",	I (FO),		33,	0,	OP (orrr),		T (regf)},
