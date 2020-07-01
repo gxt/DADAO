@@ -142,12 +142,6 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"fune",	I (FP),		18,	0,	OP (orrr),		T (regf_fbrg)},
 	{"feqle",	I (FP),		19,	0,	OP (orrr),		T (regf_fbrg)},
 
-	{"fadd",	I (FP),		4,	0,	OP (orrr),		T (regf)},
-	{"fsub",	I (FP),		6,	0,	OP (orrr),		T (regf)},
-	{"fmul",	I (FP),		16,	0,	OP (orrr),		T (regf)},
-	{"fdiv",	I (FP),		20,	0,	OP (orrr),		T (regf)},
-	{"frem",	I (FP),		22,	0,	OP (orrr),		T (regf)},
-
 	{"fix",		I (FP),		5,	0,	OP (orri),		T (regf_fbrg)},
 	{"fixu",	I (FP),		7,	0,	OP (orri),		T (regf_fbrg)},
 	{"fsqrt",	I (FP),		21,	0,	OP (orri),		T (regf)},
@@ -159,10 +153,11 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"sflotu",	I (FP),		14,	0,	OP (orri),		T (regf_fcrg)},
 
 	/* floating point instructions (single precision) */
-	{"ft.add",	I (FT),		1,	0,	OP (orrr),		T (regf)},
-	{"ft.sub",	I (FT),		2,	0,	OP (orrr),		T (regf)},
-	{"ft.mul",	I (FT),		3,	0,	OP (orrr),		T (regf)},
-	{"ft.div",	I (FT),		4,	0,	OP (orrr),		T (regf)},
+	{"ft_add",	I (FT),		1,	0,	OP (orrr),		T (regf)},
+	{"ft_sub",	I (FT),		2,	0,	OP (orrr),		T (regf)},
+	{"ft_mul",	I (FT),		3,	0,	OP (orrr),		T (regf)},
+	{"ft_div",	I (FT),		4,	0,	OP (orrr),		T (regf)},
+	{"ft_rem",	I (FT),		5,	0,	OP (orrr),		T (regf)},
 
 	{"ft.abs",	I (FT),		8,	0,	OP (orr0),		T (regf)},
 	{"ft.neg",	I (FT),		9,	0,	OP (orr0),		T (regf)},
@@ -181,10 +176,11 @@ const struct dadao_opcode dadao_opcodes[] =
 	{"ftc.ge",	I (FT),		39,	0,	OP (orrr),		T (regf)},
 
 	/* floating point instructions (double precision) */
-	{"fo.add",	I (FO),		1,	0,	OP (orrr),		T (regf)},
-	{"fo.sub",	I (FO),		2,	0,	OP (orrr),		T (regf)},
-	{"fo.mul",	I (FO),		3,	0,	OP (orrr),		T (regf)},
-	{"fo.div",	I (FO),		4,	0,	OP (orrr),		T (regf)},
+	{"fo_add",	I (FO),		1,	0,	OP (orrr),		T (regf)},
+	{"fo_sub",	I (FO),		2,	0,	OP (orrr),		T (regf)},
+	{"fo_mul",	I (FO),		3,	0,	OP (orrr),		T (regf)},
+	{"fo_div",	I (FO),		4,	0,	OP (orrr),		T (regf)},
+	{"fo_rem",	I (FO),		5,	0,	OP (orrr),		T (regf)},
 
 	{"fo.abs",	I (FO),		8,	0,	OP (orr0),		T (regf)},
 	{"fo.neg",	I (FO),		9,	0,	OP (orr0),		T (regf)},
