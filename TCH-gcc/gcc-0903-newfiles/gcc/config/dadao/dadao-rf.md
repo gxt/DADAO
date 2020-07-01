@@ -8,6 +8,7 @@
 ;; conversion to double.
 
 (define_mode_iterator	SFDF	[SF DF])
+(define_mode_attr	ftfo	[(SF "ft") (DF "fo")])
 
 (define_insn "mov<mode>"
  [(set (match_operand:SFDF 0 "nonimmediate_operand" "= Rg, Rg, Rf, Rf, Rf, Rg, Rf,  m,  m, ??Rg, ??Rf")
@@ -26,41 +27,40 @@
 	seto	%0, %1
 	seto	datao1, %1	\;	put.rf	%0, datao1")
 
-(define_insn "adddf3"
-  [(set      (match_operand:DF 0 "rf_class_operand" "= Rf")
-    (plus:DF (match_operand:DF 1 "rf_class_operand" "% Rf")
-             (match_operand:DF 2 "rf_class_operand" "  Rf")))]
+(define_insn "add<mode>3"
+  [(set        (match_operand:SFDF 0 "rf_class_operand" "= Rf")
+    (plus:SFDF (match_operand:SFDF 1 "rf_class_operand" "% Rf")
+               (match_operand:SFDF 2 "rf_class_operand" "  Rf")))]
 	""
-	"fadd	%0, %1, %2")
+	"<ftfo>_add	%0, %1, %2")
 
-(define_insn "subdf3"
-  [(set       (match_operand:DF 0 "rf_class_operand" "= Rf")
-    (minus:DF (match_operand:DF 1 "rf_class_operand" "  Rf")
-              (match_operand:DF 2 "rf_class_operand" "  Rf")))]
+(define_insn "sub<mode>3"
+  [(set         (match_operand:SFDF 0 "rf_class_operand" "= Rf")
+    (minus:SFDF (match_operand:SFDF 1 "rf_class_operand" "  Rf")
+                (match_operand:SFDF 2 "rf_class_operand" "  Rf")))]
 	""
-	"fsub	%0, %1, %2")
+	"<ftfo>_sub	%0, %1, %2")
 
-(define_insn "muldf3"
-  [(set      (match_operand:DF 0 "rf_class_operand" "= Rf")
-    (mult:DF (match_operand:DF 1 "rf_class_operand" "  Rf")
-             (match_operand:DF 2 "rf_class_operand" "  Rf")))]
+(define_insn "mul<mode>3"
+  [(set        (match_operand:SFDF 0 "rf_class_operand" "= Rf")
+    (mult:SFDF (match_operand:SFDF 1 "rf_class_operand" "  Rf")
+               (match_operand:SFDF 2 "rf_class_operand" "  Rf")))]
 	""
-	"fmul	%0, %1, %2")
+	"<ftfo>_mul	%0, %1, %2")
 
-(define_insn "divdf3"
-  [(set     (match_operand:DF 0 "rf_class_operand" "= Rf")
-    (div:DF (match_operand:DF 1 "rf_class_operand" "  Rf")
-            (match_operand:DF 2 "rf_class_operand" "  Rf")))]
+(define_insn "div<mode>3"
+  [(set       (match_operand:SFDF 0 "rf_class_operand" "= Rf")
+    (div:SFDF (match_operand:SFDF 1 "rf_class_operand" "  Rf")
+              (match_operand:SFDF 2 "rf_class_operand" "  Rf")))]
 	""
-	"fdiv	%0, %1, %2")
+	"<ftfo>_div	%0, %1, %2")
 
-;; FIXME: Is "frem" doing the right operation for moddf3?
-(define_insn "moddf3"
-  [(set     (match_operand:DF 0 "rf_class_operand" "= Rf")
-    (mod:DF (match_operand:DF 1 "rf_class_operand" "  Rf")
-            (match_operand:DF 2 "rf_class_operand" "  Rf")))]
+(define_insn "mod<mode>3"
+  [(set       (match_operand:SFDF 0 "rf_class_operand" "= Rf")
+    (mod:SFDF (match_operand:SFDF 1 "rf_class_operand" "  Rf")
+              (match_operand:SFDF 2 "rf_class_operand" "  Rf")))]
 	""
-	"frem	%0, %1, %2")
+	"<ftfo>_rem	%0, %1, %2")
 
 (define_expand "negdf2"
   [(parallel [(set (match_operand:DF 0 "rf_class_operand" "= Rf")
@@ -100,8 +100,6 @@
 	""
 	"fcmp%e0	%0, %1, %2")
 
-;; FIXME: for -mieee, add fsub %0,%1,%1\;fsub %0,%2,%2 before to
-;; make signalling compliant.
 (define_insn "*feql"
   [(set              (match_operand:CC_FPEQ 0 "rg_class_operand" "= Rg")
     (compare:CC_FPEQ (match_operand:DF      1 "rf_class_operand" "  Rf")
