@@ -4,6 +4,7 @@
 DIR_GIT_TAO		:= /pub/GIT-TAO/
 
 DIR_DADAO		:= $(shell pwd)
+DIR_DADAO_OPCODES	:= $(DIR_DADAO)/DADAO-opcodes/
 DIR_DADAO_SOURCE	:= $(DIR_DADAO)/__source/
 DIR_DADAO_BUILD		:= $(DIR_DADAO)/__build/
 DIR_DADAO_INSTALL	:= $(DIR_DADAO)/__install/

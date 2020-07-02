@@ -17,54 +17,44 @@ struct dadao_reg_alias
 extern const struct dadao_reg_alias dadao_reg_aliases[];
 
 /* General indication of the type of instruction.  */
-enum dadao_insn_type
- {
+enum dadao_insn_type {
 	dadao_type_normal,
-	dadao_type_uimm,
-	dadao_type_simm,
 	dadao_type_condbranch,
 	dadao_type_branch,
 	dadao_type_geta,
-	dadao_type_regp,
-	dadao_type_regp_dref,
-	dadao_type_regf,
-	dadao_type_regf_fbrg,
-	dadao_type_regf_fcrg,
-	dadao_type_regf_dref,
 	dadao_type_dref,
 	dadao_type_jsr,
 	dadao_type_pseudo,
- };
+};
 
-/* Type of operands an instruction takes.  Use when parsing assembly code
-   and disassembling.  */
-enum dadao_operands_type {
-	dadao_operands_none = 0,
+/* Type of operand an instruction takes. */
+enum dadao_operand_type {
+	dadao_operand_none = 0,
+	dadao_operand_rg,
+	dadao_operand_rp,
+	dadao_operand_rf,
+	dadao_operand_rv,
+	dadao_operand_u6,
+	dadao_operand_u12,
+	dadao_operand_u18,
+	dadao_operand_s12,
+	dadao_operand_s18,
+	dadao_operand_s24,
+	dadao_operand_w16,	/* setw/incw */
+	dadao_operand_noop,	/* hard insn should not be here */
+};
 
-	dadao_operands_ps_seto,		/* seto pseudo insn */
-
-	dadao_operands_iiii_rrii,	/* call/jump insn, "imm24" or "ra, rb, imm12" */
-	dadao_operands_o000,		/* no operand, for nop/ret */
-	dadao_operands_oiii,		/* ONLY "imm18" accepted, for swym/trip/trap/nop */
-	dadao_operands_orr0,		/* get/put insn  */
-	dadao_operands_orri,		/* The regular "rb, rc, imm6" */
-	dadao_operands_orri_orrr,	/* The regular "rb, rc, rd", or "rb, rc, imm6" */
-	dadao_operands_orrr,		/* The regular "rb, rc, rd".  */
-	dadao_operands_riii,		/* The regular "ra, imm18" */
-	dadao_operands_rjii,		/* The regular "ra, imm16", 2-bit in fc used to indicate WH/WJ/WK/WL */
-	dadao_operands_rrii_rrri,	/* The regular "ra, rb, imm12" or "ra, rb, rc << imm6" */
-	dadao_operands_rrrr,		/* The regular "ra, rb, rc, rd" */
- };
-
-struct dadao_opcode
- {
+struct dadao_opcode {
 	const char *name;
+	unsigned int operands_num;
 	unsigned int major_opcode;
 	unsigned int minor_opcode;
-	unsigned int double_modes;	/* 0 means one operand mode, 1 means two operand modes */
-	enum dadao_operands_type operands;
+	enum dadao_operand_type op_fa;
+	enum dadao_operand_type op_fb;
+	enum dadao_operand_type op_fc;
+	enum dadao_operand_type op_fd;
 	enum dadao_insn_type type;
- };
+};
 
 /* Declare the actual tables.  */
 extern const struct dadao_opcode dadao_opcodes[];
