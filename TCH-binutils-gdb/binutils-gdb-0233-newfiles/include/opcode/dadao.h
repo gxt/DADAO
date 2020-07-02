@@ -30,6 +30,7 @@ enum dadao_insn_type {
 /* Type of operand an instruction takes. */
 enum dadao_operand_type {
 	dadao_operand_none = 0,
+	dadao_operand_op,
 	dadao_operand_rg,
 	dadao_operand_rp,
 	dadao_operand_rf,
@@ -46,7 +47,7 @@ enum dadao_operand_type {
 
 struct dadao_opcode {
 	const char *name;
-	unsigned int operands_num;
+	int operands_num;
 	unsigned int major_opcode;
 	unsigned int minor_opcode;
 	enum dadao_operand_type op_fa;
