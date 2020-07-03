@@ -535,7 +535,6 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
 void dadao_md_assemble (char *str)
 {
 	char *operands = str;
-	char modified_char = 0;
 	struct dadao_opcode *instruction;
 	char insn_alt[16];
 	int insn_alt_i = 0;
