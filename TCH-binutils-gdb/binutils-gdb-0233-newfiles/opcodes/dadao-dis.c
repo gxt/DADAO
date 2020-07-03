@@ -232,10 +232,13 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	}
 
 	if (i == opcodep->operands_num) {
-		if (opcodep->op_fd == dadao_operand_i6)
-			(*info->fprintf_func) (info->stream, " << ");
-		else
+		if (opcodep->op_fd != dadao_operand_i6)
 			__DDIS_EXIT_FAIL();
+
+		if ((insn & 0x3F) == 0)	/* "<< 0" could be omitted */
+			return 4;
+
+		(*info->fprintf_func) (info->stream, " << ");
 	} else
 		(*info->fprintf_func) (info->stream, ", ");
 
