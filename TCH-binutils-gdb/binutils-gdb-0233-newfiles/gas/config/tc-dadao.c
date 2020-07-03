@@ -459,7 +459,9 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
 		return -1;
 
 	if ((n_operands == 3) && (exp[2].X_op == O_left_shift)) {
-		/* To accept: reg << shift6 */
+		/* To accept: rg << i6 */
+		if ((insn->op_fc != dadao_operand_rg) || (insn->op_fd != dadao_operand_i6))
+			return -1;
 		exp_next = symbol_get_value_expression (exp[2].X_add_symbol);
 		exp_last = symbol_get_value_expression (exp[2].X_op_symbol);
 	} else {
@@ -498,7 +500,14 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
 	case dadao_operand_rp:	__DD_EXP_SHOULD_BE_RP(exp_last[0], fd);	break;
 	case dadao_operand_rf:	__DD_EXP_SHOULD_BE_RF(exp_last[0], fd);	break;
 	case dadao_operand_rv:	__DD_EXP_SHOULD_BE_RV(exp_last[0], fd);	break;
+
 	case dadao_operand_u6:
+		__DD_EXP_SHOULD_BE_IMM(exp_last[0], 0, 0x3F);
+		fd = exp_last[0].X_add_number;
+		break;
+
+	case dadao_operand_i6:
+		/* << i6 can be omitted, thus i6 will be 0 */
 		if (exp_last[0].X_op == O_constant) {
 			__DD_EXP_SHOULD_BE_IMM(exp_last[0], 0, 0x3F);
 			fd = exp_last[0].X_add_number;

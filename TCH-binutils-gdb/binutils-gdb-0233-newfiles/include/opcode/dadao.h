@@ -30,18 +30,19 @@ enum dadao_insn_type {
 /* Type of operand an instruction takes. */
 enum dadao_operand_type {
 	dadao_operand_none = 0,
-	dadao_operand_op,
-	dadao_operand_rg,
-	dadao_operand_rp,
-	dadao_operand_rf,
-	dadao_operand_rv,
-	dadao_operand_u6,
-	dadao_operand_u12,
-	dadao_operand_u18,
-	dadao_operand_s12,
-	dadao_operand_s18,
-	dadao_operand_s24,
-	dadao_operand_w16,	/* setw/incw */
+	dadao_operand_op,	/* minor-opcode */
+	dadao_operand_rg,	/* rg reg class */
+	dadao_operand_rp,	/* rg reg class */
+	dadao_operand_rf,	/* rg reg class */
+	dadao_operand_rv,	/* rg reg class */
+	dadao_operand_i6,	/* shift left imm6 (unsigned) */
+	dadao_operand_u6,	/* unsigned imm 6-bit */
+	dadao_operand_u12,	/* unsigned imm 12-bit */
+	dadao_operand_u18,	/* unsigned imm 18-bit */
+	dadao_operand_s12,	/* signed imm 12-bit */
+	dadao_operand_s18,	/* signed imm 18-bit */
+	dadao_operand_s24,	/* signed imm 24-bit */
+	dadao_operand_w16,	/* setw/incw 16-bit word (unsigned) */
 	dadao_operand_noop,	/* hard insn should not be here */
 };
 
