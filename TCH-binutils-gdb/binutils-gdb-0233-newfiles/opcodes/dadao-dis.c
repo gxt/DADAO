@@ -177,7 +177,8 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 
 	if (i == opcodep->operands_num)		__DDIS_EXIT_FAIL();
 
-	(*info->fprintf_func) (info->stream, ", ");
+	if (opcodep->op_fa != dadao_operand_op)
+		(*info->fprintf_func) (info->stream, ", ");
 
 	switch (opcodep->op_fb) {
 	case dadao_operand_rg:	__DDIS_PRINT_REG("rg", fb);	i++;	break;
