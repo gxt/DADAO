@@ -75,7 +75,7 @@
       (match_operand:DI              1 "rg_class_operand" "  Rg")
       (match_operand:DI              3 "rg_class_operand" "  Rg")))]
 	""
-	"cs.<ccss_type_insn>	%0, %2, %1, %3")
+	"cs_<ccss_type_insn>	%0, %2, %1, %3")
 
 (define_insn "*movdicc_<ccuu_type_insn>"
   [(set (match_operand:DI            0 "rg_class_operand" "= Rg")
@@ -84,7 +84,7 @@
       (match_operand:DI              1 "rg_class_operand" "  Rg")
       (match_operand:DI              3 "rg_class_operand" "  Rg")))]
 	""
-	"cs.<ccuu_type_insn>	%0, %2, %1, %3")
+	"cs_<ccuu_type_insn>	%0, %2, %1, %3")
 
 (define_expand "cbranchdi4"
   [(set (match_dup 4)
@@ -107,7 +107,7 @@
       (label_ref (match_operand 0 "" ""))
       (pc)))]
 	""
-	"br.<ccss_type_insn>	%1, %0")
+	"br_<ccss_type_insn>	%1, %0")
 
 (define_insn "*br_uu_<ccuu_type_insn>"
   [(set (pc)
@@ -116,7 +116,7 @@
       (label_ref (match_operand 0 "" ""))
       (pc)))]
 	""
-	"br.<ccuu_type_insn>	%1, %0")
+	"br_<ccuu_type_insn>	%1, %0")
 
 (define_insn "*br_fp"
   [(set (pc)
@@ -126,7 +126,7 @@
       (label_ref (match_operand 0 "" ""))
       (pc)))]
 	""
-	"br.%d1	%2, %0")
+	"br_%d1	%2, %0")
 
 (define_insn "*br_fp_inverted"
   [(set (pc)
@@ -136,4 +136,4 @@
       (pc)
       (label_ref (match_operand 0 "" ""))))]
 	"REVERSIBLE_CC_MODE (GET_MODE (operands[2]))"
-	"br.%D1	%2, %0")
+	"br_%D1	%2, %0")
