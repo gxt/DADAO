@@ -147,6 +147,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		else
 			(*info->fprintf_func) (info->stream, "%s\t", opcodep->name);
 	else {
+		/* ret / nop has no operands */
 		(*info->fprintf_func) (info->stream, "%s", opcodep->name);
 		return 4;
 	}
@@ -174,8 +175,6 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	default:
 		__DDIS_EXIT_FAIL();
 	}
-
-	if (i == opcodep->operands_num)		__DDIS_EXIT_FAIL();
 
 	if (opcodep->op_fa != dadao_operand_op)
 		(*info->fprintf_func) (info->stream, ", ");
@@ -207,8 +206,6 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		__DDIS_EXIT_FAIL();
 	}
 
-	if (i == opcodep->operands_num)		__DDIS_EXIT_FAIL();
-
 	(*info->fprintf_func) (info->stream, ", ");
 
 	switch (opcodep->op_fc) {
@@ -231,26 +228,22 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		__DDIS_EXIT_FAIL();
 	}
 
-	if (i == opcodep->operands_num) {
-		if (opcodep->op_fd != dadao_operand_i6)
-			__DDIS_EXIT_FAIL();
-
-		if ((insn & 0x3F) == 0)	/* "<< 0" could be omitted */
-			return 4;
-
-		(*info->fprintf_func) (info->stream, " << ");
-	} else
-		(*info->fprintf_func) (info->stream, ", ");
-
 	switch (opcodep->op_fd) {
-	case dadao_operand_rg:	__DDIS_PRINT_REG("rg", fd);	break;
-	case dadao_operand_rp:	__DDIS_PRINT_REG("rp", fd);	break;
-	case dadao_operand_rf:	__DDIS_PRINT_REG("rf", fd);	break;
-	case dadao_operand_rv:	__DDIS_PRINT_REG("rv", fd);	break;
+	case dadao_operand_rg:	__DDIS_PRINT_REG(", rg", fd);	break;
+	case dadao_operand_rp:	__DDIS_PRINT_REG(", rp", fd);	break;
+	case dadao_operand_rf:	__DDIS_PRINT_REG(", rf", fd);	break;
+	case dadao_operand_rv:	__DDIS_PRINT_REG(", rv", fd);	break;
 
 	case dadao_operand_i6:
+		if ((insn & 0x3F) == 0)		break;		/* "<< 0" could be omitted */
+		(*info->fprintf_func) (info->stream, " << %d", (int) (insn & 0x3F));
+		break;
+
 	case dadao_operand_u6:
-		(*info->fprintf_func) (info->stream, "%d", (int) (insn & 0x3F));
+		(*info->fprintf_func) (info->stream, ", %d", (int) (insn & 0x3F));
+		break;
+
+	case dadao_operand_none:
 		break;
 
 	default:
