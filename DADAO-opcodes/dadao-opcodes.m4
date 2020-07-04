@@ -3,11 +3,8 @@
 divert(0)dnl
 
 insn(	nop,		o000,	0x00,	0x00,	op,	-,	-,	-,	normal)
-insn(	mov.rp,		orr0,	0x00,	0x10,	op,	rp,	rp,	-,	normal)
 insn(	mov.rv,		orr0,	0x00,	0x11,	op,	rv,	rv,	-,	normal)
-insn(	put.rp,		orr0,	0x00,	0x12,	op,	rp,	rg,	-,	normal)
 insn(	put.rv,		orr0,	0x00,	0x13,	op,	rv,	rg,	-,	normal)
-insn(	get.rp,		orr0,	0x00,	0x14,	op,	rg,	rp,	-,	normal)
 insn(	get.rv,		orr0,	0x00,	0x15,	op,	rg,	rv,	-,	normal)
 
 insn(	slu,		orri,	0x00,	0x20,	op,	rg,	rg,	u6,	normal)
@@ -96,6 +93,10 @@ insn(	br_p,		riii,	0x68,	0,	rg,	s18,	-,	-,	condbranch)
 insn(	br_np,		riii,	0x69,	0,	rg,	s18,	-,	-,	condbranch)
 insn(	br_od,		riii,	0x78,	0,	rg,	s18,	-,	-,	condbranch)
 insn(	br_ev,		riii,	0x79,	0,	rg,	s18,	-,	-,	condbranch)
+
+insn(	rp_p2g,		orr0,	0x08,	0x00,	op,	rg,	rp,	-,	normal)
+insn(	rp_g2p,		orr0,	0x08,	0x01,	op,	rp,	rg,	-,	normal)
+insn(	rp_p2p,		orr0,	0x08,	0x02,	op,	rp,	rp,	-,	normal)
 
 insn(	ret,		o000,	0x08,	0x37,	op,	-,	-,	-,	jsr)
 insn(	trip,		oiii,	0x08,	0x38,	op,	u18,	-,	-,	jsr)

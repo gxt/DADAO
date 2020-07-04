@@ -48,8 +48,8 @@
              (match_operand:DI 2 "dd_rg_s12_operand" "  Id, Rg")))]
 	""
 	"@
-	get.rp	datao1, %1	\;	add	%0, datao1, %2
-	get.rp	datao1, %1	\;	add	%0, datao1, %2")
+	rp_p2g	datao1, %1	\;	add	%0, datao1, %2
+	rp_p2g	datao1, %1	\;	add	%0, datao1, %2")
 
 ;; TODO: SHOULD removed lator, handling condition: imm beyond s12
 (define_insn "*addrp2rg_2"
@@ -57,7 +57,7 @@
     (plus:DI (match_operand:DI 1 "rp_class_operand"  "% Rp")
              (match_operand:DI 2 "immediate_operand" "   i")))]
 	""
-	"get.rp	datao1, %1	\;	seto	%0, %2	\;	add	%0, datao1, %0")
+	"rp_p2g	datao1, %1	\;	seto	%0, %2	\;	add	%0, datao1, %0")
 
 ;; TODO: SHOULD removed lator
 (define_insn "*addrp2rp"
@@ -65,7 +65,7 @@
     (plus:DI (match_operand:DI 1 "rp_class_operand" "%  0")
              (match_operand:DI 2 "rp_class_operand" "  Rp")))]
 	""
-	"get.rp	datao1, %1	\;	rp_add	%0, %0, datao1")
+	"rp_p2g	datao1, %1	\;	rp_add	%0, %0, datao1")
 
 ;; TODO: SHOULD removed lator, handling condition: imm beyond s12
 (define_insn "*addrp2rp_2"

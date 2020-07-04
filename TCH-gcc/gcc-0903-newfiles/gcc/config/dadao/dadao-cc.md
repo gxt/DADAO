@@ -18,8 +18,8 @@
 		&& GET_MODE_CLASS (GET_MODE (operands[1])) == MODE_CC"
 	"@
 	or	%0, %1, 0
-	put.rp	%0, %1
-	get.rp	%0, %1
+	rp_g2p	%0, %1
+	rp_p2g	%0, %1
 	ldt	%0, %1
 	stt	%1, %0")
 
