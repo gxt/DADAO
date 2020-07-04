@@ -21,9 +21,9 @@
 	<ftfo>_mov	%0, %1
 	<ftfo>_put	%0, zero
 	ldt	%0, %1
-	ldt.rf	%0, %1
+	<ftfo>_ld	%0, %1
 	stt	%1, %0
-	stt.rf	%1, %0
+	<ftfo>_st	%1, %0
 	seto	%0, %1
 	seto	datao1, %1	\;	<ftfo>_put	%0, datao1")
 
