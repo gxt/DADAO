@@ -18,7 +18,7 @@
 	or	%0, %1, 0
 	<ftfo>_get	%0, %1
 	<ftfo>_put	%0, %1
-	<ftfo>_mov	%0, %1
+	<ftfo>_2<ftfo>	%0, %1
 	<ftfo>_put	%0, zero
 	ldt	%0, %1
 	<ftfo>_ld	%0, %1
