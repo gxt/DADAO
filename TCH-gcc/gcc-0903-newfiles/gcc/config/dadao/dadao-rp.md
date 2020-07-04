@@ -17,13 +17,13 @@
   [(set (match_operand:DI 0 "rp_class_operand" "= Rp")
         (match_operand:DI 1 "memory_operand"   "   m"))]
 	""
-	"ldo.rp	%0, %1")
+	"rp_ldo	%0, %1")
 
 (define_insn "dd_st_rp"
   [(set (match_operand:DI 0 "memory_operand"   "=  m")
         (match_operand:DI 1 "rp_class_operand" "  Rp"))]
 	""
-	"sto.rp	%1, %0")
+	"rp_sto	%1, %0")
 
 (define_insn "dd_get_offset"
   [(set (match_operand:DI 0 "rg_class_operand"  "= Rg, Rg")
