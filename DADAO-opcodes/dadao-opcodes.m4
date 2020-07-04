@@ -2,6 +2,31 @@
 #	name		op-type	maj-op	min-op	fa	fb	fc	fd	insn-type
 divert(0)dnl
 
+insn(	nop,		o000,	0x00,	0x00,	op,	-,	-,	-,	normal)
+insn(	swym,		oiii,	0x00,	0x01,	op,	u18,	-,	-,	normal)
+insn(	mov.rp,		orr0,	0x00,	0x10,	op,	rp,	rp,	-,	normal)
+insn(	mov.rv,		orr0,	0x00,	0x11,	op,	rv,	rv,	-,	normal)
+insn(	put.rp,		orr0,	0x00,	0x12,	op,	rp,	rg,	-,	normal)
+insn(	put.rv,		orr0,	0x00,	0x13,	op,	rv,	rg,	-,	normal)
+insn(	get.rp,		orr0,	0x00,	0x14,	op,	rg,	rp,	-,	normal)
+insn(	get.rv,		orr0,	0x00,	0x15,	op,	rg,	rv,	-,	normal)
+
+insn(	slu,		orri,	0x00,	0x20,	op,	rg,	rg,	u6,	normal)
+insn(  _slu,		orrr,	0x00,	0x21,	op,	rg,	rg,	rg,	normal)
+insn(	sr,		orri,	0x00,	0x22,	op,	rg,	rg,	u6,	normal)
+insn(  _sr,		orrr,	0x00,	0x23,	op,	rg,	rg,	rg,	normal)
+insn(	sru,		orri,	0x00,	0x24,	op,	rg,	rg,	u6,	normal)
+insn(  _sru,		orrr,	0x00,	0x25,	op,	rg,	rg,	rg,	normal)
+insn(	not,		orri,	0x00,	0x26,	op,	rg,	rg,	u6,	normal)
+insn(  _not,		orrr,	0x00,	0x27,	op,	rg,	rg,	rg,	normal)
+
+insn(	mul,		rrii,	0x02,	0,	rg,	rg,	s12,	-,	normal)
+insn(  _mul,		rrri,	0x03,	0,	rg,	rg,	rg,	i6,	normal)
+
+insn(	mulu,		rrrr,	0x05,	0,	rg,	rg,	rg,	rg,	normal)
+insn(	div,		rrrr,	0x06,	0,	rg,	rg,	rg,	rg,	normal)
+insn(	divu,		rrrr,	0x07,	0,	rg,	rg,	rg,	rg,	normal)
+
 insn(	or,		rrii,	0x10,	0,	rg,	rg,	u12,	-,	normal)
 insn(  _or,		rrri,	0x11,	0,	rg,	rg,	rg,	i6,	normal)
 insn(	and,		rrii,	0x12,	0,	rg,	rg,	u12,	-,	normal)
@@ -26,22 +51,6 @@ insn(	sub,		rrii,	0x24,	0,	rg,	rg,	s12,	-,	normal)
 insn(  _sub,		rrri,	0x25,	0,	rg,	rg,	rg,	i6,	normal)
 insn(	subu,		rrii,	0x26,	0,	rg,	rg,	u12,	-,	normal)
 insn(  _subu,		rrri,	0x27,	0,	rg,	rg,	rg,	i6,	normal)
-
-insn(	mul,		rrii,	0x30,	0,	rg,	rg,	s12,	-,	normal)
-insn(  _mul,		rrri,	0x31,	0,	rg,	rg,	rg,	i6,	normal)
-
-insn(	mulu,		rrrr,	0x35,	0,	rg,	rg,	rg,	rg,	normal)
-insn(	div,		rrrr,	0x36,	0,	rg,	rg,	rg,	rg,	normal)
-insn(	divu,		rrrr,	0x37,	0,	rg,	rg,	rg,	rg,	normal)
-
-insn(	slu,		orri,	0x3E,	1,	op,	rg,	rg,	u6,	normal)
-insn(  _slu,		orrr,	0x3F,	1,	op,	rg,	rg,	rg,	normal)
-insn(	sr,		orri,	0x3E,	2,	op,	rg,	rg,	u6,	normal)
-insn(  _sr,		orrr,	0x3F,	2,	op,	rg,	rg,	rg,	normal)
-insn(	sru,		orri,	0x3E,	3,	op,	rg,	rg,	u6,	normal)
-insn(  _sru,		orrr,	0x3F,	3,	op,	rg,	rg,	rg,	normal)
-insn(	not,		orri,	0x3E,	4,	op,	rg,	rg,	u6,	normal)
-insn(  _not,		orrr,	0x3F,	4,	op,	rg,	rg,	rg,	normal)
 
 insn(	cs_n,		rrrr,	0x46,	0,	rg,	rg,	rg,	rg,	normal)
 insn(	cs_nn,		rrrr,	0x47,	0,	rg,	rg,	rg,	rg,	normal)
@@ -89,6 +98,10 @@ insn(	br_np,		riii,	0x69,	0,	rg,	s18,	-,	-,	condbranch)
 insn(	br_od,		riii,	0x78,	0,	rg,	s18,	-,	-,	condbranch)
 insn(	br_ev,		riii,	0x79,	0,	rg,	s18,	-,	-,	condbranch)
 
+insn(	ret,		o000,	0x08,	0x37,	op,	-,	-,	-,	jsr)
+insn(	trip,		oiii,	0x08,	0x38,	op,	u18,	-,	-,	jsr)
+insn(	trap,		oiii,	0x08,	0x3F,	op,	u18,	-,	-,	jsr)
+
 insn(	geta,		riii,	0x18,	0,	rg,	s18,	-,	-,	geta)
 insn(	rp_add,		rrii,	0x28,	0,	rp,	rp,	s12,	-,	normal)
 insn(  _rp_add,		rrri,	0x29,	0,	rp,	rp,	rg,	i6,	normal)
@@ -100,19 +113,6 @@ insn(	call,		iiii,	0xC8,	0,	s24,	-,	-,	-,	jsr)
 insn(  _call,		rrii,	0xC9,	0,	rg,	rp,	s12,	-,	jsr)
 insn(	jump,		iiii,	0xD8,	0,	s24,	-,	-,	-,	branch)
 insn(  _jump,		rrii,	0xD9,	0,	rg,	rp,	s12,	-,	branch)
-
-insn(	swym,		oiii,	0xDA,	0,	op,	u18,	-,	-,	normal)
-insn(	mov.rp,		orr0,	0xDA,	1,	op,	rp,	rp,	-,	normal)
-insn(	mov.rv,		orr0,	0xDA,	3,	op,	rv,	rv,	-,	normal)
-insn(	put.rp,		orr0,	0xDA,	0x11,	op,	rp,	rg,	-,	normal)
-insn(	put.rv,		orr0,	0xDA,	0x13,	op,	rv,	rg,	-,	normal)
-insn(	get.rp,		orr0,	0xDA,	0x21,	op,	rg,	rp,	-,	normal)
-insn(	get.rv,		orr0,	0xDA,	0x23,	op,	rg,	rv,	-,	normal)
-insn(	nop,		o000,	0xDA,	0x36,	op,	-,	-,	-,	normal)
-
-insn(	ret,		o000,	0xDA,	0x37,	op,	-,	-,	-,	jsr)
-insn(	trip,		oiii,	0xDA,	0x38,	op,	u18,	-,	-,	jsr)
-insn(	trap,		oiii,	0xDA,	0x3F,	op,	u18,	-,	-,	jsr)
 
 insn(	fcmp,		orrr,	0xDB,	1,	op,	rg,	rf,	rf,	normal)
 insn(	fun,		orrr,	0xDB,	2,	op,	rg,	rf,	rf,	normal)
