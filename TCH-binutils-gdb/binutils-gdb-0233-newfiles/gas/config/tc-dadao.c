@@ -577,8 +577,8 @@ void dadao_md_assemble (char *str)
 	if (instruction->type == dadao_type_pseudo) {
 		/* ONLY seto is pseudo insn: seto rg, imm64 */
 		if ((n_operands == 2)
-			&& (exp[0].X_op != O_register) && (exp[0].X_add_number > 0x3F)
-			&& (exp[1].X_op != O_constant))
+			&& (exp[0].X_op == O_register) && (exp[0].X_add_number < 0x40)
+			&& (exp[1].X_op == O_constant))
 			dd_pseudo_seto(opcodep, exp[0].X_add_number, exp[1].X_add_number);
 		else
 			as_bad_where(__FILE__, __LINE__, "(%s %s) unknown insn", &insn_alt[1], operands);
