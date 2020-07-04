@@ -412,9 +412,6 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
 		return -1;
 	}
 
-	if (n_exp == n_operands)
-		return -1;
-
 	switch (insn->op_fb) {
 	case dadao_operand_rg:	__DD_EXP_SHOULD_BE_RG(exp[n_exp], fb);	n_exp++;	break;
 	case dadao_operand_rp:	__DD_EXP_SHOULD_BE_RP(exp[n_exp], fb);	n_exp++;	break;
@@ -454,9 +451,6 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
 	default:
 		return -1;
 	}
-
-	if (n_exp == n_operands)
-		return -1;
 
 	if ((n_operands == 3) && (exp[2].X_op == O_left_shift)) {
 		/* To accept: rg << i6 */
