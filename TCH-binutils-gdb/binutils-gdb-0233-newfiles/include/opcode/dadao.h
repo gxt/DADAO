@@ -89,9 +89,6 @@ extern const struct dadao_opcode dadao_opcodes[];
 #define	DADAO_INSN_CALL			((unsigned int)(0xC8 << 24))
 #define	DADAO_INSN_JUMP			((unsigned int)(0xD8 << 24))
 
-#define	DADAO_INSN_SWYM			((unsigned int)(0xDA << 24))
-#define	DADAO_INSN_FP			((unsigned int)(0xDB << 24))
-
 /* Dadao bit-field definition:
  *   OP: 8-bit, [31..24]
  *   FA: 6-bit, [23..18]

@@ -170,7 +170,7 @@ static void dd_fill_nops (char *opcodep, int n)
   int i;
 
   for (i = 0; i < n; i++)
-    md_number_to_chars (opcodep + i * 4, DADAO_INSN_SWYM, 4);
+    md_number_to_chars (opcodep + i * 4, 0 /* nop opcode is 0 */, 4);
 }
 
 /* Get up to four operands, filling them into the exp array.
