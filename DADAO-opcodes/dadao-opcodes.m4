@@ -11,8 +11,8 @@ insn(	_addu,		rrri,	0x23,	0,	rg,	rg,	rg,	i6,	normal)
 insn(	_sub,		rrri,	0x25,	0,	rg,	rg,	rg,	i6,	normal)
 insn(	_subu,		rrri,	0x27,	0,	rg,	rg,	rg,	i6,	normal)
 
-insn(	add.rp,		rrii,	0x28,	0,	rp,	rp,	s12,	-,	normal)
-insn(	_add.rp,	rrri,	0x29,	0,	rp,	rp,	rg,	i6,	normal)
+insn(	rp_add,		rrii,	0x28,	0,	rp,	rp,	s12,	-,	normal)
+insn(	_rp_add,	rrri,	0x29,	0,	rp,	rp,	rg,	i6,	normal)
 
 insn(	mul,		rrii,	0x30,	0,	rg,	rg,	s12,	-,	normal)
 insn(	_mul,		rrri,	0x31,	0,	rg,	rg,	rg,	i6,	normal)
