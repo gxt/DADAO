@@ -46,13 +46,13 @@
 	or	%0, %1, 0
 	rp_p2p	%0, %1
 	fo_2fo	%0, %1
-	mov.rv	%0, %1
+	rv_v2v	%0, %1
 	rp_g2p	%0, %1
 	fo_g2f	%0, %1
-	put.rv	%0, %1
+	rv_g2v	%0, %1
 	rp_p2g	%0, %1
 	fo_f2g	%0, %1
-	get.rv	%0, %1")
+	rv_v2g	%0, %1")
 
 (define_insn "dd_ld_<mode>"
   [(set (match_operand:QHSD 0 "rg_class_operand" "= Rg")
