@@ -1,6 +1,15 @@
 #	$1		$2	$3	$4	$5	$6	$7	$8	$9
 #	name		op-type	maj-op	min-op	fa	fb	fc	fd	insn-type
 divert(0)dnl
+
+insn(	or,		rrii,	0x10,	0,	rg,	rg,	u12,	-,	normal)
+insn(	and,		rrii,	0x12,	0,	rg,	rg,	u12,	-,	normal)
+insn(	xor,		rrii,	0x14,	0,	rg,	rg,	u12,	-,	normal)
+
+insn(	_or,		rrri,	0x11,	0,	rg,	rg,	rg,	i6,	normal)
+insn(	_and,		rrri,	0x13,	0,	rg,	rg,	rg,	i6,	normal)
+insn(	_xor,		rrri,	0x15,	0,	rg,	rg,	rg,	i6,	normal)
+
 insn(	add,		rrii,	0x20,	0,	rg,	rg,	s12,	-,	normal)
 insn(	addu,		rrii,	0x22,	0,	rg,	rg,	u12,	-,	normal)
 insn(	sub,		rrii,	0x24,	0,	rg,	rg,	s12,	-,	normal)
@@ -38,14 +47,6 @@ insn(	_slu,		orrr,	0x3F,	1,	op,	rg,	rg,	rg,	normal)
 insn(	_sr,		orrr,	0x3F,	2,	op,	rg,	rg,	rg,	normal)
 insn(	_sru,		orrr,	0x3F,	3,	op,	rg,	rg,	rg,	normal)
 insn(	_not,		orrr,	0x3F,	4,	op,	rg,	rg,	rg,	normal)
-
-insn(	or,		rrii,	0x40,	0,	rg,	rg,	u12,	-,	normal)
-insn(	and,		rrii,	0x42,	0,	rg,	rg,	u12,	-,	normal)
-insn(	xor,		rrii,	0x44,	0,	rg,	rg,	u12,	-,	normal)
-
-insn(	_or,		rrri,	0x41,	0,	rg,	rg,	rg,	i6,	normal)
-insn(	_and,		rrri,	0x43,	0,	rg,	rg,	rg,	i6,	normal)
-insn(	_xor,		rrri,	0x45,	0,	rg,	rg,	rg,	i6,	normal)
 
 insn(	cs_n,		rrrr,	0x60,	0,	rg,	rg,	rg,	rg,	normal)
 insn(	cs_nn,		rrrr,	0x61,	0,	rg,	rg,	rg,	rg,	normal)
