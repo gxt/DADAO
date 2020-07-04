@@ -45,6 +45,11 @@ insn(  _sub,		rrri,	0x25,	0,	rg,	rg,	rg,	i6,	normal)
 insn(	subu,		rrii,	0x26,	0,	rg,	rg,	u12,	-,	normal)
 insn(  _subu,		rrri,	0x27,	0,	rg,	rg,	rg,	i6,	normal)
 
+insn(	cmp,		rrii,	0x30,	0,	rg,	rg,	s12,	-,	normal)
+insn(  _cmp,		rrri,	0x31,	0,	rg,	rg,	rg,	i6,	normal)
+insn(	cmpu,		rrii,	0x32,	0,	rg,	rg,	u12,	-,	normal)
+insn(  _cmpu,		rrri,	0x33,	0,	rg,	rg,	rg,	i6,	normal)
+
 insn(	cs_n,		rrrr,	0x46,	0,	rg,	rg,	rg,	rg,	normal)
 insn(	cs_nn,		rrrr,	0x47,	0,	rg,	rg,	rg,	rg,	normal)
 insn(	cs_z,		rrrr,	0x56,	0,	rg,	rg,	rg,	rg,	normal)
@@ -53,11 +58,6 @@ insn(	cs_p,		rrrr,	0x66,	0,	rg,	rg,	rg,	rg,	normal)
 insn(	cs_np,		rrrr,	0x67,	0,	rg,	rg,	rg,	rg,	normal)
 insn(	cs_od,		rrrr,	0x76,	0,	rg,	rg,	rg,	rg,	normal)
 insn(	cs_ev,		rrrr,	0x77,	0,	rg,	rg,	rg,	rg,	normal)
-
-insn(	cmp,		rrii,	0x70,	0,	rg,	rg,	s12,	-,	normal)
-insn(  _cmp,		rrri,	0x71,	0,	rg,	rg,	rg,	i6,	normal)
-insn(	cmpu,		rrii,	0x72,	0,	rg,	rg,	u12,	-,	normal)
-insn(  _cmpu,		rrri,	0x73,	0,	rg,	rg,	rg,	i6,	normal)
 
 insn(	ldb,		rrii,	0x80,	0,	rg,	rp,	s12,	-,	dref)
 insn(  _ldb,		rrri,	0x81,	0,	rg,	rp,	rg,	i6,	dref)
