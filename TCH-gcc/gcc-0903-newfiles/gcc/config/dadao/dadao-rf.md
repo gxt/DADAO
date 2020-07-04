@@ -16,16 +16,16 @@
 	""
 	"@
 	or	%0, %1, 0
-	<ftfo>_get	%0, %1
-	<ftfo>_put	%0, %1
+	<ftfo>_f2g	%0, %1
+	<ftfo>_g2f	%0, %1
 	<ftfo>_2<ftfo>	%0, %1
-	<ftfo>_put	%0, zero
+	<ftfo>_g2f	%0, zero
 	ldt	%0, %1
 	<ftfo>_ld	%0, %1
 	stt	%1, %0
 	<ftfo>_st	%1, %0
 	seto	%0, %1
-	seto	datao1, %1	\;	<ftfo>_put	%0, datao1")
+	seto	datao1, %1	\;	<ftfo>_g2f	%0, datao1")
 
 (define_insn "add<mode>3"
   [(set        (match_operand:SFDF 0 "rf_class_operand" "= Rf")

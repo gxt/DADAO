@@ -48,10 +48,10 @@
 	fo_2fo	%0, %1
 	mov.rv	%0, %1
 	rp_g2p	%0, %1
-	fo_put	%0, %1
+	fo_g2f	%0, %1
 	put.rv	%0, %1
 	rp_p2g	%0, %1
-	fo_get	%0, %1
+	fo_f2g	%0, %1
 	get.rv	%0, %1")
 
 (define_insn "dd_ld_<mode>"
