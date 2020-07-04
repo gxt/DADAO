@@ -563,7 +563,7 @@ void dadao_md_assemble (char *str)
 
 	insn_alt[++insn_alt_i] = '\0';
 	instruction = (struct dadao_opcode *) hash_find (dadao_opcode_hash, &insn_alt[1]);
-	if (instruction == NULL) {
+	if ((insn_alt[1] == '_') || (instruction == NULL)) {
 		as_bad_where(__FILE__, __LINE__, "(%s %s) unknown insn", &insn_alt[1], operands);
 		return;
 	}
