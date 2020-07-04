@@ -3,7 +3,6 @@
 divert(0)dnl
 
 insn(	nop,		o000,	0x00,	0x00,	op,	-,	-,	-,	normal)
-insn(	swym,		oiii,	0x00,	0x01,	op,	u18,	-,	-,	normal)
 insn(	mov.rp,		orr0,	0x00,	0x10,	op,	rp,	rp,	-,	normal)
 insn(	mov.rv,		orr0,	0x00,	0x11,	op,	rv,	rv,	-,	normal)
 insn(	put.rp,		orr0,	0x00,	0x12,	op,	rp,	rg,	-,	normal)
