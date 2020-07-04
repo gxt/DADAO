@@ -111,13 +111,6 @@ insn(  _call,		rrii,	0xC9,	0,	rg,	rp,	s12,	-,	jsr)
 insn(	jump,		iiii,	0xD8,	0,	s24,	-,	-,	-,	branch)
 insn(  _jump,		rrii,	0xD9,	0,	rg,	rp,	s12,	-,	branch)
 
-insn(	fcmp,		orrr,	0xDB,	1,	op,	rg,	rf,	rf,	normal)
-insn(	fun,		orrr,	0xDB,	2,	op,	rg,	rf,	rf,	normal)
-insn(	feql,		orrr,	0xDB,	3,	op,	rg,	rf,	rf,	normal)
-insn(	fcmpe,		orrr,	0xDB,	17,	op,	rg,	rf,	rf,	normal)
-insn(	fune,		orrr,	0xDB,	18,	op,	rg,	rf,	rf,	normal)
-insn(	feqle,		orrr,	0xDB,	19,	op,	rg,	rf,	rf,	normal)
-
 insn(	ft_f2g,		orr0,	0x0A,	0x00,	op,	rg,	rf,	-,	normal)
 insn(	ft_g2f,		orr0,	0x0A,	0x01,	op,	rf,	rg,	-,	normal)
 insn(	ft_2ft,		orr0,	0x0A,	0x02,	op,	rf,	rf,	-,	normal)
