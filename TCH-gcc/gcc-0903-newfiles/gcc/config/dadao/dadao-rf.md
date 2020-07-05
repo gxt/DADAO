@@ -7,9 +7,6 @@
 ;; Note that we move around the float as a collection of bits; no
 ;; conversion to double.
 
-(define_mode_iterator	SFDF	[SF DF])
-(define_mode_attr	ftfo	[(SF "ft") (DF "fo")])
-
 (define_insn "mov<mode>"
  [(set (match_operand:SFDF 0 "nonimmediate_operand" "= Rg, Rg, Rf, Rf, Rf, Rg, Rf,  m,  m, ??Rg, ??Rf")
        (match_operand:SFDF 1 "general_operand"      "  Rg, Rf, Rg, Rf, Gz,  m,  m, Rg, Rf,    F,    F"))]
