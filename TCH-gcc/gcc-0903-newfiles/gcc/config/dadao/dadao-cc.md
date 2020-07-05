@@ -123,22 +123,12 @@
 	""
 	"br_<ccuu_type_insn>	%1, %0")
 
-(define_insn "*br_fp"
+(define_insn "*br_ccff"
   [(set (pc)
     (if_then_else
-      (match_operator 1 "dadao_comparison_operator"
+      (match_operator 1 "float_comparison_operator"
         [(match_operand:CCFF 2 "rg_class_operand" "Rg") (const_int 0)])
       (label_ref (match_operand 0 "" ""))
       (pc)))]
 	""
 	"br_%d1	%2, %0")
-
-(define_insn "*br_fp_inverted"
-  [(set (pc)
-    (if_then_else
-      (match_operator 1 "dadao_comparison_operator"
-        [(match_operand:CCFF 2 "rg_class_operand" "Rg") (const_int 0)])
-      (pc)
-      (label_ref (match_operand 0 "" ""))))]
-	"REVERSIBLE_CC_MODE (GET_MODE (operands[2]))"
-	"br_%D1	%2, %0")
