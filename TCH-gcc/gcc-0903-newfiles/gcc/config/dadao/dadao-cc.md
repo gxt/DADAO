@@ -60,10 +60,13 @@
 {
 	enum rtx_code code = GET_CODE (operands[1]);
 
-	operands[4] = dadao_gen_compare_reg (code,
-			XEXP (operands[1], 0), XEXP (operands[1], 1));
-	operands[5] = gen_rtx_COMPARE (GET_MODE (operands[4]),
-			XEXP (operands[1], 0), XEXP (operands[1], 1));
+	if ((code == LTU) || (code == LEU) || (code == GTU) || (code == GEU)) {
+		operands[4] = gen_reg_rtx(CCUUmode);
+		operands[5] = gen_rtx_COMPARE (CCUUmode, XEXP (operands[1], 0), XEXP (operands[1], 1));
+	} else {
+		operands[4] = gen_reg_rtx(CCSSmode);
+		operands[5] = gen_rtx_COMPARE (CCSSmode, XEXP (operands[1], 0), XEXP (operands[1], 1));
+	}
 
 	operands[1] = gen_rtx_fmt_ee (code, VOIDmode, operands[4], const0_rtx);
 })
@@ -71,20 +74,20 @@
 (define_insn "*movdicc_<ccss_type_insn>"
   [(set (match_operand:DI            0 "rg_class_operand" "= Rg")
     (if_then_else:DI
-      (CCSS_TYPE (match_operand:CCSS 2 "rg_class_operand" "  Rg") (const_int 0))
-      (match_operand:DI              1 "rg_class_operand" "  Rg")
+      (CCSS_TYPE (match_operand:CCSS 1 "rg_class_operand" "  Rg") (const_int 0))
+      (match_operand:DI              2 "rg_class_operand" "  Rg")
       (match_operand:DI              3 "rg_class_operand" "  Rg")))]
 	""
-	"cs_<ccss_type_insn>	%0, %2, %1, %3")
+	"cs_<ccss_type_insn>	%0, %1, %2, %3")
 
 (define_insn "*movdicc_<ccuu_type_insn>"
   [(set (match_operand:DI            0 "rg_class_operand" "= Rg")
     (if_then_else:DI
-      (CCUU_TYPE (match_operand:CCUU 2 "rg_class_operand" "  Rg") (const_int 0))
-      (match_operand:DI              1 "rg_class_operand" "  Rg")
+      (CCUU_TYPE (match_operand:CCUU 1 "rg_class_operand" "  Rg") (const_int 0))
+      (match_operand:DI              2 "rg_class_operand" "  Rg")
       (match_operand:DI              3 "rg_class_operand" "  Rg")))]
 	""
-	"cs_<ccuu_type_insn>	%0, %2, %1, %3")
+	"cs_<ccuu_type_insn>	%0, %1, %2, %3")
 
 (define_expand "cbranchdi4"
   [(set (match_dup 4)
@@ -96,7 +99,9 @@
                    (pc)))]
 	""
 {
-	if ((GET_CODE (operands[0]) == LTU) || (GET_CODE (operands[0]) == LEU) || (GET_CODE (operands[0]) == GTU) || (GET_CODE (operands[0]) == GEU)) {
+	enum rtx_code code = GET_CODE (operands[0]);
+
+	if ((code == LTU) || (code == LEU) || (code == GTU) || (code == GEU)) {
 		operands[4] = gen_reg_rtx(CCUUmode);
 		operands[5] = gen_rtx_fmt_ee (COMPARE, CCUUmode, operands[1], operands[2]);
 	} else {
