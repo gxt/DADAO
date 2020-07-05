@@ -62,9 +62,8 @@
             (match_test "satisfies_constraint_Js(op)"))))
 
 ;; Return 1 if OP is a valid comparison operator for "cbranch" instructions.
-;; LE and GE are further lowered by the cbranchdf4 pattern.
 (define_predicate "float_comparison_operator"
-  (match_code "ne, eq, le, ge, lt, gt, ordered, unordered"))
+  (match_code "ne, eq, le, ge, lt, gt, ordered, unordered, ltgt"))
 
 ;; Like comparison_operator, but only true if this comparison operator is
 ;; applied to a valid mode.  Needed to avoid jump.c generating invalid

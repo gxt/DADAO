@@ -113,38 +113,24 @@
 	""
 	"<ftfo>c_<ccff_type_insn>	%0, %1, %2")
 
-
-(define_expand "cbranchdf4"
+(define_expand "cbranch<mode>4"
   [(set (match_dup 4)
-        (match_op_dup 5
-         [(match_operand:DF 1 "rf_class_operand" "")
-          (match_operand:DF 2 "rf_class_operand" "")]))
+        (match_op_dup 5 [(match_operand:SFDF 1 "rf_class_operand" "")
+                         (match_operand:SFDF 2 "rf_class_operand" "")]))
    (set (pc)
-        (if_then_else
-              (match_operator 0 "float_comparison_operator"
-               [(match_dup 4)
-                (const_int 0)])
-              (label_ref (match_operand 3 "" ""))
-              (pc)))]
-  ""
-  "
+        (if_then_else    (match_operator     0 "float_comparison_operator"
+                        [(match_dup 4) (const_int 0)])
+          (label_ref     (match_operand      3 "" ""))
+          (pc)))]
+	""
+	"
 {
-  /* The head comment of optabs.c:can_compare_p says we're required to
-     implement this, so we have to clean up the mess here.  */
-  if (GET_CODE (operands[0]) == LE || GET_CODE (operands[0]) == GE)
-    {
-      enum rtx_code ltgt_code = GET_CODE (operands[0]) == LE ? LT : GT;
-      emit_cmp_and_jump_insns (operands[1], operands[2], ltgt_code, NULL_RTX,
-			       DFmode, 0, operands[3]);
-      emit_cmp_and_jump_insns (operands[1], operands[2], EQ, NULL_RTX,
-			       DFmode, 0, operands[3]);
-      DONE;
-    }
+	if (GET_CODE (operands[0]) == LTGT) {
+		emit_cmp_and_jump_insns (operands[1], operands[2], LT, NULL_RTX, GET_MODE(operands[1]), 0, operands[3]);
+		emit_cmp_and_jump_insns (operands[1], operands[2], GT, NULL_RTX, GET_MODE(operands[1]), 0, operands[3]);
+		DONE;
+	}
 
-  operands[4] = dadao_gen_compare_reg (GET_CODE (operands[0]),
-                                      operands[1], operands[2]);
-  operands[5] = gen_rtx_fmt_ee (GET_CODE (operands[0]),
-                                GET_MODE (operands[4]),
-                                operands[1], operands[2]);
+	operands[4] = dadao_gen_compare_reg (GET_CODE(operands[0]), operands[1], operands[2]);
+	operands[5] = gen_rtx_fmt_ee (GET_CODE(operands[0]), GET_MODE(operands[4]), operands[1], operands[2]);
 }")
-
