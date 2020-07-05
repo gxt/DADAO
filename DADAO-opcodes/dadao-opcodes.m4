@@ -16,9 +16,10 @@ insn(  _not,		orrr,	0x00,	0x27,	op,	rg,	rg,	rg,	normal)
 insn(	mul,		rrii,	0x02,	0,	rg,	rg,	s12,	-,	normal)
 insn(  _mul,		rrri,	0x03,	0,	rg,	rg,	rg,	i6,	normal)
 
-insn(	mulu,		rrrr,	0x05,	0,	rg,	rg,	rg,	rg,	normal)
-insn(	div,		rrrr,	0x06,	0,	rg,	rg,	rg,	rg,	normal)
-insn(	divu,		rrrr,	0x07,	0,	rg,	rg,	rg,	rg,	normal)
+insn(	mulu,		rrrr,	0x04,	0,	rg,	rg,	rg,	rg,	normal)
+insn(	div,		rrrr,	0x05,	0,	rg,	rg,	rg,	rg,	normal)
+insn(	divu,		rrrr,	0x06,	0,	rg,	rg,	rg,	rg,	normal)
+insn(	remu,		rrrr,	0x07,	0,	rg,	rg,	rg,	rg,	normal)
 
 insn(	or,		rrii,	0x10,	0,	rg,	rg,	u12,	-,	normal)
 insn(  _or,		rrri,	0x11,	0,	rg,	rg,	rg,	i6,	normal)
