@@ -122,7 +122,7 @@
   [(set (pc)
     (if_then_else
       (match_operator 1 "dadao_comparison_operator"
-        [(match_operand 2 "dadao_reg_ccfp_operand" "Rg") (const_int 0)])
+        [(match_operand:CCFF 2 "rg_class_operand" "Rg") (const_int 0)])
       (label_ref (match_operand 0 "" ""))
       (pc)))]
 	""
@@ -132,7 +132,7 @@
   [(set (pc)
     (if_then_else
       (match_operator 1 "dadao_comparison_operator"
-        [(match_operand 2 "dadao_reg_ccfp_operand" "Rg") (const_int 0)])
+        [(match_operand:CCFF 2 "rg_class_operand" "Rg") (const_int 0)])
       (pc)
       (label_ref (match_operand 0 "" ""))))]
 	"REVERSIBLE_CC_MODE (GET_MODE (operands[2]))"

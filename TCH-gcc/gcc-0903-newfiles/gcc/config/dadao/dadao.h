@@ -346,7 +346,7 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 
 #define SELECT_CC_MODE(OP, X, Y)		dadao_select_cc_mode (OP, X, Y)
 
-#define REVERSIBLE_CC_MODE(MODE)		dadao_reversible_cc_mode (MODE)
+#define REVERSIBLE_CC_MODE(MODE)		1
 
 /* XXX gccint 18.16 Node: Describing Relative Costs of Operations */
 

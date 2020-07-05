@@ -632,34 +632,16 @@ static bool dd_legitimate_constant_p (machine_mode mode ATTRIBUTE_UNUSED, rtx x)
 /* SELECT_CC_MODE.  */
 machine_mode dadao_select_cc_mode (RTX_CODE op, rtx x, rtx y ATTRIBUTE_UNUSED)
 {
-  /* We use CCSSmode, CCUUmode, CC_FPmode, CC_FPEQmode and CC_FUNmode to
-     output different compare insns.  Note that we do not check the
-     validity of the comparison here.  */
+  /* We use CCSSmode, CCUUmode, CCFFmode to output different compare insns.
+     Note that we do not check the validity of the comparison here.  */
 
   if (GET_MODE_CLASS (GET_MODE (x)) == MODE_FLOAT)
-    {
-      if (op == ORDERED || op == UNORDERED || op == UNGE
-	  || op == UNGT || op == UNLE || op == UNLT)
-	return CC_FUNmode;
-
-      if (op == EQ || op == NE)
-	return CC_FPEQmode;
-
-      return CC_FPmode;
-    }
+    return CCFFmode;
 
   if (op == GTU || op == LTU || op == GEU || op == LEU)
     return CCUUmode;
 
   return CCSSmode;
-}
-
-/* REVERSIBLE_CC_MODE.  */
-int dadao_reversible_cc_mode (machine_mode mode)
-{
-  /* That is, all integer and the EQ, NE, ORDERED and UNORDERED float
-     compares.  */
-  return mode != CC_FPmode;
 }
 
 /* XXX gccint 18.16 Node: Describing Relative Costs of Operations */
@@ -793,12 +775,6 @@ static void dd_print_operand (FILE *stream, rtx x, int code)
     case 'd':
     case 'D':
       dadao_output_condition (stream, x, (code == 'D'));
-      return;
-
-    case 'e':
-      /* Output an extra "e" to make fcmpe, fune.  */
-      if (TARGET_FCMP_EPSILON)
-	fprintf (stream, "e");
       return;
 
     case 'r':
@@ -1504,18 +1480,6 @@ dadao_output_condition (FILE *stream, const_rtx x, int reversed)
 #undef CCEND
 #define CCEND {UNKNOWN, NULL, NULL}
 
-  static const struct cc_conv cc_fun_convs[]
-    = {{ORDERED, "Z", "P"},
-       {UNORDERED, "P", "Z"},
-       CCEND};
-  static const struct cc_conv cc_fp_convs[]
-    = {{GT, "P", NULL},
-       {LT, "N", NULL},
-       CCEND};
-  static const struct cc_conv cc_fpeq_convs[]
-    = {{NE, "Z", "P"},
-       {EQ, "P", "Z"},
-       CCEND};
   static const struct cc_conv cc_uns_convs[]
     = {{GEU, "NN", "N"},
        {GTU, "P", "NP"},
@@ -1530,6 +1494,16 @@ dadao_output_condition (FILE *stream, const_rtx x, int reversed)
        {LE, "NP", "P"},
        {LT, "N", "NN"},
        CCEND};
+  static const struct cc_conv cc_ff_convs[]
+    = {{ORDERED, "P", "NP"},
+       {UNORDERED, "P", "NP"},
+       {NE, "P", "NP"},
+       {EQ, "P", "NP"},
+       {GE, "P", "NP"},
+       {GT, "P", "NP"},
+       {LE, "P", "NP"},
+       {LT, "P", "NP"},
+       CCEND};
   static const struct cc_conv cc_di_convs[]
     = {{NE, "NZ", "Z"},
        {EQ, "Z", "NZ"},
@@ -1543,11 +1517,9 @@ dadao_output_condition (FILE *stream, const_rtx x, int reversed)
 #undef CCEND
 
   static const struct cc_type_conv cc_convs[]
-    = {{E_CC_FUNmode, cc_fun_convs},
-       {E_CC_FPmode, cc_fp_convs},
-       {E_CC_FPEQmode, cc_fpeq_convs},
-       {E_CCUUmode, cc_uns_convs},
+    = {{E_CCUUmode, cc_uns_convs},
        {E_CCSSmode, cc_signed_convs},
+       {E_CCFFmode, cc_ff_convs},
        {E_DImode, cc_di_convs}};
 
   size_t i;

@@ -109,26 +109,13 @@
 	""
 	"ft_2fo	%0, %1")
 
-(define_insn "*fcmp"
-  [(set            (match_operand:CC_FP 0 "rg_class_operand" "= Rg")
-    (compare:CC_FP (match_operand:DF    1 "rf_class_operand" "  Rf")
-                   (match_operand:DF    2 "rf_class_operand" "  Rf")))]
+(define_insn "*fcmp_<ccff_type_insn>_<mode>"
+  [(set        (match_operand:CCFF 0 "rg_class_operand" "= Rg")
+    (CCFF_TYPE (match_operand:SFDF 1 "rf_class_operand" "  Rf")
+               (match_operand:SFDF 2 "rf_class_operand" "  Rf")))]
 	""
-	"fcmp%e0	%0, %1, %2")
+	"<ftfo>c_<ccff_type_insn>	%0, %1, %2")
 
-(define_insn "*feql"
-  [(set              (match_operand:CC_FPEQ 0 "rg_class_operand" "= Rg")
-    (compare:CC_FPEQ (match_operand:DF      1 "rf_class_operand" "  Rf")
-                     (match_operand:DF      2 "rf_class_operand" "  Rf")))]
-	""
-	"feql%e0	%0, %1, %2")
-
-(define_insn "*fun"
-  [(set             (match_operand:CC_FUN 0 "rg_class_operand" "= Rg")
-    (compare:CC_FUN (match_operand:DF     1 "rf_class_operand" "  Rf")
-                    (match_operand:DF     2 "rf_class_operand" "  Rf")))]
-	""
-	"fun%e0	%0, %1, %2")
 
 (define_expand "cbranchdf4"
   [(set (match_dup 4)
@@ -159,7 +146,7 @@
 
   operands[4] = dadao_gen_compare_reg (GET_CODE (operands[0]),
                                       operands[1], operands[2]);
-  operands[5] = gen_rtx_fmt_ee (COMPARE,
+  operands[5] = gen_rtx_fmt_ee (GET_CODE (operands[0]),
                                 GET_MODE (operands[4]),
                                 operands[1], operands[2]);
 }")

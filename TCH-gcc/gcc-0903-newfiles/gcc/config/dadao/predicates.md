@@ -89,28 +89,18 @@
      dadao_output_condition.  */
   return
     mode == VOIDmode
-    || (mode == CC_FUNmode
-	&& (code == ORDERED || code == UNORDERED))
-    || (mode == CC_FPmode
-	&& (code == GT || code == LT))
-    || (mode == CC_FPEQmode
-	&& (code == NE || code == EQ))
     || (mode == CCUUmode
 	&& (code == GEU || code == GTU || code == LEU || code == LTU))
     || (mode == CCSSmode
 	&& (code == NE || code == EQ || code == GE || code == GT
 	    || code == LE || code == LT))
+    || (mode == CCFFmode
+	&& (code == ORDERED || code == UNORDERED || code == NE || code == EQ
+	    || code == GE || code == GT || code == LE || code == LT))
     || (mode == DImode
 	&& (code == NE || code == EQ || code == GE || code == GT
 	    || code == LE || code == LT || code == LEU || code == GTU));
 })
-
-;; True if this is a register with a condition-code mode.
-(define_predicate "dadao_reg_ccfp_operand"
-  (and (match_operand 0 "rg_class_operand")
-	 (ior (match_test "GET_MODE (op) == CC_FPmode")
-	      (ior (match_test "GET_MODE (op) == CC_FPEQmode")
-		   (match_test "GET_MODE (op) == CC_FUNmode")))))
 
 ;; True if this is an address_operand or a symbolic operand.
 
