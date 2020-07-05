@@ -127,20 +127,6 @@
     }
 })
 
-;; True if this is a register or 0 (int or float).
-
-(define_predicate "dadao_rf_or_0_operand"
-  (ior
-   (match_operand 0 "rf_class_operand")
-   (ior
-    (and (match_code "const_int")
-	 (match_test "op == const0_rtx"))
-    (and
-     (match_code "const_double")
-     ;; FIXME: Is mode calculation necessary and correct?
-     (match_test
-      "op == CONST0_RTX (mode == VOIDmode ? GET_MODE (op) : mode)")))))
-
 ;; True if this is a memory address, possibly strictly.
 ;; See also comment above the "*call_real" pattern.
 
