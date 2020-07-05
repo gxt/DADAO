@@ -118,19 +118,13 @@
         (match_op_dup 5 [(match_operand:SFDF 1 "rf_class_operand" "")
                          (match_operand:SFDF 2 "rf_class_operand" "")]))
    (set (pc)
-        (if_then_else    (match_operator     0 "float_comparison_operator"
+        (if_then_else    (match_operator     0 "ccff_comparison_operator"
                         [(match_dup 4) (const_int 0)])
           (label_ref     (match_operand      3 "" ""))
           (pc)))]
 	""
 	"
 {
-	if (GET_CODE (operands[0]) == LTGT) {
-		emit_cmp_and_jump_insns (operands[1], operands[2], LT, NULL_RTX, GET_MODE(operands[1]), 0, operands[3]);
-		emit_cmp_and_jump_insns (operands[1], operands[2], GT, NULL_RTX, GET_MODE(operands[1]), 0, operands[3]);
-		DONE;
-	}
-
 	operands[4] = gen_reg_rtx (CCFFmode);
 	operands[5] = gen_rtx_fmt_ee (GET_CODE(operands[0]), CCFFmode, operands[1], operands[2]);
 }")

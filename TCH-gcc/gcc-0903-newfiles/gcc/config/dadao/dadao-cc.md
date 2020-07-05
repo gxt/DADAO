@@ -126,7 +126,7 @@
 (define_insn "*br_ccff"
   [(set (pc)
     (if_then_else
-      (match_operator 1 "float_comparison_operator"
+      (match_operator 1 "ccff_comparison_operator"
         [(match_operand:CCFF 2 "rg_class_operand" "Rg") (const_int 0)])
       (label_ref (match_operand 0 "" ""))
       (pc)))]
