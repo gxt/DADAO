@@ -131,6 +131,6 @@
 		DONE;
 	}
 
-	operands[4] = dadao_gen_compare_reg (GET_CODE(operands[0]), operands[1], operands[2]);
-	operands[5] = gen_rtx_fmt_ee (GET_CODE(operands[0]), GET_MODE(operands[4]), operands[1], operands[2]);
+	operands[4] = gen_reg_rtx (CCFFmode);
+	operands[5] = gen_rtx_fmt_ee (GET_CODE(operands[0]), CCFFmode, operands[1], operands[2]);
 }")
