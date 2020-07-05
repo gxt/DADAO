@@ -113,6 +113,16 @@
 	""
 	"<ftfo>c_<ccff_type_insn>	%0, %1, %2")
 
+(define_insn "*br_ccff"
+  [(set (pc)
+    (if_then_else
+      (match_operator 1 "ccff_comparison_operator"
+        [(match_operand:CCFF 2 "rg_class_operand" "Rg") (const_int 0)])
+      (label_ref (match_operand 0 "" ""))
+      (pc)))]
+	""
+	"br_p	%2, %0")
+
 (define_expand "cbranch<mode>4"
   [(set (match_dup 4)
         (match_op_dup 5 [(match_operand:SFDF 1 "rf_class_operand" "")

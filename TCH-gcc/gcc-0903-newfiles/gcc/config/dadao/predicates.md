@@ -65,42 +65,6 @@
 (define_predicate "ccff_comparison_operator"
   (match_code "ne, eq, le, ge, lt, gt, ordered, unordered"))
 
-;; Like comparison_operator, but only true if this comparison operator is
-;; applied to a valid mode.  Needed to avoid jump.c generating invalid
-;; code with -ffast-math (gcc.dg/20001228-1.c).
-
-(define_predicate "dadao_comparison_operator"
-  (match_operand 0 "comparison_operator")
-{
-  RTX_CODE code = GET_CODE (op);
-
-  /* Comparison operators usually don't have a mode, but let's try and get
-     one anyway for the day that changes.  */
-  if (mode == VOIDmode)
-    mode = GET_MODE (op);
-
-  /* Get the mode from the first operand if we don't have one.
-     Also the reason why we do this in C.  */
-  if (mode == VOIDmode)
-    mode = GET_MODE (XEXP (op, 0));
-
-  /* FIXME: This needs to be kept in sync with the tables in
-     dadao_output_condition.  */
-  return
-    mode == VOIDmode
-    || (mode == CCUUmode
-	&& (code == GEU || code == GTU || code == LEU || code == LTU))
-    || (mode == CCSSmode
-	&& (code == NE || code == EQ || code == GE || code == GT
-	    || code == LE || code == LT))
-    || (mode == CCFFmode
-	&& (code == ORDERED || code == UNORDERED || code == NE || code == EQ
-	    || code == GE || code == GT || code == LE || code == LT))
-    || (mode == DImode
-	&& (code == NE || code == EQ || code == GE || code == GT
-	    || code == LE || code == LT || code == LEU || code == GTU));
-})
-
 ;; True if this is an address_operand or a symbolic operand.
 
 (define_predicate "dadao_symbolic_or_address_operand"

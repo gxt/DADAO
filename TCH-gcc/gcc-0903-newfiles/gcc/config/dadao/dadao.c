@@ -64,7 +64,6 @@ static int dadao_output_destination_register;
 static void dadao_output_shiftvalue_op_from_str
   (FILE *, const char *, int64_t);
 static void dadao_output_shifted_value (FILE *, int64_t);
-static void dadao_output_condition (FILE *, const_rtx, int);
 static void dadao_output_octa (FILE *, int64_t, int);
 static void dadao_emit_sp_add (HOST_WIDE_INT offset);
 
@@ -772,11 +771,6 @@ static void dd_print_operand (FILE *stream, rtx x, int code)
       dadao_output_shiftvalue_op_from_str (stream, "set", (uint64_t) dadao_intval (x));
       return;
 
-    case 'd':
-    case 'D':
-      dadao_output_condition (stream, x, (code == 'D'));
-      return;
-
     case 'r':
       /* Store the register to output a constant to.  */
       if (! REG_P (x))
@@ -1445,113 +1439,6 @@ dadao_output_shifted_value (FILE *stream, int64_t value)
 
   /* No bits set?  Then it must have been zero.  */
   fprintf (stream, "0");
-}
-
-/* Output an DADAO condition name corresponding to an operator
-   and operands:
-   (comparison_operator [(comparison_operator ...) (const_int 0)])
-   which means we have to look at *two* operators.
-
-   The argument "reversed" refers to reversal of the condition (not the
-   same as swapping the arguments).  */
-
-static void
-dadao_output_condition (FILE *stream, const_rtx x, int reversed)
-{
-  struct cc_conv
-  {
-    RTX_CODE cc;
-
-    /* The normal output cc-code.  */
-    const char *const normal;
-
-    /* The reversed cc-code, or NULL if invalid.  */
-    const char *const reversed;
-  };
-
-  struct cc_type_conv
-  {
-    machine_mode cc_mode;
-
-    /* Terminated with {UNKNOWN, NULL, NULL} */
-    const struct cc_conv *const convs;
-  };
-
-#undef CCEND
-#define CCEND {UNKNOWN, NULL, NULL}
-
-  static const struct cc_conv cc_uns_convs[]
-    = {{GEU, "NN", "N"},
-       {GTU, "P", "NP"},
-       {LEU, "NP", "P"},
-       {LTU, "N", "NN"},
-       CCEND};
-  static const struct cc_conv cc_signed_convs[]
-    = {{NE, "NZ", "Z"},
-       {EQ, "Z", "NZ"},
-       {GE, "NN", "N"},
-       {GT, "P", "NP"},
-       {LE, "NP", "P"},
-       {LT, "N", "NN"},
-       CCEND};
-  static const struct cc_conv cc_ff_convs[]
-    = {{ORDERED, "P", "NP"},
-       {UNORDERED, "P", "NP"},
-       {NE, "P", "NP"},
-       {EQ, "P", "NP"},
-       {GE, "P", "NP"},
-       {GT, "P", "NP"},
-       {LE, "P", "NP"},
-       {LT, "P", "NP"},
-       CCEND};
-  static const struct cc_conv cc_di_convs[]
-    = {{NE, "NZ", "Z"},
-       {EQ, "Z", "NZ"},
-       {GE, "NN", "N"},
-       {GT, "P", "NP"},
-       {LE, "NP", "P"},
-       {LT, "N", "NN"},
-       {GTU, "NZ", "Z"},
-       {LEU, "Z", "NZ"},
-       CCEND};
-#undef CCEND
-
-  static const struct cc_type_conv cc_convs[]
-    = {{E_CCUUmode, cc_uns_convs},
-       {E_CCSSmode, cc_signed_convs},
-       {E_CCFFmode, cc_ff_convs},
-       {E_DImode, cc_di_convs}};
-
-  size_t i;
-  int j;
-
-  machine_mode mode = GET_MODE (XEXP (x, 0));
-  RTX_CODE cc = GET_CODE (x);
-
-  for (i = 0; i < ARRAY_SIZE (cc_convs); i++)
-    {
-      if (mode == cc_convs[i].cc_mode)
-	{
-	  for (j = 0; cc_convs[i].convs[j].cc != UNKNOWN; j++)
-	    if (cc == cc_convs[i].convs[j].cc)
-	      {
-		const char *dadao_cc
-		  = (reversed ? cc_convs[i].convs[j].reversed
-		     : cc_convs[i].convs[j].normal);
-
-		if (dadao_cc == NULL)
-		  fatal_insn ("DADAO Internal: Trying to output invalidly\
- reversed condition:", x);
-
-		fprintf (stream, "%s", dadao_cc);
-		return;
-	      }
-
-	  fatal_insn ("DADAO Internal: What's the CC of this?", x);
-	}
-    }
-
-  fatal_insn ("DADAO Internal: What is the CC of this?", x);
 }
 
 /* Return the bit-value for a const_int or const_double.  */
