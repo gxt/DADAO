@@ -96,8 +96,13 @@
                    (pc)))]
 	""
 {
-	operands[4] = dadao_gen_compare_reg (GET_CODE (operands[0]), operands[1], operands[2]);
-	operands[5] = gen_rtx_fmt_ee (COMPARE, GET_MODE (operands[4]), operands[1], operands[2]);
+	if ((GET_CODE (operands[0]) == LTU) || (GET_CODE (operands[0]) == LEU) || (GET_CODE (operands[0]) == GTU) || (GET_CODE (operands[0]) == GEU)) {
+		operands[4] = gen_reg_rtx(CCUUmode);
+		operands[5] = gen_rtx_fmt_ee (COMPARE, CCUUmode, operands[1], operands[2]);
+	} else {
+		operands[4] = gen_reg_rtx(CCSSmode);
+		operands[5] = gen_rtx_fmt_ee (COMPARE, CCSSmode, operands[1], operands[2]);
+	}
 })
 
 (define_insn "*br_ss_<ccss_type_insn>"
