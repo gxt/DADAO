@@ -7,6 +7,24 @@
 ;; Note that we move around the float as a collection of bits; no
 ;; conversion to double.
 
+(define_insn "mov_rr_ft"
+  [(set (match_operand:SI 0 "register_operand" "= Rf, Rg")
+        (match_operand:SI 1 "register_operand" "  Rg, Rf"))]
+	"REGNO_REG_CLASS(REGNO(operands[0])) == FLOATING_REGS ||
+	 REGNO_REG_CLASS(REGNO(operands[1])) == FLOATING_REGS"
+	"@
+	ft_g2f	%0, %1
+	ft_f2g	%0, %1")
+
+(define_insn "mov_rr_fo"
+  [(set (match_operand:DI 0 "register_operand" "= Rf, Rg")
+        (match_operand:DI 1 "register_operand" "  Rg, Rf"))]
+	"REGNO_REG_CLASS(REGNO(operands[0])) == FLOATING_REGS ||
+	 REGNO_REG_CLASS(REGNO(operands[1])) == FLOATING_REGS"
+	"@
+	fo_g2f	%0, %1
+	fo_f2g	%0, %1")
+
 (define_insn "mov<mode>"
  [(set (match_operand:SFDF 0 "nonimmediate_operand" "= Rg, Rg, Rf, Rf, Rf, Rg, Rf,  m,  m, ??Rg, ??Rf")
        (match_operand:SFDF 1 "general_operand"      "  Rg, Rf, Rg, Rf, Gz,  m,  m, Rg, Rf,    F,    F"))]
