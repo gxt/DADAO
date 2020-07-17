@@ -39,16 +39,13 @@
 
 ;; TODO: are there rp2rf, rf2rv, rv2rs, ... requirements?
 (define_insn "mov<mode>"
-  [(set (match_operand:QHSD 0 "register_operand" "= Rg, Rp, Rv, Rp, Rv, Rg, Rg")
-        (match_operand:QHSD 1 "register_operand" "  Rg, Rp, Rv, Rg, Rg, Rp, Rv"))]
+  [(set (match_operand:QHSD 0 "register_operand" "= Rg, Rv, Rv, Rg")
+        (match_operand:QHSD 1 "register_operand" "  Rg, Rv, Rg, Rv"))]
 	""
 	"@
 	or	%0, %1, 0
-	rp_p2p	%0, %1
 	rv_v2v	%0, %1
-	rp_g2p	%0, %1
 	rv_g2v	%0, %1
-	rp_p2g	%0, %1
 	rv_v2g	%0, %1")
 
 (define_insn "dd_ld_<mode>"
