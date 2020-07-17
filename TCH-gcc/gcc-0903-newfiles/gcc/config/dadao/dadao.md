@@ -30,6 +30,7 @@
 (include "dadao-rg.md")
 (include "dadao-rp.md")
 (include "dadao-rf.md")
+(include "dadao-rv.md")
 (include "dadao-cc.md")
 
 (define_insn "nop"
@@ -39,14 +40,10 @@
 
 ;; TODO: are there rp2rf, rf2rv, rv2rs, ... requirements?
 (define_insn "mov<mode>"
-  [(set (match_operand:QHSD 0 "register_operand" "= Rg, Rv, Rv, Rg")
-        (match_operand:QHSD 1 "register_operand" "  Rg, Rv, Rg, Rv"))]
+  [(set (match_operand:QHSD 0 "register_operand" "= Rg")
+        (match_operand:QHSD 1 "register_operand" "  Rg"))]
 	""
-	"@
-	or	%0, %1, 0
-	rv_v2v	%0, %1
-	rv_g2v	%0, %1
-	rv_v2g	%0, %1")
+	"or	%0, %1, 0")
 
 (define_insn "dd_ld_<mode>"
   [(set (match_operand:QHSD 0 "rg_class_operand" "= Rg")
