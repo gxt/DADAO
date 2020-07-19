@@ -7,17 +7,6 @@
 ;; The original PO technology requires these to be ordered by speed,
 ;; so that assigner will pick the fastest.
 
-;; See file "rtl.def" for documentation on define_insn, match_*, et al.
-
-;; Uses of UNSPEC in this file:
-;; UNSPEC_VOLATILE:
-;;
-;;	1	nonlocal_goto_receiver
-;;
-
-;; The order of insns is as in Node: Standard Names, with smaller modes
-;; before bigger modes.
-
 (define_constants
   [(DD_RA_REG		126)
    (DADAO_fp_rO_OFFSET	-24)]
@@ -243,9 +232,6 @@
      for fear that middle-end will legitimize it or replace the address
      using temporary registers (which are not revived at this point).  */
   operands[1] = frame_pointer_rtx;
-
-  /* Mark this function as containing a landing-pad.  */
-  cfun->machine->has_landing_pad = 1;
 }")
 
 ;; GCC can insist on using saved registers to keep the slot address in

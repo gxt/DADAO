@@ -37,11 +37,6 @@
 /* This file should be included last.  */
 #include "target-def.h"
 
-/* We'd need a current_function_has_landing_pad.  It's marked as such when
-   a nonlocal_goto_receiver is expanded.  Not just a C++ thing, but
-   mostly.  */
-#define DADAO_CFUN_HAS_LANDING_PAD (cfun->machine->has_landing_pad != 0)
-
 /* For the default ABI, we rename registers at output-time to fill the gap
    between the (statically partitioned) saved registers and call-clobbered
    registers.  In effect this makes unused call-saved registers to be used
@@ -161,22 +156,6 @@ static reg_class_t dd_secondary_reload (bool in_p ATTRIBUTE_UNUSED,
 
 /* XXX gccint 18.9.1 Node: Basic Stack Layout */
 
-/* Implement TARGET_STARTING_FRAME_OFFSET.  */
-static HOST_WIDE_INT dd_starting_frame_offset (void)
-{
-  /* The old frame pointer is in the slot below the new one, so
-     FIRST_PARM_OFFSET does not need to depend on whether the
-     frame-pointer is needed or not.  We have to adjust for the register
-     stack pointer being located below the saved frame pointer.
-     Similarly, we store the return address on the stack too, for
-     exception handling, and always if we save the register stack pointer.  */
-  return
-    (-8 + (DADAO_CFUN_HAS_LANDING_PAD ? -16 : 0));
-}
-
-#undef	TARGET_STARTING_FRAME_OFFSET
-#define	TARGET_STARTING_FRAME_OFFSET		dd_starting_frame_offset
-
 /* DYNAMIC_CHAIN_ADDRESS.  */
 rtx dadao_dynamic_chain_address (rtx frame)
 {
@@ -246,20 +225,14 @@ int dadao_initial_elimination_offset (int fromreg, int toreg)
      The frame-pointer is counted too if it is what is eliminated, as we
      need to balance the offset for it from TARGET_STARTING_FRAME_OFFSET.
 
-     Also add in the slot for the register stack pointer we save if we
-     have a landing pad.
-
      Unfortunately, we can't access $0..$14, from unwinder code easily, so
      store the return address in a frame slot too.  FIXME: Only for
-     non-leaf functions.  FIXME: Always with a landing pad, because it's
-     hard to know whether we need the other at the time we know we need
-     the offset for one (and have to state it).
+     non-leaf functions.
 
      We have to do alignment here; get_frame_size will not return a
      multiple of STACK_BOUNDARY.  FIXME: Add note in manual.  */
 
   return fp_sp_offset
-    + (DADAO_CFUN_HAS_LANDING_PAD ? 16 : 0)
     + (fromreg == DADAO_ARG_POINTER_REGNUM ? 0 : 8);
 }
 
@@ -986,9 +959,6 @@ dadao_use_simple_return (void)
   if (frame_pointer_needed)
     stack_space_to_allocate += 8;
 
-  if (DADAO_CFUN_HAS_LANDING_PAD)
-    stack_space_to_allocate += 16;
-
   return stack_space_to_allocate == 0;
 }
 
@@ -1009,12 +979,6 @@ dadao_expand_prologue (void)
   /* If we do have a frame-pointer, add room for it.  */
   if (frame_pointer_needed)
     stack_space_to_allocate += 8;
-
-  /* If we have a non-local label, we need to be able to unwind to it, so
-     store the current register stack pointer.  Also store the return
-     address if we do that.  */
-  if (DADAO_CFUN_HAS_LANDING_PAD)
-    stack_space_to_allocate += 16;
 
   /* Make sure we don't get an unaligned stack.  */
   if ((stack_space_to_allocate % 8) != 0)
@@ -1086,46 +1050,6 @@ dadao_expand_prologue (void)
       offset -= 8;
     }
 
-  if (DADAO_CFUN_HAS_LANDING_PAD)
-    offset -= 8;
-
-  if (DADAO_CFUN_HAS_LANDING_PAD)
-    {
-      /* Store the register defining the numbering of local registers, so
-	 we know how long to unwind the register stack.  */
-
-      if (offset < 0)
-	{
-	  /* Get 8 less than otherwise, since we need to reach offset + 8.  */
-	  HOST_WIDE_INT stack_chunk
-	    = stack_space_to_allocate > (256 - 8 - 8)
-	    ? (256 - 8 - 8) : stack_space_to_allocate;
-
-	  dadao_emit_sp_add (-stack_chunk);
-
-	  offset += stack_chunk;
-	  stack_space_to_allocate -= stack_chunk;
-	}
-
-      /* We don't tell dwarf2 about this one; we just have it to unwind
-	 the register stack at landing pads.  FIXME: It's a kludge because
-	 we can't describe the effect of the PUSHJ and PUSHGO insns on the
-	 register stack at the moment.  Best thing would be to handle it
-	 like stack-pointer offsets.  Better: some hook into dwarf2out.c
-	 to produce DW_CFA_expression:s that specify the increment of rO,
-	 and unwind it at eh_return (preferred) or at the landing pad.
-	 Then saves to $0..$G-1 could be specified through that register.
-
-      emit_move_insn (gen_rtx_REG (DImode, 63),
-		      gen_rtx_REG (DImode,
-				   DADAO_rO_REGNUM));
-      emit_move_insn (gen_rtx_MEM (DImode,
-				   plus_constant (Pmode, stack_pointer_rtx,
-						  offset)),
-		      gen_rtx_REG (DImode, 63));
-      offset -= 8;  */
-    }
-
   /* After the return-address and the frame-pointer, we have the local
      variables.  They're the ones that may have an "unaligned" size.  */
   offset -= (locals_size + 7) & ~7;
@@ -1151,11 +1075,6 @@ dadao_expand_epilogue (void)
   /* The first address to access is beyond the outgoing_args area.  */
   HOST_WIDE_INT offset = crtl->outgoing_args_size;
 
-  /* Add in the space for register stack-pointer.  If so, always add room
-     for the saved PC.  */
-  if (DADAO_CFUN_HAS_LANDING_PAD)
-    stack_space_to_deallocate += 16;
-
   /* Add in the frame-pointer.  */
   if (frame_pointer_needed)
     stack_space_to_deallocate += 8;
@@ -1168,12 +1087,6 @@ dadao_expand_epilogue (void)
   /* Here is where the local variables were.  As in the prologue, they
      might be of an unaligned size.  */
   offset += (locals_size + 7) & ~7;
-
-  /* The saved register stack pointer is just below the frame-pointer
-     register.  We don't need to restore it "manually"; the POP
-     instruction does that.  */
-  if (DADAO_CFUN_HAS_LANDING_PAD)
-    offset += 16;
 
   /* Get back the old frame-pointer-value.  */
   if (frame_pointer_needed)

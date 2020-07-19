@@ -41,7 +41,6 @@
    dadao.md too.  */
 struct GTY(()) machine_function
  {
-   int has_landing_pad;
    int in_prologue;
  };
 
