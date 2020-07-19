@@ -2,7 +2,7 @@
 
    jmp_buf[5]:
    0:	fp
-   1:	rJ (return-address)
+   1:	rp01 (return-address)
    2:	sp
    3:	rO *before* the setjmp call.
    4:	temporary storage.  Reserved between setjmp and longjmp.  */
@@ -19,17 +19,17 @@ setjmp:
 # the jmp_buf (parameter 1) and the return address across a "POP".
 	or	rg59, arg1, 0
 	sto	rg61, rp59, 0
-	get.rs	rg60, rJ
+#	get.rs	rg60, rp01
 	sto	rg60, rp59, 8
 	sto	rg62, rp59, 16
 	setwl	outret, 0
 
 # Jump through hoops to get the value of rO *before* the setjmp call.
-	geta	rp63, 0f
-	put.rs	rJ, rg63
+	geta	rg63, 0f
+#	put.rs	rp01, rg63
 	ret
 0:
-	get.rs	rg63, rO
+#	get.rs	rg63, rO
 	sto	rg63, rp59, 24
 	call	rg0, rp60, 0
 	.size setjmp,.-setjmp
@@ -39,7 +39,8 @@ setjmp:
 longjmp:
 # Reset arg2 to 1 if it is 0 (see longjmp(2)) and store it in jmp_buf.
 # Save arg1 in a global register, since it will be destroyed by the POPs
-	cs_z	arg2, arg2, 1
+#	seto	rg01, 1
+#	cs_z	arg2, arg2, rg01
 	sto	arg2, rp63, 32
 	or	rg59, arg1, 0
 
@@ -51,10 +52,10 @@ longjmp:
 # access can be hoisted outside the loop, but this is safe and simple and
 # I see no need to optimize longjmps.
 	geta	rg63, 0f
-	put.rs	rJ, rg63
+#	put.rs	rp01, rg63
 	ldo	rg63, rp59, 24
 0:
-	get.rs	rg60, rO
+#	get.rs	rg60, rO
 	cmpu	rg60, rg60, rg63
 	br_np	rg60, 1f
 	ldo	outret, rp59, 32
