@@ -8,8 +8,7 @@
 ;; so that assigner will pick the fastest.
 
 (define_constants
-  [(DD_RA_REG		126)
-   (DADAO_fp_rO_OFFSET	-24)]
+  [(DD_RA_REG		126)]
 )
 
 (include "iterators.md")
@@ -206,78 +205,3 @@
    (use (label_ref (match_operand 1 "" "")))]
   ""
 	"jump	rg63, %a0")
-
-;; The only peculiar thing is that the register stack has to be unwound at
-;; nonlocal_goto_receiver.  At each function that has a nonlocal label, we
-;; save at function entry the location of the "alpha" register stack
-;; pointer, rO, in a stack slot known to that function (right below where
-;; the frame-pointer would be located).
-;; In the nonlocal goto receiver, we unwind the register stack by a series
-;; of "pop 0,0" until rO equals the saved value.  (If it goes lower, we
-;; should die with a trap.)
-(define_expand "nonlocal_goto_receiver"
-  [(parallel [(unspec_volatile [(match_dup 1)] 1)
-	      (clobber (scratch:DI))
-	      (clobber (reg:DI DD_RA_REG))])
-   (set (reg:DI DD_RA_REG) (match_dup 0))]
-  ""
-  "
-{
-  operands[0]
-    = dadao_get_hard_reg_initial_val (Pmode, DADAO_RETURN_ADDRESS_REGNUM);
-
-  /* We need the frame-pointer to be live or the equivalent
-     expression, so refer to it in the pattern.  We can't use a MEM
-     (that may contain out-of-range offsets in the final expression)
-     for fear that middle-end will legitimize it or replace the address
-     using temporary registers (which are not revived at this point).  */
-  operands[1] = frame_pointer_rtx;
-}")
-
-;; GCC can insist on using saved registers to keep the slot address in
-;; "across" the exception, or (perhaps) to use saved registers in the
-;; address and re-use them after the register stack unwind, so it's best
-;; to form the address ourselves.
-(define_insn "*nonlocal_goto_receiver_expanded"
-  [(unspec_volatile [(match_operand:DI 1 "frame_pointer_operand" "Sf")] 1)
-   (clobber (match_scratch:DI 0 "=&r"))
-   (clobber (reg:DI DD_RA_REG))]
-  ""
-{
-  rtx my_operands[3];
-  const char *my_template
-    = "	geta	rg63, 0f	\;\
-	rp_g2p	rp62, rg63	\;\
-	ldo	rg63, %a0, 0	\;\
-0:	ret";
-
-  my_operands[1] = operands[0];
-  my_operands[2] = GEN_INT (-DADAO_fp_rO_OFFSET);
-
-  if (operands[1] == hard_frame_pointer_rtx)
-    {
-      dadao_output_register_setting (asm_out_file, REGNO (operands[0]),
-				    DADAO_fp_rO_OFFSET, 1);
-      my_operands[0]
-	= gen_rtx_PLUS (Pmode, hard_frame_pointer_rtx, operands[0]);
-    }
-  else
-    {
-      int64_t offs = INTVAL (XEXP (operands[1], 1));
-      offs += DADAO_fp_rO_OFFSET;
-
-      if (insn_const_int_ok_for_constraint (offs, CONSTRAINT_Id))
-	my_operands[0]
-	  = gen_rtx_PLUS (Pmode, stack_pointer_rtx, GEN_INT (offs));
-      else
-	{
-	  dadao_output_register_setting (asm_out_file, REGNO (operands[0]),
-					offs, 1);
-	  my_operands[0]
-	    = gen_rtx_PLUS (Pmode, stack_pointer_rtx, operands[0]);
-	}
-    }
-
-  output_asm_insn (my_template, my_operands);
-  return "";
-})
