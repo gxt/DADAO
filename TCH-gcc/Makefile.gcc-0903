@@ -72,7 +72,11 @@ gcc-0903-source:
 gcc-0903-build-new:
 	@rm -fr $(GCC_0903_BUILD)
 	@mkdir -p $(GCC_0903_BUILD)
+	# FIXME: add -Wno-format to remove a heap of compiling warnings
 	@cd $(GCC_0903_BUILD) &&					\
+		CFLAGS="-Wno-format -g -O2"				\
+		CPPFLAGS="-Wno-format -g -O2"				\
+		CXXFLAGS="-Wno-format -g -O2"				\
 		$(GCC_0903_SOURCE)/configure				\
 			--target=$(GCC_0903_TARGET)			\
 			--srcdir=$(GCC_0903_SOURCE)			\
