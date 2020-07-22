@@ -125,9 +125,9 @@
 	"ft_2fo	%0, %1")
 
 (define_insn "*fcmp_<ccff_type_insn>_<mode>"
-  [(set        (match_operand:CCFF 0 "rg_class_operand" "= Rg")
-    (CCFF_TYPE (match_operand:SFDF 1 "rf_class_operand" "  Rf")
-               (match_operand:SFDF 2 "rf_class_operand" "  Rf")))]
+  [(set             (match_operand:CCFF 0 "rg_class_operand" "= Rg")
+    (CCFF_TYPE:CCFF (match_operand:SFDF 1 "rf_class_operand" "  Rf")
+                    (match_operand:SFDF 2 "rf_class_operand" "  Rf")))]
 	""
 	"<ftfo>c_<ccff_type_insn>	%0, %1, %2")
 
