@@ -139,7 +139,8 @@ static bool dd_hard_regno_mode_ok (unsigned int regno, machine_mode mode)
 /* XXX gccint 18.8 Node: Register Classes */
 
 static reg_class_t dd_secondary_reload (bool in_p ATTRIBUTE_UNUSED,
-		rtx x ATTRIBUTE_UNUSED, reg_class_t rclass,
+		rtx x ATTRIBUTE_UNUSED,
+		reg_class_t rclass ATTRIBUTE_UNUSED,
 		machine_mode reload_mode ATTRIBUTE_UNUSED,
 		secondary_reload_info *sri ATTRIBUTE_UNUSED)
 {
@@ -205,7 +206,6 @@ static bool dd_frame_pointer_required (void)
    pointer.  Used to eliminate the frame pointer.  */
 int dadao_initial_elimination_offset (int fromreg, int toreg)
 {
-  int regno;
   int fp_sp_offset = (get_frame_size () + crtl->outgoing_args_size + 7) & ~7;
 
   /* There is no actual offset between these two virtual values, but for
@@ -946,8 +946,6 @@ dadao_get_hard_reg_initial_val (machine_mode mode, int regno)
 int
 dadao_use_simple_return (void)
 {
-  int regno;
-
   int stack_space_to_allocate
     = (crtl->outgoing_args_size
        + crtl->args.pretend_args_size
@@ -1066,7 +1064,6 @@ void
 dadao_expand_epilogue (void)
 {
   HOST_WIDE_INT locals_size = get_frame_size ();
-  int regno;
   HOST_WIDE_INT stack_space_to_deallocate
     = (crtl->outgoing_args_size
        + crtl->args.pretend_args_size
