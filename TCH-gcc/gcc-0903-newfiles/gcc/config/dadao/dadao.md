@@ -8,7 +8,7 @@
 ;; so that assigner will pick the fastest.
 
 (define_constants
-  [(DD_RA_REG		126)]
+	[(DD_RA_REG		126)]
 )
 
 (include "iterators.md")
@@ -53,76 +53,52 @@
 	"")
 
 (define_expand "call"
-  [(parallel [(call (match_operand:SI 0 "memory_operand" "")
+  [(parallel [(call (match_operand 0 "memory_operand" "")
 		    (match_operand 1 "general_operand" ""))
-	      (use (match_operand 2 "general_operand" ""))
-	      (clobber (match_dup 4))])
-   (set (match_dup 4) (match_dup 3))]
-  ""
-  "
+	      (use  (match_operand 2 "" ""))
+	      (clobber (reg:DI DD_RA_REG))])]
+	""
 {
-  /* The caller checks that the operand is generally valid as an
-     address, but at -O0 nothing makes sure that it's also a valid
-     call address for a *call*; a dadao_symbolic_or_address_operand.
-     Force into a register if it isn't.  */
-  if (!dadao_symbolic_or_address_operand (XEXP (operands[0], 0),
-					 GET_MODE (XEXP (operands[0], 0))))
-    operands[0]
-      = replace_equiv_address (operands[0],
-			       force_reg (Pmode, XEXP (operands[0], 0)));
+	/* The caller checks that the operand is generally valid as an
+	   address, but at -O0 nothing makes sure that it's also a valid
+	   call address for a *call*; a dadao_symbolic_or_address_operand.
+	   Force into a register if it isn't.  */
+	if (!dadao_symbolic_or_address_operand (XEXP (operands[0], 0),
+				GET_MODE (XEXP (operands[0], 0))))
+	operands[0] = replace_equiv_address (operands[0],
+				force_reg (Pmode, XEXP (operands[0], 0)));
 
-  /* Since the epilogue 'uses' the return address, and it is clobbered
-     in the call, and we set it back after every call (all but one setting
-     will be optimized away), integrity is maintained.  */
-  operands[3]
-    = dadao_get_hard_reg_initial_val (Pmode, DADAO_RETURN_ADDRESS_REGNUM);
-
-  /* FIXME: There's a bug in gcc which causes NULL to be passed as
-     operand[2] when we get out of registers, which later confuses gcc.
-     Work around it by replacing it with const_int 0.  Possibly documentation
-     error too.  */
-  if (operands[2] == NULL_RTX)
-    operands[2] = const0_rtx;
-
-  operands[4] = gen_rtx_REG (DImode, DADAO_RETURN_ADDRESS_REGNUM);
-}")
+	/* FIXME: There's a bug in gcc which causes NULL to be passed as
+	   operand[2] when we get out of registers, which later confuses gcc.
+	   Work around it by replacing it with const_int 0.  Possibly documentation
+	   error too.  */
+	if (operands[2] == NULL_RTX)	operands[2] = const0_rtx;
+})
 
 (define_expand "call_value"
   [(parallel [(set (match_operand 0 "" "")
-		   (call (match_operand:SI 1 "memory_operand" "")
+		   (call (match_operand 1 "memory_operand" "")
 			 (match_operand 2 "general_operand" "")))
-	      (use (match_operand 3 "general_operand" ""))
-	      (clobber (match_dup 5))])
-   (set (match_dup 5) (match_dup 4))]
-  ""
-  "
+	      (use (match_operand 3 "" ""))
+	      (clobber (reg:DI DD_RA_REG))])]
+	""
 {
-  /* The caller checks that the operand is generally valid as an
-     address, but at -O0 nothing makes sure that it's also a valid
-     call address for a *call*; a dadao_symbolic_or_address_operand.
-     Force into a register if it isn't.  */
-  if (!dadao_symbolic_or_address_operand (XEXP (operands[1], 0),
-					 GET_MODE (XEXP (operands[1], 0))))
-    operands[1]
-      = replace_equiv_address (operands[1],
-			       force_reg (Pmode, XEXP (operands[1], 0)));
+	/* The caller checks that the operand is generally valid as an
+	   address, but at -O0 nothing makes sure that it's also a valid
+	   call address for a *call*; a dadao_symbolic_or_address_operand.
+	   Force into a register if it isn't.  */
+	if (!dadao_symbolic_or_address_operand (XEXP (operands[1], 0),
+				GET_MODE (XEXP (operands[1], 0))))
+	operands[1] = replace_equiv_address (operands[1],
+				force_reg (Pmode, XEXP (operands[1], 0)));
 
-  /* Since the epilogue 'uses' the return address, and it is clobbered
-     in the call, and we set it back after every call (all but one setting
-     will be optimized away), integrity is maintained.  */
-  operands[4]
-    = dadao_get_hard_reg_initial_val (Pmode, DADAO_RETURN_ADDRESS_REGNUM);
+	/* FIXME: See 'call'.  */
+	if (operands[3] == NULL_RTX)	operands[3] = const0_rtx;
 
-  /* FIXME: See 'call'.  */
-  if (operands[3] == NULL_RTX)
-    operands[3] = const0_rtx;
-
-  /* FIXME: Documentation bug: operands[3] (operands[2] for 'call') is the
-     *next* argument register, not the number of arguments in registers.
-     (There used to be code here where that mattered.)  */
-
-  operands[5] = gen_rtx_REG (DImode, DADAO_RETURN_ADDRESS_REGNUM);
-}")
+	/* FIXME: Documentation bug: operands[3] (operands[2] for 'call') is the
+	   *next* argument register, not the number of arguments in registers.
+	   (There used to be code here where that mattered.)  */
+})
 
 ;; Don't use 'p' here.  A 'p' must stand first in constraints, or reload
 ;; messes up, not registering the address for reload.  Several C++
