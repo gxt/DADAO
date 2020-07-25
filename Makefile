@@ -10,6 +10,18 @@ DIR_DADAO_BUILD		:= $(DIR_DADAO)/__build/
 DIR_DADAO_INSTALL	:= $(DIR_DADAO)/__install/
 DIR_DADAO_LOG		:= $(DIR_DADAO)/__log/
 
+VER_BINUTILS_GDB	:= 0233
+VER_GCC			:= 0903
+VER_NEWLIB_CYGWIN	:= 0303
+VER_LINUX		:= 0503
+VER_QEMU		:= 0401
+
+include TCH-binutils-gdb/Makefile.binutils-gdb-$(VER_BINUTILS_GDB)
+include TCH-gcc/Makefile.gcc-$(VER_GCC)
+include TCH-newlib-cygwin/Makefile.newlib-cygwin-$(VER_NEWLIB_CYGWIN)
+include ENV-linux/Makefile.linux-$(VER_LINUX)
+include SIM-qemu/Makefile.qemu-$(VER_QEMU)
+
 all:
 	@echo ""
 	@echo "DA DAO ZHI JIAN!"
@@ -18,29 +30,21 @@ all:
 tch-highfive:
 	@echo "=== BUILD Toolchain BEGIN ==="
 	@make -s dadao-clean
-	@make -s binutils-gdb-0233-highfive
-	@make -s gcc-0903-highfive
-	@make -s newlib-cygwin-0303-highfive
+	@make -s binutils-gdb-$(VER_BINUTILS_GDB)-highfive
+	@make -s gcc-$(VER_GCC)-highfive
+	@make -s newlib-cygwin-$(VER_NEWLIB_CYGWIN)-highfive
 	@echo "=== BUILD Toolchain DONE! ==="
-
-include TCH-binutils-gdb/Makefile.binutils-gdb-0233
-include TCH-gcc/Makefile.gcc-0903
-include TCH-newlib-cygwin/Makefile.newlib-cygwin-0303
 
 env-highfive:
 	@echo "=== BUILD Run-Time Environment BEGIN ==="
-	@make -s linux-0503-highfive
-	@make -s linux-0503-headers-highfive
+	@make -s linux-$(VER_LINUX)-highfive
+	@make -s linux-$(VER_LINUX)-headers-highfive
 	@echo "=== BUILD Run-Time Environment DONE! ==="
-
-include ENV-linux/Makefile.linux-0503
 
 sim-highfive:
 	@echo "=== BUILD Simulators BEGIN ==="
-	@make -s qemu-0401-highfive
+	@make -s qemu-$(VER_QEMU)-highfive
 	@echo "=== BUILD Simulators DONE! ==="
-
-include SIM-qemu/Makefile.qemu-0401
 
 dadao-highfive:
 	@make --silent dadao-clean
