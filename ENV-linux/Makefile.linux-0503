@@ -40,7 +40,7 @@ linux-0503-source:
 		git add arch/dadao;				\
 		git commit -sm"DADAO: add arch/dadao dir"
 #	@echo "Apply linux-0503-patches ..."
-#	@cd $(LINUX_0503_PATCHES); git am $(LINUX_0503_PATCHES)/*.patch
+#	@cd $(LINUX_0503_SOURCE); git am $(LINUX_0503_PATCHES)/*.patch
 
 linux-0503-build-new:
 	@echo "Remove old linux build dir ..."
