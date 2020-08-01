@@ -6,8 +6,8 @@ BINUTILS_GDB_0233_VERSION		:= binutils-2_33_1
 BINUTILS_GDB_0233_BRANCH		:= dadao-0233
 BINUTILS_GDB_0233_TARGET		:= dadao-linux-elf
 
-BINUTILS_GDB_0233_NEWFILES		:= $(DIR_DADAO)/TCH-binutils-gdb/binutils-gdb-0233-newfiles
-BINUTILS_GDB_0233_PATCHES		:= $(DIR_DADAO)/TCH-binutils-gdb/binutils-gdb-0233-patches
+BINUTILS_GDB_0233_NEWFILES		:= $(DIR_DADAO_TOP)/TCH-binutils-gdb/binutils-gdb-0233-newfiles
+BINUTILS_GDB_0233_PATCHES		:= $(DIR_DADAO_TOP)/TCH-binutils-gdb/binutils-gdb-0233-patches
 
 BINUTILS_GDB_0233_SOURCE		:= $(DIR_DADAO_SOURCE)/binutils-gdb-0233
 BINUTILS_GDB_0233_OPCODES		:= $(BINUTILS_GDB_0233_SOURCE)/opcodes/dadao-insn.opc

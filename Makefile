@@ -3,12 +3,12 @@
 #
 DIR_TAO_GIT		:= /pub/GIT-TAO/
 
-DIR_DADAO		:= $(shell pwd)
-DIR_DADAO_OPCODES	:= $(DIR_DADAO)/DADAO-opcodes/
-DIR_DADAO_SOURCE	:= $(DIR_DADAO)/__source/
-DIR_DADAO_BUILD		:= $(DIR_DADAO)/__build/
-DIR_DADAO_INSTALL	:= $(DIR_DADAO)/__install/
-DIR_DADAO_LOG		:= $(DIR_DADAO)/__log/
+DIR_DADAO_TOP		:= $(shell pwd)
+DIR_DADAO_OPCODES	:= $(DIR_DADAO_TOP)/DADAO-opcodes/
+DIR_DADAO_SOURCE	:= $(DIR_DADAO_TOP)/__source/
+DIR_DADAO_BUILD		:= $(DIR_DADAO_TOP)/__build/
+DIR_DADAO_INSTALL	:= $(DIR_DADAO_TOP)/__install/
+DIR_DADAO_LOG		:= $(DIR_DADAO_TOP)/__log/
 
 VER_BINUTILS_GDB	:= 0233
 VER_GCC			:= 0903

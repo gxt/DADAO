@@ -6,9 +6,9 @@ NEWLIB_CYGWIN_0303_VERSION	:= newlib-3.3.0
 NEWLIB_CYGWIN_0303_BRANCH	:= dadao-0303
 NEWLIB_CYGWIN_0303_TARGET	:= dadao-linux-elf
 
-NEWLIB_CYGWIN_0303_NEWFILES	:= $(DIR_DADAO)/TCH-newlib-cygwin/newlib-cygwin-0303-newfiles
-NEWLIB_CYGWIN_0303_PATCHES	:= $(DIR_DADAO)/TCH-newlib-cygwin/newlib-cygwin-0303-patches
-NEWLIB_CYGWIN_0303_FIXUP	:= $(DIR_DADAO)/TCH-newlib-cygwin/newlib-cygwin-0303-fixup
+NEWLIB_CYGWIN_0303_NEWFILES	:= $(DIR_DADAO_TOP)/TCH-newlib-cygwin/newlib-cygwin-0303-newfiles
+NEWLIB_CYGWIN_0303_PATCHES	:= $(DIR_DADAO_TOP)/TCH-newlib-cygwin/newlib-cygwin-0303-patches
+NEWLIB_CYGWIN_0303_FIXUP	:= $(DIR_DADAO_TOP)/TCH-newlib-cygwin/newlib-cygwin-0303-fixup
 
 NEWLIB_CYGWIN_0303_SOURCE	:= $(DIR_DADAO_SOURCE)/newlib-cygwin-0303
 NEWLIB_CYGWIN_0303_BUILD	:= $(DIR_DADAO_BUILD)/newlib-cygwin-0303
@@ -37,7 +37,7 @@ newlib-cygwin-0303-source:
 	@cd $(NEWLIB_CYGWIN_0303_SOURCE); git checkout -b $(NEWLIB_CYGWIN_0303_BRANCH) $(NEWLIB_CYGWIN_0303_VERSION)
 	# include
 	@echo "INCLUDE: Copy include dir from binutils-gdb (elf/dadao.h and opcode/dadao.h)"
-	@cp -a $(DIR_DADAO)/TCH-binutils-gdb/binutils-gdb-0233-newfiles/include/* $(NEWLIB_CYGWIN_0303_SOURCE)/include
+	@cp -a $(DIR_DADAO_TOP)/TCH-binutils-gdb/binutils-gdb-0233-newfiles/include/* $(NEWLIB_CYGWIN_0303_SOURCE)/include
 	@cd $(NEWLIB_CYGWIN_0303_SOURCE);					\
 		git add include;						\
 		git commit -sm"DADAO-include: add header files"
