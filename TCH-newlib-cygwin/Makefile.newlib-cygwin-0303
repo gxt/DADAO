@@ -1,7 +1,7 @@
 #
 # Makefile for newlib-cygwin in toolchain
 #
-NEWLIB_CYGWIN_0303_ORIGIN	:= $(DIR_GIT_TAO)/newlib-cygwin.git
+NEWLIB_CYGWIN_0303_ORIGIN	:= $(DIR_TAO_GIT)/newlib-cygwin.git
 NEWLIB_CYGWIN_0303_VERSION	:= newlib-3.3.0
 NEWLIB_CYGWIN_0303_BRANCH	:= dadao-0303
 NEWLIB_CYGWIN_0303_TARGET	:= dadao-linux-elf

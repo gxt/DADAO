@@ -1,7 +1,7 @@
 #
 # TOP Makefile
 #
-DIR_GIT_TAO		:= /pub/GIT-TAO/
+DIR_TAO_GIT		:= /pub/GIT-TAO/
 
 DIR_DADAO		:= $(shell pwd)
 DIR_DADAO_OPCODES	:= $(DIR_DADAO)/DADAO-opcodes/

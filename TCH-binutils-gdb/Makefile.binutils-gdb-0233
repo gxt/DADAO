@@ -1,7 +1,7 @@
 #
 # Makefile for binutils-gdb in toolchain
 #
-BINUTILS_GDB_0233_ORIGIN		:= $(DIR_GIT_TAO)/binutils-gdb.git
+BINUTILS_GDB_0233_ORIGIN		:= $(DIR_TAO_GIT)/binutils-gdb.git
 BINUTILS_GDB_0233_VERSION		:= binutils-2_33_1
 BINUTILS_GDB_0233_BRANCH		:= dadao-0233
 BINUTILS_GDB_0233_TARGET		:= dadao-linux-elf
