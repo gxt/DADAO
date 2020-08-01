@@ -16,7 +16,7 @@ index a4828c4cae3..7d9829ec27a 100644
  
    d10v-*-*)				fmt=elf ;;
    d30v-*-*)				fmt=elf ;;
-+  dadao-*-*)				fmt=elf ;;
++  dadao-*-*)				fmt=elf em=linux bfd_gas=yes ;;
    dlx-*-*)				fmt=elf ;;
  
    bpf-*-*)				fmt=elf ;;
