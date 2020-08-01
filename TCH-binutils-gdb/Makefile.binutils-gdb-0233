@@ -125,6 +125,7 @@ binutils-gdb-0233-build-new:
 	@mkdir -p $(BINUTILS_GDB_0233_BUILD)
 	@cd $(BINUTILS_GDB_0233_BUILD) &&				\
 		$(BINUTILS_GDB_0233_SOURCE)/configure			\
+			--disable-nls					\
 			--target=$(BINUTILS_GDB_0233_TARGET)		\
 			--srcdir=$(BINUTILS_GDB_0233_SOURCE)		\
 			--prefix=$(BINUTILS_GDB_0233_INSTALL)
