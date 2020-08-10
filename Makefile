@@ -3,12 +3,13 @@
 #
 DIR_TAO_GIT		:= /pub/GIT-TAO/
 
+DIR_DADAO_TMP		:= /tmp/__$(USER)-DADAO/
 DIR_DADAO_TOP		:= $(shell pwd)
 DIR_DADAO_OPCODES	:= $(DIR_DADAO_TOP)/DADAO-opcodes/
-DIR_DADAO_SOURCE	:= $(DIR_DADAO_TOP)/__source/
-DIR_DADAO_BUILD		:= $(DIR_DADAO_TOP)/__build/
-DIR_DADAO_INSTALL	:= $(DIR_DADAO_TOP)/__install/
-DIR_DADAO_LOG		:= $(DIR_DADAO_TOP)/__log/
+DIR_DADAO_SOURCE	:= $(DIR_DADAO_TOP)/__source
+DIR_DADAO_BUILD		:= $(DIR_DADAO_TOP)/__build
+DIR_DADAO_INSTALL	:= $(DIR_DADAO_TOP)/__install
+DIR_DADAO_LOG		:= $(DIR_DADAO_TOP)/__log
 
 VER_BINUTILS_GDB	:= 0233
 VER_GCC			:= 0903
@@ -54,10 +55,24 @@ dadao-highfive:
 	@make --silent env-highfive
 	@echo "BUILD EVERYTHING DONE!"
 
+dadao-start-tmp:
+	@echo "IMPORTANT: MAKE SURE THE SERVER HAS ENOUGH MEMORY!"
+	@make --silent dadao-clean
+	@mkdir -p $(DIR_DADAO_TMP)/__source
+	@mkdir -p $(DIR_DADAO_TMP)/__build
+	@mkdir -p $(DIR_DADAO_TMP)/__install
+	@mkdir -p $(DIR_DADAO_TMP)/__log
+	@ln -s -t $(DIR_DADAO_TOP) $(DIR_DADAO_TMP)/__source
+	@ln -s -t $(DIR_DADAO_TOP) $(DIR_DADAO_TMP)/__build
+	@ln -s -t $(DIR_DADAO_TOP) $(DIR_DADAO_TMP)/__install
+	@ln -s -t $(DIR_DADAO_TOP) $(DIR_DADAO_TMP)/__log
+	@echo "Done: check $(DIR_DADAO_TMP) for all things"
+
 dadao-clean:
 	@echo "CLEAR EVERYTHING!"
 	@rm -fr $(DIR_DADAO_SOURCE)
 	@rm -fr $(DIR_DADAO_BUILD)
 	@rm -fr $(DIR_DADAO_INSTALL)
 	@rm -fr $(DIR_DADAO_LOG)
+	@rm -fr $(DIR_DADAO_TMP)
 	@echo "CLEAR EVERYTHING DONE!"
