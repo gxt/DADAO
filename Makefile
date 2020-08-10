@@ -33,13 +33,13 @@ tch-highfive:
 	@make -s dadao-clean
 	@make -s binutils-gdb-$(VER_BINUTILS_GDB)-highfive
 	@make -s gcc-$(VER_GCC)-highfive
+	@test -d $(DIR_DADAO_INSTALL)/include/linux || make -s -C $(DIR_DADAO_TOP) linux-$(VER_LINUX)-headers-highfive
 	@make -s newlib-cygwin-$(VER_NEWLIB_CYGWIN)-highfive
 	@echo "=== BUILD Toolchain DONE! ==="
 
 env-highfive:
 	@echo "=== BUILD Run-Time Environment BEGIN ==="
 	@make -s linux-$(VER_LINUX)-highfive
-	@make -s linux-$(VER_LINUX)-headers-highfive
 	@echo "=== BUILD Run-Time Environment DONE! ==="
 
 sim-highfive:

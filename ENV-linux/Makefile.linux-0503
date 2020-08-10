@@ -101,6 +101,9 @@ linux-0503-headers-install:
 linux-0503-headers-highfive:
 	@echo "--- headers-highfive SHOULD AFTER linux-0503-highfive ---"
 	@echo "BEGIN TO BUILD linux-0503-headers!"
+	@echo "0. Check source dir and build dir"
+	@test -d $(LINUX_0503_SOURCE) || make -C $(DIR_DADAO_TOP) linux-0503-source
+	@test -d $(LINUX_0503_BUILD) || make -C $(DIR_DADAO_TOP) linux-0503-build-new
 	@echo "1. Check headers ..."
 	@make -s linux-0503-headers-check			1>> $(LINUX_0503_LOG_STDOUT) 2>> $(LINUX_0503_LOG_STDERR)
 	@echo "1. Check headers complete."
