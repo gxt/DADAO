@@ -48,14 +48,14 @@ sim-highfive:
 	@echo "=== BUILD Simulators DONE! ==="
 
 dadao-highfive:
-	@make --silent dadao-clean
+	@make --silent dadao-reboot
 	@echo "BEGIN TO BUILD EVERYTHING!"
 	@make --silent sim-highfive
 	@make --silent tch-highfive
 	@make --silent env-highfive
 	@echo "BUILD EVERYTHING DONE!"
 
-dadao-start-tmp:
+dadao-reboot:
 	@echo "IMPORTANT: MAKE SURE THE SERVER HAS ENOUGH MEMORY!"
 	@make --silent dadao-clean
 	@mkdir -p $(DIR_DADAO_TMP)/__source
