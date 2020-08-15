@@ -105,7 +105,6 @@ newlib-cygwin-0303-install:
 	@PATH=$(NEWLIB_CYGWIN_0303_PATH) make -C $(NEWLIB_CYGWIN_0303_BUILD) install
 
 newlib-cygwin-0303-highfive:
-	@echo "=== newlib-cygwin building time maybe: real 1m15s, user 2m30s, sys 0m40s ==="
 	@echo "BEGIN TO BUILD newlib-cygwin-0303!"
 	@echo "0. Remove old newlib-cygwin logfiles"
 	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)

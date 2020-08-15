@@ -30,6 +30,7 @@ all:
 
 tch-highfive:
 	@echo "=== BUILD Toolchain BEGIN ==="
+	@echo "=== building time maybe: real 11m, user 34m, sys 5m ==="
 	@make -s binutils-gdb-$(VER_BINUTILS_GDB)-highfive
 	@make -s gcc-$(VER_GCC)-highfive
 	@make -s newlib-cygwin-$(VER_NEWLIB_CYGWIN)-highfive
