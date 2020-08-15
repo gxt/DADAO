@@ -30,7 +30,6 @@ all:
 
 tch-highfive:
 	@echo "=== BUILD Toolchain BEGIN ==="
-	@make -s dadao-clean
 	@make -s binutils-gdb-$(VER_BINUTILS_GDB)-highfive
 	@make -s gcc-$(VER_GCC)-highfive
 	@test -d $(DIR_DADAO_INSTALL)/include/linux || make -s -C $(DIR_DADAO_TOP) linux-$(VER_LINUX)-headers-highfive
