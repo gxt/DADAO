@@ -89,6 +89,7 @@ newlib-cygwin-0303-source:
 newlib-cygwin-0303-build-new:
 	@rm -fr $(NEWLIB_CYGWIN_0303_BUILD)
 	@mkdir -p $(NEWLIB_CYGWIN_0303_BUILD)
+	@test -d $(DIR_DADAO_INSTALL)/include/linux || make -s -C $(DIR_DADAO_TOP) linux-$(VER_LINUX)-headers-highfive
 	# CFLAGS_FOR_TARGET="-g -Os" can be added before configure to modify default CFLAGS
 	@cd $(NEWLIB_CYGWIN_0303_BUILD) && PATH=$(NEWLIB_CYGWIN_0303_PATH)	\
 		$(NEWLIB_CYGWIN_0303_SOURCE)/configure				\
