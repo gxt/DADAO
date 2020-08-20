@@ -100,6 +100,14 @@ static const char *regnames[] = {
     "rf40", "rf41", "rf42", "rf43", "rf44", "rf45", "rf46", "rf47",
     "rf48", "rf49", "rf50", "rf51", "rf52", "rf53", "rf54", "rf55",
     "rf56", "rf57", "rf58", "rf59", "rf60", "rf61", "rf62", "rf63",
+    "rv00", "rv01", "rv02", "rv03", "rv04", "rv05", "rv06", "rv07",
+    "rv08", "rv09", "rv10", "rv11", "rv12", "rv13", "rv14", "rv15",
+    "rv16", "rv17", "rv18", "rv19", "rv20", "rv21", "rv22", "rv23",
+    "rv24", "rv25", "rv26", "rv27", "rv28", "rv29", "rv30", "rv31",
+    "rv32", "rv33", "rv34", "rv35", "rv36", "rv37", "rv38", "rv39",
+    "rv40", "rv41", "rv42", "rv43", "rv44", "rv45", "rv46", "rv47",
+    "rv48", "rv49", "rv50", "rv51", "rv52", "rv53", "rv54", "rv55",
+    "rv56", "rv57", "rv58", "rv59", "rv60", "rv61", "rv62", "rv63",
     "pc"};
 
 /* Map TCG globals to CPU context.  */
