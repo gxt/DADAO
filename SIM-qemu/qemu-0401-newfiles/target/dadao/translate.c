@@ -75,14 +75,14 @@ static TCGv_i64 cpu_PC;
 #include "exec/gen-icount.h"
 
 static const char *regnames[] = {
-    "zero", "rd01", "rd02", "rd03", "rd04", "rd05", "rd06", "rd07",
-    "rd08", "rd09", "rd10", "rd11", "rd12", "rd13", "rd14", "rd15",
-    "rd16", "rd17", "rd18", "rd19", "rd20", "rd21", "rd22", "rd23",
-    "rd24", "rd25", "rd26", "rd27", "rd28", "rd29", "rd30", "rd31",
-    "rd32", "rd33", "rd34", "rd35", "rd36", "rd37", "rd38", "rd39",
-    "rd40", "rd41", "rd42", "rd43", "rd44", "rd45", "rd46", "rd47",
-    "rd48", "rd49", "rd50", "rd51", "rd52", "rd53", "rd54", "rd55",
-    "rd56", "rd57", "rd58", "rd59", "rd60", "rd61", "rd62", "rd63",
+    "zero", "rg01", "rg02", "rg03", "rg04", "rg05", "rg06", "rg07",
+    "rg08", "rg09", "rg10", "rg11", "rg12", "rg13", "rg14", "rg15",
+    "rg16", "rg17", "rg18", "rg19", "rg20", "rg21", "rg22", "rg23",
+    "rg24", "rg25", "rg26", "rg27", "rg28", "rg29", "rg30", "rg31",
+    "rg32", "rg33", "rg34", "rg35", "rg36", "rg37", "rg38", "rg39",
+    "rg40", "rg41", "rg42", "rg43", "rg44", "rg45", "rg46", "rg47",
+    "rg48", "rg49", "rg50", "rg51", "rg52", "rg53", "rg54", "rg55",
+    "rg56", "rg57", "rg58", "rg59", "rg60", "rg61", "rg62", "rg63",
     "null", "rp01", "rp02", "rp03", "rp04", "rp05", "rp06", "rp07",
     "rp08", "rp09", "rp10", "rp11", "rp12", "rp13", "rp14", "rp15",
     "rp16", "rp17", "rp18", "rp19", "rp20", "rp21", "rp22", "rp23",
@@ -91,14 +91,14 @@ static const char *regnames[] = {
     "rp40", "rp41", "rp42", "rp43", "rp44", "rp45", "rp46", "rp47",
     "rp48", "rp49", "rp50", "rp51", "rp52", "rp53", "rp54", "rp55",
     "rp56", "rp57", "rp58", "rp59", "rp60", "rp61", "rp62", "rp63",
-    "ra00", "ra01", "ra02", "ra03", "ra04", "ra05", "ra06", "ra07",
-    "ra08", "ra09", "ra10", "ra11", "ra12", "ra13", "ra14", "ra15",
-    "ra16", "ra17", "ra18", "ra19", "ra20", "ra21", "ra22", "ra23",
-    "ra24", "ra25", "ra26", "ra27", "ra28", "ra29", "ra30", "ra31",
-    "ra32", "ra33", "ra34", "ra35", "ra36", "ra37", "ra38", "ra39",
-    "ra40", "ra41", "ra42", "ra43", "ra44", "ra45", "ra46", "ra47",
-    "ra48", "ra49", "ra50", "ra51", "ra52", "ra53", "ra54", "ra55",
-    "ra56", "ra57", "ra58", "ra59", "ra60", "ra61", "ra62", "ra63",
+    "rf00", "rf01", "rf02", "rf03", "rf04", "rf05", "rf06", "rf07",
+    "rf08", "rf09", "rf10", "rf11", "rf12", "rf13", "rf14", "rf15",
+    "rf16", "rf17", "rf18", "rf19", "rf20", "rf21", "rf22", "rf23",
+    "rf24", "rf25", "rf26", "rf27", "rf28", "rf29", "rf30", "rf31",
+    "rf32", "rf33", "rf34", "rf35", "rf36", "rf37", "rf38", "rf39",
+    "rf40", "rf41", "rf42", "rf43", "rf44", "rf45", "rf46", "rf47",
+    "rf48", "rf49", "rf50", "rf51", "rf52", "rf53", "rf54", "rf55",
+    "rf56", "rf57", "rf58", "rf59", "rf60", "rf61", "rf62", "rf63",
     "pc"};
 
 /* Map TCG globals to CPU context.  */
@@ -107,13 +107,13 @@ void dadao_translate_init(void)
     int i;
     for (i = 0; i < 64; i++)
         cpu_RD[i] = tcg_global_mem_new_i64(cpu_env,
-            offsetof(CPUDADAOState, regds[i]), regnames[i]);
+            offsetof(CPUDADAOState, __rg[i]), regnames[i]);
     for (i = 0; i < 64; i++)
         cpu_RP[i] = tcg_global_mem_new_i64(cpu_env,
-            offsetof(CPUDADAOState, regps[i]), regnames[i + 64]);
+            offsetof(CPUDADAOState, __rp[i]), regnames[i + 64]);
     for (i = 0; i < 64; i++)
         cpu_RA[i] = tcg_global_mem_new_i64(cpu_env,
-            offsetof(CPUDADAOState, regas[i]), regnames[i + 128]);
+            offsetof(CPUDADAOState, __rf[i]), regnames[i + 128]);
     cpu_PC = tcg_global_mem_new_i64(cpu_env,
         offsetof(CPUDADAOState, regpc), regnames[192]);
 }
@@ -163,11 +163,11 @@ static void do_arith_2op(CPUDADAOState *env, DisasContext *s, uint32_t insn)
             src = cpu_RP[fd4];
             dst = cpu_RD[fd5];
             break;
-        case 0x8: /* rd2rp */
+        case 0x8: /* rg2rp */
             src = cpu_RD[fd4];
             dst = cpu_RP[fd5];
             break;
-        case 0x0: /* rd2rd */
+        case 0x0: /* rg2rd */
             src = cpu_RD[fd4];
             dst = cpu_RD[fd5];
             break;
@@ -367,7 +367,7 @@ static void do_load(CPUDADAOState *env, DisasContext *s, uint32_t insn)
         default:
             ILLEGAL;
         }
-    } else { /* rp1 + rd2 ror imm6 */
+    } else { /* rp1 + rg2 ror imm6 */
         imm = DADAO_INSN_FD5(insn);
         tcg_gen_rotri_i64(addr, addr, imm);
         switch (DADAO_INSN_OPERAND(insn)) {
@@ -411,7 +411,7 @@ static void do_store(CPUDADAOState *env, DisasContext *s, uint32_t insn)
         default:
             ILLEGAL;
         }
-    } else { /* rp1 + rd2 ror imm6 */
+    } else { /* rp1 + rg2 ror imm6 */
         imm = DADAO_INSN_FD5(insn);
         tcg_gen_rotri_i64(addr, addr, imm);
         switch (DADAO_INSN_OPERAND(insn)) {
@@ -551,7 +551,7 @@ void dadao_cpu_dump_state(CPUState *cs, FILE *f, int flags)
     uint32_t psr;
 
     for (i = 0; i < 32; i++) {
-        qemu_fprintf(f, "R%02d=%08lx", i, env->regds[i]);
+        qemu_fprintf(f, "R%02d=%08lx", i, env->__rg[i]);
         if ((i % 4) == 3) {
             qemu_fprintf(f, "\n");
         } else {

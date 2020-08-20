@@ -16,10 +16,9 @@
 #include "exec/cpu-defs.h"
 
 typedef struct CPUDADAOState {
-    /* General-purpose registers.  */
-    uint64_t regds[64]; /* data registers */
-    uint64_t regps[64]; /* pointer registers */
-    uint64_t regas[64]; /* return address registers */
+    uint64_t __rg[64];		/* general registers */
+    uint64_t __rp[64];		/* pointer registers */
+    uint64_t __rf[64];		/* floating-point registers */
     uint64_t regpc;
 
     /* System control coprocessor (cp0) */
