@@ -12,6 +12,9 @@ DD_GCC			:= $(DIR_DADAO_INSTALL)/bin/dadao-linux-elf-gcc
 DD_READELF		:= $(DIR_DADAO_INSTALL)/bin/dadao-linux-elf-readelf
 DD_OBJDUMP		:= $(DIR_DADAO_INSTALL)/bin/dadao-linux-elf-objdump
 
+DD_QEMU_USER		:= $(DIR_DADAO_INSTALL)/bin/qemu-dadao
+DD_QEMU_SYS		:= $(DIR_DADAO_INSTALL)/bin/qemu-system-dadao
+
 all:
 	@echo ""
 	@echo "DADAO-misc"
@@ -28,6 +31,8 @@ TESTFILE_DUMP		:= $(TESTFILE_DSTDIR)/$(TESTFILE_NAME).dump
 
 TESTFILE_CFLAGS		:= -g -O2 -save-temps
 #TESTFILE_CFLAGS		:= -g -O2 -save-temps -fdump-tree-all -fdump-ipa-all -fdump-rtl-all
+
+TESTFILE_LOG		:= $(TESTFILE_DSTDIR)/$(TESTFILE_NAME).log
 
 TESTFILE_CFLAGS_EXTRA	:=
 #TESTFILE_CFLAGS_EXTRA	:=							\
@@ -46,3 +51,6 @@ testfile-highfive:
 			-o $(TESTFILE_DST) $(TESTFILE_SRC)
 	$(DD_READELF) -a $(TESTFILE_DST) > $(TESTFILE_ELF)
 	$(DD_OBJDUMP) -d $(TESTFILE_DST) > $(TESTFILE_DUMP)
+
+testfile-run:
+	$(DD_QEMU_USER) -singlestep -strace -D $(TESTFILE_LOG) $(TESTFILE_DST)
