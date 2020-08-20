@@ -19,6 +19,7 @@ typedef struct CPUDADAOState {
     uint64_t __rg[64];		/* general registers */
     uint64_t __rp[64];		/* pointer registers */
     uint64_t __rf[64];		/* floating-point registers */
+    uint64_t __rv[64];		/* vector registers */
     uint64_t regpc;
 
     /* System control coprocessor (cp0) */
