@@ -19,7 +19,7 @@ static void dadao_cpu_set_pc(CPUState *cs, vaddr value)
 {
     DADAOCPU *cpu = DADAO_CPU(cs);
 
-    cpu->env.regpc = value;
+    cpu->env.__REG_PC = value;
 }
 
 static bool dadao_cpu_has_work(CPUState *cs)
@@ -84,9 +84,9 @@ static void dadao_cpu_initfn(Object *obj)
     cpu_set_cpustate_pointers(cpu);
 
 #ifdef CONFIG_USER_ONLY
-    env->regpc = 0;
+    env->__REG_PC = 0;
 #else
-    env->regpc = 0x03000000;
+    env->__REG_PC = 0x03000000;
 #endif
 }
 

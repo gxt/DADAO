@@ -15,12 +15,12 @@
 /* keep order */
 #include "exec/cpu-defs.h"
 
+#define __REG_PC	__rp[0]
 typedef struct CPUDADAOState {
     uint64_t __rg[64];		/* general registers */
     uint64_t __rp[64];		/* pointer registers */
     uint64_t __rf[64];		/* floating-point registers */
     uint64_t __rv[64];		/* vector registers */
-    uint64_t regpc;
 } CPUDADAOState;
 
 /**
@@ -85,7 +85,7 @@ typedef DADAOCPU ArchCPU;
 static inline void cpu_get_tb_cpu_state(CPUDADAOState *env, target_ulong *pc,
     target_ulong *cs_base, uint32_t *flags)
 {
-    *pc = env->regpc;
+    *pc = env->__REG_PC;
     *cs_base = 0;
     *flags = 0;
 }

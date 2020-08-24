@@ -71,7 +71,6 @@ static TCGv_i64 cpu_RG[64];
 static TCGv_i64 cpu_RP[64];
 static TCGv_i64 cpu_RF[64];
 static TCGv_i64 cpu_RV[64];
-static TCGv_i64 cpu_PC;
 
 #include "exec/gen-icount.h"
 
@@ -126,8 +125,6 @@ void dadao_translate_init(void)
     for (i = 0; i < 64; i++)
         cpu_RV[i] = tcg_global_mem_new_i64(cpu_env,
             offsetof(CPUDADAOState, __rv[i]), regnames[i + 192]);
-    cpu_PC = tcg_global_mem_new_i64(cpu_env,
-        offsetof(CPUDADAOState, regpc), regnames[256]);
 }
 
 static int num_temps; /* for gen_* debug only */
@@ -583,5 +580,5 @@ void dadao_cpu_dump_state(CPUState *cs, FILE *f, int flags)
 void restore_state_to_opc(CPUDADAOState *env, TranslationBlock *tb,
     target_ulong *data)
 {
-    env->regpc = data[0];
+    env->__REG_PC = data[0];
 }

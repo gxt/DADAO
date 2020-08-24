@@ -4,20 +4,20 @@
 static inline void cpu_clone_regs(CPUDADAOState *env, target_ulong newsp)
 {
     if (newsp) {
-        env->regpc = newsp;
+        env->__REG_PC = newsp;
     }
 
-    env->regpc = 0;
+    env->__REG_PC = 0;
 }
 
 static inline void cpu_set_tls(CPUDADAOState *env, target_ulong newtls)
 {
-    env->regpc = newtls;
+    env->__REG_PC = newtls;
 }
 
 static inline abi_ulong get_sp_from_cpustate(CPUDADAOState *env)
 {
-   return env->regpc;
+   return env->__REG_PC;
 }
 
 #endif
