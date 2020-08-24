@@ -7,10 +7,10 @@
 #define LINUX_USER_DADAO_TARGET_SYSCALL_H
 
 struct target_pt_regs {
-    abi_long pc;
-    abi_long sp;
-    abi_long rd[64];
-    abi_long rb[64];
+	abi_long __rg[64];
+	abi_long __rp[64];
+	abi_long __rf[64];
+	abi_long __rv[64];
 };
 
 #define UNAME_MACHINE "WUXING"

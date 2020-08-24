@@ -16,11 +16,27 @@
 #include "exec/cpu-defs.h"
 
 #define __REG_PC	__rp[0]
+#define __REG_SP	__rp[1]
 typedef struct CPUDADAOState {
-    uint64_t __rg[64];		/* general registers */
-    uint64_t __rp[64];		/* pointer registers */
-    uint64_t __rf[64];		/* floating-point registers */
-    uint64_t __rv[64];		/* vector registers */
+	uint64_t __rg[64];		/* general registers */
+	uint64_t __rp[64];		/* pointer registers */
+	uint64_t __rf[64];		/* floating-point registers */
+	uint64_t __rv[64];		/* vector registers */
+
+    /* System control coprocessor (cp0) */
+    struct {
+        uint32_t c0_cpuid;
+        uint32_t c0_cachetype;
+        uint32_t c1_sys;         /* System control register.  */
+        uint32_t c2_base;        /* MMU translation table base.  */
+        uint32_t c3_faultstatus; /* Fault status registers.  */
+        uint32_t c4_faultaddr;   /* Fault address registers.  */
+        uint32_t c5_cacheop;     /* Cache operation registers.  */
+        uint32_t c6_tlbop;       /* TLB operation registers. */
+    } cp0;
+
+    /* Internal CPU feature flags.  */
+    uint32_t features;
 } CPUDADAOState;
 
 /**
@@ -95,5 +111,9 @@ bool dadao_cpu_tlb_fill(CPUState *cs, vaddr address, int size,
     bool probe, uintptr_t retaddr);
 void dadao_translate_init(void);
 void switch_mode(CPUDADAOState *, int);
+
+#define DADAO_INSN_TRAP_MASK		0xFFFC0000
+#define DADAO_INSN_TRAP_CODE		0x08FC0000
+
 
 #endif /* DADAO_CPU_H */

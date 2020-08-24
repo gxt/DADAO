@@ -43,15 +43,20 @@ void cpu_loop(CPUDADAOState *env)
 			break;
 
 		case DADAO_EXCP_TRAP:
-			get_user_code_u32(insn, env->pc - 4, env);
-			sysret = do_syscall(env, insn & 0x3FFFF,
+			get_user_u32(insn, env->__REG_PC - 4);
+			if ((insn & DADAO_INSN_TRAP_MASK) == DADAO_INSN_TRAP_CODE) {
+				EXCP_DUMP(env, "\nqemu: wrong trap insn %#x - check endian\n", insn);
+				abort();
+			}
+
+			sysret = do_syscall(env, insn & ~DADAO_INSN_TRAP_MASK,
 					_DDABI_ARG(env, 0), _DDABI_ARG(env, 1),
 					_DDABI_ARG(env, 2), _DDABI_ARG(env, 3), 
 					_DDABI_ARG(env, 4), _DDABI_ARG(env, 5),
 					0, 0);
 
 			if (sysret == -TARGET_ERESTARTSYS) {
-				env->pc -= 4;
+				env->__REG_PC -= 4;
 				break;
 			}
 
@@ -71,5 +76,6 @@ void cpu_loop(CPUDADAOState *env)
 
 void target_cpu_copy_regs(CPUArchState *env, struct target_pt_regs *regs)
 {
-	env->pc = regs->pc;
+	env->__REG_PC = regs->__REG_PC;
+	env->__REG_SP = regs->__REG_SP;
 }
