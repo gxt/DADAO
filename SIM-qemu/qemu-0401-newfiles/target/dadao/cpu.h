@@ -21,22 +21,6 @@ typedef struct CPUDADAOState {
     uint64_t __rf[64];		/* floating-point registers */
     uint64_t __rv[64];		/* vector registers */
     uint64_t regpc;
-
-    /* System control coprocessor (cp0) */
-    struct {
-        uint32_t c0_cpuid;
-        uint32_t c0_cachetype;
-        uint32_t c1_sys;         /* System control register.  */
-        uint32_t c2_base;        /* MMU translation table base.  */
-        uint32_t c3_faultstatus; /* Fault status registers.  */
-        uint32_t c4_faultaddr;   /* Fault address registers.  */
-        uint32_t c5_cacheop;     /* Cache operation registers.  */
-        uint32_t c6_tlbop;       /* TLB operation registers. */
-    } cp0;
-
-    /* Internal CPU feature flags.  */
-    uint32_t features;
-
 } CPUDADAOState;
 
 /**
@@ -59,10 +43,17 @@ bool dadao_cpu_exec_interrupt(CPUState *cpu, int int_req);
 void dadao_cpu_dump_state(CPUState *cpu, FILE *f, int flags);
 hwaddr dadao_cpu_get_phys_page_debug(CPUState *cpu, vaddr addr);
 
-#define DADAO_EXCP_PRIV (1)
-#define DADAO_EXCP_ITRAP (2)
-#define DADAO_EXCP_DTRAP (3)
-#define DADAO_EXCP_INTR (4)
+/* Exception vectors definitions */
+enum {
+	DADAO_EXCP_NONE		= 0,
+	DADAO_EXCP_TRIP		= 1,
+	DADAO_EXCP_TRAP		= 2,
+	DADAO_EXCP_IMMU		= 3,
+	DADAO_EXCP_DMMU		= 4,
+	DADAO_EXCP_ILLI		= 5,
+	DADAO_EXCP_INTR		= 6,
+	DADAO_EXCP_HALT		= 7,
+};
 
 /* Return the current ASR value.  */
 target_ulong cpu_asr_read(CPUDADAOState *env1);

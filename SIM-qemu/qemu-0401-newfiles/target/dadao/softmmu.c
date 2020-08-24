@@ -202,9 +202,9 @@ bool dadao_cpu_tlb_fill(CPUState *cs, vaddr address, int size,
     env->cp0.c3_faultstatus = ret;
     env->cp0.c4_faultaddr = address;
     if (access_type == 2) {
-        cs->exception_index = DADAO_EXCP_ITRAP;
+        cs->exception_index = DADAO_EXCP_IMMU;
     } else {
-        cs->exception_index = DADAO_EXCP_DTRAP;
+        cs->exception_index = DADAO_EXCP_DMMU;
     }
     cpu_loop_exit_restore(cs, retaddr);
 }
