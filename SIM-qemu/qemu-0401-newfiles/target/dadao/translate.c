@@ -109,6 +109,9 @@ static const char *regnames[] = {
     "rv56", "rv57", "rv58", "rv59", "rv60", "rv61", "rv62", "rv63",
     "pc"};
 
+/* Include DADAO decoder */
+#include "decode-dadao.inc.c"
+
 /* Map TCG globals to CPU context.  */
 void dadao_translate_init(void)
 {
