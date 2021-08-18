@@ -137,25 +137,21 @@ binutils-gdb-0233-install:
 	@make -C $(BINUTILS_GDB_0233_BUILD) install
 
 binutils-gdb-0233-highfive:
-	@echo "BEGIN TO BUILD binutils-gdb-0233!"
-	@echo "0. Remove old binutils logfiles"
+	# --- BUILD binutils-gdb-0233 BEGIN ---
+	# 0. Remove old binutils logfiles
 	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
 	@rm -fr $(BINUTILS_GDB_0233_LOG_STDOUT) $(BINUTILS_GDB_0233_LOG_STDERR)
-	@echo "1. Clean old binutils-gdb ..."
+	# 1. Clean old binutils-gdb ...
 	@make -s binutils-gdb-0233-clean			1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
-	@echo "2. Clone and patch new binutils-gdb ..."
+	# 2. Clone and patch new binutils-gdb ...
 	@make -s binutils-gdb-0233-source			1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
-	@echo "2. Clone and patch new binutils-gdb complete."
-	@echo "3. Configure binutils-gdb ..."
+	# 3. Configure binutils-gdb ...
 	@make -s binutils-gdb-0233-build-new			1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
-	@echo "3. Configure binutils-gdb complete."
-	@echo "4. Make binutils-gdb ..."
+	# 4. Make binutils-gdb ...
 	@make -s binutils-gdb-0233-build			1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
-	@echo "4. Make binutils-gdb complete."
-	@echo "5. Install binutils-gdb ..."
+	# 5. Install binutils-gdb ...
 	@make -s binutils-gdb-0233-install			1>> $(BINUTILS_GDB_0233_LOG_STDOUT) 2>> $(BINUTILS_GDB_0233_LOG_STDERR)
-	@echo "5. Install binutils-gdb complete."
-	@echo "BUILD binutils-gdb-0233 DONE!"
+	# --- BUILD binutils-gdb-0233 DONE! ---
 
 binutils-gdb-0233-check-gas:
 	@echo "=== binutils-gdb check-gas time maybe: real 5s, user 3s, sys 2s ==="
