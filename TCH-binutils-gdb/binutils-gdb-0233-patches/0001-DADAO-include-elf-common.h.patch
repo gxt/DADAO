@@ -1,7 +1,7 @@
 From 4f004885784d4d301b7332451c924838f80d3561 Mon Sep 17 00:00:00 2001
 From: Guan Xuetao <gxt@pku.edu.cn>
 Date: Sat, 18 Apr 2020 06:01:58 +0000
-Subject: [PATCH] DADAO-include: elf/common.h
+Subject: [PATCH] DADAO: include/elf/common.h
 
 Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
 ---
