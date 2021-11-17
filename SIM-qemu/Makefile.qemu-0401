@@ -1,7 +1,7 @@
 #
 # Makefile for simulator
 #
-QEMU_0401_ORIGIN	:= $(DIR_TAO_GIT)/qemu.git
+QEMU_0401_ORIGIN	:= $(DIR_GIT_ORIGIN)/qemu.git
 QEMU_0401_VERSION	:= v4.1.0
 QEMU_0401_BRANCH	:= dadao-0401
 QEMU_0401_TARGETS	:= dadao-softmmu,dadao-linux-user

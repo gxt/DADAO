@@ -1,7 +1,7 @@
 #
 # Makefile for linux-0503
 #
-LINUX_0503_ORIGIN	:= /pub/GIT-TAO/linux.git
+LINUX_0503_ORIGIN	:= $(DIR_GIT_ORIGIN)/linux.git
 LINUX_0503_VERSION	:= v5.3
 LINUX_0503_ARCH		:= dadao
 LINUX_0503_BRANCH	:= dadao-0503

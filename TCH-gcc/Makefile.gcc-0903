@@ -1,7 +1,7 @@
 #
 # Makefile for gcc in toolchain
 #
-GCC_0903_ORIGIN		:= $(DIR_TAO_GIT)/gcc.git
+GCC_0903_ORIGIN		:= $(DIR_GIT_ORIGIN)/gcc.git
 GCC_0903_VERSION	:= releases/gcc-9.3.0
 GCC_0903_BRANCH		:= dadao-0903
 GCC_0903_TARGET		:= dadao-linux-elf
