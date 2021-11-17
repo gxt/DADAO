@@ -39,7 +39,7 @@ binutils-gdb-0233-source:
 	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/include/* $(BINUTILS_GDB_0233_SOURCE)/include
 	@cd $(BINUTILS_GDB_0233_SOURCE);				\
 		git add include;					\
-		git commit -sm"DADAO-include: add header files"
+		git commit -sm"DADAO: add header files"
 	@echo "INCLUDE: Apply include related patches ..."
 	@cd $(BINUTILS_GDB_0233_SOURCE); git am $(BINUTILS_GDB_0233_PATCHES)/0*.patch
 	# bfd
@@ -47,52 +47,52 @@ binutils-gdb-0233-source:
 	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/bfd/* $(BINUTILS_GDB_0233_SOURCE)/bfd
 	@cd $(BINUTILS_GDB_0233_SOURCE);				\
 		git add bfd;						\
-		git commit -sm"DADAO-bfd: add dadao support"
+		git commit -sm"DADAO: add bfd support"
 	@echo "BFD: Apply bfd related patches ..."
 	@cd $(BINUTILS_GDB_0233_SOURCE); git am $(BINUTILS_GDB_0233_PATCHES)/1*.patch
 	@echo "BFD: re-generate configure and Makefile.in"
 	@cd $(BINUTILS_GDB_0233_SOURCE)/bfd;				\
 		autoreconf;						\
 		git add .;						\
-		git commit -sm"DADAO-bfd: re-generate configure and Makefile.in"
+		git commit -sm"DADAO: re-generate bfd configure and Makefile.in"
 	@echo "BFD: re-generate bfd-in2.h and libbfd.h"
 	@cd $(BINUTILS_GDB_0233_SOURCE)/bfd;				\
 		./configure;						\
 		make headers;						\
 		make distclean;						\
 		git add .;						\
-		git commit -sm"DADAO-bfd: re-generate bfd-in2.h and libbfd.h"
+		git commit -sm"DADAO: re-generate bfd-in2.h and libbfd.h"
 	# gas
 	@echo "GAS: Copy gas/config dir"
 	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/gas/config/* $(BINUTILS_GDB_0233_SOURCE)/gas/config/
 	@cd $(BINUTILS_GDB_0233_SOURCE);				\
 		git add gas/config;					\
-		git commit -sm"DADAO-gas: add dadao config support"
+		git commit -sm"DADAO: add gas config support"
 	@echo "GAS: Copy gas/testsuite dir"
 	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/gas/testsuite/* $(BINUTILS_GDB_0233_SOURCE)/gas/testsuite/
 	@cd $(BINUTILS_GDB_0233_SOURCE);				\
 		git add gas/testsuite;					\
-		git commit -sm"DADAO-gas: add dadao testsuite support"
+		git commit -sm"DADAO: add gas testsuite support"
 	@echo "GAS: Apply gas related patches ..."
 	@cd $(BINUTILS_GDB_0233_SOURCE); git am $(BINUTILS_GDB_0233_PATCHES)/2*.patch
 	@echo "GAS: re-generate configure and Makefile.in"
 	@cd $(BINUTILS_GDB_0233_SOURCE)/gas;				\
 		autoreconf;						\
 		git add .;						\
-		git commit -sm"DADAO-gas: re-generate configure and Makefile.in"
+		git commit -sm"DADAO: re-generate gas configure and Makefile.in"
 	# ld
 	@echo "LD: Copy ld dir"
 	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/ld/* $(BINUTILS_GDB_0233_SOURCE)/ld/
 	@cd $(BINUTILS_GDB_0233_SOURCE);				\
 		git add ld;						\
-		git commit -sm"DADAO-ld: add dadao support"
+		git commit -sm"DADAO: add ld support"
 	@echo "LD: Apply ld related patches ..."
 	@cd $(BINUTILS_GDB_0233_SOURCE); git am $(BINUTILS_GDB_0233_PATCHES)/3*.patch
 	@echo "LD: re-generate configure and Makefile.in"
 	@cd $(BINUTILS_GDB_0233_SOURCE)/ld;				\
 		autoreconf;						\
 		git add .;						\
-		git commit -sm"DADAO-ld: re-generate configure and Makefile.in"
+		git commit -sm"DADAO: re-generate ld configure and Makefile.in"
 	# opcodes
 	@echo "OPCODES: Copy opcodes dir"
 	@cp -a $(BINUTILS_GDB_0233_NEWFILES)/opcodes/* $(BINUTILS_GDB_0233_SOURCE)/opcodes/
@@ -100,14 +100,14 @@ binutils-gdb-0233-source:
 	@make OPCODES_TARGET=$(BINUTILS_GDB_0233_OPCODES) -C $(DIR_DADAO_OPCODES) opcodes-binutils
 	@cd $(BINUTILS_GDB_0233_SOURCE);				\
 		git add opcodes;					\
-		git commit -sm"DADAO-opcodes: add dadao support"
+		git commit -sm"DADAO: add opcodes support"
 	@echo "OPCODES: Apply opcodes related patches ..."
 	@cd $(BINUTILS_GDB_0233_SOURCE); git am $(BINUTILS_GDB_0233_PATCHES)/4*.patch
 	@echo "OPCODES: re-generate configure and Makefile.in"
 	@cd $(BINUTILS_GDB_0233_SOURCE)/opcodes;			\
 		autoreconf;						\
 		git add .;						\
-		git commit -sm"DADAO-opcodes: re-generate configure and Makefile.in"
+		git commit -sm"DADAO: re-generate opcodes configure and Makefile.in"
 	# binutils
 	@echo "BINUTILS: Apply binutils related patches ..."
 	@cd $(BINUTILS_GDB_0233_SOURCE); git am $(BINUTILS_GDB_0233_PATCHES)/8*.patch
