@@ -1,123 +1,129 @@
 #
 # Makefile for gcc in toolchain
 #
-GCC_0903_ORIGIN		:= $(DIR_GIT_ORIGIN)/gcc.git
-GCC_0903_VERSION	:= releases/gcc-9.3.0
-GCC_0903_BRANCH		:= dadao-0903
-GCC_0903_TARGET		:= dadao-linux-elf
+GCC_1003_ORIGIN		:= $(DIR_GIT_ORIGIN)/gcc.git
+GCC_1003_VERSION	:= releases/gcc-10.3.0
+GCC_1003_BRANCH		:= dadao-1003
+GCC_1003_TARGET		:= dadao-linux-elf
 
-GCC_0903_NEWFILES	:= $(DIR_DADAO_TOP)/TCH-gcc/gcc-0903-newfiles
-GCC_0903_PATCHES	:= $(DIR_DADAO_TOP)/TCH-gcc/gcc-0903-patches
-GCC_0903_FIXUP		:= $(DIR_DADAO_TOP)/TCH-gcc/gcc-0903-fixup
+GCC_1003_NEWFILES	:= $(DIR_DADAO_TOP)/TCH-gcc/gcc-1003-newfiles
+GCC_1003_PATCHES	:= $(DIR_DADAO_TOP)/TCH-gcc/gcc-1003-patches
+GCC_1003_FIXUP		:= $(DIR_DADAO_TOP)/TCH-gcc/gcc-1003-fixup
 
-GCC_0903_SOURCE		:= $(DIR_DADAO_SOURCE)/gcc-0903
-GCC_0903_BUILD		:= $(DIR_DADAO_BUILD)/gcc-0903
-GCC_0903_INSTALL	?= $(DIR_DADAO_INSTALL)
-#GCC_0903_INSTALL	?= $(DIR_DADAO_BUILD)/__gcc-0903
-GCC_0903_LOG_STDOUT	:= $(DIR_DADAO_LOG)/gcc-0903.out
-GCC_0903_LOG_STDERR	:= $(DIR_DADAO_LOG)/gcc-0903.err
+GCC_1003_SOURCE		:= $(DIR_DADAO_SOURCE)/gcc-1003
+GCC_1003_BUILD		:= $(DIR_DADAO_BUILD)/gcc-1003
+GCC_1003_INSTALL	?= $(DIR_DADAO_INSTALL)
+#GCC_1003_INSTALL	?= $(DIR_DADAO_BUILD)/__gcc-1003
+GCC_1003_LOG_STDOUT	:= $(DIR_DADAO_LOG)/gcc-1003.out
+GCC_1003_LOG_STDERR	:= $(DIR_DADAO_LOG)/gcc-1003.err
 
-gcc-0903-clean:
+gcc-1003-clean:
 	@echo "Remove old gcc source dir ..."
-	@rm -fr $(GCC_0903_SOURCE)
+	@rm -fr $(GCC_1003_SOURCE)
 	@echo "Remove old gcc build dir ..."
-	@rm -fr $(GCC_0903_BUILD)
-ifneq ($(GCC_0903_INSTALL), $(DIR_DADAO_INSTALL))
+	@rm -fr $(GCC_1003_BUILD)
+ifneq ($(GCC_1003_INSTALL), $(DIR_DADAO_INSTALL))
 	@echo "Remove old gcc install dir ..."
-	@rm -fr $(GCC_0903_INSTALL)
+	@rm -fr $(GCC_1003_INSTALL)
 endif
 
-gcc-0903-source:
+gcc-1003-source:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
-	@rm -fr $(GCC_0903_SOURCE)
+	@rm -fr $(GCC_1003_SOURCE)
 	@echo "Clone official repo"
-	@git clone $(GCC_0903_ORIGIN) -- $(GCC_0903_SOURCE)
-	@cd $(GCC_0903_SOURCE); git checkout -b $(GCC_0903_BRANCH) $(GCC_0903_VERSION)
+	@git clone $(GCC_1003_ORIGIN) -- $(GCC_1003_SOURCE)
+	@cd $(GCC_1003_SOURCE); git checkout -b $(GCC_1003_BRANCH) $(GCC_1003_VERSION)
 	# gcc/config
-	@cp -a $(GCC_0903_NEWFILES)/gcc/config/* $(GCC_0903_SOURCE)/gcc/config/
-	@cd $(GCC_0903_SOURCE);						\
+	@cp -a $(GCC_1003_NEWFILES)/gcc/config/* $(GCC_1003_SOURCE)/gcc/config/
+	@cd $(GCC_1003_SOURCE);						\
 		git add gcc/config/dadao;				\
 		git commit -sm"DADAO: add gcc/config/dadao support"
 	# gcc/common/config
-	@cp -a $(GCC_0903_NEWFILES)/gcc/common/config/* $(GCC_0903_SOURCE)/gcc/common/config/
-	@cd $(GCC_0903_SOURCE);						\
+	@cp -a $(GCC_1003_NEWFILES)/gcc/common/config/* $(GCC_1003_SOURCE)/gcc/common/config/
+	@cd $(GCC_1003_SOURCE);						\
 		git add gcc/common/config/dadao;			\
 		git commit -sm"DADAO: add gcc/common/config/dadao support"
 	# gcc dir patches
-	@cd $(GCC_0903_SOURCE); git am $(GCC_0903_PATCHES)/1*.patch
+	@cd $(GCC_1003_SOURCE); git am $(GCC_1003_PATCHES)/1*.patch
 	# libgcc/config
-	@cp -a $(GCC_0903_NEWFILES)/libgcc/config/* $(GCC_0903_SOURCE)/libgcc/config/
-	@cd $(GCC_0903_SOURCE);						\
+	@cp -a $(GCC_1003_NEWFILES)/libgcc/config/* $(GCC_1003_SOURCE)/libgcc/config/
+	@cd $(GCC_1003_SOURCE);						\
 		git add libgcc/config/dadao;				\
 		git commit -sm"DADAO: add libgcc/config/dadao support"
 	# libgcc dir patches
-	@cd $(GCC_0903_SOURCE); git am $(GCC_0903_PATCHES)/2*.patch
+	@cd $(GCC_1003_SOURCE); git am $(GCC_1003_PATCHES)/2*.patch
 	# root config
-	@cd $(GCC_0903_SOURCE); git am $(GCC_0903_PATCHES)/9*.patch
+	@cd $(GCC_1003_SOURCE); git am $(GCC_1003_PATCHES)/9*.patch
 	# re-generate configure and Makefile.in in root dir
-	@cd $(GCC_0903_SOURCE);						\
-		$(AUTORECONF);						\
+	@cd $(GCC_1003_SOURCE);						\
+		autoreconf;						\
 		git add .;						\
 		git commit -sm"DADAO: re-generate root configure"
 
-gcc-0903-build-new:
-	@rm -fr $(GCC_0903_BUILD)
-	@mkdir -p $(GCC_0903_BUILD)
+gcc-1003-build-new:
+	@rm -fr $(GCC_1003_BUILD)
+	@mkdir -p $(GCC_1003_BUILD)
 	# FIXME: add -Wno-format to remove a heap of compiling warnings
-	@cd $(GCC_0903_BUILD) &&					\
+	@cd $(GCC_1003_BUILD) &&					\
 		CFLAGS="-Wno-format -g -O2"				\
 		CPPFLAGS="-Wno-format -g -O2"				\
 		CXXFLAGS="-Wno-format -g -O2"				\
-		$(GCC_0903_SOURCE)/configure				\
-			--target=$(GCC_0903_TARGET)			\
-			--srcdir=$(GCC_0903_SOURCE)			\
-			--prefix=$(GCC_0903_INSTALL)			\
+		$(GCC_1003_SOURCE)/configure				\
+			--target=$(GCC_1003_TARGET)			\
+			--srcdir=$(GCC_1003_SOURCE)			\
+			--prefix=$(GCC_1003_INSTALL)			\
+			--disable-libquadamth				\
+			--disable-libatomic				\
 			--disable-nls					\
 			--disable-libssp				\
 			--enable-languages=c				\
 			--enable-checking				\
 			--enable-werror					\
-			--without-headers
+			--with-newlib					\
+			--without-headers				\
+			--with-gmp=/usr/local/gmp			\
+			--with-mpfr=/usr/local/mpfr			\
+			--with-mpc=/usr/local/mpc
 
-gcc-0903-build:
-	@make -C $(GCC_0903_BUILD) -j8 all
-#	@make -C $(GCC_0903_BUILD) -j8 all-gcc		; if ONLY gcc required, no libgcc and others
+gcc-1003-build:
+	@make -C $(GCC_1003_BUILD) -j8 all
+#	@make -C $(GCC_1003_BUILD) -j8 all-gcc		; if ONLY gcc required, no libgcc and others
 
-gcc-0903-install:
-	@make -C $(GCC_0903_BUILD) install
-#	@make -C $(GCC_0903_BUILD) install-gcc		; if ONLY gcc required, no libgcc and others
+gcc-1003-install:
+	@make -C $(GCC_1003_BUILD) install
+#	@make -C $(GCC_1003_BUILD) install-gcc		; if ONLY gcc required, no libgcc and others
 
-gcc-0903-highfive:
-	@echo "BEGIN TO BUILD gcc-0903!"
+gcc-1003-highfive:
+	@echo "BEGIN TO BUILD gcc-1003!"
 	@echo "0. Remove old gcc logfiles"
 	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
-	@rm -fr $(GCC_0903_LOG_STDOUT) $(GCC_0903_LOG_STDERR)
+	@rm -fr $(GCC_1003_LOG_STDOUT) $(GCC_1003_LOG_STDERR)
 	@echo "1. Clean old gcc ..."
-	@make -s gcc-0903-clean				1>> $(GCC_0903_LOG_STDOUT) 2>> $(GCC_0903_LOG_STDERR)
+	@make -s gcc-1003-clean				1>> $(GCC_1003_LOG_STDOUT) 2>> $(GCC_1003_LOG_STDERR)
 	@echo "2. Clone and patch new gcc ..."
-	@make -s gcc-0903-source			1>> $(GCC_0903_LOG_STDOUT) 2>> $(GCC_0903_LOG_STDERR)
+	@make -s gcc-1003-source			1>> $(GCC_1003_LOG_STDOUT) 2>> $(GCC_1003_LOG_STDERR)
 	@echo "2. Clone and patch new gcc complete."
 	@echo "3. Configure gcc ..."
-	@make -s gcc-0903-build-new			1>> $(GCC_0903_LOG_STDOUT) 2>> $(GCC_0903_LOG_STDERR)
+	@make -s gcc-1003-build-new			1>> $(GCC_1003_LOG_STDOUT) 2>> $(GCC_1003_LOG_STDERR)
 	@echo "3. Configure gcc complete."
 	@echo "4. Make all-gcc ..."
-	@make -s gcc-0903-build				1>> $(GCC_0903_LOG_STDOUT) 2>> $(GCC_0903_LOG_STDERR)
+	@make -s gcc-1003-build				1>> $(GCC_1003_LOG_STDOUT) 2>> $(GCC_1003_LOG_STDERR)
 	@echo "4. Make all-gcc complete."
 	@echo "5. Install gcc ..."
-	@make -s gcc-0903-install			1>> $(GCC_0903_LOG_STDOUT) 2>> $(GCC_0903_LOG_STDERR)
+	@make -s gcc-1003-install			1>> $(GCC_1003_LOG_STDOUT) 2>> $(GCC_1003_LOG_STDERR)
 	@echo "5. Install gcc complete."
-	@echo "BUILD gcc-0903 DONE!"
+	@echo "BUILD gcc-1003 DONE!"
 
-gcc-0903-check:
+gcc-1003-check:
 	@echo "MUST build/install binutils/gcc in the same dir (use tch-highfive)"
-	@make -C $(GCC_0903_BUILD) check-gcc-c		1>> $(GCC_0903_LOG_STDOUT) 2>> $(GCC_0903_LOG_STDERR)
-	@ln --symbolic -t $(GCC_0903_BUILD) $(GCC_0903_BUILD)/gcc/testsuite/gcc/gcc.sum
+	@make -C $(GCC_1003_BUILD) check-gcc-c		1>> $(GCC_1003_LOG_STDOUT) 2>> $(GCC_1003_LOG_STDERR)
+	@ln --symbolic -t $(GCC_1003_BUILD) $(GCC_1003_BUILD)/gcc/testsuite/gcc/gcc.sum
 
-gcc-0903-tags:
-	@cd $(GCC_0903_SOURCE) &&							\
+gcc-1003-tags:
+	@cd $(GCC_1003_SOURCE) &&							\
 		ctags --recurse --exclude=testsuite --languages=C,C++			\
 			./fixincludes							\
-			./gcc $(GCC_0903_BUILD)/gcc					\
+			./gcc $(GCC_1003_BUILD)/gcc					\
 			./include ./intl						\
 			./libbacktrace ./libcc1 ./libcpp ./libdecnumber ./libiberty	\
 			./libgcc ./libquadmath						\
