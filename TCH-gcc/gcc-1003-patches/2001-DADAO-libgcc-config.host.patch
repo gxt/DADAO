@@ -1,0 +1,37 @@
+From 32edd153c8a0654a9163e1260953bf69b0f73ea4 Mon Sep 17 00:00:00 2001
+From: Zhu Guangtao <zhuguangtao@pkunity.com>
+Date: Fri, 19 Nov 2021 05:52:34 +0000
+Subject: [PATCH 2/4] DADAO-libgcc: config.host
+
+Signed-off-by: Zhu Guangtao <zhuguangtao@pkunity.com>
+---
+ libgcc/config.host | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/libgcc/config.host b/libgcc/config.host
+index c529cc40f0c..47eaf4ec3ea 100644
+--- a/libgcc/config.host
++++ b/libgcc/config.host
+@@ -576,8 +576,6 @@ bpf-*-*)
+ cr16-*-elf)
+ 	tmake_file="${tmake_file} cr16/t-cr16 cr16/t-crtlibid t-fdpbit"
+ 	extra_parts="$extra_parts crti.o crtn.o crtlibid.o"
+-        ;;
+-crisv32-*-elf)
+ 	tmake_file="$tmake_file cris/t-cris t-softfp-sfdf t-softfp"
+  	;;
+ cris-*-elf)
+@@ -595,6 +593,10 @@ csky-*-linux*)
+ 	extra_parts="$extra_parts crti.o crtn.o"
+ 	md_unwind_header=csky/linux-unwind.h
+ 	;;
++dadao-*-*)
++	extra_parts="crti.o crtn.o crtbegin.o crtend.o"
++	tmake_file="${tmake_file} ${cpu_type}/t-${cpu_type}"
++	;;
+ epiphany-*-elf* | epiphany-*-rtems*)
+ 	tmake_file="$tmake_file epiphany/t-epiphany t-fdpbit epiphany/t-custom-eqsf"
+ 	extra_parts="$extra_parts crti.o crtint.o crtrunc.o crtm1reg-r43.o crtm1reg-r63.o crtn.o"
+-- 
+2.25.1
+

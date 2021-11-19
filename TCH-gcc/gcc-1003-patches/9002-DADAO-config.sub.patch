@@ -1,0 +1,45 @@
+From b73903aa01c189108ae174b97a5b4a8a2886ce73 Mon Sep 17 00:00:00 2001
+From: Zhu Guangtao <zhuguangtao@pkunity.com>
+Date: Fri, 19 Nov 2021 06:01:40 +0000
+Subject: [PATCH 4/4] DADAO: config.sub
+
+Signed-off-by: Zhu Guangtao <zhuguangtao@pkunity.com>
+---
+ config.sub | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/config.sub b/config.sub
+index a318a468685..e9a6926e5e0 100755
+--- a/config.sub
++++ b/config.sub
+@@ -970,6 +970,9 @@ case $cpu-$vendor in
+ 	mmix-unknown)
+ 		vendor=knuth
+ 		;;
++	dadao-unknown)
++		vendor=tao
++		;;
+ 	microblaze-unknown | microblazeel-unknown)
+ 		vendor=xilinx
+ 		;;
+@@ -1173,6 +1176,7 @@ case $cpu-$vendor in
+ 			| c[123]* | c30 | [cjt]90 | c4x \
+ 			| c8051 | clipper | craynv | csky | cydra \
+ 			| d10v | d30v | dlx | dsp16xx \
++			| dadao \
+ 			| e2k | elxsi | epiphany \
+ 			| f30[01] | f700 | fido | fr30 | frv | ft32 | fx80 \
+ 			| h8300 | h8500 \
+@@ -1553,6 +1557,9 @@ case $cpu-$vendor in
+ 	clipper-intergraph)
+ 		os=clix
+ 		;;
++	dadao-*)
++		os=elf
++		;;
+ 	hexagon-*)
+ 		os=elf
+ 		;;
+-- 
+2.25.1
+
