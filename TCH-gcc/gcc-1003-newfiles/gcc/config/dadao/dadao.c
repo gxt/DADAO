@@ -244,23 +244,22 @@ int dadao_initial_elimination_offset (int fromreg, int toreg)
 /* Return an rtx for a function argument to go in a register, and 0 for
    one that must go on stack.  */
 static rtx dd_function_arg (cumulative_args_t argsp_v,
-			machine_mode mode, const_tree type,
-			bool named ATTRIBUTE_UNUSED)
+			    const function_arg_info &arg)
 {
   CUMULATIVE_ARGS *argsp = get_cumulative_args (argsp_v);
 
   /* Last-argument marker.  */
-  if (type == void_type_node)
+  if (arg.end_marker_p ())
     return (argsp->regs < DADAO_MAX_ARGS_IN_REGS)
-      ? gen_rtx_REG (mode, DADAO_FIRST_ARG_REGNUM + argsp->regs)
+      ? gen_rtx_REG (arg.mode, DADAO_FIRST_ARG_REGNUM + argsp->regs)
       : NULL_RTX;
 
   return (argsp->regs < DADAO_MAX_ARGS_IN_REGS
-	  && !targetm.calls.must_pass_in_stack (mode, type)
-	  && (GET_MODE_BITSIZE (mode) <= 64
+	  && !targetm.calls.must_pass_in_stack (arg)
+	  && (GET_MODE_BITSIZE (arg.mode) <= 64
 	      || argsp->lib
 	      || TARGET_LIBFUNC))
-    ? gen_rtx_REG (mode, DADAO_FIRST_ARG_REGNUM + argsp->regs)
+    ? gen_rtx_REG (arg.mode, DADAO_FIRST_ARG_REGNUM + argsp->regs)
     : NULL_RTX;
 }
 
@@ -269,17 +268,17 @@ static rtx dd_function_arg (cumulative_args_t argsp_v,
 
 /* Returns nonzero for everything that goes by reference, 0 for
    everything that goes by value.  */
-static bool dd_pass_by_reference (cumulative_args_t argsp_v, machine_mode mode,
-			const_tree type, bool named ATTRIBUTE_UNUSED)
+static bool dd_pass_by_reference (cumulative_args_t argsp_v,
+				  const function_arg_info &arg)
 {
   CUMULATIVE_ARGS *argsp = get_cumulative_args (argsp_v);
 
   /* FIXME: Check: I'm not sure the must_pass_in_stack check is
      necessary.  */
-  if (targetm.calls.must_pass_in_stack (mode, type))
+  if (targetm.calls.must_pass_in_stack (arg))
     return true;
 
-  if (DADAO_FUNCTION_ARG_SIZE (mode, type) > 8
+  if (DADAO_FUNCTION_ARG_SIZE (arg.mode, arg.type) > 8
       && !TARGET_LIBFUNC
       && (!argsp || !argsp->lib))
     return true;
@@ -290,13 +289,13 @@ static bool dd_pass_by_reference (cumulative_args_t argsp_v, machine_mode mode,
 #undef	TARGET_PASS_BY_REFERENCE
 #define	TARGET_PASS_BY_REFERENCE	dd_pass_by_reference
 
-static void dd_function_arg_advance (cumulative_args_t argsp_v, machine_mode mode,
-			const_tree type, bool named ATTRIBUTE_UNUSED)
+static void dd_function_arg_advance (cumulative_args_t argsp_v,
+				     const function_arg_info &arg)
 {
   CUMULATIVE_ARGS *argsp = get_cumulative_args (argsp_v);
-  int arg_size = DADAO_FUNCTION_ARG_SIZE (mode, type);
+  int arg_size = DADAO_FUNCTION_ARG_SIZE (arg.mode, arg.type);
 
-  argsp->regs = ((targetm.calls.must_pass_in_stack (mode, type)
+  argsp->regs = ((targetm.calls.must_pass_in_stack (arg)
 		  || (arg_size > 8
 		      && !TARGET_LIBFUNC
 		      && !argsp->lib))
@@ -415,8 +414,9 @@ void dadao_function_profiler (FILE *stream ATTRIBUTE_UNUSED,
    let's stick to pushing argument registers on the stack.  Later, we
    can parse all arguments in registers, to improve performance.  */
 static void dd_setup_incoming_varargs (cumulative_args_t args_so_farp_v,
-			machine_mode mode, tree vartype, int *pretend_sizep,
-			int second_time ATTRIBUTE_UNUSED)
+				       const function_arg_info &arg,
+				       int *pretend_sizep,
+				       int second_time ATTRIBUTE_UNUSED)
 {
   CUMULATIVE_ARGS *args_so_farp = get_cumulative_args (args_so_farp_v);
 
@@ -427,7 +427,7 @@ static void dd_setup_incoming_varargs (cumulative_args_t args_so_farp_v,
 
   /* We assume that one argument takes up one register here.  That should
      be true until we start messing with multi-reg parameters.  */
-  if ((7 + (DADAO_FUNCTION_ARG_SIZE (mode, vartype))) / 8 != 1)
+  if ((7 + (DADAO_FUNCTION_ARG_SIZE (arg.mode, arg.type))) / 8 != 1)
     internal_error ("DADAO Internal: Last named vararg would not fit in a register");
 }
 
