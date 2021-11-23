@@ -14,22 +14,23 @@
 * Qing zhe zhuo zhi yuan, dong zhe jing zhi ji
 * Ren neng chang qing jing, tian di xi jie gui
 
+# VERSION 0.1:
+
+## Check autotools before going ahead
+* autoreconf: 2.69 and 2.64
+* automake: 1.15 and 1.11
+
 ## DADAO toolchain
-Two systems:
-* gcc
-* binutils-gdb
-* newlib-cygwin
+* make tch-highfive
+* make binutils-gdb-0233-highfive
+* make gcc-0903-highfive
+* make newlib-cygwin-0303-highfive
 
 ## DADAO simulator
-One system:
-* qemu: user/softmmu
+* make qemu-0401-highfive
 
 ## DADAO environment
-Three systems:
-* linux
-* busybox
-* initramfs
-* LFS
+* make linux-0503-headers-highfive
 
 # Specification For config
 * cpu-type:	dadao
