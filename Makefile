@@ -18,6 +18,8 @@ VER_NEWLIB_CYGWIN	:= 0303
 VER_LINUX		:= 0503
 VER_QEMU		:= 0401
 
+AUTORECONF		:= autoreconf
+
 include TCH-binutils-gdb/Makefile.binutils-gdb-$(VER_BINUTILS_GDB)
 include TCH-gcc/Makefile.gcc-$(VER_GCC)
 include TCH-newlib-cygwin/Makefile.newlib-cygwin-$(VER_NEWLIB_CYGWIN)
