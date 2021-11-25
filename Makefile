@@ -14,6 +14,7 @@ DIR_DADAO_LOG		:= $(DIR_DADAO_TOP)/__log
 
 VER_BINUTILS_GDB	:= 0235
 VER_GCC			:= 1003
+VER_GLIBC		:= 0231
 VER_NEWLIB_CYGWIN	:= 0303
 VER_LINUX		:= 0504
 VER_QEMU		:= 0401
@@ -22,6 +23,7 @@ AUTORECONF		:= autoreconf
 
 include TCH-binutils-gdb/Makefile.binutils-gdb-$(VER_BINUTILS_GDB)
 include TCH-gcc/Makefile.gcc-$(VER_GCC)
+include TCH-glibc/Makefile.glibc-$(VER_GLIBC)
 include TCH-newlib-cygwin/Makefile.newlib-cygwin-$(VER_NEWLIB_CYGWIN)
 include ENV-linux/Makefile.linux-$(VER_LINUX)
 include SIM-qemu/Makefile.qemu-$(VER_QEMU)
