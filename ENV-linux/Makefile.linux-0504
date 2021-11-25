@@ -18,97 +18,91 @@ LINUX_0504_LOG_STDOUT	:= $(DIR_DADAO_LOG)/linux-0504.out
 LINUX_0504_LOG_STDERR	:= $(DIR_DADAO_LOG)/linux-0504.err
 
 linux-0504-clean:
-	@echo "Remove old linux source dir ..."
+	# Remove old linux source dir ...
 	@rm -fr $(LINUX_0504_SOURCE)
-	@echo "Remove old linux build dir ..."
+	# Remove old linux build dir ...
 	@rm -fr $(LINUX_0504_BUILD)
 ifneq ($(LINUX_0504_INSTALL), $(DIR_DADAO_INSTALL))
-	@echo "Remove old linux install dir ..."
+	# Remove old linux install dir ...
 	@rm -fr $(LINUX_0504_INSTALL)
 endif
 
 linux-0504-source:
-	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
+	# Remove old source dir
 	@rm -fr $(LINUX_0504_SOURCE)
-	@echo "Clone official repo"
+	# Clone official repo
+	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@git clone $(LINUX_0504_ORIGIN) -- $(LINUX_0504_SOURCE)
 	@cd $(LINUX_0504_SOURCE);				\
 		git checkout -b $(LINUX_0504_BRANCH) $(LINUX_0504_VERSION)
-	@echo "Copy arch/dadao dir"
+	# Copy arch/dadao dir
 	@cp -a $(LINUX_0504_NEWFILES)/arch/* $(LINUX_0504_SOURCE)/arch/
 	@cd $(LINUX_0504_SOURCE);				\
 		git add arch/dadao;				\
 		git commit -sm"DADAO: add arch/dadao dir"
-#	@echo "Apply linux-0504-patches ..."
+	# Apply linux-0504-patches ...
 #	@cd $(LINUX_0504_SOURCE); git am $(LINUX_0504_PATCHES)/*.patch
 
 linux-0504-build-new:
-	@echo "Remove old linux build dir ..."
+	# Remove old linux build dir ...
 	@rm -fr $(LINUX_0504_BUILD)
+	# make defconfig
 	@mkdir -p $(LINUX_0504_BUILD)
-	@echo "Make $(LINUX_0504_DEFCONFIG) ..."
 	@make -C $(LINUX_0504_SOURCE)				\
 		O=$(LINUX_0504_BUILD)				\
 		ARCH=$(LINUX_0504_ARCH)				\
 		$(LINUX_0504_DEFCONFIG)
 
 linux-0504-build:
-	@echo "Making (in several minutes) ..."
+	# Making (in several minutes) ...
 	@make -C $(LINUX_0504_BUILD)				\
 		ARCH=$(LINUX_0504_ARCH) -j8
 
 linux-0504-install:
-	@echo "Make install ..."
+	# Make install ...
 	@make -C $(LINUX_0504_BUILD)				\
 		ARCH=$(LINUX_0504_ARCH)				\
 		INSTALL_PATH=$(LINUX_0504_INSTALL)		\
 		install
 
 linux-0504-highfive:
-	@echo "BEGIN TO BUILD linux-0504!"
-	@echo "0. Remove old logfiles"
+	# BEGIN TO BUILD linux-0504!
+	# 0. Remove old logfiles
 	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
 	@rm -fr $(LINUX_0504_LOG_STDOUT) $(LINUX_0504_LOG_STDERR)
-	@echo "1. Clean old linux ..."
+	# 1. Clean old linux ...
 	@make -s linux-0504-clean				1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
-	@echo "2. Clone and patch new linux ..."
+	# 2. Clone and patch new linux ...
 	@make -s linux-0504-source				1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
-	@echo "2. Clone and patch new linux complete."
-	@echo "3. Configure linux ..."
+	# 3. Configure linux ...
 	@make -s linux-0504-build-new				1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
-	@echo "3. Configure linux complete."
-	@echo "4. Make linux ..."
+	# 4. Make linux ...
 #	@make -s linux-0504-build				1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
-	@echo "4. Make linux complete."
-	@echo "5. Install linux images ..."
+	# 5. Install linux images ...
 #	@make -s linux-0504-install				1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
-	@echo "5. Install linux complete."
-	@echo "BUILD linux-0504 DONE!"
+	# BUILD linux-0504 DONE!
 
 linux-0504-headers-check:
-	@echo "Headers check ..."
+	# Headers check ...
 	@make -C $(LINUX_0504_BUILD)				\
 		ARCH=$(LINUX_0504_ARCH)				\
 		headers_check
 
 linux-0504-headers-install:
-	@echo "Headers install ..."
+	# Headers install ...
 	@make -C $(LINUX_0504_BUILD)				\
 		ARCH=$(LINUX_0504_ARCH)				\
 		INSTALL_HDR_PATH=$(LINUX_0504_INSTALL)		\
 		headers_install
 
 linux-0504-headers-highfive:
-	@echo "--- headers-highfive SHOULD AFTER linux-0504-highfive ---"
-	@echo "BEGIN TO BUILD linux-0504-headers!"
-	@echo "0. Check source dir and build dir"
+	# BEGIN TO BUILD linux-0504-headers!
+	# 0. Check source dir and build dir
 	@test -d $(LINUX_0504_SOURCE) || make -C $(DIR_DADAO_TOP) linux-0504-source
 	@test -d $(LINUX_0504_BUILD) || make -C $(DIR_DADAO_TOP) linux-0504-build-new
-	@echo "1. Check headers ..."
+	# 1. Check headers ...
 	@make -s linux-0504-headers-check			1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
-	@echo "1. Check headers complete."
-	@echo "2. Install headers ..."
+	# 2. Install headers ...
 	@make -s linux-0504-headers-install			1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
-	@echo "2. Install headers complete."
-	@echo "BUILD linux-0504-headers DONE!"
+	# BUILD linux-0504-headers DONE!
 
