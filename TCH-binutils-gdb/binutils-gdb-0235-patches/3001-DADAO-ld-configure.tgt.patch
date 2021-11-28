@@ -1,26 +1,26 @@
-From 9cf3ab472464a455b049d655f1e2b65b37ce92be Mon Sep 17 00:00:00 2001
-From: Guan Xuetao <gxt@pku.edu.cn>
-Date: Sat, 21 Mar 2020 10:28:09 +0000
-Subject: [PATCH 3002/3002] DADAO-ld: configure.tgt
+From 0f11a7758fde80a413baf59ac1d51bd4a873ddb0 Mon Sep 17 00:00:00 2001
+From: Yang Chen <yang_chen@pku.edu.cn>
+Date: Sun, 28 Nov 2021 14:04:03 +0800
+Subject: [PATCH] DADAO: ld/configure.tgt
 
-Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+Signed-off-by: Yang Chen <yang_chen@pku.edu.cn>
 ---
  ld/configure.tgt | 2 ++
  1 file changed, 2 insertions(+)
 
 diff --git a/ld/configure.tgt b/ld/configure.tgt
-index c81bc8a7d84..24d515547f1 100644
+index 87c7d9a4cad..eb31c2cf94a 100644
 --- a/ld/configure.tgt
 +++ b/ld/configure.tgt
-@@ -206,6 +206,8 @@ d30v-*-*ext*)		targ_emul=d30v_e; targ_extra_emuls="d30velf d30v_o" ;;
- d30v-*-*onchip*)	targ_emul=d30v_o; targ_extra_emuls="d30velf d30v_e" ;;
- d30v-*-*)		targ_emul=d30velf; targ_extra_emuls="d30v_e d30v_o"
+@@ -253,6 +253,8 @@ d30v-*-*)		targ_emul=d30velf
+ 			targ_extra_emuls="d30v_e d30v_o"
+ 			targ_extra_ofiles=ldelfgen.o
  			;;
 +dadao-*-*)		targ_emul=elf64_dadao
 +			;;
  dlx-*-elf*)		targ_emul=elf32_dlx
+ 			targ_extra_ofiles=ldelfgen.o
  			;;
- epiphany-*-*)		targ_emul=elf32epiphany
 -- 
 2.17.1
 
