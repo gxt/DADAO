@@ -19,7 +19,7 @@
 # MA 02110-1301, USA.
 #
 
-# This file is sourced from elf32.em and used to define DADAO and ELF
+# This file is sourced from elf.em and used to define DADAO and ELF
 # specific things.
 
 fragment <<EOF
