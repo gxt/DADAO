@@ -26,5 +26,6 @@ bfd_dadao_arch =
    bfd_default_compatible,	/* Architecture comparison function.  */
    bfd_default_scan,		/* String to architecture conversion.  */
    bfd_arch_default_fill,	/* Default fill.  */
-   NULL				/* Next in list.  */
+   NULL,				/* Next in list.  */
+   0 /* Maximum offset of a reloc from the start of an insn.  */
 };
