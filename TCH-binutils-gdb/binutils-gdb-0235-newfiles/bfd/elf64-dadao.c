@@ -591,7 +591,7 @@ dadao_elf_reloc (bfd *abfd,
   else
     relocation = symbol->value;
 
-  reloc_target_output_section = bfd_get_output_section (symbol);
+  reloc_target_output_section = bfd_asymbol_section (symbol)->output_section;
 
   /* Here the variable relocation holds the final address of the symbol we
      are relocating against, plus any addend.  */
@@ -687,7 +687,7 @@ dadao_elf_relocate_section (bfd *output_bfd ATTRIBUTE_UNUSED,
 						  symtab_hdr->sh_link,
 						  sym->st_name);
 	  if (name == NULL)
-	    name = bfd_section_name (input_bfd, sec);
+	    name = bfd_section_name (sec);
 	}
       else
 	{
