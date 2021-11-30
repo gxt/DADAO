@@ -1,0 +1,108 @@
+#
+# Makefile for simulator
+#
+QEMU_0600_ORIGIN	:= $(DIR_GIT_ORIGIN)/qemu.git
+QEMU_0600_VERSION	:= v6.0.1
+QEMU_0600_BRANCH	:= dadao-0600
+QEMU_0600_TARGETS	:= dadao-softmmu,dadao-linux-user
+
+QEMU_0600_NEWFILES	:= $(DIR_DADAO_TOP)/SIM-qemu/qemu-0600-newfiles
+QEMU_0600_PATCHES	:= $(DIR_DADAO_TOP)/SIM-qemu/qemu-0600-patches
+
+QEMU_0600_SOURCE	:= $(DIR_DADAO_SOURCE)/qemu-0600
+QEMU_0600_DECODE	:= $(QEMU_0600_SOURCE)/target/dadao/decode-dadao.inc.c
+QEMU_0600_BUILD		:= $(DIR_DADAO_BUILD)/qemu-0600
+QEMU_0600_INSTALL	?= $(DIR_DADAO_INSTALL)
+#QEMU_0600_INSTALL	?= $(DIR_DADAO_BUILD)/__qemu-0600
+QEMU_0600_LOG_STDOUT	:= $(DIR_DADAO_LOG)/qemu-0600.out
+QEMU_0600_LOG_STDERR	:= $(DIR_DADAO_LOG)/qemu-0600.err
+
+qemu-0600-clean:
+	@echo "Remove old qemu source dir ..."
+	@rm -fr $(QEMU_0600_SOURCE)
+	@echo "Remove old qemu build dir ..."
+	@rm -fr $(QEMU_0600_BUILD)
+ifneq ($(QEMU_0600_INSTALL), $(DIR_DADAO_INSTALL))
+	@echo "Remove old qemu install dir ..."
+	@rm -fr $(QEMU_0600_INSTALL)
+endif
+
+qemu-0600-source:
+	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
+	@rm -fr $(QEMU_0600_SOURCE)
+	@echo "Clone official repo"
+	@git clone $(QEMU_0600_ORIGIN) -- $(QEMU_0600_SOURCE)
+	@cd $(QEMU_0600_SOURCE); git checkout -b $(QEMU_0600_BRANCH) $(QEMU_0600_VERSION)
+	# include and arch-init
+	@echo "INCLUDE and arch-init patches"
+	@cd $(QEMU_0600_SOURCE); git am $(QEMU_0600_PATCHES)/0*.patch
+	# linux-user
+	@echo "LINUX-USER: Copy linux-user/dadao dir"
+	@cp -a $(QEMU_0600_NEWFILES)/linux-user/* $(QEMU_0600_SOURCE)/linux-user/
+	@cd $(QEMU_0600_SOURCE);					\
+		git add linux-user/dadao;				\
+		git commit -sm"DADAO-linux-user: add dadao support"
+	@echo "LINUX-USER: apply patches"
+	@cd $(QEMU_0600_SOURCE); git am $(QEMU_0600_PATCHES)/1*.patch
+	# target
+	@echo "TARGET: Copy target/dadao dir"
+	@cp -a $(QEMU_0600_NEWFILES)/target/* $(QEMU_0600_SOURCE)/target/
+	@echo "TARGET-DECODE: Generate dadao decodetree file"
+	@make TARGET_DECODE_QEMU=$(QEMU_0600_DECODE) -C $(DIR_DADAO_OPCODES) decode-qemu
+	@cd $(QEMU_0600_SOURCE);					\
+		git add target/dadao;					\
+		git commit -sm"DADAO-target: add dadao support"
+	# default-configs
+	@echo "DEFAULT-CONFIGS: Copy config files"
+	@cp -a $(QEMU_0600_NEWFILES)/default-configs/* $(QEMU_0600_SOURCE)/default-configs/
+	@cd $(QEMU_0600_SOURCE);					\
+		git add default-configs;				\
+		git commit -sm"DADAO-default-configs: add dadao support"
+	# root config
+	@echo "CONFIG: Apply patches"
+	@cd $(QEMU_0600_SOURCE); git am $(QEMU_0600_PATCHES)/9*.patch
+
+qemu-0600-build-new:
+	@rm -fr $(QEMU_0600_BUILD)
+	@mkdir -p $(QEMU_0600_BUILD)
+	@cd $(QEMU_0600_BUILD) &&					\
+		$(QEMU_0600_SOURCE)/configure				\
+			--target-list=$(QEMU_0600_TARGETS)		\
+			--prefix=$(QEMU_0600_INSTALL)			\
+			--disable-sdl					\
+			--disable-capstone				\
+			--disable-slirp					\
+			--disable-fdt					\
+			--enable-debug					\
+			--enable-curses
+
+qemu-0600-build:
+	@make -C $(QEMU_0600_BUILD) -j8
+
+qemu-0600-install:
+	@echo "Make install ..."
+	@make -C $(QEMU_0600_BUILD) install
+
+qemu-0600-highfive:
+	@echo "BEGIN TO BUILD qemu-0600!"
+	@echo "0. Remove old logfiles"
+	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
+	@rm -fr $(QEMU_0600_LOG_STDOUT) $(QEMU_0600_LOG_STDERR)
+	@echo "1. Clean old qemu ..."
+	@make -s qemu-0600-clean				1>> $(QEMU_0600_LOG_STDOUT) 2>> $(QEMU_0600_LOG_STDERR)
+	@echo "2. Clone and patch new qemu ..."
+	@make -s qemu-0600-source				1>> $(QEMU_0600_LOG_STDOUT) 2>> $(QEMU_0600_LOG_STDERR)
+	@echo "2. Clone and patch new qemu complete."
+	@echo "3. Configure qemu ..."
+	@make -s qemu-0600-build-new				1>> $(QEMU_0600_LOG_STDOUT) 2>> $(QEMU_0600_LOG_STDERR)
+	@echo "3. Configure qemu complete."
+	@echo "4. Make all-qemu ..."
+	@make -s qemu-0600-build				1>> $(QEMU_0600_LOG_STDOUT) 2>> $(QEMU_0600_LOG_STDERR)
+	@echo "4. Make all-qemu complete."
+	@echo "5. Install qemu ..."
+	@make -s qemu-0600-install				1>> $(QEMU_0600_LOG_STDOUT) 2>> $(QEMU_0600_LOG_STDERR)
+	@echo "5. Install qemu complete."
+	@echo "BUILD qemu-0600 DONE!"
+
+qemu-0600-tags:
+	@make -C $(QEMU_0600_SOURCE) ctags
