@@ -7,10 +7,6 @@
  *	Liang Shuhao <1700012741@pku.edu.cn>
  *	Guan Xuetao <gxt@pku.edu.cn>
  */
-#ifdef CONFIG_USER_ONLY
-#error This file only exist under softmmu circumstance
-#endif
-
 #include "qemu/osdep.h"
 /* keep */
 #include "cpu.h"
@@ -47,6 +43,7 @@ void switch_mode(CPUDADAOState *env, int mode)
     return;
 }
 
+#ifndef CONFIG_USER_ONLY
 /* Handle a CPU exception.  */
 void dadao_cpu_do_interrupt(CPUState *cs)
 {
@@ -148,11 +145,13 @@ static int get_phys_addr_dadao(CPUDADAOState *env, uint32_t address,
 do_fault:
     return code;
 }
+#endif
 
 bool dadao_cpu_tlb_fill(CPUState *cs, vaddr address, int size,
                        MMUAccessType access_type, int mmu_idx,
                        bool probe, uintptr_t retaddr)
 {
+#ifndef CONFIG_USER_ONLY
     DADAOCPU *cpu = DADAO_CPU(cs);
     CPUDADAOState *env = &cpu->env;
     uint32_t phys_addr;
@@ -207,6 +206,9 @@ bool dadao_cpu_tlb_fill(CPUState *cs, vaddr address, int size,
         cs->exception_index = DADAO_EXCP_DMMU;
     }
     cpu_loop_exit_restore(cs, retaddr);
+#else
+    return true;
+#endif
 }
 
 hwaddr dadao_cpu_get_phys_page_debug(CPUState *cs, vaddr addr)

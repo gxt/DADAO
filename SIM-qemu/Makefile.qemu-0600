@@ -52,9 +52,16 @@ qemu-0600-source:
 	@cd $(QEMU_0600_SOURCE);					\
 		git add target/dadao;					\
 		git commit -sm"DADAO-target: add dadao support"
+	# hw
+	@echo "HW: Copy hw/dadao dir"
+	@cp -a $(QEMU_0600_NEWFILES)/hw/* $(QEMU_0600_SOURCE)/hw/
+	@cd $(QEMU_0600_SOURCE);					\
+		git add hw/dadao;						\
+		git commit -sm"DADAO-hw: add dadao support"
 	# default-configs
 	@echo "DEFAULT-CONFIGS: Copy config files"
-	@cp -a $(QEMU_0600_NEWFILES)/default-configs/* $(QEMU_0600_SOURCE)/default-configs/
+	@cp -a $(QEMU_0600_NEWFILES)/default-configs/devices/* $(QEMU_0600_SOURCE)/default-configs/devices/
+	@cp -a $(QEMU_0600_NEWFILES)/default-configs/targets/* $(QEMU_0600_SOURCE)/default-configs/targets/
 	@cd $(QEMU_0600_SOURCE);					\
 		git add default-configs;				\
 		git commit -sm"DADAO-default-configs: add dadao support"

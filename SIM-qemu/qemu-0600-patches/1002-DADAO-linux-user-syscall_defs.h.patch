@@ -1,41 +1,43 @@
-From 23c9e93816ad5ffa2bbbaed0d925ddaa36d07d0e Mon Sep 17 00:00:00 2001
-From: Guan Xuetao <gxt@pku.edu.cn>
-Date: Fri, 13 Dec 2019 03:29:45 +0800
+From c156d37a034b45f946676fb65f6a4d00a18997bb Mon Sep 17 00:00:00 2001
+From: Hao Chenqi <hchenqi@pku.edu.cn>
+Date: Fri, 26 Nov 2021 16:50:25 +0800
 Subject: [PATCH 1002/1002] DADAO-linux-user: syscall_defs.h
 
 Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+Signed-off-by: Hao Chenqi <hchenqi@pku.edu.cn>
 ---
- linux-user/syscall_defs.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ linux-user/syscall_defs.h | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/linux-user/syscall_defs.h b/linux-user/syscall_defs.h
-index 0662270300..8a07dd536f 100644
+index 25be414727..021ef29b74 100644
 --- a/linux-user/syscall_defs.h
 +++ b/linux-user/syscall_defs.h
-@@ -73,7 +73,7 @@
-     || defined(TARGET_S390X) \
-     || defined(TARGET_OPENRISC) || defined(TARGET_TILEGX) \
+@@ -74,7 +74,7 @@
+     || defined(TARGET_M68K) || defined(TARGET_CRIS) \
+     || defined(TARGET_S390X) || defined(TARGET_OPENRISC) \
      || defined(TARGET_NIOS2) || defined(TARGET_RISCV) \
 -    || defined(TARGET_XTENSA)
 +    || defined(TARGET_XTENSA) || defined(TARGET_DADAO)
  
  #define TARGET_IOC_SIZEBITS	14
  #define TARGET_IOC_DIRBITS	2
-@@ -1952,7 +1952,7 @@ struct target_stat64  {
+@@ -2144,7 +2144,8 @@ struct target_stat64  {
+     abi_ulong __unused5;
  };
  
- #elif defined(TARGET_OPENRISC) || defined(TARGET_TILEGX) || \
--      defined(TARGET_NIOS2) || defined(TARGET_RISCV)
-+      defined(TARGET_NIOS2) || defined(TARGET_RISCV) || defined(TARGET_DADAO)
+-#elif defined(TARGET_OPENRISC) || defined(TARGET_NIOS2) || defined(TARGET_RISCV)
++#elif defined(TARGET_OPENRISC) || defined(TARGET_NIOS2) || \
++      defined(TARGET_RISCV) || defined(TARGET_DADAO)
  
  /* These are the asm-generic versions of the stat and stat64 structures */
  
-@@ -2125,7 +2125,7 @@ struct target_statfs64 {
+@@ -2342,7 +2343,7 @@ struct target_statfs64 {
  };
  #elif (defined(TARGET_PPC64) || defined(TARGET_X86_64) || \
         defined(TARGET_SPARC64) || defined(TARGET_AARCH64) || \
 -       defined(TARGET_RISCV)) && !defined(TARGET_ABI32)
-+       defined(TARGET_RISCV)) && !defined(TARGET_ABI32) || defined (TARGET_DADAO)
++       defined(TARGET_RISCV) || defined(TARGET_DADAO)) && !defined(TARGET_ABI32)
  struct target_statfs {
  	abi_long f_type;
  	abi_long f_bsize;

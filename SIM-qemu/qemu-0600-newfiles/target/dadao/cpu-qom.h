@@ -10,7 +10,8 @@
 #ifndef QEMU_DADAO_CPU_QOM_H
 #define QEMU_DADAO_CPU_QOM_H
 
-#include "qom/cpu.h"
+#include "hw/core/cpu.h"
+#include "qom/object.h"
 
 #define TYPE_DADAO_CPU "dadao-cpu"
 

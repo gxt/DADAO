@@ -1,6 +1,0 @@
-obj-y += translate.o helper.o cpu.o
-
-obj-$(CONFIG_SOFTMMU) += softmmu.o
-
-helper.o-cflags := $(CURSES_CFLAGS)
-helper.o-libs := $(CURSES_LIBS)

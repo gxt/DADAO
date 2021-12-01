@@ -1,0 +1,37 @@
+From aa8bb15a44f366b03f787f58cbf8ee2409ae95e6 Mon Sep 17 00:00:00 2001
+From: Hao Chenqi <hchenqi@pku.edu.cn>
+Date: Fri, 26 Nov 2021 21:41:10 +0800
+Subject: [PATCH 9003/9003] DADAO-scripts: qemu-binfmt-conf.sh
+
+Signed-off-by: Hao Chenqi <hchenqi@pku.edu.cn>
+---
+ scripts/qemu-binfmt-conf.sh | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/qemu-binfmt-conf.sh b/scripts/qemu-binfmt-conf.sh
+index 573b5dc6ac..7140802a1d 100755
+--- a/scripts/qemu-binfmt-conf.sh
++++ b/scripts/qemu-binfmt-conf.sh
+@@ -4,7 +4,7 @@
+ qemu_target_list="i386 i486 alpha arm armeb sparc sparc32plus sparc64 \
+ ppc ppc64 ppc64le m68k mips mipsel mipsn32 mipsn32el mips64 mips64el \
+ sh4 sh4eb s390x aarch64 aarch64_be hppa riscv32 riscv64 xtensa xtensaeb \
+-microblaze microblazeel or1k x86_64 hexagon"
++microblaze microblazeel or1k x86_64 hexagon dadao"
+ 
+ i386_magic='\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x03\x00'
+ i386_mask='\xff\xff\xff\xff\xff\xfe\xfe\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff'
+@@ -140,6 +140,10 @@ hexagon_magic='\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x
+ hexagon_mask='\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff'
+ hexagon_family=hexagon
+ 
++dadao_magic='\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\xDA\xDA'
++dadao_mask='\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff'
++dadao_family=dadao
++
+ qemu_get_family() {
+     cpu=${HOST_ARCH:-$(uname -m)}
+     case "$cpu" in
+-- 
+2.17.1
+

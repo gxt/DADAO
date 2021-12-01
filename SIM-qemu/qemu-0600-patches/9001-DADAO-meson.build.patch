@@ -1,0 +1,25 @@
+From e35c34a8890e5b8cbc0c4f14fccc921cad4f2c3d Mon Sep 17 00:00:00 2001
+From: Hao Chenqi <hchenqi@pku.edu.cn>
+Date: Fri, 26 Nov 2021 20:58:52 +0800
+Subject: [PATCH 9001/9003] DADAO: meson.build
+
+Signed-off-by: Hao Chenqi <hchenqi@pku.edu.cn>
+---
+ meson.build | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/meson.build b/meson.build
+index c6f4b0cf5e..bab21e62d7 100644
+--- a/meson.build
++++ b/meson.build
+@@ -1193,6 +1193,7 @@ disassemblers = {
+   'arm' : ['CONFIG_ARM_DIS'],
+   'avr' : ['CONFIG_AVR_DIS'],
+   'cris' : ['CONFIG_CRIS_DIS'],
++  'dadao' : ['CONFIG_DADAO_DIS'],
+   'hexagon' : ['CONFIG_HEXAGON_DIS'],
+   'hppa' : ['CONFIG_HPPA_DIS'],
+   'i386' : ['CONFIG_I386_DIS'],
+-- 
+2.17.1
+
