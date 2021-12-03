@@ -13,7 +13,7 @@
 #define	DADAO_REG_RG_START			0x00
 #define	DADAO_REG_RP_START			0x40
 #define	DADAO_REG_RF_START			0x80
-#define	DADAO_REG_RV_START			0xC0
+#define	DADAO_REG_RR_START			0xC0
 #define	DADAO_REG_RS_START			0x100
 
 #define	DADAO_MAX_ARGS_IN_REGS			16
@@ -188,7 +188,7 @@ enum reg_class {
 	GENERAL_REGS,
 	POINTER_REGS,
 	FLOATING_REGS,
-	VECTOR_REGS,
+	RETURN_REGS,
 	ALL_REGS,
 	LIM_REG_CLASSES };
 
@@ -199,12 +199,12 @@ enum reg_class {
 	"GENERAL_REGS",				\
 	"POINTER_REGS",				\
 	"FLOATING_REGS",			\
-	"VECTOR_REGS",				\
+	"RETURN_REGS",				\
 	"ALL_REGS"}
 
 /* Note that the contents of each item is always 32 bits.  */
 #define REG_CLASS_CONTENTS {							\
-	/* Rg	Rg	Rp	Rp	Rf	Rf	Rv	Rv */		\
+	/* Rg	Rg	Rp	Rp	Rf	Rf	Rr	Rr */		\
 	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0},		\
 	{~0,	~0,	 0,	 0,	 0,	 0,	 0,	 0},		\
 	{ 0,	 0,	~0,	~0,	 0,	 0,	 0,	 0},		\
@@ -216,7 +216,7 @@ enum reg_class {
 	( (REGNO) >= FIRST_PSEUDO_REGISTER	? NO_REGS			\
 	: (REGNO) < 0x40			? GENERAL_REGS			\
 	: (REGNO) < 0x80			? POINTER_REGS			\
-	: (REGNO) < 0xC0			? FLOATING_REGS : VECTOR_REGS)
+	: (REGNO) < 0xC0			? FLOATING_REGS : RETURN_REGS)
 
 #define BASE_REG_CLASS				POINTER_REGS
 #define INDEX_REG_CLASS				GENERAL_REGS
@@ -415,14 +415,14 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 	"rf40", "rf41", "rf42", "rf43", "rf44", "rf45", "rf46", "rf47",		\
 	"rf48", "rf49", "rf50", "rf51", "rf52", "rf53", "rf54", "rf55",		\
 	"rf56", "rf57", "rf58", "rf59", "rf60", "rf61", "rf62", "rf63",		\
-	"rv0", "rv1", "rv2", "rv3", "rv4", "rv5", "rv6", "rv7",			\
-	"rv8", "rv9", "rv10", "rv11", "rv12", "rv13", "rv14", "rv15",		\
-	"rv16", "rv17", "rv18", "rv19", "rv20", "rv21", "rv22", "rv23",		\
-	"rv24", "rv25", "rv26", "rv27", "rv28", "rv29", "rv30", "rv31",		\
-	"rv32", "rv33", "rv34", "rv35", "rv36", "rv37", "rv38", "rv39",		\
-	"rv40", "rv41", "rv42", "rv43", "rv44", "rv45", "rv46", "rv47",		\
-	"rv48", "rv49", "rv50", "rv51", "rv52", "rv53", "rv54", "rv55",		\
-	"rv56", "rv57", "rv58", "rv59", "rv60", "rv61", "rv62", "rv63"}
+	"rr0", "rr1", "rr2", "rr3", "rr4", "rr5", "rr6", "rr7",			\
+	"rr8", "rr9", "rr10", "rr11", "rr12", "rr13", "rr14", "rr15",		\
+	"rr16", "rr17", "rr18", "rr19", "rr20", "rr21", "rr22", "rr23",		\
+	"rr24", "rr25", "rr26", "rr27", "rr28", "rr29", "rr30", "rr31",		\
+	"rr32", "rr33", "rr34", "rr35", "rr36", "rr37", "rr38", "rr39",		\
+	"rr40", "rr41", "rr42", "rr43", "rr44", "rr45", "rr46", "rr47",		\
+	"rr48", "rr49", "rr50", "rr51", "rr52", "rr53", "rr54", "rr55",		\
+	"rr56", "rr57", "rr58", "rr59", "rr60", "rr61", "rr62", "rr63"}
 
 #define	ADDITIONAL_REGISTER_NAMES {		\
 	{"zero", DADAO_CONST_ZERO_REGNUM},	\

@@ -17,8 +17,8 @@
 (define_register_constraint "Rf" "FLOATING_REGS"
 	"Floating-point registers")
 
-(define_register_constraint "Rv" "VECTOR_REGS"
-	"Vector registers")
+(define_register_constraint "Rr" "RETURN_REGS"
+	"Return registers")
 
 (define_constraint "Sf"
 	"@internal"

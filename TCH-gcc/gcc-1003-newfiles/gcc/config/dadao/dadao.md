@@ -18,7 +18,7 @@
 (include "dadao-rg.md")
 (include "dadao-rp.md")
 (include "dadao-rf.md")
-(include "dadao-rv.md")
+(include "dadao-rr.md")
 (include "dadao-cc.md")
 
 (define_insn "nop"

@@ -26,9 +26,9 @@
 	return (REGNO_REG_CLASS(REGNO(op)) == FLOATING_REGS);
 })
 
-(define_predicate "rv_class_operand"
+(define_predicate "rr_class_operand"
   (and (match_code "reg")
-       (match_test "REGNO_REG_CLASS (REGNO (op)) == VECTOR_REGS")))
+       (match_test "REGNO_REG_CLASS (REGNO (op)) == RETURN_REGS")))
 
 ;; TODO: ri add shift-imm handler
 (define_predicate "dd_rg_u12_operand"
