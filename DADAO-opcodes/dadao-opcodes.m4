@@ -175,6 +175,3 @@ insn(  _ft_st,		rrri,	0xAB,	0,	rf,	rp,	rg,	i6,	dref)
 insn(	fo_st,		rrii,	0xBA,	0,	rf,	rp,	s12,	-,	dref)
 insn(  _fo_st,		rrri,	0xBB,	0,	rf,	rp,	rg,	i6,	dref)
 
-insn(	rv_v2g,		orr0,	0x0C,	0x00,	op,	rg,	rv,	-,	normal)
-insn(	rv_g2v,		orr0,	0x0C,	0x01,	op,	rv,	rg,	-,	normal)
-insn(	rv_v2v,		orr0,	0x0C,	0x02,	op,	rv,	rv,	-,	normal)

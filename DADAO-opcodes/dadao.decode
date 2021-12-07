@@ -1,7 +1,7 @@
 #
 # This file is processed by scripts/decodetree.py
 #
-# reg type: rg=0 rp=1 rf=2 rv=3
+# reg type: rg=0 rp=1 rf=2 rr=3
 # imm type: iu=0 is=1
 
 # Fields
