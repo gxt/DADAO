@@ -158,7 +158,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	case dadao_operand_rg:	__DDIS_PRINT_REG("rg", fa);	i++;	break;
 	case dadao_operand_rp:	__DDIS_PRINT_REG("rp", fa);	i++;	break;
 	case dadao_operand_rf:	__DDIS_PRINT_REG("rf", fa);	i++;	break;
-	case dadao_operand_rv:	__DDIS_PRINT_REG("rv", fa);	i++;	break;
+	case dadao_operand_rr:	__DDIS_PRINT_REG("rr", fa);	i++;	break;
 
 	case dadao_operand_s24: /* ONLY call or jump be here */
 		offset = (insn & 0xFFFFFF) << 2;
@@ -183,7 +183,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	case dadao_operand_rg:	__DDIS_PRINT_REG("rg", fb);	i++;	break;
 	case dadao_operand_rp:	__DDIS_PRINT_REG("rp", fb);	i++;	break;
 	case dadao_operand_rf:	__DDIS_PRINT_REG("rf", fb);	i++;	break;
-	case dadao_operand_rv:	__DDIS_PRINT_REG("rv", fb);	i++;	break;
+	case dadao_operand_rr:	__DDIS_PRINT_REG("rr", fb);	i++;	break;
 
 	case dadao_operand_w16:
 		(*info->fprintf_func) (info->stream, "0x%x", (insn & 0xFFFF));
@@ -212,7 +212,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	case dadao_operand_rg:	__DDIS_PRINT_REG("rg", fc);	i++;	break;
 	case dadao_operand_rp:	__DDIS_PRINT_REG("rp", fc);	i++;	break;
 	case dadao_operand_rf:	__DDIS_PRINT_REG("rf", fc);	i++;	break;
-	case dadao_operand_rv:	__DDIS_PRINT_REG("rv", fc);	i++;	break;
+	case dadao_operand_rr:	__DDIS_PRINT_REG("rr", fc);	i++;	break;
 
 	case dadao_operand_s12:
 		if (insn & 0x800) {
@@ -232,7 +232,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	case dadao_operand_rg:	__DDIS_PRINT_REG(", rg", fd);	break;
 	case dadao_operand_rp:	__DDIS_PRINT_REG(", rp", fd);	break;
 	case dadao_operand_rf:	__DDIS_PRINT_REG(", rf", fd);	break;
-	case dadao_operand_rv:	__DDIS_PRINT_REG(", rv", fd);	break;
+	case dadao_operand_rr:	__DDIS_PRINT_REG(", rr", fd);	break;
 
 	case dadao_operand_i6:
 		if ((insn & 0x3F) == 0)		break;		/* "<< 0" could be omitted */
