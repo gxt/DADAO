@@ -19,9 +19,9 @@ const struct dadao_reg_alias dadao_reg_aliases[] =
 	{"datao2", 2},	/* internal reg for as, SHOULD removed at last */
 	{"datao3", 3},	/* internal reg for as, SHOULD removed at last */
 	/* Pointer registers */
-	{"pc", 0x40 + 0},
-	{"sp", 0x40 + 1},
-	{"fp", 0x40 + 2},
+	//{"pc", 0x40 + 0},
+	//{"sp", 0x40 + 1},
+	//{"fp", 0x40 + 2},
 
 	{NULL, 0}
  };
