@@ -2,7 +2,7 @@
 #	name		op-type	maj-op	min-op	fa	fb	fc	fd	insn-type
 divert(0)dnl
 
-insn(	nop,		o000,	0x00,	0x00,	op,	-,	-,	-,	normal)
+insn(	swym,		o000,	0x00,	0x00,	op,	-,	-,	-,	normal)
 
 insn(	slu,		orri,	0x00,	0x20,	op,	rg,	rg,	u6,	normal)
 insn(  _slu,		orrr,	0x00,	0x21,	op,	rg,	rg,	rg,	normal)
