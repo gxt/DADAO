@@ -36,7 +36,6 @@ enum dadao_operand_type {
 	dadao_operand_rf,	/* rg reg class */
 	dadao_operand_rr,	/* rg reg class */
 	dadao_operand_i6,	/* shift left imm6 (unsigned) */
-	dadao_operand_u6,	/* unsigned imm 6-bit */
 	dadao_operand_u12,	/* unsigned imm 12-bit */
 	dadao_operand_u18,	/* unsigned imm 18-bit */
 	dadao_operand_s12,	/* signed imm 12-bit */

@@ -495,11 +495,6 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
 	case dadao_operand_rf:	__DD_EXP_SHOULD_BE_RF(exp_last[0], fd);	break;
 	case dadao_operand_rr:	__DD_EXP_SHOULD_BE_RR(exp_last[0], fd);	break;
 
-	case dadao_operand_u6:
-		__DD_EXP_SHOULD_BE_IMM(exp_last[0], 0, 0x3F);
-		fd = exp_last[0].X_add_number;
-		break;
-
 	case dadao_operand_i6:
 		/* << i6 can be omitted, thus i6 will be 0 */
 		if (exp_last[0].X_op == O_constant) {

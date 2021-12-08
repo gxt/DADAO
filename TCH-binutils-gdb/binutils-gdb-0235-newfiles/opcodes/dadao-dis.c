@@ -239,10 +239,6 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		(*info->fprintf_func) (info->stream, " << %d", (int) (insn & 0x3F));
 		break;
 
-	case dadao_operand_u6:
-		(*info->fprintf_func) (info->stream, ", %d", (int) (insn & 0x3F));
-		break;
-
 	case dadao_operand_none:
 		break;
 
