@@ -4,8 +4,8 @@
  *
  * Contributed by:
  *   2019:
- *	Liang Shuhao <1700012741@pku.edu.cn>
- *	Guan Xuetao <gxt@pku.edu.cn>
+ *  Liang Shuhao <1700012741@pku.edu.cn>
+ *  Guan Xuetao <gxt@pku.edu.cn>
  */
 
 #include "qemu/osdep.h"
@@ -19,7 +19,7 @@ static void dadao_cpu_set_pc(CPUState *cs, vaddr value)
 {
     DADAOCPU *cpu = DADAO_CPU(cs);
 
-    cpu->env.__REG_PC = value;
+    cpu->env.REG_PC = value;
 }
 
 static bool dadao_cpu_has_work(CPUState *cs)
@@ -84,9 +84,9 @@ static void dadao_cpu_initfn(Object *obj)
     cpu_set_cpustate_pointers(cpu);
 
 #ifdef CONFIG_USER_ONLY
-    env->__REG_PC = 0;
+    env->REG_PC = 0;
 #else
-    env->__REG_PC = 0x03000000;
+    env->REG_PC = 0x03000000;
 #endif
 }
 

@@ -4,8 +4,8 @@
  *
  * Contributed by:
  *   2019:
- *	Liang Shuhao <1700012741@pku.edu.cn>
- *	Guan Xuetao <gxt@pku.edu.cn>
+ *  Liang Shuhao <1700012741@pku.edu.cn>
+ *  Guan Xuetao <gxt@pku.edu.cn>
  */
 
 #include "qemu/osdep.h"
@@ -31,7 +31,7 @@
 
 #ifndef CONFIG_USER_ONLY
 void helper_cp0_set(CPUDADAOState *env, uint32_t val, uint32_t creg,
-    uint32_t cop)
+                    uint32_t cop)
 {
     /*
      * movc pp.nn, rn, #imm9

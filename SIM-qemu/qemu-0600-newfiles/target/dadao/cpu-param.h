@@ -4,12 +4,12 @@
  *
  * Contributed by:
  *   2019:
- *	Liang Shuhao <1700012741@pku.edu.cn>
- *	Guan Xuetao <gxt@pku.edu.cn>
+ *  Liang Shuhao <1700012741@pku.edu.cn>
+ *  Guan Xuetao <gxt@pku.edu.cn>
  */
 
 #ifndef DADAO_CPU_PARAM_H
-#define DADAO_CPU_PARAM_H 1
+#define DADAO_CPU_PARAM_H
 
 #define TARGET_LONG_BITS                64
 #define TARGET_PAGE_BITS                12

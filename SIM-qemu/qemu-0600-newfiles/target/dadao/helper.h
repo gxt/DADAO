@@ -4,8 +4,8 @@
  *
  * Contributed by:
  *   2019:
- *	Liang Shuhao <1700012741@pku.edu.cn>
- *	Guan Xuetao <gxt@pku.edu.cn>
+ *  Liang Shuhao <1700012741@pku.edu.cn>
+ *  Guan Xuetao <gxt@pku.edu.cn>
  */
 
 #ifndef CONFIG_USER_ONLY

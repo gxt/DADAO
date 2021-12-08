@@ -27,8 +27,8 @@ index fc9c4f12be..3cfb93acf9 100644
 +static inline void init_thread(struct target_pt_regs *regs,
 +                               struct image_info *infop)
 +{
-+    regs->__REG_PC = infop->entry;
-+    regs->__REG_SP = infop->start_stack;
++    regs->REG_PC = infop->entry;
++    regs->REG_SP = infop->start_stack;
 +}
 +
 +#define ELF_EXEC_PAGESIZE 4096

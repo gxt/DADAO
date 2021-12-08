@@ -4,14 +4,14 @@
  *
  * Contributed by:
  *   2019:
- *	Liang Shuhao <1700012741@pku.edu.cn>
- *	Guan Xuetao <gxt@pku.edu.cn>
+ *  Liang Shuhao <1700012741@pku.edu.cn>
+ *  Guan Xuetao <gxt@pku.edu.cn>
  */
 #include "qemu/osdep.h"
-/* keep */
+
 #include "qemu.h"
 #include "signal-common.h"
-/* order */
+
 #include "linux-user/trace.h"
 
 struct target_sigcontext {
@@ -34,8 +34,8 @@ struct target_rt_sigframe {
 
 /* required by `signal.c` */
 void setup_rt_frame(int sig, struct target_sigaction *ka,
-    target_siginfo_t *info,
-    target_sigset_t *set, CPUDADAOState *env)
+                    target_siginfo_t *info,
+                    target_sigset_t *set, CPUDADAOState *env)
 {
     return;
 }

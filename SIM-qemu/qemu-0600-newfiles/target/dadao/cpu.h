@@ -3,25 +3,27 @@
  * Copyright (C) 2019-2033 Guan Xuetao (AT) Peking Univ.
  *
  * Contributed by:
+ *   2021:
+ *  Hao Chenqi <hchenqi@pku.edu.cn>
  *   2019:
- *	Liang Shuhao <1700012741@pku.edu.cn>
- *	Guan Xuetao <gxt@pku.edu.cn>
+ *  Liang Shuhao <1700012741@pku.edu.cn>
+ *  Guan Xuetao <gxt@pku.edu.cn>
  */
 
 #ifndef DADAO_CPU_H
 #define DADAO_CPU_H
 
 #include "cpu-qom.h"
-/* keep order */
 #include "exec/cpu-defs.h"
 
-#define __REG_PC	__rp[0]
-#define __REG_SP	__rp[1]
+#define REG_PC  rp[0]
+#define REG_SP  rp[1]
+
 typedef struct CPUDADAOState {
-	uint64_t __rg[64];		/* general registers */
-	uint64_t __rp[64];		/* pointer registers */
-	uint64_t __rf[64];		/* floating-point registers */
-	uint64_t __rv[64];		/* vector registers */
+    uint64_t rg[64];        /* general registers */
+    uint64_t rp[64];        /* pointer registers */
+    uint64_t rf[64];        /* floating-point registers */
+    uint64_t rr[64];        /* return address registers */
 
     /* System control coprocessor (cp0) */
     struct {
@@ -61,14 +63,14 @@ hwaddr dadao_cpu_get_phys_page_debug(CPUState *cpu, vaddr addr);
 
 /* Exception vectors definitions */
 enum {
-	DADAO_EXCP_NONE		= 0,
-	DADAO_EXCP_TRIP		= 1,
-	DADAO_EXCP_TRAP		= 2,
-	DADAO_EXCP_IMMU		= 3,
-	DADAO_EXCP_DMMU		= 4,
-	DADAO_EXCP_ILLI		= 5,
-	DADAO_EXCP_INTR		= 6,
-	DADAO_EXCP_HALT		= 7,
+    DADAO_EXCP_NONE = 0,
+    DADAO_EXCP_TRIP = 1,
+    DADAO_EXCP_TRAP = 2,
+    DADAO_EXCP_IMMU = 3,
+    DADAO_EXCP_DMMU = 4,
+    DADAO_EXCP_ILLI = 5,
+    DADAO_EXCP_INTR = 6,
+    DADAO_EXCP_HALT = 7,
 };
 
 /* Return the current ASR value.  */
@@ -99,21 +101,20 @@ typedef DADAOCPU ArchCPU;
 #define CPU_RESOLVING_TYPE TYPE_DADAO_CPU
 
 static inline void cpu_get_tb_cpu_state(CPUDADAOState *env, target_ulong *pc,
-    target_ulong *cs_base, uint32_t *flags)
+                                        target_ulong *cs_base, uint32_t *flags)
 {
-    *pc = env->__REG_PC;
+    *pc = env->REG_PC;
     *cs_base = 0;
     *flags = 0;
 }
 
 bool dadao_cpu_tlb_fill(CPUState *cs, vaddr address, int size,
-    MMUAccessType access_type, int mmu_idx,
-    bool probe, uintptr_t retaddr);
+                        MMUAccessType access_type, int mmu_idx,
+                        bool probe, uintptr_t retaddr);
 void dadao_translate_init(void);
-void switch_mode(CPUDADAOState *, int);
+void switch_mode(CPUDADAOState *env, int mode);
 
-#define DADAO_INSN_TRAP_MASK		0xFFFC0000
-#define DADAO_INSN_TRAP_CODE		0x08FC0000
-
+#define DADAO_INSN_TRAP_MASK  0xFFFC0000
+#define DADAO_INSN_TRAP_CODE  0x08FC0000
 
 #endif /* DADAO_CPU_H */

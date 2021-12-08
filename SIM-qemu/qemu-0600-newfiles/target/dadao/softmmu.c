@@ -4,8 +4,8 @@
  *
  * Contributed by:
  *   2019:
- *	Liang Shuhao <1700012741@pku.edu.cn>
- *	Guan Xuetao <gxt@pku.edu.cn>
+ *  Liang Shuhao <1700012741@pku.edu.cn>
+ *  Guan Xuetao <gxt@pku.edu.cn>
  */
 #include "qemu/osdep.h"
 /* keep */
@@ -55,8 +55,9 @@ void dadao_cpu_do_interrupt(CPUState *cs)
 }
 
 static int get_phys_addr_dadao(CPUDADAOState *env, uint32_t address,
-        int access_type, int is_user, uint32_t *phys_ptr, int *prot,
-        target_ulong *page_size)
+                               int access_type, int is_user, 
+                               uint32_t *phys_ptr, int *prot,
+                               target_ulong *page_size)
 {
     CPUState *cs = env_cpu(env);
     int code;
@@ -148,8 +149,8 @@ do_fault:
 #endif
 
 bool dadao_cpu_tlb_fill(CPUState *cs, vaddr address, int size,
-                       MMUAccessType access_type, int mmu_idx,
-                       bool probe, uintptr_t retaddr)
+                        MMUAccessType access_type, int mmu_idx,
+                        bool probe, uintptr_t retaddr)
 {
 #ifndef CONFIG_USER_ONLY
     DADAOCPU *cpu = DADAO_CPU(cs);
@@ -171,7 +172,7 @@ bool dadao_cpu_tlb_fill(CPUState *cs, vaddr address, int size,
     } else {
         if ((address & (1 << 31)) || (is_user)) {
             ret = get_phys_addr_dadao(env, address, access_type, is_user,
-                                    &phys_addr, &prot, &page_size);
+                                      &phys_addr, &prot, &page_size);
             if (is_user) {
                 DPRINTF("user space access: ret %x, address %" VADDR_PRIx ", "
                         "access_type %x, phys_addr %x, prot %x\n",
@@ -214,6 +215,6 @@ bool dadao_cpu_tlb_fill(CPUState *cs, vaddr address, int size,
 hwaddr dadao_cpu_get_phys_page_debug(CPUState *cs, vaddr addr)
 {
     error_report("function dadao_cpu_get_phys_page_debug not "
-                    "implemented, aborting");
+                 "implemented, aborting");
     return -1;
 }

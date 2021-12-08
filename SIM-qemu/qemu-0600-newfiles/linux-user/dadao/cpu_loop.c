@@ -3,9 +3,11 @@
  * Copyright (C) 2019-2033 Guan Xuetao (AT) Peking Univ.
  *
  * Contributed by:
+ *   2021:
+ *  Hao Chenqi <hchenqi@pku.edu.cn>
  *   2019:
- *	Liang Shuhao <1700012741@pku.edu.cn>
- *	Guan Xuetao <gxt@pku.edu.cn>
+ *  Liang Shuhao <1700012741@pku.edu.cn>
+ *  Guan Xuetao <gxt@pku.edu.cn>
  */
 
 #include "qemu/osdep.h"
@@ -18,64 +20,69 @@
 
 void cpu_loop(CPUDADAOState *env)
 {
-	CPUState *cs = env_cpu(env);
-	int trapnr;
-	unsigned int insn;
-	abi_long sysret;
-	target_siginfo_t info;
+    CPUState *cs = env_cpu(env);
+    int trapnr;
+    unsigned int insn;
+    abi_long sysret;
+    target_siginfo_t info;
 
-	for (;;) {
-		cpu_exec_start(cs);
-		trapnr = cpu_exec(cs);
-		cpu_exec_end(cs);
-		process_queued_cpu_work(cs);
+    for (;;) {
+        cpu_exec_start(cs);
+        trapnr = cpu_exec(cs);
+        cpu_exec_end(cs);
+        process_queued_cpu_work(cs);
 
-		switch (trapnr) {
-		case EXCP_INTERRUPT:
-			/* Just indicate that signals should be handled asap */
-			break;
+        switch (trapnr) {
+        case EXCP_INTERRUPT:
+            /* Just indicate that signals should be handled as soon as possible */
+            break;
 
-		case EXCP_DEBUG:
-			info.si_signo = TARGET_SIGTRAP;
-			info.si_errno = 0;
-			info.si_code = TARGET_TRAP_BRKPT;
-			queue_signal(env, info.si_signo, QEMU_SI_FAULT, &info);
-			break;
+        case EXCP_DEBUG:
+            info.si_signo = TARGET_SIGTRAP;
+            info.si_errno = 0;
+            info.si_code = TARGET_TRAP_BRKPT;
+            queue_signal(env, info.si_signo, QEMU_SI_FAULT, &info);
+            break;
 
-		case DADAO_EXCP_TRAP:
-			get_user_u32(insn, env->__REG_PC - 4);
-			if ((insn & DADAO_INSN_TRAP_MASK) == DADAO_INSN_TRAP_CODE) {
-				EXCP_DUMP(env, "\nqemu: wrong trap insn %#x - check endian\n", insn);
-				abort();
-			}
+        case DADAO_EXCP_TRAP:
+            get_user_u32(insn, env->REG_PC - 4);
+            if ((insn & DADAO_INSN_TRAP_MASK) == DADAO_INSN_TRAP_CODE) {
+                EXCP_DUMP(env, "\nqemu: wrong trap insn %#x - check endian\n", insn);
+                abort();
+            }
 
-			sysret = do_syscall(env, insn & ~DADAO_INSN_TRAP_MASK,
-					_DDABI_ARG(env, 0), _DDABI_ARG(env, 1),
-					_DDABI_ARG(env, 2), _DDABI_ARG(env, 3), 
-					_DDABI_ARG(env, 4), _DDABI_ARG(env, 5),
-					0, 0);
+            sysret = do_syscall(env,
+                                insn & ~DADAO_INSN_TRAP_MASK,
+                                DDABI_ARG(env, 0), 
+                                DDABI_ARG(env, 1),
+                                DDABI_ARG(env, 2), 
+                                DDABI_ARG(env, 3), 
+                                DDABI_ARG(env, 4), 
+                                DDABI_ARG(env, 5),
+                                0, 0);
 
-			if (sysret == -TARGET_ERESTARTSYS) {
-				env->__REG_PC -= 4;
-				break;
-			}
+            if (sysret == -TARGET_ERESTARTSYS) {
+                env->REG_PC -= 4;
+                break;
+            }
 
-			if (sysret != -TARGET_QEMU_ESIGRETURN)
-				_DDABI_RETVAL(env) = sysret;
+            if (sysret != -TARGET_QEMU_ESIGRETURN) {
+                DDABI_RETVAL(env) = sysret;
+            }
 
-			break;
+            break;
 
-		default:
-			EXCP_DUMP(env, "\nqemu: unhandled CPU exception %#x - aborting\n", trapnr);
-			abort();
-		}
+        default:
+            EXCP_DUMP(env, "\nqemu: unhandled CPU exception %#x - aborting\n", trapnr);
+            abort();
+        }
 
-		process_pending_signals(env);
-	}
+        process_pending_signals(env);
+    }
 }
 
 void target_cpu_copy_regs(CPUArchState *env, struct target_pt_regs *regs)
 {
-	env->__REG_PC = regs->__REG_PC;
-	env->__REG_SP = regs->__REG_SP;
+    env->REG_PC = regs->REG_PC;
+    env->REG_SP = regs->REG_SP;
 }
