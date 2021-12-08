@@ -2,7 +2,7 @@
 #	name		op-type	maj-op	min-op	fa	fb	fc	fd	insn-type
 divert(0)dnl
 
-insn(	swym,		o000,	0x00,	0x00,	op,	-,	-,	-,	normal)
+insn(	swym,		zzzz,	0x00,	0x00,	op,	-,	-,	-,	normal)
 
 insn(	slu,		orri,	0x00,	0x20,	op,	rg,	rg,	u6,	normal)
 insn(  _slu,		orrr,	0x00,	0x21,	op,	rg,	rg,	rg,	normal)
@@ -96,7 +96,7 @@ insn(	rp_p2g,		orr0,	0x08,	0x00,	op,	rg,	rp,	-,	normal)
 insn(	rp_g2p,		orr0,	0x08,	0x01,	op,	rp,	rg,	-,	normal)
 insn(	rp_p2p,		orr0,	0x08,	0x02,	op,	rp,	rp,	-,	normal)
 
-insn(	ret,		o000,	0x08,	0x37,	op,	-,	-,	-,	jsr)
+insn(	ret,		zzzz,	0x08,	0x37,	op,	-,	-,	-,	jsr)
 insn(	trip,		oiii,	0x08,	0x38,	op,	u18,	-,	-,	jsr)
 insn(	trap,		oiii,	0x08,	0x3F,	op,	u18,	-,	-,	jsr)
 
