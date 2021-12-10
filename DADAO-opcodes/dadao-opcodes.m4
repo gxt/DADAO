@@ -32,7 +32,7 @@ insn(	rp2rp,		orri,	0x10,	0x35,	op,	rp,	rp,	i6,	normal)
 insn(	rf2rg,		orri,	0x10,	0x38,	op,	rg,	rf,	i6,	normal)
 insn(	rf2rf,		orri,	0x10,	0x3A,	op,	rf,	rf,	i6,	normal)
 
-insn(	add,		rrii,	0x11,	0,	rg,	rg,	s12,	-,	normal)
+insn(	add,		riii,	0x11,	0,	rg,	s18,	-,	-,	normal)
 insn(  _add,		rrrr,	0x12,	0,	rg,	rg,	rg,	rg,	normal)
 insn(	sub,		rrrr,	0x13,	0,	rg,	rg,	rg,	rg,	normal)
 insn(	muls,		rrrr,	0x14,	0,	rg,	rg,	rg,	rg,	normal)
