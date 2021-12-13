@@ -408,6 +408,10 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
 			return insn->type;
 		}
 
+	case dadao_operand_none:
+		fa = 0;
+		break;
+
 	default:
 		return -1;
 	}
