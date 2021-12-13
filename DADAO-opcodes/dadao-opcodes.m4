@@ -153,12 +153,12 @@ insn(	stmft,		rrri,	0x5E,	0,	rf,	rp,	rg,	i6,	dref)
 insn(	stmfo,		rrri,	0x5F,	0,	rf,	rp,	rg,	i6,	dref)
 
 insn(	jump,		iiii,	0x64,	0,	s24,	-,	-,	-,	branch)
-insn(  _jump,		rrii,	0x65,	0,	rg,	rp,	s12,	-,	branch)
+insn(  _jump,		rrii,	0x65,	0,	rp,	rg,	s12,	-,	branch)
 
 insn(	ldmrr,		rrri,	0x67,	0,	rr,	rp,	rg,	i6,	dref)
 
 insn(	call,		iiii,	0x6C,	0,	s24,	-,	-,	-,	jsr)
-insn(  _call,		rrii,	0x6D,	0,	rg,	rp,	s12,	-,	jsr)
+insn(  _call,		rrii,	0x6D,	0,	rp,	rg,	s12,	-,	jsr)
 
 insn(	ret,		zzzz,	0x6E,	0,	-,	-,	-,	-,	jsr)
 insn(	stmrr,		rrri,	0x6F,	0,	rr,	rp,	rg,	i6,	dref)
