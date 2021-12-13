@@ -13,7 +13,7 @@ ifelse(	$#, `9', `', `__error')dnl
 			$2, `riii',	2,
 			$2, `rjii',	2,
 			$2, `rrii',	3,
-			$2, `rrri',	3,
+			$2, `rrri',	4,
 			$2, `rrrr',	4, `__error')dnl
 ,	$3,	$4,	ifelse( $5, `-', _OP(none), _OP($5))dnl
 ,	ifelse( $6, `-', _OP(none), _OP($6))dnl
