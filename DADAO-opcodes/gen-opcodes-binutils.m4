@@ -7,7 +7,6 @@ ifelse(	$#, `9', `', `__error')dnl
   { "$1",	ifelse(	$2, `iiii',	1,
 			$2, `zzzz',	0,
 			$2, `oiii',	1,
-			$2, `orr0',	2,
 			$2, `orri',	3,
 			$2, `orrr',	3,
 			$2, `riii',	2,
