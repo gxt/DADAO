@@ -103,5 +103,14 @@ _start:
 	# 0100-1xxx
 	strp	rp1, rp2, 3
 	stmrp	rp1, rp2, rg3, 4
+	# 0101-0000L MISC-RF
 
+	# 0110-0xxx
+	jump	_start
+	call	rp1, rg2, 3
+	ldmrr	rr1, rp2, rg3, 4
+	# 0110-1xxx
+	call	_start
+	call	rp1, rg2, 3
 	ret
+	stmrr	rr1, rp2, rg3, 4
