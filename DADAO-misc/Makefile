@@ -9,6 +9,7 @@ DIR_DADAO_INSTALL	:= $(DIR_DADAO_TOP)/__install
 
 #DD_GCC			:= $(DIR_DADAO_BUILD)/gcc-0903/gcc/xgcc
 DD_GCC			:= $(DIR_DADAO_INSTALL)/bin/dadao-linux-elf-gcc
+DD_GAS			:= $(DIR_DADAO_INSTALL)/bin/dadao-linux-elf-as
 DD_READELF		:= $(DIR_DADAO_INSTALL)/bin/dadao-linux-elf-readelf
 DD_OBJDUMP		:= $(DIR_DADAO_INSTALL)/bin/dadao-linux-elf-objdump
 
@@ -19,6 +20,8 @@ all:
 	@echo ""
 	@echo "DADAO-misc"
 	@echo ""
+
+TEST_GAS_NAME		:= insn-simple
 
 TESTFILE_NAME		:= conftest
 TESTFILE_SRCDIR		:= $(DIR_DADAO_MISC)
@@ -41,6 +44,15 @@ TESTFILE_CFLAGS_EXTRA	:=
 		-B$(DIR_DADAO_INSTALL)/dadao-linux-elf/lib/			\
 		-isystem $(DIR_DADAO_INSTALL)/dadao-linux-elf/include		\
 		-isystem $(DIR_DADAO_INSTALL)/dadao-linux-elf/sys-include	\
+
+test-gas-highfive:
+	test -d $(TESTFILE_DSTDIR) || mkdir -p $(TESTFILE_DSTDIR)
+	cd $(TESTFILE_DSTDIR);							\
+		$(DD_GAS)							\
+			-o $(TESTFILE_DSTDIR)/$(TEST_GAS_NAME).o		\
+			$(TESTFILE_SRCDIR)/$(TEST_GAS_NAME).s
+	$(DD_READELF) -a $(TESTFILE_DSTDIR)/$(TEST_GAS_NAME).o > $(TESTFILE_DSTDIR)/$(TEST_GAS_NAME).elf
+	$(DD_OBJDUMP) -d $(TESTFILE_DSTDIR)/$(TEST_GAS_NAME).o > $(TESTFILE_DSTDIR)/$(TEST_GAS_NAME).dump
 
 testfile-highfive:
 	test -f $(TESTFILE_SRC) || exit
