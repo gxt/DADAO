@@ -55,5 +55,23 @@ _start:
 	andnwj	rg1, 2
 	andnwk	rg1, 2
 	andnwl	rg1, 2
+	# 0010-0xxx
+	csn	rg1, rg2, rg3, rg4
+	csnn	rg1, rg2, rg3, rg4
+	csz	rg1, rg2, rg3, rg4
+	csnz	rg1, rg2, rg3, rg4
+	csp	rg1, rg2, rg3, rg4
+	csnp	rg1, rg2, rg3, rg4
+	csod	rg1, rg2, rg3, rg4
+	csev	rg1, rg2, rg3, rg4
+	# 0010-1xxx
+	brn	rg1, _start
+	brnn	rg1, _start
+	brz	rg1, _start
+	brnz	rg1, _start
+	brp	rg1, _start
+	brnp	rg1, _start
+	brod	rg1, _start
+	brev	rg1, _start
 
 	ret
