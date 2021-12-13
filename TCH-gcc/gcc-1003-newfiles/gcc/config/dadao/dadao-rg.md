@@ -87,6 +87,6 @@
 (define_insn "*nor"
   [(set             (match_operand:DI 0 "rg_class_operand" "=   Rg")
     (and:DI (not:DI (match_operand:DI 1 "rg_class_operand" "%   Rg"))
-            (not:DI (match_operand:DI 2 "dd_rg_u12_operand" "  JdRg"))))]
+            (not:DI (match_operand:DI 2 "rg_class_operand" "    Rg"))))]
 	""
-	"or	%0, %1, %2	\;	not	%0, %0, 0")
+	"orr	%0, %1, %2	\;	not	%0, %0, rg0")

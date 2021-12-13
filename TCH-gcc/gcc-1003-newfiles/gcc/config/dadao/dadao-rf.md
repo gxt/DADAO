@@ -30,7 +30,7 @@
        (match_operand:SFDF 1 "general_operand"      "  Rg, Rf, Rg, Rf, Gz,  m,  m, Rg, Rf,    F,    F"))]
 	""
 	"@
-	or	%0, %1, 0
+	orr	%0, %1, rg0
 	<ftfo>_f2g	%0, %1
 	<ftfo>_g2f	%0, %1
 	<ftfo>_2<ftfo>	%0, %1

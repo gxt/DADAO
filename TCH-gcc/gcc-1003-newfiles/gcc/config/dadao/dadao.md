@@ -31,7 +31,7 @@
   [(set (match_operand:QHSD 0 "register_operand" "= Rg")
         (match_operand:QHSD 1 "register_operand" "  Rg"))]
 	""
-	"or	%0, %1, 0")
+	"orr	%0, %1, rg0")
 
 (define_insn "dd_ld_<mode>"
   [(set (match_operand:QHSD 0 "rg_class_operand" "= Rg")
