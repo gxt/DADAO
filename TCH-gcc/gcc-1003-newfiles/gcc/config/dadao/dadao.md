@@ -24,7 +24,7 @@
 (define_insn "nop"
   [(const_int 0)]
 	""
-	"nop")
+	"swym")
 
 ;; TODO: are there rp2rf, rf2rv, rv2rs, ... requirements?
 (define_insn "mov<mode>"
