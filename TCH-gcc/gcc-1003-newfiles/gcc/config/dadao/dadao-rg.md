@@ -7,7 +7,7 @@
 (define_insn "<code>di3"
   [(set          (match_operand:DI 0 "rg_class_operand" "=   Rg")
     (RG_ARITH:DI (match_operand:DI 1 "rg_class_operand" "%   Rg")
-                 (match_operand:DI 2 "dd_rg_u12_operand" "  JdRg")))]
+                 (match_operand:DI 2 "rg_class_operand" "    Rg")))]
 	""
 	"<rg_arith_insn>	%0, %1, %2")
 
@@ -18,7 +18,7 @@
 	""
 	"@
 	%s1	%0, %v1
-	subu	%0, rg0, %n1
+	xor	%0, %0, %0	\; add	%0, %n1	\;	sub	%0, %0, rg0, %0	\;	
 	seto	%0, %1")
 
 (define_insn "adddi3"
@@ -36,7 +36,7 @@
     (minus:DI (match_operand:DI 1 "rg_class_operand" "  Rg")
               (match_operand:DI 2 "rg_class_operand" "  Rg")))]
 	""
-	"subu	%0, %1, %2")
+	"sub	%0, %0, %1, %2")
 
 (define_insn "muldi3"
   [(set      (match_operand:DI 0 "rg_class_operand" "= Rg")
@@ -76,7 +76,7 @@
   [(set     (match_operand:DI 0 "rg_class_operand" "= Rg")
     (neg:DI (match_operand:DI 1 "rg_class_operand" "  Rg")))]
 	""
-	"subu	%0, rg0, %1")
+	"sub	%0, %0, rg0, %1")
 
 (define_insn "one_cmpldi2"
   [(set     (match_operand:DI 0 "rg_class_operand" "= Rg")
