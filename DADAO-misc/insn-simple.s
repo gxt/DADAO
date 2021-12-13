@@ -73,5 +73,35 @@ _start:
 	brnp	rg1, _start
 	brod	rg1, _start
 	brev	rg1, _start
+	# 0011-0xxx
+	ldbs	rg1, rp2, 3
+	ldws	rg1, rp2, 3
+	ldts	rg1, rp2, 3
+	ldo	rg1, rp2, 3
+	ldmbs	rg1, rp2, rg3, 4
+	ldmws	rg1, rp2, rg3, 4
+	ldmts	rg1, rp2, rg3, 4
+	ldmo	rg1, rp2, rg3, 4
+	# 0011-1xxx
+	stb	rg1, rp2, 3
+	stw	rg1, rp2, 3
+	stt	rg1, rp2, 3
+	sto	rg1, rp2, 3
+	stmb	rg1, rp2, rg3, 4
+	stmw	rg1, rp2, rg3, 4
+	stmt	rg1, rp2, rg3, 4
+	stmo	rg1, rp2, rg3, 4
+	# 0100-0xxx
+	ldbu	rg1, rp2, 3
+	ldwu	rg1, rp2, 3
+	ldtu	rg1, rp2, 3
+	ldrp	rp1, rp2, 3
+	ldmbu	rg1, rp2, rg3, 4
+	ldmwu	rg1, rp2, rg3, 4
+	ldmtu	rg1, rp2, rg3, 4
+	ldmrp	rp1, rp2, rg3, 4
+	# 0100-1xxx
+	strp	rp1, rp2, 3
+	stmrp	rp1, rp2, rg3, 4
 
 	ret
