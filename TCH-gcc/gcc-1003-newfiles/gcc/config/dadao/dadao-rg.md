@@ -18,7 +18,7 @@
 	""
 	"@
 	%s1	%0, %v1
-	subu	%0, zero, %n1
+	subu	%0, rg0, %n1
 	seto	%0, %1")
 
 (define_insn "adddi3"
@@ -54,7 +54,7 @@
    (set     (match_operand:DI 3 "rg_class_operand" "= Rg")
             (mod:DI (match_dup 1) (match_dup 2)))]
 	""
-	"div	%0, %1, %2, %3")
+	"divs	%0, %1, %2, %3")
 
 (define_insn "udivmoddi4"
   [(set      (match_operand:DI 0 "rg_class_operand" "= Rg")
@@ -76,13 +76,13 @@
   [(set     (match_operand:DI 0 "rg_class_operand" "= Rg")
     (neg:DI (match_operand:DI 1 "rg_class_operand" "  Rg")))]
 	""
-	"subu	%0, zero, %1")
+	"subu	%0, rg0, %1")
 
 (define_insn "one_cmpldi2"
   [(set     (match_operand:DI 0 "rg_class_operand" "= Rg")
     (not:DI (match_operand:DI 1 "rg_class_operand" "  Rg")))]
 	""
-	"not	%0, %1, zero")
+	"not	%0, %1, rg0")
 
 (define_insn "*nor"
   [(set             (match_operand:DI 0 "rg_class_operand" "=   Rg")

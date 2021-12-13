@@ -1127,7 +1127,7 @@ dadao_output_register_setting (FILE *stream,
     fprintf (stream, "\t");
 
   if (insn_const_int_ok_for_constraint (value, CONSTRAINT_Nd))
-    fprintf (stream, "subu	%s, zero, %" PRId64, reg_names[regno], -value);
+    fprintf (stream, "subu	%s, rg0, %" PRId64, reg_names[regno], -value);
   else if (dadao_shiftable_wyde_value ((uint64_t) value))
     {
       /* First, the one-insn cases.  */
@@ -1147,7 +1147,7 @@ dadao_output_register_setting (FILE *stream,
 					  value);
       fprintf (stream, " %s,", reg_names[regno]);
       dadao_output_shifted_value (stream, -(uint64_t) value);
-      fprintf (stream, "\n\tsubu	%s, zero, %s", reg_names[regno],
+      fprintf (stream, "\n\tsubu	%s, rg0, %s", reg_names[regno],
 	       reg_names[regno]);
     }
   else if (dadao_shiftable_wyde_value (~(uint64_t) value))

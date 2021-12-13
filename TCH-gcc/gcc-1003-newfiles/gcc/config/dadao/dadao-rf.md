@@ -34,7 +34,7 @@
 	<ftfo>_f2g	%0, %1
 	<ftfo>_g2f	%0, %1
 	<ftfo>_2<ftfo>	%0, %1
-	<ftfo>_g2f	%0, zero
+	<ftfo>_g2f	%0, rg0
 	ldt	%0, %1
 	<ftfo>_ld	%0, %1
 	stt	%1, %0
