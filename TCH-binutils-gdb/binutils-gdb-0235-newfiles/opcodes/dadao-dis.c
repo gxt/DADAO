@@ -190,6 +190,11 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		return 4;
 
 	case dadao_operand_s18:
+		if ((insn & 0xFF000000) == 0x11000000) {		/* add riii */
+			(*info->fprintf_func) (info->stream, "%d", (int) (0xFFFC0000 | (insn & 0x3FFFF)));
+			return 4;
+		}
+
 		offset = (insn & 0x3FFFF) << 2;
 		if (offset & 0x80000)		offset -= 0x100000;	/* backward */
 
