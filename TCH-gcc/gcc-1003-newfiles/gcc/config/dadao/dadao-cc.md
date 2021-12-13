@@ -34,7 +34,7 @@
     (compare:CCSS (match_operand:DI   1 "rg_class_operand"  "    Rg")
                   (match_operand:DI   2 "dd_rg_s12_operand" "  IdRg")))]
 	""
-	"cmp	%0, %1, %2")
+	"cmps	%0, %1, %2")
 
 (define_insn "*cmpss2"
   [(set           (match_operand:CCSS 0 "rg_class_operand"  "= Rg")
@@ -78,7 +78,7 @@
       (match_operand:DI              2 "rg_class_operand" "  Rg")
       (match_operand:DI              3 "rg_class_operand" "  Rg")))]
 	""
-	"cs_<ccss_type_insn>	%0, %1, %2, %3")
+	"cs<ccss_type_insn>	%0, %1, %2, %3")
 
 (define_insn "*movdicc_<ccuu_type_insn>"
   [(set (match_operand:DI            0 "rg_class_operand" "= Rg")
@@ -87,7 +87,7 @@
       (match_operand:DI              2 "rg_class_operand" "  Rg")
       (match_operand:DI              3 "rg_class_operand" "  Rg")))]
 	""
-	"cs_<ccuu_type_insn>	%0, %1, %2, %3")
+	"cs<ccuu_type_insn>	%0, %1, %2, %3")
 
 (define_expand "cbranchdi4"
   [(set (match_dup 4)
@@ -117,7 +117,7 @@
       (label_ref (match_operand 0 "" ""))
       (pc)))]
 	""
-	"br_<ccss_type_insn>	%1, %0")
+	"br<ccss_type_insn>	%1, %0")
 
 (define_insn "*br_uu_<ccuu_type_insn>"
   [(set (pc)
@@ -126,4 +126,4 @@
       (label_ref (match_operand 0 "" ""))
       (pc)))]
 	""
-	"br_<ccuu_type_insn>	%1, %0")
+	"br<ccuu_type_insn>	%1, %0")
