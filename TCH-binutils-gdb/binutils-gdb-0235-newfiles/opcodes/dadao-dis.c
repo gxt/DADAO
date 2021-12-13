@@ -235,8 +235,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	case dadao_operand_rr:	__DDIS_PRINT_REG(", rr", fd);	break;
 
 	case dadao_operand_i6:
-		if ((insn & 0x3F) == 0)		break;		/* "<< 0" could be omitted */
-		(*info->fprintf_func) (info->stream, " << %d", (int) (insn & 0x3F));
+		(*info->fprintf_func) (info->stream, ", %d", (int) (insn & 0x3F));
 		break;
 
 	case dadao_operand_none:
