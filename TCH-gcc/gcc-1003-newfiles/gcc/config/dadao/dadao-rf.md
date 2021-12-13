@@ -22,8 +22,8 @@
 	"REGNO_REG_CLASS(REGNO(operands[0])) == FLOATING_REGS ||
 	 REGNO_REG_CLASS(REGNO(operands[1])) == FLOATING_REGS"
 	"@
-	fo_g2f	%0, %1
-	fo_f2g	%0, %1")
+	rg2rf	%0, %1
+	rf2rg	%0, %1")
 
 (define_insn "mov<mode>"
  [(set (match_operand:SFDF 0 "nonimmediate_operand" "= Rg, Rg, Rf, Rf, Rf, Rg, Rf,  m,  m, ??Rg, ??Rf")

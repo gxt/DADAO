@@ -14,13 +14,13 @@
   [(set (match_operand:DI 0 "rp_class_operand" "= Rp")
         (match_operand:DI 1 "rg_class_operand" "  Rg"))]
 	""
-	"rp_g2p	%0, %1")
+	"rg2rp	%0, %1")
 
 (define_insn "mov_rp2rg"
   [(set (match_operand:DI 0 "rg_class_operand" "= Rg")
         (match_operand:DI 1 "rp_class_operand" "  Rp"))]
 	""
-	"rp_p2g	%0, %1")
+	"rp2rg	%0, %1")
 
 (define_insn "*addrp"
   [(set      (match_operand:DI 0 "rp_class_operand"  "= Rp, Rp")
