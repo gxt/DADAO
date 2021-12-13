@@ -18,8 +18,8 @@
 		&& GET_MODE_CLASS (GET_MODE (operands[1])) == MODE_CC"
 	"@
 	orr	%0, %1, rg0
-	rp_g2p	%0, %1
-	rp_p2g	%0, %1
+	rg2p	%0, %1, 0
+	rp2g	%0, %1, 0
 	ldt	%0, %1
 	stt	%1, %0")
 
@@ -41,7 +41,7 @@
     (compare:CCSS (match_operand:DI   1 "rg_class_operand"  "  Rg")
                   (match_operand:DI   2 "const_int_operand" "   i")))]
 	""
-	"seto	datao1, %2	\;	cmp	%0, %1, datao1")
+	"seto	datao1, %2	\;	cmps	%0, %1, datao1")
 
 (define_insn "*cmpuu"
   [(set           (match_operand:CCUU 0 "rg_class_operand"  "=   Rg")
