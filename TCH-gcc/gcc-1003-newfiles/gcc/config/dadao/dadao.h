@@ -437,7 +437,7 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 
 #define	ASM_OUTPUT_REG_PUSH(STREAM, REGNO)				\
 	do {								\
-		fprintf (STREAM, "\tsubu\t%s, %s, 8\n",			\
+		fprintf (STREAM, "\tadd\t%s, -8\n",			\
 			reg_names[STACK_POINTER_REGNUM],		\
 			reg_names[STACK_POINTER_REGNUM]);		\
 		fprintf (STREAM, "\tsto\t%s, %s, 0\n",			\
@@ -450,7 +450,7 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 		fprintf (STREAM, "\tldo\t%s, %s, 0\n",			\
 			reg_names[(REGNO)],				\
 			reg_names[STACK_POINTER_REGNUM]);		\
-		fprintf (STREAM, "\taddu\t%s, %s, 8\n",			\
+		fprintf (STREAM, "\tadd\t%s, 8\n",			\
 			reg_names[STACK_POINTER_REGNUM],		\
 			reg_names[STACK_POINTER_REGNUM]);		\
 	} while (0)
