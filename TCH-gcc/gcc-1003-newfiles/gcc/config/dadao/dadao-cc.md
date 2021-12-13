@@ -41,7 +41,7 @@
     (compare:CCSS (match_operand:DI   1 "rg_class_operand"  "  Rg")
                   (match_operand:DI   2 "const_int_operand" "   i")))]
 	""
-	"seto	datao1, %2	\;	cmps	%0, %1, datao1")
+	"seto	rg1, %2	\;	cmps	%0, %1, rg1")
 
 (define_insn "*cmpuu"
   [(set           (match_operand:CCUU 0 "rg_class_operand"  "=   Rg")

@@ -56,8 +56,8 @@
         (match_operand:DI 1 "immediate_operand" "   s, Ai"))]
 	""
 	"@
-	geta	datao1, %1	\;	rp_add	%0, rp0, datao1
-	geta	datao1, %1	\;	rp_add	%0, rp0, datao1")
+	geta	rg1, %1	\;	rp_add	%0, rp0, rg1
+	geta	rg1, %1	\;	rp_add	%0, rp0, rg1")
 
 ;; TODO: SHOULD removed lator
 (define_insn "*addrp2rg"
@@ -66,8 +66,8 @@
              (match_operand:DI 2 "dd_rg_s12_operand" "  Id, Rg")))]
 	""
 	"@
-	rp2rg	datao1, %1, 0	\;	add	%0, datao1, %2
-	rp2rg	datao1, %1, 0	\;	add	%0, datao1, %2")
+	rp2rg	rg1, %1, 0	\;	add	%0, rg1, %2
+	rp2rg	rg1, %1, 0	\;	add	%0, rg1, %2")
 
 ;; TODO: SHOULD removed lator, handling condition: imm beyond s12
 (define_insn "*addrp2rg_2"
@@ -75,7 +75,7 @@
     (plus:DI (match_operand:DI 1 "rp_class_operand"  "% Rp")
              (match_operand:DI 2 "immediate_operand" "   i")))]
 	""
-	"rp2rg	datao1, %1, 0	\;	seto	%0, %2	\;	add	%0, datao1, %0")
+	"rp2rg	rg1, %1, 0	\;	seto	%0, %2	\;	add	%0, rg1, %0")
 
 ;; TODO: SHOULD removed lator
 (define_insn "*addrp2rp"
@@ -83,7 +83,7 @@
     (plus:DI (match_operand:DI 1 "rp_class_operand" "%  0")
              (match_operand:DI 2 "rp_class_operand" "  Rp")))]
 	""
-	"rp2rg	datao1, %1, 0	\;	rp_add	%0, %0, datao1")
+	"rp2rg	rg1, %1, 0	\;	rp_add	%0, %0, rg1")
 
 ;; TODO: SHOULD removed lator, handling condition: imm beyond s12
 (define_insn "*addrp2rp_2"
@@ -91,4 +91,4 @@
     (plus:DI (match_operand:DI 1 "rp_class_operand"  "% Rp")
              (match_operand:DI 2 "immediate_operand" "   i")))]
 	""
-	"seto	datao1, %2	\;	rp_add	%0, %1, datao1")
+	"seto	rg1, %2	\;	rp_add	%0, %1, rg1")

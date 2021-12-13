@@ -25,11 +25,11 @@
   [(set      (match_operand:DI 0 "rg_class_operand" "=   Rg, Rg, Rg")
     (plus:DI (match_operand:DI 1 "rg_class_operand" "%   Rg, Rg,  0")
              (match_operand:DI 2 "dd_rg_u12_operand" "  JdRg, Nd, Iw")))]
-	""
-	"@
-	addu	%0, %1, %2
-	subu	%0, %1, %n2
-	%i2	%0, %v2")
+	"" "")
+;	"@
+;	add	%0, %1, %2
+;	sub	%0, %1, %n2
+;	%i2	%0, %v2")
 
 (define_insn "subdi3"
   [(set       (match_operand:DI 0 "rg_class_operand" "= Rg")
