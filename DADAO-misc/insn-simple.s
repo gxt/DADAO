@@ -104,7 +104,41 @@ _start:
 	strp	rp1, rp2, 3
 	stmrp	rp1, rp2, rg3, 4
 	# 0101-0000L MISC-RF
-
+	ft2fo	rf1, rf2, 3
+	fo2ft	rf1, rf2, 3
+	ftadd	rf1, rf2, rf3
+	ftsub	rf1, rf2, rf3
+	ftmul	rf1, rf2, rf3
+	ftdiv	rf1, rf2, rf3
+	ftcun	rg1, rf2, rf3
+	ftcor	rg1, rf2, rf3
+	ftcne	rg1, rf2, rf3
+	ftceq	rg1, rf2, rf3
+	ftclt	rg1, rf2, rf3
+	ftcge	rg1, rf2, rf3
+	ftcgt	rg1, rf2, rf3
+	ftcle	rg1, rf2, rf3
+	foadd	rf1, rf2, rf3
+	fosub	rf1, rf2, rf3
+	fomul	rf1, rf2, rf3
+	fodiv	rf1, rf2, rf3
+	focun	rg1, rf2, rf3
+	focor	rg1, rf2, rf3
+	focne	rg1, rf2, rf3
+	foceq	rg1, rf2, rf3
+	foclt	rg1, rf2, rf3
+	focge	rg1, rf2, rf3
+	focgt	rg1, rf2, rf3
+	focle	rg1, rf2, rf3
+	# 0101-0xxx
+	ldft	rf1, rp2, 3
+	ldfo	rf1, rp2, 3
+	ldmft	rf1, rp2, rg3, 4
+	ldmfo	rf1, rp2, rg3, 4
+	stft	rf1, rp2, 3
+	stfo	rf1, rp2, 3
+	stmft	rf1, rp2, rg3, 4
+	stmfo	rf1, rp2, rg3, 4
 	# 0110-0xxx
 	jump	_start
 	call	rp1, rg2, 3
