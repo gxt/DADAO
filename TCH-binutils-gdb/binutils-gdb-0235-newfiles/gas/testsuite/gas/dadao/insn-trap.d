@@ -9,5 +9,5 @@ Disassembly of section .text:
    4:	7107ffff 	cmd 	cp1, 262143
    8:	72041041 	rg2cr	cp1, cr1, cr2, rg1
    c:	73041041 	cr2rg	cp1, rg1, cr1, cr2
-  10:	74041fff 	cpld    cp1, rp1, 4096
-  14:	75041fff 	cpst    cp1, rp1, 4096
+  10:	74041fff 	cpld    cp1, rp1, 4095
+  14:	75041fff 	cpst    cp1, rp1, 4095
