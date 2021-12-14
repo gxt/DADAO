@@ -110,6 +110,9 @@ _start:
 	ftsub	rf1, rf2, rf3
 	ftmul	rf1, rf2, rf3
 	ftdiv	rf1, rf2, rf3
+	ftabs	rf1, rf2, 3
+	ftneg	rf1, rf2, 3
+	ftsqrt	rf1, rf2, 3
 	ftcun	rg1, rf2, rf3
 	ftcor	rg1, rf2, rf3
 	ftcne	rg1, rf2, rf3
@@ -122,6 +125,9 @@ _start:
 	fosub	rf1, rf2, rf3
 	fomul	rf1, rf2, rf3
 	fodiv	rf1, rf2, rf3
+	foabs	rf1, rf2, 3
+	foneg	rf1, rf2, 3
+	fosqrt	rf1, rf2, 3
 	focun	rg1, rf2, rf3
 	focor	rg1, rf2, rf3
 	focne	rg1, rf2, rf3
