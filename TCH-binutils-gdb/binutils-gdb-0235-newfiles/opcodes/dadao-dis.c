@@ -159,6 +159,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	case dadao_operand_rp:	__DDIS_PRINT_REG("rp", fa);	i++;	break;
 	case dadao_operand_rf:	__DDIS_PRINT_REG("rf", fa);	i++;	break;
 	case dadao_operand_rr:	__DDIS_PRINT_REG("rr", fa);	i++;	break;
+	case dadao_operand_cp:	__DDIS_PRINT_REG("cp", fa); i++;	break;
 
 	case dadao_operand_s24: /* ONLY call or jump be here */
 		offset = (insn & 0xFFFFFF) << 2;
