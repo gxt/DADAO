@@ -5,8 +5,8 @@ tmpdir/insn-arith.o:     file format elf64-dadao
 Disassembly of section .text:
 
 0000000000000000 <_start>:
-   0:	110427ff 	add	rg1, rg2, 2047
-   4:	11042800 	add	rg1, rg2, -2048
+   0:	1105ffff 	add	rg1, 262143
+   4:	11070000 	add	rg1, -262144
    8:	120420c4 	add	rg1, rg2, rg3, rg4
    c:	130420c4 	sub	rg1, rg2, rg3, rg4
   10:	140420c4 	muls	rg1, rg2, rg3, rg4

@@ -1,8 +1,8 @@
 # Da Dao Zhi Jian
 _start:
 	# add/addu/sub/subu/mul
-	add	rg1, rg2, 2047
-	add	rg1, rg2, -2048
+	add	rg1, 262143
+	add	rg1, -262144
 	add	rg1, rg2, rg3, rg4
 	sub	rg1, rg2, rg3, rg4
 	# muls/mulu/divs/divu

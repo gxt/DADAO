@@ -4,8 +4,8 @@ GAS for DADAO .*/insn-arith.s 			page 1
    1              	# Da Dao Zhi Jian
    2              	_start:
    3              		# add/addu/sub/subu
-   4 0000 110427ff 		add	rg1, rg2, 2047
-   5 0004 11042800 		add	rg1, rg2, -2048
+   4 0000 1105ffff 		add	rg1, 262143
+   5 0004 11070000 		add	rg1, -262144
    6 0008 120420c4 		add	rg1, rg2, rg3, rg4
    7 000c 130420c4 		sub	rg1, rg2, rg3, rg4
    8               		# muls/mulu/divs/divu
