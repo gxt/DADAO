@@ -185,7 +185,8 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	case dadao_operand_rp:	__DDIS_PRINT_REG("rp", fb);	i++;	break;
 	case dadao_operand_rf:	__DDIS_PRINT_REG("rf", fb);	i++;	break;
 	case dadao_operand_rr:	__DDIS_PRINT_REG("rr", fb);	i++;	break;
-
+	case dadao_operand_cr:	__DDIS_PRINT_REG("cr", fb); i++;	break;
+	
 	case dadao_operand_w16:
 		(*info->fprintf_func) (info->stream, "0x%x", (insn & 0xFFFF));
 		return 4;
