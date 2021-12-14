@@ -302,6 +302,9 @@ void dadao_md_begin (void)
 		
 		sprintf (buf, "cp%d", i);
 		symbol_table_insert (symbol_new (buf, reg_section, i + 256, &zero_address_frag));
+
+		sprintf (buf, "cr%d", i);
+		symbol_table_insert (symbol_new (buf, reg_section, i + 320, &zero_address_frag));
 	}
 
 	for (i = 0; dadao_reg_aliases[i].name != NULL; i++)
@@ -379,6 +382,12 @@ static void dd_pseudo_seto(char *opcodep, int seto_fa, unsigned long long seto_o
 	if (e.X_add_number < 0x100)	return -1;	\
 	f = e.X_add_number - 0x100;
 
+#define	__DD_EXP_SHOULD_BE_CR(e, f)			\
+	if (e.X_op != O_register)	return -1;	\
+	if (e.X_add_number > 0x17F)	return -1;	\
+	if (e.X_add_number < 0x140)	return -1;	\
+	f = e.X_add_number - 0x140;
+
 #define	__DD_EXP_SHOULD_BE_IMM(e, min, max)		\
 	if (e.X_op != O_constant)	return -1;	\
 	if (e.X_add_number > max)	return -1;	\
@@ -431,6 +440,7 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
 	case dadao_operand_rp:	__DD_EXP_SHOULD_BE_RP(exp[n_exp], fb);	n_exp++;	break;
 	case dadao_operand_rf:	__DD_EXP_SHOULD_BE_RF(exp[n_exp], fb);	n_exp++;	break;
 	case dadao_operand_rr:	__DD_EXP_SHOULD_BE_RR(exp[n_exp], fb);	n_exp++;	break;
+	case dadao_operand_cr:	__DD_EXP_SHOULD_BE_CR(exp[n_exp], fb);	n_exp++;	break;
 
 	case dadao_operand_w16:
 		__DD_EXP_SHOULD_BE_IMM(exp[n_exp], 0, 0xFFFF);
@@ -482,6 +492,7 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
 	case dadao_operand_rp:	__DD_EXP_SHOULD_BE_RP(exp_next[0], fc);	break;
 	case dadao_operand_rf:	__DD_EXP_SHOULD_BE_RF(exp_next[0], fc);	break;
 	case dadao_operand_rr:	__DD_EXP_SHOULD_BE_RR(exp_next[0], fc);	break;
+	case dadao_operand_cr:	__DD_EXP_SHOULD_BE_CR(exp_next[0], fc);	break;
 
 	case dadao_operand_s12:
 		__DD_EXP_SHOULD_BE_IMM(exp_next[0], -0x800, 0x7FF);
@@ -508,6 +519,7 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
 	case dadao_operand_rp:	__DD_EXP_SHOULD_BE_RP(exp_last[0], fd);	break;
 	case dadao_operand_rf:	__DD_EXP_SHOULD_BE_RF(exp_last[0], fd);	break;
 	case dadao_operand_rr:	__DD_EXP_SHOULD_BE_RR(exp_last[0], fd);	break;
+	case dadao_operand_cr:	__DD_EXP_SHOULD_BE_CR(exp_last[0], fd);	break;
 
 	case dadao_operand_i6:
 		/* << i6 can be omitted, thus i6 will be 0 */
@@ -533,6 +545,7 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
 #undef	__DD_EXP_SHOULD_BE_RF
 #undef	__DD_EXP_SHOULD_BE_RR
 #undef	__DD_EXP_SHOULD_BE_CP
+#undef	__DD_EXP_SHOULD_BE_CR
 #undef	__DD_EXP_SHOULD_BE_IMM
 
 /* Assemble one insn in STR.  */
