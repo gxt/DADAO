@@ -186,7 +186,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	case dadao_operand_rf:	__DDIS_PRINT_REG("rf", fb);	i++;	break;
 	case dadao_operand_rr:	__DDIS_PRINT_REG("rr", fb);	i++;	break;
 	case dadao_operand_cr:	__DDIS_PRINT_REG("cr", fb); i++;	break;
-	
+
 	case dadao_operand_w16:
 		(*info->fprintf_func) (info->stream, "0x%x", (insn & 0xFFFF));
 		return 4;
@@ -223,6 +223,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	case dadao_operand_rp:	__DDIS_PRINT_REG("rp", fc);	i++;	break;
 	case dadao_operand_rf:	__DDIS_PRINT_REG("rf", fc);	i++;	break;
 	case dadao_operand_rr:	__DDIS_PRINT_REG("rr", fc);	i++;	break;
+	case dadao_operand_cr:	__DDIS_PRINT_REG("cr", fc); i++;	break;
 
 	case dadao_operand_s12:
 		if (insn & 0x800) {
@@ -243,6 +244,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	case dadao_operand_rp:	__DDIS_PRINT_REG(", rp", fd);	break;
 	case dadao_operand_rf:	__DDIS_PRINT_REG(", rf", fd);	break;
 	case dadao_operand_rr:	__DDIS_PRINT_REG(", rr", fd);	break;
+	case dadao_operand_cr:	__DDIS_PRINT_REG(", cr", fd);	break;
 
 	case dadao_operand_i6:
 		(*info->fprintf_func) (info->stream, ", %d", (int) (insn & 0x3F));
