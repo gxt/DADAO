@@ -148,3 +148,5 @@ _start:
 	call	rp1, rg2, 3
 	ret
 	stmrr	rr1, rp2, rg3, 4
+	# 0111-0xxx
+	trap	cp0, 1
