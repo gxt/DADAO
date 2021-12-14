@@ -25,6 +25,8 @@ typedef struct CPUDADAOState {
     uint64_t rf[64];        /* floating-point registers */
     uint64_t rr[64];        /* return address registers */
 
+    int32_t trap_num;       /* system call number */
+
     /* System control coprocessor (cp0) */
     struct {
         uint32_t c0_cpuid;
@@ -113,8 +115,5 @@ bool dadao_cpu_tlb_fill(CPUState *cs, vaddr address, int size,
                         bool probe, uintptr_t retaddr);
 void dadao_translate_init(void);
 void switch_mode(CPUDADAOState *env, int mode);
-
-#define DADAO_INSN_TRAP_MASK  0xFFFC0000
-#define DADAO_INSN_TRAP_CODE  0x08FC0000
 
 #endif /* DADAO_CPU_H */

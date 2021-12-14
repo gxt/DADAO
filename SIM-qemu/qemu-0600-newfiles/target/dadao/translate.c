@@ -39,22 +39,17 @@
 #include "trace-tcg.h"
 #include "exec/log.h"
 
-/* is_jmp field values */
-#define DISAS_JUMP DISAS_TARGET_0    /* only pc was modified dynamically */
-#define DISAS_UPDATE DISAS_TARGET_1  /* cpu state was modified dynamically */
-#define DISAS_TB_JUMP DISAS_TARGET_2 /* only pc was modified statically */
-/* These instructions trap after executing, so defer them until after the
-   conditional executions state has been updated.  */
-#define DISAS_SYSCALL DISAS_TARGET_3
-
 typedef struct DisasContext {
     DisasContextBase base;
 } DisasContext;
 
-static TCGv_i64 cpu_RG[64];
-static TCGv_i64 cpu_RP[64];
-static TCGv_i64 cpu_RF[64];
-static TCGv_i64 cpu_RR[64];
+static TCGv_i64 cpu_rg[64];
+static TCGv_i64 cpu_rp[64];
+static TCGv_i64 cpu_rf[64];
+static TCGv_i64 cpu_rr[64];
+static TCGv_i32 cpu_trap_num;
+
+#define cpu_pc cpu_rp[0]
 
 static const char *regnames[] = {
     "zero", "rg01", "rg02", "rg03", "rg04", "rg05", "rg06", "rg07",
@@ -99,25 +94,28 @@ void dadao_translate_init(void)
 {
     int i;
     for (i = 0; i < 64; i++) {
-        cpu_RG[i] = tcg_global_mem_new_i64(cpu_env, 
+        cpu_rg[i] = tcg_global_mem_new_i64(cpu_env, 
                                            offsetof(CPUDADAOState, rg[i]), 
                                            regnames[i + 64 * 0]);
     }
     for (i = 0; i < 64; i++) {
-        cpu_RP[i] = tcg_global_mem_new_i64(cpu_env,
+        cpu_rp[i] = tcg_global_mem_new_i64(cpu_env,
                                            offsetof(CPUDADAOState, rp[i]), 
                                            regnames[i + 64 * 1]);
     }
     for (i = 0; i < 64; i++) {
-        cpu_RF[i] = tcg_global_mem_new_i64(cpu_env,
+        cpu_rf[i] = tcg_global_mem_new_i64(cpu_env,
                                            offsetof(CPUDADAOState, rf[i]), 
                                            regnames[i + 64 * 2]);
     }
     for (i = 0; i < 64; i++) {
-        cpu_RR[i] = tcg_global_mem_new_i64(cpu_env,
+        cpu_rr[i] = tcg_global_mem_new_i64(cpu_env,
                                            offsetof(CPUDADAOState, rr[i]), 
                                            regnames[i + 64 * 3]);
     }
+    cpu_trap_num = tcg_global_mem_new_i32(cpu_env,
+                                          offsetof(CPUDADAOState, trap_num),
+                                          "trap_num");
 }
 
 /*
@@ -125,9 +123,26 @@ static int times_4(DisasContext *ctx, int x)
 {
     return x * 4;
 }
+*/
+
+bool disas_dadao(DisasContext *ctx, uint32_t insn);
 
 #include "decode-dadao.inc.c"
-*/
+
+static void gen_exception(int excp)
+{
+    TCGv_i32 tmp = tcg_const_i32(excp);
+    gen_helper_exception(cpu_env, tmp);
+    tcg_temp_free_i32(tmp);
+}
+
+static bool trans_trap(DisasContext *ctx, arg_trap *a)
+{
+    tcg_gen_movi_i32(cpu_trap_num, a->num);
+    gen_exception(DADAO_EXCP_TRAP);
+    ctx->base.is_jmp = DISAS_NORETURN;
+    return true;
+}
 
 static void dadao_tr_init_disas_context(DisasContextBase *dcbase, CPUState *cs)
 {
@@ -152,21 +167,29 @@ static bool dadao_tr_breakpoint_check(DisasContextBase *dcbase, CPUState *cs,
 
 static void dadao_tr_translate_insn(DisasContextBase *dcbase, CPUState *cs)
 {
-    DisasContext *dc = container_of(dcbase, DisasContext, base);
+    DisasContext *ctx = container_of(dcbase, DisasContext, base);
     DADAOCPU *cpu = DADAO_CPU(cs);
-    uint32_t insn = translator_ldl(&cpu->env, dc->base.pc_next);
+    uint32_t insn = translator_ldl(&cpu->env, ctx->base.pc_next);
+
+    tcg_gen_movi_i64(cpu_pc, ctx->base.pc_next);
     
-    insn = insn;
-/*
-    if (!disas_dadao(dc, insn)) {
-        gen_illegal_exception(dc);
+    if (!disas_dadao(ctx, insn)) {
+        gen_exception(DADAO_EXCP_ILLI);
+        ctx->base.is_jmp = DISAS_NORETURN;
     }
-*/
-    dc->base.pc_next += 4;
+
+    ctx->base.pc_next += 4;
 }
 
 static void dadao_tr_tb_stop(DisasContextBase *dcbase, CPUState *cs)
 {
+    DisasContext *ctx = container_of(dcbase, DisasContext, base);
+
+    if (ctx->base.is_jmp == DISAS_NORETURN) {
+        return;
+    }
+
+    tcg_gen_exit_tb(NULL, 0);
 }
 
 static void dadao_tr_disas_log(const DisasContextBase *dcbase, CPUState *cs)
@@ -221,7 +244,7 @@ void dadao_cpu_dump_state(CPUState *cs, FILE *f, int flags)
 }
 
 void restore_state_to_opc(CPUDADAOState *env, TranslationBlock *tb,
-    target_ulong *data)
+                          target_ulong *data)
 {
     env->REG_PC = data[0];
 }

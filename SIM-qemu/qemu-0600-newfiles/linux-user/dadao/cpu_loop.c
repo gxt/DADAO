@@ -13,17 +13,15 @@
 #include "qemu/osdep.h"
 #include "qemu-common.h"
 #include "qemu.h"
-#include "qemu/error-report.h"
 #include "cpu_loop-common.h"
-#include "elf.h"
+
 #include "dadao-abi.h"
 
 void cpu_loop(CPUDADAOState *env)
 {
     CPUState *cs = env_cpu(env);
     int trapnr;
-    unsigned int insn;
-    abi_long sysret;
+    abi_long ret;
     target_siginfo_t info;
 
     for (;;) {
@@ -33,50 +31,32 @@ void cpu_loop(CPUDADAOState *env)
         process_queued_cpu_work(cs);
 
         switch (trapnr) {
-        case EXCP_INTERRUPT:
-            /* Just indicate that signals should be handled as soon as possible */
+        case DADAO_EXCP_TRAP:
+            ret = do_syscall(env,
+                             env->trap_num,
+                             DDABI_ARG(env, 0),
+                             DDABI_ARG(env, 1),
+                             DDABI_ARG(env, 2),
+                             DDABI_ARG(env, 3),
+                             DDABI_ARG(env, 4),
+                             DDABI_ARG(env, 5),
+                             0, 0);
+            if (ret == -TARGET_ERESTARTSYS) {
+                env->REG_PC -= 4;
+            } else if (ret != -TARGET_QEMU_ESIGRETURN) {
+                DDABI_RETVAL(env) = ret;
+            }
             break;
-
-        case EXCP_DEBUG:
-            info.si_signo = TARGET_SIGTRAP;
+        case DADAO_EXCP_ILLI:
+            info.si_signo = TARGET_SIGILL;
             info.si_errno = 0;
-            info.si_code = TARGET_TRAP_BRKPT;
+            info.si_code = TARGET_ILL_ILLOPC;
+            info._sifields._sigfault._addr = env->REG_PC;
             queue_signal(env, info.si_signo, QEMU_SI_FAULT, &info);
             break;
-
-        case DADAO_EXCP_TRAP:
-            get_user_u32(insn, env->REG_PC - 4);
-            if ((insn & DADAO_INSN_TRAP_MASK) == DADAO_INSN_TRAP_CODE) {
-                EXCP_DUMP(env, "\nqemu: wrong trap insn %#x - check endian\n", insn);
-                abort();
-            }
-
-            sysret = do_syscall(env,
-                                insn & ~DADAO_INSN_TRAP_MASK,
-                                DDABI_ARG(env, 0), 
-                                DDABI_ARG(env, 1),
-                                DDABI_ARG(env, 2), 
-                                DDABI_ARG(env, 3), 
-                                DDABI_ARG(env, 4), 
-                                DDABI_ARG(env, 5),
-                                0, 0);
-
-            if (sysret == -TARGET_ERESTARTSYS) {
-                env->REG_PC -= 4;
-                break;
-            }
-
-            if (sysret != -TARGET_QEMU_ESIGRETURN) {
-                DDABI_RETVAL(env) = sysret;
-            }
-
-            break;
-
         default:
-            EXCP_DUMP(env, "\nqemu: unhandled CPU exception %#x - aborting\n", trapnr);
-            abort();
+            g_assert_not_reached();
         }
-
         process_pending_signals(env);
     }
 }

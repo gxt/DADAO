@@ -230,10 +230,12 @@ bool dadao_cpu_exec_interrupt(CPUState *cs, int interrupt_request)
     return false;
 }
 
-void HELPER(exception)(CPUDADAOState *env, uint64_t exp)
+void HELPER(exception)(CPUDADAOState *env, uint32_t excp)
 {
-    while (0) {
-    }
+    DADAOCPU *cpu = env_archcpu(env);
+    CPUState *cs = CPU(cpu);
+    cs->exception_index = excp;
+    cpu_loop_exit(cs);
 }
 
 target_ulong cpu_asr_read(CPUDADAOState *env)
