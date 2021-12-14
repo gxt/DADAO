@@ -18,7 +18,7 @@
 (include "dadao-rg.md")
 (include "dadao-rp.md")
 (include "dadao-rf.md")
-(include "dadao-rr.md")
+; (include "dadao-rr.md")
 (include "dadao-cc.md")
 
 (define_insn "nop"
@@ -33,17 +33,31 @@
 	""
 	"orr	%0, %1, rg0")
 
-(define_insn "dd_ld_<mode>"
+(define_insn "*dd_ld_<mode>"
   [(set (match_operand:QHSD 0 "rg_class_operand" "= Rg")
         (match_operand:QHSD 1 "memory_operand"   "   m"))]
 	""
-	"ld<bwto>	%0, %1")
+	"")
+
+(define_insn "dd_ld_<mode>"
+  [(set		(match_operand:QHSD 0 "rg_class_operand" "= Rg")
+    (plus:QHSD	(match_operand:QHSD 1 "rp_class_operand" "  Rp")
+		(match_operand:QHSD 2 "dd_rg_s12_operand""  Jd")))]
+	""
+	"ld<bwto>	%0, %1, %2")
 
 (define_insn "dd_st_<mode>"
+  [(set		(match_operand:QHSD 0 "rg_class_operand" "= Rg")
+    (plus:QHSD	(match_operand:QHSD 1 "rp_class_operand" "  Rp")
+		(match_operand:QHSD 2 "dd_rg_s12_operand""  Jd")))]
+	""
+	"st<bwto>	%0, %1, %2")
+
+(define_insn "*dd_st_<mode>"
   [(set (match_operand:QHSD 0 "memory_operand"   "=  m")
         (match_operand:QHSD 1 "rg_class_operand" "  Rg"))]
 	""
-	"st<bwto>	%1, %0")
+	"")
 
 ;; TODO: hope following insns will be optimized during rtl process
 (define_insn "*dd_st_2_<mode>"

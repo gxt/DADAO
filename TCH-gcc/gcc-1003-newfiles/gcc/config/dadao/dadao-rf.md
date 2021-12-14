@@ -13,8 +13,8 @@
 	"REGNO_REG_CLASS(REGNO(operands[0])) == FLOATING_REGS ||
 	 REGNO_REG_CLASS(REGNO(operands[1])) == FLOATING_REGS"
 	"@
-	ft_g2f	%0, %1
-	ft_f2g	%0, %1")
+	rg2rf	%0, %1, 0
+	rf2rg	%0, %1, 0")
 
 (define_insn "mov_rr_fo"
   [(set (match_operand:DI 0 "register_operand" "= Rf, Rg")
@@ -22,114 +22,115 @@
 	"REGNO_REG_CLASS(REGNO(operands[0])) == FLOATING_REGS ||
 	 REGNO_REG_CLASS(REGNO(operands[1])) == FLOATING_REGS"
 	"@
-	rg2rf	%0, %1
-	rf2rg	%0, %1")
+	rg2rf	%0, %1, 0
+	rf2rg	%0, %1, 0")
 
-(define_insn "mov<mode>"
+ (define_insn "mov<mode>"
  [(set (match_operand:SFDF 0 "nonimmediate_operand" "= Rg, Rg, Rf, Rf, Rf, Rg, Rf,  m,  m, ??Rg, ??Rf")
        (match_operand:SFDF 1 "general_operand"      "  Rg, Rf, Rg, Rf, Gz,  m,  m, Rg, Rf,    F,    F"))]
 	""
-	"@
-	orr	%0, %1, rg0
-	<ftfo>_f2g	%0, %1
-	<ftfo>_g2f	%0, %1
-	<ftfo>_2<ftfo>	%0, %1
-	<ftfo>_g2f	%0, rg0
-	ldt	%0, %1
-	<ftfo>_ld	%0, %1
-	stt	%1, %0
-	<ftfo>_st	%1, %0
-	seto	%0, %1
-	seto	rg1, %1	\;	<ftfo>_g2f	%0, rg1")
+	"")
+
+;	"orr	%0, %1, rg0
+;	<ftfo>_f2g	%0, %1
+;	<ftfo>_g2f	%0, %1
+;	<ftfo>_2<ftfo>	%0, %1
+;	<ftfo>_g2f	%0, rg0
+;	ldt	%0, %1
+;	<ftfo>_ld	%0, %1
+;	stt	%1, %0
+;	<ftfo>_st	%1, %0
+;	seto	%0, %1
+;	seto	rg1, %1	\;	<ftfo>_g2f	%0, rg1")
 
 (define_insn "add<mode>3"
   [(set        (match_operand:SFDF 0 "rf_class_operand" "= Rf")
     (plus:SFDF (match_operand:SFDF 1 "rf_class_operand" "% Rf")
                (match_operand:SFDF 2 "rf_class_operand" "  Rf")))]
 	""
-	"<ftfo>_add	%0, %1, %2")
+	"<ftfo>add	%0, %1, %2")
 
 (define_insn "sub<mode>3"
   [(set         (match_operand:SFDF 0 "rf_class_operand" "= Rf")
     (minus:SFDF (match_operand:SFDF 1 "rf_class_operand" "  Rf")
                 (match_operand:SFDF 2 "rf_class_operand" "  Rf")))]
 	""
-	"<ftfo>_sub	%0, %1, %2")
+	"<ftfo>sub	%0, %1, %2")
 
 (define_insn "mul<mode>3"
   [(set        (match_operand:SFDF 0 "rf_class_operand" "= Rf")
     (mult:SFDF (match_operand:SFDF 1 "rf_class_operand" "  Rf")
                (match_operand:SFDF 2 "rf_class_operand" "  Rf")))]
 	""
-	"<ftfo>_mul	%0, %1, %2")
+	"<ftfo>mul	%0, %1, %2")
 
 (define_insn "div<mode>3"
   [(set       (match_operand:SFDF 0 "rf_class_operand" "= Rf")
     (div:SFDF (match_operand:SFDF 1 "rf_class_operand" "  Rf")
               (match_operand:SFDF 2 "rf_class_operand" "  Rf")))]
 	""
-	"<ftfo>_div	%0, %1, %2")
+	"<ftfo>div	%0, %1, %2")
 
 (define_insn "abs<mode>2"
   [(set       (match_operand:SFDF 0 "rf_class_operand" "= Rf")
     (abs:SFDF (match_operand:SFDF 1 "rf_class_operand" "  Rf")))]
-	""
-	"<ftfo>_abs	%0, %1")
+	"" "")
+;	"<ftfo>abs	%0, %1")
 
 (define_insn "neg<mode>2"
   [(set       (match_operand:SFDF 0 "rf_class_operand" "= Rf")
     (neg:SFDF (match_operand:SFDF 1 "rf_class_operand" "  Rf")))]
-	""
-	"<ftfo>_neg	%0, %1")
+	"" "")
+;	"<ftfo>neg	%0, %1")
 
 (define_insn "sqrt<mode>2"
   [(set        (match_operand:SFDF 0 "rf_class_operand" "= Rf")
     (sqrt:SFDF (match_operand:SFDF 1 "rf_class_operand" "  Rf")))]
-	""
-	"<ftfo>_sqrt	%0, %1")
+	"" "")
+;	"<ftfo>sqrt	%0, %1")
 
 (define_insn "floatdi<mode>2"
   [(set         (match_operand:SFDF 0 "rf_class_operand" "= Rf")
     (float:SFDF (match_operand:DI   1 "rg_class_operand" "  Rg")))]
-	""
-	"<ftfo>_i2f	%1, %0")
+	"" "")
+;	"<ftfo>_i2f	%1, %0")
 
 (define_insn "floatundi<mode>2"
   [(set                  (match_operand:SFDF 0 "rf_class_operand" "= Rf")
     (unsigned_float:SFDF (match_operand:DI   1 "rg_class_operand" "  Rg")))]
-	""
-	"<ftfo>_u2f	%1, %0")
+	"" "")
+;	"<ftfo>_u2f	%1, %0")
 
 (define_insn "fix<mode>di2"
   [(set     (match_operand:DI   0 "rg_class_operand" "= Rg")
     (fix:DI (match_operand:SFDF 1 "rf_class_operand" "  Rf")))]
-	""
-	"<ftfo>_f2i	%0, %1")
+	"" "")
+;	"<ftfo>_f2i	%0, %1")
 
 (define_insn "fix<mode>undi2"
   [(set              (match_operand:DI   0 "rg_class_operand" "= Rg")
     (unsigned_fix:DI (match_operand:SFDF 1 "rf_class_operand" "  Rf")))]
-	""
-	"<ftfo>_f2u	%0, %1")
+	"" "")
+;	"<ftfo>_f2u	%0, %1")
 
 (define_insn "truncdfsf2"
   [(set                (match_operand:SF 0 "rf_class_operand" "= Rf")
     (float_truncate:SF (match_operand:DF 1 "rf_class_operand" "  Rf")))]
 	""
-	"fo_2ft	%0, %1")
+	"fo2ft	%0, %1, 0")
 
 (define_insn "extendsfdf2"
   [(set              (match_operand:DF 0 "rf_class_operand" "= Rf")
     (float_extend:DF (match_operand:SF 1 "rf_class_operand" "  Rf")))]
 	""
-	"ft_2fo	%0, %1")
+	"ft2fo	%0, %1, 0")
 
 (define_insn "*fcmp_<ccff_type_insn>_<mode>"
   [(set             (match_operand:CCFF 0 "rg_class_operand" "= Rg")
     (CCFF_TYPE:CCFF (match_operand:SFDF 1 "rf_class_operand" "  Rf")
                     (match_operand:SFDF 2 "rf_class_operand" "  Rf")))]
 	""
-	"<ftfo>c_<ccff_type_insn>	%0, %1, %2")
+	"<ftfo>c<ccff_type_insn>	%0, %1, %2")
 
 (define_insn "*br_ccff"
   [(set (pc)
