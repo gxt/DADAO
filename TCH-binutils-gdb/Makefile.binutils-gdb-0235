@@ -97,7 +97,7 @@ binutils-gdb-0235-source:
 	@echo "OPCODES: Copy opcodes dir"
 	@cp -a $(BINUTILS_GDB_0235_NEWFILES)/opcodes/* $(BINUTILS_GDB_0235_SOURCE)/opcodes/
 	@echo "OPCODES: Generate dadao opcodes file"
-	@make OPCODES_TARGET=$(BINUTILS_GDB_0235_OPCODES) -C $(DIR_DADAO_OPCODES) opcodes-binutils
+	@make TARGET_OPCODES=$(BINUTILS_GDB_0235_OPCODES) -C $(DIR_DADAO_OPCODES) opcodes-binutils
 	@cd $(BINUTILS_GDB_0235_SOURCE);				\
 		git add opcodes;					\
 		git commit -sm"DADAO: add opcodes support"
