@@ -3,6 +3,9 @@ all:
 	@echo "Use m4 to generate opcodes"
 	@echo ""
 
+clean:
+	@rm -f *.inc.c *.opc
+
 M4			:= m4
 GEN_OPCODES		:= gen-opcodes-binutils.m4
 TARGET_OPCODES		?= target-opcodes.opc
