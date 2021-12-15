@@ -13,7 +13,7 @@ opcodes-binutils:
 PYTHON			:= /usr/bin/python3
 # copy from qemu-0600/scripts/decodetree.py
 DECODETREE		?= decodetree-0600.py
-TARGET_DECODE_QEMU	?= $(shell pwd)/decode-dadao.inc.c
+TARGET_DECODE_QEMU	?= $(shell pwd)/target-decode.inc.c
 
-decode-qemu: dadao.decode $(DECODETREE)
+decode-qemu: simrisc.decode $(DECODETREE)
 	$(PYTHON) $(DECODETREE) --decode disas_dadao -o $(TARGET_DECODE_QEMU) $<
