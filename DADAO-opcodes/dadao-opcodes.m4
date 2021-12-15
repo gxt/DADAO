@@ -170,9 +170,9 @@ insn(	ret,		zzzz,	0x6E,	0,	-,	-,	-,	-,	jsr)
 insn(	stmrr,		rrri,	0x6F,	0,	rr,	rp,	rg,	i6,	dref)
 
 insn(	trap,		ciii,	0x70,	0,	cp,	u18,	-,	-,	jsr)
-insn(	cmd,		ciii,	0x71,	0,	cp,	u18,	-,	-,	normal)
+insn(	cpcoop,		ciii,	0x71,	0,	cp,	u18,	-,	-,	normal)
 insn(	rg2cr,		crrr,	0x72,	0,	cp,	cr,	cr,	rg,	normal)
 insn(	cr2rg,		crrr,	0x73,	0,	cp,	rg,	cr,	cr,	normal)
-insn(	cpld,		crii,	0x74,	0,	cp,	rp,	u12,	-,	dref)
-insn(	cpst,		crii,	0x75,	0,	cp,	rp,	u12,	-,	dref)
+insn(	cpload,		crii,	0x74,	0,	cp,	rp,	u12,	-,	dref)
+insn(	cpstor,		crii,	0x75,	0,	cp,	rp,	u12,	-,	dref)
 
