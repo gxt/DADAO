@@ -52,6 +52,7 @@ insn(	andnwk,		rjii,	0x17,	1,	rg,	w16,	-,	-,	normal)
 insn(	andnwj,		rjii,	0x17,	2,	rg,	w16,	-,	-,	normal)
 insn(	andnwh,		rjii,	0x17,	3,	rg,	w16,	-,	-,	normal)
 
+insn(	addrp,		riii,	0x18,	0,	rp,	s18,	-,	-,	normal)
 insn(	add,		riii,	0x19,	0,	rg,	s18,	-,	-,	normal)
 insn(  _add,		rrrr,	0x1A,	0,	rg,	rg,	rg,	rg,	normal)
 insn(	sub,		rrrr,	0x1B,	0,	rg,	rg,	rg,	rg,	normal)
