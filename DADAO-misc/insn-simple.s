@@ -29,6 +29,7 @@ _start:
 	rf2rg	rg1, rf2, 3
 	rf2rf	rf1, rf2, 3
 	# 0001-0xxx
+	addrp	rp1, 4
 	add	rg1, 2
 	add	rg1, rg2, rg3, rg4
 	sub	rg1, rg2, rg3, rg4
@@ -156,3 +157,8 @@ _start:
 	stmrr	rr1, rp2, rg3, 4
 	# 0111-0xxx
 	trap	cp0, 1
+	cpcoop	cp1, 2
+	rg2cr	cp1, cr2, cr3, rg4
+	cr2rg	cp1, rg2, cr3, cr4
+	cpload	cp1, rp2, 3
+	cpstor	cp1, rp2, 3
