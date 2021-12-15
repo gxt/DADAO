@@ -23,4 +23,4 @@ ifelse(	$#, `9', `', `__error')dnl
 ,	ifelse( $8, `-', _OP(none), _OP($8))dnl
 ,	_T($9)},')
 
-include(dadao-opcodes.m4)
+include(simrisc-opcodes.m4)

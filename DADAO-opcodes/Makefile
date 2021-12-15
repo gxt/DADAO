@@ -1,13 +1,14 @@
-M4		:= m4
-OPCODES_TARGET	?= opcodes-output
-
 all:
 	@echo ""
 	@echo "Use m4 to generate opcodes"
 	@echo ""
 
+M4			:= m4
+GEN_OPCODES		:= gen-opcodes-binutils.m4
+TARGET_OPCODES		?= target-opcodes.opc
+
 opcodes-binutils:
-	$(M4) gen-opcodes-binutils.m4	> $(OPCODES_TARGET)
+	$(M4) $(GEN_OPCODES)	> $(TARGET_OPCODES)
 
 PYTHON			:= /usr/bin/python3
 # copy from qemu-0600/scripts/decodetree.py
