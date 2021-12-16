@@ -2,7 +2,56 @@
 
 
 #
+# Load Store Instructions
+#
+
+@rrii   ........ ra:6   rp:6   imm:s12
+
+ldo     00110011 ...... ...... ............     @rrii
+
+sto     00111011 ...... ...... ............     @rrii
+
+
+@rrri   ........ ra:6   rp:6   rg:6   cnt:6
+
+ldmo    00110111 ...... ...... ...... ......    @rrri
+
+stmo    00111111 ...... ...... ...... ......    @rrri
+
+
+
+#
+# Register Copy Instructions
+#
+
+
+
+#
+# Arithmetic Instructions
+#
+
+
+
+#
+# Floating Point Instructions
+#
+
+
+
+#
 # Control Flow Instructions
 #
 
+swym	00000000 ------ ------ ------ ------
+
+ret	    01101110 ------ ------ ------ ------
+
 trap    01110000 000000 num:18
+
+
+
+#
+# System Instructions
+#
+
+
