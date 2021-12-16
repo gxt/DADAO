@@ -41,6 +41,7 @@
 
 typedef struct DisasContext {
     DisasContextBase base;
+    uint32_t mem_idx;
 } DisasContext;
 
 static TCGv_i64 cpu_rg[64];
@@ -136,6 +137,64 @@ static void gen_exception(int excp)
     tcg_temp_free_i32(tmp);
 }
 
+/* load store instructions */
+
+static bool trans_ldo(DisasContext *ctx, arg_ldo *a)
+{
+    TCGv_i64 addr = tcg_temp_new_i64();
+    tcg_gen_addi_i64(addr, cpu_rp[a->rp], a->imm);
+    tcg_gen_qemu_ld64(cpu_rg[a->ra], addr, ctx->mem_idx);
+    tcg_temp_free_i64(addr);
+    return true;
+}
+
+static bool trans_sto(DisasContext *ctx, arg_sto *a)
+{
+    TCGv_i64 addr = tcg_temp_new_i64();
+    tcg_gen_addi_i64(addr, cpu_rp[a->rp], a->imm);
+    tcg_gen_qemu_st64(cpu_rg[a->ra], addr, ctx->mem_idx);
+    tcg_temp_free_i64(addr);
+    return true;
+}
+
+static bool trans_ldmo(DisasContext *ctx, arg_ldmo *a)
+{
+    TCGv_i64 addr = tcg_temp_new_i64();
+    tcg_gen_add_i64(addr, cpu_rp[a->rp], cpu_rg[a->rg]);
+    tcg_gen_qemu_ld64(cpu_rg[a->ra], addr, ctx->mem_idx);
+    for (; a->cnt > 0; a->cnt--) {
+        tcg_gen_addi_i64(addr, addr, 8);
+        tcg_gen_qemu_ld64(cpu_rg[++a->ra], addr, ctx->mem_idx);
+    }
+    tcg_temp_free_i64(addr);
+    return true;
+}
+
+static bool trans_stmo(DisasContext *ctx, arg_stmo *a)
+{
+    TCGv_i64 addr = tcg_temp_new_i64();
+    tcg_gen_add_i64(addr, cpu_rp[a->rp], cpu_rg[a->rg]);
+    tcg_gen_qemu_st64(cpu_rg[a->ra], addr, ctx->mem_idx);
+    for (; a->cnt > 0; a->cnt--) {
+        tcg_gen_addi_i64(addr, addr, 8);
+        tcg_gen_qemu_st64(cpu_rg[++a->ra], addr, ctx->mem_idx);
+    }
+    tcg_temp_free_i64(addr);
+    return true;
+}
+
+/* control flow instructios */
+
+static bool trans_swym(DisasContext *ctx, arg_swym *a)
+{
+    return true;
+}
+
+static bool trans_ret(DisasContext *ctx, arg_swym *a)
+{
+    return true;
+}
+
 static bool trans_trap(DisasContext *ctx, arg_trap *a)
 {
     tcg_gen_movi_i32(cpu_trap_num, a->num);
@@ -146,6 +205,10 @@ static bool trans_trap(DisasContext *ctx, arg_trap *a)
 
 static void dadao_tr_init_disas_context(DisasContextBase *dcbase, CPUState *cs)
 {
+    DisasContext *ctx = container_of(dcbase, DisasContext, base);
+    CPUDADAOState *env = cs->env_ptr;
+    
+    ctx->mem_idx = cpu_mmu_index(env, false);
 }
 
 static void dadao_tr_tb_start(DisasContextBase *dcbase, CPUState *cs)
