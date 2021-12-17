@@ -139,48 +139,238 @@ static void gen_exception(int excp)
 
 /* load store instructions */
 
-static bool trans_ldo(DisasContext *ctx, arg_ldo *a)
+static bool trans_ld_all(DisasContext *ctx, arg_rrii *a, 
+                         TCGv_i64* cpu_ra, MemOp mop)
+{
+    if (a->ra == 0) {
+        g_assert_not_reached();
+    }
+    TCGv_i64 addr = tcg_temp_new_i64();
+    tcg_gen_addi_i64(addr, cpu_rp[a->rp], a->imm);
+    tcg_gen_qemu_ld_i64(cpu_ra[a->ra], addr, ctx->mem_idx, mop);
+    tcg_temp_free_i64(addr);
+    return true;
+}
+
+static bool trans_st_all(DisasContext *ctx, arg_rrii *a, 
+                         TCGv_i64* cpu_ra, MemOp mop)
 {
     TCGv_i64 addr = tcg_temp_new_i64();
     tcg_gen_addi_i64(addr, cpu_rp[a->rp], a->imm);
-    tcg_gen_qemu_ld64(cpu_rg[a->ra], addr, ctx->mem_idx);
+    tcg_gen_qemu_st_i64(cpu_ra[a->ra], addr, ctx->mem_idx, mop);
     tcg_temp_free_i64(addr);
     return true;
+}
+
+static bool trans_ldm_all(DisasContext *ctx, arg_rrri *a,
+                          TCGv_i64* cpu_ra, MemOp mop)
+{
+    if (a->ra == 0) {
+        g_assert_not_reached();
+    }
+    TCGv_i64 addr = tcg_temp_new_i64();
+    tcg_gen_add_i64(addr, cpu_rp[a->rp], cpu_rg[a->rg]);
+    tcg_gen_qemu_ld64(cpu_ra[a->ra], addr, ctx->mem_idx);
+    while (a->cnt--) {
+        tcg_gen_addi_i64(addr, addr, 1 << (mop & 3));
+        tcg_gen_qemu_ld_i64(cpu_ra[++a->ra], addr, ctx->mem_idx, mop);
+    }
+    tcg_temp_free_i64(addr);
+    return true;
+}
+
+static bool trans_stm_all(DisasContext *ctx, arg_rrri *a,
+                          TCGv_i64* cpu_ra, MemOp mop)
+{
+    TCGv_i64 addr = tcg_temp_new_i64();
+    tcg_gen_add_i64(addr, cpu_rp[a->rp], cpu_rg[a->rg]);
+    tcg_gen_qemu_st64(cpu_ra[a->ra], addr, ctx->mem_idx);
+    while (a->cnt--) {
+        tcg_gen_addi_i64(addr, addr, 1 << (mop & 3));
+        tcg_gen_qemu_st_i64(cpu_ra[++a->ra], addr, ctx->mem_idx, mop);
+    }
+    tcg_temp_free_i64(addr);
+    return true;
+}
+
+static bool trans_ldbs(DisasContext *ctx, arg_ldbs *a)
+{
+    return trans_ld_all(ctx, a, cpu_rg, MO_SB);
+}
+
+static bool trans_ldws(DisasContext *ctx, arg_ldws *a)
+{
+    return trans_ld_all(ctx, a, cpu_rg, MO_TESW);
+}
+
+static bool trans_ldts(DisasContext *ctx, arg_ldts *a)
+{
+    return trans_ld_all(ctx, a, cpu_rg, MO_TESL);
+}
+
+static bool trans_ldo(DisasContext *ctx, arg_ldo *a)
+{
+    return trans_ld_all(ctx, a, cpu_rg, MO_TEQ);
+}
+
+static bool trans_ldbu(DisasContext *ctx, arg_ldbu *a)
+{
+    return trans_ld_all(ctx, a, cpu_rg, MO_UB);
+}
+
+static bool trans_ldwu(DisasContext *ctx, arg_ldwu *a)
+{
+    return trans_ld_all(ctx, a, cpu_rg, MO_TEUW);
+}
+
+static bool trans_ldtu(DisasContext *ctx, arg_ldtu *a)
+{
+    return trans_ld_all(ctx, a, cpu_rg, MO_TEUL);
+}
+
+static bool trans_ldrp(DisasContext *ctx, arg_ldrp *a)
+{
+    return trans_ld_all(ctx, a, cpu_rp, MO_TEQ);
+}
+
+static bool trans_ldft(DisasContext *ctx, arg_ldft *a)
+{
+    return trans_ld_all(ctx, a, cpu_rf, MO_TEUL);
+}
+
+static bool trans_ldfo(DisasContext *ctx, arg_ldfo *a)
+{
+    return trans_ld_all(ctx, a, cpu_rf, MO_TEQ);
+}
+
+static bool trans_stb(DisasContext *ctx, arg_stb *a)
+{
+    return trans_st_all(ctx, a, cpu_rg, MO_UB);
+}
+
+static bool trans_stw(DisasContext *ctx, arg_stw *a)
+{
+    return trans_st_all(ctx, a, cpu_rg, MO_TEUW);
+}
+
+static bool trans_stt(DisasContext *ctx, arg_stt *a)
+{
+    return trans_st_all(ctx, a, cpu_rg, MO_TEUL);
 }
 
 static bool trans_sto(DisasContext *ctx, arg_sto *a)
 {
-    TCGv_i64 addr = tcg_temp_new_i64();
-    tcg_gen_addi_i64(addr, cpu_rp[a->rp], a->imm);
-    tcg_gen_qemu_st64(cpu_rg[a->ra], addr, ctx->mem_idx);
-    tcg_temp_free_i64(addr);
-    return true;
+    return trans_st_all(ctx, a, cpu_rg, MO_TEQ);
+}
+
+static bool trans_strp(DisasContext *ctx, arg_strp *a)
+{
+    return trans_st_all(ctx, a, cpu_rp, MO_TEQ);
+}
+
+static bool trans_stft(DisasContext *ctx, arg_stft *a)
+{
+    return trans_st_all(ctx, a, cpu_rf, MO_TEUL);
+}
+
+static bool trans_stfo(DisasContext *ctx, arg_stfo *a)
+{
+    return trans_st_all(ctx, a, cpu_rf, MO_TEQ);
+}
+
+static bool trans_ldmbs(DisasContext *ctx, arg_ldmbs *a)
+{
+    return trans_ldm_all(ctx, a, cpu_rg, MO_SB);
+}
+
+static bool trans_ldmws(DisasContext *ctx, arg_ldmws *a)
+{
+    return trans_ldm_all(ctx, a, cpu_rg, MO_TESW);
+}
+
+static bool trans_ldmts(DisasContext *ctx, arg_ldmts *a)
+{
+    return trans_ldm_all(ctx, a, cpu_rg, MO_TESL);
 }
 
 static bool trans_ldmo(DisasContext *ctx, arg_ldmo *a)
 {
-    TCGv_i64 addr = tcg_temp_new_i64();
-    tcg_gen_add_i64(addr, cpu_rp[a->rp], cpu_rg[a->rg]);
-    tcg_gen_qemu_ld64(cpu_rg[a->ra], addr, ctx->mem_idx);
-    for (; a->cnt > 0; a->cnt--) {
-        tcg_gen_addi_i64(addr, addr, 8);
-        tcg_gen_qemu_ld64(cpu_rg[++a->ra], addr, ctx->mem_idx);
-    }
-    tcg_temp_free_i64(addr);
-    return true;
+    return trans_ldm_all(ctx, a, cpu_rg, MO_TEQ);
+}
+
+static bool trans_ldmbu(DisasContext *ctx, arg_ldmbu *a)
+{
+    return trans_ldm_all(ctx, a, cpu_rg, MO_UB);
+}
+
+static bool trans_ldmwu(DisasContext *ctx, arg_ldmwu *a)
+{
+    return trans_ldm_all(ctx, a, cpu_rg, MO_TEUW);
+}
+
+static bool trans_ldmtu(DisasContext *ctx, arg_ldmtu *a)
+{
+    return trans_ldm_all(ctx, a, cpu_rg, MO_TEUL);
+}
+
+static bool trans_ldmrp(DisasContext *ctx, arg_ldmrp *a)
+{
+    return trans_ldm_all(ctx, a, cpu_rg, MO_TEQ);
+}
+
+static bool trans_ldmft(DisasContext *ctx, arg_ldmft *a)
+{
+    return trans_ldm_all(ctx, a, cpu_rg, MO_TEUL);
+}
+
+static bool trans_ldmfo(DisasContext *ctx, arg_ldmfo *a)
+{
+    return trans_ldm_all(ctx, a, cpu_rg, MO_TEQ);
+}
+
+static bool trans_ldmrr(DisasContext *ctx, arg_ldmrr *a)
+{
+    return trans_ldm_all(ctx, a, cpu_rr, MO_TEQ);
+}
+
+static bool trans_stmb(DisasContext *ctx, arg_stmb *a)
+{
+    return trans_stm_all(ctx, a, cpu_rg, MO_UB);
+}
+
+static bool trans_stmw(DisasContext *ctx, arg_stmw *a)
+{
+    return trans_stm_all(ctx, a, cpu_rg, MO_TEUW);
+}
+
+static bool trans_stmt(DisasContext *ctx, arg_stmt *a)
+{
+    return trans_stm_all(ctx, a, cpu_rg, MO_TEUL);
 }
 
 static bool trans_stmo(DisasContext *ctx, arg_stmo *a)
 {
-    TCGv_i64 addr = tcg_temp_new_i64();
-    tcg_gen_add_i64(addr, cpu_rp[a->rp], cpu_rg[a->rg]);
-    tcg_gen_qemu_st64(cpu_rg[a->ra], addr, ctx->mem_idx);
-    for (; a->cnt > 0; a->cnt--) {
-        tcg_gen_addi_i64(addr, addr, 8);
-        tcg_gen_qemu_st64(cpu_rg[++a->ra], addr, ctx->mem_idx);
-    }
-    tcg_temp_free_i64(addr);
-    return true;
+    return trans_stm_all(ctx, a, cpu_rg, MO_TEQ);
+}
+
+static bool trans_stmrp(DisasContext *ctx, arg_stmrp *a)
+{
+    return trans_stm_all(ctx, a, cpu_rg, MO_TEQ);
+}
+
+static bool trans_stmft(DisasContext *ctx, arg_stmft *a)
+{
+    return trans_stm_all(ctx, a, cpu_rg, MO_TEUL);
+}
+
+static bool trans_stmfo(DisasContext *ctx, arg_stmfo *a)
+{
+    return trans_stm_all(ctx, a, cpu_rg, MO_TEQ);
+}
+
+static bool trans_stmrr(DisasContext *ctx, arg_stmrr *a)
+{
+    return trans_stm_all(ctx, a, cpu_rr, MO_TEQ);
 }
 
 /* control flow instructios */
