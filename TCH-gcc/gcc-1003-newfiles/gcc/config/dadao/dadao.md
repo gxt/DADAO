@@ -53,6 +53,13 @@
 	""
 	"st<bwto>	%0, %1, %2")
 
+;; TODO: hope following insns will be optimized during rtl process
+(define_insn "*dd_st_2_<mode>"
+  [(set (match_operand:QHSD 0 "memory_operand" "")
+        (match_operand:QHSD 1 "general_operand" ""))]
+	""
+	"")
+
 (define_expand "call"
   [(parallel [(call (match_operand 0 "memory_operand" "")
 		    (match_operand 1 "general_operand" ""))
