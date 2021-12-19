@@ -135,10 +135,10 @@
 	 (match_operand 1 "" ""))
    (use (match_operand 2 "" ""))
    (clobber (reg:DI DD_RA_REG))]
-  ""
-  "@
-	call	%0
-	call	%2, %a0")
+  "" "")
+;  "@
+;	call	%0
+;	call	%2, %a0")
 
 (define_insn "*call_value_real"
   [(set (match_operand 0 "register_operand" "=r,r")
@@ -147,10 +147,10 @@
 	      (match_operand 2 "" "")))
   (use (match_operand 3 "" ""))
   (clobber (reg:DI DD_RA_REG))]
-  ""
-  "@
-	call	%1
-	call	%3, %a1")
+  "" "")
+;  "@
+;	call	%1
+;	call	%3, %a1")
 
 ;; I hope untyped_call and untyped_return are not needed for DADAO.
 ;; Users of Objective-C will notice.
@@ -186,12 +186,12 @@
 
 (define_insn "indirect_jump"
   [(set (pc) (match_operand 0 "address_operand" "p"))]
-  ""
-	"jump	rg63, %a0")
+  "" "")
+;	"jump	rg63, %a0")
 
 ;; FIXME: This is just a jump, and should be expanded to one.
 (define_insn "tablejump"
   [(set (pc) (match_operand:DI 0 "address_operand" "p"))
    (use (label_ref (match_operand 1 "" "")))]
-  ""
-	"jump	rg63, %a0")
+  "" "")
+;	"jump	rg63, %a0")

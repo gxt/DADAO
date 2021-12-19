@@ -443,7 +443,7 @@ static void dd_asm_trampoline_template (FILE *stream)
      static chain is stored at offset 16, and the function address is
      stored at offset 24.  */
 
-  fprintf (stream, "\tgeta	rg63, 1f\n");
+  fprintf (stream, "\tsetrg	rg63, 1f\n");
   fprintf (stream, "\tldo	rg63, rg63, 0\n");
   fprintf (stream, "\tcall	rp0, rg63, 0\n");
   fprintf (stream, "1:\t.dd.o64	0\n");
