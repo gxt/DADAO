@@ -45,6 +45,9 @@ TEST_GCC_FLAGS_EXTRA	:=
 TEST_QEMU_TARGET	:= $(TEST_DSTDIR)/$(TEST_GCC_NAME)
 TEST_QEMU_LOG		:= $(TEST_DSTDIR)/$(TEST_GCC_NAME).log
 
+test-clean:
+	@rm -f *.i *.s *.o *.dump *.elf
+
 test-gas-highfive:
 	test -d $(TEST_DSTDIR) || mkdir -p $(TEST_DSTDIR)
 	$(DD_GAS) $(TEST_GAS_FLAGS) $(TEST_SRCDIR)/$(TEST_GAS_NAME).S
