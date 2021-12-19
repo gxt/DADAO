@@ -47,24 +47,11 @@
 	"ld<bwto>	%0, %1, %2")
 
 (define_insn "dd_st_<mode>"
-  [(set		(match_operand:QHSD 0 "rg_class_operand" "= Rg")
-    (plus:QHSD	(match_operand:QHSD 1 "rp_class_operand" "  Rp")
-		(match_operand:QHSD 2 "dd_rg_s12_operand""  Jd")))]
+  [(set	(plus:QHSD (match_operand:QHSD 1 "rp_class_operand" "  Rp")
+		   (match_operand:QHSD 2 "dd_rg_s12_operand""  Jd"))
+	(match_operand:QHSD 0 "rg_class_operand" "Rg"))]
 	""
 	"st<bwto>	%0, %1, %2")
-
-(define_insn "*dd_st_<mode>"
-  [(set (match_operand:QHSD 0 "memory_operand"   "=  m")
-        (match_operand:QHSD 1 "rg_class_operand" "  Rg"))]
-	""
-	"")
-
-;; TODO: hope following insns will be optimized during rtl process
-(define_insn "*dd_st_2_<mode>"
-  [(set (match_operand:QHSD 0 "memory_operand" "")
-        (match_operand:QHSD 1 "general_operand" ""))]
-	""
-	"")
 
 (define_expand "call"
   [(parallel [(call (match_operand 0 "memory_operand" "")
