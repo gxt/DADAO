@@ -1,0 +1,25 @@
+From 2e4a6ecf6272d683b58c520586503d602a968337 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sun, 19 Dec 2021 16:56:53 +0800
+Subject: [PATCH] DADAO: scripts/config.sub
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ scripts/config.sub | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/scripts/config.sub b/scripts/config.sub
+index a8f3f7e7cd..649b4bfa74 100755
+--- a/scripts/config.sub
++++ b/scripts/config.sub
+@@ -1171,6 +1171,7 @@ case $cpu-$vendor in
+ 			| bfin | bs2000 \
+ 			| c[123]* | c30 | [cjt]90 | c4x \
+ 			| c8051 | clipper | craynv | csky | cydra \
++			| dadao \
+ 			| d10v | d30v | dlx | dsp16xx \
+ 			| e2k | elxsi | epiphany \
+ 			| f30[01] | f700 | fido | fr30 | frv | ft32 | fx80 \
+-- 
+2.17.1
+

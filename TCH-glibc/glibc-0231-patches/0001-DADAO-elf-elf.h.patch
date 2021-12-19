@@ -1,0 +1,26 @@
+From f8af226d4c061eb56b9c64d792a94dcf626a9510 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sun, 19 Dec 2021 16:47:12 +0800
+Subject: [PATCH] DADAO: elf/elf.h
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ elf/elf.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/elf/elf.h b/elf/elf.h
+index 2549a177d6..bca8e611ed 100644
+--- a/elf/elf.h
++++ b/elf/elf.h
+@@ -374,6 +374,8 @@ typedef struct
+ 
+ #define EM_ALPHA	0x9026
+ 
++#define	EM_DADAO	0xDADA
++
+ /* Legal values for e_version (version).  */
+ 
+ #define EV_NONE		0		/* Invalid ELF version */
+-- 
+2.17.1
+

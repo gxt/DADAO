@@ -1,0 +1,27 @@
+From 3a7b5415e5e3ea8759f5260045e573d9c48323be Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sun, 19 Dec 2021 16:57:07 +0800
+Subject: [PATCH] DADAO: scripts/config.guess
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ scripts/config.guess | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/scripts/config.guess b/scripts/config.guess
+index 0f9b29c884..3ace30fbfd 100755
+--- a/scripts/config.guess
++++ b/scripts/config.guess
+@@ -1428,6 +1428,9 @@ EOF
+     amd64:Isilon\ OneFS:*:*)
+ 	echo x86_64-unknown-onefs
+ 	exit ;;
++    dadao:*:*:*)
++	echo dadao-unknown-linux-elf
++	exit ;;
+     *:Unleashed:*:*)
+ 	echo "$UNAME_MACHINE"-unknown-unleashed"$UNAME_RELEASE"
+ 	exit ;;
+-- 
+2.17.1
+
