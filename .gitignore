@@ -3,5 +3,6 @@
 __source
 __build
 __install
+__target
 __log
 .vscode
