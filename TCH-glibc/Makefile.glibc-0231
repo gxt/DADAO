@@ -58,7 +58,7 @@ glibc-0231-build-new:
 	@rm -fr $(GLIBC_0231_BUILD)
 	@mkdir -p $(GLIBC_0231_BUILD)
 	# Check necessary linux headers
-	@test -d $(DIR_DADAO_TARGET)/include/linux || make -s -C $(DIR_DADAO_TOP) linux-$(VER_LINUX)-headers-highfive
+	@test -d $(DIR_DADAO_TARGET)/usr/include/linux || make -s -C $(DIR_DADAO_TOP) linux-$(VER_LINUX)-headers-highfive
 	# Configure
 	@cd $(GLIBC_0231_BUILD) && PATH=$(GLIBC_0231_PATH)			\
 		CFLAGS=$(ANTIQUE_CFLAGS)					\
@@ -73,7 +73,7 @@ glibc-0231-build-new:
 			--disable-profile					\
 			--enable-add-ons					\
 			--enable-kernel=2.6.31					\
-			--with-headers=$(DIR_DADAO_TARGET)/include		\
+			--with-headers=$(DIR_DADAO_TARGET)/usr/include		\
 			libc_cv_forced_unwind=yes				\
 			libc_cv_c_cleanup=yes
 	# Update syscall lists
