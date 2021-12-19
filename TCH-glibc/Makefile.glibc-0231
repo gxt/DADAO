@@ -36,12 +36,12 @@ glibc-0231-source:
 	@git clone $(GLIBC_0231_ORIGIN) -- $(GLIBC_0231_SOURCE)
 	@cd $(GLIBC_0231_SOURCE); git checkout -b $(GLIBC_0231_BRANCH) $(GLIBC_0231_VERSION)
 	# glibc-ports-2.31: add dadao support
-#	@cp -a $(GLIBC_0231_NEWFILES)/sysdeps/dadao $(GLIBC_0231_SOURCE)/sysdeps
-#	@cd $(GLIBC_0231_SOURCE);						\
+	@cp -a $(GLIBC_0231_NEWFILES)/sysdeps/dadao $(GLIBC_0231_SOURCE)/sysdeps
+	@cd $(GLIBC_0231_SOURCE);						\
 		git add sysdeps/dadao;						\
 		git commit -sm"DADAO: add sysdeps/dadao"
-#	@cp -a $(GLIBC_0231_NEWFILES)/sysdeps/unix/sysv/linux/dadao $(GLIBC_0231_SOURCE)/sysdeps/unix/sysv/linux
-#	@cd $(GLIBC_0231_SOURCE);						\
+	@cp -a $(GLIBC_0231_NEWFILES)/sysdeps/unix/sysv/linux/dadao $(GLIBC_0231_SOURCE)/sysdeps/unix/sysv/linux
+	@cd $(GLIBC_0231_SOURCE);						\
 		git add sysdeps/unix/sysv/linux/dadao;				\
 		git commit -sm"DADAO: add sysdeps/unix/sysv/linux/dadao"
 #	@cp -a $(GLIBC_0231_NEWFILES)/sysdeps/unix/dadao $(GLIBC_0231_SOURCE)/sysdeps/unix
@@ -49,9 +49,9 @@ glibc-0231-source:
 		git add sysdeps/unix/dadao;					\
 		git commit -sm"DADAO: add sysdeps/unix/dadao"
 	# Apply include related patches ...
-#	@cd $(GLIBC_0231_SOURCE); git am $(GLIBC_0231_PATCHES)/0*.patch
+	@cd $(GLIBC_0231_SOURCE); git am $(GLIBC_0231_PATCHES)/0*.patch
 	# CONFIG: Apply config related patches ...
-#	@cd $(GLIBC_0231_SOURCE); git am $(GLIBC_0231_PATCHES)/9*.patch
+	@cd $(GLIBC_0231_SOURCE); git am $(GLIBC_0231_PATCHES)/9*.patch
 
 glibc-0231-build-new:
 	# Remove old glibc build dir ...
