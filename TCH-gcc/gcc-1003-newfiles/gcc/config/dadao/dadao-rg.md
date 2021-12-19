@@ -11,7 +11,7 @@
 	""
 	"<rg_arith_insn>	%0, %1, %2")
 
-;; seto is pseudo insn, so we place ? before Rg
+;; setrg is pseudo insn, so we place ? before Rg
 (define_insn "mov_ri<mode>"
   [(set (match_operand:QHSD 0 "rg_class_operand"  "= Rg, Rg, ??Rg")
         (match_operand:QHSD 1 "const_int_operand" "  Iw, Nd,    n"))]
@@ -19,7 +19,7 @@
 	"@
 	%s1	%0, %v1
 	xor	%0, %0, %0	\; add	%0, %n1	\;	sub	%0, %0, rg0, %0	\;	
-	seto	%0, %1")
+	setrg	%0, %1")
 
 (define_insn "adddi3"
   [(set      (match_operand:DI 0 "rg_class_operand" "=   Rg, Rg, Rg")

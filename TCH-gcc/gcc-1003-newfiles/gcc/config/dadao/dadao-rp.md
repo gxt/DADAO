@@ -91,7 +91,7 @@
     (plus:DI (match_operand:DI 1 "rp_class_operand"  "% Rp")
              (match_operand:DI 2 "immediate_operand" "   i")))]
 	""
-	"rp2rg	rg1, %1, 0	\;	seto	%0, %2	\;	add	rg0, %0, rg1, %0")
+	"rp2rg	rg1, %1, 0	\;	setrg	%0, %2	\;	add	rg0, %0, rg1, %0")
 
 ;; TODO: SHOULD removed lator
 (define_insn "*addrp2rp"
@@ -107,4 +107,4 @@
     (plus:DI (match_operand:DI 1 "rp_class_operand"  "% Rp")
              (match_operand:DI 2 "immediate_operand" "   i")))]
 	"" "")
-;	"seto	rg1, %2	\;	rp_add	%0, %1, rg1")
+;	"setrg	rg1, %2	\;	rp_add	%0, %1, rg1")

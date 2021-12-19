@@ -40,8 +40,8 @@
 ;	<ftfo>_ld	%0, %1
 ;	stt	%1, %0
 ;	<ftfo>_st	%1, %0
-;	seto	%0, %1
-;	seto	rg1, %1	\;	<ftfo>_g2f	%0, rg1")
+;	setrg	%0, %1
+;	setrg	rg1, %1	\;	<ftfo>_g2f	%0, rg1")
 
 (define_insn "add<mode>3"
   [(set        (match_operand:SFDF 0 "rf_class_operand" "= Rf")
