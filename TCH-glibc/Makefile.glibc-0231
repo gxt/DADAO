@@ -77,7 +77,11 @@ glibc-0231-build-new:
 			libc_cv_forced_unwind=yes				\
 			libc_cv_c_cleanup=yes
 	# Update syscall lists
+	@touch $(GLIBC_0231_SOURCE)/sysdeps/unix/sysv/linux/dadao/arch-syscall.h
 	@PATH=$(GLIBC_0231_PATH) make -C $(GLIBC_0231_BUILD) update-syscall-lists
+	@cd $(GLIBC_0231_SOURCE);						\
+		git add sysdeps/unix/sysv/linux/dadao/arch-syscall.h;		\
+		git commit -sm"DADAO: sysdeps/unix/sysv/linux/dadao/arch-syscall.h"
 
 glibc-0231-build:
 	@PATH=$(GLIBC_0231_PATH) make -C $(GLIBC_0231_BUILD) -j8
