@@ -12,8 +12,7 @@ LINUX_0504_PATCHES	:= $(DIR_DADAO_TOP)/ENV-linux/linux-0504-patches
 
 LINUX_0504_SOURCE	:= $(DIR_DADAO_SOURCE)/linux-0504
 LINUX_0504_BUILD	:= $(DIR_DADAO_BUILD)/linux-0504
-LINUX_0504_INSTALL	?= $(DIR_DADAO_INSTALL)
-#LINUX_0504_INSTALL	?= $(DIR_DADAO_BUILD)/__linux-0504
+LINUX_0504_TARGET	?= $(DIR_DADAO_TARGET)
 LINUX_0504_LOG_STDOUT	:= $(DIR_DADAO_LOG)/linux-0504.out
 LINUX_0504_LOG_STDERR	:= $(DIR_DADAO_LOG)/linux-0504.err
 
@@ -22,10 +21,8 @@ linux-0504-clean:
 	@rm -fr $(LINUX_0504_SOURCE)
 	# Remove old linux build dir ...
 	@rm -fr $(LINUX_0504_BUILD)
-ifneq ($(LINUX_0504_INSTALL), $(DIR_DADAO_INSTALL))
-	# Remove old linux install dir ...
-	@rm -fr $(LINUX_0504_INSTALL)
-endif
+	# Remove old linux target dir ...
+	@rm -fr $(LINUX_0504_TARGET)/usr/include
 
 linux-0504-source:
 	# Remove old source dir
@@ -62,7 +59,7 @@ linux-0504-install:
 	# Make install ...
 	@make -C $(LINUX_0504_BUILD)				\
 		ARCH=$(LINUX_0504_ARCH)				\
-		INSTALL_PATH=$(LINUX_0504_INSTALL)		\
+		INSTALL_PATH=$(LINUX_0504_TARGET)		\
 		install
 
 linux-0504-highfive:
@@ -92,7 +89,7 @@ linux-0504-headers-install:
 	# Headers install ...
 	@make -C $(LINUX_0504_BUILD)				\
 		ARCH=$(LINUX_0504_ARCH)				\
-		INSTALL_HDR_PATH=$(LINUX_0504_INSTALL)		\
+		INSTALL_HDR_PATH=$(LINUX_0504_TARGET)/usr	\
 		headers_install
 
 linux-0504-headers-highfive:
