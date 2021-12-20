@@ -314,11 +314,11 @@ void dadao_md_begin (void)
 
 static void dd_pseudo_setrg(char *opcodep, int setrg_fa, unsigned long long setrg_octa)
 {
-	int seto_flag;
+	int setrg_flag;
 	unsigned int setrg_w16_1, setrg_w16_2, setrg_w16_3,setrg_w16_4;
 
-	/* seto rg, imm64 */
-	seto_flag = 0; // use seto or setz
+	/* setrg rg, imm64 */
+	setrg_flag = 0; // use setow or setzw
 
 	setrg_w16_1 = (setrg_octa) & 0xFFFF;
 	setrg_w16_2 = (setrg_octa >> 16) & 0xFFFF;
@@ -327,15 +327,15 @@ static void dd_pseudo_setrg(char *opcodep, int setrg_fa, unsigned long long setr
 
 	if(((setrg_w16_4 == 0)+(setrg_w16_3 == 0)+(setrg_w16_2 == 0))
 		<((setrg_w16_4 == 0xFFFF)+(setrg_w16_3 == 0xFFFF)+(setrg_w16_2 == 0xFFFF))){
-		seto_flag = 1;
+		setrg_flag = 1;
 	}
 	
-	if (seto_flag)
+	if (setrg_flag)
 		md_number_to_chars(opcodep, DADAO_INSN_SETO | (setrg_fa << 18) | DADAO_WYDE_WL | setrg_w16_1, 4);
 	else
 		md_number_to_chars(opcodep, DADAO_INSN_SETZ | (setrg_fa << 18) | DADAO_WYDE_WL | setrg_w16_1, 4);
 
-	if (seto_flag){
+	if (setrg_flag){
 		if(setrg_w16_2 != 0xFFFF){
 			opcodep = frag_more (4);
 			md_number_to_chars(opcodep, DADAO_INSN_ANDN | (setrg_fa << 18) | DADAO_WYDE_WK | setrg_w16_2, 4);
@@ -348,7 +348,7 @@ static void dd_pseudo_setrg(char *opcodep, int setrg_fa, unsigned long long setr
 		}
 	}
 
-	if (seto_flag){
+	if (setrg_flag){
 		if(setrg_w16_3 != 0xFFFF){
 			opcodep = frag_more (4);
 			md_number_to_chars(opcodep, DADAO_INSN_ANDN | (setrg_fa << 18) | DADAO_WYDE_WJ | setrg_w16_3, 4);
@@ -361,7 +361,7 @@ static void dd_pseudo_setrg(char *opcodep, int setrg_fa, unsigned long long setr
 		}
 	}
 
-	if (seto_flag){
+	if (setrg_flag){
 		if(setrg_w16_4 != 0xFFFF){
 			opcodep = frag_more (4);
 			md_number_to_chars(opcodep, DADAO_INSN_ANDN | (setrg_fa << 18) | DADAO_WYDE_WH | setrg_w16_4, 4);
@@ -615,7 +615,7 @@ void dadao_md_assemble (char *str)
 	}
 
 	if (instruction->type == dadao_type_pseudo) {
-		/* ONLY seto is pseudo insn: seto rg, imm64 */
+		/* ONLY setrg is pseudo insn: setrg rg, imm64 */
 		if ((n_operands == 2)
 			&& (exp[0].X_op == O_register) && (exp[0].X_add_number < 0x40)
 			&& (exp[1].X_op == O_constant))
