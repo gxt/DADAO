@@ -74,20 +74,20 @@
 (define_insn "abs<mode>2"
   [(set       (match_operand:SFDF 0 "rf_class_operand" "= Rf")
     (abs:SFDF (match_operand:SFDF 1 "rf_class_operand" "  Rf")))]
-	"" "")
-;	"<ftfo>abs	%0, %1")
+	""
+	"<ftfo>abs	%0, %1, 0")
 
 (define_insn "neg<mode>2"
   [(set       (match_operand:SFDF 0 "rf_class_operand" "= Rf")
     (neg:SFDF (match_operand:SFDF 1 "rf_class_operand" "  Rf")))]
-	"" "")
-;	"<ftfo>neg	%0, %1")
+	""
+	"<ftfo>neg	%0, %1, 0")
 
 (define_insn "sqrt<mode>2"
   [(set        (match_operand:SFDF 0 "rf_class_operand" "= Rf")
     (sqrt:SFDF (match_operand:SFDF 1 "rf_class_operand" "  Rf")))]
-	"" "")
-;	"<ftfo>sqrt	%0, %1")
+	""
+	"<ftfo>sqrt	%0, %1, 0")
 
 (define_insn "floatdi<mode>2"
   [(set         (match_operand:SFDF 0 "rf_class_operand" "= Rf")
