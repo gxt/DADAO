@@ -31,19 +31,14 @@
 ;	rp_add	%0, %1, %2
 ;	rp_add	%0, %1, %2")
 
-; TODO
-;(define_insn "dd_ld_rp"
-;  [(set		(match_operand:DI 0 "rg_class_operand" "= Rp")
-;    (plus:DI	(match_operand:DI 1 "rp_class_operand" "  Rp")
-;		(match_operand:DI 2 "dd_rg_s12_operand""  Id")))]
-;	""
-;	"ldrp	%0, %1, %2")
-
-(define_insn "*dd_ld_rp"
-  [(set (match_operand:DI 0 "rp_class_operand" "= Rp")
-        (match_operand:DI 1 "memory_operand"   "   m"))]
+(define_insn "dd_ld_rp"
+  [(set (match_operand:DI 0 "rp_class_operand" "= Rp,Rp,Rp")
+        (match_operand:DI 1 "memory_operand"   "  Wi,Wz,Wg"))]
 	""
-	"")
+	"@
+	ldrp	%0, %1
+	ldrp	%0, %1
+	ldmrp	%0, %1, 0")
 
 (define_insn "dd_st_rp"
   [(set (match_operand:DI 0 "memory_operand"   "=  m")
