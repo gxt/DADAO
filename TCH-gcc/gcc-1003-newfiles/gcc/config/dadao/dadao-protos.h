@@ -14,6 +14,12 @@ extern rtx dadao_return_addr_rtx (int, rtx);
 extern int dadao_initial_elimination_offset (int, int);
 /* XXX gccint 18.9.12 Node: Generating Code for Profiling */
 extern void dadao_function_profiler (FILE *, int);
+
+/* gccint 18.13 Node: Addressing Modes */
+extern bool dd_load_legitimate_address_rpzero (rtx);
+extern bool dd_load_legitimate_address_rpimm (rtx);
+extern bool dd_load_legitimate_address_rprg (rtx);
+
 /* XXX gccint 18.15.2 Node: Representation of condition codes using registers */
 #ifdef RTX_CODE
 extern machine_mode dadao_select_cc_mode (enum rtx_code, rtx, rtx);

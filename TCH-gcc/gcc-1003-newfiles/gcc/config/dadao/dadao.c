@@ -538,6 +538,8 @@ int dadao_constant_address_p (rtx x)
   return constant_ok || (addend & 3) == 0;
 }
 
+#define	_DD_LEGITIMATE_ADDR_GENERAL(X, XC) (REG_P(X) && (REGNO_REG_CLASS(REGNO(X)) == XC))
+
 /* Return 1 if the address is OK, otherwise 0.  */
 static bool dd_legitimate_address_p (machine_mode mode ATTRIBUTE_UNUSED,
 			   rtx x, bool strict_checking)
@@ -575,6 +577,41 @@ static bool dd_legitimate_address_p (machine_mode mode ATTRIBUTE_UNUSED,
 
 #undef	TARGET_LEGITIMATE_ADDRESS_P
 #define	TARGET_LEGITIMATE_ADDRESS_P		dd_legitimate_address_p
+
+bool dd_load_legitimate_address_rpzero (rtx x)
+{
+	if (_DD_LEGITIMATE_ADDR_GENERAL(x, POINTER_REGS))
+		return 1;
+	return 0;
+}
+
+bool dd_load_legitimate_address_rprg (rtx x)
+{
+	if (GET_CODE(x) != PLUS)
+		return 0;
+	rtx x1 = XEXP (x, 0);
+	rtx x2 = XEXP (x, 1);
+	if (_DD_LEGITIMATE_ADDR_GENERAL(x1, POINTER_REGS)
+	 && _DD_LEGITIMATE_ADDR_GENERAL(x2, GENERAL_REGS))
+		return 1;
+	return 0;
+}
+
+/* Return 1 if the address is OK, otherwise 0.  */
+bool dd_load_legitimate_address_rpimm (rtx x)
+{
+	if (GET_CODE(x) != PLUS)
+		return 0;
+	rtx x1 = XEXP (x, 0);
+	rtx x2 = XEXP (x, 1);
+
+	/* (mem (plus (rp) (-0x800, 0x7FF))) */
+	if (_DD_LEGITIMATE_ADDR_GENERAL(x1, POINTER_REGS) && satisfies_constraint_Id (x2))
+		return 1;
+	return 0;
+}
+
+#undef	_DD_LEGITIMATE_ADDR_RC
 
 /* Implement TARGET_LEGITIMATE_CONSTANT_P.  */
 static bool dd_legitimate_constant_p (machine_mode mode ATTRIBUTE_UNUSED, rtx x)
@@ -794,13 +831,17 @@ static void dd_print_operand (FILE *stream, rtx x, int code)
       fprintf (stream, "%s", reg_names[DADAO_OUTPUT_REGNO (regno)]);
       return;
 
+/* TODO */
+    case PLUS:
+      return;
+
     case MEM:
       output_address (GET_MODE (modified_x), XEXP (modified_x, 0));
       return;
 
-	case CONST_INT:
-		fprintf (stream, HOST_WIDE_INT_PRINT_DEC, INTVAL (modified_x));
-		return;
+    case CONST_INT:
+      fprintf (stream, HOST_WIDE_INT_PRINT_DEC, INTVAL (modified_x));
+      return;
 
     case CONST_DOUBLE:
       /* Do somewhat as CONST_INT.  */
