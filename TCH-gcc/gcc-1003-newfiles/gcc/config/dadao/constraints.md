@@ -85,3 +85,23 @@
 	"@internal"
 	(match_operand 0 "dadao_address_operand"))
 
+;; Memory constraint
+;; W = M upside down ( M stands for Memory )
+;; g = second operand is GENERAL_REGS
+;; z = second operand is Zero
+;; i = second operand is Immediate
+(define_memory_constraint "Wg"
+	"@internal"
+	(and (match_code "mem")
+	     (match_test "dd_load_legitimate_address_rprg (XEXP (op, 0))")))
+
+(define_memory_constraint "Wz"
+	"@internal"
+	(and (match_code "mem")
+	     (match_test "dd_load_legitimate_address_rpzero (XEXP (op, 0))")))
+
+(define_memory_constraint "Wi"
+	"@internal"
+	(and (match_code "mem")
+	     (match_test "dd_load_legitimate_address_rpimm (XEXP (op, 0))")))
+
