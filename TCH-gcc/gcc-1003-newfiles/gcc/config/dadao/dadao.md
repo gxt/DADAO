@@ -33,18 +33,14 @@
 	""
 	"orr	%0, %1, rg0")
 
-(define_insn "*dd_ld_<mode>"
-  [(set (match_operand:QHSD 0 "rg_class_operand" "= Rg")
-        (match_operand:QHSD 1 "memory_operand"   "   m"))]
+(define_insn "dd_load_<mode>"
+  [(set (match_operand:QHSD 0 "rg_class_operand" "=  Rg,Rg,Rg")
+        (match_operand:QHSD 1 "memory_operand"   "   Wi,Wz,Wg"))]
 	""
-	"")
-
-(define_insn "dd_ld_<mode>"
-  [(set		(match_operand:QHSD 0 "rg_class_operand" "= Rg")
-    (plus:QHSD	(match_operand:QHSD 1 "rp_class_operand" "  Rp")
-		(match_operand:QHSD 2 "dd_rg_s12_operand""  Jd")))]
-	""
-	"ld<bwto>	%0, %1, %2")
+	"@
+	ld<bwto>u	%0, %1
+	ld<bwto>u	%0, %1
+	ldm<bwto>u	%0, %1, 0")
 
 (define_insn "dd_st_<mode>"
   [(set	(plus:QHSD (match_operand:QHSD 1 "rp_class_operand" "  Rp")
