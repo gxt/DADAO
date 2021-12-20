@@ -45,19 +45,12 @@
 	""
 	"")
 
-;TODO
-;(define_insn "dd_st_rp"
-;  [(set		(match_operand:DI 0 "rp_class_operand" "= Rp")
-;    (plus:DI	(match_operand:DI 1 "rp_class_operand" "  Rp")
-;		(match_operand:DI 2 "dd_rg_s12_operand""  Id")))]
-;	""
-;	"strp	%0, %1, %2")
-
-(define_insn "*dd_st_rp"
+(define_insn "dd_st_rp"
   [(set (match_operand:DI 0 "memory_operand"   "=  m")
-        (match_operand:DI 1 "rp_class_operand" "  Rp"))]
+        (plus:DI (match_operand:DI 1 "rp_class_operand"	 "Rp")
+		 (match_operand:DI 2 "dd_rg_s12_operand" "Id")))]
 	""
-	"")
+	"strp	%0, %1, %2")
 
 (define_insn "dd_get_offset"
   [(set (match_operand:DI 0 "rg_class_operand"  "= Rg, Rg")
