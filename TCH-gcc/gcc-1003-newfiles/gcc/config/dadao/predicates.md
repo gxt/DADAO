@@ -41,6 +41,11 @@
        (and (match_code "const_int")
             (match_test "satisfies_constraint_Id(op)"))))
 
+(define_predicate "dd_rg_s18_operand"
+  (ior (match_operand 0 "rg_class_operand")
+       (and (match_code "const_int")
+            (match_test "satisfies_constraint_It(op)"))))
+
 (define_predicate "dd_rg_u6_operand"
   (ior (match_operand 0 "rg_class_operand")
        (and (match_code "const_int")

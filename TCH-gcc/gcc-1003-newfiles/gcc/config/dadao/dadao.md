@@ -38,9 +38,9 @@
         (match_operand:QHSD 1 "memory_operand"   "   Wi,Wz,Wg"))]
 	""
 	"@
-	ld<bwto>u	%0, %1
-	ld<bwto>u	%0, %1
-	ldm<bwto>u	%0, %1, 0")
+	* { return GET_MODE (operands[1]) == DImode ? \"ldo	%0, %1\" : \"ld<bwto>u	%0, %1\"; }
+	* { return GET_MODE (operands[1]) == DImode ? \"ldo     %0, %1\" : \"ld<bwto>u	%0, %1\"; }
+	* { return GET_MODE (operands[1]) == DImode ? \"ldmo	%0, %1, 0\" : \"ldm<bwto>u	%0, %1, 0\"; }")
 
 (define_insn "dd_st_<mode>"
   [(set	(plus:QHSD (match_operand:QHSD 1 "rp_class_operand" "  Rp")
