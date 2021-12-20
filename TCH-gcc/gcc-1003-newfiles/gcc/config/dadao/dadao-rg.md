@@ -22,21 +22,20 @@
 	setrg	%0, %1")
 
 (define_insn "adddi3"
-  [(set      (match_operand:DI 0 "rg_class_operand" "=   Rg, Rg, Rg")
-    (plus:DI (match_operand:DI 1 "rg_class_operand" "%   Rg, Rg,  0")
-             (match_operand:DI 2 "dd_rg_u12_operand" "  JdRg, Nd, Iw")))]
-	"" "")
-;	"@
-;	add	%0, %1, %2
-;	sub	%0, %1, %n2
-;	%i2	%0, %v2")
+  [(set      (match_operand:DI 0 "rg_class_operand"	"= Rg,Rg")
+    (plus:DI (match_operand:DI 1 "rg_class_operand"	"% Rg,Rg")
+             (match_operand:DI 2 "dd_rg_u12_operand"	"  Rg,Jd")))]
+	""
+	"@
+	add	rg0, %0, %1, %2
+	*{ return \"add\t%1, %2\t\; setrg\t%0, %1\t\;\"; }")
 
 (define_insn "subdi3"
   [(set       (match_operand:DI 0 "rg_class_operand" "= Rg")
     (minus:DI (match_operand:DI 1 "rg_class_operand" "  Rg")
               (match_operand:DI 2 "rg_class_operand" "  Rg")))]
 	""
-	"sub	%0, %0, %1, %2")
+	"sub	rg0, %0, %1, %2")
 
 (define_insn "muldi3"
   [(set      (match_operand:DI 0 "rg_class_operand" "= Rg")
@@ -76,7 +75,7 @@
   [(set     (match_operand:DI 0 "rg_class_operand" "= Rg")
     (neg:DI (match_operand:DI 1 "rg_class_operand" "  Rg")))]
 	""
-	"sub	%0, %0, rg0, %1")
+	"sub	rg0, %0, rg0, %1")
 
 (define_insn "one_cmpldi2"
   [(set     (match_operand:DI 0 "rg_class_operand" "= Rg")
