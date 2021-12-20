@@ -44,7 +44,7 @@
 
 (define_insn "dd_st_<mode>"
   [(set	(plus:QHSD (match_operand:QHSD 1 "rp_class_operand" "  Rp")
-		   (match_operand:QHSD 2 "dd_rg_s12_operand""  Jd"))
+		   (match_operand:QHSD 2 "dd_rg_s12_operand""  Id"))
 	(match_operand:QHSD 0 "rg_class_operand" "Rg"))]
 	""
 	"st<bwto>	%0, %1, %2")
