@@ -25,23 +25,16 @@
 	rg2rf	%0, %1, 0
 	rf2rg	%0, %1, 0")
 
- (define_insn "mov<mode>"
- [(set (match_operand:SFDF 0 "nonimmediate_operand" "= Rg, Rg, Rf, Rf, Rf, Rg, Rf,  m,  m, ??Rg, ??Rf")
-       (match_operand:SFDF 1 "general_operand"      "  Rg, Rf, Rg, Rf, Gz,  m,  m, Rg, Rf,    F,    F"))]
+(define_insn "mov<mode>"
+  [(set (match_operand:SFDF 0 "nonimmediate_operand" "= Rg,Rg,Rf,Rg,  m")
+	(match_operand:SFDF 1 "general_operand"      "  Rg,Rf,Rg,imm,Rg"))]
 	""
-	"")
-
-;	"orr	%0, %1, rg0
-;	<ftfo>_f2g	%0, %1
-;	<ftfo>_g2f	%0, %1
-;	<ftfo>_2<ftfo>	%0, %1
-;	<ftfo>_g2f	%0, rg0
-;	ldt	%0, %1
-;	<ftfo>_ld	%0, %1
-;	stt	%1, %0
-;	<ftfo>_st	%1, %0
-;	setrg	%0, %1
-;	setrg	rg1, %1	\;	<ftfo>_g2f	%0, rg1")
+	"@
+	orr	%0, %1, rg0
+	rf2rg	%0, %1, 0
+	rg2rf	%0, %1, 0
+	setrg	%0, %1
+	sto	%1, %0")
 
 (define_insn "add<mode>3"
   [(set        (match_operand:SFDF 0 "rf_class_operand" "= Rf")
