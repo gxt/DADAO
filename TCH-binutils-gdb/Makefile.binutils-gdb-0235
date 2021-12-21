@@ -16,6 +16,7 @@ BINUTILS_GDB_0235_INSTALL		?= $(DIR_DADAO_INSTALL)
 #BINUTILS_GDB_0235_INSTALL		?= $(DIR_DADAO_BUILD)/__binutils-gdb-0235
 BINUTILS_GDB_0235_LOG_STDOUT		:= $(DIR_DADAO_LOG)/binutils-gdb-0235.out
 BINUTILS_GDB_0235_LOG_STDERR		:= $(DIR_DADAO_LOG)/binutils-gdb-0235.err
+BINUTILS_GDB_0235_LOG_CHECK		:= $(DIR_DADAO_LOG)/binutils-gdb-0235.check
 
 binutils-gdb-0235-clean:
 	@echo "Remove old binutils-gdb source dir ..."
@@ -144,25 +145,12 @@ binutils-gdb-0235-highfive:
 	@make -s binutils-gdb-0235-install			1>> $(BINUTILS_GDB_0235_LOG_STDOUT) 2>> $(BINUTILS_GDB_0235_LOG_STDERR)
 	# --- BUILD binutils-gdb-0235 DONE! ---
 
-binutils-gdb-0235-check-gas:
-	@echo "=== binutils-gdb check-gas time maybe: real 5s, user 3s, sys 2s ==="
-	@echo "=== gas Summary on (2020/05/25): 205 of expected passes, 2 of unsupported tests ==="
-	@make -C $(BINUTILS_GDB_0235_BUILD) check-gas		1>> $(BINUTILS_GDB_0235_LOG_STDOUT) 2>> $(BINUTILS_GDB_0235_LOG_STDERR)
-	@echo "=== head/tail of gas.sum ==="
-	@head -n 6 $(BINUTILS_GDB_0235_BUILD)/gas/testsuite/gas.sum
-	@tail -n 6 $(BINUTILS_GDB_0235_BUILD)/gas/testsuite/gas.sum
-
-binutils-gdb-0235-check-binutils:
-	@echo "=== binutils-gdb check-binutils time maybe: real 54s, user 58s, sys 12s ==="
-	@echo "=== binutils Summary on (2020/05/07): 204 of expected passes, 8 of unsupported tests ==="
-	@make -C $(BINUTILS_GDB_0235_BUILD) check-binutils	1>> $(BINUTILS_GDB_0235_LOG_STDOUT) 2>> $(BINUTILS_GDB_0235_LOG_STDERR)
-	@echo "=== head/tail of gas.sum ==="
-	@head -n 6 $(BINUTILS_GDB_0235_BUILD)/binutils/binutils.sum
-	@tail -n 5 $(BINUTILS_GDB_0235_BUILD)/binutils/binutils.sum
-
-binutils-gdb-0235-check-ld:
-	@make -C $(BINUTILS_GDB_0235_BUILD) check-ld		1>> $(BINUTILS_GDB_0235_LOG_STDOUT) 2>> $(BINUTILS_GDB_0235_LOG_STDERR)
-	@ln --symbolic --force -t $(BINUTILS_GDB_0235_BUILD) $(BINUTILS_GDB_0235_BUILD)/ld/ld.sum
+binutils-gdb-0235-check:
+	@rm -fr $(BINUTILS_GDB_0235_LOG_CHECK)
+	@make -i -C $(BINUTILS_GDB_0235_BUILD) check-binutils	>> $(BINUTILS_GDB_0235_LOG_CHECK)
+	@make -i -C $(BINUTILS_GDB_0235_BUILD) check-gas	>> $(BINUTILS_GDB_0235_LOG_CHECK)
+	@make -i -C $(BINUTILS_GDB_0235_BUILD) check-ld		>> $(BINUTILS_GDB_0235_LOG_CHECK)
+	@echo "RESULTS: binutils/binutils.sum gas/testsuite/gas.sum ld/ld.sum"
 
 binutils-gdb-0235-TAGS:
 	@make -C $(BINUTILS_GDB_0235_BUILD) -j8 TAGS		1>> $(BINUTILS_GDB_0235_LOG_STDOUT) 2>> $(BINUTILS_GDB_0235_LOG_STDERR)
