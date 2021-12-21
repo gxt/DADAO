@@ -153,7 +153,7 @@ binutils-gdb-0235-check:
 	@echo "RESULTS: binutils/binutils.sum gas/testsuite/gas.sum ld/ld.sum"
 
 binutils-gdb-0235-TAGS:
-	@make -C $(BINUTILS_GDB_0235_BUILD) -j8 TAGS		1>> $(BINUTILS_GDB_0235_LOG_STDOUT) 2>> $(BINUTILS_GDB_0235_LOG_STDERR)
+	@make -C $(BINUTILS_GDB_0235_BUILD) -j8 TAGS
 	@etags -f $(BINUTILS_GDB_0235_SOURCE)/include/TAGS --recurse $(BINUTILS_GDB_0235_SOURCE)/include
 	@etags -f $(BINUTILS_GDB_0235_SOURCE)/TAGS --etags-include=$(BINUTILS_GDB_0235_SOURCE)/include/TAGS
 	@find $(BINUTILS_GDB_0235_BUILD) -name TAGS -exec		\
