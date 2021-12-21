@@ -22,14 +22,18 @@
 	""
 	"rp2rg	%0, %1, 0")
 
+;; TODO
+;; temporary register usage has to be settled
+;; rg6 is one temporary reg replacement
+
 (define_insn "*addrp"
   [(set      (match_operand:DI 0 "rp_class_operand"  "= Rp, Rp")
     (plus:DI (match_operand:DI 1 "rp_class_operand"  "% Rp, Rp")
-             (match_operand:DI 2 "dd_rg_s12_operand" "  Id, Rg")))]
-	"" "")
-;	"@
-;	rp_add	%0, %1, %2
-;	rp_add	%0, %1, %2")
+             (match_operand:DI 2 "dd_rg_s18_operand" "  Rg, It")))]
+	""
+	"@
+	rp2rg	rg6, %1, 0	\;add	rg0, %2, %2, rg6	\;rg2rp	%0, %2, 0	\;
+	*{ return (REGNO(operands[0]) == REGNO(operands[1])) ? \"addrp\t%0, %2\" : \"addrp\t%1, %2\t\;rp2rp\t%0, %1, 0\t\;\"; }")
 
 (define_insn "dd_ld_rp"
   [(set (match_operand:DI 0 "rp_class_operand" "= Rp,Rp,Rp")
