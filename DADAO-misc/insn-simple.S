@@ -21,6 +21,7 @@ _start:
 	not	rg1, rg2, 3
 	cmps	rg1, rg2, rg3
 	cmpu	rg1, rg2, rg3
+	cmprp	rg1, rp2, rp3
 	addrp	rp1, rp2, rg3
 	subrp	rp1, rp2, rg3
 	rg2rg	rg1, rg2, 3
