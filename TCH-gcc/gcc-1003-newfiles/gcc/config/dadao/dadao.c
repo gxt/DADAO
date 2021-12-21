@@ -778,7 +778,7 @@ static void dd_print_operand (FILE *stream, rtx x, int code)
       return;
 
     case 's':
-      dadao_output_shiftvalue_op_from_str (stream, "seto", (uint64_t) dadao_intval (x));
+      dadao_output_shiftvalue_op_from_str (stream, "setz", (uint64_t) dadao_intval (x));
       return;
 
     case 'r':
@@ -1168,11 +1168,11 @@ dadao_output_register_setting (FILE *stream,
     fprintf (stream, "\t");
 
   if (insn_const_int_ok_for_constraint (value, CONSTRAINT_Nd))
-    fprintf (stream, "sub	%s, %s, rg0, %" PRId64, reg_names[regno], -value);
+    fprintf (stream, "sub	rg0, %s, rg0, %" PRId64, reg_names[regno], -value);
   else if (dadao_shiftable_wyde_value ((uint64_t) value))
     {
       /* First, the one-insn cases.  */
-      dadao_output_shiftvalue_op_from_str (stream, "seto",
+      dadao_output_shiftvalue_op_from_str (stream, "setz",
 					  (uint64_t)
 					  value);
       fprintf (stream, "\t%s, ", reg_names[regno]);
@@ -1183,12 +1183,12 @@ dadao_output_register_setting (FILE *stream,
       /* We do this to get a bit more legible assembly code.  The next
 	 alternative is mostly redundant with this.  */
 
-      dadao_output_shiftvalue_op_from_str (stream, "seto",
+      dadao_output_shiftvalue_op_from_str (stream, "setz",
 					  -(uint64_t)
 					  value);
       fprintf (stream, " %s,", reg_names[regno]);
       dadao_output_shifted_value (stream, -(uint64_t) value);
-      fprintf (stream, "\n\tsub	%s, %s, rg0, %s", reg_names[regno],
+      fprintf (stream, "\n\tsub	rg0, %s, rg0, %s", reg_names[regno],
 	       reg_names[regno]);
     }
   else if (dadao_shiftable_wyde_value (~(uint64_t) value))
@@ -1201,7 +1201,7 @@ dadao_output_register_setting (FILE *stream,
 	 with two insns, since it makes more readable assembly code (if
 	 anyone else cares).  */
 
-      dadao_output_shiftvalue_op_from_str (stream, "seto",
+      dadao_output_shiftvalue_op_from_str (stream, "setz",
 					  ~(uint64_t)
 					  value);
       fprintf (stream, "\t%s,", reg_names[regno]);
@@ -1211,7 +1211,7 @@ dadao_output_register_setting (FILE *stream,
     }
   else
     {
-	fprintf (stream, "seto	%s, ", reg_names[regno]);
+	fprintf (stream, "setz	%s, ", reg_names[regno]);
 	dadao_output_octa (stream, value, 0);
     }
 

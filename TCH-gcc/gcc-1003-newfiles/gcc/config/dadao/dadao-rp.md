@@ -74,7 +74,7 @@
              (match_operand:DI 2 "dd_rg_s18_operand" "  It, Rg")))]
 	""
 	"@
-	rp2rg	rg1, %1, 0	\;add	rg1, %2	\;rg2rg	%0, rg1	\;
+	rp2rg	rg1, %1, 0	\;add	rg1, %2	\;rg2rg	%0, rg1, 0	\;
 	rp2rg	rg1, %1, 0	\;add	rg0, %0, rg1, %2")
 
 ;; TODO: SHOULD removed lator, handling condition: imm beyond s12
