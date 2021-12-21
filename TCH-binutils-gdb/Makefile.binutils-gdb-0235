@@ -30,7 +30,7 @@ endif
 binutils-gdb-0235-source:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@rm -fr $(BINUTILS_GDB_0235_SOURCE)
-	@echo "Clone official repo"
+	# Clone official repo
 	@git clone $(BINUTILS_GDB_0235_ORIGIN) -- $(BINUTILS_GDB_0235_SOURCE)
 	@cd $(BINUTILS_GDB_0235_SOURCE);				\
 		git checkout -b $(BINUTILS_GDB_0235_BRANCH) $(BINUTILS_GDB_0235_VERSION)
@@ -39,87 +39,73 @@ binutils-gdb-0235-source:
 		grep -rl 'ARFLAGS = cru' ./ |				\
 			xargs sed -i 's/ARFLAGS = cru/ARFLAGS = crUu/g';\
 		git commit -asm"DADAO: remove ar warning messages"
-	# include
-	@echo "INCLUDE: Copy include dir"
+	# handle include dir
 	@cp -a $(BINUTILS_GDB_0235_NEWFILES)/include/* $(BINUTILS_GDB_0235_SOURCE)/include
 	@cd $(BINUTILS_GDB_0235_SOURCE);				\
 		git add include;					\
-		git commit -sm"DADAO: add header files"
-	@echo "INCLUDE: Apply include related patches ..."
-	@cd $(BINUTILS_GDB_0235_SOURCE); git am $(BINUTILS_GDB_0235_PATCHES)/0*.patch
-	# bfd
-	@echo "BFD: Copy bfd dir"
+		git commit -sm"DADAO: add header files";		\
+		git am $(BINUTILS_GDB_0235_PATCHES)/0*.patch
+	# handle bfd dir
 	@cp -a $(BINUTILS_GDB_0235_NEWFILES)/bfd/* $(BINUTILS_GDB_0235_SOURCE)/bfd
 	@cd $(BINUTILS_GDB_0235_SOURCE);				\
 		git add bfd;						\
-		git commit -sm"DADAO: add bfd support"
-	@echo "BFD: Apply bfd related patches ..."
-	@cd $(BINUTILS_GDB_0235_SOURCE); git am $(BINUTILS_GDB_0235_PATCHES)/1*.patch
-	@echo "BFD: re-generate configure and Makefile.in"
+		git commit -sm"DADAO: add bfd support";			\
+		git am $(BINUTILS_GDB_0235_PATCHES)/1*.patch
+	# BFD: re-generate configure and Makefile.in
 	@cd $(BINUTILS_GDB_0235_SOURCE)/bfd;				\
 		autoreconf;						\
 		git add .;						\
 		git commit -sm"DADAO: re-generate bfd configure and Makefile.in"
-	@echo "BFD: re-generate bfd-in2.h and libbfd.h"
+	# BFD: re-generate bfd-in2.h and libbfd.h
 	@cd $(BINUTILS_GDB_0235_SOURCE)/bfd;				\
 		./configure;						\
 		make headers;						\
 		make distclean;						\
 		git add .;						\
 		git commit -sm"DADAO: re-generate bfd-in2.h and libbfd.h"
-	# gas
-	@echo "GAS: Copy gas/config dir"
+	# handle gas dir
 	@cp -a $(BINUTILS_GDB_0235_NEWFILES)/gas/config/* $(BINUTILS_GDB_0235_SOURCE)/gas/config/
-	@cd $(BINUTILS_GDB_0235_SOURCE);				\
-		git add gas/config;					\
-		git commit -sm"DADAO: add gas config support"
-	@echo "GAS: Copy gas/testsuite dir"
 	@cp -a $(BINUTILS_GDB_0235_NEWFILES)/gas/testsuite/* $(BINUTILS_GDB_0235_SOURCE)/gas/testsuite/
 	@cd $(BINUTILS_GDB_0235_SOURCE);				\
+		git add gas/config;					\
+		git commit -sm"DADAO: add gas config support";		\
 		git add gas/testsuite;					\
-		git commit -sm"DADAO: add gas testsuite support"
-	@echo "GAS: Apply gas related patches ..."
-	@cd $(BINUTILS_GDB_0235_SOURCE); git am $(BINUTILS_GDB_0235_PATCHES)/2*.patch
-	@echo "GAS: re-generate configure and Makefile.in"
+		git commit -sm"DADAO: add gas testsuite support";	\
+		git am $(BINUTILS_GDB_0235_PATCHES)/2*.patch
+	# GAS: re-generate configure and Makefile.in
 	@cd $(BINUTILS_GDB_0235_SOURCE)/gas;				\
 		autoreconf;						\
 		git add .;						\
 		git commit -sm"DADAO: re-generate gas configure and Makefile.in"
-	# ld
-	@echo "LD: Copy ld dir"
+	# handle ld dir
 	@cp -a $(BINUTILS_GDB_0235_NEWFILES)/ld/* $(BINUTILS_GDB_0235_SOURCE)/ld/
 	@cd $(BINUTILS_GDB_0235_SOURCE);				\
 		git add ld;						\
-		git commit -sm"DADAO: add ld support"
-	@echo "LD: Apply ld related patches ..."
-	@cd $(BINUTILS_GDB_0235_SOURCE); git am $(BINUTILS_GDB_0235_PATCHES)/3*.patch
-	@echo "LD: re-generate configure and Makefile.in"
+		git commit -sm"DADAO: add ld support";			\
+		git am $(BINUTILS_GDB_0235_PATCHES)/3*.patch
+	# LD: re-generate configure and Makefile.in
 	@cd $(BINUTILS_GDB_0235_SOURCE)/ld;				\
 		autoreconf;						\
 		git add .;						\
 		git commit -sm"DADAO: re-generate ld configure and Makefile.in"
-	# opcodes
-	@echo "OPCODES: Copy opcodes dir"
+	# handle opcodes dir
 	@cp -a $(BINUTILS_GDB_0235_NEWFILES)/opcodes/* $(BINUTILS_GDB_0235_SOURCE)/opcodes/
-	@echo "OPCODES: Generate dadao opcodes file"
+	# OPCODES: Generate dadao opcodes file
 	@make TARGET_OPCODES=$(BINUTILS_GDB_0235_OPCODES) -C $(DIR_DADAO_OPCODES) opcodes-binutils
 	@cd $(BINUTILS_GDB_0235_SOURCE);				\
 		git add opcodes;					\
-		git commit -sm"DADAO: add opcodes support"
-	@echo "OPCODES: Apply opcodes related patches ..."
-	@cd $(BINUTILS_GDB_0235_SOURCE); git am $(BINUTILS_GDB_0235_PATCHES)/4*.patch
-	@echo "OPCODES: re-generate configure and Makefile.in"
+		git commit -sm"DADAO: add opcodes support";		\
+		git am $(BINUTILS_GDB_0235_PATCHES)/4*.patch
+	# OPCODES: re-generate configure and Makefile.in
 	@cd $(BINUTILS_GDB_0235_SOURCE)/opcodes;			\
 		autoreconf;						\
 		git add .;						\
 		git commit -sm"DADAO: re-generate opcodes configure and Makefile.in"
-	# binutils
-	@echo "BINUTILS: Apply binutils related patches ..."
+	# handle binutils dir
 	@cd $(BINUTILS_GDB_0235_SOURCE); git am $(BINUTILS_GDB_0235_PATCHES)/8*.patch
-	# root config
-	@echo "CONFIG: Apply config related patches ..."
+	# handle root dir
 	@cd $(BINUTILS_GDB_0235_SOURCE); git am $(BINUTILS_GDB_0235_PATCHES)/9*.patch
-	@echo "CONFIG: re-generate configure and Makefile.in in root dir"
+	# CONFIG: re-generate configure and Makefile.in in root dir
 	@cd $(BINUTILS_GDB_0235_SOURCE);				\
 		autoreconf;						\
 		git add .;						\
