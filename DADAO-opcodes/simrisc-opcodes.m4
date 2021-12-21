@@ -23,17 +23,21 @@ insn(  _not,		orri,	0x10,	0x1E,	op,	rg,	rg,	i6,	normal)
 
 insn(	cmps,		orrr,	0x10,	0x24,	op,	rg,	rg,	rg,	normal)
 insn(	cmpu,		orrr,	0x10,	0x25,	op,	rg,	rg,	rg,	normal)
+
+insn(	rg2rg,		orri,	0x10,	0x28,	op,	rg,	rg,	i6,	normal)
+insn(	rg2rp,		orri,	0x10,	0x29,	op,	rp,	rg,	i6,	normal)
+insn(	rp2rg,		orri,	0x10,	0x2A,	op,	rg,	rp,	i6,	normal)
+insn(	rp2rp,		orri,	0x10,	0x2B,	op,	rp,	rp,	i6,	normal)
 insn(	cmprp,		orrr,	0x10,	0x2D,	op,	rg,	rp,	rp,	normal)
 insn(	addrp,		orrr,	0x10,	0x2E,	op,	rp,	rp,	rg,	normal)
 insn(	subrp,		orrr,	0x10,	0x2F,	op,	rp,	rp,	rg,	normal)
 
-insn(	rg2rg,		orri,	0x10,	0x30,	op,	rg,	rg,	i6,	normal)
-insn(	rg2rp,		orri,	0x10,	0x31,	op,	rp,	rg,	i6,	normal)
-insn(	rg2rf,		orri,	0x10,	0x32,	op,	rf,	rg,	i6,	normal)
-insn(	rp2rg,		orri,	0x10,	0x34,	op,	rg,	rp,	i6,	normal)
-insn(	rp2rp,		orri,	0x10,	0x35,	op,	rp,	rp,	i6,	normal)
-insn(	rf2rg,		orri,	0x10,	0x38,	op,	rg,	rf,	i6,	normal)
-insn(	rf2rf,		orri,	0x10,	0x3A,	op,	rf,	rf,	i6,	normal)
+insn(	rg2rf,		orri,	0x10,	0x31,	op,	rf,	rg,	i6,	normal)
+insn(	rf2rg,		orri,	0x10,	0x32,	op,	rg,	rf,	i6,	normal)
+insn(	rf2rf,		orri,	0x10,	0x33,	op,	rf,	rf,	i6,	normal)
+
+insn(	rg2rr,		orri,	0x10,	0x39,	op,	rr,	rg,	i6,	normal)
+insn(	rr2rg,		orri,	0x10,	0x3A,	op,	rg,	rr,	i6,	normal)
 
 insn(  _cmps,		rrii,	0x12,	0,	rg,	rg,	s12,	-,	normal)
 insn(  _cmpu,		rrii,	0x13,	0,	rg,	rg,	u12,	-,	normal)

@@ -21,16 +21,18 @@ _start:
 	not	rg1, rg2, 3
 	cmps	rg1, rg2, rg3
 	cmpu	rg1, rg2, rg3
+	rg2rg	rg1, rg2, 3
+	rg2rp	rp1, rg2, 3
+	rp2rg	rg1, rp2, 3
+	rp2rp	rp1, rp2, 3
 	cmprp	rg1, rp2, rp3
 	addrp	rp1, rp2, rg3
 	subrp	rp1, rp2, rg3
-	rg2rg	rg1, rg2, 3
-	rg2rp	rp1, rg2, 3
 	rg2rf	rf1, rg2, 3
-	rp2rg	rg1, rp2, 3
-	rp2rp	rp1, rp2, 3
 	rf2rg	rg1, rf2, 3
 	rf2rf	rf1, rf2, 3
+	rg2rr	rr1, rg2, 3
+	rr2rg	rg1, rr2, 3
 	# 0001-0xxx
 	addrp	rp1, 4
 	add	rg1, 2
