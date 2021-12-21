@@ -34,6 +34,11 @@ binutils-gdb-0235-source:
 	@git clone $(BINUTILS_GDB_0235_ORIGIN) -- $(BINUTILS_GDB_0235_SOURCE)
 	@cd $(BINUTILS_GDB_0235_SOURCE);				\
 		git checkout -b $(BINUTILS_GDB_0235_BRANCH) $(BINUTILS_GDB_0235_VERSION)
+	# replace cru with crUu
+	@cd $(BINUTILS_GDB_0235_SOURCE);				\
+		grep -rl 'ARFLAGS = cru' ./ |				\
+			xargs sed -i 's/ARFLAGS = cru/ARFLAGS = crUu/g';\
+		git commit -asm"DADAO: remove ar warning messages"
 	# include
 	@echo "INCLUDE: Copy include dir"
 	@cp -a $(BINUTILS_GDB_0235_NEWFILES)/include/* $(BINUTILS_GDB_0235_SOURCE)/include
