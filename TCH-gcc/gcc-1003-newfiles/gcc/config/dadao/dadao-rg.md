@@ -28,7 +28,7 @@
 	""
 	"@
 	add	rg0, %0, %1, %2
-	*{ return \"add\t%1, %2\t\; setrg\t%0, %1\t\;\"; }")
+	*{ return (operands[1] == operands[0]) ? \"add\t%0, %2\":\"add\t%1, %2\t\;setrg\t%0, %1\t\;\"; }")
 
 (define_insn "subdi3"
   [(set       (match_operand:DI 0 "rg_class_operand" "= Rg")
