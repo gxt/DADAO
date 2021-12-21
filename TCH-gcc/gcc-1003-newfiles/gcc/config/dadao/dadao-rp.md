@@ -90,13 +90,25 @@
   [(set      (match_operand:DI 0 "rp_class_operand" "= Rp")
     (plus:DI (match_operand:DI 1 "rp_class_operand" "%  0")
              (match_operand:DI 2 "rp_class_operand" "  Rp")))]
-	"" "")
-;	"rp2rg	rg1, %1, 0	\;	rp_add	%0, %0, rg1")
+	""
+	"*
+	  output_asm_insn (\"rp2rg\\trg6, %2\", operands);
+	  output_asm_insn (\"rp2rg\\trg1, %1\", operands);
+	  output_asm_insn (\"add\\trg0, rg1, rg1, rg6\", operands);
+	  output_asm_insn (\"rg2rp\\t%0, rg1\", operands);
+	  return \"Internal Compiler Error.\";
+	")
 
 ;; TODO: SHOULD removed lator, handling condition: imm beyond s12
-(define_insn "*addrp2rp_2"
+(define_insn "addrp2rp_large_scale"
   [(set      (match_operand:DI 0 "rp_class_operand"  "= Rp")
     (plus:DI (match_operand:DI 1 "rp_class_operand"  "% Rp")
              (match_operand:DI 2 "immediate_operand" "   i")))]
-	"" "")
-;	"setrg	rg1, %2	\;	rp_add	%0, %1, rg1")
+	""
+	"*
+	  output_asm_insn (\"setrg\\trg6, %2\", operands);
+	  output_asm_insn (\"rp2rg\\trg1, %1\", operands);
+	  output_asm_insn (\"add\\trg0, rg1, rg1, rg6\", operands);
+	  output_asm_insn (\"rg2rp\\t%0, rg1\", operands);
+	  return \"Internal Compiler Error.\";
+	")
