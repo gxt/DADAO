@@ -71,11 +71,11 @@
 (define_insn "*addrp2rg"
   [(set      (match_operand:DI 0 "rg_class_operand"  "= Rg, Rg")
     (plus:DI (match_operand:DI 1 "rp_class_operand"  "% Rp, Rp")
-             (match_operand:DI 2 "dd_rg_s12_operand" "  Id, Rg")))]
+             (match_operand:DI 2 "dd_rg_s18_operand" "  It, Rg")))]
 	""
 	"@
-	rp2rg	rg1, %1, 0	\;	add	%0, %2
-	rp2rg	rg1, %1, 0	\;	add	%0, %2")
+	rp2rg	rg1, %1, 0	\;add	rg1, %2	\;rg2rg	%0, rg1	\;
+	rp2rg	rg1, %1, 0	\;add	rg0, %0, rg1, %2")
 
 ;; TODO: SHOULD removed lator, handling condition: imm beyond s12
 (define_insn "*addrp2rg_2"
@@ -83,7 +83,7 @@
     (plus:DI (match_operand:DI 1 "rp_class_operand"  "% Rp")
              (match_operand:DI 2 "immediate_operand" "   i")))]
 	""
-	"rp2rg	rg1, %1, 0	\;	setrg	%0, %2	\;	add	rg0, %0, rg1, %0")
+	"rp2rg	rg1, %1, 0	\;setrg	%0, %2	\;add	rg0, %0, rg1, %0")
 
 ;; TODO: SHOULD removed lator
 (define_insn "*addrp2rp"
