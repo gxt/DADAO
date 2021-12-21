@@ -21,7 +21,7 @@
 (define_insn "adddi3"
   [(set      (match_operand:DI 0 "rg_class_operand"	"= Rg,Rg")
     (plus:DI (match_operand:DI 1 "rg_class_operand"	"% Rg,Rg")
-             (match_operand:DI 2 "dd_rg_s18_operand"	"  Rg,It")))]
+             (match_operand:DI 2 "dd_rg_u18_operand"	"  Rg,Jt")))]
 	""
 	"@
 	add	rg0, %0, %1, %2

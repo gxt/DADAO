@@ -68,6 +68,11 @@
 	(and (match_code "const_int")
 	     (match_test "IN_RANGE (ival, 0, 4095)")))
 
+(define_constraint "Jt"
+	"A 18-bit unsigned integer"
+	(and (match_code "const_int")
+	     (match_test "IN_RANGE (ival, 0, 0x1FFFF)")))
+
 ;; Floating Point immediate constraints
 ;; FIXME: Iz (or Gz) is redundant.
 (define_constraint "Gz"
