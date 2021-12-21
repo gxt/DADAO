@@ -23,6 +23,8 @@ insn(  _not,		orri,	0x10,	0x1E,	op,	rg,	rg,	i6,	normal)
 
 insn(	cmps,		orrr,	0x10,	0x24,	op,	rg,	rg,	rg,	normal)
 insn(	cmpu,		orrr,	0x10,	0x25,	op,	rg,	rg,	rg,	normal)
+insn(	addrp,		orrr,	0x10,	0x2E,	op,	rp,	rp,	rg,	normal)
+insn(	subrp,		orrr,	0x10,	0x2F,	op,	rp,	rp,	rg,	normal)
 
 insn(	rg2rg,		orri,	0x10,	0x30,	op,	rg,	rg,	i6,	normal)
 insn(	rg2rp,		orri,	0x10,	0x31,	op,	rp,	rg,	i6,	normal)
@@ -52,7 +54,7 @@ insn(	andnwk,		rjii,	0x17,	1,	rg,	w16,	-,	-,	normal)
 insn(	andnwj,		rjii,	0x17,	2,	rg,	w16,	-,	-,	normal)
 insn(	andnwh,		rjii,	0x17,	3,	rg,	w16,	-,	-,	normal)
 
-insn(	addrp,		riii,	0x18,	0,	rp,	s18,	-,	-,	normal)
+insn(  _addrp,		riii,	0x18,	0,	rp,	s18,	-,	-,	normal)
 insn(	add,		riii,	0x19,	0,	rg,	s18,	-,	-,	normal)
 insn(  _add,		rrrr,	0x1A,	0,	rg,	rg,	rg,	rg,	normal)
 insn(	sub,		rrrr,	0x1B,	0,	rg,	rg,	rg,	rg,	normal)
