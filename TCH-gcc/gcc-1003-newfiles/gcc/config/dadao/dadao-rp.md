@@ -32,7 +32,7 @@
              (match_operand:DI 2 "dd_rg_s18_operand" "  Rg, It")))]
 	""
 	"@
-	rp2rg	rg6, %1, 0	\;add	rg0, %2, %2, rg6	\;rg2rp	%0, %2, 0	\;
+	rp2rg	rg6, %1, 0	\;add	rg0, rg6, %2, rg6	\;rg2rp	%0, rg6, 0	\;
 	*{ return (REGNO(operands[0]) == REGNO(operands[1])) ? \"addrp\t%0, %2\" : \"addrp\t%1, %2\t\;rp2rp\t%0, %1, 0\t\;\"; }")
 
 (define_insn "dd_ld_rp"
@@ -46,10 +46,9 @@
 
 (define_insn "dd_st_rp"
   [(set (match_operand:DI 0 "memory_operand"   "=  m")
-        (plus:DI (match_operand:DI 1 "rp_class_operand"	 "Rp")
-		 (match_operand:DI 2 "dd_rg_s12_operand" "Id")))]
+        (match_operand:DI 1 "rp_class_operand"	 "Rp"))]
 	""
-	"strp	%0, %1, %2")
+	"strp	%1, %0")
 
 (define_insn "dd_get_offset"
   [(set (match_operand:DI 0 "rg_class_operand"  "= Rg, Rg")
