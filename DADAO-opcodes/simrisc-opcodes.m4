@@ -23,6 +23,7 @@ insn(  _not,		orri,	0x10,	0x1E,	op,	rg,	rg,	i6,	normal)
 
 insn(	cmps,		orrr,	0x10,	0x24,	op,	rg,	rg,	rg,	normal)
 insn(	cmpu,		orrr,	0x10,	0x25,	op,	rg,	rg,	rg,	normal)
+insn(	cmprp,		orrr,	0x10,	0x2D,	op,	rg,	rp,	rp,	normal)
 insn(	addrp,		orrr,	0x10,	0x2E,	op,	rp,	rp,	rg,	normal)
 insn(	subrp,		orrr,	0x10,	0x2F,	op,	rp,	rp,	rg,	normal)
 
