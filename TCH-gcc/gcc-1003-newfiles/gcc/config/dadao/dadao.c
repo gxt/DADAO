@@ -594,6 +594,9 @@ bool dd_load_legitimate_address_rprg (rtx x)
 	if (_DD_LEGITIMATE_ADDR_GENERAL(x1, POINTER_REGS)
 	 && _DD_LEGITIMATE_ADDR_GENERAL(x2, GENERAL_REGS))
 		return 1;
+	if (_DD_LEGITIMATE_ADDR_GENERAL(x2, POINTER_REGS)
+	 && _DD_LEGITIMATE_ADDR_GENERAL(x1, GENERAL_REGS))
+		return 1;
 	return 0;
 }
 
