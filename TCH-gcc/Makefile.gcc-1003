@@ -72,18 +72,20 @@ gcc-1003-build-new:
 			--target=$(GCC_1003_TARGET)			\
 			--srcdir=$(GCC_1003_SOURCE)			\
 			--prefix=$(GCC_1003_INSTALL)			\
-			--disable-libquadamth				\
-			--disable-libatomic				\
-			--disable-nls					\
 			--disable-libssp				\
+			--disable-libcilkrts				\
 			--enable-languages=c				\
-			--enable-checking				\
-			--enable-werror					\
-			--with-newlib					\
-			--without-headers				\
-			--with-gmp=/usr/local/gmp			\
-			--with-mpfr=/usr/local/mpfr			\
-			--with-mpc=/usr/local/mpc
+			--disable-shared				\
+			--disable-threads				\
+			--disable-libatomic				\
+			--disable-decimal-float				\
+			--disable-libffi				\
+			--disable-libgomp				\
+			--disable-libitm				\
+			--disable-libmpx				\
+			--disable-libquadmath				\
+			--disable-libsanitizer				\
+			--with-newlib
 
 gcc-1003-build:
 	@make -C $(GCC_1003_BUILD) -j8 all
