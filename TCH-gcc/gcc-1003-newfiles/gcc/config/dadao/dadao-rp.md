@@ -26,14 +26,21 @@
 ;; temporary register usage has to be settled
 ;; rg6 is one temporary reg replacement
 
-(define_insn "*addrp"
+(define_insn "addrp"
   [(set      (match_operand:DI 0 "rp_class_operand"  "= Rp, Rp")
     (plus:DI (match_operand:DI 1 "rp_class_operand"  "% Rp, Rp")
-             (match_operand:DI 2 "dd_rg_s18_operand" "  Rg, It")))]
+             (match_operand:DI 2 "dd_rg_u18_operand" "  Rg, Jt")))]
 	""
 	"@
 	rp2rg	rg6, %1, 0	\;add	rg0, rg6, %2, rg6	\;rg2rp	%0, rg6, 0	\;
 	*{ return (REGNO(operands[0]) == REGNO(operands[1])) ? \"addrp\t%0, %2\" : \"addrp\t%1, %2\t\;rp2rp\t%0, %1, 0\t\;\"; }")
+
+(define_insn "addrp_large_scale"
+  [(set      (match_operand:DI 0 "rp_class_operand"  "= Rp")
+    (plus:DI (match_operand:DI 1 "rp_class_operand"  "% Rp")
+             (match_operand:DI 2 "immediate_operand" "  i")))]
+	""
+	"setrg	rg1, %2	\;rp2rg	rg6, %1, 0\t\;add\trg0, rg6, rg1, rg6\t\;rg2rp	%0, rg6, 0	\;")
 
 (define_insn "dd_ld_rp"
   [(set (match_operand:DI 0 "rp_class_operand" "= Rp,Rp,Rp")
