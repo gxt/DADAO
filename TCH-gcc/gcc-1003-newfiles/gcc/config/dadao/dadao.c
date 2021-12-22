@@ -444,7 +444,7 @@ static void dd_asm_trampoline_template (FILE *stream)
      stored at offset 24.  */
 
   fprintf (stream, "\tsetrg	rg63, 1f\n");
-  fprintf (stream, "\tldo	rg63, rg63, 0\n");
+  fprintf (stream, "\tldo	rg63, rp63, 0\n");
   fprintf (stream, "\tcall	rp0, rg63, 0\n");
   fprintf (stream, "1:\t.dd.o64	0\n");
 }
@@ -1104,6 +1104,7 @@ dadao_expand_prologue (void)
 void
 dadao_expand_epilogue (void)
 {
+/* TODO */
   HOST_WIDE_INT locals_size = get_frame_size ();
   HOST_WIDE_INT stack_space_to_deallocate
     = (crtl->outgoing_args_size
@@ -1146,8 +1147,8 @@ dadao_expand_epilogue (void)
 
   /* We do not need to restore pretended incoming args, just add back
      offset to sp.  */
-  if (stack_space_to_deallocate != 0)
-    dadao_emit_sp_add (stack_space_to_deallocate);
+//  if (stack_space_to_deallocate != 0)
+//    dadao_emit_sp_add (stack_space_to_deallocate);
 
 }
 
