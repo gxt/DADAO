@@ -45,10 +45,13 @@
 	ldmrp	%0, %1, 0")
 
 (define_insn "dd_st_rp"
-  [(set (match_operand:DI 0 "memory_operand"   "=  m")
-        (match_operand:DI 1 "rp_class_operand"	 "Rp"))]
+  [(set (match_operand:DI 0 "memory_operand"	"= Wi,Wz,Wg")
+        (match_operand:DI 1 "rp_class_operand"	"  Rp,Rp,Rp"))]
 	""
-	"strp	%1, %0")
+	"@
+	strp	%1, %0
+	strp	%1, %0
+	stmrp	%1, %0, 0")
 
 (define_insn "dd_get_offset"
   [(set (match_operand:DI 0 "rg_class_operand"  "= Rg, Rg")
