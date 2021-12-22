@@ -70,7 +70,7 @@
 (define_insn "*addrp2rg"
   [(set      (match_operand:DI 0 "rg_class_operand"  "= Rg, Rg")
     (plus:DI (match_operand:DI 1 "rp_class_operand"  "% Rp, Rp")
-             (match_operand:DI 2 "dd_rg_s18_operand" "  It, Rg")))]
+             (match_operand:DI 2 "dd_rg_u18_operand" "  Jt, Rg")))]
 	""
 	"@
 	rp2rg	rg1, %1, 0	\;add	rg1, %2	\;rg2rg	%0, rg1, 0	\;
