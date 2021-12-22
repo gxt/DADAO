@@ -18,9 +18,9 @@
 		&& GET_MODE_CLASS (GET_MODE (operands[1])) == MODE_CC"
 	"@
 	orr	%0, %1, rg0
-	rg2p	%0, %1, 0
-	rp2g	%0, %1, 0
-	ldt	%0, %1
+	rg2rp	%0, %1, 0
+	rp2rg	%0, %1, 0
+	ldtu	%0, %1
 	stt	%1, %0")
 
 (define_expand "mov<mode>"
