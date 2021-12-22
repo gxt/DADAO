@@ -5,7 +5,7 @@
 
 void _exit (int n)
 {
-  __asm__ ("orr	rg63, %0, rg0\n\ttrap	cp1, 0"
+  __asm__ ("orr	rg63, %0, rg0\n\ttrap	cp0, 0"
 	   : /* No outputs.  */
 	   : "r" (n)
 	   : "memory");

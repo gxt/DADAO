@@ -31,7 +31,7 @@ setjmp:
 0:
 #	get.rs	rg63, rO
 	sto	rg63, rp59, 24
-	call	rg0, rp60, 0
+# TODO	call	rg0, rp60, 0
 	.size setjmp,.-setjmp
 
 	.section .text.longjmp,"ax",@progbits
@@ -64,5 +64,5 @@ longjmp:
 	ldo	rg61, rp59, 0
 	ldo	rg63, rp59, 8
 	ldo	rg62, rp59, 16
-	call	rg0, rp63, 0
+# TODO	call	rg0, rp63, 0
  	.size longjmp,.-longjmp
