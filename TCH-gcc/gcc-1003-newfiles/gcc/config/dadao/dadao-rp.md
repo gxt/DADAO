@@ -35,6 +35,13 @@
 	addrp	%0, %1, %2
 	*{ return (REGNO(operands[0]) == REGNO(operands[1])) ? \"addrp\t%0, %2\" : \"addrp\t%1, %2\t\;rp2rp\t%0, %1, 0\t\;\"; }")
 
+(define_insn "addrp_ctry"
+  [(set      (match_operand:DI 0 "rp_class_operand"  "=Rp")
+    (plus:DI (match_operand:DI 1 "rg_class_operand"  "%Rg")
+             (match_operand:DI 2 "rp_class_operand"  " Rp")))]
+	""
+	"addrp	%0, %2, %1")
+
 (define_insn "addrp_large_scale"
   [(set      (match_operand:DI 0 "rp_class_operand"  "= Rp")
     (plus:DI (match_operand:DI 1 "rp_class_operand"  "% Rp")
