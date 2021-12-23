@@ -58,12 +58,30 @@
 	st<bwto>	%1, %0
 	stm<bwto>	%1, %0, 0")
 
-;; TODO: hope following insns will be optimized during rtl process
-(define_insn "*dd_st_2_<mode>"
-  [(set (match_operand:QHSD 0 "memory_operand" "")
-        (match_operand:QHSD 1 "general_operand" ""))]
+(define_expand "st<mode>_miscellaneous"
+  [(set (match_operand:QHSD 0 "memory_operand"	"")
+	(match_operand:QHSD 1 "general_operand" ""))]
+	"!reload_completed"
+	{
+	  /* It's one debugging define_expand insn pattern. */
+	  output_asm_insn (\"abc\", operands);
+	  DONE;
+	})
+
+(define_insn "dd_st<mode>_m2m"
+  [(set (match_operand:QHSD 0 "memory_operand" "= Wi,Wz,Wg,m,m,m,m")
+	(match_operand:QHSD 1 "memory_operand" "  m,m,m,m,Wi,Wz,Wg"))]
 	"!reload_completed"
 	"")
+
+(define_insn "dd_st<mode>_i2m"
+  [(set (match_operand:QHSD 0 "memory_operand"	  "= Wi,Wz,Wg")
+	(match_operand:QHSD 1 "immediate_operand" "   i, i, i"))]
+	"!reload_completed"
+	"@
+	setrg	rg1, %1	\;st<bwto>	rg1, %0
+	setrg   rg1, %1 \;st<bwto>	rg1, %0
+	setrg   rg1, %1 \;stm<bwto>	rg1, %0, 0")
 
 (define_expand "call"
   [(parallel [(call (match_operand 0 "memory_operand" "")
