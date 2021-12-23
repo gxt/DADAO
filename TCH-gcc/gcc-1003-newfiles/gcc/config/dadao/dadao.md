@@ -43,17 +43,26 @@
 	* { return GET_MODE (operands[1]) == DImode ? \"ldmo	%0, %1, 0\" : \"ldm<bwto>u	%0, %1, 0\"; }")
 
 (define_insn "dd_st_<mode>"
-  [(set	(plus:QHSD (match_operand:QHSD 1 "rp_class_operand" "  Rp")
-		   (match_operand:QHSD 2 "dd_rg_s12_operand""  Id"))
+  [(set	(plus:QHSD (match_operand:QHSD 1 "rp_class_operand"  "Rp")
+		   (match_operand:QHSD 2 "immediate_operand" "i"))
 	(match_operand:QHSD 0 "rg_class_operand" "Rg"))]
 	""
-	"st<bwto>	%0, %1, %2")
+	"setrg	rg1, %2	\;stm<bwto>	%0, %1, rg1, 0	\;")
+
+(define_insn "dd_st_<mode>_m"
+  [(set (match_operand:QHSD 0 "memory_operand"	 "= Wi,Wz,Wg")
+	(match_operand:QHSD 1 "rg_class_operand" "  Rg,Rg,Rg"))]
+	""
+	"@
+	st<bwto>	%1, %0
+	st<bwto>	%1, %0
+	stm<bwto>	%1, %0, 0")
 
 ;; TODO: hope following insns will be optimized during rtl process
 (define_insn "*dd_st_2_<mode>"
   [(set (match_operand:QHSD 0 "memory_operand" "")
         (match_operand:QHSD 1 "general_operand" ""))]
-	""
+	"!reload_completed"
 	"")
 
 (define_expand "call"
