@@ -45,9 +45,9 @@
 	(match_operand:SFDF 1 "immediate_operand" "   i, i, i"))]
 	"!reload_completed"
 	"@
-	setrg	rg1, %1	\;rg2rf	rf1, rg1	\;st<ftfo>	rf1, %0
-	setrg   rg1, %1 \;rg2rf rf1, rg1        \;st<ftfo>	rf1, %0
-	setrg   rg1, %1 \;rg2rf rf1, rg1        \;stm<ftfo>	rf1, %0, 0")
+	setrg	rg1, %1	\;rg2rf	rf1, rg1, 0	\;st<ftfo>	rf1, %0
+	setrg   rg1, %1 \;rg2rf rf1, rg1, 0	\;st<ftfo>	rf1, %0
+	setrg   rg1, %1 \;rg2rf rf1, rg1, 0	\;stm<ftfo>	rf1, %0, 0")
 
 
 ; TODO
