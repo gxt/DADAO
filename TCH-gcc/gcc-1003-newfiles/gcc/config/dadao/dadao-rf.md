@@ -25,6 +25,32 @@
 	rg2rf	%0, %1, 0
 	rf2rg	%0, %1, 0")
 
+(define_insn "dd_st<mode>"
+  [(set (match_operand:SFDF 0 "memory_operand"	 "= Wi,Wz,Wg")
+	(match_operand:SFDF 1 "rf_class_operand" "  Rf,Rf,Rf"))]
+	""
+	"@
+	st<ftfo>	%1, %0
+	st<ftfo>	%1, %0
+	stm<ftfo>	%1, %0, 0")
+
+(define_insn "dd_st<mode>_m2m"
+  [(set (match_operand:SFDF 0 "memory_operand" "= Wi,Wz,Wg,m,m,m,m")
+	(match_operand:SFDF 1 "memory_operand" "  m,m,m,m,Wi,Wz,Wg"))]
+	"!reload_completed"
+	"")
+
+(define_insn "dd_st<mode>_i2m"
+  [(set (match_operand:SFDF 0 "memory_operand"	  "= Wi,Wz,Wg")
+	(match_operand:SFDF 1 "immediate_operand" "   i, i, i"))]
+	"!reload_completed"
+	"@
+	setrg	rg1, %1	\;rg2rf	rf1, rg1	\;st<ftfo>	rf1, %0
+	setrg   rg1, %1 \;rg2rf rf1, rg1        \;st<ftfo>	rf1, %0
+	setrg   rg1, %1 \;rg2rf rf1, rg1        \;stm<ftfo>	rf1, %0, 0")
+
+
+; TODO
 (define_insn "mov<mode>"
   [(set (match_operand:SFDF 0 "nonimmediate_operand" "= Rg,Rg,Rf,Rg, Wi,Wz,Wg,Rf")
 	(match_operand:SFDF 1 "general_operand"      "  Rg,Rf,Rg,imm,Rg,Rg,Rg,m"))]
