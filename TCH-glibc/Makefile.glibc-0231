@@ -33,8 +33,8 @@ glibc-0231-source:
 	@rm -fr $(GLIBC_0231_SOURCE)
 	# Clone official repo
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
-	@git clone $(GLIBC_0231_ORIGIN) -- $(GLIBC_0231_SOURCE)
-	@cd $(GLIBC_0231_SOURCE); git checkout -b $(GLIBC_0231_BRANCH) $(GLIBC_0231_VERSION)
+	@git clone -q $(GLIBC_0231_ORIGIN) -- $(GLIBC_0231_SOURCE)
+	@cd $(GLIBC_0231_SOURCE); git checkout -qb $(GLIBC_0231_BRANCH) $(GLIBC_0231_VERSION)
 	# glibc-ports-2.31: add dadao support
 	@cp -a $(GLIBC_0231_NEWFILES)/sysdeps/dadao $(GLIBC_0231_SOURCE)/sysdeps
 	@cd $(GLIBC_0231_SOURCE);						\
