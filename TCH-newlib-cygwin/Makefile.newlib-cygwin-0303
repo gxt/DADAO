@@ -33,8 +33,8 @@ newlib-cygwin-0303-source:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@rm -fr $(NEWLIB_CYGWIN_0303_SOURCE)
 	@echo "Clone official repo"
-	@git clone $(NEWLIB_CYGWIN_0303_ORIGIN) -- $(NEWLIB_CYGWIN_0303_SOURCE)
-	@cd $(NEWLIB_CYGWIN_0303_SOURCE); git checkout -b $(NEWLIB_CYGWIN_0303_BRANCH) $(NEWLIB_CYGWIN_0303_VERSION)
+	@git clone -q $(NEWLIB_CYGWIN_0303_ORIGIN) -- $(NEWLIB_CYGWIN_0303_SOURCE)
+	@cd $(NEWLIB_CYGWIN_0303_SOURCE); git checkout -qb $(NEWLIB_CYGWIN_0303_BRANCH) $(NEWLIB_CYGWIN_0303_VERSION)
 	# include
 	@echo "INCLUDE: Copy include dir from binutils-gdb (elf/dadao.h and opcode/dadao.h)"
 	@cp -a $(DIR_DADAO_TOP)/TCH-binutils-gdb/binutils-gdb-0235-newfiles/include/* $(NEWLIB_CYGWIN_0303_SOURCE)/include
