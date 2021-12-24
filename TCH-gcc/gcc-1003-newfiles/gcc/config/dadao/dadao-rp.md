@@ -67,6 +67,13 @@
 	strp	%1, %0
 	stmrp	%1, %0, 0")
 
+(define_insn "dd_st_addr"
+  [(set (match_operand:DI 0 "memory_operand"   "=  m")
+        (plus:DI (match_operand:DI 1 "rp_class_operand"	 "Rp")
+		 (match_operand:DI 2 "dd_rg_s12_operand" "Id")))]
+	""
+	"")
+
 (define_insn "dd_get_offset"
   [(set (match_operand:DI 0 "rg_class_operand"  "= Rg, Rg")
         (match_operand:DI 1 "immediate_operand" "   s, Ai"))]
