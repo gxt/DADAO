@@ -31,8 +31,8 @@ qemu-0600-source:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@rm -fr $(QEMU_0600_SOURCE)
 	@echo "Clone official repo"
-	@git clone $(QEMU_0600_ORIGIN) -- $(QEMU_0600_SOURCE)
-	@cd $(QEMU_0600_SOURCE); git checkout -b $(QEMU_0600_BRANCH) $(QEMU_0600_VERSION)
+	@git clone -q $(QEMU_0600_ORIGIN) -- $(QEMU_0600_SOURCE)
+	@cd $(QEMU_0600_SOURCE); git checkout -qb $(QEMU_0600_BRANCH) $(QEMU_0600_VERSION)
 	# include and arch-init
 	@echo "INCLUDE and arch-init patches"
 	@cd $(QEMU_0600_SOURCE); git am $(QEMU_0600_PATCHES)/0*.patch
