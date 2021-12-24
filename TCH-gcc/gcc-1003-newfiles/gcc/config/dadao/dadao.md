@@ -33,7 +33,7 @@
 	""
 	"orr	%0, %1, rg0")
 
-(define_insn "dd_load_<mode>"
+(define_insn "dd_ld_<mode>"
   [(set (match_operand:QHSD 0 "rg_class_operand" "=  Rg,Rg,Rg")
         (match_operand:QHSD 1 "memory_operand"   "   Wi,Wz,Wg"))]
 	""
