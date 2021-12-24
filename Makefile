@@ -1,7 +1,6 @@
 #
 # TOP Makefile
 #
-DIR_TAO_GIT		:= /pub/GIT-TAO/
 DIR_GIT_ORIGIN		:= /pub/GIT-ORIGIN/
 DIR_TAO_TO_ALL		:= /pub/to-all/
 
