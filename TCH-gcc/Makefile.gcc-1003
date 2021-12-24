@@ -31,8 +31,8 @@ gcc-1003-source:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@rm -fr $(GCC_1003_SOURCE)
 	@echo "Clone official repo"
-	@git clone $(GCC_1003_ORIGIN) -- $(GCC_1003_SOURCE)
-	@cd $(GCC_1003_SOURCE); git checkout -b $(GCC_1003_BRANCH) $(GCC_1003_VERSION)
+	@git clone -q $(GCC_1003_ORIGIN) -- $(GCC_1003_SOURCE)
+	@cd $(GCC_1003_SOURCE); git checkout -qb $(GCC_1003_BRANCH) $(GCC_1003_VERSION)
 	# gcc/config
 	@cp -a $(GCC_1003_NEWFILES)/gcc/config/* $(GCC_1003_SOURCE)/gcc/config/
 	@cd $(GCC_1003_SOURCE);						\
