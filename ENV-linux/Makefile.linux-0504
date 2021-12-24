@@ -29,9 +29,9 @@ linux-0504-source:
 	@rm -fr $(LINUX_0504_SOURCE)
 	# Clone official repo
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
-	@git clone $(LINUX_0504_ORIGIN) -- $(LINUX_0504_SOURCE)
+	@git clone -q $(LINUX_0504_ORIGIN) -- $(LINUX_0504_SOURCE)
 	@cd $(LINUX_0504_SOURCE);				\
-		git checkout -b $(LINUX_0504_BRANCH) $(LINUX_0504_VERSION)
+		git checkout -qb $(LINUX_0504_BRANCH) $(LINUX_0504_VERSION)
 	# Copy arch/dadao dir
 	@cp -a $(LINUX_0504_NEWFILES)/arch/* $(LINUX_0504_SOURCE)/arch/
 	@cd $(LINUX_0504_SOURCE);				\
