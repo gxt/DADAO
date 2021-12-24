@@ -3,6 +3,8 @@
 #
 LINUX_0504_ORIGIN	:= $(DIR_GIT_ORIGIN)/linux.git
 LINUX_0504_VERSION	:= v5.4
+LINUX_0504_VERSION_BASEURL	:= https://mirrors.tuna.tsinghua.edu.cn/kernel/v5.x/
+LINUX_0504_VERSION_PATCH	:= patch-5.4.100.xz
 LINUX_0504_ARCH		:= dadao
 LINUX_0504_BRANCH	:= dadao-0504
 LINUX_0504_DEFCONFIG	:= dadao_defconfig
@@ -32,6 +34,15 @@ linux-0504-source:
 	@git clone -q $(LINUX_0504_ORIGIN) -- $(LINUX_0504_SOURCE)
 	@cd $(LINUX_0504_SOURCE);				\
 		git checkout -qb $(LINUX_0504_BRANCH) $(LINUX_0504_VERSION)
+	# Add official patch
+	@test -f $(DIR_TAO_TO_ALL)/$(LINUX_0504_VERSION_PATCH) ||	\
+		wget --directory-prefix=$(DIR_TAO_TO_ALL)		\
+			$(LINUX_0504_VERSION_BASEURL)/$(LINUX_0504_VERSION_PATCH)
+	@cd $(LINUX_0504_SOURCE);					\
+		xzcat $(DIR_TAO_TO_ALL)/$(LINUX_0504_VERSION_PATCH)	\
+			| patch -p1;					\
+		git add .;						\
+		git commit -sm"LINUX $(LINUX_0504_VERSION_PATCH)"
 	# Copy arch/dadao dir
 	@cp -a $(LINUX_0504_NEWFILES)/arch/* $(LINUX_0504_SOURCE)/arch/
 	@cd $(LINUX_0504_SOURCE);				\
