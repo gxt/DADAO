@@ -32,9 +32,9 @@ binutils-gdb-0235-source:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@rm -fr $(BINUTILS_GDB_0235_SOURCE)
 	# Clone official repo
-	@git clone $(BINUTILS_GDB_0235_ORIGIN) -- $(BINUTILS_GDB_0235_SOURCE)
+	@git clone -q $(BINUTILS_GDB_0235_ORIGIN) -- $(BINUTILS_GDB_0235_SOURCE)
 	@cd $(BINUTILS_GDB_0235_SOURCE);				\
-		git checkout -b $(BINUTILS_GDB_0235_BRANCH) $(BINUTILS_GDB_0235_VERSION)
+		git checkout -qb $(BINUTILS_GDB_0235_BRANCH) $(BINUTILS_GDB_0235_VERSION)
 	# replace cru with crUu
 	@cd $(BINUTILS_GDB_0235_SOURCE);				\
 		grep -rl 'ARFLAGS = cru' ./ |				\
