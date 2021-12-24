@@ -72,7 +72,7 @@ glibc-0231-build-new:
 			--prefix=$(GLIBC_0231_INSTALL)/$(GLIBC_0231_TARGET)	\
 			--disable-profile					\
 			--enable-add-ons					\
-			--enable-kernel=2.6.31					\
+			--enable-kernel=5.4					\
 			--with-headers=$(DIR_DADAO_TARGET)/usr/include		\
 			libc_cv_forced_unwind=yes				\
 			libc_cv_c_cleanup=yes
