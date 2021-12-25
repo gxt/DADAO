@@ -82,13 +82,13 @@
 ;	geta	%0, %1
 ;	geta	%0, %1")
 
+;; FIXME
+;; Adding Rp-i for reload-pass
 (define_insn "dd_get_addr"
-  [(set (match_operand:DI 0 "rp_class_operand"  "= Rp, Rp")
-        (match_operand:DI 1 "immediate_operand" "   s, Ai"))]
-	"" "")
-;	"@
-;	geta	rg1, %1	\;	rp_add	%0, rp0, rg1
-;	geta	rg1, %1	\;	rp_add	%0, rp0, rg1")
+  [(set (match_operand:DI 0 "rp_class_operand"  "= Rp, Rp, Rp")
+        (match_operand:DI 1 "immediate_operand" "   s, Ai,  i"))]
+	""
+	"")
 
 ;; TODO: SHOULD removed lator
 (define_insn "*addrp2rg"
