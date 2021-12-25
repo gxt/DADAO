@@ -29,18 +29,26 @@
 ;; TODO: are there rp2rf, rf2rv, rv2rs, ... requirements?
 (define_insn "mov<mode>"
   [(set (match_operand:QHSD 0 "register_operand" "= Rg")
-        (match_operand:QHSD 1 "register_operand" "  Rg"))]
+        (match_operand:QHSD 1 "register_operand"  " Rg"))]
 	""
 	"orr	%0, %1, rg0")
 
+(define_expand "dd_load<mode>"
+  [(set (match_operand:QHSD 0 "rg_class_operand")
+	(match_operand:QHSD 1 "memory_operand"))]
+	""
+	{})
+
 (define_insn "dd_ld_<mode>"
-  [(set (match_operand:QHSD 0 "rg_class_operand" "=  Rg,Rg,Rg")
-        (match_operand:QHSD 1 "memory_operand"   "   Wi,Wz,Wg"))]
+  [(set (match_operand:QHSD 0 "rg_class_operand" "=  Rg,Rg,Rg,Rg,Rg")
+        (match_operand:QHSD 1 "memory_operand"   "   Wi,Wz,Wg,Wm, m"))]
 	""
 	"@
 	* { return GET_MODE (operands[1]) == DImode ? \"ldo	%0, %1\" : \"ld<bwto>u	%0, %1\"; }
 	* { return GET_MODE (operands[1]) == DImode ? \"ldo     %0, %1\" : \"ld<bwto>u	%0, %1\"; }
-	* { return GET_MODE (operands[1]) == DImode ? \"ldmo	%0, %1, 0\" : \"ldm<bwto>u	%0, %1, 0\"; }")
+	* { return GET_MODE (operands[1]) == DImode ? \"ldmo	%0, %1, 0\" : \"ldm<bwto>u	%0, %1, 0\"; }
+	swym
+	")
 
 (define_insn "dd_st_<mode>"
   [(set	(plus:QHSD (match_operand:QHSD 1 "rp_class_operand"  "Rp")

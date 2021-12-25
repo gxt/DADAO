@@ -540,6 +540,8 @@ int dadao_constant_address_p (rtx x)
 
 #define	_DD_LEGITIMATE_ADDR_GENERAL(X, XC) (REG_P(X) && (REGNO_REG_CLASS(REGNO(X)) == XC))
 
+static bool dd_judge_legitimate_address (rtx);
+
 /* Return 1 if the address is OK, otherwise 0.  */
 static bool dd_legitimate_address_p (machine_mode mode ATTRIBUTE_UNUSED,
 			   rtx x, bool strict_checking)
@@ -570,6 +572,11 @@ static bool dd_legitimate_address_p (machine_mode mode ATTRIBUTE_UNUSED,
 	/* (mem (plus (rg) (rp))) */
 	if (_DD_LEGITIMATE_ADDR_RC(x2, POINTER_REGS) && _DD_LEGITIMATE_ADDR_RC(x1, GENERAL_REGS))
 		return 1;
+
+	/* (mem (plus (rp) (mem))) */
+	if (((REGNO_REG_CLASS(REGNO(x1)) == POINTER_REGS) && (MEM_P(x2)))
+	 || (_DD_LEGITIMATE_ADDR_GENERAL(x2, POINTER_REGS) && (MEM_P(x1))))
+		return dd_judge_legitimate_address (MEM_P(x1) ? x1 : x2);
 
 	return 0;
 #undef	_DD_LEGITIMATE_ADDR_RC
@@ -613,8 +620,6 @@ bool dd_load_legitimate_address_rpimm (rtx x)
 		return 1;
 	return 0;
 }
-
-static bool dd_judge_legitimate_address (rtx);
 
 /* Return 1 if the address is OK, otherwise 0.  */
 bool dd_load_legitimate_address_rpmem (rtx x)
