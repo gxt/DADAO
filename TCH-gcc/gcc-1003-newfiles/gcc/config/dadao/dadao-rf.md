@@ -49,11 +49,16 @@
 	setrg   rg1, %1 \;rg2rf rf1, rg1, 0	\;st<ftfo>	rf1, %0
 	setrg   rg1, %1 \;rg2rf rf1, rg1, 0	\;stm<ftfo>	rf1, %0, 0")
 
+(define_insn "dd_ld<mode>"
+  [(set (match_operand:SFDF 0 "rf_class_operand" "= Rf,Rf,Rf,Rf")
+	(match_operand:SFDF 1 "memory_operand"	 "  Wi,Wz,Wm, m"))]
+	""
+	"")
 
 ; TODO
 (define_insn "mov<mode>"
-  [(set (match_operand:SFDF 0 "nonimmediate_operand" "= Rg,Rg,Rf,Rg, Wi,Wz,Wg,Rf")
-	(match_operand:SFDF 1 "general_operand"      "  Rg,Rf,Rg,imm,Rg,Rg,Rg,m"))]
+  [(set (match_operand:SFDF 0 "nonimmediate_operand" "= Rg,Rg,Rf,Rg, Wi,Wz,Wg")
+	(match_operand:SFDF 1 "general_operand"      "  Rg,Rf,Rg,imm,Rg,Rg,Rg"))]
 	""
 	"@
 	orr	%0, %1, rg0
@@ -62,8 +67,7 @@
 	setrg	%0, %1
 	sto	%1, %0
 	sto	%1, %0
-	stmo	%1, %0, 0
-	")
+	stmo	%1, %0, 0")
 
 (define_insn "add<mode>3"
   [(set        (match_operand:SFDF 0 "rf_class_operand" "= Rf")
