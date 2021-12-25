@@ -50,8 +50,8 @@
 	setrg   rg1, %1 \;rg2rf rf1, rg1, 0	\;stm<ftfo>	rf1, %0, 0")
 
 (define_insn "dd_ld<mode>"
-  [(set (match_operand:SFDF 0 "rf_class_operand" "= Rf,Rf,Rf,Rf")
-	(match_operand:SFDF 1 "memory_operand"	 "  Wi,Wz,Wm, m"))]
+  [(set (match_operand:SFDF 0 "register_operand" "= Rg,Rf")
+	(match_operand:SFDF 1 "memory_operand"))]
 	""
 	"")
 
