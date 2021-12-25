@@ -18,21 +18,26 @@
 	""
 	"setrg	%0, %1")
 
+;; FIXME
 (define_insn "adddi3"
-  [(set      (match_operand:DI 0 "rg_class_operand"	"= Rg,Rg")
-    (plus:DI (match_operand:DI 1 "rg_class_operand"	"% Rg,Rg")
-             (match_operand:DI 2 "dd_rg_s18_operand"	"  Rg,It")))]
+  [(set      (match_operand:DI 0 "rg_class_operand"	"= Rg,Rg,Rg")
+    (plus:DI (match_operand:DI 1 "rg_class_operand"	"% Rg,Rg,Rg")
+             (match_operand:DI 2 "general_operand"	"  Rg,i,It")))]
 	""
 	"@
 	add	rg0, %0, %1, %2
+	setrg	rg1, %2	\;add	rg0, %0, %1, rg1	\;
 	*{ return (operands[1] == operands[0]) ? \"add\t%0, %2\":\"add\t%1, %2\t\;setrg\t%0, %1\t\;\"; }")
 
+;; FIXME
 (define_insn "subdi3"
-  [(set       (match_operand:DI 0 "rg_class_operand" "= Rg")
-    (minus:DI (match_operand:DI 1 "rg_class_operand" "  Rg")
-              (match_operand:DI 2 "rg_class_operand" "  Rg")))]
+  [(set       (match_operand:DI 0 "rg_class_operand"	"= Rg,Rg")
+    (minus:DI (match_operand:DI 1 "rg_class_operand"	"  Rg,Rg")
+              (match_operand:DI 2 "general_operand"	"  Rg, i")))]
 	""
-	"sub	rg0, %0, %1, %2")
+	"@
+	sub	rg0, %0, %1, %2
+	setrg	rg1, %2	\;sub	rg0, %0, %1, rg1	\;")
 
 (define_insn "muldi3"
   [(set      (match_operand:DI 0 "rg_class_operand" "= Rg")
