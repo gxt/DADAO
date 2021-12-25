@@ -59,16 +59,18 @@
 	""
 {
 	enum rtx_code code = GET_CODE (operands[1]);
+	machine_mode mode = GET_MODE (XEXP(operands[1], 0));
 
 	if ((code == LTU) || (code == LEU) || (code == GTU) || (code == GEU)) {
 		operands[4] = gen_reg_rtx(CCUUmode);
 		operands[5] = gen_rtx_COMPARE (CCUUmode, XEXP (operands[1], 0), XEXP (operands[1], 1));
 	} else {
-		operands[4] = gen_reg_rtx(CCSSmode);
-		operands[5] = gen_rtx_COMPARE (CCSSmode, XEXP (operands[1], 0), XEXP (operands[1], 1));
+		operands[4] = gen_reg_rtx(mode);
+		operands[5] = gen_rtx_COMPARE (mode, XEXP (operands[1], 0), XEXP (operands[1], 1));
 	}
 
 	operands[1] = gen_rtx_fmt_ee (code, VOIDmode, operands[4], const0_rtx);
+	DONE;
 })
 
 (define_insn "*movdicc_<ccss_type_insn>"
