@@ -55,16 +55,23 @@
 	""
 	"")
 
+(define_insn "mov<mode>imm"
+  [(set (match_operand:SFDF 0 "register_operand" "= Rf,Rg")
+	(match_operand:SFDF 1 "const_double_operand"))]
+	""
+	"@
+	setrg	rg1, %1\;rg2rf	%0, rg1, 0
+	setrg	%0, %1")
+
 ; TODO
 (define_insn "mov<mode>"
-  [(set (match_operand:SFDF 0 "nonimmediate_operand" "= Rg,Rg,Rf,Rg, Wi,Wz,Wg")
-	(match_operand:SFDF 1 "general_operand"      "  Rg,Rf,Rg,imm,Rg,Rg,Rg"))]
+  [(set (match_operand:SFDF 0 "nonimmediate_operand" "= Rg,Rg,Rf,Wi,Wz,Wg")
+	(match_operand:SFDF 1 "general_operand"      "  Rg,Rf,Rg,Rg,Rg,Rg"))]
 	""
 	"@
 	orr	%0, %1, rg0
 	rf2rg	%0, %1, 0
 	rg2rf	%0, %1, 0
-	setrg	%0, %1
 	sto	%1, %0
 	sto	%1, %0
 	stmo	%1, %0, 0")
