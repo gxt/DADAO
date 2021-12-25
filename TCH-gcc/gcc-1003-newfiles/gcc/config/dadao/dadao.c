@@ -614,6 +614,70 @@ bool dd_load_legitimate_address_rpimm (rtx x)
 	return 0;
 }
 
+static bool dd_judge_legitimate_address (rtx);
+
+/* Return 1 if the address is OK, otherwise 0.  */
+bool dd_load_legitimate_address_rpmem (rtx x)
+{
+	if (GET_CODE(x) != PLUS)
+		return 0;
+
+	rtx x1 = XEXP (x, 0);
+	rtx x2 = XEXP (x, 1);
+
+	/* (mem (plus (rp) (mem))) */
+	if (((REGNO_REG_CLASS(REGNO(x1)) == POINTER_REGS) && (MEM_P(x2)))
+	 || (_DD_LEGITIMATE_ADDR_GENERAL(x2, POINTER_REGS) && (MEM_P(x1))))
+		return dd_judge_legitimate_address (MEM_P(x1) ? x1 : x2);
+
+	return 0;
+}
+
+static
+bool dd_judge_legitimate_address (rtx x)
+{
+	if (!MEM_P(x))
+		return 0;
+
+	rtx x1 = XEXP (x, 0);
+
+	if (_DD_LEGITIMATE_ADDR_GENERAL(x1, POINTER_REGS))
+		return 1;
+
+	if (GET_CODE(x1) == PLUS)
+	{
+		rtx op0 = XEXP (x1, 0);
+		rtx op1 = XEXP (x1, 1);
+
+		if (_DD_LEGITIMATE_ADDR_GENERAL(op0, POINTER_REGS)
+		 && _DD_LEGITIMATE_ADDR_GENERAL(op1, GENERAL_REGS))
+			return 1;
+
+		if (_DD_LEGITIMATE_ADDR_GENERAL(op1, POINTER_REGS)
+		 && _DD_LEGITIMATE_ADDR_GENERAL(op0, GENERAL_REGS))
+			return 1;
+
+		if (_DD_LEGITIMATE_ADDR_GENERAL(op0, POINTER_REGS)
+		 && satisfies_constraint_Id(op1))
+			return 1;
+
+		if ((_DD_LEGITIMATE_ADDR_GENERAL(op0, POINTER_REGS) && MEM_P(op1))
+		 || (_DD_LEGITIMATE_ADDR_GENERAL(op1, POINTER_REGS) && MEM_P(op0)))
+		{
+			if (MEM_P(op0))
+			{
+				rtx tp = op1;
+				op1 = op0;
+				op0 = tp;
+			}
+			if (dd_judge_legitimate_address(op1))
+				return 1;
+		}
+	}
+
+	return 0;
+}
+
 #undef	_DD_LEGITIMATE_ADDR_RC
 
 /* Implement TARGET_LEGITIMATE_CONSTANT_P.  */

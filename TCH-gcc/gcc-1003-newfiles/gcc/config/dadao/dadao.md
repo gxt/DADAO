@@ -49,24 +49,17 @@
 	""
 	"setrg	rg1, %2	\;stm<bwto>	%0, %1, rg1, 0	\;")
 
-(define_insn "dd_st_<mode>_m"
-  [(set (match_operand:QHSD 0 "memory_operand"	 "= Wi,Wz,Wg")
-	(match_operand:QHSD 1 "rg_class_operand" "  Rg,Rg,Rg"))]
+(define_expand "dd_st_<mode>_m"
+  [(set (match_operand:QHSD 0 "memory_operand")
+	(match_operand:QHSD 1 "rg_class_operand"))]
 	""
-	"@
-	st<bwto>	%1, %0
-	st<bwto>	%1, %0
-	stm<bwto>	%1, %0, 0")
+	{})
 
-(define_expand "st<mode>_miscellaneous"
-  [(set (match_operand:QHSD 0 "memory_operand"	"")
-	(match_operand:QHSD 1 "general_operand" ""))]
-	"!reload_completed"
-	{
-	  /* It's one debugging define_expand insn pattern. */
-	  output_asm_insn (\"abc\", operands);
-	  DONE;
-	})
+(define_insn "st<mode>_miscellaneous"
+  [(set (match_operand:QHSD 0 "memory_operand"	"= m,m,Wm")
+	(match_operand:QHSD 1 "general_operand" "  r,Rg,Rg"))]
+	""
+	"")
 
 (define_insn "dd_st<mode>_m2m"
   [(set (match_operand:QHSD 0 "memory_operand" "= Wi,Wz,Wg,m,m,m,m")
@@ -75,13 +68,14 @@
 	"")
 
 (define_insn "dd_st<mode>_i2m"
-  [(set (match_operand:QHSD 0 "memory_operand"	  "= Wi,Wz,Wg")
-	(match_operand:QHSD 1 "immediate_operand" "   i, i, i"))]
+  [(set (match_operand:QHSD 0 "memory_operand"	  "= Wi,Wz,Wg, m")
+	(match_operand:QHSD 1 "immediate_operand" "   i, i, i, i"))]
 	"!reload_completed"
 	"@
 	setrg	rg1, %1	\;st<bwto>	rg1, %0
 	setrg   rg1, %1 \;st<bwto>	rg1, %0
-	setrg   rg1, %1 \;stm<bwto>	rg1, %0, 0")
+	setrg   rg1, %1 \;stm<bwto>	rg1, %0, 0
+	swym")
 
 (define_expand "call"
   [(parallel [(call (match_operand 0 "memory_operand" "")

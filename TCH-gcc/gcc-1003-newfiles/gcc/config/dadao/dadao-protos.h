@@ -18,6 +18,7 @@ extern void dadao_function_profiler (FILE *, int);
 /* gccint 18.13 Node: Addressing Modes */
 extern bool dd_load_legitimate_address_rpzero (rtx);
 extern bool dd_load_legitimate_address_rpimm (rtx);
+extern bool dd_load_legitimate_address_rpmem (rtx);
 extern bool dd_load_legitimate_address_rprg (rtx);
 
 /* XXX gccint 18.15.2 Node: Representation of condition codes using registers */
