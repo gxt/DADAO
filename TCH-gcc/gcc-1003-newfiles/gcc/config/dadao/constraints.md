@@ -38,7 +38,7 @@
 (define_constraint "It"
 	"A 18-bit signed integer"
 	(and (match_code "const_int")
-	     (match_test "IN_RANGE (ival, -0x40000, 0x3FFFF)")))
+	     (match_test "IN_RANGE (ival, -0x20000, 0x1FFFF)")))
 
 (define_constraint "Iw"
 	"Shiftable wyde integer"
