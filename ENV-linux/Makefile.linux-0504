@@ -23,7 +23,7 @@ linux-0504-clean:
 	@rm -fr $(LINUX_0504_SOURCE)
 	# Remove old linux build dir ...
 	@rm -fr $(LINUX_0504_BUILD)
-	# Remove old linux target dir ...
+	# Remove old linux header dir ...
 	@rm -fr $(LINUX_0504_TARGET)/usr/include
 
 linux-0504-source:
@@ -89,6 +89,11 @@ linux-0504-highfive:
 	# 5. Install linux images ...
 #	@make -s linux-0504-install				1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
 	# BUILD linux-0504 DONE!
+	# 8. Check headers ...
+	@make -s linux-0504-headers-check			1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
+	# 9. Install headers ...
+	@make -s linux-0504-headers-install			1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
+	# BUILD linux-0504-headers DONE!
 
 linux-0504-headers-check:
 	# Headers check ...
@@ -105,12 +110,18 @@ linux-0504-headers-install:
 
 linux-0504-headers-highfive:
 	# BEGIN TO BUILD linux-0504-headers!
-	# 0. Check source dir and build dir
-	@test -d $(LINUX_0504_SOURCE) || make -C $(DIR_DADAO_TOP) linux-0504-source
-	@test -d $(LINUX_0504_BUILD) || make -C $(DIR_DADAO_TOP) linux-0504-build-new
-	# 1. Check headers ...
-	@make -s linux-0504-headers-check			1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
-	# 2. Install headers ...
-	@make -s linux-0504-headers-install			1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
+	# 0. Remove old logfiles
+	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
+	@rm -fr $(LINUX_0504_LOG_STDOUT) $(LINUX_0504_LOG_STDERR)
+	# 1. Remove old linux header dir ...
+	@rm -fr $(LINUX_0504_TARGET)/usr/include
+	# 2. Check source dir ...
+	@test -d $(LINUX_0504_SOURCE) || make -s linux-0504-source	1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
+	# 3. Check build dir ...
+	@test -d $(LINUX_0504_BUILD) || make -s linux-0504-build-new	1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
+	# 4. Check headers ...
+	@make -s linux-0504-headers-check				1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
+	# 5. Install headers ...
+	@make -s linux-0504-headers-install				1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
 	# BUILD linux-0504-headers DONE!
 
