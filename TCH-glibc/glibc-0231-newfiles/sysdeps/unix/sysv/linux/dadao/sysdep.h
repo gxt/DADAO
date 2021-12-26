@@ -14,4 +14,6 @@
 #undef	SYS_ify
 #define	SYS_ify(syscall_name)		(__NR_##syscall_name)
 
+#define	INTERNAL_SYSCALL_DECL(err)	do { } while (0)
+
 #endif /* _SYSDEPS_LINUX_DADAO_SYSDEP_H_ */
