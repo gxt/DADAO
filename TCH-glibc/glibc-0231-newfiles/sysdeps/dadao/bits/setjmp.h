@@ -10,7 +10,8 @@
 #endif
 
 #ifndef _ASM
-__extension__ typedef unsigned long long __jmp_buf [64];
+/* FIXME: copied from aarch64, not correct */
+__extension__ typedef unsigned long long __jmp_buf [22];
 #endif
 
 #endif /* _SYSDEPS_DADAO_BITS_SETJMP_H_ */
