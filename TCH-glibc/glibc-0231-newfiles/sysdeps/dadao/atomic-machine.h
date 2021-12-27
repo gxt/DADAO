@@ -17,4 +17,7 @@ typedef uint64_t	uatomic64_t;
 #define USE_ATOMIC_COMPILER_BUILTINS	0
 #define ATOMIC_EXCHANGE_USES_CAS	0
 
+/* FIXME: for basic operations, NOT CORRECT! */
+#include <sysdeps/generic/atomic-machine.h>
+
 #endif	/* _SYSDEPS_DADAO_ATOMIC_MACHINE_H_ */
