@@ -29,11 +29,15 @@
 (define_insn "addrp"
   [(set      (match_operand:DI 0 "rp_class_operand"  "= Rp, Rp")
     (plus:DI (match_operand:DI 1 "rp_class_operand"  "% Rp, Rp")
-             (match_operand:DI 2 "dd_rg_u18_operand" "  Rg, Jt")))]
+             (match_operand:DI 2 "dd_rg_s18_operand" "  Rg, It")))]
 	""
 	"@
 	addrp	%0, %1, %2
-	*{ return (REGNO(operands[0]) == REGNO(operands[1])) ? \"addrp\t%0, %2\" : \"addrp\t%1, %2\t\;rp2rp\t%0, %1, 0\t\;\"; }")
+	*{ return (REGNO(operands[0])		\
+		== REGNO(operands[1])) ? 	\
+		\"addrp	%0, %2	\" :		\
+		\"addrp	%1, %2	\;rp2rp	%0, %1, 0	\;\";	\
+	}")
 
 (define_insn "addrp_ctry"
   [(set      (match_operand:DI 0 "rp_class_operand"  "=Rp")
@@ -41,13 +45,6 @@
              (match_operand:DI 2 "rp_class_operand"  " Rp")))]
 	""
 	"addrp	%0, %2, %1")
-
-(define_insn "addrp_large_scale"
-  [(set      (match_operand:DI 0 "rp_class_operand"  "= Rp")
-    (plus:DI (match_operand:DI 1 "rp_class_operand"  "% Rp")
-             (match_operand:DI 2 "immediate_operand" "  i")))]
-	""
-	"setrg	rg1, %2	\;rp2rg	rg6, %1, 0\t\;add\trg0, rg6, rg1, rg6\t\;rg2rp	%0, rg6, 0	\;")
 
 (define_insn "dd_ld_rp"
   [(set (match_operand:DI 0 "rp_class_operand" "= Rp,Rp,Rp")
@@ -89,21 +86,3 @@
         (match_operand:DI 1 "immediate_operand" "   s, Ai,  i"))]
 	""
 	"")
-
-;; TODO: SHOULD removed lator
-(define_insn "*addrp2rg"
-  [(set      (match_operand:DI 0 "rg_class_operand"  "= Rg, Rg")
-    (plus:DI (match_operand:DI 1 "rp_class_operand"  "% Rp, Rp")
-             (match_operand:DI 2 "dd_rg_u18_operand" "  Jt, Rg")))]
-	""
-	"@
-	rp2rg	rg1, %1, 0	\;add	rg1, %2	\;rg2rg	%0, rg1, 0	\;
-	rp2rg	rg1, %1, 0	\;add	rg0, %0, rg1, %2")
-
-;; TODO: SHOULD removed lator, handling condition: imm beyond s12
-(define_insn "*addrp2rg_2"
-  [(set      (match_operand:DI 0 "rg_class_operand"  "= Rg")
-    (plus:DI (match_operand:DI 1 "rp_class_operand"  "% Rp")
-             (match_operand:DI 2 "immediate_operand" "   i")))]
-	""
-	"rp2rg	rg1, %1, 0	\;setrg	%0, %2	\;add	rg0, %0, rg1, %0")

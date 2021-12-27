@@ -26,7 +26,6 @@
 	""
 	"swym")
 
-;; TODO: are there rp2rf, rf2rv, rv2rs, ... requirements?
 (define_insn "mov<mode>"
   [(set (match_operand:QHSD 0 "register_operand" "= Rg")
         (match_operand:QHSD 1 "register_operand"  " Rg"))]
@@ -40,15 +39,13 @@
 	{})
 
 (define_insn "dd_ld_<mode>"
-  [(set (match_operand:QHSD 0 "rg_class_operand" "=  Rg,Rg,Rg,Rg,Rg")
-        (match_operand:QHSD 1 "memory_operand"   "   Wi,Wz,Wg,Wm, m"))]
+  [(set (match_operand:QHSD 0 "rg_class_operand" "=  Rg,Rg,Rg")
+        (match_operand:QHSD 1 "memory_operand"   "   Wi,Wz,Wg"))]
 	""
 	"@
 	* { return GET_MODE (operands[1]) == DImode ? \"ldo	%0, %1\" : \"ld<bwto>u	%0, %1\"; }
-	* { return GET_MODE (operands[1]) == DImode ? \"ldo     %0, %1\" : \"ld<bwto>u	%0, %1\"; }
-	* { return GET_MODE (operands[1]) == DImode ? \"ldmo	%0, %1, 0\" : \"ldm<bwto>u	%0, %1, 0\"; }
-	swym
-	")
+	* { return GET_MODE (operands[1]) == DImode ? \"ldo	%0, %1\" : \"ld<bwto>u	%0, %1\"; }
+	* { return GET_MODE (operands[1]) == DImode ? \"ldmo	%0, %1, 0\" : \"ldm<bwto>u	%0, %1, 0\"; }")
 
 (define_insn "dd_st_<mode>"
   [(set	(plus:QHSD (match_operand:QHSD 1 "rp_class_operand"  "Rp")
