@@ -501,6 +501,38 @@ static bool trans_csev(DisasContext *ctx, arg_csev *a)
     return trans_cs_od_ev(ctx, a, false);
 }
 
+static bool trans_setow(DisasContext *ctx, arg_setow *a)
+{
+    int64_t arg = ((int64_t)a->imm << (a->j * 16)) |
+                  ~((int64_t)0xFFFF << (a->j * 16));
+    tcg_gen_movi_i64(cpu_rg[a->rg], arg);
+    return true;
+}
+
+static bool trans_setzw(DisasContext *ctx, arg_setzw *a)
+{
+    int64_t arg = (int64_t)a->imm << (a->j * 16);
+    tcg_gen_movi_i64(cpu_rg[a->rg], arg);
+    return true;
+}
+
+static bool trans_orw(DisasContext *ctx, arg_orw *a)
+{
+    int64_t arg = (int64_t)a->imm << (a->j * 16);
+    tcg_gen_ori_i64(cpu_rg[a->rg], cpu_rg[a->rg], arg);
+    return true;
+}
+
+static bool trans_andnw(DisasContext *ctx, arg_andnw *a)
+{
+    int64_t arg = ((int64_t)a->imm << (a->j * 16)) |
+                  ~((int64_t)0xFFFF << (a->j * 16));
+    int64_t xor = (int64_t)0xFFFF << (a->j * 16);
+    tcg_gen_andi_i64(cpu_rg[a->rg], cpu_rg[a->rg], arg);
+    tcg_gen_xori_i64(cpu_rg[a->rg], cpu_rg[a->rg], xor);
+    return true;
+}
+
 /* control flow instructions */
 
 static bool trans_swym(DisasContext *ctx, arg_swym *a)
