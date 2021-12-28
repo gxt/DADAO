@@ -573,31 +573,47 @@ static bool trans_addrp(DisasContext *ctx, arg_addrp *a)
 
 static bool trans_add(DisasContext *ctx, arg_add *a)
 {
+    TCGv_i64 zero = tcg_const_i64(0);
+    tcg_gen_add2_i64(cpu_rg[a->rgb], cpu_rg[a->rga],
+                     cpu_rg[a->rgc], zero, cpu_rg[a->rgd], zero);
+    tcg_temp_free_i64(zero);
     return true;
 }
 
 static bool trans_sub(DisasContext *ctx, arg_sub *a)
 {
+    TCGv_i64 zero = tcg_const_i64(0);
+    tcg_gen_sub2_i64(cpu_rg[a->rgb], cpu_rg[a->rga],
+                     cpu_rg[a->rgc], zero, cpu_rg[a->rgd], zero);
+    tcg_temp_free_i64(zero);
     return true;
 }
 
 static bool trans_muls(DisasContext *ctx, arg_muls *a)
 {
+    tcg_gen_muls2_i64(cpu_rg[a->rgb], cpu_rg[a->rga],
+                      cpu_rg[a->rgc], cpu_rg[a->rgd]);
     return true;
 }
 
 static bool trans_mulu(DisasContext *ctx, arg_mulu *a)
 {
+    tcg_gen_mulu2_i64(cpu_rg[a->rgb], cpu_rg[a->rga],
+                      cpu_rg[a->rgc], cpu_rg[a->rgd]);
     return true;
 }
 
 static bool trans_divs(DisasContext *ctx, arg_divs *a)
 {
+    tcg_gen_div_i64(cpu_rg[a->rgb], cpu_rg[a->rgc], cpu_rg[a->rgd]);
+    tcg_gen_rem_i64(cpu_rg[a->rga], cpu_rg[a->rgc], cpu_rg[a->rgd]);
     return true;
 }
 
 static bool trans_divu(DisasContext *ctx, arg_divu *a)
 {
+    tcg_gen_divu_i64(cpu_rg[a->rgb], cpu_rg[a->rgc], cpu_rg[a->rgd]);
+    tcg_gen_remu_i64(cpu_rg[a->rga], cpu_rg[a->rgc], cpu_rg[a->rgd]);
     return true;
 }
 
