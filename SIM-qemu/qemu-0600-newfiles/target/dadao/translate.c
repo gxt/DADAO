@@ -143,7 +143,7 @@ static bool trans_ld_all(DisasContext *ctx, arg_rrii *a,
                          TCGv_i64* cpu_ra, MemOp mop)
 {
     if (a->ra == 0) {
-        g_assert_not_reached();
+        return false;
     }
     TCGv_i64 addr = tcg_temp_new_i64();
     tcg_gen_addi_i64(addr, cpu_rp[a->rp], a->imm);
@@ -166,7 +166,7 @@ static bool trans_ldm_all(DisasContext *ctx, arg_rrri *a,
                           TCGv_i64* cpu_ra, MemOp mop)
 {
     if (a->ra == 0 || a->ra + a->cnt >= 64) {
-        g_assert_not_reached();
+        return false;
     }
     TCGv_i64 addr = tcg_temp_new_i64();
     tcg_gen_add_i64(addr, cpu_rp[a->rp], cpu_rg[a->rg]);
@@ -183,7 +183,7 @@ static bool trans_stm_all(DisasContext *ctx, arg_rrri *a,
                           TCGv_i64* cpu_ra, MemOp mop)
 {
     if (a->ra + a->cnt >= 64) {
-        g_assert_not_reached();
+        return false;
     }
     TCGv_i64 addr = tcg_temp_new_i64();
     tcg_gen_add_i64(addr, cpu_rp[a->rp], cpu_rg[a->rg]);
@@ -382,7 +382,7 @@ static bool trans_rb2ra_all(DisasContext* ctx, arg_orri* a,
                             TCGv_i64* cpu_rb, TCGv_i64* cpu_ra) 
 {
     if (a->ra == 0 || a->ra + a->cnt >= 64 || a->rb + a->cnt >= 64) {
-        g_assert_not_reached();
+        return false;
     }
     if (cpu_rb != cpu_ra) {
         while (a->cnt-- >= 0) {
@@ -407,6 +407,9 @@ static bool trans_rb2ra_all(DisasContext* ctx, arg_orri* a,
 
 static bool trans_cs_all(DisasContext* ctx, arg_rrrr* a, TCGCond cond)
 {
+    if (a->rga == 0) {
+        return false;
+    }
     TCGv_i64 zero = tcg_const_i64(0);
     tcg_gen_movcond_i64(cond, cpu_rg[a->rga], cpu_rg[a->rgb], zero,
                         cpu_rg[a->rgc], cpu_rg[a->rgd]);
@@ -416,6 +419,9 @@ static bool trans_cs_all(DisasContext* ctx, arg_rrrr* a, TCGCond cond)
 
 static bool trans_cs_od_ev(DisasContext* ctx, arg_rrrr* a, bool is_od)
 {
+    if (a->rga == 0) {
+        return false;
+    }
     TCGv_i64 bit0 = tcg_const_i64(1);
     TCGv_i64 zero = tcg_const_i64(0);
     tcg_gen_and_i64(bit0, bit0, cpu_rg[a->rgb]);
@@ -503,6 +509,9 @@ static bool trans_csev(DisasContext *ctx, arg_csev *a)
 
 static bool trans_setow(DisasContext *ctx, arg_setow *a)
 {
+    if (a->rg == 0) {
+        return false;
+    }
     int64_t arg = ((int64_t)a->imm << (a->j * 16)) |
                   ~((int64_t)0xFFFF << (a->j * 16));
     tcg_gen_movi_i64(cpu_rg[a->rg], arg);
@@ -511,6 +520,9 @@ static bool trans_setow(DisasContext *ctx, arg_setow *a)
 
 static bool trans_setzw(DisasContext *ctx, arg_setzw *a)
 {
+    if (a->rg == 0) {
+        return false;
+    }
     int64_t arg = (int64_t)a->imm << (a->j * 16);
     tcg_gen_movi_i64(cpu_rg[a->rg], arg);
     return true;
@@ -518,6 +530,9 @@ static bool trans_setzw(DisasContext *ctx, arg_setzw *a)
 
 static bool trans_orw(DisasContext *ctx, arg_orw *a)
 {
+    if (a->rg == 0) {
+        return false;
+    }
     int64_t arg = (int64_t)a->imm << (a->j * 16);
     tcg_gen_ori_i64(cpu_rg[a->rg], cpu_rg[a->rg], arg);
     return true;
@@ -525,6 +540,9 @@ static bool trans_orw(DisasContext *ctx, arg_orw *a)
 
 static bool trans_andnw(DisasContext *ctx, arg_andnw *a)
 {
+    if (a->rg == 0) {
+        return false;
+    }
     int64_t arg = ((int64_t)a->imm << (a->j * 16)) |
                   ~((int64_t)0xFFFF << (a->j * 16));
     int64_t xor = (int64_t)0xFFFF << (a->j * 16);
@@ -537,11 +555,19 @@ static bool trans_andnw(DisasContext *ctx, arg_andnw *a)
 
 static bool trans_addi(DisasContext *ctx, arg_addi *a)
 {
+    if (a->rg == 0) {
+        return false;
+    }
+    tcg_gen_addi_i64(cpu_rg[a->rg], cpu_rg[a->rg], a->imm);
     return true;
 }
 
 static bool trans_addrp(DisasContext *ctx, arg_addrp *a)
 {
+    if (a->rp == 0) {
+        return false;
+    }
+    tcg_gen_addi_i64(cpu_rp[a->rp], cpu_rp[a->rp], a->imm);
     return true;
 }
 
