@@ -722,16 +722,19 @@ static bool trans_xor(DisasContext *ctx, arg_xor *a)
 
 static bool trans_shlu(DisasContext *ctx, arg_shlu *a)
 {
+    tcg_gen_shl_i64(cpu_rg[a->rgb], cpu_rg[a->rgc], cpu_rg[a->rgd]);
     return true;
 }
 
 static bool trans_shrs(DisasContext *ctx, arg_shrs *a)
 {
+    tcg_gen_sar_i64(cpu_rg[a->rgb], cpu_rg[a->rgc], cpu_rg[a->rgd]);
     return true;
 }
 
 static bool trans_shru(DisasContext *ctx, arg_shru *a)
 {
+    tcg_gen_shr_i64(cpu_rg[a->rgb], cpu_rg[a->rgc], cpu_rg[a->rgd]);
     return true;
 }
 
@@ -752,16 +755,19 @@ static bool trans_not(DisasContext *ctx, arg_not *a)
 
 static bool trans_shlui(DisasContext *ctx, arg_shlui *a)
 {
+    tcg_gen_shli_i64(cpu_rg[a->rgb], cpu_rg[a->rgc], a->imm);
     return true;
 }
 
 static bool trans_shrsi(DisasContext *ctx, arg_shrsi *a)
 {
+    tcg_gen_sari_i64(cpu_rg[a->rgb], cpu_rg[a->rgc], a->imm);
     return true;
 }
 
 static bool trans_shrui(DisasContext *ctx, arg_shrui *a)
 {
+    tcg_gen_shri_i64(cpu_rg[a->rgb], cpu_rg[a->rgc], a->imm);
     return true;
 }
 
