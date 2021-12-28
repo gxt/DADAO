@@ -740,16 +740,30 @@ static bool trans_shru(DisasContext *ctx, arg_shru *a)
 
 static bool trans_exts(DisasContext *ctx, arg_exts *a)
 {
+    TCGv_i64 imm = tcg_temp_new_i64();
+    tcg_gen_subfi_i64(imm, 63, cpu_rg[a->rgd]);
+    tcg_gen_shl_i64(cpu_rg[a->rgb], cpu_rg[a->rgc], imm);
+    tcg_gen_sar_i64(cpu_rg[a->rgb], cpu_rg[a->rgc], imm);
+    tcg_temp_free_i64(imm);
     return true;
 }
 
 static bool trans_extz(DisasContext *ctx, arg_extz *a)
 {
+    TCGv_i64 imm = tcg_temp_new_i64();
+    tcg_gen_subfi_i64(imm, 63, cpu_rg[a->rgd]);
+    tcg_gen_shl_i64(cpu_rg[a->rgb], cpu_rg[a->rgc], imm);
+    tcg_gen_shr_i64(cpu_rg[a->rgb], cpu_rg[a->rgc], imm);
+    tcg_temp_free_i64(imm);
     return true;
 }
 
 static bool trans_not(DisasContext *ctx, arg_not *a)
 {
+    TCGv_i64 imm = tcg_const_i64((int64_t)~0);
+    tcg_gen_shl_i64(imm, imm, cpu_rg[a->rgd]);
+    tcg_gen_xor_i64(cpu_rg[a->rgb], cpu_rg[a->rgc], imm);
+    tcg_temp_free_i64(imm);
     return true;
 }
 
@@ -773,16 +787,21 @@ static bool trans_shrui(DisasContext *ctx, arg_shrui *a)
 
 static bool trans_extsi(DisasContext *ctx, arg_extsi *a)
 {
+    tcg_gen_shli_i64(cpu_rg[a->rgb], cpu_rg[a->rgc], 63 - a->imm);
+    tcg_gen_sari_i64(cpu_rg[a->rgb], cpu_rg[a->rgc], 63 - a->imm);
     return true;
 }
 
 static bool trans_extzi(DisasContext *ctx, arg_extzi *a)
 {
+    tcg_gen_shli_i64(cpu_rg[a->rgb], cpu_rg[a->rgc], 63 - a->imm);
+    tcg_gen_shri_i64(cpu_rg[a->rgb], cpu_rg[a->rgc], 63 - a->imm);
     return true;
 }
 
 static bool trans_noti(DisasContext *ctx, arg_noti *a)
 {
+    tcg_gen_xori_i64(cpu_rg[a->rgb], cpu_rg[a->rgc], (int64_t)~0 << a->imm);
     return true;
 }
 
