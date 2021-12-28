@@ -619,21 +619,65 @@ static bool trans_divu(DisasContext *ctx, arg_divu *a)
 
 static bool trans_cmpsi(DisasContext *ctx, arg_cmpsi *a)
 {
+    TCGv_i64 imm = tcg_const_i64(a->imm);
+    TCGv_i64 zero = tcg_const_i64(0);
+    TCGv_i64 pos = tcg_const_i64(1);
+    TCGv_i64 neg = tcg_const_i64(-1);
+    tcg_gen_movcond_i64(TCG_COND_GT, cpu_rg[a->rga], cpu_rg[a->rgb], imm,
+                        pos, zero);
+    tcg_gen_movcond_i64(TCG_COND_LT, cpu_rg[a->rga], cpu_rg[a->rgb], imm,
+                        neg, cpu_rg[a->rga]);
+    tcg_temp_free_i64(imm);
+    tcg_temp_free_i64(zero);
+    tcg_temp_free_i64(pos);
+    tcg_temp_free_i64(neg);
     return true;
 }
 
 static bool trans_cmpui(DisasContext *ctx, arg_cmpui *a)
 {
+    TCGv_i64 imm = tcg_const_i64(a->imm);
+    TCGv_i64 zero = tcg_const_i64(0);
+    TCGv_i64 pos = tcg_const_i64(1);
+    TCGv_i64 neg = tcg_const_i64(-1);
+    tcg_gen_movcond_i64(TCG_COND_GTU, cpu_rg[a->rga], cpu_rg[a->rgb], imm,
+                        pos, zero);
+    tcg_gen_movcond_i64(TCG_COND_LTU, cpu_rg[a->rga], cpu_rg[a->rgb], imm,
+                        neg, cpu_rg[a->rga]);
+    tcg_temp_free_i64(imm);
+    tcg_temp_free_i64(zero);
+    tcg_temp_free_i64(pos);
+    tcg_temp_free_i64(neg);
     return true;
 }
 
 static bool trans_cmps(DisasContext *ctx, arg_cmps *a)
 {
+    TCGv_i64 zero = tcg_const_i64(0);
+    TCGv_i64 pos = tcg_const_i64(1);
+    TCGv_i64 neg = tcg_const_i64(-1);
+    tcg_gen_movcond_i64(TCG_COND_GT, cpu_rg[a->rgb], cpu_rg[a->rgc],
+                        cpu_rg[a->rgd], pos, zero);
+    tcg_gen_movcond_i64(TCG_COND_LT, cpu_rg[a->rgb], cpu_rg[a->rgc],
+                        cpu_rg[a->rgd], neg, cpu_rg[a->rgb]);
+    tcg_temp_free_i64(zero);
+    tcg_temp_free_i64(pos);
+    tcg_temp_free_i64(neg);
     return true;
 }
 
 static bool trans_cmpu(DisasContext *ctx, arg_cmpu *a)
 {
+    TCGv_i64 zero = tcg_const_i64(0);
+    TCGv_i64 pos = tcg_const_i64(1);
+    TCGv_i64 neg = tcg_const_i64(-1);
+    tcg_gen_movcond_i64(TCG_COND_GTU, cpu_rg[a->rgb], cpu_rg[a->rgc],
+                        cpu_rg[a->rgd], pos, zero);
+    tcg_gen_movcond_i64(TCG_COND_LTU, cpu_rg[a->rgb], cpu_rg[a->rgc],
+                        cpu_rg[a->rgd], neg, cpu_rg[a->rgb]);
+    tcg_temp_free_i64(zero);
+    tcg_temp_free_i64(pos);
+    tcg_temp_free_i64(neg);
     return true;
 }
 
