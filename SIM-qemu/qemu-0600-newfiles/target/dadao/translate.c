@@ -165,7 +165,7 @@ static bool trans_st_all(DisasContext *ctx, arg_rrii *a,
 static bool trans_ldm_all(DisasContext *ctx, arg_rrri *a,
                           TCGv_i64* cpu_ra, MemOp mop)
 {
-    if (a->ra == 0) {
+    if (a->ra == 0 || a->ra + a->cnt >= 64) {
         g_assert_not_reached();
     }
     TCGv_i64 addr = tcg_temp_new_i64();
@@ -182,6 +182,9 @@ static bool trans_ldm_all(DisasContext *ctx, arg_rrri *a,
 static bool trans_stm_all(DisasContext *ctx, arg_rrri *a,
                           TCGv_i64* cpu_ra, MemOp mop)
 {
+    if (a->ra + a->cnt >= 64) {
+        g_assert_not_reached();
+    }
     TCGv_i64 addr = tcg_temp_new_i64();
     tcg_gen_add_i64(addr, cpu_rp[a->rp], cpu_rg[a->rg]);
     tcg_gen_qemu_st64(cpu_ra[a->ra], addr, ctx->mem_idx);
@@ -371,6 +374,70 @@ static bool trans_stmfo(DisasContext *ctx, arg_stmfo *a)
 static bool trans_stmrr(DisasContext *ctx, arg_stmrr *a)
 {
     return trans_stm_all(ctx, a, cpu_rr, MO_TEQ);
+}
+
+/* register copy instructions */
+
+static bool trans_rb2ra_all(DisasContext* ctx, arg_orri* a,
+                            TCGv_i64* cpu_rb, TCGv_i64* cpu_ra) 
+{
+    if (a->ra == 0 || a->ra + a->cnt >= 64 || a->rb + a->cnt >= 64) {
+        g_assert_not_reached();
+    }
+    if (cpu_rb != cpu_ra) {
+        while (a->cnt-- >= 0) {
+            tcg_gen_mov_i64(cpu_ra[a->ra++], cpu_rb[a->rb++]);
+        }
+    } else {
+        if (a->ra < a->rb) {
+            while (a->cnt-- >= 0) {
+                tcg_gen_mov_i64(cpu_ra[a->ra++], cpu_rb[a->rb++]);
+            }
+        } else if (a->ra > a->rb) {
+            a->ra += a->cnt; a->rb += a->cnt;
+            while (a->cnt-- >= 0) {
+                tcg_gen_mov_i64(cpu_ra[a->ra--], cpu_rb[a->rb--]);
+            }
+        } else {
+            /* a->ra == a->rb, do nothing */
+        }
+    }
+    return true;
+}
+
+static bool trans_rg2rg(DisasContext* ctx, arg_rg2rg* a)
+{
+    return trans_rb2ra_all(ctx, a, cpu_rg, cpu_rg);
+}
+
+static bool trans_rg2rp(DisasContext* ctx, arg_rg2rp* a)
+{
+    return trans_rb2ra_all(ctx, a, cpu_rg, cpu_rp);
+}
+
+static bool trans_rg2rf(DisasContext* ctx, arg_rg2rf* a)
+{
+    return trans_rb2ra_all(ctx, a, cpu_rg, cpu_rf);
+}
+
+static bool trans_rp2rg(DisasContext* ctx, arg_rp2rg* a)
+{
+    return trans_rb2ra_all(ctx, a, cpu_rp, cpu_rg);
+}
+
+static bool trans_rp2rp(DisasContext* ctx, arg_rp2rp* a)
+{
+    return trans_rb2ra_all(ctx, a, cpu_rp, cpu_rp);
+}
+
+static bool trans_rf2rg(DisasContext* ctx, arg_rf2rg* a)
+{
+    return trans_rb2ra_all(ctx, a, cpu_rf, cpu_rg);
+}
+
+static bool trans_rf2rf(DisasContext* ctx, arg_rf2rf* a)
+{
+    return trans_rb2ra_all(ctx, a, cpu_rf, cpu_rf);
 }
 
 /* control flow instructios */
