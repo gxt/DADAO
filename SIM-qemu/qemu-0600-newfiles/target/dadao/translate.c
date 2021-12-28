@@ -533,6 +533,143 @@ static bool trans_andnw(DisasContext *ctx, arg_andnw *a)
     return true;
 }
 
+/* arithmetic instructions */
+
+static bool trans_addi(DisasContext *ctx, arg_addi *a)
+{
+    return true;
+}
+
+static bool trans_addrp(DisasContext *ctx, arg_addrp *a)
+{
+    return true;
+}
+
+static bool trans_add(DisasContext *ctx, arg_add *a)
+{
+    return true;
+}
+
+static bool trans_sub(DisasContext *ctx, arg_sub *a)
+{
+    return true;
+}
+
+static bool trans_muls(DisasContext *ctx, arg_muls *a)
+{
+    return true;
+}
+
+static bool trans_mulu(DisasContext *ctx, arg_mulu *a)
+{
+    return true;
+}
+
+static bool trans_divs(DisasContext *ctx, arg_divs *a)
+{
+    return true;
+}
+
+static bool trans_divu(DisasContext *ctx, arg_divu *a)
+{
+    return true;
+}
+
+static bool trans_cmpsi(DisasContext *ctx, arg_cmpsi *a)
+{
+    return true;
+}
+
+static bool trans_cmpui(DisasContext *ctx, arg_cmpui *a)
+{
+    return true;
+}
+
+static bool trans_cmps(DisasContext *ctx, arg_cmps *a)
+{
+    return true;
+}
+
+static bool trans_cmpu(DisasContext *ctx, arg_cmpu *a)
+{
+    return true;
+}
+
+static bool trans_and(DisasContext *ctx, arg_and *a)
+{
+    return true;
+}
+
+static bool trans_orr(DisasContext *ctx, arg_orr *a)
+{
+    return true;
+}
+
+static bool trans_xor(DisasContext *ctx, arg_xor *a)
+{
+    return true;
+}
+
+static bool trans_shlu(DisasContext *ctx, arg_shlu *a)
+{
+    return true;
+}
+
+static bool trans_shrs(DisasContext *ctx, arg_shrs *a)
+{
+    return true;
+}
+
+static bool trans_shru(DisasContext *ctx, arg_shru *a)
+{
+    return true;
+}
+
+static bool trans_exts(DisasContext *ctx, arg_exts *a)
+{
+    return true;
+}
+
+static bool trans_extz(DisasContext *ctx, arg_extz *a)
+{
+    return true;
+}
+
+static bool trans_not(DisasContext *ctx, arg_not *a)
+{
+    return true;
+}
+
+static bool trans_shlui(DisasContext *ctx, arg_shlui *a)
+{
+    return true;
+}
+
+static bool trans_shrsi(DisasContext *ctx, arg_shrsi *a)
+{
+    return true;
+}
+
+static bool trans_shrui(DisasContext *ctx, arg_shrui *a)
+{
+    return true;
+}
+
+static bool trans_extsi(DisasContext *ctx, arg_extsi *a)
+{
+    return true;
+}
+
+static bool trans_extzi(DisasContext *ctx, arg_extzi *a)
+{
+    return true;
+}
+
+static bool trans_noti(DisasContext *ctx, arg_noti *a)
+{
+    return true;
+}
+
 /* control flow instructions */
 
 static bool trans_swym(DisasContext *ctx, arg_swym *a)
