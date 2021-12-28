@@ -376,7 +376,7 @@ static bool trans_stmrr(DisasContext *ctx, arg_stmrr *a)
     return trans_stm_all(ctx, a, cpu_rr, MO_TEQ);
 }
 
-/* register copy instructions */
+/* register assignment instructions */
 
 static bool trans_rb2ra_all(DisasContext* ctx, arg_orri* a,
                             TCGv_i64* cpu_rb, TCGv_i64* cpu_ra) 
@@ -402,6 +402,27 @@ static bool trans_rb2ra_all(DisasContext* ctx, arg_orri* a,
             /* a->ra == a->rb, do nothing */
         }
     }
+    return true;
+}
+
+static bool trans_cs_all(DisasContext* ctx, arg_rrrr* a, TCGCond cond)
+{
+    TCGv_i64 zero = tcg_const_i64(0);
+    tcg_gen_movcond_i64(cond, cpu_rg[a->rga], cpu_rg[a->rgb], zero,
+                        cpu_rg[a->rgc], cpu_rg[a->rgd]);
+    tcg_temp_free_i64(zero);
+    return true;
+}
+
+static bool trans_cs_od_ev(DisasContext* ctx, arg_rrrr* a, bool is_od)
+{
+    TCGv_i64 bit0 = tcg_const_i64(1);
+    TCGv_i64 zero = tcg_const_i64(0);
+    tcg_gen_and_i64(bit0, bit0, cpu_rg[a->rgb]);
+    tcg_gen_movcond_i64(is_od ? TCG_COND_NE : TCG_COND_EQ, cpu_rg[a->rga],
+                        bit0, zero, cpu_rg[a->rgc], cpu_rg[a->rgd]);
+    tcg_temp_free_i64(bit0);
+    tcg_temp_free_i64(zero);
     return true;
 }
 
@@ -440,7 +461,47 @@ static bool trans_rf2rf(DisasContext* ctx, arg_rf2rf* a)
     return trans_rb2ra_all(ctx, a, cpu_rf, cpu_rf);
 }
 
-/* control flow instructios */
+static bool trans_csn(DisasContext *ctx, arg_csn *a)
+{
+    return trans_cs_all(ctx, a, TCG_COND_LT);
+}
+
+static bool trans_csnn(DisasContext *ctx, arg_csnn *a)
+{
+    return trans_cs_all(ctx, a, TCG_COND_GE);
+}
+
+static bool trans_csz(DisasContext *ctx, arg_csz *a)
+{
+    return trans_cs_all(ctx, a, TCG_COND_EQ);
+}
+
+static bool trans_csnz(DisasContext *ctx, arg_csnz *a)
+{
+    return trans_cs_all(ctx, a, TCG_COND_NE);
+}
+
+static bool trans_csp(DisasContext *ctx, arg_csp *a)
+{
+    return trans_cs_all(ctx, a, TCG_COND_GT);
+}
+
+static bool trans_csnp(DisasContext *ctx, arg_csnp *a)
+{
+    return trans_cs_all(ctx, a, TCG_COND_LE);
+}
+
+static bool trans_csod(DisasContext *ctx, arg_csod *a)
+{
+    return trans_cs_od_ev(ctx, a, true);
+}
+
+static bool trans_csev(DisasContext *ctx, arg_csev *a)
+{
+    return trans_cs_od_ev(ctx, a, false);
+}
+
+/* control flow instructions */
 
 static bool trans_swym(DisasContext *ctx, arg_swym *a)
 {
