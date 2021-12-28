@@ -619,6 +619,9 @@ static bool trans_divu(DisasContext *ctx, arg_divu *a)
 
 static bool trans_cmpsi(DisasContext *ctx, arg_cmpsi *a)
 {
+    if (a->rga == 0) {
+        return false;
+    }
     TCGv_i64 imm = tcg_const_i64(a->imm);
     TCGv_i64 zero = tcg_const_i64(0);
     TCGv_i64 pos = tcg_const_i64(1);
@@ -636,6 +639,9 @@ static bool trans_cmpsi(DisasContext *ctx, arg_cmpsi *a)
 
 static bool trans_cmpui(DisasContext *ctx, arg_cmpui *a)
 {
+    if (a->rga == 0) {
+        return false;
+    }
     TCGv_i64 imm = tcg_const_i64(a->imm);
     TCGv_i64 zero = tcg_const_i64(0);
     TCGv_i64 pos = tcg_const_i64(1);
@@ -653,6 +659,9 @@ static bool trans_cmpui(DisasContext *ctx, arg_cmpui *a)
 
 static bool trans_cmps(DisasContext *ctx, arg_cmps *a)
 {
+    if (a->rgb == 0) {
+        return false;
+    }
     TCGv_i64 zero = tcg_const_i64(0);
     TCGv_i64 pos = tcg_const_i64(1);
     TCGv_i64 neg = tcg_const_i64(-1);
@@ -668,6 +677,9 @@ static bool trans_cmps(DisasContext *ctx, arg_cmps *a)
 
 static bool trans_cmpu(DisasContext *ctx, arg_cmpu *a)
 {
+    if (a->rgb == 0) {
+        return false;
+    }
     TCGv_i64 zero = tcg_const_i64(0);
     TCGv_i64 pos = tcg_const_i64(1);
     TCGv_i64 neg = tcg_const_i64(-1);
@@ -683,16 +695,28 @@ static bool trans_cmpu(DisasContext *ctx, arg_cmpu *a)
 
 static bool trans_and(DisasContext *ctx, arg_and *a)
 {
+    if (a->rgb == 0) {
+        return false;
+    }
+    tcg_gen_and_i64(cpu_rg[a->rgb], cpu_rg[a->rgc], cpu_rg[a->rgd]);
     return true;
 }
 
 static bool trans_orr(DisasContext *ctx, arg_orr *a)
 {
+    if (a->rgb == 0) {
+        return false;
+    }
+    tcg_gen_or_i64(cpu_rg[a->rgb], cpu_rg[a->rgc], cpu_rg[a->rgd]);
     return true;
 }
 
 static bool trans_xor(DisasContext *ctx, arg_xor *a)
 {
+    if (a->rgb == 0) {
+        return false;
+    }
+    tcg_gen_xor_i64(cpu_rg[a->rgb], cpu_rg[a->rgc], cpu_rg[a->rgd]);
     return true;
 }
 
