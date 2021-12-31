@@ -53,7 +53,8 @@ static TCGv_i64 cpu_rf[64];
 static TCGv_i64 cpu_rr[64];
 static TCGv_i32 cpu_trap_num;
 
-#define cpu_pc cpu_rp[0]
+#define cpu_pc   cpu_rp[0]
+#define cpu_rasp cpu_rr[0]
 
 static const char *regnames[] = {
     "zero", "rg01", "rg02", "rg03", "rg04", "rg05", "rg06", "rg07",
@@ -173,7 +174,7 @@ static bool trans_ldm_all(DisasContext *ctx, arg_rrri *a,
     }
     TCGv_i64 addr = tcg_temp_new_i64();
     tcg_gen_add_i64(addr, cpu_rp[a->rp], cpu_rg[a->rg]);
-    tcg_gen_qemu_ld64(cpu_ra[a->ra], addr, ctx->mem_idx);
+    tcg_gen_qemu_ld_i64(cpu_ra[a->ra], addr, ctx->mem_idx, mop);
     while (a->cnt--) {
         tcg_gen_addi_i64(addr, addr, 1 << (mop & 3));
         tcg_gen_qemu_ld_i64(cpu_ra[++a->ra], addr, ctx->mem_idx, mop);
@@ -190,7 +191,7 @@ static bool trans_stm_all(DisasContext *ctx, arg_rrri *a,
     }
     TCGv_i64 addr = tcg_temp_new_i64();
     tcg_gen_add_i64(addr, cpu_rp[a->rp], cpu_rg[a->rg]);
-    tcg_gen_qemu_st64(cpu_ra[a->ra], addr, ctx->mem_idx);
+    tcg_gen_qemu_st_i64(cpu_ra[a->ra], addr, ctx->mem_idx, mop);
     while (a->cnt--) {
         tcg_gen_addi_i64(addr, addr, 1 << (mop & 3));
         tcg_gen_qemu_st_i64(cpu_ra[++a->ra], addr, ctx->mem_idx, mop);
@@ -823,18 +824,67 @@ static bool trans_trap(DisasContext *ctx, arg_trap *a)
     return true;
 }
 
+static void push_return_address(DisasContext *ctx)
+{
+    TCGv_i64 zero = tcg_const_local_i64(0);
+    TCGLabel* reg_ras_not_full = gen_new_label();
+    TCGLabel* rasp_set = gen_new_label();
+    tcg_gen_brcond_i64(TCG_COND_EQ, cpu_rr[1], zero, reg_ras_not_full);
+    tcg_gen_brcond_i64(TCG_COND_NE, cpu_rasp, zero, rasp_set);
+    gen_exception(DADAO_EXCP_TRIP);
+    gen_set_label(rasp_set);
+    tcg_gen_addi_i64(cpu_rasp, cpu_rasp, -8);
+    tcg_gen_qemu_st_i64(cpu_rr[1], cpu_rasp, ctx->mem_idx, MO_TEQ);
+    gen_set_label(reg_ras_not_full);
+    for (int i = 1; i < 63; ++i) {
+        tcg_gen_mov_i64(cpu_rr[i], cpu_rr[i + 1]);
+    }
+    tcg_gen_movi_i64(cpu_rr[63], ctx->base.pc_next + 4);
+    tcg_temp_free_i64(zero);
+}
+
+static void pop_return_address(DisasContext *ctx)
+{
+    TCGv_i64 zero = tcg_const_local_i64(0);
+    TCGLabel* reg_ras_not_empty = gen_new_label();
+    TCGLabel* rasp_set = gen_new_label();
+    TCGLabel* done = gen_new_label();
+    tcg_gen_brcond_i64(TCG_COND_NE, cpu_rr[63], zero, reg_ras_not_empty);
+    tcg_gen_brcond_i64(TCG_COND_NE, cpu_rasp, zero, rasp_set);
+    gen_exception(DADAO_EXCP_TRIP);
+    gen_set_label(rasp_set);
+    tcg_gen_qemu_ld_i64(cpu_pc, cpu_rasp, ctx->mem_idx, MO_TEQ);
+    for (int i = 63; i >= 1; --i) {
+        tcg_gen_addi_i64(cpu_rasp, cpu_rasp, 8);
+        tcg_gen_qemu_ld_i64(cpu_rr[i], cpu_rasp, ctx->mem_idx, MO_TEQ);
+    }
+    tcg_gen_br(done);
+    gen_set_label(reg_ras_not_empty);
+    tcg_gen_mov_i64(cpu_pc, cpu_rr[63]);
+    for (int i = 62; i >= 1; --i) {
+        tcg_gen_mov_i64(cpu_rr[i + 1], cpu_rr[i]);
+    }
+    tcg_gen_mov_i64(cpu_rr[1], zero);
+    gen_set_label(done);
+    tcg_temp_free_i64(zero);
+}
+
 static bool trans_call(DisasContext *ctx, arg_call *a)
 {
-    return true;
+    push_return_address(ctx);
+    return trans_jump(ctx, a);
 }
 
 static bool trans_callaa(DisasContext *ctx, arg_callaa *a)
 {
-    return true;
+    push_return_address(ctx);
+    return trans_jumpaa(ctx, a);
 }
 
 static bool trans_ret(DisasContext *ctx, arg_swym *a)
 {
+    pop_return_address(ctx);
+    ctx->base.is_jmp = DISAS_JUMP;
     return true;
 }
 
