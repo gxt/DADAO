@@ -44,6 +44,9 @@ typedef struct DisasContext {
     uint32_t mem_idx;
 } DisasContext;
 
+/* is_jmp field values */
+#define DISAS_JUMP DISAS_TARGET_0 
+
 static TCGv_i64 cpu_rg[64];
 static TCGv_i64 cpu_rp[64];
 static TCGv_i64 cpu_rf[64];
@@ -812,17 +815,112 @@ static bool trans_swym(DisasContext *ctx, arg_swym *a)
     return true;
 }
 
-static bool trans_ret(DisasContext *ctx, arg_swym *a)
-{
-    return true;
-}
-
 static bool trans_trap(DisasContext *ctx, arg_trap *a)
 {
     tcg_gen_movi_i32(cpu_trap_num, a->num);
     gen_exception(DADAO_EXCP_TRAP);
     ctx->base.is_jmp = DISAS_NORETURN;
     return true;
+}
+
+static bool trans_call(DisasContext *ctx, arg_call *a)
+{
+    return true;
+}
+
+static bool trans_callaa(DisasContext *ctx, arg_callaa *a)
+{
+    return true;
+}
+
+static bool trans_ret(DisasContext *ctx, arg_swym *a)
+{
+    return true;
+}
+
+static bool trans_jump(DisasContext *ctx, arg_jump *a)
+{
+    tcg_gen_movi_i64(cpu_pc, ctx->base.pc_next + a->imm * 4);
+    ctx->base.is_jmp = DISAS_JUMP;
+    return true;
+}
+
+static bool trans_jumpaa(DisasContext *ctx, arg_jumpaa *a)
+{
+    tcg_gen_movi_i64(cpu_pc, a->rpa);
+    tcg_gen_add_i64(cpu_pc, cpu_pc, cpu_rg[a->rgb]);
+    tcg_gen_addi_i64(cpu_pc, cpu_pc, a->imm * 4);
+    ctx->base.is_jmp = DISAS_JUMP;
+    return true;
+}
+
+static bool trans_br_all(DisasContext *ctx, arg_riii *a, TCGCond cond)
+{
+    TCGv_i64 zero = tcg_const_i64(0);
+    TCGv_i64 next = tcg_const_i64(ctx->base.pc_next + 4);
+    TCGv_i64 dest = tcg_const_i64(ctx->base.pc_next + a->imm * 4);
+    tcg_gen_movcond_i64(cond, cpu_pc, cpu_rg[a->rga], zero, dest, next);
+    tcg_temp_free_i64(zero);
+    tcg_temp_free_i64(next);
+    tcg_temp_free_i64(dest);
+    ctx->base.is_jmp = DISAS_JUMP;
+    return true;
+}
+
+static bool trans_br_od_ev(DisasContext* ctx, arg_riii* a, bool is_od)
+{
+    TCGv_i64 bit0 = tcg_const_i64(1);
+    TCGv_i64 zero = tcg_const_i64(0);
+    TCGv_i64 next = tcg_const_i64(ctx->base.pc_next + 4);
+    TCGv_i64 dest = tcg_const_i64(ctx->base.pc_next + a->imm * 4);
+    tcg_gen_and_i64(bit0, bit0, cpu_rg[a->rga]);
+    tcg_gen_movcond_i64(is_od ? TCG_COND_NE : TCG_COND_EQ, cpu_pc,
+                        bit0, zero, dest, next);
+    tcg_temp_free_i64(bit0);
+    tcg_temp_free_i64(zero);
+    tcg_temp_free_i64(next);
+    tcg_temp_free_i64(dest);
+    return true;
+}
+
+static bool trans_brn(DisasContext *ctx, arg_brn *a)
+{
+    return trans_br_all(ctx, a, TCG_COND_LT);
+}
+
+static bool trans_brnn(DisasContext *ctx, arg_brnn *a)
+{
+    return trans_br_all(ctx, a, TCG_COND_GE);
+}
+
+static bool trans_brz(DisasContext *ctx, arg_brz *a)
+{
+    return trans_br_all(ctx, a, TCG_COND_EQ);
+}
+
+static bool trans_brnz(DisasContext *ctx, arg_brnz *a)
+{
+    return trans_br_all(ctx, a, TCG_COND_NE);
+}
+
+static bool trans_brp(DisasContext *ctx, arg_brp *a)
+{
+    return trans_br_all(ctx, a, TCG_COND_GT);
+}
+
+static bool trans_brnp(DisasContext *ctx, arg_brnp *a)
+{
+    return trans_br_all(ctx, a, TCG_COND_LE);
+}
+
+static bool trans_brod(DisasContext *ctx, arg_brod *a)
+{
+    return trans_br_od_ev(ctx, a, true);
+}
+
+static bool trans_brev(DisasContext *ctx, arg_brev *a)
+{
+    return trans_br_od_ev(ctx, a, false);
 }
 
 static void dadao_tr_init_disas_context(DisasContextBase *dcbase, CPUState *cs)
@@ -871,6 +969,11 @@ static void dadao_tr_tb_stop(DisasContextBase *dcbase, CPUState *cs)
     DisasContext *ctx = container_of(dcbase, DisasContext, base);
 
     if (ctx->base.is_jmp == DISAS_NORETURN) {
+        return;
+    }
+
+    if (ctx->base.is_jmp == DISAS_JUMP) {
+        tcg_gen_lookup_and_goto_ptr();
         return;
     }
 
