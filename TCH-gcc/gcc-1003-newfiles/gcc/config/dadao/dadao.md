@@ -32,12 +32,6 @@
 	""
 	"orr	%0, %1, rg0")
 
-(define_expand "dd_load<mode>"
-  [(set (match_operand:QHSD 0 "rg_class_operand")
-	(match_operand:QHSD 1 "memory_operand"))]
-	""
-	{})
-
 (define_insn "dd_ld_<mode>"
   [(set (match_operand:QHSD 0 "rg_class_operand" "=  Rg,Rg,Rg")
         (match_operand:QHSD 1 "memory_operand"   "   Wi,Wz,Wg"))]
@@ -54,15 +48,9 @@
 	""
 	"setrg	rg1, %2	\;stm<bwto>	%0, %1, rg1, 0	\;")
 
-(define_expand "dd_st_<mode>_m"
-  [(set (match_operand:QHSD 0 "memory_operand")
-	(match_operand:QHSD 1 "rg_class_operand"))]
-	""
-	{})
-
-(define_insn "st<mode>_miscellaneous"
-  [(set (match_operand:QHSD 0 "memory_operand"	"= m,m,Wm")
-	(match_operand:QHSD 1 "general_operand" "  r,Rg,Rg"))]
+(define_insn "st<mode>_misc"
+  [(set (match_operand:QHSD 0 "memory_operand"	"= m,Wm")
+	(match_operand:QHSD 1 "general_operand" " Rg,Rg"))]
 	""
 	"")
 
