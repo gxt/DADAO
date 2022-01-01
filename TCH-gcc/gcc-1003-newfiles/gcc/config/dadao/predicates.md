@@ -17,6 +17,12 @@
   (and (match_code "reg")
        (match_test "REGNO_REG_CLASS (REGNO (op)) == POINTER_REGS")))
 
+(define_predicate "dd_arith_spns_op"
+  (ior	(ior	(match_operand 0 "rp_class_operand")
+		(match_operand 0 "rg_class_operand"))
+	(and	(match_code "const_int")
+		(match_test "satisfies_constraint_It(op)"))))
+
 (define_predicate "rf_class_operand"
   (match_code "reg, subreg")
 {

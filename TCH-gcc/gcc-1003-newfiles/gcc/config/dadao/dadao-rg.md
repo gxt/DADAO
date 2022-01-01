@@ -23,7 +23,7 @@
 (define_insn "adddi3"
   [(set      (match_operand:DI 0 "register_operand"	"= Rg,Rp,Rg,Rp")
     (plus:DI (match_operand:DI 1 "register_operand"	"  Rg,Rp,Rg,Rp")
-             (match_operand:DI 2 "nonmemory_operand"	"  Rg,Rg,It,It")))]
+             (match_operand:DI 2 "dd_arith_spns_op"	"  Rg,Rg,It,It")))]
 	""
 	"@
 	add	rg0, %0, %1, %2
