@@ -21,18 +21,19 @@
 ;; FIXME
 ;; Fill in the output_template & constraint forms
 (define_insn "adddi3"
-  [(set      (match_operand:DI 0 "register_operand"	"= Rg,Rg,Rp,Rp")
-    (plus:DI (match_operand:DI 1 "register_operand"	"% Rg,Rg,Rp,Rp")
-             (match_operand:DI 2 "nonmemory_operand"	"  Rg,It,It,Rg")))]
+  [(set      (match_operand:DI 0 "register_operand"	"= Rg,Rp,Rg,Rp")
+    (plus:DI (match_operand:DI 1 "register_operand"	"  Rg,Rp,Rg,Rp")
+             (match_operand:DI 2 "nonmemory_operand"	"  Rg,Rg,It,It")))]
 	""
 	"@
 	add	rg0, %0, %1, %2
-	*{	\
+	addrp	%0, %1, %2
+	* {	\
 	return (operands[1] == operands[0]) ? \"add	%0, %2	\" :	\
-					      \"add	%1, %2	\;setrg	%0, %1	\;\" ;	\
-	 }
-	swym
-	")
+					      \"add	%1, %2	\;rg2rg	%0, %1, 0	\;\" ;	}
+	* {	\
+	return (operands[1] == operands[0]) ? \"addrp	%0, %2	\" :	\
+					      \"add	%1, %2	\;rg2rp	%0, %1, 0	\;\" ;	}")
 
 ;; FIXME
 (define_insn "subdi3"
