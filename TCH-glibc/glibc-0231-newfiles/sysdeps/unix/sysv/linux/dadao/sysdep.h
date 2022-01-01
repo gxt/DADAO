@@ -14,6 +14,8 @@
 #undef	SYS_ify
 #define	SYS_ify(syscall_name)		(__NR_##syscall_name)
 
+/* INTERNAL_SYSCALL_DECL - Allows us to setup some function static
+ * value to use within the context of the syscall */
 #define	INTERNAL_SYSCALL_DECL(err)	do { } while (0)
 
 #define	INTERNAL_SYSCALL_RAW(name, err, nr, args...)		\
@@ -30,8 +32,19 @@
 		}						\
 	(long int) _sys_result; })
 
+/* Similar to INLINE_SYSCALL but we don't set errno */
 #define	INTERNAL_SYSCALL(name, err, nr, args...)		\
 	INTERNAL_SYSCALL_RAW(SYS_ify(name), err, nr, args)
+
+/* INTERNAL_SYSCALL_ERROR_P - Returns 0 if it wasn't an error, 1 otherwise
+ * You are allowed to use the syscall result (val) and the DECL error
+ * variable to determine what went wrong. */
+#define INTERNAL_SYSCALL_ERROR_P(val, err)			\
+	((unsigned long) (val) > -4096UL)
+
+/* INTERNAL_SYSCALL_ERRNO - Munges the val/err pair into the error number.
+ * In our case we just flip the sign. */
+#define INTERNAL_SYSCALL_ERRNO(val, err)	(-(val))
 
 #define LOAD_ARGS_0()
 #define ASM_ARGS_0
