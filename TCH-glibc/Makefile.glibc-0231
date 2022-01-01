@@ -44,10 +44,6 @@ glibc-0231-source:
 	@cd $(GLIBC_0231_SOURCE);						\
 		git add sysdeps/unix/sysv/linux/dadao;				\
 		git commit -sm"DADAO: add sysdeps/unix/sysv/linux/dadao"
-#	@cp -a $(GLIBC_0231_NEWFILES)/sysdeps/unix/dadao $(GLIBC_0231_SOURCE)/sysdeps/unix
-#	@cd $(GLIBC_0231_SOURCE);						\
-		git add sysdeps/unix/dadao;					\
-		git commit -sm"DADAO: add sysdeps/unix/dadao"
 	# Apply include related patches ...
 	@cd $(GLIBC_0231_SOURCE); git am $(GLIBC_0231_PATCHES)/0*.patch
 	# CONFIG: Apply config related patches ...
