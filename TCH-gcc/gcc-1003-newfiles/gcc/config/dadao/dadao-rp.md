@@ -47,22 +47,24 @@
 	"addrp	%0, %2, %1")
 
 (define_insn "dd_ld_rp"
-  [(set (match_operand:DI 0 "rp_class_operand" "= Rp,Rp,Rp")
-        (match_operand:DI 1 "memory_operand"   "  Wi,Wz,Wg"))]
+  [(set (match_operand:DI 0 "rp_class_operand" "=Rp")
+        (match_operand:DI 1 "memory_operand"   "  m"))]
 	""
-	"@
-	ldrp	%0, %1
-	ldrp	%0, %1
-	ldmrp	%0, %1, 0")
+	{
+	  if (satisfies_constraint_Wg(operands[1]))
+	  	return	"ldmrp	%0, %1, 0";
+	  return	"ldrp	%0, %1";
+	})
 
 (define_insn "dd_st_rp"
-  [(set (match_operand:DI 0 "memory_operand"	"= Wi,Wz,Wg")
-        (match_operand:DI 1 "rp_class_operand"	"  Rp,Rp,Rp"))]
+  [(set (match_operand:DI 0 "memory_operand"   "=m")
+        (match_operand:DI 1 "rp_class_operand" "Rp"))]
 	""
-	"@
-	strp	%1, %0
-	strp	%1, %0
-	stmrp	%1, %0, 0")
+	{
+	  if (satisfies_constraint_Wg(operands[0]))
+		return	"stmrp	%1, %0, 0";
+	  return	"strp	%1, %0";
+	})
 
 (define_insn "dd_st_addr"
   [(set (match_operand:DI 0 "memory_operand"   "=  m")
