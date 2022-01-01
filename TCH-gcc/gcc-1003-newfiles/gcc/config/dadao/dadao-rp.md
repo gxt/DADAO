@@ -26,18 +26,14 @@
 ;; temporary register usage has to be settled
 ;; rg6 is one temporary reg replacement
 
-(define_insn "addrp"
-  [(set      (match_operand:DI 0 "rp_class_operand"  "= Rp, Rp")
-    (plus:DI (match_operand:DI 1 "rp_class_operand"  "% Rp, Rp")
-             (match_operand:DI 2 "dd_rg_s18_operand" "  Rg, It")))]
-	""
-	"@
-	addrp	%0, %1, %2
-	*{ return (REGNO(operands[0])		\
-		== REGNO(operands[1])) ? 	\
-		\"addrp	%0, %2	\" :		\
-		\"addrp	%1, %2	\;rp2rp	%0, %1, 0	\;\";	\
-	}")
+(define_insn "addrp_lscal"
+  [(set      (match_operand:DI 0 "rp_class_operand")
+    (plus:DI (match_operand:DI 1 "rp_class_operand")
+             (match_operand:DI 2 "immediate_operand")))]
+	"!satisfies_constraint_It(operands[2])"
+	{
+	  return "setrg	rg7, %2	\;addrp	%0, %1, rg7	\;";
+	})
 
 (define_insn "addrp_ctry"
   [(set      (match_operand:DI 0 "rp_class_operand"  "=Rp")
@@ -67,7 +63,7 @@
 	})
 
 (define_insn "dd_st_addr"
-  [(set (match_operand:DI 0 "memory_operand"   "=  m")
+  [(set (match_operand:DI 0 "memory_operand")
         (plus:DI (match_operand:DI 1 "rp_class_operand"	 "Rp")
 		 (match_operand:DI 2 "dd_rg_s12_operand" "Id")))]
 	""
