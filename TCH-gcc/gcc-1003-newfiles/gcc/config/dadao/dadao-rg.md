@@ -33,7 +33,7 @@
 					      \"add	%1, %2	\;rg2rg	%0, %1, 0	\;\" ;	}
 	* {	\
 	return (operands[1] == operands[0]) ? \"addrp	%0, %2	\" :	\
-					      \"add	%1, %2	\;rg2rp	%0, %1, 0	\;\" ;	}")
+					      \"addrp	%1, %2	\;rp2rp	%0, %1, 0	\;\" ;	}")
 
 ;; FIXME
 (define_insn "subdi3"
@@ -43,7 +43,7 @@
 	""
 	"@
 	sub	rg0, %0, %1, %2
-	setrg	rg1, %2	\;sub	rg0, %0, %1, rg1	\;")
+	setrg	rg7, %2	\;sub	rg0, %0, %1, rg7	\;")
 
 (define_insn "muldi3"
   [(set      (match_operand:DI 0 "rg_class_operand" "= Rg")
