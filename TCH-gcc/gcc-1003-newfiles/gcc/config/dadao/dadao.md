@@ -42,33 +42,26 @@
 	* { return GET_MODE (operands[1]) == DImode ? \"ldmo	%0, %1, 0\" : \"ldm<bwto>u	%0, %1, 0\"; }")
 
 (define_insn "dd_st_<mode>"
-  [(set	(plus:QHSD (match_operand:QHSD 1 "rp_class_operand"  "Rp")
-		   (match_operand:QHSD 2 "immediate_operand" "i"))
-	(match_operand:QHSD 0 "rg_class_operand" "Rg"))]
+  [(set (match_operand:QHSD 0 "memory_operand"	"=m")
+	(match_operand:QHSD 1 "rg_class_operand" "Rg"))]
 	""
-	"setrg	rg1, %2	\;stm<bwto>	%0, %1, rg1, 0	\;")
+	{
+	  if (satisfies_constraint_Wg (operands[0]))
+	    return "stm<bwto>	%1, %0, 0";
+	  return "st<bwto>	%1, %0";
+	})
 
-(define_insn "st<mode>_misc"
-  [(set (match_operand:QHSD 0 "memory_operand"	"= m,Wm")
-	(match_operand:QHSD 1 "general_operand" " Rg,Rg"))]
+(define_insn "*dd_st<mode>_M2M"
+  [(set (match_operand:QHSD 0 "memory_operand" "=m")
+	(match_operand:QHSD 1 "memory_operand" " m"))]
 	""
 	"")
 
-(define_insn "dd_st<mode>_m2m"
-  [(set (match_operand:QHSD 0 "memory_operand" "= Wi,Wz,Wg,m,m,m,m")
-	(match_operand:QHSD 1 "memory_operand" "  m,m,m,m,Wi,Wz,Wg"))]
-	"!reload_completed"
+(define_insn "*dd_st<mode>_I2M"
+  [(set (match_operand:QHSD 0 "memory_operand"	  "=m")
+	(match_operand:QHSD 1 "immediate_operand" " i"))]
+	""
 	"")
-
-(define_insn "dd_st<mode>_i2m"
-  [(set (match_operand:QHSD 0 "memory_operand"	  "= Wi,Wz,Wg, m")
-	(match_operand:QHSD 1 "immediate_operand" "   i, i, i, i"))]
-	"!reload_completed"
-	"@
-	setrg	rg1, %1	\;st<bwto>	rg1, %0
-	setrg   rg1, %1 \;st<bwto>	rg1, %0
-	setrg   rg1, %1 \;stm<bwto>	rg1, %0, 0
-	swym")
 
 (define_expand "call"
   [(parallel [(call (match_operand 0 "memory_operand" "")
