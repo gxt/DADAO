@@ -72,13 +72,6 @@ glibc-0231-build-new:
 			--with-headers=$(DIR_DADAO_TARGET)/usr/include		\
 			libc_cv_forced_unwind=yes				\
 			libc_cv_c_cleanup=yes
-	# Update syscall lists
-	@touch $(GLIBC_0231_SOURCE)/sysdeps/unix/sysv/linux/dadao/arch-syscall.h
-	@PATH=$(GLIBC_0231_PATH) make -C $(GLIBC_0231_BUILD) update-syscall-lists
-	@cd $(GLIBC_0231_SOURCE);						\
-		git add sysdeps/unix/sysv/linux/dadao/arch-syscall.h;		\
-		git commit -sm"DADAO: sysdeps/unix/sysv/linux/dadao/arch-syscall.h"
-
 glibc-0231-build:
 	@PATH=$(GLIBC_0231_PATH) make -C $(GLIBC_0231_BUILD) -j8
 
@@ -101,3 +94,12 @@ glibc-0231-highfive:
 	# 5. Install glibc ...
 	@make -s glibc-0231-install			1>> $(GLIBC_0231_LOG_STDOUT) 2>> $(GLIBC_0231_LOG_STDERR)
 	# BUILD glibc-0231 DONE!
+
+glibc-0231-update-syscall-lists:
+	# @touch $(GLIBC_0231_SOURCE)/sysdeps/unix/sysv/linux/dadao/arch-syscall.h
+	@test -f $(GLIBC_0231_BUILD)/Makefile || make -s -C $(DIR_DADAO_TOP) glibc-$(VER_GLIBC)-build-new
+	@PATH=$(GLIBC_0231_PATH) make -C $(GLIBC_0231_BUILD) update-syscall-lists
+	@cd $(GLIBC_0231_SOURCE);						\
+		git diff
+	@echo "If DIFF, update arch-syscall.h file!"
+
