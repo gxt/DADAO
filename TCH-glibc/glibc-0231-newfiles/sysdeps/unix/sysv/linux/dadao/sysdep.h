@@ -45,6 +45,19 @@
 
 #else	/* __ASSEMBLER__ */
 
+/* In order to get __set_errno() definition in INLINE_SYSCALL.  */
+#include <errno.h>
+
+/* Define a macro which expands into the inline wrapper code for a system call. */
+#undef	INLINE_SYSCALL
+#define	INLINE_SYSCALL(name, nr, args...)	({				\
+	unsigned long __sys_res = INTERNAL_SYSCALL (name, , nr, args);		\
+	if (__glibc_unlikely (INTERNAL_SYSCALL_ERROR_P (__sys_res, ))) {	\
+		__set_errno (INTERNAL_SYSCALL_ERRNO (__sys_res, ));		\
+		__sys_res = (unsigned long) -1;					\
+	}									\
+	(long) __sys_res; })
+
 /* INTERNAL_SYSCALL_DECL - Allows us to setup some function static
  * value to use within the context of the syscall */
 #define	INTERNAL_SYSCALL_DECL(err)	do { } while (0)
