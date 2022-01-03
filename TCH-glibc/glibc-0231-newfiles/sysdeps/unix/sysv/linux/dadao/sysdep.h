@@ -14,6 +14,37 @@
 #undef	SYS_ify
 #define	SYS_ify(syscall_name)		(__NR_##syscall_name)
 
+#ifdef	__ASSEMBLER__
+
+#define __DO_SYSCALL(syscall_name, args)			\
+	trap	cp0, SYS_ify(syscall_name)
+
+#define PSEUDO(name, syscall_name, args)			\
+	.text;							\
+	ENTRY (name);						\
+	__DO_SYSCALL (syscall_name, args);
+/* FIXME: error handler should be here */
+
+#undef	PSEUDO_END
+#define PSEUDO_END(name)					\
+	END (name);
+
+#define PSEUDO_NOERRNO(name, syscall_name, args)		\
+	.text;							\
+	ENTRY (name);						\
+	__DO_SYSCALL (syscall_name, args);
+
+#undef	PSEUDO_END_NOERRNO
+#define PSEUDO_END_NOERRNO(name)				\
+	END (name);
+
+#define ret_NOERRNO		ret
+
+#define	PSEUDO_ERRVAL		.error NOT support PSEUDO_ERRVAL
+#define	ret_ERRVAL		ret
+
+#else	/* __ASSEMBLER__ */
+
 /* INTERNAL_SYSCALL_DECL - Allows us to setup some function static
  * value to use within the context of the syscall */
 #define	INTERNAL_SYSCALL_DECL(err)	do { } while (0)
@@ -83,5 +114,7 @@
 	register long _a7 asm ("rg22") = (long) (a7);		\
 	LOAD_ARGS_6 (a1, a2, a3, a4, a5, a6)
 #define ASM_ARGS_7		ASM_ARGS_6, "r" (_a7)
+
+#endif	/* __ASSEMBLER__ */
 
 #endif /* _SYSDEPS_LINUX_DADAO_SYSDEP_H_ */
