@@ -154,12 +154,12 @@ _start:
 	# 0110-0xxx
 	jump	_start
 	call	rb1, rd2, 3
-	ldmrb	ra1, rb2, rd3, 4
+	ldmra	ra1, rb2, rd3, 4
 	# 0110-1xxx
 	call	_start
 	call	rb1, rd2, 3
 	ret
-	stmrb	ra1, rb2, rd3, 4
+	stmra	ra1, rb2, rd3, 4
 	# 0111-0xxx
 	trap	cp0, 1
 	cpcoop	cp1, 2
