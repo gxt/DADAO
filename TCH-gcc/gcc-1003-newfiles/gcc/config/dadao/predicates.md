@@ -31,27 +31,27 @@
        (match_test "REGNO_REG_CLASS (REGNO (op)) == RETURN_REGS")))
 
 ;; TODO: ri add shift-imm handler
-(define_predicate "dd_rg_u12_operand"
+(define_predicate "dd_rd_u12_operand"
   (ior (match_operand 0 "rd_class_operand")
        (and (match_code "const_int")
             (match_test "satisfies_constraint_Jd(op)"))))
 
-(define_predicate "dd_rg_s12_operand"
+(define_predicate "dd_rd_s12_operand"
   (ior (match_operand 0 "rd_class_operand")
        (and (match_code "const_int")
             (match_test "satisfies_constraint_Id(op)"))))
 
-(define_predicate "dd_rg_s18_operand"
+(define_predicate "dd_rd_s18_operand"
   (ior (match_operand 0 "rd_class_operand")
        (and (match_code "const_int")
             (match_test "satisfies_constraint_It(op)"))))
 
-(define_predicate "dd_rg_u18_operand"
+(define_predicate "dd_rd_u18_operand"
   (ior (match_operand 0 "rd_class_operand")
        (and (match_code "const_int")
             (match_test "satisfies_constraint_Jt(op)"))))
 
-(define_predicate "dd_rg_u6_operand"
+(define_predicate "dd_rd_u6_operand"
   (ior (match_operand 0 "rd_class_operand")
        (and (match_code "const_int")
             (match_test "satisfies_constraint_Js(op)"))))

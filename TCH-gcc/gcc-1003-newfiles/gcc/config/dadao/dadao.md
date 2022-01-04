@@ -51,7 +51,7 @@
           }
 	  if (REG_P (operands[0]) && REGNO_REG_CLASS (REGNO(operands[0])) == GENERAL_REGS &&
 	      REG_P (operands[1]) && REGNO_REG_CLASS (REGNO(operands[1])) == GENERAL_REGS)
-		return "orr	%0, %1, rg0";
+		return "orr	%0, %1, rd0";
 	})
 
 (define_expand "call"
@@ -175,11 +175,9 @@
 (define_insn "indirect_jump"
   [(set (pc) (match_operand 0 "address_operand" "p"))]
   "" "")
-;	"jump	rg63, %a0")
 
 ;; FIXME: This is just a jump, and should be expanded to one.
 (define_insn "tablejump"
   [(set (pc) (match_operand:DI 0 "address_operand" "p"))
    (use (label_ref (match_operand 1 "" "")))]
   "" "")
-;	"jump	rg63, %a0")

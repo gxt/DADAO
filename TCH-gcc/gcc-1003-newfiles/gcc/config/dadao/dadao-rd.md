@@ -6,7 +6,7 @@
 
 (define_insn "<code>di3"
   [(set          (match_operand:DI 0 "rd_class_operand" "=   Rd")
-    (RG_ARITH:DI (match_operand:DI 1 "rd_class_operand" "%   Rd")
+    (RD_ARITH:DI (match_operand:DI 1 "rd_class_operand" "%   Rd")
                  (match_operand:DI 2 "rd_class_operand" "    Rd")))]
 	""
 	"<rd_arith_insn>	%0, %1, %2")
@@ -68,7 +68,7 @@
 
 (define_insn "<rd_shift_name>di3"
   [(set          (match_operand:DI 0 "rd_class_operand" "=   Rd")
-    (RG_SHIFT:DI (match_operand:DI 1 "rd_class_operand" "    Rd")
+    (RD_SHIFT:DI (match_operand:DI 1 "rd_class_operand" "    Rd")
                  (match_operand:DI 2 "dd_rd_u6_operand" "  JsRd")))]
 	""
 	"<rd_shift_insn>	%0, %1, %2")

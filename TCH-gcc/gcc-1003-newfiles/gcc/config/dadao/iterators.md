@@ -10,12 +10,12 @@
 (define_mode_iterator	SFDF		[SF DF])
 (define_mode_attr	ftfo		[(SF "ft") (DF "fo")])
 
-(define_code_iterator	RG_ARITH	[and ior xor])
-(define_code_attr	rg_arith_insn	[(and "and") (ior "orr") (xor "xor")])
+(define_code_iterator	RD_ARITH	[and ior xor])
+(define_code_attr	rd_arith_insn	[(and "and") (ior "orr") (xor "xor")])
 
-(define_code_iterator	RG_SHIFT	[ashift ashiftrt lshiftrt])
-(define_code_attr	rg_shift_name	[(ashift "ashl") (ashiftrt "ashr") (lshiftrt "lshr")])
-(define_code_attr	rg_shift_insn	[(ashift "shlu")  (ashiftrt "shrs")   (lshiftrt "shru")])
+(define_code_iterator	RD_SHIFT	[ashift ashiftrt lshiftrt])
+(define_code_attr	rd_shift_name	[(ashift "ashl") (ashiftrt "ashr") (lshiftrt "lshr")])
+(define_code_attr	rd_shift_insn	[(ashift "shlu")  (ashiftrt "shrs")   (lshiftrt "shru")])
 
 (define_mode_iterator	CC_ANY		[CCSS CCUU CCFF])
 

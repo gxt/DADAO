@@ -8,22 +8,22 @@
 ;; conversion to double.
 
 (define_insn "mov_rr_ft"
-  [(set (match_operand:SI 0 "register_operand" "= Rf, Rg")
-        (match_operand:SI 1 "register_operand" "  Rg, Rf"))]
+  [(set (match_operand:SI 0 "register_operand" "= Rf, Rd")
+        (match_operand:SI 1 "register_operand" "  Rd, Rf"))]
 	"REGNO_REG_CLASS(REGNO(operands[0])) == FLOATING_REGS ||
 	 REGNO_REG_CLASS(REGNO(operands[1])) == FLOATING_REGS"
 	"@
-	rg2rf	%0, %1, 0
-	rf2rg	%0, %1, 0")
+	rd2rf	%0, %1, 0
+	rf2rd	%0, %1, 0")
 
 (define_insn "mov_rr_fo"
-  [(set (match_operand:DI 0 "register_operand" "= Rf, Rg")
-        (match_operand:DI 1 "register_operand" "  Rg, Rf"))]
+  [(set (match_operand:DI 0 "register_operand" "= Rf, Rd")
+        (match_operand:DI 1 "register_operand" "  Rd, Rf"))]
 	"REGNO_REG_CLASS(REGNO(operands[0])) == FLOATING_REGS ||
 	 REGNO_REG_CLASS(REGNO(operands[1])) == FLOATING_REGS"
 	"@
-	rg2rf	%0, %1, 0
-	rf2rg	%0, %1, 0")
+	rd2rf	%0, %1, 0
+	rf2rd	%0, %1, 0")
 
 (define_insn "dd_st<mode>"
   [(set (match_operand:SFDF 0 "memory_operand"	 "= Wi,Wz,Wg")
@@ -45,33 +45,33 @@
 	(match_operand:SFDF 1 "immediate_operand" "   i, i, i"))]
 	"!reload_completed"
 	"@
-	setrg	rg1, %1	\;rg2rf	rf1, rg1, 0	\;st<ftfo>	rf1, %0
-	setrg   rg1, %1 \;rg2rf rf1, rg1, 0	\;st<ftfo>	rf1, %0
-	setrg   rg1, %1 \;rg2rf rf1, rg1, 0	\;stm<ftfo>	rf1, %0, 0")
+	setrd	rd1, %1	\;rd2rf	rf1, rd1, 0	\;st<ftfo>	rf1, %0
+	setrd   rd1, %1 \;rd2rf rf1, rd1, 0	\;st<ftfo>	rf1, %0
+	setrd   rd1, %1 \;rd2rf rf1, rd1, 0	\;stm<ftfo>	rf1, %0, 0")
 
 (define_insn "dd_ld<mode>"
-  [(set (match_operand:SFDF 0 "register_operand" "= Rg,Rf")
+  [(set (match_operand:SFDF 0 "register_operand" "= Rd,Rf")
 	(match_operand:SFDF 1 "memory_operand"))]
 	""
 	"")
 
 (define_insn "mov<mode>imm"
-  [(set (match_operand:SFDF 0 "register_operand" "= Rf,Rg")
+  [(set (match_operand:SFDF 0 "register_operand" "= Rf,Rd")
 	(match_operand:SFDF 1 "const_double_operand"))]
 	""
 	"@
-	setrg	rg1, %1\;rg2rf	%0, rg1, 0
-	setrg	%0, %1")
+	setrd	rd1, %1\;rd2rf	%0, rd1, 0
+	setrd	%0, %1")
 
 ; TODO
 (define_insn "mov<mode>"
-  [(set (match_operand:SFDF 0 "nonimmediate_operand" "= Rg,Rg,Rf,Wi,Wz,Wg")
-	(match_operand:SFDF 1 "general_operand"      "  Rg,Rf,Rg,Rg,Rg,Rg"))]
+  [(set (match_operand:SFDF 0 "nonimmediate_operand" "= Rd,Rd,Rf,Wi,Wz,Wg")
+	(match_operand:SFDF 1 "general_operand"      "  Rd,Rf,Rd,Rd,Rd,Rd"))]
 	""
 	"@
-	orr	%0, %1, rg0
-	rf2rg	%0, %1, 0
-	rg2rf	%0, %1, 0
+	orr	%0, %1, rd0
+	rf2rd	%0, %1, 0
+	rd2rf	%0, %1, 0
 	sto	%1, %0
 	sto	%1, %0
 	stmo	%1, %0, 0")
@@ -124,24 +124,24 @@
 
 (define_insn "floatdi<mode>2"
   [(set         (match_operand:SFDF 0 "rf_class_operand" "= Rf")
-    (float:SFDF (match_operand:DI   1 "rg_class_operand" "  Rg")))]
+    (float:SFDF (match_operand:DI   1 "rd_class_operand" "  Rd")))]
 	"" "")
 ;	"<ftfo>_i2f	%1, %0")
 
 (define_insn "floatundi<mode>2"
   [(set                  (match_operand:SFDF 0 "rf_class_operand" "= Rf")
-    (unsigned_float:SFDF (match_operand:DI   1 "rg_class_operand" "  Rg")))]
+    (unsigned_float:SFDF (match_operand:DI   1 "rd_class_operand" "  Rd")))]
 	"" "")
 ;	"<ftfo>_u2f	%1, %0")
 
 (define_insn "fix<mode>di2"
-  [(set     (match_operand:DI   0 "rg_class_operand" "= Rg")
+  [(set     (match_operand:DI   0 "rd_class_operand" "= Rd")
     (fix:DI (match_operand:SFDF 1 "rf_class_operand" "  Rf")))]
 	"" "")
 ;	"<ftfo>_f2i	%0, %1")
 
 (define_insn "fix<mode>undi2"
-  [(set              (match_operand:DI   0 "rg_class_operand" "= Rg")
+  [(set              (match_operand:DI   0 "rd_class_operand" "= Rd")
     (unsigned_fix:DI (match_operand:SFDF 1 "rf_class_operand" "  Rf")))]
 	"" "")
 ;	"<ftfo>_f2u	%0, %1")
@@ -159,7 +159,7 @@
 	"ft2fo	%0, %1, 0")
 
 (define_insn "*fcmp_<ccff_type_insn>_<mode>"
-  [(set             (match_operand:CCFF 0 "rg_class_operand" "= Rg")
+  [(set             (match_operand:CCFF 0 "rd_class_operand" "= Rd")
     (CCFF_TYPE:CCFF (match_operand:SFDF 1 "rf_class_operand" "  Rf")
                     (match_operand:SFDF 2 "rf_class_operand" "  Rf")))]
 	""
@@ -169,11 +169,11 @@
   [(set (pc)
     (if_then_else
       (match_operator 1 "ccff_comparison_operator"
-        [(match_operand:CCFF 2 "rg_class_operand" "Rg") (const_int 0)])
+        [(match_operand:CCFF 2 "rd_class_operand" "Rd") (const_int 0)])
       (label_ref (match_operand 0 "" ""))
       (pc)))]
 	""
-	"brp	%2, %0")
+	"brb	%2, %0")
 
 (define_expand "cbranch<mode>4"
   [(set (match_dup 4)
