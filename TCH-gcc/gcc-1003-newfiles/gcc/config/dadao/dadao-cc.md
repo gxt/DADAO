@@ -12,14 +12,14 @@
 ;; we treat them as signed entities; see dadao-modes.def.  The following
 ;; expanders should cover all MODE_CC modes, and expand for this pattern.
 (define_insn "*movcc_expanded"
-  [(set (match_operand 0 "nonimmediate_operand" "=Rg,Rp,Rg,Rg,m")
-	(match_operand 1 "nonimmediate_operand"  "Rg,Rg,Rp,m,Rg"))]
+  [(set (match_operand 0 "nonimmediate_operand" "=Rd,Rb,Rd,Rd,m")
+	(match_operand 1 "nonimmediate_operand"  "Rd,Rd,Rb,m,Rd"))]
 	"GET_MODE_CLASS (GET_MODE (operands[0])) == MODE_CC
 		&& GET_MODE_CLASS (GET_MODE (operands[1])) == MODE_CC"
 	"@
-	orr	%0, %1, rg0
-	rg2rp	%0, %1, 0
-	rp2rg	%0, %1, 0
+	orr	%0, %1, rd0
+	rd2rb	%0, %1, 0
+	rb2rd	%0, %1, 0
 	ldtu	%0, %1
 	stt	%1, %0")
 
@@ -30,32 +30,32 @@
 	"")
 
 (define_insn "*cmpss"
-  [(set           (match_operand:CCSS 0 "rg_class_operand"  "=   Rg")
-    (compare:CCSS (match_operand:DI   1 "rg_class_operand"  "    Rg")
-                  (match_operand:DI   2 "dd_rg_s12_operand" "  IdRg")))]
+  [(set           (match_operand:CCSS 0 "rd_class_operand"  "=   Rd")
+    (compare:CCSS (match_operand:DI   1 "rd_class_operand"  "    Rd")
+                  (match_operand:DI   2 "dd_rd_s12_operand" "  IdRd")))]
 	""
 	"cmps	%0, %1, %2")
 
 (define_insn "*cmpss2"
-  [(set           (match_operand:CCSS 0 "rg_class_operand"  "= Rg")
-    (compare:CCSS (match_operand:DI   1 "rg_class_operand"  "  Rg")
+  [(set           (match_operand:CCSS 0 "rd_class_operand"  "= Rd")
+    (compare:CCSS (match_operand:DI   1 "rd_class_operand"  "  Rd")
                   (match_operand:DI   2 "const_int_operand" "   i")))]
 	""
-	"setrg	rg1, %2	\;	cmps	%0, %1, rg1")
+	"setrd	rd1, %2	\;	cmps	%0, %1, rd1")
 
 (define_insn "*cmpuu"
-  [(set           (match_operand:CCUU 0 "rg_class_operand"  "=   Rg")
-    (compare:CCUU (match_operand:DI   1 "rg_class_operand"  "    Rg")
-                  (match_operand:DI   2 "dd_rg_u12_operand" "  JdRg")))]
+  [(set           (match_operand:CCUU 0 "rd_class_operand"  "=   Rd")
+    (compare:CCUU (match_operand:DI   1 "rd_class_operand"  "    Rd")
+                  (match_operand:DI   2 "dd_rd_u12_operand" "  JdRd")))]
 	""
 	"cmpu	%0, %1, %2")
 
 (define_expand "movdicc"
   [(set (match_dup 4) (match_dup 5))
-   (set              (match_operand:DI 0 "rg_class_operand" "")
+   (set              (match_operand:DI 0 "rd_class_operand" "")
     (if_then_else:DI (match_operand    1 "ordered_comparison_operator" "")
-                     (match_operand:DI 2 "rg_class_operand" "")
-                     (match_operand:DI 3 "rg_class_operand" "")))]
+                     (match_operand:DI 2 "rd_class_operand" "")
+                     (match_operand:DI 3 "rd_class_operand" "")))]
 	""
 {
 	enum rtx_code code = GET_CODE (operands[1]);
@@ -74,27 +74,27 @@
 })
 
 (define_insn "*movdicc_<ccss_type_insn>"
-  [(set (match_operand:DI            0 "rg_class_operand" "= Rg")
+  [(set (match_operand:DI            0 "rd_class_operand" "= Rd")
     (if_then_else:DI
-      (CCSS_TYPE (match_operand:CCSS 1 "rg_class_operand" "  Rg") (const_int 0))
-      (match_operand:DI              2 "rg_class_operand" "  Rg")
-      (match_operand:DI              3 "rg_class_operand" "  Rg")))]
+      (CCSS_TYPE (match_operand:CCSS 1 "rd_class_operand" "  Rd") (const_int 0))
+      (match_operand:DI              2 "rd_class_operand" "  Rd")
+      (match_operand:DI              3 "rd_class_operand" "  Rd")))]
 	""
 	"cs<ccss_type_insn>	%0, %1, %2, %3")
 
 (define_insn "*movdicc_<ccuu_type_insn>"
-  [(set (match_operand:DI            0 "rg_class_operand" "= Rg")
+  [(set (match_operand:DI            0 "rd_class_operand" "= Rd")
     (if_then_else:DI
-      (CCUU_TYPE (match_operand:CCUU 1 "rg_class_operand" "  Rg") (const_int 0))
-      (match_operand:DI              2 "rg_class_operand" "  Rg")
-      (match_operand:DI              3 "rg_class_operand" "  Rg")))]
+      (CCUU_TYPE (match_operand:CCUU 1 "rd_class_operand" "  Rd") (const_int 0))
+      (match_operand:DI              2 "rd_class_operand" "  Rd")
+      (match_operand:DI              3 "rd_class_operand" "  Rd")))]
 	""
 	"cs<ccuu_type_insn>	%0, %1, %2, %3")
 
 (define_expand "cbranchdi4"
   [(set (match_dup 4)
-        (match_op_dup 5 [(match_operand:DI 1 "rg_class_operand" "")
-                         (match_operand:DI 2 "dd_rg_u12_operand" "")]))
+        (match_op_dup 5 [(match_operand:DI 1 "rd_class_operand" "")
+                         (match_operand:DI 2 "dd_rd_u12_operand" "")]))
    (set (pc)
      (if_then_else (match_operator 0 "ordered_comparison_operator" [(match_dup 4) (const_int 0)])
                    (label_ref (match_operand 3 "" ""))
@@ -115,7 +115,7 @@
 (define_insn "*br_ss_<ccss_type_insn>"
   [(set (pc)
     (if_then_else
-      (CCSS_TYPE (match_operand:CCSS 1 "rg_class_operand" "Rg") (const_int 0))
+      (CCSS_TYPE (match_operand:CCSS 1 "rd_class_operand" "Rd") (const_int 0))
       (label_ref (match_operand 0 "" ""))
       (pc)))]
 	""
@@ -124,7 +124,7 @@
 (define_insn "*br_uu_<ccuu_type_insn>"
   [(set (pc)
     (if_then_else
-      (CCUU_TYPE (match_operand:CCUU 1 "rg_class_operand" "Rg") (const_int 0))
+      (CCUU_TYPE (match_operand:CCUU 1 "rd_class_operand" "Rd") (const_int 0))
       (label_ref (match_operand 0 "" ""))
       (pc)))]
 	""

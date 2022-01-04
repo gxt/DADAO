@@ -1,77 +1,77 @@
 ;; vim: filetype=lisp
 
-;; GCC machine description for DADAO rp class
+;; GCC machine description for DADAO rb class
 ;; Copyright (C) 2020-2033 Guan Xuetao (AT) Peking Univ.
 ;; Contributed by Guan Xuetao <gxt@pku.edu.cn>
 
-(define_insn "mov_rp2rp"
-  [(set (match_operand:DI 0 "rp_class_operand" "= Rp")
-        (match_operand:DI 1 "rp_class_operand" "  Rp"))]
+(define_insn "mov_rb2rb"
+  [(set (match_operand:DI 0 "rb_class_operand" "= Rb")
+        (match_operand:DI 1 "rb_class_operand" "  Rb"))]
 	""
-	"rp2rp	%0, %1, 0")
+	"rb2rb	%0, %1, 0")
 
-(define_insn "mov_rg2rp"
-  [(set (match_operand:DI 0 "rp_class_operand" "= Rp")
-        (match_operand:DI 1 "rg_class_operand" "  Rg"))]
+(define_insn "mov_rd2rb"
+  [(set (match_operand:DI 0 "rb_class_operand" "= Rb")
+        (match_operand:DI 1 "rd_class_operand" "  Rd"))]
 	""
-	"rg2rp	%0, %1, 0")
+	"rd2rb	%0, %1, 0")
 
-(define_insn "mov_rp2rg"
-  [(set (match_operand:DI 0 "rg_class_operand" "= Rg")
-        (match_operand:DI 1 "rp_class_operand" "  Rp"))]
+(define_insn "mov_rb2rd"
+  [(set (match_operand:DI 0 "rd_class_operand" "= Rd")
+        (match_operand:DI 1 "rb_class_operand" "  Rb"))]
 	""
-	"rp2rg	%0, %1, 0")
+	"rb2rd	%0, %1, 0")
 
-(define_insn "addrp"
-  [(set      (match_operand:DI 0 "rp_class_operand" "=Rp")
-    (plus:DI (match_operand:DI 1 "rp_class_operand" "%Rp")
-             (match_operand:DI 2 "dd_rg_s18_operand")))]
+(define_insn "addrb"
+  [(set      (match_operand:DI 0 "rb_class_operand" "=Rb")
+    (plus:DI (match_operand:DI 1 "rb_class_operand" "%Rb")
+             (match_operand:DI 2 "dd_rd_s18_operand")))]
 	""
 	{
 	  if (!satisfies_constraint_It(operands[2]))
-	    return "addrp	%0, %1, %2";
+	    return "addrb	%0, %1, %2";
 	  else
 	    if (REGNO(operands[0]) == REGNO(operands[1]))
-		 return "addrp	%1, %2";
-	    else return "addrp	%0, %2	\;addrp	%0, %1, rg0	\;";
+		 return "addrb	%1, %2";
+	    else return "addrb	%0, %2	\;addrb	%0, %1, rd0	\;";
 	})
 
-(define_insn "addrp_large_scale"
-  [(set      (match_operand:DI 0 "rp_class_operand"  "= Rp")
-    (plus:DI (match_operand:DI 1 "rp_class_operand"  "% Rp")
+(define_insn "addrb_larde_scale"
+  [(set      (match_operand:DI 0 "rb_class_operand"  "= Rb")
+    (plus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb")
              (match_operand:DI 2 "immediate_operand" "  i")))]
 	""
-	"setrp	%0, %2	\;addrp	%0, %1, rg0	\;")
+	"setrb	%0, %2	\;addrb	%0, %1, rd0	\;")
 
-(define_insn "addrp_ctry"
-  [(set      (match_operand:DI 0 "rp_class_operand"  "=Rp")
-    (plus:DI (match_operand:DI 1 "rg_class_operand"  "%Rg")
-             (match_operand:DI 2 "rp_class_operand"  " Rp")))]
+(define_insn "addrb_ctry"
+  [(set      (match_operand:DI 0 "rb_class_operand"  "=Rb")
+    (plus:DI (match_operand:DI 1 "rd_class_operand"  "%Rd")
+             (match_operand:DI 2 "rb_class_operand"  " Rb")))]
 	""
-	"addrp	%0, %2, %1")
+	"addrb	%0, %2, %1")
 
-(define_insn "dd_ld_rp"
-  [(set (match_operand:DI 0 "rp_class_operand")
+(define_insn "dd_ld_rb"
+  [(set (match_operand:DI 0 "rb_class_operand")
         (match_operand:DI 1 "memory_operand" "Wi,Wz,Wg"))]
 	""
 	"@
-	ldrp	%0, %1
-	ldrp	%0, %1
-	ldmrp	%0, %1, 0")
+	ldrb	%0, %1
+	ldrb	%0, %1
+	ldmrb	%0, %1, 0")
 
-(define_insn "dd_st_rp"
+(define_insn "dd_st_rb"
   [(set (match_operand:DI 0 "memory_operand" "=Wi,Wz,Wg")
-        (match_operand:DI 1 "rp_class_operand"))]
+        (match_operand:DI 1 "rb_class_operand"))]
 	""
 	"@
-	strp	%1, %0
-	strp	%1, %0
-	stmrp	%1, %0, 0")
+	strb	%1, %0
+	strb	%1, %0
+	stmrb	%1, %0, 0")
 
 (define_expand "store_address"
   [(set      (match_operand:DI 0 "memory_operand"    "=m")
-    (plus:DI (match_operand:DI 1 "rp_class_operand"  "Rp")
-             (match_operand:DI 2 "dd_rg_s12_operand" "Id")))]
+    (plus:DI (match_operand:DI 1 "rb_class_operand"  "Rb")
+             (match_operand:DI 2 "dd_rd_s12_operand" "Id")))]
 	""
 	"{
 	  if (satisfies_constraint_It(operands[2])) {
@@ -84,53 +84,53 @@
 ; Only used in optimization
 (define_insn "dd_store_address"
   [(set      (match_operand:DI 0 "memory_operand"    "=m")
-    (plus:DI (match_operand:DI 1 "rp_class_operand"  "Rp")
-	     (match_operand:DI 2 "dd_rg_s12_operand" "Id")))
+    (plus:DI (match_operand:DI 1 "rb_class_operand"  "Rb")
+	     (match_operand:DI 2 "dd_rd_s12_operand" "Id")))
 	(clobber (reg:DI 71))]
 	""
-	"addrp	rp7, %1, rg0	\;addrp	rp7, %2	\;strp	rp7, %0	\;")
+	"addrb	rb7, %1, rd0	\;addrb	rb7, %2	\;strb	rb7, %0	\;")
 
 (define_insn "dd_get_offset"
-  [(set (match_operand:DI 0 "rg_class_operand")
+  [(set (match_operand:DI 0 "rd_class_operand")
         (match_operand:DI 1 "immediate_operand"))]
 	""
-	"setrg	%0, %1")
+	"setrd	%0, %1")
 
 (define_insn "dd_get_addr"
-  [(set (match_operand:DI 0 "rp_class_operand")
+  [(set (match_operand:DI 0 "rb_class_operand")
         (match_operand:DI 1 "immediate_operand"))]
 	""
-	"setrp	%0, %1")
+	"setrb	%0, %1")
 
-(define_expand "dd_plus_rp"
-  [(set      (match_operand:DI 0 "rg_class_operand")
-    (plus:DI (match_operand:DI 1 "rp_class_operand")
+(define_expand "dd_plus_rb"
+  [(set      (match_operand:DI 0 "rd_class_operand")
+    (plus:DI (match_operand:DI 1 "rb_class_operand")
              (match_operand:DI 2 "nonmemory_operand")))]
 	""
 	"{
 	  if (satisfies_constraint_It(operands[2]) ||
 	     (REG_P (operands[2]) &&
 	      REGNO_REG_CLASS(REGNO(operands[2])) == GENERAL_REGS))
-	    emit_insn (gen_addrp2rg (operands[0], operands[1], operands[2]));
+	    emit_insn (gen_addrb2rd (operands[0], operands[1], operands[2]));
 	  if (GET_CODE (operands[2]) == CONST_INT &&
 	     !satisfies_constraint_It (operands[2]))
-	   emit_insn (gen_addrp2rg_large_scale (operands[0], operands[1], operands[2]));
+	   emit_insn (gen_addrb2rd_larde_scale (operands[0], operands[1], operands[2]));
 	}")
 
-(define_insn "addrp2rg"
-  [(set      (match_operand:DI 0 "rg_class_operand"  "= Rg, Rg")
-    (plus:DI (match_operand:DI 1 "rp_class_operand"  "% Rp, Rp")
-	     (match_operand:DI 2 "dd_rg_s18_operand" "  It, Rg")))
+(define_insn "addrb2rd"
+  [(set      (match_operand:DI 0 "rd_class_operand"  "= Rd, Rd")
+    (plus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb, Rb")
+	     (match_operand:DI 2 "dd_rd_s18_operand" "  It, Rd")))
 	(clobber (reg:DI 71))]
 	""
 	"@
-	setrp	rp7, %2	\;addrp	rp7, %1, rg0	\;rp2rg	%0, rp7, 0	\;
-	rp2rg	%0, %1, 0	\;add	rg0, %0, %2, %0	\;")
+	setrb	rb7, %2	\;addrb	rb7, %1, rd0	\;rb2rd	%0, rb7, 0	\;
+	rb2rd	%0, %1, 0	\;add	rd0, %0, %2, %0	\;")
 
-(define_insn "addrp2rg_large_scale"
-  [(set      (match_operand:DI 0 "rg_class_operand")
-    (plus:DI (match_operand:DI 1 "rp_class_operand")
+(define_insn "addrb2rd_larde_scale"
+  [(set      (match_operand:DI 0 "rd_class_operand")
+    (plus:DI (match_operand:DI 1 "rb_class_operand")
              (match_operand:DI 2 "immediate_operand")))
 	(clobber (reg:DI 7))]
 	""
-	"rp2rg	%0, %1, 0	\;setrg	rg7, %2	\;add	rg0, %0, rg7, %0	\;")
+	"rb2rd	%0, %1, 0	\;setrd	rd7, %2	\;add	rd0, %0, rd7, %0	\;")

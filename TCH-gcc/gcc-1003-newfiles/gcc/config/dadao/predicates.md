@@ -4,7 +4,7 @@
 ;; Copyright (C) 2020-2033 Guan Xuetao (AT) Peking Univ.
 
 ;; register class operands
-(define_predicate "rg_class_operand"
+(define_predicate "rd_class_operand"
   (match_code "reg, subreg")
 {
 	if (!register_operand(op, mode))	return 0;
@@ -13,7 +13,7 @@
 	return (REGNO_REG_CLASS(REGNO(op)) == GENERAL_REGS);
 })
 
-(define_predicate "rp_class_operand"
+(define_predicate "rb_class_operand"
   (and (match_code "reg")
        (match_test "REGNO_REG_CLASS (REGNO (op)) == POINTER_REGS")))
 
@@ -32,33 +32,33 @@
 	return (REGNO_REG_CLASS(REGNO(op)) == FLOATING_REGS);
 })
 
-(define_predicate "rr_class_operand"
+(define_predicate "ra_class_operand"
   (and (match_code "reg")
        (match_test "REGNO_REG_CLASS (REGNO (op)) == RETURN_REGS")))
 
 ;; TODO: ri add shift-imm handler
 (define_predicate "dd_rg_u12_operand"
-  (ior (match_operand 0 "rg_class_operand")
+  (ior (match_operand 0 "rd_class_operand")
        (and (match_code "const_int")
             (match_test "satisfies_constraint_Jd(op)"))))
 
 (define_predicate "dd_rg_s12_operand"
-  (ior (match_operand 0 "rg_class_operand")
+  (ior (match_operand 0 "rd_class_operand")
        (and (match_code "const_int")
             (match_test "satisfies_constraint_Id(op)"))))
 
 (define_predicate "dd_rg_s18_operand"
-  (ior (match_operand 0 "rg_class_operand")
+  (ior (match_operand 0 "rd_class_operand")
        (and (match_code "const_int")
             (match_test "satisfies_constraint_It(op)"))))
 
 (define_predicate "dd_rg_u18_operand"
-  (ior (match_operand 0 "rg_class_operand")
+  (ior (match_operand 0 "rd_class_operand")
        (and (match_code "const_int")
             (match_test "satisfies_constraint_Jt(op)"))))
 
 (define_predicate "dd_rg_u6_operand"
-  (ior (match_operand 0 "rg_class_operand")
+  (ior (match_operand 0 "rd_class_operand")
        (and (match_code "const_int")
             (match_test "satisfies_constraint_Js(op)"))))
 

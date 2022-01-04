@@ -4,14 +4,14 @@
 ;; Copyright (C) 2020-2033 Guan Xuetao (AT) Peking Univ.
 ;; Contributed by Guan Xuetao <gxt@pku.edu.cn>
 
-(define_insn "mov_rg2rr"
-  [(set (match_operand:DI 0 "rr_class_operand" "= Rr")
-        (match_operand:DI 1 "rg_class_operand" "  Rg"))]
+(define_insn "mov_rd2ra"
+  [(set (match_operand:DI 0 "ra_class_operand" "= Ra")
+        (match_operand:DI 1 "rd_class_operand" "  Rd"))]
 	""
-	"rr_g2r	%0, %1")
+	"rd2ra	%0, %1, 0")
 
-(define_insn "mov_rr2rg"
-  [(set (match_operand:DI 0 "rg_class_operand" "= Rg")
-        (match_operand:DI 1 "rr_class_operand" "  Rr"))]
+(define_insn "mov_ra2rd"
+  [(set (match_operand:DI 0 "rd_class_operand" "= Rd")
+        (match_operand:DI 1 "ra_class_operand" "  Ra"))]
 	""
-	"rr_r2g	%0, %1")
+	"ra2rd	%0, %1, 0")
