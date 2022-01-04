@@ -11,13 +11,13 @@
 # like in gcc/crtstuff.c.
 
 	.section .init,"ax",@progbits
-#	setrp	rg63, 0f
-#	put.rs	rJ, rg63
+#	setrb	rd63, 0f
+#	put.rs	rJ, rd63
 	ret
 0:
 
 	.section .fini,"ax",@progbits
-#	setrp	rg63, 0f
-#	put.rs	rJ, rg63
+#	setrb	rd63, 0f
+#	put.rs	rJ, rd63
 	ret
 0:

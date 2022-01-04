@@ -32,37 +32,37 @@ crtsdat:
 	.dd.o64	_end
 
 _start:
-# TODO	geta	rg63, crtstxt
-	ldo	rg2, rp63, 0
-#	andnwl	rg2, 0x7ff
-	ldo	rg3, rp63, 8
-	setowl	rg4, 2048
+# TODO	geta	rd63, crtstxt
+	ldo	rd2, rb63, 0
+#	andnwl	rd2, 0x7ff
+	ldo	rd3, rb63, 8
+	setowl	rd4, 2048
 0:
-	add	rg0, rg2, rg2, rg4
-	cmps	rg63, rg2, rg3
-	brn	rg63, 0b
+	add	rd0, rd2, rd2, rd4
+	cmps	rd63, rd2, rd3
+	brn	rd63, 0b
 
-# TODO	setrp	rg63, crtsdat
-	ldo	rg2, rp63, 0
-#	andnwl	rg2, 0x7ff
-	ldo	rg3, rp63, 8
+# TODO	setrb	rd63, crtsdat
+	ldo	rd2, rb63, 0
+#	andnwl	rd2, 0x7ff
+	ldo	rd3, rb63, 8
 0:
-	add	rg0, rg2, rg2, rg4
-	cmps	rg63, rg2, rg3
-	brn	rg63, 0b
+	add	rd0, rd2, rd2, rd4
+	cmps	rd63, rd2, rd3
+	brn	rd63, 0b
 
 # Initialize the stack pointer.  It is supposedly made a global
 # zero-initialized (allowed to change) register in crtn.S; we use the
 # explicit number.
-# TODO	setrp	rg63, stackpp
-	ldo	rg62, rp63, 0
+# TODO	setrb	rd63, stackpp
+	ldo	rd62, rb63, 0
 
 	call	_init
 
 # Copy argc and argv from their initial position to argument registers
 # where necessary.
-	orr	rg39, rg0, rg0
-	orr	rg40, rg1, rg0
+	orr	rd39, rd0, rd0
+	orr	rd40, rd1, rd0
 
 	call	main
 	call	exit
@@ -76,21 +76,21 @@ _start:
 	.section .init,"ax",@progbits
 	.global	_init
 _init:
-#	get.rs	rg0, rJ
-	brz	rg0, 0f
-	setowl	rg63, 63
+#	get.rs	rd0, rJ
+	brz	rd0, 0f
+	setowl	rd63, 63
 	trap	cp0, 0
 0:	trap	cp0, 0
 
 # Register _fini to be executed as the last atexit function.
-# TODO	setrp	rg39, _fini
+# TODO	setrb	rd39, _fini
 	call	atexit
 
 	.section .fini,"ax",@progbits
 	.global	_fini
 _fini:
-#	get.rs	rg0, rJ
-	brz	rg0, 0f
-	setowl	rg63, 63
+#	get.rs	rd0, rJ
+	brz	rd0, 0f
+	setowl	rd63, 63
 	trap	cp0, 0
 0:	trap	cp0, 0
