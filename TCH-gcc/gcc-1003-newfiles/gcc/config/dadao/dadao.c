@@ -443,9 +443,9 @@ static void dd_asm_trampoline_template (FILE *stream)
      static chain is stored at offset 16, and the function address is
      stored at offset 24.  */
 
-  fprintf (stream, "\tsetrg	rg63, 1f\n");
-  fprintf (stream, "\tldo	rg63, rp63, 0\n");
-  fprintf (stream, "\tcall	rp0, rg63, 0\n");
+  fprintf (stream, "\tsetrd	rd63, 1f\n");
+  fprintf (stream, "\tldo	rd63, rb63, 0\n");
+  fprintf (stream, "\tcall	rb0, rd63, 0\n");
   fprintf (stream, "1:\t.dd.o64	0\n");
 }
 
@@ -551,7 +551,7 @@ static bool dd_legitimate_address_p (machine_mode mode ATTRIBUTE_UNUSED,
 	( !strict_checking && (REGNO (X) >= FIRST_PSEUDO_REGISTER)) ||		\
 	( strict_checking && (REGNO_REG_CLASS(reg_renumber[REGNO(X)]) == XC))))
 
-	/* (mem rp) */
+	/* (mem rb) */
 	if (_DD_LEGITIMATE_ADDR_RC(x, POINTER_REGS))
 		return 1;
 
@@ -561,19 +561,19 @@ static bool dd_legitimate_address_p (machine_mode mode ATTRIBUTE_UNUSED,
 	rtx x1 = XEXP (x, 0);
 	rtx x2 = XEXP (x, 1);
 
-	/* (mem (plus (rp) (rg))) */
+	/* (mem (plus (rb) (rd))) */
 	if (_DD_LEGITIMATE_ADDR_RC(x1, POINTER_REGS) && _DD_LEGITIMATE_ADDR_RC(x2, GENERAL_REGS))
 		return 1;
 
-	/* (mem (plus (rp) (-0x800, 0x7FF))) */
+	/* (mem (plus (rb) (-0x800, 0x7FF))) */
 	if (_DD_LEGITIMATE_ADDR_RC(x1, POINTER_REGS) && satisfies_constraint_Id (x2))
 		return 1;
 
-	/* (mem (plus (rg) (rp))) */
+	/* (mem (plus (rd) (rb))) */
 	if (_DD_LEGITIMATE_ADDR_RC(x2, POINTER_REGS) && _DD_LEGITIMATE_ADDR_RC(x1, GENERAL_REGS))
 		return 1;
 
-	/* (mem (plus (rp) (mem))) */
+	/* (mem (plus (rb) (mem))) */
 	if (((REGNO_REG_CLASS(REGNO(x1)) == POINTER_REGS) && (MEM_P(x2)))
 	 || (_DD_LEGITIMATE_ADDR_GENERAL(x2, POINTER_REGS) && (MEM_P(x1))))
 		return dd_judge_legitimate_address (MEM_P(x1) ? x1 : x2);
@@ -585,14 +585,14 @@ static bool dd_legitimate_address_p (machine_mode mode ATTRIBUTE_UNUSED,
 #undef	TARGET_LEGITIMATE_ADDRESS_P
 #define	TARGET_LEGITIMATE_ADDRESS_P		dd_legitimate_address_p
 
-bool dd_load_legitimate_address_rpzero (rtx x)
+bool dd_load_legitimate_address_rbzero (rtx x)
 {
 	if (_DD_LEGITIMATE_ADDR_GENERAL(x, POINTER_REGS))
 		return 1;
 	return 0;
 }
 
-bool dd_load_legitimate_address_rprg (rtx x)
+bool dd_load_legitimate_address_rbrd (rtx x)
 {
 	if (GET_CODE(x) != PLUS)
 		return 0;
@@ -608,21 +608,21 @@ bool dd_load_legitimate_address_rprg (rtx x)
 }
 
 /* Return 1 if the address is OK, otherwise 0.  */
-bool dd_load_legitimate_address_rpimm (rtx x)
+bool dd_load_legitimate_address_rbimm (rtx x)
 {
 	if (GET_CODE(x) != PLUS)
 		return 0;
 	rtx x1 = XEXP (x, 0);
 	rtx x2 = XEXP (x, 1);
 
-	/* (mem (plus (rp) (-0x800, 0x7FF))) */
+	/* (mem (plus (rb) (-0x800, 0x7FF))) */
 	if (_DD_LEGITIMATE_ADDR_GENERAL(x1, POINTER_REGS) && satisfies_constraint_Id (x2))
 		return 1;
 	return 0;
 }
 
 /* Return 1 if the address is OK, otherwise 0.  */
-bool dd_load_legitimate_address_rpmem (rtx x)
+bool dd_load_legitimate_address_rbmem (rtx x)
 {
 	if (GET_CODE(x) != PLUS)
 		return 0;
@@ -630,7 +630,7 @@ bool dd_load_legitimate_address_rpmem (rtx x)
 	rtx x1 = XEXP (x, 0);
 	rtx x2 = XEXP (x, 1);
 
-	/* (mem (plus (rp) (mem))) */
+	/* (mem (plus (rb) (mem))) */
 	if (((REGNO_REG_CLASS(REGNO(x1)) == POINTER_REGS) && (MEM_P(x2)))
 	 || (_DD_LEGITIMATE_ADDR_GENERAL(x2, POINTER_REGS) && (MEM_P(x1))))
 		return dd_judge_legitimate_address (MEM_P(x1) ? x1 : x2);
@@ -948,7 +948,7 @@ static void dd_print_operand (FILE *stream, rtx x, int code)
 static void dd_print_operand_address (FILE *stream, machine_mode /*mode*/, rtx x)
 {
 	if (REG_P (x)) {
-		/* (mem rp) */
+		/* (mem rb) */
 		fprintf (stream, "%s, 0", reg_names[DADAO_OUTPUT_REGNO (REGNO (x))]);
 		return;
 	} else if (GET_CODE (x) == PLUS) {
@@ -956,21 +956,21 @@ static void dd_print_operand_address (FILE *stream, machine_mode /*mode*/, rtx x
 		rtx x2 = XEXP (x, 1);
 
 #define	_DD_REG_CLASS(X, XC)	( REG_P(X) && (REGNO_REG_CLASS(REGNO(X)) == XC))
-		/* (mem (plus (rp) (rg))) */
+		/* (mem (plus (rb) (rd))) */
 		if (_DD_REG_CLASS(x1, POINTER_REGS) && _DD_REG_CLASS(x2, GENERAL_REGS)) {
 			fprintf (stream, "%s, %s", reg_names[DADAO_OUTPUT_REGNO (REGNO (x1))],
 						reg_names[DADAO_OUTPUT_REGNO (REGNO (x2))]);
 			return;
 		}
 
-		/* (mem (plus (rg) (rp))) */
+		/* (mem (plus (rd) (rb))) */
 		if (_DD_REG_CLASS(x2, POINTER_REGS) && _DD_REG_CLASS(x1, GENERAL_REGS)) {
 			fprintf (stream, "%s, %s", reg_names[DADAO_OUTPUT_REGNO (REGNO (x2))],
 						reg_names[DADAO_OUTPUT_REGNO (REGNO (x1))]);
 			return;
 		}
 
-		/* (mem (plus (rp) (-0x800, 0x7FF))) */
+		/* (mem (plus (rb) (-0x800, 0x7FF))) */
 		if (_DD_REG_CLASS(x1, POINTER_REGS) && satisfies_constraint_Id (x2)) {
 			fprintf (stream, "%s, ", reg_names[DADAO_OUTPUT_REGNO (REGNO (x1))]);
 			output_addr_const (stream, x2);
@@ -1242,7 +1242,7 @@ dadao_output_register_setting (FILE *stream,
     fprintf (stream, "\t");
 
   if (insn_const_int_ok_for_constraint (value, CONSTRAINT_Nd))
-    fprintf (stream, "sub	rg0, %s, rg0, %" PRId64, reg_names[regno], -value);
+    fprintf (stream, "sub	rd0, %s, rd0, %" PRId64, reg_names[regno], -value);
   else if (dadao_shiftable_wyde_value ((uint64_t) value))
     {
       /* First, the one-insn cases.  */
@@ -1262,7 +1262,7 @@ dadao_output_register_setting (FILE *stream,
 					  value);
       fprintf (stream, " %s,", reg_names[regno]);
       dadao_output_shifted_value (stream, -(uint64_t) value);
-      fprintf (stream, "\n\tsub	rg0, %s, rg0, %s", reg_names[regno],
+      fprintf (stream, "\n\tsub	rd0, %s, rd0, %s", reg_names[regno],
 	       reg_names[regno]);
     }
   else if (dadao_shiftable_wyde_value (~(uint64_t) value))
@@ -1280,7 +1280,7 @@ dadao_output_register_setting (FILE *stream,
 					  value);
       fprintf (stream, "\t%s,", reg_names[regno]);
       dadao_output_shifted_value (stream, ~(uint64_t) value);
-      fprintf (stream, "\n\tnot	%s, %s, rg0", reg_names[regno],
+      fprintf (stream, "\n\tnot	%s, %s, rd0", reg_names[regno],
 	       reg_names[regno]);
     }
   else

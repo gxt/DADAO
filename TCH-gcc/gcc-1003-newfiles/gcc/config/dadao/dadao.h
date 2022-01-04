@@ -10,29 +10,29 @@
 #error	DADAO ONLY SUPPORT ELF FORMAT!
 #endif
 
-#define	DADAO_REG_RG_START			0x00
-#define	DADAO_REG_RP_START			0x40
+#define	DADAO_REG_RD_START			0x00
+#define	DADAO_REG_RB_START			0x40
 #define	DADAO_REG_RF_START			0x80
-#define	DADAO_REG_RR_START			0xC0
+#define	DADAO_REG_RA_START			0xC0
 #define	DADAO_REG_RS_START			0x100
 
 #define	DADAO_MAX_ARGS_IN_REGS			16
-#define	DADAO_CONST_ZERO_REGNUM			(DADAO_REG_RG_START + 0x00)
-#define	DADAO_EH_RETURN_DATA_REGNUM		(DADAO_REG_RG_START + 0x04)
-#define	DADAO_FIRST_ARG_REGNUM			(DADAO_REG_RG_START + 0x10)
-#define	DADAO_RETURN_VALUE_REGNUM		(DADAO_REG_RG_START + 0x1F)
+#define	DADAO_CONST_ZERO_REGNUM			(DADAO_REG_RD_START + 0x00)
+#define	DADAO_EH_RETURN_DATA_REGNUM		(DADAO_REG_RD_START + 0x04)
+#define	DADAO_FIRST_ARG_REGNUM			(DADAO_REG_RD_START + 0x10)
+#define	DADAO_RETURN_VALUE_REGNUM		(DADAO_REG_RD_START + 0x1F)
 
 /* FIXME: This one isn't fully implemented yet.  Return values larger than
    one register are passed by reference in DADAO_STRUCT_VALUE_REGNUM by the
    caller, except for return values of type "complex".  */
-#define	DADAO_PROGRAM_COUNTER_REGNUM		(DADAO_REG_RP_START + 0x00)
-#define	DADAO_STACK_POINTER_REGNUM		(DADAO_REG_RP_START + 0x01)
-#define	DADAO_FRAME_POINTER_REGNUM		(DADAO_REG_RP_START + 0x02)
-#define DADAO_ARG_POINTER_REGNUM		(DADAO_REG_RP_START + 0x03)
-#define	DADAO_EH_RETURN_HANDLER_REGNUM		(DADAO_REG_RP_START + 0x04)
-#define DADAO_STATIC_CHAIN_REGNUM		(DADAO_REG_RP_START + 0x05)
-#define	DADAO_RETURN_ADDRESS_REGNUM		(DADAO_REG_RP_START + 0x3E)
-#define	DADAO_STRUCT_VALUE_REGNUM		(DADAO_REG_RP_START + 0x3F)
+#define	DADAO_PROGRAM_COUNTER_REGNUM		(DADAO_REG_RB_START + 0x00)
+#define	DADAO_STACK_POINTER_REGNUM		(DADAO_REG_RB_START + 0x01)
+#define	DADAO_FRAME_POINTER_REGNUM		(DADAO_REG_RB_START + 0x02)
+#define DADAO_ARG_POINTER_REGNUM		(DADAO_REG_RB_START + 0x03)
+#define	DADAO_EH_RETURN_HANDLER_REGNUM		(DADAO_REG_RB_START + 0x04)
+#define DADAO_STATIC_CHAIN_REGNUM		(DADAO_REG_RB_START + 0x05)
+#define	DADAO_RETURN_ADDRESS_REGNUM		(DADAO_REG_RB_START + 0x3E)
+#define	DADAO_STRUCT_VALUE_REGNUM		(DADAO_REG_RB_START + 0x3F)
 
 #define DADAO_FUNCTION_ARG_SIZE(MODE, TYPE) \
  ((MODE) != BLKmode ? GET_MODE_SIZE (MODE) : int_size_in_bytes (TYPE))
@@ -210,7 +210,7 @@ enum reg_class {
 
 /* Note that the contents of each item is always 32 bits.  */
 #define REG_CLASS_CONTENTS {							\
-	/* Rg	Rg	Rp	Rp	Rf	Rf	Rr	Rr */		\
+	/* Rd	Rd	Rb	Rb	Rf	Rf	Ra	Ra */		\
 	{ 0,	 0,	 0,	 0,	 0,	 0,	 0,	 0},		\
 	{~0,	~0,	 0,	 0,	 0,	 0,	 0,	 0},		\
 	{ 0,	 0,	~0,	~0,	 0,	 0,	 0,	 0},		\
@@ -398,22 +398,22 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 /* XXX gccint 18.20.7 Node: Output of Assembler Instructions */
 
 #define	REGISTER_NAMES {							\
-	"rg0", "rg1", "rg2", "rg3", "rg4", "rg5", "rg6", "rg7",			\
-	"rg8", "rg9", "rg10", "rg11", "rg12", "rg13", "rg14", "rg15",		\
-	"rg16", "rg17", "rg18", "rg19", "rg20", "rg21", "rg22", "rg23",		\
-	"rg24", "rg25", "rg26", "rg27", "rg28", "rg29", "rg30", "rg31",		\
-	"rg32", "rg33", "rg34", "rg35", "rg36", "rg37", "rg38", "rg39",		\
-	"rg40", "rg41", "rg42", "rg43", "rg44", "rg45", "rg46", "rg47",		\
-	"rg48", "rg49", "rg50", "rg51", "rg52", "rg53", "rg54", "rg55",		\
-	"rg56", "rg57", "rg58", "rg59", "rg60", "rg61", "rg62", "rg63",		\
-	"rp0", "rp1", "rp2", "rp3", "rp4", "rp5", "rp6", "rp7",			\
-	"rp8", "rp9", "rp10", "rp11", "rp12", "rp13", "rp14", "rp15",		\
-	"rp16", "rp17", "rp18", "rp19", "rp20", "rp21", "rp22", "rp23",		\
-	"rp24", "rp25", "rp26", "rp27", "rp28", "rp29", "rp30", "rp31",		\
-	"rp32", "rp33", "rp34", "rp35", "rp36", "rp37", "rp38", "rp39",		\
-	"rp40", "rp41", "rp42", "rp43", "rp44", "rp45", "rp46", "rp47",		\
-	"rp48", "rp49", "rp50", "rp51", "rp52", "rp53", "rp54", "rp55",		\
-	"rp56", "rp57", "rp58", "rp59", "rp60", "rp61", "rp62", "rp63",		\
+	"rd0", "rd1", "rd2", "rd3", "rd4", "rd5", "rd6", "rd7",			\
+	"rd8", "rd9", "rd10", "rd11", "rd12", "rd13", "rd14", "rd15",		\
+	"rd16", "rd17", "rd18", "rd19", "rd20", "rd21", "rd22", "rd23",		\
+	"rd24", "rd25", "rd26", "rd27", "rd28", "rd29", "rd30", "rd31",		\
+	"rd32", "rd33", "rd34", "rd35", "rd36", "rd37", "rd38", "rd39",		\
+	"rd40", "rd41", "rd42", "rd43", "rd44", "rd45", "rd46", "rd47",		\
+	"rd48", "rd49", "rd50", "rd51", "rd52", "rd53", "rd54", "rd55",		\
+	"rd56", "rd57", "rd58", "rd59", "rd60", "rd61", "rd62", "rd63",		\
+	"rb0", "rb1", "rb2", "rb3", "rb4", "rb5", "rb6", "rb7",			\
+	"rb8", "rb9", "rb10", "rb11", "rb12", "rb13", "rb14", "rb15",		\
+	"rb16", "rb17", "rb18", "rb19", "rb20", "rb21", "rb22", "rb23",		\
+	"rb24", "rb25", "rb26", "rb27", "rb28", "rb29", "rb30", "rb31",		\
+	"rb32", "rb33", "rb34", "rb35", "rb36", "rb37", "rb38", "rb39",		\
+	"rb40", "rb41", "rb42", "rb43", "rb44", "rb45", "rb46", "rb47",		\
+	"rb48", "rb49", "rb50", "rb51", "rb52", "rb53", "rb54", "rb55",		\
+	"rb56", "rb57", "rb58", "rb59", "rb60", "rb61", "rb62", "rb63",		\
 	"rf0", "rf1", "rf2", "rf3", "rf4", "rf5", "rf6", "rf7",			\
 	"rf8", "rf9", "rf10", "rf11", "rf12", "rf13", "rf14", "rf15",		\
 	"rf16", "rf17", "rf18", "rf19", "rf20", "rf21", "rf22", "rf23",		\
@@ -422,14 +422,14 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 	"rf40", "rf41", "rf42", "rf43", "rf44", "rf45", "rf46", "rf47",		\
 	"rf48", "rf49", "rf50", "rf51", "rf52", "rf53", "rf54", "rf55",		\
 	"rf56", "rf57", "rf58", "rf59", "rf60", "rf61", "rf62", "rf63",		\
-	"rr0", "rr1", "rr2", "rr3", "rr4", "rr5", "rr6", "rr7",			\
-	"rr8", "rr9", "rr10", "rr11", "rr12", "rr13", "rr14", "rr15",		\
-	"rr16", "rr17", "rr18", "rr19", "rr20", "rr21", "rr22", "rr23",		\
-	"rr24", "rr25", "rr26", "rr27", "rr28", "rr29", "rr30", "rr31",		\
-	"rr32", "rr33", "rr34", "rr35", "rr36", "rr37", "rr38", "rr39",		\
-	"rr40", "rr41", "rr42", "rr43", "rr44", "rr45", "rr46", "rr47",		\
-	"rr48", "rr49", "rr50", "rr51", "rr52", "rr53", "rr54", "rr55",		\
-	"rr56", "rr57", "rr58", "rr59", "rr60", "rr61", "rr62", "rr63"}
+	"ra0", "ra1", "ra2", "ra3", "ra4", "ra5", "ra6", "ra7",			\
+	"ra8", "ra9", "ra10", "ra11", "ra12", "ra13", "ra14", "ra15",		\
+	"ra16", "ra17", "ra18", "ra19", "ra20", "ra21", "ra22", "ra23",		\
+	"ra24", "ra25", "ra26", "ra27", "ra28", "ra29", "ra30", "ra31",		\
+	"ra32", "ra33", "ra34", "ra35", "ra36", "ra37", "ra38", "ra39",		\
+	"ra40", "ra41", "ra42", "ra43", "ra44", "ra45", "ra46", "ra47",		\
+	"ra48", "ra49", "ra50", "ra51", "ra52", "ra53", "ra54", "ra55",		\
+	"ra56", "ra57", "ra58", "ra59", "ra60", "ra61", "ra62", "ra63"}
 
 #define	ADDITIONAL_REGISTER_NAMES {		\
 	{"zero", DADAO_CONST_ZERO_REGNUM},	\

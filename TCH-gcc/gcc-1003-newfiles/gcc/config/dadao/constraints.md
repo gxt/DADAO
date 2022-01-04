@@ -98,20 +98,20 @@
 (define_memory_constraint "Wg"
 	"@internal"
 	(and (match_code "mem")
-	     (match_test "dd_load_legitimate_address_rprg (XEXP (op, 0))")))
+	     (match_test "dd_load_legitimate_address_rbrd (XEXP (op, 0))")))
 
 (define_memory_constraint "Wz"
 	"@internal"
 	(and (match_code "mem")
-	     (match_test "dd_load_legitimate_address_rpzero (XEXP (op, 0))")))
+	     (match_test "dd_load_legitimate_address_rbzero (XEXP (op, 0))")))
 
 (define_memory_constraint "Wm"
 	"@internal"
 	(and (match_code "mem")
-	     (match_test "dd_load_legitimate_address_rpmem (XEXP (op, 0))")))
+	     (match_test "dd_load_legitimate_address_rbmem (XEXP (op, 0))")))
 
 (define_memory_constraint "Wi"
 	"@internal"
 	(and (match_code "mem")
-	     (match_test "dd_load_legitimate_address_rpimm (XEXP (op, 0))")))
+	     (match_test "dd_load_legitimate_address_rbimm (XEXP (op, 0))")))
 
