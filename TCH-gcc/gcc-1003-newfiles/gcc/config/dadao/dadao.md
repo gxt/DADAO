@@ -27,8 +27,8 @@
 	"swym")
 
 (define_insn "mov<mode>"
-  [(set (match_operand:QHSD 0 "nonimmediate_operand" "=Rg,Rg, m")
-        (match_operand:QHSD 1 "general_operand"      " Rg, m,Rg"))]
+  [(set (match_operand:QHSD 0 "nonimmediate_operand" "=Rd,Rd, m")
+        (match_operand:QHSD 1 "general_operand"      " Rd, m,Rd"))]
 	""
 	{
 	  if (MEM_P (operands[0]) && REG_P (operands[1]) && REGNO_REG_CLASS (REGNO(operands[1])) == GENERAL_REGS) {
@@ -119,7 +119,7 @@
 ;; As of r190682 still so: newlib/libc/stdlib/dtoa.c ICEs if "p" is used.
 (define_insn "*call_real"
   [(call (mem:SI
-	  (match_operand:DI 0 "dadao_symbolic_or_address_operand" "s,RpAu"))
+	  (match_operand:DI 0 "dadao_symbolic_or_address_operand" "s,RbAu"))
 	 (match_operand 1 "" ""))
    (use (match_operand 2 "" ""))
    (clobber (reg:DI DD_RA_REG))]
@@ -131,7 +131,7 @@
 (define_insn "*call_value_real"
   [(set (match_operand 0 "register_operand" "=r,r")
 	(call (mem:SI
-	       (match_operand:DI 1 "dadao_symbolic_or_address_operand" "s,RpAu"))
+	       (match_operand:DI 1 "dadao_symbolic_or_address_operand" "s,RbAu"))
 	      (match_operand 2 "" "")))
   (use (match_operand 3 "" ""))
   (clobber (reg:DI DD_RA_REG))]
