@@ -446,11 +446,6 @@ static bool trans_rd2rb(DisasContext* ctx, arg_rd2rb* a)
     return trans_hb2ha_all(ctx, a, cpu_rd, cpu_rb);
 }
 
-static bool trans_rd2rf(DisasContext* ctx, arg_rd2rf* a)
-{
-    return trans_hb2ha_all(ctx, a, cpu_rd, cpu_rf);
-}
-
 static bool trans_rb2rd(DisasContext* ctx, arg_rb2rd* a)
 {
     return trans_hb2ha_all(ctx, a, cpu_rb, cpu_rd);
@@ -461,6 +456,11 @@ static bool trans_rb2rb(DisasContext* ctx, arg_rb2rb* a)
     return trans_hb2ha_all(ctx, a, cpu_rb, cpu_rb);
 }
 
+static bool trans_rd2rf(DisasContext* ctx, arg_rd2rf* a)
+{
+    return trans_hb2ha_all(ctx, a, cpu_rd, cpu_rf);
+}
+
 static bool trans_rf2rd(DisasContext* ctx, arg_rf2rd* a)
 {
     return trans_hb2ha_all(ctx, a, cpu_rf, cpu_rd);
@@ -469,6 +469,16 @@ static bool trans_rf2rd(DisasContext* ctx, arg_rf2rd* a)
 static bool trans_rf2rf(DisasContext* ctx, arg_rf2rf* a)
 {
     return trans_hb2ha_all(ctx, a, cpu_rf, cpu_rf);
+}
+
+static bool trans_rd2ra(DisasContext* ctx, arg_rd2ra* a)
+{
+    return trans_hb2ha_all(ctx, a, cpu_rd, cpu_ra);
+}
+
+static bool trans_ra2rd(DisasContext* ctx, arg_ra2rd* a)
+{
+    return trans_hb2ha_all(ctx, a, cpu_ra, cpu_rd);
 }
 
 static bool trans_csn(DisasContext *ctx, arg_csn *a)
