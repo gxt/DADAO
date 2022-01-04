@@ -4,111 +4,111 @@
 _start:
 	swym
 	# 0001-0000: MISC-Norm
-	and	rg1, rg2, rg3
-	orr	rg1, rg2, rg3
-	xor	rg1, rg2, rg3
-	shlu	rg1, rg2, rg3
-	shrs	rg1, rg2, rg3
-	shru	rg1, rg2, rg3
-	exts	rg1, rg2, rg3
-	extz	rg1, rg2, rg3
-	not	rg1, rg2, rg3
-	shlu	rg1, rg2, 3
-	shrs	rg1, rg2, 3
-	shru	rg1, rg2, 3
-	exts	rg1, rg2, 3
-	extz	rg1, rg2, 3
-	not	rg1, rg2, 3
-	cmps	rg1, rg2, rg3
-	cmpu	rg1, rg2, rg3
-	rg2rg	rg1, rg2, 3
-	rg2rp	rp1, rg2, 3
-	rp2rg	rg1, rp2, 3
-	rp2rp	rp1, rp2, 3
-	cmprp	rg1, rp2, rp3
-	addrp	rp1, rp2, rg3
-	subrp	rp1, rp2, rg3
-	rg2rf	rf1, rg2, 3
-	rf2rg	rg1, rf2, 3
+	and	rd1, rd2, rd3
+	orr	rd1, rd2, rd3
+	xor	rd1, rd2, rd3
+	shlu	rd1, rd2, rd3
+	shrs	rd1, rd2, rd3
+	shru	rd1, rd2, rd3
+	exts	rd1, rd2, rd3
+	extz	rd1, rd2, rd3
+	not	rd1, rd2, rd3
+	shlu	rd1, rd2, 3
+	shrs	rd1, rd2, 3
+	shru	rd1, rd2, 3
+	exts	rd1, rd2, 3
+	extz	rd1, rd2, 3
+	not	rd1, rd2, 3
+	cmps	rd1, rd2, rd3
+	cmpu	rd1, rd2, rd3
+	rd2rd	rd1, rd2, 3
+	rd2rb	rb1, rd2, 3
+	rb2rd	rd1, rb2, 3
+	rb2rb	rb1, rb2, 3
+	cmprb	rd1, rb2, rb3
+	addrb	rb1, rb2, rd3
+	subrb	rb1, rb2, rd3
+	rd2rf	rf1, rd2, 3
+	rf2rd	rd1, rf2, 3
 	rf2rf	rf1, rf2, 3
-	rg2rr	rr1, rg2, 3
-	rr2rg	rg1, rr2, 3
+	rd2ra	ra1, rd2, 3
+	ra2rd	rd1, ra2, 3
 	# 0001-0xxx
-	addrp	rp1, 4
-	add	rg1, 2
-	add	rg1, rg2, rg3, rg4
-	sub	rg1, rg2, rg3, rg4
-	muls	rg1, rg2, rg3, rg4
-	mulu	rg1, rg2, rg3, rg4
-	divs	rg1, rg2, rg3, rg4
-	divu	rg1, rg2, rg3, rg4
+	addrb	rb1, 4
+	add	rd1, 2
+	add	rd1, rd2, rd3, rd4
+	sub	rd1, rd2, rd3, rd4
+	muls	rd1, rd2, rd3, rd4
+	mulu	rd1, rd2, rd3, rd4
+	divs	rd1, rd2, rd3, rd4
+	divu	rd1, rd2, rd3, rd4
 	# 0001-1xxx
-	cmps	rg1, rg2, 3
-	cmpu	rg1, rg2, 3
-	setowh	rg1, 2
-	setowj	rg1, 2
-	setowk	rg1, 2
-	setowl	rg1, 2
-	setzwh	rg1, 2
-	setzwj	rg1, 2
-	setzwk	rg1, 2
-	setzwl	rg1, 2
-	orwh	rg1, 2
-	orwj	rg1, 2
-	orwk	rg1, 2
-	orwl	rg1, 2
-	andnwh	rg1, 2
-	andnwj	rg1, 2
-	andnwk	rg1, 2
-	andnwl	rg1, 2
+	cmps	rd1, rd2, 3
+	cmpu	rd1, rd2, 3
+	setowh	rd1, 2
+	setowj	rd1, 2
+	setowk	rd1, 2
+	setowl	rd1, 2
+	setzwh	rd1, 2
+	setzwj	rd1, 2
+	setzwk	rd1, 2
+	setzwl	rd1, 2
+	orwh	rd1, 2
+	orwj	rd1, 2
+	orwk	rd1, 2
+	orwl	rd1, 2
+	andnwh	rd1, 2
+	andnwj	rd1, 2
+	andnwk	rd1, 2
+	andnwl	rd1, 2
 	# 0010-0xxx
-	csn	rg1, rg2, rg3, rg4
-	csnn	rg1, rg2, rg3, rg4
-	csz	rg1, rg2, rg3, rg4
-	csnz	rg1, rg2, rg3, rg4
-	csp	rg1, rg2, rg3, rg4
-	csnp	rg1, rg2, rg3, rg4
-	csod	rg1, rg2, rg3, rg4
-	csev	rg1, rg2, rg3, rg4
+	csn	rd1, rd2, rd3, rd4
+	csnn	rd1, rd2, rd3, rd4
+	csz	rd1, rd2, rd3, rd4
+	csnz	rd1, rd2, rd3, rd4
+	csp	rd1, rd2, rd3, rd4
+	csnp	rd1, rd2, rd3, rd4
+	csod	rd1, rd2, rd3, rd4
+	csev	rd1, rd2, rd3, rd4
 	# 0010-1xxx
-	brn	rg1, _start
-	brnn	rg1, _start
-	brz	rg1, _start
-	brnz	rg1, _start
-	brp	rg1, _start
-	brnp	rg1, _start
-	brod	rg1, _start
-	brev	rg1, _start
+	brn	rd1, _start
+	brnn	rd1, _start
+	brz	rd1, _start
+	brnz	rd1, _start
+	brb	rd1, _start
+	brnp	rd1, _start
+	brod	rd1, _start
+	brev	rd1, _start
 	# 0011-0xxx
-	ldbs	rg1, rp2, 3
-	ldws	rg1, rp2, 3
-	ldts	rg1, rp2, 3
-	ldo	rg1, rp2, 3
-	ldmbs	rg1, rp2, rg3, 4
-	ldmws	rg1, rp2, rg3, 4
-	ldmts	rg1, rp2, rg3, 4
-	ldmo	rg1, rp2, rg3, 4
+	ldbs	rd1, rb2, 3
+	ldws	rd1, rb2, 3
+	ldts	rd1, rb2, 3
+	ldo	rd1, rb2, 3
+	ldmbs	rd1, rb2, rd3, 4
+	ldmws	rd1, rb2, rd3, 4
+	ldmts	rd1, rb2, rd3, 4
+	ldmo	rd1, rb2, rd3, 4
 	# 0011-1xxx
-	stb	rg1, rp2, 3
-	stw	rg1, rp2, 3
-	stt	rg1, rp2, 3
-	sto	rg1, rp2, 3
-	stmb	rg1, rp2, rg3, 4
-	stmw	rg1, rp2, rg3, 4
-	stmt	rg1, rp2, rg3, 4
-	stmo	rg1, rp2, rg3, 4
+	stb	rd1, rb2, 3
+	stw	rd1, rb2, 3
+	stt	rd1, rb2, 3
+	sto	rd1, rb2, 3
+	stmb	rd1, rb2, rd3, 4
+	stmw	rd1, rb2, rd3, 4
+	stmt	rd1, rb2, rd3, 4
+	stmo	rd1, rb2, rd3, 4
 	# 0100-0xxx
-	ldbu	rg1, rp2, 3
-	ldwu	rg1, rp2, 3
-	ldtu	rg1, rp2, 3
-	ldrp	rp1, rp2, 3
-	ldmbu	rg1, rp2, rg3, 4
-	ldmwu	rg1, rp2, rg3, 4
-	ldmtu	rg1, rp2, rg3, 4
-	ldmrp	rp1, rp2, rg3, 4
+	ldbu	rd1, rb2, 3
+	ldwu	rd1, rb2, 3
+	ldtu	rd1, rb2, 3
+	ldrb	rb1, rb2, 3
+	ldmbu	rd1, rb2, rd3, 4
+	ldmwu	rd1, rb2, rd3, 4
+	ldmtu	rd1, rb2, rd3, 4
+	ldmrb	rb1, rb2, rd3, 4
 	# 0100-1xxx
-	strp	rp1, rp2, 3
-	stmrp	rp1, rp2, rg3, 4
+	strb	rb1, rb2, 3
+	stmrb	rb1, rb2, rd3, 4
 	# 0101-0000L MISC-RF
 	ft2fo	rf1, rf2, 3
 	fo2ft	rf1, rf2, 3
@@ -119,14 +119,14 @@ _start:
 	ftabs	rf1, rf2, 3
 	ftneg	rf1, rf2, 3
 	ftsqrt	rf1, rf2, 3
-	ftcun	rg1, rf2, rf3
-	ftcor	rg1, rf2, rf3
-	ftcne	rg1, rf2, rf3
-	ftceq	rg1, rf2, rf3
-	ftclt	rg1, rf2, rf3
-	ftcge	rg1, rf2, rf3
-	ftcgt	rg1, rf2, rf3
-	ftcle	rg1, rf2, rf3
+	ftcun	rd1, rf2, rf3
+	ftcor	rd1, rf2, rf3
+	ftcne	rd1, rf2, rf3
+	ftceq	rd1, rf2, rf3
+	ftclt	rd1, rf2, rf3
+	ftcge	rd1, rf2, rf3
+	ftcgt	rd1, rf2, rf3
+	ftcle	rd1, rf2, rf3
 	foadd	rf1, rf2, rf3
 	fosub	rf1, rf2, rf3
 	fomul	rf1, rf2, rf3
@@ -134,36 +134,36 @@ _start:
 	foabs	rf1, rf2, 3
 	foneg	rf1, rf2, 3
 	fosqrt	rf1, rf2, 3
-	focun	rg1, rf2, rf3
-	focor	rg1, rf2, rf3
-	focne	rg1, rf2, rf3
-	foceq	rg1, rf2, rf3
-	foclt	rg1, rf2, rf3
-	focge	rg1, rf2, rf3
-	focgt	rg1, rf2, rf3
-	focle	rg1, rf2, rf3
+	focun	rd1, rf2, rf3
+	focor	rd1, rf2, rf3
+	focne	rd1, rf2, rf3
+	foceq	rd1, rf2, rf3
+	foclt	rd1, rf2, rf3
+	focge	rd1, rf2, rf3
+	focgt	rd1, rf2, rf3
+	focle	rd1, rf2, rf3
 	# 0101-0xxx
-	ldft	rf1, rp2, 3
-	ldfo	rf1, rp2, 3
-	ldmft	rf1, rp2, rg3, 4
-	ldmfo	rf1, rp2, rg3, 4
-	stft	rf1, rp2, 3
-	stfo	rf1, rp2, 3
-	stmft	rf1, rp2, rg3, 4
-	stmfo	rf1, rp2, rg3, 4
+	ldft	rf1, rb2, 3
+	ldfo	rf1, rb2, 3
+	ldmft	rf1, rb2, rd3, 4
+	ldmfo	rf1, rb2, rd3, 4
+	stft	rf1, rb2, 3
+	stfo	rf1, rb2, 3
+	stmft	rf1, rb2, rd3, 4
+	stmfo	rf1, rb2, rd3, 4
 	# 0110-0xxx
 	jump	_start
-	call	rp1, rg2, 3
-	ldmrr	rr1, rp2, rg3, 4
+	call	rb1, rd2, 3
+	ldmrb	ra1, rb2, rd3, 4
 	# 0110-1xxx
 	call	_start
-	call	rp1, rg2, 3
+	call	rb1, rd2, 3
 	ret
-	stmrr	rr1, rp2, rg3, 4
+	stmrb	ra1, rb2, rd3, 4
 	# 0111-0xxx
 	trap	cp0, 1
 	cpcoop	cp1, 2
-	rg2cr	cp1, cr2, cr3, rg4
-	cr2rg	cp1, rg2, cr3, cr4
-	cpload	cp1, rp2, 3
-	cpstor	cp1, rp2, 3
+	rd2cr	cp1, cr2, cr3, rd4
+	cr2rd	cp1, rd2, cr3, cr4
+	cpload	cp1, rb2, 3
+	cpstor	cp1, rb2, 3
