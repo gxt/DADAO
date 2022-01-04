@@ -8,16 +8,16 @@
 ;;	Guan Xuetao <gxt@pku.edu.cn>
 
 ;; Register class constraints
-(define_register_constraint "Rg" "GENERAL_REGS"
+(define_register_constraint "Rd" "GENERAL_REGS"
 	"General registers")
 
-(define_register_constraint "Rp" "POINTER_REGS"
+(define_register_constraint "Rb" "POINTER_REGS"
 	"Pointer registers")
 
 (define_register_constraint "Rf" "FLOATING_REGS"
 	"Floating-point registers")
 
-(define_register_constraint "Rr" "RETURN_REGS"
+(define_register_constraint "Ra" "RETURN_REGS"
 	"Return registers")
 
 (define_constraint "Sf"
