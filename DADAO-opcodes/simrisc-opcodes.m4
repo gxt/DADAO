@@ -178,10 +178,10 @@ insn(	ret,		zzzz,	0x6E,	0,	-,	-,	-,	-,	jsr)
 
 insn(	stmra,		rrri,	0x6F,	0,	ra,	rb,	rd,	i6,	dref)
 
-insn(	trap,		oiii,	0x70,	0,	cp,	u18,	-,	-,	jsr)
-insn(	cpcoop,		oiii,	0x71,	0,	cp,	u18,	-,	-,	normal)
-insn(	rd2cr,		orrr,	0x72,	0,	cp,	cr,	cr,	rd,	normal)
-insn(	cr2rd,		orrr,	0x73,	0,	cp,	rd,	cr,	cr,	normal)
-insn(	cpload,		orii,	0x74,	0,	cp,	rb,	u12,	-,	dref)
-insn(	cpstor,		orii,	0x75,	0,	cp,	rb,	u12,	-,	dref)
+insn(	trap,		ciii,	0x70,	0,	cp,	u18,	-,	-,	jsr)
+insn(	cpcoop,		ciii,	0x71,	0,	cp,	u18,	-,	-,	normal)
+insn(	rd2cr,		crrr,	0x72,	0,	cp,	cr,	cr,	rd,	normal)
+insn(	cr2rd,		crrr,	0x73,	0,	cp,	rd,	cr,	cr,	normal)
+insn(	cpload,		crii,	0x74,	0,	cp,	rb,	u12,	-,	dref)
+insn(	cpstor,		crii,	0x75,	0,	cp,	rb,	u12,	-,	dref)
 
