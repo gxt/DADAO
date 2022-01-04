@@ -1,22 +1,22 @@
 # Da Dao Zhi Jian
 _start:
 	# add/addu/sub/subu/mul
-	add	rg1, 131071
-	add	rg1, -131072
-	add	rg1, rg2, rg3, rg4
-	sub	rg1, rg2, rg3, rg4
+	add	rd1, 131071
+	add	rd1, -131072
+	add	rd1, rd2, rd3, rd4
+	sub	rd1, rd2, rd3, rd4
 	# muls/mulu/divs/divu
-	muls	rg1, rg2, rg3, rg4
-	mulu	rg1, rg2, rg3, rg4
-	divs	rg1, rg2, rg3, rg4
-	divu	rg1, rg2, rg3, rg4
+	muls	rd1, rd2, rd3, rd4
+	mulu	rd1, rd2, rd3, rd4
+	divs	rd1, rd2, rd3, rd4
+	divu	rd1, rd2, rd3, rd4
 	# and/orr/xor
-	and	rg1, rg2, rg3
-	orr	rg1, rg2, rg3
-	xor	rg1, rg2, rg3
+	and	rd1, rd2, rd3
+	orr	rd1, rd2, rd3
+	xor	rd1, rd2, rd3
 	# cmps/cmpu
-	cmps	rg1, rg2, 2047
-	cmps	rg1, rg2, -2048
-	cmpu	rg1, rg2, 4095
-	cmps	rg1, rg2, rg3
-	cmpu	rg1, rg2, rg3
+	cmps	rd1, rd2, 2047
+	cmps	rd1, rd2, -2048
+	cmpu	rd1, rd2, 4095
+	cmps	rd1, rd2, rd3
+	cmpu	rd1, rd2, rd3
