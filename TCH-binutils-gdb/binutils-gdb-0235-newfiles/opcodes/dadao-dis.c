@@ -155,10 +155,10 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	i = 0;
 
 	switch (opcodep->op_fa) {
-	case dadao_operand_rg:	__DDIS_PRINT_REG("rg", fa);	i++;	break;
-	case dadao_operand_rp:	__DDIS_PRINT_REG("rp", fa);	i++;	break;
+	case dadao_operand_rd:	__DDIS_PRINT_REG("rd", fa);	i++;	break;
+	case dadao_operand_rb:	__DDIS_PRINT_REG("rb", fa);	i++;	break;
 	case dadao_operand_rf:	__DDIS_PRINT_REG("rf", fa);	i++;	break;
-	case dadao_operand_rr:	__DDIS_PRINT_REG("rr", fa);	i++;	break;
+	case dadao_operand_ra:	__DDIS_PRINT_REG("ra", fa);	i++;	break;
 	case dadao_operand_cp:	__DDIS_PRINT_REG("cp", fa); i++;	break;
 
 	case dadao_operand_s24: /* ONLY call or jump be here */
@@ -181,10 +181,10 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		(*info->fprintf_func) (info->stream, ", ");
 
 	switch (opcodep->op_fb) {
-	case dadao_operand_rg:	__DDIS_PRINT_REG("rg", fb);	i++;	break;
-	case dadao_operand_rp:	__DDIS_PRINT_REG("rp", fb);	i++;	break;
+	case dadao_operand_rd:	__DDIS_PRINT_REG("rd", fb);	i++;	break;
+	case dadao_operand_rb:	__DDIS_PRINT_REG("rb", fb);	i++;	break;
 	case dadao_operand_rf:	__DDIS_PRINT_REG("rf", fb);	i++;	break;
-	case dadao_operand_rr:	__DDIS_PRINT_REG("rr", fb);	i++;	break;
+	case dadao_operand_ra:	__DDIS_PRINT_REG("ra", fb);	i++;	break;
 	case dadao_operand_cr:	__DDIS_PRINT_REG("cr", fb); i++;	break;
 
 	case dadao_operand_w16:
@@ -219,10 +219,10 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	(*info->fprintf_func) (info->stream, ", ");
 
 	switch (opcodep->op_fc) {
-	case dadao_operand_rg:	__DDIS_PRINT_REG("rg", fc);	i++;	break;
-	case dadao_operand_rp:	__DDIS_PRINT_REG("rp", fc);	i++;	break;
+	case dadao_operand_rd:	__DDIS_PRINT_REG("rd", fc);	i++;	break;
+	case dadao_operand_rb:	__DDIS_PRINT_REG("rb", fc);	i++;	break;
 	case dadao_operand_rf:	__DDIS_PRINT_REG("rf", fc);	i++;	break;
-	case dadao_operand_rr:	__DDIS_PRINT_REG("rr", fc);	i++;	break;
+	case dadao_operand_ra:	__DDIS_PRINT_REG("ra", fc);	i++;	break;
 	case dadao_operand_cr:	__DDIS_PRINT_REG("cr", fc); i++;	break;
 
 	case dadao_operand_s12:
@@ -240,10 +240,10 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	}
 
 	switch (opcodep->op_fd) {
-	case dadao_operand_rg:	__DDIS_PRINT_REG(", rg", fd);	break;
-	case dadao_operand_rp:	__DDIS_PRINT_REG(", rp", fd);	break;
+	case dadao_operand_rd:	__DDIS_PRINT_REG(", rd", fd);	break;
+	case dadao_operand_rb:	__DDIS_PRINT_REG(", rb", fd);	break;
 	case dadao_operand_rf:	__DDIS_PRINT_REG(", rf", fd);	break;
-	case dadao_operand_rr:	__DDIS_PRINT_REG(", rr", fd);	break;
+	case dadao_operand_ra:	__DDIS_PRINT_REG(", ra", fd);	break;
 	case dadao_operand_cr:	__DDIS_PRINT_REG(", cr", fd);	break;
 
 	case dadao_operand_i6:
