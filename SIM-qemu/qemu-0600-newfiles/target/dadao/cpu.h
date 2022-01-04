@@ -16,14 +16,14 @@
 #include "cpu-qom.h"
 #include "exec/cpu-defs.h"
 
-#define REG_PC  rp[0]
-#define REG_SP  rp[1]
+#define REG_PC  rb[0]
+#define REG_SP  rb[1]
 
 typedef struct CPUDADAOState {
-    uint64_t rg[64];        /* general registers */
-    uint64_t rp[64];        /* pointer registers */
+    uint64_t rd[64];        /* general registers */
+    uint64_t rb[64];        /* pointer registers */
     uint64_t rf[64];        /* floating-point registers */
-    uint64_t rr[64];        /* return address registers */
+    uint64_t ra[64];        /* return address registers */
 
     int32_t trap_num;       /* system call number */
 
