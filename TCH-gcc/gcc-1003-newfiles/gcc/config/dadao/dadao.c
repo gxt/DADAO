@@ -1154,9 +1154,10 @@ dadao_expand_prologue (void)
 							 offset)),
 			     hard_frame_pointer_rtx);
       RTX_FRAME_RELATED_P (insn) = 1;
-      insn = emit_insn (gen_adddi3 (hard_frame_pointer_rtx,
-				    stack_pointer_rtx,
-				    GEN_INT (offset + 8)));
+// TODO
+//      insn = emit_insn (gen_adddi3 (hard_frame_pointer_rtx,
+//				    stack_pointer_rtx,
+//				    GEN_INT (offset + 8)));
       RTX_FRAME_RELATED_P (insn) = 1;
       offset -= 8;
     }
@@ -1341,7 +1342,8 @@ dadao_emit_sp_add (HOST_WIDE_INT offset)
       /* Negative stack-pointer adjustments are allocations and appear in
 	 the prologue only.  We mark them as frame-related so unwind and
 	 debug info is properly emitted for them.  */
-      if (offset > -255)
+//TODO
+/*      if (offset > -255)
 	insn = emit_insn (gen_adddi3 (stack_pointer_rtx,
 				      stack_pointer_rtx,
 				      GEN_INT (offset)));
@@ -1353,12 +1355,12 @@ dadao_emit_sp_add (HOST_WIDE_INT offset)
 					stack_pointer_rtx, tmpr));
 	}
       RTX_FRAME_RELATED_P (insn) = 1;
-    }
+*/    }
   else
     {
       /* Positive adjustments are in the epilogue only.  Don't mark them
 	 as "frame-related" for unwind info.  */
-      if (insn_const_int_ok_for_constraint (offset, CONSTRAINT_Iw))
+/*      if (insn_const_int_ok_for_constraint (offset, CONSTRAINT_Iw))
 	emit_insn (gen_adddi3 (stack_pointer_rtx,
 			       stack_pointer_rtx,
 			       GEN_INT (offset)));
@@ -1369,7 +1371,7 @@ dadao_emit_sp_add (HOST_WIDE_INT offset)
 	  insn = emit_insn (gen_adddi3 (stack_pointer_rtx,
 					stack_pointer_rtx, tmpr));
 	}
-    }
+ */ }
 }
 
 /* Print operator suitable for doing something with a shiftable
