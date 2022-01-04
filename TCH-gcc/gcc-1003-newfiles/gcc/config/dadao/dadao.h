@@ -79,8 +79,13 @@ struct GTY(()) machine_function
   %{melf|r:-m elf64_dadao}"
 
 /* FIXME: There's no provision for profiling here.  */
+#ifndef STARTFILE_SPEC
 #define STARTFILE_SPEC			"crti%O%s crtbegin%O%s"
+#endif
+
+#ifndef ENDFILE_SPEC
 #define ENDFILE_SPEC			"crtend%O%s crtn%O%s"
+#endif
 
 /* XXX gccint 18.3 Node: Run-time Target Specification */
 
