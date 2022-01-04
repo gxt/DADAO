@@ -5,8 +5,8 @@
 # Load Store Instructions
 #
 
-&rrii            ra     rp     imm
-@rrii   ........ ra:6   rp:6   imm:s12          &rrii
+&rrii            ha     rb     imm
+@rrii   ........ ha:6   rb:6   imm:s12          &rrii
 
 ldbs    00110000 ...... ...... ............     @rrii
 ldws    00110001 ...... ...... ............     @rrii
@@ -17,7 +17,7 @@ ldbu    01000000 ...... ...... ............     @rrii
 ldwu    01000001 ...... ...... ............     @rrii
 ldtu    01000010 ...... ...... ............     @rrii
 
-ldrp    01000011 ...... ...... ............     @rrii
+ldrb    01000011 ...... ...... ............     @rrii
 
 ldft    01010010 ...... ...... ............     @rrii
 ldfo    01010011 ...... ...... ............     @rrii
@@ -27,14 +27,14 @@ stw     00111001 ...... ...... ............     @rrii
 stt     00111010 ...... ...... ............     @rrii
 sto     00111011 ...... ...... ............     @rrii
 
-strp    01001011 ...... ...... ............     @rrii
+strb    01001011 ...... ...... ............     @rrii
 
 stft    01011010 ...... ...... ............     @rrii
 stfo    01011011 ...... ...... ............     @rrii
 
 
-&rrri            ra     rp     rg     cnt
-@rrri   ........ ra:6   rp:6   rg:6   cnt:6     &rrri
+&rrri            ha     rb     rd     cnt
+@rrri   ........ ha:6   rb:6   rd:6   cnt:6     &rrri
 
 ldmbs   00110100 ...... ...... ...... ......    @rrri
 ldmws   00110101 ...... ...... ...... ......    @rrri
@@ -45,24 +45,24 @@ ldmbu   01000100 ...... ...... ...... ......    @rrri
 ldmwu   01000101 ...... ...... ...... ......    @rrri
 ldmtu   01000110 ...... ...... ...... ......    @rrri
 
-ldmrp   01000111 ...... ...... ...... ......    @rrri
+ldmrb   01000111 ...... ...... ...... ......    @rrri
 
 ldmft   01010110 ...... ...... ...... ......    @rrri
 ldmfo   01010111 ...... ...... ...... ......    @rrri
 
-ldmrr   01100111 ...... ...... ...... ......    @rrri
+ldmra   01100111 ...... ...... ...... ......    @rrri
 
 stmb    00111100 ...... ...... ...... ......    @rrri
 stmw    00111101 ...... ...... ...... ......    @rrri
 stmt    00111110 ...... ...... ...... ......    @rrri
 stmo    00111111 ...... ...... ...... ......    @rrri
 
-stmrp   01001111 ...... ...... ...... ......    @rrri
+stmrb   01001111 ...... ...... ...... ......    @rrri
 
 stmft   01011110 ...... ...... ...... ......    @rrri
 stmfo   01011111 ...... ...... ...... ......    @rrri
 
-stmrr   01101111 ...... ...... ...... ......    @rrri
+stmra   01101111 ...... ...... ...... ......    @rrri
 
 
 
@@ -70,20 +70,20 @@ stmrr   01101111 ...... ...... ...... ......    @rrri
 # Register Assignment Instructions
 #
 
-&orri                   ra     rb     cnt 
-@orri   ........ ...... ra:6   rb:6   cnt:6     &orri
+&orri                   ha     hb     cnt 
+@orri   ........ ...... ha:6   hb:6   cnt:6     &orri
 
-rg2rg   00010000 110000 ...... ...... ......    @orri
-rg2rp   00010000 110001 ...... ...... ......    @orri
-rg2rf   00010000 110010 ...... ...... ......    @orri
-rp2rg   00010000 110100 ...... ...... ......    @orri
-rp2rp   00010000 110101 ...... ...... ......    @orri
-rf2rg   00010000 111000 ...... ...... ......    @orri
+rd2rd   00010000 110000 ...... ...... ......    @orri
+rd2rb   00010000 110001 ...... ...... ......    @orri
+rd2rf   00010000 110010 ...... ...... ......    @orri
+rb2rd   00010000 110100 ...... ...... ......    @orri
+rb2rb   00010000 110101 ...... ...... ......    @orri
+rf2rd   00010000 111000 ...... ...... ......    @orri
 rf2rf   00010000 111010 ...... ...... ......    @orri
 
 
-&rrrr            rga    rgb    rgc    rgd
-@rrrr   ........ rga:6  rgb:6  rgc:6  rgd:6     &rrrr
+&rrrr            rdha   rdhb   rdhc   rdhd
+@rrrr   ........ rdha:6 rdhb:6 rdhc:6 rdhd:6    &rrrr
 
 csn     00100000 ...... ...... ...... ......    @rrrr
 csnn    00100001 ...... ...... ...... ......    @rrrr
@@ -95,8 +95,8 @@ csod    00100110 ...... ...... ...... ......    @rrrr
 csev    00100111 ...... ...... ...... ......    @rrrr
 
 
-&rjii            rg     j   imm
-@rjii   ........ rg:6   j:2 imm:16              &rjii
+&rjii            rd     j   imm
+@rjii   ........ rd:6   j:2 imm:16              &rjii
 
 setow   00010100 ...... ..  ................    @rjii
 setzw   00010101 ...... ..  ................    @rjii
@@ -109,8 +109,8 @@ andnw   00010111 ...... ..  ................    @rjii
 # Arithmetic Instructions
 #
 
-addi    00011001 rg:6   imm:s18
-addrp   00011000 rp:6   imm:s18
+addi    00011001 rd:6   imm:s18
+addrb   00011000 rb:6   imm:s18
 
 add     00011010 ...... ...... ...... ......    @rrrr
 sub     00011011 ...... ...... ...... ......    @rrrr
@@ -119,12 +119,12 @@ mulu    00011101 ...... ...... ...... ......    @rrrr
 divs    00011110 ...... ...... ...... ......    @rrrr
 divu    00011111 ...... ...... ...... ......    @rrrr
 
-cmpsi   00010010 rga:6  rgb:6  imm:s12
-cmpui   00010011 rga:6  rgb:6  imm:12
+cmpsi   00010010 rdha:6 rdhb:6 imm:s12
+cmpui   00010011 rdha:6 rdhb:6 imm:12
 
 
-&orrr                   rgb    rgc    rgd
-@orrr   ........ ...... rgb:6  rgc:6  rgd:6     &orrr
+&orrr                   rdhb   rdhc   rdhd
+@orrr   ........ ...... rdhb:6 rdhc:6 rdhd:6    &orrr
 
 cmps    00010000 100100 ...... ...... ......    @orrr
 cmpu    00010000 100101 ...... ...... ......    @orrr
@@ -141,12 +141,12 @@ extz    00010000 010101 ...... ...... ......    @orrr
 not     00010000 010110 ...... ...... ......    @orrr
 
 
-shlui   00010000 011001 rgb:6  rgc:6  imm:6
-shrsi   00010000 011010 rgb:6  rgc:6  imm:6
-shrui   00010000 011011 rgb:6  rgc:6  imm:6
-extsi   00010000 011100 rgb:6  rgc:6  imm:6
-extzi   00010000 011101 rgb:6  rgc:6  imm:6
-noti    00010000 011110 rgb:6  rgc:6  imm:6
+shlui   00010000 011001 rdhb:6 rdhc:6 imm:6
+shrsi   00010000 011010 rdhb:6 rdhc:6 imm:6
+shrui   00010000 011011 rdhb:6 rdhc:6 imm:6
+extsi   00010000 011100 rdhb:6 rdhc:6 imm:6
+extzi   00010000 011101 rdhb:6 rdhc:6 imm:6
+noti    00010000 011110 rdhb:6 rdhc:6 imm:6
 
 
 
@@ -169,12 +169,12 @@ trap    01110000 cp:6   num:18
 jump    01100100 imm:s24
 call    01101100 imm:s24
 
-jumpaa  01100101 rpa:6  rgb:6  imm:s12
-callaa  01101101 rpa:6  rgb:6  imm:s12
+jumpaa  01100101 rb:6   rd:6   imm:s12
+callaa  01101101 rb:6   rd:6   imm:s12
 
 
-&riii            rga    imm
-@riii   ........ rga:6  imm:s18                 &riii
+&riii            rd     imm
+@riii   ........ rd:6   imm:s18                 &riii
 
 brn     00101000 ...... ..................      @riii
 brnn    00101001 ...... ..................      @riii
