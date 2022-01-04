@@ -31,10 +31,10 @@ enum dadao_insn_type {
 enum dadao_operand_type {
 	dadao_operand_none = 0,
 	dadao_operand_op,	/* minor-opcode */
-	dadao_operand_rg,	/* rg reg class */
-	dadao_operand_rp,	/* rg reg class */
-	dadao_operand_rf,	/* rg reg class */
-	dadao_operand_rr,	/* rg reg class */
+	dadao_operand_rd,	/* rd reg class */
+	dadao_operand_rb,	/* rb reg class */
+	dadao_operand_rf,	/* rf reg class */
+	dadao_operand_ra,	/* ra reg class */
 	dadao_operand_i6,	/* shift left imm6 (unsigned) */
 	dadao_operand_u12,	/* unsigned imm 12-bit */
 	dadao_operand_u18,	/* unsigned imm 18-bit */
