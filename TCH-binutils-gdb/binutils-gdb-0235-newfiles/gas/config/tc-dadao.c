@@ -288,16 +288,16 @@ void dadao_md_begin (void)
 		hash_insert (dadao_opcode_hash, opcode->name, (char *) opcode);
 
 	for (i = 0; i < 64; i++) {
-		sprintf (buf, "rg%d", i);
+		sprintf (buf, "rd%d", i);
 		symbol_table_insert (symbol_new (buf, reg_section, i, &zero_address_frag));
 
-		sprintf (buf, "rp%d", i);
+		sprintf (buf, "rb%d", i);
 		symbol_table_insert (symbol_new (buf, reg_section, i + 64, &zero_address_frag));
 
 		sprintf (buf, "rf%d", i);
 		symbol_table_insert (symbol_new (buf, reg_section, i + 128, &zero_address_frag));
 
-		sprintf (buf, "rr%d", i);
+		sprintf (buf, "ra%d", i);
 		symbol_table_insert (symbol_new (buf, reg_section, i + 192, &zero_address_frag));
 		
 		sprintf (buf, "cp%d", i);
@@ -376,12 +376,12 @@ static void dd_pseudo_setrd(char *opcodep, int setrd_fa, unsigned long long setr
 }
 
 
-#define	__DD_EXP_SHOULD_BE_RG(e, f)			\
+#define	__DD_EXP_SHOULD_BE_RD(e, f)			\
 	if (e.X_op != O_register)	return -1;	\
 	if (e.X_add_number > 0x3F)	return -1;	\
 	f = e.X_add_number;
 
-#define	__DD_EXP_SHOULD_BE_RP(e, f)			\
+#define	__DD_EXP_SHOULD_BE_RB(e, f)			\
 	if (e.X_op != O_register)	return -1;	\
 	if (e.X_add_number > 0x7F)	return -1;	\
 	if (e.X_add_number < 0x40)	return -1;	\
@@ -393,7 +393,7 @@ static void dd_pseudo_setrd(char *opcodep, int setrd_fa, unsigned long long setr
 	if (e.X_add_number < 0x80)	return -1;	\
 	f = e.X_add_number - 0x80;
 
-#define	__DD_EXP_SHOULD_BE_RR(e, f)			\
+#define	__DD_EXP_SHOULD_BE_RA(e, f)			\
 	if (e.X_op != O_register)	return -1;	\
 	if (e.X_add_number > 0xFF)	return -1;	\
 	if (e.X_add_number < 0xC0)	return -1;	\
@@ -428,10 +428,10 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
 		return -1;
 
 	switch (insn->op_fa) {
-	case dadao_operand_rg:	__DD_EXP_SHOULD_BE_RG(exp[n_exp], fa);	n_exp++;	break;
-	case dadao_operand_rp:	__DD_EXP_SHOULD_BE_RP(exp[n_exp], fa);	n_exp++;	break;
+	case dadao_operand_rd:	__DD_EXP_SHOULD_BE_RD(exp[n_exp], fa);	n_exp++;	break;
+	case dadao_operand_rb:	__DD_EXP_SHOULD_BE_RB(exp[n_exp], fa);	n_exp++;	break;
 	case dadao_operand_rf:	__DD_EXP_SHOULD_BE_RF(exp[n_exp], fa);	n_exp++;	break;
-	case dadao_operand_rr:	__DD_EXP_SHOULD_BE_RR(exp[n_exp], fa);	n_exp++;	break;
+	case dadao_operand_ra:	__DD_EXP_SHOULD_BE_RA(exp[n_exp], fa);	n_exp++;	break;
 	case dadao_operand_cp:	__DD_EXP_SHOULD_BE_CP(exp[n_exp], fa);  n_exp++;	break;
 
 	case dadao_operand_op:
@@ -459,10 +459,10 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
 	}
 
 	switch (insn->op_fb) {
-	case dadao_operand_rg:	__DD_EXP_SHOULD_BE_RG(exp[n_exp], fb);	n_exp++;	break;
-	case dadao_operand_rp:	__DD_EXP_SHOULD_BE_RP(exp[n_exp], fb);	n_exp++;	break;
+	case dadao_operand_rd:	__DD_EXP_SHOULD_BE_RD(exp[n_exp], fb);	n_exp++;	break;
+	case dadao_operand_rb:	__DD_EXP_SHOULD_BE_RB(exp[n_exp], fb);	n_exp++;	break;
 	case dadao_operand_rf:	__DD_EXP_SHOULD_BE_RF(exp[n_exp], fb);	n_exp++;	break;
-	case dadao_operand_rr:	__DD_EXP_SHOULD_BE_RR(exp[n_exp], fb);	n_exp++;	break;
+	case dadao_operand_ra:	__DD_EXP_SHOULD_BE_RA(exp[n_exp], fb);	n_exp++;	break;
 	case dadao_operand_cr:	__DD_EXP_SHOULD_BE_CR(exp[n_exp], fb);	n_exp++;	break;
 
 	case dadao_operand_w16:
@@ -501,7 +501,7 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
 
 	if ((n_operands == 3) && (exp[2].X_op == O_left_shift)) {
 		/* To accept: rg << i6 */
-		if ((insn->op_fc != dadao_operand_rg) || (insn->op_fd != dadao_operand_i6))
+		if ((insn->op_fc != dadao_operand_rd) || (insn->op_fd != dadao_operand_i6))
 			return -1;
 		exp_next = symbol_get_value_expression (exp[2].X_add_symbol);
 		exp_last = symbol_get_value_expression (exp[2].X_op_symbol);
@@ -511,10 +511,10 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
 	}
 
 	switch (insn->op_fc) {
-	case dadao_operand_rg:	__DD_EXP_SHOULD_BE_RG(exp_next[0], fc);	break;
-	case dadao_operand_rp:	__DD_EXP_SHOULD_BE_RP(exp_next[0], fc);	break;
+	case dadao_operand_rd:	__DD_EXP_SHOULD_BE_RD(exp_next[0], fc);	break;
+	case dadao_operand_rb:	__DD_EXP_SHOULD_BE_RB(exp_next[0], fc);	break;
 	case dadao_operand_rf:	__DD_EXP_SHOULD_BE_RF(exp_next[0], fc);	break;
-	case dadao_operand_rr:	__DD_EXP_SHOULD_BE_RR(exp_next[0], fc);	break;
+	case dadao_operand_ra:	__DD_EXP_SHOULD_BE_RA(exp_next[0], fc);	break;
 	case dadao_operand_cr:	__DD_EXP_SHOULD_BE_CR(exp_next[0], fc);	break;
 
 	case dadao_operand_s12:
@@ -538,10 +538,10 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
 	}
 
 	switch (insn->op_fd) {
-	case dadao_operand_rg:	__DD_EXP_SHOULD_BE_RG(exp_last[0], fd);	break;
-	case dadao_operand_rp:	__DD_EXP_SHOULD_BE_RP(exp_last[0], fd);	break;
+	case dadao_operand_rd:	__DD_EXP_SHOULD_BE_RD(exp_last[0], fd);	break;
+	case dadao_operand_rb:	__DD_EXP_SHOULD_BE_RB(exp_last[0], fd);	break;
 	case dadao_operand_rf:	__DD_EXP_SHOULD_BE_RF(exp_last[0], fd);	break;
-	case dadao_operand_rr:	__DD_EXP_SHOULD_BE_RR(exp_last[0], fd);	break;
+	case dadao_operand_ra:	__DD_EXP_SHOULD_BE_RA(exp_last[0], fd);	break;
 	case dadao_operand_cr:	__DD_EXP_SHOULD_BE_CR(exp_last[0], fd);	break;
 
 	case dadao_operand_i6:
@@ -563,10 +563,10 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
 	*insn_code = ((insn->major_opcode << 24) | (fa << 18) | (fb << 12) | (fc << 6) | fd);
 	return 0;
 }
-#undef	__DD_EXP_SHOULD_BE_RG
-#undef	__DD_EXP_SHOULD_BE_RP
+#undef	__DD_EXP_SHOULD_BE_RD
+#undef	__DD_EXP_SHOULD_BE_RB
 #undef	__DD_EXP_SHOULD_BE_RF
-#undef	__DD_EXP_SHOULD_BE_RR
+#undef	__DD_EXP_SHOULD_BE_RA
 #undef	__DD_EXP_SHOULD_BE_CP
 #undef	__DD_EXP_SHOULD_BE_CR
 #undef	__DD_EXP_SHOULD_BE_IMM
