@@ -474,7 +474,9 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
 		return 0;
 
 	case dadao_operand_s18:
-		/* ONLY condbranch and geta be here */
+		/* condbranch */
+		/* addrb rb, imm18 */
+		/* add rb, imm18 */
 		if (exp[n_exp].X_op == O_constant) {
 			__DD_EXP_SHOULD_BE_IMM(exp[n_exp], -0x20000, 0x1FFFF);
 			*insn_code = ((insn->major_opcode << 24) | (fa << 18)
@@ -615,7 +617,8 @@ void dadao_md_assemble (char *str)
 	}
 
 	if (instruction->type == dadao_type_pseudo) {
-		/* ONLY setrd is pseudo insn: setrd rd, imm64 */
+		/* setrd is pseudo insn: setrd rd, imm64 */
+		/* setrb rb, imm64 : wait to add*/
 		if ((n_operands == 2)
 			&& (exp[0].X_op == O_register) && (exp[0].X_add_number < 0x40)
 			&& (exp[1].X_op == O_constant))
@@ -630,7 +633,9 @@ void dadao_md_assemble (char *str)
 	ret_code = dd_get_insn_code(instruction, exp, n_operands, &insn_code);
 
 	if (ret_code == -1) {
-		/* three possibles: iiii_rrii / orri_orrr / rrii_rrri */
+		/* five possibles */
+		/* iiii_rrii / orrr_orri / orrr_rrii */
+		/* orrr_riii / riii_rrrr */
 		insn_alt[0] = '_';
 
 		instruction = (struct dadao_opcode *) hash_find (dadao_opcode_hash, insn_alt);
