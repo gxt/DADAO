@@ -854,10 +854,7 @@ static void pop_return_address(DisasContext *ctx)
     gen_exception(DADAO_EXCP_TRIP);
     gen_set_label(rasp_set);
     tcg_gen_qemu_ld_i64(cpu_pc, cpu_rasp, ctx->mem_idx, MO_TEQ);
-    for (int i = 63; i >= 1; --i) {
-        tcg_gen_addi_i64(cpu_rasp, cpu_rasp, 8);
-        tcg_gen_qemu_ld_i64(cpu_rr[i], cpu_rasp, ctx->mem_idx, MO_TEQ);
-    }
+    tcg_gen_addi_i64(cpu_rasp, cpu_rasp, 8);
     tcg_gen_br(done);
     gen_set_label(reg_ras_not_empty);
     tcg_gen_mov_i64(cpu_pc, cpu_rr[63]);
