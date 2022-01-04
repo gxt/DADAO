@@ -566,7 +566,7 @@ static bool trans_addi(DisasContext *ctx, arg_addi *a)
     return true;
 }
 
-static bool trans_addrb(DisasContext *ctx, arg_addrb *a)
+static bool trans_addrbi(DisasContext *ctx, arg_addrbi *a)
 {
     if (a->rb == 0) {
         return false;
@@ -694,6 +694,36 @@ static bool trans_cmpu(DisasContext *ctx, arg_cmpu *a)
     tcg_temp_free_i64(zero);
     tcg_temp_free_i64(pos);
     tcg_temp_free_i64(neg);
+    return true;
+}
+
+static bool trans_cmprb(DisasContext *ctx, arg_cmprb *a)
+{
+    if (a->rdhb == 0) {
+        return false;
+    }
+    TCGv_i64 zero = tcg_const_i64(0);
+    TCGv_i64 pos = tcg_const_i64(1);
+    TCGv_i64 neg = tcg_const_i64(-1);
+    tcg_gen_movcond_i64(TCG_COND_GTU, cpu_rd[a->rdhb], cpu_rd[a->rbhc],
+                        cpu_rd[a->rbhd], pos, zero);
+    tcg_gen_movcond_i64(TCG_COND_LTU, cpu_rd[a->rdhb], cpu_rd[a->rbhc],
+                        cpu_rd[a->rbhd], neg, cpu_rd[a->rdhb]);
+    tcg_temp_free_i64(zero);
+    tcg_temp_free_i64(pos);
+    tcg_temp_free_i64(neg);
+    return true;
+}
+
+static bool trans_addrb(DisasContext *ctx, arg_addrb *a)
+{
+    tcg_gen_add_i64(cpu_rb[a->rbhb], cpu_rb[a->rbhc], cpu_rd[a->rdhd]);
+    return true;
+}
+
+static bool trans_subrb(DisasContext *ctx, arg_subrb *a)
+{
+    tcg_gen_sub_i64(cpu_rb[a->rbhb], cpu_rb[a->rbhc], cpu_rd[a->rdhd]);
     return true;
 }
 
