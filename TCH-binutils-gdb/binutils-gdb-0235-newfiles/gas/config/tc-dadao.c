@@ -312,65 +312,65 @@ void dadao_md_begin (void)
 				dadao_reg_aliases[i].number, &zero_address_frag));
 }
 
-static void dd_pseudo_setrg(char *opcodep, int setrg_fa, unsigned long long setrg_octa)
+static void dd_pseudo_setrd(char *opcodep, int setrd_fa, unsigned long long setrd_octa)
 {
-	int setrg_flag;
-	unsigned int setrg_w16_1, setrg_w16_2, setrg_w16_3,setrg_w16_4;
+	int setrd_flag;
+	unsigned int setrd_w16_1, setrd_w16_2, setrd_w16_3,setrd_w16_4;
 
-	/* setrg rg, imm64 */
-	setrg_flag = 0; // use setow or setzw
+	/* setrd rd, imm64 */
+	setrd_flag = 0; // use setow or setzw
 
-	setrg_w16_1 = (setrg_octa) & 0xFFFF;
-	setrg_w16_2 = (setrg_octa >> 16) & 0xFFFF;
-	setrg_w16_3 = (setrg_octa >> 32) & 0xFFFF;
-	setrg_w16_4 = (setrg_octa >> 48) & 0xFFFF;
+	setrd_w16_1 = (setrd_octa) & 0xFFFF;
+	setrd_w16_2 = (setrd_octa >> 16) & 0xFFFF;
+	setrd_w16_3 = (setrd_octa >> 32) & 0xFFFF;
+	setrd_w16_4 = (setrd_octa >> 48) & 0xFFFF;
 
-	if(((setrg_w16_4 == 0)+(setrg_w16_3 == 0)+(setrg_w16_2 == 0))
-		<((setrg_w16_4 == 0xFFFF)+(setrg_w16_3 == 0xFFFF)+(setrg_w16_2 == 0xFFFF))){
-		setrg_flag = 1;
+	if(((setrd_w16_4 == 0)+(setrd_w16_3 == 0)+(setrd_w16_2 == 0))
+		<((setrd_w16_4 == 0xFFFF)+(setrd_w16_3 == 0xFFFF)+(setrd_w16_2 == 0xFFFF))){
+		setrd_flag = 1;
 	}
 	
-	if (setrg_flag)
-		md_number_to_chars(opcodep, DADAO_INSN_SETO | (setrg_fa << 18) | DADAO_WYDE_WL | setrg_w16_1, 4);
+	if (setrd_flag)
+		md_number_to_chars(opcodep, DADAO_INSN_SETO | (setrd_fa << 18) | DADAO_WYDE_WL | setrd_w16_1, 4);
 	else
-		md_number_to_chars(opcodep, DADAO_INSN_SETZ | (setrg_fa << 18) | DADAO_WYDE_WL | setrg_w16_1, 4);
+		md_number_to_chars(opcodep, DADAO_INSN_SETZ | (setrd_fa << 18) | DADAO_WYDE_WL | setrd_w16_1, 4);
 
-	if (setrg_flag){
-		if(setrg_w16_2 != 0xFFFF){
+	if (setrd_flag){
+		if(setrd_w16_2 != 0xFFFF){
 			opcodep = frag_more (4);
-			md_number_to_chars(opcodep, DADAO_INSN_ANDN | (setrg_fa << 18) | DADAO_WYDE_WK | setrg_w16_2, 4);
+			md_number_to_chars(opcodep, DADAO_INSN_ANDN | (setrd_fa << 18) | DADAO_WYDE_WK | setrd_w16_2, 4);
 		}
 	}
 	else{
-		if(setrg_w16_2 != 0){
+		if(setrd_w16_2 != 0){
 			opcodep = frag_more (4);
-			md_number_to_chars(opcodep, DADAO_INSN_OR | (setrg_fa << 18) | DADAO_WYDE_WK | setrg_w16_2, 4);
+			md_number_to_chars(opcodep, DADAO_INSN_OR | (setrd_fa << 18) | DADAO_WYDE_WK | setrd_w16_2, 4);
 		}
 	}
 
-	if (setrg_flag){
-		if(setrg_w16_3 != 0xFFFF){
+	if (setrd_flag){
+		if(setrd_w16_3 != 0xFFFF){
 			opcodep = frag_more (4);
-			md_number_to_chars(opcodep, DADAO_INSN_ANDN | (setrg_fa << 18) | DADAO_WYDE_WJ | setrg_w16_3, 4);
+			md_number_to_chars(opcodep, DADAO_INSN_ANDN | (setrd_fa << 18) | DADAO_WYDE_WJ | setrd_w16_3, 4);
 		}
 	}
 	else{
-		if(setrg_w16_3 != 0){
+		if(setrd_w16_3 != 0){
 			opcodep = frag_more (4);
-			md_number_to_chars(opcodep, DADAO_INSN_OR | (setrg_fa << 18) | DADAO_WYDE_WJ | setrg_w16_3, 4);
+			md_number_to_chars(opcodep, DADAO_INSN_OR | (setrd_fa << 18) | DADAO_WYDE_WJ | setrd_w16_3, 4);
 		}
 	}
 
-	if (setrg_flag){
-		if(setrg_w16_4 != 0xFFFF){
+	if (setrd_flag){
+		if(setrd_w16_4 != 0xFFFF){
 			opcodep = frag_more (4);
-			md_number_to_chars(opcodep, DADAO_INSN_ANDN | (setrg_fa << 18) | DADAO_WYDE_WH | setrg_w16_4, 4);
+			md_number_to_chars(opcodep, DADAO_INSN_ANDN | (setrd_fa << 18) | DADAO_WYDE_WH | setrd_w16_4, 4);
 		}
 	}
 	else{
-		if(setrg_w16_4 != 0){
+		if(setrd_w16_4 != 0){
 			opcodep = frag_more (4);
-			md_number_to_chars(opcodep, DADAO_INSN_OR | (setrg_fa << 18) | DADAO_WYDE_WH | setrg_w16_4, 4);
+			md_number_to_chars(opcodep, DADAO_INSN_OR | (setrd_fa << 18) | DADAO_WYDE_WH | setrd_w16_4, 4);
 		}
 	}
 }
@@ -615,12 +615,12 @@ void dadao_md_assemble (char *str)
 	}
 
 	if (instruction->type == dadao_type_pseudo) {
-		/* ONLY setrg is pseudo insn: setrg rg, imm64 */
+		/* ONLY setrd is pseudo insn: setrd rd, imm64 */
 		if ((n_operands == 2)
 			&& (exp[0].X_op == O_register) && (exp[0].X_add_number < 0x40)
 			&& (exp[1].X_op == O_constant))
 			if(instruction->major_opcode == 0){
-				dd_pseudo_setrg(opcodep, exp[0].X_add_number, exp[1].X_add_number);
+				dd_pseudo_setrd(opcodep, exp[0].X_add_number, exp[1].X_add_number);
 			}
 		else
 			as_bad_where(__FILE__, __LINE__, "(%s %s) unknown insn", &insn_alt[1], operands);
