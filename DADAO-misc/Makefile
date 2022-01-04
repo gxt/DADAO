@@ -6,13 +6,13 @@ DIR_DADAO_TOP		:= $(HOME)/DADAO
 DIR_DADAO_BUILD		:= $(DIR_DADAO_TOP)/__build
 DIR_DADAO_INSTALL	:= $(DIR_DADAO_TOP)/__install
 
-DD_GAS			:= $(DIR_DADAO_INSTALL)/bin/dadao-linux-elf-as
-DD_READELF		:= $(DIR_DADAO_INSTALL)/bin/dadao-linux-elf-readelf
-DD_OBJDUMP		:= $(DIR_DADAO_INSTALL)/bin/dadao-linux-elf-objdump
+DD_GAS			:= $(DIR_DADAO_INSTALL)/bin/dadao-linux-gnu-as
+DD_READELF		:= $(DIR_DADAO_INSTALL)/bin/dadao-linux-gnu-readelf
+DD_OBJDUMP		:= $(DIR_DADAO_INSTALL)/bin/dadao-linux-gnu-objdump
 
 VER_GCC			?= 1003
 DD_XGCC			:= $(DIR_DADAO_BUILD)/gcc-$(VER_GCC)/gcc/xgcc
-DD_GCC			:= $(DIR_DADAO_INSTALL)/bin/dadao-linux-elf-gcc
+DD_GCC			:= $(DIR_DADAO_INSTALL)/bin/dadao-linux-gnu-gcc
 
 DD_QEMU_USER		:= $(DIR_DADAO_INSTALL)/bin/qemu-dadao
 DD_QEMU_SYS		:= $(DIR_DADAO_INSTALL)/bin/qemu-system-dadao
@@ -32,10 +32,10 @@ TEST_CONFTEST_NAME	:= conftest
 TEST_XGCC_FLAGS		:= -c $(TEST_DSTDIR)/$(TEST_GCC_NAME) -save-temps
 TEST_XGCC_FLAGS_EXTRA	:=							\
 		-B$(DIR_DADAO_BUILD)/gcc-$(VER_GCC)/gcc/			\
-		-B$(DIR_DADAO_INSTALL)/dadao-linux-elf/bin/			\
-		-B$(DIR_DADAO_INSTALL)/dadao-linux-elf/lib/			\
-		-isystem $(DIR_DADAO_INSTALL)/dadao-linux-elf/include		\
-		-isystem $(DIR_DADAO_INSTALL)/dadao-linux-elf/sys-include	\
+		-B$(DIR_DADAO_INSTALL)/dadao-linux-gnu/bin/			\
+		-B$(DIR_DADAO_INSTALL)/dadao-linux-gnu/lib/			\
+		-isystem $(DIR_DADAO_INSTALL)/dadao-linux-gnu/include		\
+		-isystem $(DIR_DADAO_INSTALL)/dadao-linux-gnu/sys-include	\
 
 TEST_GCC_NAME		?= $(TEST_CONFTEST_NAME)
 TEST_GCC_FLAGS		:= -o $(TEST_DSTDIR)/$(TEST_GCC_NAME) -g -O2 -save-temps
