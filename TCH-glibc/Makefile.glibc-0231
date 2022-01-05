@@ -4,7 +4,7 @@
 GLIBC_0231_ORIGIN	:= $(DIR_GIT_ORIGIN)/glibc.git
 GLIBC_0231_VERSION	:= glibc-2.31
 GLIBC_0231_BRANCH	:= dadao-0231
-GLIBC_0231_TARGET	:= dadao-linux
+GLIBC_0231_TARGET	:= dadao-linux-gnu
 
 GLIBC_0231_NEWFILES	:= $(DIR_DADAO_TOP)/TCH-glibc/glibc-0231-newfiles
 GLIBC_0231_PATCHES	:= $(DIR_DADAO_TOP)/TCH-glibc/glibc-0231-patches
