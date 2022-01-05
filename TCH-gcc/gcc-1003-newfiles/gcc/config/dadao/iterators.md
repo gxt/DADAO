@@ -20,10 +20,10 @@
 (define_mode_iterator	CC_ANY		[CCSS CCUU CCFF])
 
 (define_code_iterator	CCSS_TYPE	[eq ne lt le gt ge])
-(define_code_attr	ccss_type_insn	[(eq "z") (ne "nz") (lt "n") (le "np") (gt "b") (ge "nn")])
+(define_code_attr	ccss_type_insn	[(eq "z") (ne "nz") (lt "n") (le "np") (gt "p") (ge "nn")])
 
 (define_code_iterator	CCUU_TYPE	[eq ne ltu leu gtu geu])
-(define_code_attr	ccuu_type_insn	[(eq "z") (ne "nz") (ltu "n") (leu "np") (gtu "b") (geu "nn")])
+(define_code_attr	ccuu_type_insn	[(eq "z") (ne "nz") (ltu "n") (leu "np") (gtu "p") (geu "nn")])
 
 (define_code_iterator	CCFF_TYPE	[eq ne lt le gt ge ordered unordered])
 (define_code_attr	ccff_type_insn	[(eq "eq") (ne "ne") (lt "lt") (le "le") (gt "gt") (ge "ge") (ordered "or") (unordered "un")])

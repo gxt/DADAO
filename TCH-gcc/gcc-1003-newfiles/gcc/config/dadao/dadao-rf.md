@@ -173,7 +173,7 @@
       (label_ref (match_operand 0 "" ""))
       (pc)))]
 	""
-	"brb	%2, %0")
+	"brp	%2, %0")
 
 (define_expand "cbranch<mode>4"
   [(set (match_dup 4)

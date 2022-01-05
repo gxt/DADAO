@@ -52,6 +52,7 @@
 	  if (REG_P (operands[0]) && REGNO_REG_CLASS (REGNO(operands[0])) == GENERAL_REGS &&
 	      REG_P (operands[1]) && REGNO_REG_CLASS (REGNO(operands[1])) == GENERAL_REGS)
 		return "orr	%0, %1, rd0";
+	  return "xxx";
 	})
 
 (define_expand "call"
