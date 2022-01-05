@@ -75,7 +75,7 @@ _start:
 	brnn	rd1, _start
 	brz	rd1, _start
 	brnz	rd1, _start
-	brb	rd1, _start
+	brp	rd1, _start
 	brnp	rd1, _start
 	brod	rd1, _start
 	brev	rd1, _start
