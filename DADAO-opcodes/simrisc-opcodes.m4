@@ -174,7 +174,7 @@ insn(	ldmra,		rrri,	0x67,	0,	ra,	rb,	rd,	i6,	dref)
 insn(	call,		iiii,	0x6C,	0,	s24,	-,	-,	-,	jsr)
 insn(  _call,		rrii,	0x6D,	0,	rb,	rd,	s12,	-,	jsr)
 
-insn(	ret,		zzzz,	0x6E,	0,	-,	-,	-,	-,	jsr)
+insn(	ret,		zzzz,	0x6D,	0,	-,	-,	-,	-,	jsr)
 
 insn(	stmra,		rrri,	0x6F,	0,	ra,	rb,	rd,	i6,	dref)
 
