@@ -103,3 +103,9 @@ glibc-0231-update-syscall-lists:
 		git diff
 	@echo "If DIFF, update arch-syscall.h file!"
 
+glibc-0231-update-all-abi:
+	@PATH=$(GLIBC_0231_PATH) make -C $(GLIBC_0231_BUILD) update-all-abi
+	@cd $(GLIBC_0231_SOURCE);						\
+		git diff
+	@echo "If DIFF, update abilist files!"
+
