@@ -856,11 +856,19 @@ static bool trans_swym(DisasContext *ctx, arg_swym *a)
     return true;
 }
 
-static bool trans_trap(DisasContext *ctx, arg_trap *a)
+static bool trans_jump(DisasContext *ctx, arg_jump *a)
 {
-    tcg_gen_movi_i32(cpu_trap_num, a->num);
-    gen_exception(DADAO_EXCP_TRAP);
-    ctx->base.is_jmp = DISAS_NORETURN;
+    tcg_gen_movi_i64(cpu_pc, ctx->base.pc_next + a->imm * 4);
+    ctx->base.is_jmp = DISAS_JUMP;
+    return true;
+}
+
+static bool trans_jumpaa(DisasContext *ctx, arg_jumpaa *a)
+{
+    tcg_gen_movi_i64(cpu_pc, a->rb);
+    tcg_gen_add_i64(cpu_pc, cpu_pc, cpu_rd[a->rd]);
+    tcg_gen_addi_i64(cpu_pc, cpu_pc, a->imm * 4);
+    ctx->base.is_jmp = DISAS_JUMP;
     return true;
 }
 
@@ -923,22 +931,6 @@ static bool trans_callaa(DisasContext *ctx, arg_callaa *a)
 
 trans_ret:
     pop_return_address(ctx);
-    ctx->base.is_jmp = DISAS_JUMP;
-    return true;
-}
-
-static bool trans_jump(DisasContext *ctx, arg_jump *a)
-{
-    tcg_gen_movi_i64(cpu_pc, ctx->base.pc_next + a->imm * 4);
-    ctx->base.is_jmp = DISAS_JUMP;
-    return true;
-}
-
-static bool trans_jumpaa(DisasContext *ctx, arg_jumpaa *a)
-{
-    tcg_gen_movi_i64(cpu_pc, a->rb);
-    tcg_gen_add_i64(cpu_pc, cpu_pc, cpu_rd[a->rd]);
-    tcg_gen_addi_i64(cpu_pc, cpu_pc, a->imm * 4);
     ctx->base.is_jmp = DISAS_JUMP;
     return true;
 }
@@ -1010,6 +1002,39 @@ static bool trans_brod(DisasContext *ctx, arg_brod *a)
 static bool trans_brev(DisasContext *ctx, arg_brev *a)
 {
     return trans_br_od_ev(ctx, a, false);
+}
+
+static bool trans_trap(DisasContext *ctx, arg_trap *a)
+{
+    tcg_gen_movi_i32(cpu_trap_num, a->num);
+    gen_exception(DADAO_EXCP_TRAP);
+    ctx->base.is_jmp = DISAS_NORETURN;
+    return true;
+}
+
+static bool trans_cpcoop(DisasContext *ctx, arg_cpcoop *a)
+{
+    return false;
+}
+
+static bool trans_rd2cr(DisasContext *ctx, arg_rd2cr *a)
+{
+    return false;
+}
+
+static bool trans_cr2rd(DisasContext *ctx, arg_cr2rd *a)
+{
+    return false;
+}
+
+static bool trans_cpload(DisasContext *ctx, arg_cpload *a)
+{
+    return false;
+}
+
+static bool trans_cpstor(DisasContext *ctx, arg_cpstor *a)
+{
+    return false;
 }
 
 static void dadao_tr_init_disas_context(DisasContextBase *dcbase, CPUState *cs)
