@@ -521,6 +521,11 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
 
 	case dadao_operand_s12:
 		__DD_EXP_SHOULD_BE_IMM(exp_next[0], -0x800, 0x7FF);
+		/* call rb0, rd0, 0 doesn't exist */
+		if (insn->major_opcode == 0x6D && insn->operands_num == 3) {
+			if(fa == 0 && fb == 0 && (exp_next[0].X_add_number & 0xFFF) == 0)
+				return -1;
+		}
 		*insn_code = ((insn->major_opcode << 24) | (fa << 18) | (fb << 12)
 			| (exp_next[0].X_add_number & 0xFFF));
 		return 0;
