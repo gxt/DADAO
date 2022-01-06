@@ -13,7 +13,7 @@
 # include <stdint.h>
 # include <dl-dtv.h>
 
-register struct pthread *__thread_self __asm__ ("rp4");
+register struct pthread *__thread_self __asm__ ("rb4");
 
 /* Get system call information.  */
 # include <sysdep.h>
@@ -68,7 +68,7 @@ typedef struct
 /* Value passed to 'clone' for initialization of the thread register.  */
 # define TLS_DEFINE_INIT_TP(tp, pd)	void *tp = (char *) (pd) + TLS_PRE_TCB_SIZE
 
-/* Informs libthread_db that the thread pointer is rp4, which is used
+/* Informs libthread_db that the thread pointer is rb4, which is used
  * to know how to do THREAD_SELF.  */
 # define DB_THREAD_SELF			REGISTER (64, 64, 68 * 8, -TLS_PRE_TCB_SIZE)
 
