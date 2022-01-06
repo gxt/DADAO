@@ -42,6 +42,12 @@ static struct dadao_dis_info *initialize_dadao_dis_info (void)
 
 		i = opcodep->major_opcode;
 
+		if(opcodep->operands_num == 0 && i == 0x6D){
+			ddis_infop->ddis_majorp[i+1] = opcodep;
+			ddis_infop->ddis_optype[i] = dadao_operand_noop;
+			continue;
+		}
+
 		if (opcodep->op_fa == dadao_operand_op) {
 			minor_opcodep = ddis_infop->ddis_minorp[i];
 			if (minor_opcodep == NULL) {
@@ -122,6 +128,10 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 
 	switch (ddis_infop->ddis_optype[(insn >> 24)]) {
 	case dadao_operand_none:
+		if (insn == 0x6D000000 ) {
+			opcodep = ddis_infop->ddis_majorp[(insn>>24)+1];
+			break;
+		}
 		opcodep = ddis_infop->ddis_majorp[(insn >> 24)];
 		break;
 
