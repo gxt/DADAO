@@ -39,12 +39,12 @@
 	  }
           if (MEM_P (operands[1]) && REG_P (operands[0]) && REGNO_REG_CLASS (REGNO(operands[0])) == GENERAL_REGS) {
                 if (satisfies_constraint_Wg (operands[1])) {
-			if (GET_MODE (operands[0]) == DImode) return "ldmo       %0, %1, 0";
+			if (GET_MODE (operands[0]) == DImode) return "ldmo	%0, %1, 0";
 			else
 				return "ldm<bwto>u	%0, %1, 0";
 		}
                 else {
-			if (GET_MODE (operands[0]) == DImode) return "ldo       %0, %1";
+			if (GET_MODE (operands[0]) == DImode) return "ldo	%0, %1";
                         else
 				return "ld<bwto>u	%0, %1";
 		}
@@ -124,10 +124,10 @@
 	 (match_operand 1 "" ""))
    (use (match_operand 2 "" ""))
    (clobber (reg:DI DD_RA_REG))]
-  "" "")
-;  "@
-;	call	%0
-;	call	%2, %a0")
+  ""
+  "@
+	call	%0
+	call	%0, %a2")
 
 (define_insn "*call_value_real"
   [(set (match_operand 0 "register_operand" "=r,r")
@@ -136,10 +136,10 @@
 	      (match_operand 2 "" "")))
   (use (match_operand 3 "" ""))
   (clobber (reg:DI DD_RA_REG))]
-  "" "")
-;  "@
-;	call	%1
-;	call	%3, %a1")
+  ""
+  "@
+	call	%1
+	call	%1, %a3")
 
 ;; I hope untyped_call and untyped_return are not needed for DADAO.
 ;; Users of Objective-C will notice.
