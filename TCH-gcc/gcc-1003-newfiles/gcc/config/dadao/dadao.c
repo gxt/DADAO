@@ -1012,7 +1012,7 @@ static void dd_option_override (void)
 	   They could be relative if we just elide them to after all pertinent
 	   labels.  */
 	if (flag_pic) {
-		warning (0, "%<-f%s%> not supported: ignored", (flag_pic > 1) ? "PIC" : "pic");
+	//	warning (0, "%<-f%s%> not supported: ignored", (flag_pic > 1) ? "PIC" : "pic");
 		flag_pic = 0;
 	}
 }
