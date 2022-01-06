@@ -914,12 +914,14 @@ static bool trans_call(DisasContext *ctx, arg_call *a)
 
 static bool trans_callaa(DisasContext *ctx, arg_callaa *a)
 {
+    if (a->rb == 0 && a->rd == 0 && a->imm == 0) {
+        goto trans_ret;
+    }
+
     push_return_address(ctx);
     return trans_jumpaa(ctx, a);
-}
 
-static bool trans_ret(DisasContext *ctx, arg_swym *a)
-{
+trans_ret:
     pop_return_address(ctx);
     ctx->base.is_jmp = DISAS_JUMP;
     return true;
