@@ -619,15 +619,27 @@ static bool trans_mulu(DisasContext *ctx, arg_mulu *a)
 
 static bool trans_divs(DisasContext *ctx, arg_divs *a)
 {
+    TCGLabel* label_not_zero = gen_new_label();
+    TCGv_i64 zero = tcg_const_i64(0);
+    tcg_gen_brcond_i64(TCG_COND_NE, cpu_rd[a->rdhd], zero, label_not_zero);
+    gen_exception(DADAO_EXCP_INTR);
+    gen_set_label(label_not_zero);
     tcg_gen_div_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
     tcg_gen_rem_i64(cpu_rd[a->rdha], cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
+    tcg_temp_free_i64(zero);
     return true;
 }
 
 static bool trans_divu(DisasContext *ctx, arg_divu *a)
 {
+    TCGLabel* label_not_zero = gen_new_label();
+    TCGv_i64 zero = tcg_const_i64(0);
+    tcg_gen_brcond_i64(TCG_COND_NE, cpu_rd[a->rdhd], zero, label_not_zero);
+    gen_exception(DADAO_EXCP_INTR);
+    gen_set_label(label_not_zero);
     tcg_gen_divu_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
     tcg_gen_remu_i64(cpu_rd[a->rdha], cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
+    tcg_temp_free_i64(zero);
     return true;
 }
 
