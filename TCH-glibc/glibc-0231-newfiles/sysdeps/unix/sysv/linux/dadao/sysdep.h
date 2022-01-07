@@ -68,7 +68,8 @@
 		register int _a16 asm ("rd31");			\
 		LOAD_ARGS_##nr (args)				\
 		asm volatile (					\
-			"trap	cp0, %1	@ syscall " #name	\
+			"# syscall " #name			\
+			"trap	cp0, %1"			\
 			: "=r" (_a16)				\
 			: "i" (name) ASM_ARGS_##nr		\
 			: "memory");				\
