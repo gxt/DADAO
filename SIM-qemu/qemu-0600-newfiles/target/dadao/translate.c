@@ -1018,6 +1018,9 @@ static bool trans_brev(DisasContext *ctx, arg_brev *a)
 
 static bool trans_trap(DisasContext *ctx, arg_trap *a)
 {
+    if (a->cp != 0) {
+        return false;
+    }
     tcg_gen_movi_i32(cpu_trap_num, a->num);
     gen_exception(DADAO_EXCP_TRAP);
     ctx->base.is_jmp = DISAS_NORETURN;
