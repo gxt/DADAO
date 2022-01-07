@@ -43,6 +43,8 @@ TEST_GCC_FLAGS		+= -save-temps
 #TEST_GCC_FLAGS		+= -g -O2
 #TEST_GCC_FLAGS		+= -fdump-tree-all -fdump-ipa-all -fdump-rtl-all
 TEST_GCC_FLAGS_EXTRA	:=							\
+		$(DIR_DADAO_INSTALL)/lib/gcc/dadao-linux-gnu/10.3.0/crti.o	\
+		$(DIR_DADAO_INSTALL)/lib/gcc/dadao-linux-gnu/10.3.0/crtn.o	\
 		-nostdlib -lgcc							\
 		-B$(DIR_DADAO_BUILD)/gcc-$(VER_GCC)/gcc/			\
 		-B$(DIR_DADAO_INSTALL)/dadao-linux-gnu/bin/			\
@@ -50,14 +52,11 @@ TEST_GCC_FLAGS_EXTRA	:=							\
 		-isystem $(DIR_DADAO_INSTALL)/dadao-linux-gnu/include		\
 		-isystem $(DIR_DADAO_INSTALL)/dadao-linux-gnu/sys-include
 
-#		$(DIR_DADAO_INSTALL)/lib/gcc/dadao-linux-gnu/10.3.0/crti.o	\
-#		$(DIR_DADAO_INSTALL)/lib/gcc/dadao-linux-gnu/10.3.0/crtn.o	\
-
 test-gcc-highfive:
 	test -d $(TEST_DSTDIR) || mkdir -p $(TEST_DSTDIR)
 	$(DD_GCC) $(TEST_GCC_FLAGS) $(TEST_GCC_FLAGS_EXTRA) $(TEST_SRCDIR)/$(TEST_GCC_NAME).c
-	$(DD_READELF) -a $(TEST_DSTDIR)/$(TEST_GCC_NAME).o > $(TEST_DSTDIR)/$(TEST_GCC_NAME).elf
-	$(DD_OBJDUMP) -d $(TEST_DSTDIR)/$(TEST_GCC_NAME).o > $(TEST_DSTDIR)/$(TEST_GCC_NAME).dump
+	$(DD_READELF) -a $(TEST_DSTDIR)/$(TEST_GCC_NAME) > $(TEST_DSTDIR)/$(TEST_GCC_NAME).elf
+	$(DD_OBJDUMP) -d $(TEST_DSTDIR)/$(TEST_GCC_NAME) > $(TEST_DSTDIR)/$(TEST_GCC_NAME).dump
 
 TEST_QEMU_NAME		?= conftest
 TEST_QEMU_TARGET	:= $(TEST_DSTDIR)/$(TEST_QEMU_NAME)
