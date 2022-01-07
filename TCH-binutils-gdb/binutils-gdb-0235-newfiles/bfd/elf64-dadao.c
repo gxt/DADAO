@@ -444,13 +444,13 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 		} else {
 			reg = (insn_origin >> 18) & 0x3F;
 
-			bfd_put_32 (abfd, DADAO_INSN_SETZ | (reg << 18) | DADAO_WYDE_WH |
+			bfd_put_32 (abfd, DADAO_INSN_SETZW | (reg << 18) | DADAO_WYDE_WH |
 				((addr >> 48) & 0xffff), (bfd_byte *) datap);
-			bfd_put_32 (abfd, DADAO_INSN_OR | (reg << 18) | DADAO_WYDE_WJ |
+			bfd_put_32 (abfd, DADAO_INSN_ORW | (reg << 18) | DADAO_WYDE_WJ |
 				((addr >> 32) & 0xffff), (bfd_byte *) datap + 4);
-			bfd_put_32 (abfd, DADAO_INSN_OR | (reg << 18) | DADAO_WYDE_WK |
+			bfd_put_32 (abfd, DADAO_INSN_ORW | (reg << 18) | DADAO_WYDE_WK |
 				((addr >> 16) & 0xffff), (bfd_byte *) datap + 8);
-			bfd_put_32 (abfd, DADAO_INSN_OR | (reg << 18) | DADAO_WYDE_WL |
+			bfd_put_32 (abfd, DADAO_INSN_ORW | (reg << 18) | DADAO_WYDE_WL |
 				(addr & 0xffff), (bfd_byte *) datap + 12);
 		}
 
@@ -474,13 +474,13 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 			bfd_put_32 (abfd, (insn_origin ^ DADAO_INSN_ALTMODE) | (4),
 				 (bfd_byte *) datap);
 
-			bfd_put_32 (abfd, DADAO_INSN_SETZ | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WH |
+			bfd_put_32 (abfd, DADAO_INSN_SETZW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WH |
 				((value >> 48) & 0xffff), (bfd_byte *) datap + 4);
-			bfd_put_32 (abfd, DADAO_INSN_OR | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WJ |
+			bfd_put_32 (abfd, DADAO_INSN_ORW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WJ |
 				((value >> 32) & 0xffff), (bfd_byte *) datap + 8);
-			bfd_put_32 (abfd, DADAO_INSN_OR | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WK |
+			bfd_put_32 (abfd, DADAO_INSN_ORW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WK |
 				((value >> 16) & 0xffff), (bfd_byte *) datap + 12);
-			bfd_put_32 (abfd, DADAO_INSN_OR | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WL |
+			bfd_put_32 (abfd, DADAO_INSN_ORW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WL |
 				(value & 0xffff), (bfd_byte *) datap + 16);
 
 			/* Put a "jump $3, $0, 0" after the common sequence.  */
@@ -502,13 +502,13 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 			bfd_put_32 (abfd, insn_origin | DADAO_INSN_ALTMODE | ((value >> 2) & 0xFFFFFF),
 				(bfd_byte *) datap);
 		} else {
-			bfd_put_32 (abfd, DADAO_INSN_SETZ | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WH |
+			bfd_put_32 (abfd, DADAO_INSN_SETZW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WH |
 				((value >> 48) & 0xffff), (bfd_byte *) datap);
-			bfd_put_32 (abfd, DADAO_INSN_OR | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WJ |
+			bfd_put_32 (abfd, DADAO_INSN_ORW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WJ |
 				((value >> 32) & 0xffff), (bfd_byte *) datap + 4);
-			bfd_put_32 (abfd, DADAO_INSN_OR | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WK |
+			bfd_put_32 (abfd, DADAO_INSN_ORW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WK |
 				((value >> 16) & 0xffff), (bfd_byte *) datap + 8);
-			bfd_put_32 (abfd, DADAO_INSN_OR | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WL |
+			bfd_put_32 (abfd, DADAO_INSN_ORW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WL |
 				(value & 0xffff), (bfd_byte *) datap + 12);
 
 			bfd_put_32 (abfd, (insn_origin & ~DADAO_INSN_ALTMODE) | (DADAO_REGP_TAO << 18), (bfd_byte *) datap + 16);
