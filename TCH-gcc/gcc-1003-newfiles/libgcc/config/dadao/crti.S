@@ -65,7 +65,7 @@ _start:
 	orr	rd40, rd1, rd0
 
 	call	main
-	call	exit
+//	call	exit
 
 # Provide the first part of _init and _fini.  Save the return address on the
 # register stack.  We eventually ignore the return address of these
@@ -84,7 +84,7 @@ _init:
 
 # Register _fini to be executed as the last atexit function.
 # TODO	setrb	rd39, _fini
-	call	atexit
+//	call	atexit
 
 	.section .fini,"ax",@progbits
 	.global	_fini
