@@ -25,14 +25,14 @@ stackpp:
 	.dd.o64 __Stack_start
 crtstxt:
 	.dd.o64	_init
-	.dd.o64	__etext
+#	.dd.o64	__etext
 
 crtsdat:
 	.dd.o64	 dstart
 	.dd.o64	_end
 
 _start:
-# TODO	geta	rd63, crtstxt
+	setrb	rd63, crtstxt
 	ldo	rd2, rb63, 0
 #	andnwl	rd2, 0x7ff
 	ldo	rd3, rb63, 8
@@ -42,7 +42,7 @@ _start:
 	cmps	rd63, rd2, rd3
 	brn	rd63, 0b
 
-# TODO	setrb	rd63, crtsdat
+	setrb	rd63, crtsdat
 	ldo	rd2, rb63, 0
 #	andnwl	rd2, 0x7ff
 	ldo	rd3, rb63, 8
@@ -54,8 +54,8 @@ _start:
 # Initialize the stack pointer.  It is supposedly made a global
 # zero-initialized (allowed to change) register in crtn.S; we use the
 # explicit number.
-# TODO	setrb	rd63, stackpp
-	ldo	rd62, rb63, 0
+#	setrb	rd63, stackpp
+#	ldo	rd62, rb63, 0
 
 	call	_init
 
@@ -65,7 +65,7 @@ _start:
 	orr	rd40, rd1, rd0
 
 	call	main
-//	call	exit
+#	call	exit
 
 # Provide the first part of _init and _fini.  Save the return address on the
 # register stack.  We eventually ignore the return address of these
@@ -84,7 +84,7 @@ _init:
 
 # Register _fini to be executed as the last atexit function.
 # TODO	setrb	rd39, _fini
-//	call	atexit
+#	call	atexit
 
 	.section .fini,"ax",@progbits
 	.global	_fini
