@@ -275,6 +275,18 @@ md_show_usage (FILE * stream)
                           The linker will catch any errors. \n"));
 }
 
+/* Standard calling conventions leave the CFA at SP on entry.  */
+void dadao_cfi_frame_initial_instructions (void)
+{
+	cfi_add_CFA_def_cfa_register (1);
+}
+
+int tc_dadao_regname_to_dw2regnum (char *regname)
+{
+	as_bad (_("unknown register `%s'"), regname);
+	return -1;
+}
+
 /* Initialize GAS DADAO specifics.  */
 void dadao_md_begin (void)
 {

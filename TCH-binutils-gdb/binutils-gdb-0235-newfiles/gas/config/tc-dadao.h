@@ -59,10 +59,23 @@ extern fragS *dadao_opcode_frag;
 #define TC_FRAG_TYPE fragS *
 #define TC_FRAG_INIT(frag, max_bytes) (frag)->tc_frag_data = dadao_opcode_frag
 
+#define TARGET_USE_CFIPOP	1
+
+#define tc_cfi_frame_initial_instructions dadao_cfi_frame_initial_instructions
+extern void dadao_cfi_frame_initial_instructions (void);
+
+#define tc_regname_to_dw2regnum tc_dadao_regname_to_dw2regnum
+extern int tc_dadao_regname_to_dw2regnum (char *);
+
+#define DWARF2_CIE_DATA_ALIGNMENT	-8
+
 /* Each insn is a tetrabyte (4 bytes) long, but if there are BYTE
    sequences sprinkled in, we can get unaligned DWARF2 offsets, so let's
    explicitly say one byte.  */
-#define DWARF2_LINE_MIN_INSN_LENGTH 1
+#define DWARF2_LINE_MIN_INSN_LENGTH	1
+
+/* The ra63 register.  */
+#define DWARF2_DEFAULT_RETURN_COLUMN	255
 
 /* This target is buggy, and sets fix size too large.  */
 #define TC_FX_SIZE_SLACK(FIX) 6
