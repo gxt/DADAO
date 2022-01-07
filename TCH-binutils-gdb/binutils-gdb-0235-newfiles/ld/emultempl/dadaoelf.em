@@ -44,7 +44,7 @@ dadao_before_allocation (void)
 
   /* Force -relax on (regardless of whether we're doing a relocatable
      link).  */
-  ENABLE_RELAXATION;
+  /* ENABLE_RELAXATION; */
 }
 
 static void
