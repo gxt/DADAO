@@ -19,15 +19,40 @@
 	"setrd	%0, %1")
 
 ;; FIXME
-(define_insn "adddi3"
-  [(set      (match_operand:DI 0 "rd_class_operand"	"= Rd,Rd,Rd")
-    (plus:DI (match_operand:DI 1 "rd_class_operand"	"% Rd,Rd,Rd")
-             (match_operand:DI 2 "general_operand"	"  Rd,i,It")))]
+(define_expand "adddi3"
+  [(set      (match_operand:DI 0 "register_operand"	"= Rd,Rd,Rd,Rb,Rb,Rb")
+    (plus:DI (match_operand:DI 1 "register_operand"	"% Rd,Rd,Rd,Rb,Rb,Rb")
+             (match_operand:DI 2 "general_operand"	"  Rd, i,It,Rd, i,It")))]
 	""
-	"@
-	add	rd0, %0, %1, %2
-	setrd	rd1, %2	\;add	rd0, %0, %1, rd1	\;
-	*{ return (operands[1] == operands[0]) ? \"add\t%0, %2\":\"add\t%1, %2\t\;setrd\t%0, %1\t\;\"; }")
+	"{
+		if (REGNO_REG_CLASS(REGNO(operands[0]))==POINTER_REGS) {
+			if (REGNO_REG_CLASS(REGNO(operands[0]))==GENERAL_REGS) 
+				emit_insn (gen_addrb_rd(operands[0], operands[1], operands[2]));
+			else	emit_insn (gen_addrb_imm(operands[0], operands[1], operands[2]));
+			DONE;
+		}
+		if (REGNO_REG_CLASS(REGNO(operands[0]))==GENERAL_REGS) {
+			if (REGNO_REG_CLASS(REGNO(operands[0]))==GENERAL_REGS)
+				emit_insn (gen_dd_addrd(operands[0], operands[1], operands[2]));
+			DONE;
+		}
+	}")
+
+(define_insn "dd_addrd"
+  [(set      (match_operand:DI 0 "rd_class_operand" "=Rd")
+    (plus:DI (match_operand:DI 1 "rd_class_operand" "%Rd")
+             (match_operand:DI 2 "general_operand"  "iRd")))]
+	""
+	{
+	  if (REG_P(operands[2])) return "add	rd0, %0, %1, %2";
+	  if (GET_CODE(operands[2])==CONST_INT) {
+		if (!satisfies_constraint_It(operands[2]))	return "setrd	%0, %2	\;add	rd0, %0, %1, %0";
+		else {
+			if (operands[0] == operands[1])		return "add	%0, %2";
+			return "setrd   %0, %2  \;add   rd0, %0, %1, %0";
+		}
+	  }
+	})
 
 ;; FIXME
 (define_insn "subdi3"

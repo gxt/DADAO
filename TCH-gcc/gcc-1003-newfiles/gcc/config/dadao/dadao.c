@@ -1154,10 +1154,10 @@ dadao_expand_prologue (void)
 							 offset)),
 			     hard_frame_pointer_rtx);
       RTX_FRAME_RELATED_P (insn) = 1;
-// TODO
-//      insn = emit_insn (gen_adddi3 (hard_frame_pointer_rtx,
-//				    stack_pointer_rtx,
-//				    GEN_INT (offset + 8)));
+      
+      insn = emit_insn (gen_addrb_imm (hard_frame_pointer_rtx,
+				       stack_pointer_rtx,
+				       GEN_INT (offset + 8)));
       RTX_FRAME_RELATED_P (insn) = 1;
       offset -= 8;
     }

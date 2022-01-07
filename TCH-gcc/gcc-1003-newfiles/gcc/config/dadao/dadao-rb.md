@@ -22,26 +22,28 @@
 	""
 	"rb2rd	%0, %1, 0")
 
-(define_insn "addrb"
+(define_insn "addrb_rd"
   [(set      (match_operand:DI 0 "rb_class_operand" "=Rb")
     (plus:DI (match_operand:DI 1 "rb_class_operand" "%Rb")
-             (match_operand:DI 2 "dd_rd_s18_operand")))]
+             (match_operand:DI 2 "dd_rd_s18_operand" "Rd")))]
+	""
+	"addrb	%0, %1, %2")
+
+(define_insn "addrb_imm"
+  [(set      (match_operand:DI 0 "rb_class_operand"  "= Rb")
+    (plus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb")
+             (match_operand:DI 2 "immediate_operand" "  i")))
+	(clobber (reg:DI 7))
+	(clobber (reg:DI 71))]
 	""
 	{
 	  if (!satisfies_constraint_It(operands[2]))
-	    return "addrb	%0, %1, %2";
+		return	"setrd	rd7, %2	\;addrb	%0, %1, rd7";
+	  if (operands[1] == operands[0])
+		return	"addrb	%0, %2";
 	  else
-	    if (REGNO(operands[0]) == REGNO(operands[1]))
-		 return "addrb	%1, %2";
-	    else return "addrb	%0, %2	\;addrb	%0, %1, rd0	\;";
+		return	"rb2rd	rd7, %1, 0	\;add	rd7, %2	\;rd2rb	%0, rd7, 0";
 	})
-
-(define_insn "addrb_larde_scale"
-  [(set      (match_operand:DI 0 "rb_class_operand"  "= Rb")
-    (plus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb")
-             (match_operand:DI 2 "immediate_operand" "  i")))]
-	""
-	"setrb	%0, %2	\;addrb	%0, %1, rd0	\;")
 
 (define_insn "addrb_ctry"
   [(set      (match_operand:DI 0 "rb_class_operand"  "=Rb")
