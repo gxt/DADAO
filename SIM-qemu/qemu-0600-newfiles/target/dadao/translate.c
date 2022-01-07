@@ -622,7 +622,7 @@ static bool trans_divs(DisasContext *ctx, arg_divs *a)
     TCGLabel* label_not_zero = gen_new_label();
     TCGv_i64 zero = tcg_const_i64(0);
     tcg_gen_brcond_i64(TCG_COND_NE, cpu_rd[a->rdhd], zero, label_not_zero);
-    gen_exception(DADAO_EXCP_INTR);
+    gen_exception(DADAO_EXCP_FPER);
     gen_set_label(label_not_zero);
     tcg_gen_div_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
     tcg_gen_rem_i64(cpu_rd[a->rdha], cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
@@ -635,7 +635,7 @@ static bool trans_divu(DisasContext *ctx, arg_divu *a)
     TCGLabel* label_not_zero = gen_new_label();
     TCGv_i64 zero = tcg_const_i64(0);
     tcg_gen_brcond_i64(TCG_COND_NE, cpu_rd[a->rdhd], zero, label_not_zero);
-    gen_exception(DADAO_EXCP_INTR);
+    gen_exception(DADAO_EXCP_FPER);
     gen_set_label(label_not_zero);
     tcg_gen_divu_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
     tcg_gen_remu_i64(cpu_rd[a->rdha], cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
@@ -1058,6 +1058,8 @@ static void dadao_tr_init_disas_context(DisasContextBase *dcbase, CPUState *cs)
     CPUDADAOState *env = cs->env_ptr;
     
     ctx->mem_idx = cpu_mmu_index(env, false);
+
+    cpu_dump_state(cs, stdout, 0);
 }
 
 static void dadao_tr_tb_start(DisasContextBase *dcbase, CPUState *cs)
@@ -1074,6 +1076,11 @@ static void dadao_tr_insn_start(DisasContextBase *dcbase, CPUState *cs)
 static bool dadao_tr_breakpoint_check(DisasContextBase *dcbase, CPUState *cs,
                                       const CPUBreakpoint *bp)
 {
+    DisasContext *ctx = container_of(dcbase, DisasContext, base);
+    tcg_gen_movi_i64(cpu_pc, ctx->base.pc_next);
+    gen_exception(DADAO_EXCP_DEBG);
+    ctx->base.is_jmp = DISAS_NORETURN;
+    ctx->base.pc_next += 4;
     return true;
 }
 
@@ -1106,6 +1113,12 @@ static void dadao_tr_tb_stop(DisasContextBase *dcbase, CPUState *cs)
         return;
     }
 
+    if (ctx->base.is_jmp == DISAS_TOO_MANY) {
+        tcg_gen_movi_i64(cpu_pc, ctx->base.pc_next);
+        gen_exception(DADAO_EXCP_DEBG);
+        return;
+    }
+
     tcg_gen_exit_tb(NULL, 0);
 }
 
@@ -1132,32 +1145,29 @@ void gen_intermediate_code(CPUState *cs, TranslationBlock *tb, int max_insns)
 
 void dadao_cpu_dump_state(CPUState *cs, FILE *f, int flags)
 {
-    static const char *cpu_mode_names[16] = {
-        "USER", "REAL", "INTR", "PRIV", "UM14", "UM15", "UM16", "TRAP",
-        "UM18", "UM19", "UM1A", "EXTN", "UM1C", "UM1D", "UM1E", "SUSR"
-    };
-
     DADAOCPU *cpu = DADAO_CPU(cs);
     CPUDADAOState *env = &cpu->env;
-    int i;
-    uint32_t psr;
 
-    for (i = 0; i < 32; i++) {
-        qemu_fprintf(f, "R%02d=%08lx", i, env->rd[i]);
-        if ((i % 4) == 3) {
+    qemu_fprintf(f, "rd:\n");
+    for (int i = 0; i < 64; i += 4) {
+        if (env->rd[i + 0] || env->rd[i + 1] || env->rd[i + 2] || env->rd[i + 3]) {
+            qemu_fprintf(f, "rd%02d=%016lx ", i + 0, env->rd[i + 0]);
+            qemu_fprintf(f, "rd%02d=%016lx ", i + 1, env->rd[i + 1]);
+            qemu_fprintf(f, "rd%02d=%016lx ", i + 2, env->rd[i + 2]);
+            qemu_fprintf(f, "rd%02d=%016lx ", i + 3, env->rd[i + 3]);
             qemu_fprintf(f, "\n");
-        } else {
-            qemu_fprintf(f, " ");
         }
     }
-    psr = cpu_asr_read(env);
-    qemu_fprintf(f, "PSR=%08x %c%c%c%c %s\n",
-                 psr,
-                 psr & (1 << 31) ? 'N' : '-',
-                 psr & (1 << 30) ? 'Z' : '-',
-                 psr & (1 << 29) ? 'C' : '-',
-                 psr & (1 << 28) ? 'V' : '-',
-                 cpu_mode_names[psr & 0xf]);
+    qemu_fprintf(f, "rb:\n");
+    for (int i = 0; i < 64; i += 4) {
+        if (env->rb[i + 0] || env->rb[i + 1] || env->rb[i + 2] || env->rb[i + 3]) {
+            qemu_fprintf(f, "rb%02d=%016lx ", i + 0, env->rb[i + 0]);
+            qemu_fprintf(f, "rb%02d=%016lx ", i + 1, env->rb[i + 1]);
+            qemu_fprintf(f, "rb%02d=%016lx ", i + 2, env->rb[i + 2]);
+            qemu_fprintf(f, "rb%02d=%016lx ", i + 3, env->rb[i + 3]);
+            qemu_fprintf(f, "\n");
+        }
+    }
 }
 
 void restore_state_to_opc(CPUDADAOState *env, TranslationBlock *tb,

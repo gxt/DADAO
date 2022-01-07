@@ -54,6 +54,16 @@ void cpu_loop(CPUDADAOState *env)
             info._sifields._sigfault._addr = env->REG_PC;
             queue_signal(env, info.si_signo, QEMU_SI_FAULT, &info);
             break;
+        case DADAO_EXCP_DEBG:
+            cpu_dump_state(cs, stdout, 0);
+            break;
+        case DADAO_EXCP_FPER:
+            info.si_signo = TARGET_SIGFPE;
+            info.si_errno = 0;
+            info.si_code = 0;
+            info._sifields._sigfault._addr = env->REG_PC;
+            queue_signal(env, info.si_signo, QEMU_SI_FAULT, &info);
+            break;
         default:
             g_assert_not_reached();
         }
