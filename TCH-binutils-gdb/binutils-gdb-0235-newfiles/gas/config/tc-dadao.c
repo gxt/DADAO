@@ -634,16 +634,21 @@ void dadao_md_assemble (char *str)
 	}
 
 	if (instruction->type == dadao_type_pseudo) {
-		/* setrd is pseudo insn: setrd rd, imm64 */
-		/* setrb rb, imm64 : wait to add*/
-		if ((n_operands == 2)
-			&& (exp[0].X_op == O_register) && (exp[0].X_add_number < 0x40)
-			&& (exp[1].X_op == O_constant))
-			if(instruction->major_opcode == 0){
-				dd_pseudo_setrd(opcodep, exp[0].X_add_number, exp[1].X_add_number);
-			}
-		else
-			as_bad_where(__FILE__, __LINE__, "(%s %s) unknown insn", &insn_alt[1], operands);
+		switch (instruction->major_opcode) {
+		case 0:
+			/* setrd rd, imm64 */
+			if (n_operands != 2)			break;
+			if (exp[0].X_op != O_register)		break;
+			if (exp[0].X_add_number >= 0x40)	break;
+			if (exp[1].X_op != O_constant)		break;
+			dd_pseudo_setrd(opcodep, exp[0].X_add_number, exp[1].X_add_number);
+			return;
+		case 1:
+			/* setrb rb, imm64 : wait to add */
+		default:
+			break;
+		}
+		as_bad_where(__FILE__, __LINE__, "(%s %s) unknown insn", &insn_alt[1], operands);
 		return;
 	}
 
