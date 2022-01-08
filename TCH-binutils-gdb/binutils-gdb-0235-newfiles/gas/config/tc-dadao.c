@@ -12,6 +12,7 @@
 #include "elf/dadao.h"
 #include "opcode/dadao.h"
 #include "safe-ctype.h"
+#include "dw2gencfi.h"
 #include "dwarf2dbg.h"
 
 static int get_operands (char *, expressionS *);
