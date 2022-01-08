@@ -1154,10 +1154,13 @@ dadao_expand_prologue (void)
 							 offset)),
 			     hard_frame_pointer_rtx);
       RTX_FRAME_RELATED_P (insn) = 1;
-      
-      insn = emit_insn (gen_addrb_imm (hard_frame_pointer_rtx,
-				       stack_pointer_rtx,
-				       GEN_INT (offset + 8)));
+      insn = emit_insn (gen_mov_ridi (gen_rtx_REG(DImode, 7),
+				      GEN_INT (offset + 8)));
+      RTX_FRAME_RELATED_P (insn) = 1;
+
+      insn = emit_insn (gen_addrb_rd (hard_frame_pointer_rtx,
+				      stack_pointer_rtx,
+				      gen_rtx_REG(DImode, 7)));
       RTX_FRAME_RELATED_P (insn) = 1;
       offset -= 8;
     }
@@ -1342,36 +1345,25 @@ dadao_emit_sp_add (HOST_WIDE_INT offset)
       /* Negative stack-pointer adjustments are allocations and appear in
 	 the prologue only.  We mark them as frame-related so unwind and
 	 debug info is properly emitted for them.  */
-//TODO
-/*      if (offset > -255)
-	insn = emit_insn (gen_adddi3 (stack_pointer_rtx,
-				      stack_pointer_rtx,
-				      GEN_INT (offset)));
-      else
-	{
-	  rtx tmpr = gen_rtx_REG (DImode, 63);
-	  RTX_FRAME_RELATED_P (emit_move_insn (tmpr, GEN_INT (offset))) = 1;
-	  insn = emit_insn (gen_adddi3 (stack_pointer_rtx,
+
+	rtx tmpr = gen_rtx_REG (DImode, 7);
+	RTX_FRAME_RELATED_P (emit_move_insn (tmpr, GEN_INT (offset))) = 1;
+
+	insn = emit_insn (gen_addrb_rd (stack_pointer_rtx,
 					stack_pointer_rtx, tmpr));
-	}
-      RTX_FRAME_RELATED_P (insn) = 1;
-*/    }
+	RTX_FRAME_RELATED_P (insn) = 1;
+    }
   else
     {
       /* Positive adjustments are in the epilogue only.  Don't mark them
 	 as "frame-related" for unwind info.  */
-/*      if (insn_const_int_ok_for_constraint (offset, CONSTRAINT_Iw))
-	emit_insn (gen_adddi3 (stack_pointer_rtx,
-			       stack_pointer_rtx,
-			       GEN_INT (offset)));
-      else
 	{
-	  rtx tmpr = gen_rtx_REG (DImode, 63);
+	  rtx tmpr = gen_rtx_REG (DImode, 7);
 	  emit_move_insn (tmpr, GEN_INT (offset));
-	  insn = emit_insn (gen_adddi3 (stack_pointer_rtx,
-					stack_pointer_rtx, tmpr));
+	  insn = emit_insn (gen_addrb_rd (stack_pointer_rtx,
+					  stack_pointer_rtx, tmpr));
 	}
- */ }
+     }
 }
 
 /* Print operator suitable for doing something with a shiftable

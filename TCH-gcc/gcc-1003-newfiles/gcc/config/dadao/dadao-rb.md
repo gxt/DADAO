@@ -25,24 +25,41 @@
 (define_insn "addrb_rd"
   [(set      (match_operand:DI 0 "rb_class_operand" "=Rb")
     (plus:DI (match_operand:DI 1 "rb_class_operand" "%Rb")
-             (match_operand:DI 2 "dd_rd_s18_operand" "Rd")))]
+             (match_operand:DI 2 "rd_class_operand" "Rd")))]
 	""
 	"addrb	%0, %1, %2")
 
+
 (define_insn "addrb_imm"
-  [(set      (match_operand:DI 0 "rb_class_operand"  "= Rb")
-    (plus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb")
-             (match_operand:DI 2 "immediate_operand" "  i")))
-	(clobber (reg:DI 7))
-	(clobber (reg:DI 71))]
-	""
+  [(parallel[
+        (set       (match_operand:DI 0 "rb_class_operand"  "= Rb")
+          (plus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb")
+                   (match_operand:DI 2 "immediate_operand" "  i")))
+        (clobber (reg:DI 7))])]
+        ""
+        {
+          if (!satisfies_constraint_It(operands[2]))
+                return  "setrd  rd7, %2 \;addrb %0, %1, rd7";
+          if (operands[1] == operands[0])
+                return  "addrb  %0, %2";
+          else
+                return  "rb2rb  %0, %1, 0       \;addrb %0, %2";
+        })
+
+(define_insn "addrb_imm_prereload"
+  [(parallel[
+	(set	   (match_operand:DI 0 "rb_class_operand"  "= Rb")
+    	  (plus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb")
+		   (match_operand:DI 2 "immediate_operand" "  i")))
+	(clobber (match_scratch:DI 3 "=&r"))])]
+	"!reload_completed"
 	{
 	  if (!satisfies_constraint_It(operands[2]))
-		return	"setrd	rd7, %2	\;addrb	%0, %1, rd7";
+		return	"setrd	%3, %2	\;addrb	%0, %1, %3";
 	  if (operands[1] == operands[0])
 		return	"addrb	%0, %2";
 	  else
-		return	"rb2rd	rd7, %1, 0	\;add	rd7, %2	\;rd2rb	%0, rd7, 0";
+		return	"rb2rb	%0, %1, 0	\;addrb	%0, %2";
 	})
 
 (define_insn "addrb_ctry"

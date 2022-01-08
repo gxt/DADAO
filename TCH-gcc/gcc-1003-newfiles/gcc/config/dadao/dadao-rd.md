@@ -30,7 +30,8 @@
 			if (REG_P(operands[2]) &&
 			    REGNO_REG_CLASS(REGNO(operands[2]))==GENERAL_REGS) 
 				emit_insn (gen_addrb_rd(operands[0], operands[1], operands[2]));
-			else	emit_insn (gen_addrb_imm(operands[0], operands[1], operands[2]));
+			else
+				emit_insn (gen_addrb_imm_prereload(operands[0], operands[1], operands[2]));
 			DONE;
 		}
 		if (REG_P(operands[0]) &&
