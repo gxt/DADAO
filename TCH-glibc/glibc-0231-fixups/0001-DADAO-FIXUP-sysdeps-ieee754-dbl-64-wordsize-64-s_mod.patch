@@ -1,0 +1,25 @@
+From 6715c1e3b8e5dd3b53e05c84e7a57fa943bcd716 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sat, 8 Jan 2022 21:37:27 +0800
+Subject: [PATCH] DADAO-FIXUP: sysdeps/ieee754/dbl-64/wordsize-64/s_modf.c
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ sysdeps/ieee754/dbl-64/wordsize-64/s_modf.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sysdeps/ieee754/dbl-64/wordsize-64/s_modf.c b/sysdeps/ieee754/dbl-64/wordsize-64/s_modf.c
+index 8d14e78ef0..bdb653c85b 100644
+--- a/sysdeps/ieee754/dbl-64/wordsize-64/s_modf.c
++++ b/sysdeps/ieee754/dbl-64/wordsize-64/s_modf.c
+@@ -19,6 +19,7 @@
+  * Exception:
+  *	No exception.
+  */
++#undef NO_LONG_DOUBLE
+ 
+ #include <math.h>
+ #include <math_private.h>
+-- 
+2.17.1
+

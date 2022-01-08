@@ -8,6 +8,7 @@ GLIBC_0231_TARGET	:= dadao-linux-gnu
 
 GLIBC_0231_NEWFILES	:= $(DIR_DADAO_TOP)/TCH-glibc/glibc-0231-newfiles
 GLIBC_0231_PATCHES	:= $(DIR_DADAO_TOP)/TCH-glibc/glibc-0231-patches
+GLIBC_0231_FIXUPS	:= $(DIR_DADAO_TOP)/TCH-glibc/glibc-0231-fixups
 
 GLIBC_0231_SOURCE	:= $(DIR_DADAO_SOURCE)/glibc-0231
 GLIBC_0231_BUILD	:= $(DIR_DADAO_BUILD)/glibc-0231
@@ -48,6 +49,8 @@ glibc-0231-source:
 	@cd $(GLIBC_0231_SOURCE); git am $(GLIBC_0231_PATCHES)/0*.patch
 	# CONFIG: Apply config related patches ...
 	@cd $(GLIBC_0231_SOURCE); git am $(GLIBC_0231_PATCHES)/9*.patch
+	# FIXUP: Apply fixups ...
+	@cd $(GLIBC_0231_SOURCE); git am $(GLIBC_0231_FIXUPS)/*.patch
 
 glibc-0231-build-new:
 	# Remove old glibc build dir ...
