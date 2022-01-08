@@ -25,9 +25,6 @@ all:
 	@echo "DADAO-misc: test-gas-highfive test-gcc-highfive test-qemu-run"
 	@echo ""
 
-test-clean:
-	@rm -f *.i *.s *.o *.dump *.elf
-
 TEST_GAS_NAME		:= insn-simple
 TEST_GAS_FLAGS		:= -o $(TEST_DSTDIR)/$(TEST_GAS_NAME).o
 
@@ -64,3 +61,6 @@ TEST_QEMU_LOG		:= $(TEST_DSTDIR)/$(TEST_QEMU_NAME).log
 
 test-qemu-run:
 	$(DD_QEMU_USER) -singlestep -strace -D $(TEST_QEMU_LOG) $(TEST_QEMU_TARGET)
+
+test-clean:
+	@rm -f *.i *.s *.o *.dump *.elf $(TEST_GCC_NAME) $(TEST_GAS_NAME)
