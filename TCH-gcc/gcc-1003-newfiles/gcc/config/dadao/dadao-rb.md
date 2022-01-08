@@ -31,36 +31,18 @@
 
 
 (define_insn "addrb_imm"
-  [(parallel[
-        (set       (match_operand:DI 0 "rb_class_operand"  "= Rb")
-          (plus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb")
-                   (match_operand:DI 2 "immediate_operand" "  i")))
-        (clobber (reg:DI 7))])]
+  [(set       (match_operand:DI 0 "rb_class_operand"  "= Rb")
+     (plus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb")
+              (match_operand:DI 2 "immediate_operand" "  i")))]
         ""
         {
           if (!satisfies_constraint_It(operands[2]))
-                return  "setrd  rd7, %2 \;addrb %0, %1, rd7";
+                return  "swym"; // "setrd  rd7, %2 \;addrb %0, %1, rd7";
           if (operands[1] == operands[0])
                 return  "addrb  %0, %2";
           else
                 return  "rb2rb  %0, %1, 0       \;addrb %0, %2";
         })
-
-(define_insn "addrb_imm_prereload"
-  [(parallel[
-	(set	   (match_operand:DI 0 "rb_class_operand"  "= Rb")
-    	  (plus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb")
-		   (match_operand:DI 2 "immediate_operand" "  i")))
-	(clobber (match_scratch:DI 3 "=&r"))])]
-	"!reload_completed"
-	{
-	  if (!satisfies_constraint_It(operands[2]))
-		return	"setrd	%3, %2	\;addrb	%0, %1, %3";
-	  if (operands[1] == operands[0])
-		return	"addrb	%0, %2";
-	  else
-		return	"rb2rb	%0, %1, 0	\;addrb	%0, %2";
-	})
 
 (define_insn "addrb_ctry"
   [(set      (match_operand:DI 0 "rb_class_operand"  "=Rb")
@@ -113,13 +95,15 @@
   [(set (match_operand:DI 0 "rd_class_operand")
         (match_operand:DI 1 "immediate_operand"))]
 	""
-	"setrd	%0, %1")
+	"swym")
+;	"setrd	%0, %1")
 
 (define_insn "dd_get_addr"
   [(set (match_operand:DI 0 "rb_class_operand")
         (match_operand:DI 1 "immediate_operand"))]
 	""
-	"setrb	%0, %1")
+	"swym");
+;	"setrb	%0, %1")
 
 (define_expand "dd_plus_rb"
   [(set      (match_operand:DI 0 "rd_class_operand")
@@ -143,8 +127,10 @@
 	(clobber (reg:DI 71))]
 	""
 	"@
-	setrb	rb7, %2	\;addrb	rb7, %1, rd0	\;rb2rd	%0, rb7, 0	\;
-	rb2rd	%0, %1, 0	\;add	rd0, %0, %2, %0	\;")
+	swym
+	swym")
+;	setrb	rb7, %2	\;addrb	rb7, %1, rd0	\;rb2rd	%0, rb7, 0	\;
+;	rb2rd	%0, %1, 0	\;add	rd0, %0, %2, %0	\;")
 
 (define_insn "addrb2rd_larde_scale"
   [(set      (match_operand:DI 0 "rd_class_operand")

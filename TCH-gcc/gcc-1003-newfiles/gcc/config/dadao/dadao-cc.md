@@ -41,7 +41,8 @@
     (compare:CCSS (match_operand:DI   1 "rd_class_operand"  "  Rd")
                   (match_operand:DI   2 "const_int_operand" "   i")))]
 	""
-	"setrd	rd1, %2	\;	cmps	%0, %1, rd1")
+	"swym")
+;	"setrd	rd1, %2	\;	cmps	%0, %1, rd1")
 
 (define_insn "*cmpuu"
   [(set           (match_operand:CCUU 0 "rd_class_operand"  "=   Rd")

@@ -16,7 +16,8 @@
   [(set (match_operand:QHSD 0 "rd_class_operand"  "=??Rd")
         (match_operand:QHSD 1 "const_int_operand" "    n"))]
 	""
-	"setrd	%0, %1")
+	"swym")
+;	"setrd	%0, %1")
 
 ;; FIXME
 (define_expand "adddi3"
@@ -31,7 +32,7 @@
 			    REGNO_REG_CLASS(REGNO(operands[2]))==GENERAL_REGS) 
 				emit_insn (gen_addrb_rd(operands[0], operands[1], operands[2]));
 			else
-				emit_insn (gen_addrb_imm_prereload(operands[0], operands[1], operands[2]));
+				emit_insn (gen_addrb_imm(operands[0], operands[1], operands[2]));
 			DONE;
 		}
 		if (REG_P(operands[0]) &&
@@ -39,25 +40,36 @@
 			if (REG_P(operands[2]) &&
 			    REGNO_REG_CLASS(REGNO(operands[2]))==GENERAL_REGS)
 				emit_insn (gen_dd_addrd(operands[0], operands[1], operands[2]));
+			else if (GET_CODE(operands[2])==CONST_INT)
+				emit_insn (gen_dd_addrd_imm(operands[0], operands[1], operands[2]));
+			else if (MEM_P(operands[2]))
+				emit_insn (gen_dd_addrd_mem(operands[0], operands[1], operands[2]));
 			DONE;
 		}
 	}")
 
+(define_insn "dd_addrd_mem"
+  [(set      (match_operand:DI 0 "rd_class_operand" "=Rd")
+    (plus:DI (match_operand:DI 1 "rd_class_operand" "%Rd")
+             (match_operand:DI 2 "memory_operand"     "m")))]
+        ""
+	{
+		return "ldo	%0, %2	\;add	rd0, %0, %1, %0";
+	})
+
+(define_insn "dd_addrd_imm"
+  [(set      (match_operand:DI 0 "rd_class_operand" "=Rd")
+    (plus:DI (match_operand:DI 1 "rd_class_operand" "%Rd")
+             (match_operand:DI 2 "immediate_operand"  "i")))]
+        ""
+	"swym")
+
 (define_insn "dd_addrd"
   [(set      (match_operand:DI 0 "rd_class_operand" "=Rd")
     (plus:DI (match_operand:DI 1 "rd_class_operand" "%Rd")
-             (match_operand:DI 2 "general_operand"  "iRd")))]
+             (match_operand:DI 2 "rd_class_operand"  "Rd")))]
 	""
-	{
-	  if (REG_P(operands[2])) return "add	rd0, %0, %1, %2";
-	  if (GET_CODE(operands[2])==CONST_INT) {
-		if (!satisfies_constraint_It(operands[2]))	return "setrd	%0, %2	\;add	rd0, %0, %1, %0";
-		else {
-			if (operands[0] == operands[1])		return "add	%0, %2";
-			return "setrd   %0, %2  \;add   rd0, %0, %1, %0";
-		}
-	  }
-	})
+	"add	rd0, %0, %1, %2")
 
 ;; FIXME
 (define_insn "subdi3"
@@ -67,7 +79,8 @@
 	""
 	"@
 	sub	rd0, %0, %1, %2
-	setrd	%0, %2	\;add	rd0, %0, %1, %0	\;")
+	swym")
+;	setrd	%0, %2	\;add	rd0, %0, %1, %0	\;")
 
 (define_insn "muldi3"
   [(set      (match_operand:DI 0 "rd_class_operand" "= Rd")
