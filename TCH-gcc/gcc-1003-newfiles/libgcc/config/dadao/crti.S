@@ -9,13 +9,11 @@ _start:
 	.section .init,"ax",@progbits
 	.global	_init
 _init:
-	rb2rd	rd7, rb1, 0
-	add	rd7, -8
-	rd2rb	rb2, rd7, 0
+	rb2rb	rb2, rb1, 0
+	addrb	rb2, -8
 
 	.section .fini,"ax",@progbits
 	.global	_fini
 _fini:
-	rb2rd    rd7, rb1, 0
-        add     rd7, -8
-        rd2rb   rb2, rd7, 0
+	rb2rb	rb2, rb1, 0
+	addrb	rb2, -8
