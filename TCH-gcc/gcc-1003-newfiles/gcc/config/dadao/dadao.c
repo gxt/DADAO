@@ -1154,8 +1154,8 @@ dadao_expand_prologue (void)
 							 offset)),
 			     hard_frame_pointer_rtx);
       RTX_FRAME_RELATED_P (insn) = 1;
-      insn = emit_insn (gen_mov_ridi (gen_rtx_REG(DImode, 7),
-				      GEN_INT (offset + 8)));
+      insn = emit_insn (gen_setrddi_const (gen_rtx_REG(DImode, 7),
+					   GEN_INT (offset + 8)));
       RTX_FRAME_RELATED_P (insn) = 1;
 
       insn = emit_insn (gen_addrb_rd (hard_frame_pointer_rtx,

@@ -11,13 +11,22 @@
 	""
 	"<rd_arith_insn>	%0, %1, %2")
 
-;; setrd is pseudo insn, so we place ? before Rd
-(define_insn "mov_ri<mode>"
-  [(set (match_operand:QHSD 0 "rd_class_operand"  "=??Rd")
-        (match_operand:QHSD 1 "const_int_operand" "    n"))]
+(define_insn "setrd<mode>_const"
+  [(set (match_operand:QHSD 0 "rd_class_operand"  "=Rd")
+        (match_operand:QHSD 1 "const_int_operand" "  i"))]
 	""
-	"swym")
-;	"setrd	%0, %1")
+	"setrd	%0, %1")
+
+(define_insn "setrddi_addr"
+  [(set (match_operand:DI 0 "rd_class_operand"  "=Rd")
+        (match_operand:DI 1 "dd_symbolic_operand" ""))]
+        ""
+	{
+	  // rtx l = gen_reg_rtx(SImode);
+	  // rtx r = gen_reg_rtx(SImode);
+	  // emit_insn (gen_)
+	  return "";
+	})
 
 ;; FIXME
 (define_expand "adddi3"
@@ -49,20 +58,34 @@
 	}")
 
 (define_insn "dd_addrd_mem"
-  [(set      (match_operand:DI 0 "rd_class_operand" "=Rd")
-    (plus:DI (match_operand:DI 1 "rd_class_operand" "%Rd")
-             (match_operand:DI 2 "memory_operand"     "m")))]
+  [(set      (match_operand:DI 0 "rd_class_operand" "=Rd,Rd")
+    (plus:DI (match_operand:DI 1 "rd_class_operand" "%Rd,Rd")
+             (match_operand:DI 2 "memory_operand"    "Wg,m")))]
         ""
-	{
-		return "ldo	%0, %2	\;add	rd0, %0, %1, %0";
-	})
+	"@
+	ldmo	%0, %2	\;add	rd0, %0, %1, %0
+	ldo	%0, %2	\;add	rd0, %0, %1, %0")
 
 (define_insn "dd_addrd_imm"
   [(set      (match_operand:DI 0 "rd_class_operand" "=Rd")
     (plus:DI (match_operand:DI 1 "rd_class_operand" "%Rd")
-             (match_operand:DI 2 "immediate_operand"  "i")))]
+             (match_operand:DI 2 "const_int_operand"  "i")))]
         ""
-	"swym")
+	{
+	  if (satisfies_constraint_Ai(operands[2])) {
+		return "Internal compiler error: Ai as imm";
+	  }
+	  else if (satisfies_constraint_Au(operands[2])) {
+		return "Internal compiler error: Au as imm";
+	  }
+	  else if (satisfies_constraint_It(operands[2])) {
+		if (operands[0] == operands[1]) 
+			return "add	%0, %2";
+		else	return "setrd	%0, %2	\;add	rd0, %0, %1, %0";
+	  }
+	  else
+		return "setrd	%0, %2	\;add	rd0, %0, %1, %0";
+	})
 
 (define_insn "dd_addrd"
   [(set      (match_operand:DI 0 "rd_class_operand" "=Rd")

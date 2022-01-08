@@ -91,16 +91,9 @@
 	""
 	"addrb	rb7, %1, rd0	\;addrb	rb7, %2	\;strb	rb7, %0	\;")
 
-(define_insn "dd_get_offset"
-  [(set (match_operand:DI 0 "rd_class_operand")
-        (match_operand:DI 1 "immediate_operand"))]
-	""
-	"swym")
-;	"setrd	%0, %1")
-
 (define_insn "dd_get_addr"
-  [(set (match_operand:DI 0 "rb_class_operand")
-        (match_operand:DI 1 "immediate_operand"))]
+  [(set (match_operand:DI 0 "rb_class_operand" "=Rb")
+        (match_operand:DI 1 "immediate_operand"  "s"))]
 	""
 	"swym");
 ;	"setrb	%0, %1")
