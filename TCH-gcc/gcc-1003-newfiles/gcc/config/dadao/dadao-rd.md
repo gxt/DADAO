@@ -25,14 +25,18 @@
              (match_operand:DI 2 "general_operand"	"  Rd, i,It,Rd, i,It")))]
 	""
 	"{
-		if (REGNO_REG_CLASS(REGNO(operands[0]))==POINTER_REGS) {
-			if (REGNO_REG_CLASS(REGNO(operands[0]))==GENERAL_REGS) 
+		if (REG_P(operands[0]) &&
+		    REGNO_REG_CLASS(REGNO(operands[0]))==POINTER_REGS) {
+			if (REG_P(operands[2]) &&
+			    REGNO_REG_CLASS(REGNO(operands[2]))==GENERAL_REGS) 
 				emit_insn (gen_addrb_rd(operands[0], operands[1], operands[2]));
 			else	emit_insn (gen_addrb_imm(operands[0], operands[1], operands[2]));
 			DONE;
 		}
-		if (REGNO_REG_CLASS(REGNO(operands[0]))==GENERAL_REGS) {
-			if (REGNO_REG_CLASS(REGNO(operands[0]))==GENERAL_REGS)
+		if (REG_P(operands[0]) &&
+		    REGNO_REG_CLASS(REGNO(operands[0]))==GENERAL_REGS) {
+			if (REG_P(operands[2]) &&
+			    REGNO_REG_CLASS(REGNO(operands[2]))==GENERAL_REGS)
 				emit_insn (gen_dd_addrd(operands[0], operands[1], operands[2]));
 			DONE;
 		}
