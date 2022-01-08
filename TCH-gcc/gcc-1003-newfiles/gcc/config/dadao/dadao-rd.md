@@ -11,11 +11,12 @@
 	""
 	"<rd_arith_insn>	%0, %1, %2")
 
+;;FIXME
 (define_insn "setrd<mode>_const"
   [(set (match_operand:QHSD 0 "rd_class_operand"  "=Rd")
-        (match_operand:QHSD 1 "const_int_operand" "  i"))]
+        (match_operand:QHSD 1 "immediate_operand" "  i"))]
 	""
-	"setrd	%0, %1")
+	"swym")
 
 (define_insn "setrddi_addr"
   [(set (match_operand:DI 0 "rd_class_operand"  "=Rd")
@@ -69,14 +70,16 @@
 (define_insn "dd_addrd_imm"
   [(set      (match_operand:DI 0 "rd_class_operand" "=Rd")
     (plus:DI (match_operand:DI 1 "rd_class_operand" "%Rd")
-             (match_operand:DI 2 "const_int_operand"  "i")))]
+             (match_operand:DI 2 "immediate_operand"  "i")))]
         ""
 	{
 	  if (satisfies_constraint_Ai(operands[2])) {
-		return "Internal compiler error: Ai as imm";
+		/* Internal compiler error: Ai as imm */
+		return "swym";
 	  }
 	  else if (satisfies_constraint_Au(operands[2])) {
-		return "Internal compiler error: Au as imm";
+		/* Internal compiler error: Au as imm */
+		return "swym";
 	  }
 	  else if (satisfies_constraint_It(operands[2])) {
 		if (operands[0] == operands[1]) 
