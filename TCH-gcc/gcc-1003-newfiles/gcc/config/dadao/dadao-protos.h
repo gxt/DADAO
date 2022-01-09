@@ -6,6 +6,7 @@
 
 /* XXX gccint 18.4 Node: Defining data structures for per-function information */
 extern void dadao_init_expanders (void);
+extern void dd_print_operand_address (FILE *, machine_mode, rtx);
 /* XXX gccint 18.9.1 Node: Basic Stack Layout */
 extern rtx dadao_dynamic_chain_address (rtx);
 extern void dadao_setup_frame_addresses (void);

@@ -945,7 +945,7 @@ static void dd_print_operand (FILE *stream, rtx x, int code)
 #define	TARGET_PRINT_OPERAND				dd_print_operand
 
 /* TARGET_PRINT_OPERAND_ADDRESS.  */
-static void dd_print_operand_address (FILE *stream, machine_mode /*mode*/, rtx x)
+void dd_print_operand_address (FILE *stream, machine_mode /*mode*/, rtx x)
 {
 	if (REG_P (x)) {
 		/* (mem rb) */

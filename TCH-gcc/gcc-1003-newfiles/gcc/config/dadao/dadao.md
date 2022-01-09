@@ -36,9 +36,26 @@
 			return "stm<bwto>	%1, %0, 0";
 		else if (satisfies_constraint_Wm (operands[0])) {
 			rtx mem = operands[0];
-			rtx base_reg = XEXP(operands[0], 0);
-			rtx index_mem = XEXP(operands[0], 1);
-			operands[0] = index_mem;
+
+			rtx plus_op = XEXP(mem, 0);
+			rtx base_reg = XEXP(plus_op, 0);
+			rtx index_mem = XEXP(plus_op, 1);
+
+			machine_mode mmode = GET_MODE(index_mem);
+
+			if (satisfies_constraint_Wg(index_mem)) {
+				fprintf (asm_out_file, "\tldm<bwto>%s	rd7, ", mmode == DImode ? "" : "u");
+				dd_print_operand_address(asm_out_file, mmode, XEXP(index_mem, 0));
+				fprintf (asm_out_file, ", 0\n");
+			}
+			else {
+				fprintf (asm_out_file, "\tld<bwto>%s	rd7, ", mmode == DImode ? "" : "u");
+				dd_print_operand_address(asm_out_file, mmode, XEXP(index_mem, 0));
+				fprintf (asm_out_file, "\n");
+			}
+			fprintf (asm_out_file, "\tstm<bwto>	%s, %s, rd7, 0\n",
+								reg_names[REGNO (operands[1])],
+								reg_names[REGNO (base_reg)]);
 			return "";
 		}
 		else
