@@ -131,4 +131,8 @@
 
 #endif	/* __ASSEMBLER__ */
 
+/* Pointer mangling is not yet supported for DADAO.  */
+#define PTR_MANGLE(var)		(void) (var)
+#define PTR_DEMANGLE(var)	(void) (var)
+
 #endif /* _SYSDEPS_LINUX_DADAO_SYSDEP_H_ */
