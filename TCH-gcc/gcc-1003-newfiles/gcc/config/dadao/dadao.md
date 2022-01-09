@@ -34,6 +34,13 @@
 	  if (MEM_P (operands[0]) && REG_P (operands[1]) && REGNO_REG_CLASS (REGNO(operands[1])) == GENERAL_REGS) {
 		if (satisfies_constraint_Wg (operands[0]))
 			return "stm<bwto>	%1, %0, 0";
+		else if (satisfies_constraint_Wm (operands[0])) {
+			rtx mem = operands[0];
+			rtx base_reg = XEXP(operands[0], 0);
+			rtx index_mem = XEXP(operands[0], 1);
+			operands[0] = index_mem;
+			return "";
+		}
 		else
 			return "st<bwto>	%1, %0";
 	  }

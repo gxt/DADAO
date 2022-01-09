@@ -31,12 +31,12 @@
 
 ;; FIXME
 (define_expand "adddi3"
-  [(set      (match_operand:DI 0 "register_operand"	"= Rd,Rd,Rd,Rb,Rb,Rb")
-    (plus:DI (match_operand:DI 1 "register_operand"	"% Rd,Rd,Rd,Rb,Rb,Rb")
-             (match_operand:DI 2 "general_operand"	"  Rd, i,It,Rd, i,It")))]
+  [(set      (match_operand:DI 0 "register_operand"	"= Rd,Rd,Rd")
+    (plus:DI (match_operand:DI 1 "register_operand"	"% Rd,Rd,Rd")
+             (match_operand:DI 2 "general_operand"	"  Rd, i,It")))]
 	""
 	"{
-		if (REG_P(operands[0]) &&
+/*		if (REG_P(operands[0]) &&
 		    REGNO_REG_CLASS(REGNO(operands[0]))==POINTER_REGS) {
 			if (REG_P(operands[2]) &&
 			    REGNO_REG_CLASS(REGNO(operands[2]))==GENERAL_REGS) 
@@ -44,7 +44,7 @@
 			else
 				emit_insn (gen_addrb_imm(operands[0], operands[1], operands[2]));
 			DONE;
-		}
+		}	*/
 		if (REG_P(operands[0]) &&
 		    REGNO_REG_CLASS(REGNO(operands[0]))==GENERAL_REGS) {
 			if (REG_P(operands[2]) &&
