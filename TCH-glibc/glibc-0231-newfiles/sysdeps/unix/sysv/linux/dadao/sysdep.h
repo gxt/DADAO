@@ -63,19 +63,17 @@
 #define	INTERNAL_SYSCALL_DECL(err)	do { } while (0)
 
 #define	INTERNAL_SYSCALL_RAW(name, err, nr, args...)		\
-	({ unsigned long int _sys_result;			\
-		{						\
-		register int _a16 asm ("rd31");			\
+	({							\
+		register int _nr asm ("rd31");			\
 		LOAD_ARGS_##nr (args)				\
+		_nr = name;					\
 		asm volatile (					\
 			"# syscall " #name			\
-			"trap	cp0, %1"			\
-			: "=r" (_a16)				\
-			: "i" (name) ASM_ARGS_##nr		\
+			"trap	cp0, 0"				\
+			: "=r" (_nr)				\
+			: "r" (_nr) ASM_ARGS_##nr		\
 			: "memory");				\
-		_sys_result = _a16;				\
-		}						\
-	(long int) _sys_result; })
+	(long int) _nr; })
 
 /* Similar to INLINE_SYSCALL but we don't set errno */
 #define	INTERNAL_SYSCALL(name, err, nr, args...)		\
@@ -128,6 +126,10 @@
 	register long _a7 asm ("rd22") = (long) (a7);		\
 	LOAD_ARGS_6 (a1, a2, a3, a4, a5, a6)
 #define ASM_ARGS_7		ASM_ARGS_6, "r" (_a7)
+
+/* Non-constant syscalls are actually pretty easy...  */
+#define INTERNAL_SYSCALL_NCS(number, err, nr, args...)		\
+	INTERNAL_SYSCALL_RAW(number, err, nr, args)
 
 #endif	/* __ASSEMBLER__ */
 
