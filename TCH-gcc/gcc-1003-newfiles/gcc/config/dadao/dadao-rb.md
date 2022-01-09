@@ -61,13 +61,16 @@
 	ldmrb	%0, %1, 0")
 
 (define_insn "dd_st_rb"
-  [(set (match_operand:DI 0 "memory_operand" "=Wi,Wz,Wg")
-        (match_operand:DI 1 "rb_class_operand"))]
+  [(set (match_operand:DI 0 "memory_operand"   "=m")
+        (match_operand:DI 1 "rb_class_operand" "Rb"))]
 	""
-	"@
-	strb	%1, %0
-	strb	%1, %0
-	stmrb	%1, %0, 0")
+	{
+	  if (satisfies_constraint_Wg(operands[0])) {
+		return "stmrb	%1, %0, 0";
+	  }
+	  else
+		return "strb	%1, %0";
+	})
 
 (define_expand "store_address"
   [(set      (match_operand:DI 0 "memory_operand"    "=m")
