@@ -73,12 +73,11 @@
              (match_operand:DI 2 "immediate_operand"  "i")))]
         ""
 	{
+	  /* constraint Ai --> label \ symbol & plus (label \ symbol + imm)
+	   * constraint Au --> rb & plus [(rb + imm) & (rb + rd)]
+	   * other ?
+	   */
 	  if (satisfies_constraint_Ai(operands[2])) {
-		/* Internal compiler error: Ai as imm */
-		return "swym";
-	  }
-	  else if (satisfies_constraint_Au(operands[2])) {
-		/* Internal compiler error: Au as imm */
 		return "swym";
 	  }
 	  else if (satisfies_constraint_It(operands[2])) {
