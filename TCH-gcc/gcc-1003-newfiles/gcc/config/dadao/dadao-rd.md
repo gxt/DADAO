@@ -64,7 +64,7 @@
              (match_operand:DI 2 "memory_operand"    "Wg,m")))]
         ""
 	"@
-	ldmo	%0, %2	\;add	rd0, %0, %1, %0
+	ldmo	%0, %2, 0	\;add	rd0, %0, %1, %0
 	ldo	%0, %2	\;add	rd0, %0, %1, %0")
 
 (define_insn "dd_addrd_imm"
