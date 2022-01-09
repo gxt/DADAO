@@ -1,0 +1,26 @@
+From b65b1a193b1243b57470be8200186266c33340f6 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sun, 9 Jan 2022 18:36:39 +0800
+Subject: [PATCH] DADAO-FIXUP: libio/Makefile
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ libio/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libio/Makefile b/libio/Makefile
+index 59e1f68e9c..c56f79dc63 100644
+--- a/libio/Makefile
++++ b/libio/Makefile
+@@ -106,7 +106,7 @@ CFLAGS-fseeko.c += -fexceptions
+ CFLAGS-ftello64.c += -fexceptions
+ CFLAGS-ftello.c += -fexceptions
+ CFLAGS-fwide.c += -fexceptions
+-CFLAGS-genops.c += -fexceptions
++CFLAGS-genops.c += -fexceptions -O1
+ CFLAGS-getc.c += -fexceptions
+ CFLAGS-getchar.c += -fexceptions
+ CFLAGS-getwc.c += -fexceptions
+-- 
+2.17.1
+
