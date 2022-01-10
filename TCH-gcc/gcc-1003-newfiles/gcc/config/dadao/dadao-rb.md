@@ -78,7 +78,7 @@
 (define_expand "store_address"
   [(set      (match_operand:DI 0 "memory_operand"    "=m")
     (plus:DI (match_operand:DI 1 "rb_class_operand"  "Rb")
-             (match_operand:DI 2 "dd_rd_s12_operand" "Id")))]
+             (match_operand:DI 2 "dd_rd_s12_operand" "")))]
 	""
 	"{
 	  if (satisfies_constraint_It(operands[2])) {
@@ -95,7 +95,14 @@
 	     (match_operand:DI 2 "dd_rd_s12_operand" "Id")))
 	(clobber (reg:DI 71))]
 	""
-	"addrb	rb7, %1, rd0	\;addrb	rb7, %2	\;strb	rb7, %0	\;")
+	{
+	  if (!satisfies_constraint_Wg(operands[0]))
+	    {
+		return "addrb	rb7, %1, rd0	\;addrb	rb7, %2	\;strb	rb7, %0	\;";
+	    }
+	  else
+		return "addrb   rb7, %1, rd0    \;addrb rb7, %2 \;stmrb  rb7, %0, 0 \;";
+	})
 
 (define_insn "dd_get_addr"
   [(set (match_operand:DI 0 "rb_class_operand" "=Rb")
