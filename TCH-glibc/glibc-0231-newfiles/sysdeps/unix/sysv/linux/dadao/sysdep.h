@@ -17,7 +17,8 @@
 #ifdef	__ASSEMBLER__
 
 #define __DO_SYSCALL(syscall_name, args)			\
-	trap	cp0, SYS_ify(syscall_name)
+	setzwl	rd31, SYS_ify(syscall_name);			\
+	trap	cp0, 0;
 
 #define PSEUDO(name, syscall_name, args)			\
 	.text;							\
