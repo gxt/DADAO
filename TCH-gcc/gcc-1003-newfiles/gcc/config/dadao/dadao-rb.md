@@ -52,13 +52,16 @@
 	"addrb	%0, %2, %1")
 
 (define_insn "dd_ld_rb"
-  [(set (match_operand:DI 0 "rb_class_operand")
-        (match_operand:DI 1 "memory_operand" "Wi,Wz,Wg"))]
+  [(set (match_operand:DI 0 "rb_class_operand" "=Rb")
+        (match_operand:DI 1 "memory_operand"     "m"))]
 	""
-	"@
-	ldrb	%0, %1
-	ldrb	%0, %1
-	ldmrb	%0, %1, 0")
+	{
+	  if (satisfies_constraint_Wg(operands[1])) {
+                return "ldmrb   %0, %1, 0";
+          }
+          else
+                return "ldrb    %0, %1";
+	})
 
 (define_insn "dd_st_rb"
   [(set (match_operand:DI 0 "memory_operand"   "=m")
