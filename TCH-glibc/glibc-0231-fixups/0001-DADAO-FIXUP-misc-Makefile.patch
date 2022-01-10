@@ -1,0 +1,26 @@
+From be81d1d428f7886c13ff13ea6cffb70f5cf5a339 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Mon, 10 Jan 2022 21:47:07 +0800
+Subject: [PATCH] DADAO-FIXUP: misc/Makefile
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ misc/Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/misc/Makefile b/misc/Makefile
+index e0465980c7..d9838390ea 100644
+--- a/misc/Makefile
++++ b/misc/Makefile
+@@ -137,6 +137,8 @@ CFLAGS-sbrk.op = $(no-stack-protector)
+ CFLAGS-brk.o = $(no-stack-protector)
+ CFLAGS-brk.op = $(no-stack-protector)
+ 
++CFLAGS-getttyent.c += -O1
++
+ include ../Rules
+ 
+ $(objpfx)libg.a: $(dep-dummy-lib); $(make-dummy-lib)
+-- 
+2.17.1
+
