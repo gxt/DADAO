@@ -67,6 +67,40 @@
 
 ;; True if this is an address_operand or a symbolic operand.
 
+(define_predicate "local_symbolic_operand"
+  (match_code "label_ref,const,symbol_ref")
+{
+  if (GET_CODE (op) == CONST
+      && GET_CODE (XEXP (op, 0)) == PLUS
+      && CONST_INT_P (XEXP (XEXP (op, 0), 1)))
+    op = XEXP (XEXP (op, 0), 0);
+
+  if (GET_CODE (op) == LABEL_REF)
+    return 1;
+
+  if (GET_CODE (op) != SYMBOL_REF)
+    return 0;
+
+  return (SYMBOL_REF_LOCAL_P (op)
+	  && !SYMBOL_REF_WEAK (op)
+	  && !SYMBOL_REF_TLS_MODEL (op));
+})
+
+(define_predicate "global_symbolic_operand"
+  (match_code "const,symbol_ref")
+{
+  if (GET_CODE (op) == CONST
+      && GET_CODE (XEXP (op, 0)) == PLUS
+      && CONST_INT_P (XEXP (XEXP (op, 0), 1)))
+    op = XEXP (XEXP (op, 0), 0);
+
+  if (GET_CODE (op) != SYMBOL_REF)
+    return 0;
+
+  return ((!SYMBOL_REF_LOCAL_P (op) || SYMBOL_REF_WEAK (op))
+	  && !SYMBOL_REF_TLS_MODEL (op));
+})
+
 (define_predicate "dd_symbolic_operand"
   (match_code "symbol_ref, label_ref")
 {

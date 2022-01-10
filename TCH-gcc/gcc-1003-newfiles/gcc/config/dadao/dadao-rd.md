@@ -11,23 +11,23 @@
 	""
 	"<rd_arith_insn>	%0, %1, %2")
 
-;;FIXME
-(define_insn "setrd<mode>_const"
-  [(set (match_operand:QHSD 0 "rd_class_operand"  "=Rd")
-        (match_operand:QHSD 1 "immediate_operand" "  i"))]
+(define_insn "setrd<mode>_addr_local"
+  [(set (match_operand:QHSD 0 "rd_class_operand" "=Rd")
+        (match_operand:QHSD 1 "local_symbolic_operand" ""))]
 	""
 	"swym")
 
-(define_insn "setrddi_addr"
-  [(set (match_operand:DI 0 "rd_class_operand"  "=Rd")
-        (match_operand:DI 1 "dd_symbolic_operand" ""))]
+(define_insn "setrd<mode>_addr_global"
+  [(set (match_operand:QHSD 0 "rd_class_operand"  "=Rd")
+        (match_operand:QHSD 1 "global_symbolic_operand" ""))]
         ""
-	{
-	  // rtx l = gen_reg_rtx(SImode);
-	  // rtx r = gen_reg_rtx(SImode);
-	  // emit_insn (gen_)
-	  return "";
-	})
+	"swym")
+
+(define_insn "setrd<mode>_const"
+  [(set (match_operand:QHSD 0 "rd_class_operand"  "=Rd")
+        (match_operand:QHSD 1 "const_int_operand" "  i"))]
+	""
+	"setrd	%0, %1")
 
 ;; FIXME
 (define_expand "adddi3"
