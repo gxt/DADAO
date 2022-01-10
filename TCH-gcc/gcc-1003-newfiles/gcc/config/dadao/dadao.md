@@ -42,6 +42,7 @@
 			rtx index_mem = XEXP(plus_op, 1);
 
 			machine_mode mmode = GET_MODE(index_mem);
+			rtx scratch = gen_rtx_REG(DImode, 7);
 
 			if (satisfies_constraint_Wg(index_mem)) {
 				fprintf (asm_out_file, "\tldm<bwto>%s	rd7, ", mmode == DImode ? "" : "u");
@@ -49,13 +50,17 @@
 				fprintf (asm_out_file, ", 0\n");
 			}
 			else {
-				fprintf (asm_out_file, "\tld<bwto>%s	rd7, ", mmode == DImode ? "" : "u");
+				if (can_create_pseudo_p()) {
+					scratch = gen_reg_rtx(DImode);
+				}
+				fprintf (asm_out_file, "\tld<bwto>%s	%s, ", mmode == DImode ? "" : "u", reg_names[REGNO (scratch)]);
 				dd_print_operand_address(asm_out_file, mmode, XEXP(index_mem, 0));
 				fprintf (asm_out_file, "\n");
 			}
-			fprintf (asm_out_file, "\tstm<bwto>	%s, %s, rd7, 0\n",
+			fprintf (asm_out_file, "\tstm<bwto>	%s, %s, %s, 0\n",
 								reg_names[REGNO (operands[1])],
-								reg_names[REGNO (base_reg)]);
+								reg_names[REGNO (base_reg)],
+								reg_names[REGNO (scratch)]);
 			return "";
 		}
 		else
