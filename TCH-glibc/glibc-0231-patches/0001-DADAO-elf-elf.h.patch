@@ -1,15 +1,15 @@
-From f8af226d4c061eb56b9c64d792a94dcf626a9510 Mon Sep 17 00:00:00 2001
+From 997fd860ba2d2a2430d2cea88f2a00360e01ac48 Mon Sep 17 00:00:00 2001
 From: Guan Xuetao <gxt@pku.edu.cn>
-Date: Sun, 19 Dec 2021 16:47:12 +0800
+Date: Tue, 11 Jan 2022 19:51:40 +0800
 Subject: [PATCH] DADAO: elf/elf.h
 
 Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
 ---
- elf/elf.h | 2 ++
- 1 file changed, 2 insertions(+)
+ elf/elf.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/elf/elf.h b/elf/elf.h
-index 2549a177d6..bca8e611ed 100644
+index 2549a177d6..821a5e3f44 100644
 --- a/elf/elf.h
 +++ b/elf/elf.h
 @@ -374,6 +374,8 @@ typedef struct
@@ -21,6 +21,17 @@ index 2549a177d6..bca8e611ed 100644
  /* Legal values for e_version (version).  */
  
  #define EV_NONE		0		/* Invalid ELF version */
+@@ -4027,6 +4029,10 @@ enum
+ #define R_NDS32_TLS_TPOFF	102
+ #define R_NDS32_TLS_DESC	119
+ 
++/* DADAO relocations.  */
++#define R_DADAO_NONE		0	/* No reloc */
++#define R_DADAO_JUMP_SLOT	31	/* Create PLT entry */
++
+ __END_DECLS
+ 
+ #endif	/* elf.h */
 -- 
 2.17.1
 
