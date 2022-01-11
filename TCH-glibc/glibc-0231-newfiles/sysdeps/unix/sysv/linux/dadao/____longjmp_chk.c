@@ -2,7 +2,6 @@
  * Copyright (C) 2020-2033 Guan Xuetao (AT) Peking Univ.
  * Contributed by Guan Xuetao <gxt@pku.edu.cn>
  */
-#include <jmpbuf-offsets.h>
 #include <sysdep.h>
 #include <setjmp.h>
 #include <signal.h>
@@ -19,7 +18,7 @@
 
 #define CHECK_SP(sp)	do {						\
 	void *this_frame = __builtin_frame_address (0);			\
-	void *saved_frame = JB_FRAME_ADDRESS (env);			\
+	void *saved_frame = (void *)env[0];	/* FIXME */		\
 	INTERNAL_SYSCALL_DECL (err);					\
 	stack_t ss;							\
 									\
