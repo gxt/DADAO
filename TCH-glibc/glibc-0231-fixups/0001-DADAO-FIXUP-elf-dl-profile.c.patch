@@ -1,0 +1,75 @@
+From 6ee24ba769e9e5779a09ddd96929c140d495fff0 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Wed, 12 Jan 2022 04:20:23 +0800
+Subject: [PATCH] DADAO-FIXUP: elf/dl-profile.c
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ elf/dl-profile.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/elf/dl-profile.c b/elf/dl-profile.c
+index c681f5415c..093e66d098 100644
+--- a/elf/dl-profile.c
++++ b/elf/dl-profile.c
+@@ -146,7 +146,7 @@ struct here_cg_arc_record
+     uint32_t count __attribute__ ((aligned (__alignof__ (uint32_t))));
+   } __attribute__ ((packed));
+ 
+-static struct here_cg_arc_record *data;
++static struct here_cg_arc_record *data_tao;
+ 
+ /* Nonzero if profiling is under way.  */
+ static int running;
+@@ -401,7 +401,7 @@ _dl_start_profile (void)
+ 
+   /* Compute pointer to array of the arc information.  */
+   narcsp = (uint32_t *) ((char *) kcount + kcountsize + sizeof (uint32_t));
+-  data = (struct here_cg_arc_record *) ((char *) narcsp + sizeof (uint32_t));
++  data_tao = (struct here_cg_arc_record *) ((char *) narcsp + sizeof (uint32_t));
+ 
+   if (st.st_size == 0)
+     {
+@@ -449,9 +449,9 @@ _dl_start_profile (void)
+       size_t to_index;
+       size_t newfromidx;
+       --idx;
+-      to_index = (data[idx].self_pc / (HASHFRACTION * sizeof (*tos)));
++      to_index = (data_tao[idx].self_pc / (HASHFRACTION * sizeof (*tos)));
+       newfromidx = fromidx++;
+-      froms[newfromidx].here = &data[idx];
++      froms[newfromidx].here = &data_tao[idx];
+       froms[newfromidx].link = tos[to_index];
+       tos[to_index] = newfromidx;
+     }
+@@ -547,10 +547,10 @@ _dl_mcount (ElfW(Addr) frompc, ElfW(Addr) selfpc)
+ 	    {
+ 	      size_t to_index;
+ 	      size_t newfromidx;
+-	      to_index = (data[narcs].self_pc
++	      to_index = (data_tao[narcs].self_pc
+ 			  / (HASHFRACTION * sizeof (*tos)));
+ 	      newfromidx = catomic_exchange_and_add (&fromidx, 1) + 1;
+-	      froms[newfromidx].here = &data[narcs];
++	      froms[newfromidx].here = &data_tao[narcs];
+ 	      froms[newfromidx].link = tos[to_index];
+ 	      tos[to_index] = newfromidx;
+ 	      catomic_increment (&narcs);
+@@ -569,10 +569,10 @@ _dl_mcount (ElfW(Addr) frompc, ElfW(Addr) selfpc)
+ 	      *topcindex = catomic_exchange_and_add (&fromidx, 1) + 1;
+ 	      fromp = &froms[*topcindex];
+ 
+-	      fromp->here = &data[newarc];
+-	      data[newarc].from_pc = frompc;
+-	      data[newarc].self_pc = selfpc;
+-	      data[newarc].count = 0;
++	      fromp->here = &data_tao[newarc];
++	      data_tao[newarc].from_pc = frompc;
++	      data_tao[newarc].self_pc = selfpc;
++	      data_tao[newarc].count = 0;
+ 	      fromp->link = 0;
+ 	      catomic_increment (&narcs);
+ 
+-- 
+2.17.1
+
