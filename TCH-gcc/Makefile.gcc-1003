@@ -8,7 +8,7 @@ GCC_1003_TARGET		:= dadao-linux-gnu
 
 GCC_1003_NEWFILES	:= $(DIR_DADAO_TOP)/TCH-gcc/gcc-1003-newfiles
 GCC_1003_PATCHES	:= $(DIR_DADAO_TOP)/TCH-gcc/gcc-1003-patches
-GCC_1003_FIXUP		:= $(DIR_DADAO_TOP)/TCH-gcc/gcc-1003-fixup
+GCC_1003_FIXUP		:= $(DIR_DADAO_TOP)/TCH-gcc/gcc-1003-fixups
 
 GCC_1003_SOURCE		:= $(DIR_DADAO_SOURCE)/gcc-1003
 GCC_1003_BUILD		:= $(DIR_DADAO_BUILD)/gcc-1003
@@ -45,6 +45,8 @@ gcc-1003-source:
 		git commit -sm"DADAO: add gcc/common/config/dadao support"
 	# gcc dir patches
 	@cd $(GCC_1003_SOURCE); git am $(GCC_1003_PATCHES)/1*.patch
+	# gcc dir fixups
+	@cd $(GCC_1003_SOURCE); git am $(GCC_1003_FIXUP)/0*.patch
 	# libgcc/config
 	@cp -a $(GCC_1003_NEWFILES)/libgcc/config/* $(GCC_1003_SOURCE)/libgcc/config/
 	@cd $(GCC_1003_SOURCE);						\
