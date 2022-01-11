@@ -1,0 +1,26 @@
+From 12c76d460527ffbe2bb18c05016165a4d0934069 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Tue, 11 Jan 2022 12:51:16 +0800
+Subject: [PATCH] DADAO-FIXUP: sunrpc/Makefile
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ sunrpc/Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/sunrpc/Makefile b/sunrpc/Makefile
+index d5840d0770..e55f997787 100644
+--- a/sunrpc/Makefile
++++ b/sunrpc/Makefile
+@@ -155,6 +155,8 @@ CFLAGS-key_call.c += -fexceptions
+ CFLAGS-pmap_rmt.c += -fexceptions
+ CFLAGS-clnt_perr.c += -fexceptions
+ CFLAGS-openchild.c += -fexceptions
++CFLAGS-xdr.c += -O1
++CFLAGS-compat-xdr.c += -O1
+ 
+ $(objpfx)tst-getmyaddr: $(common-objpfx)linkobj/libc.so
+ $(objpfx)tst-xdrmem: $(common-objpfx)linkobj/libc.so
+-- 
+2.17.1
+
