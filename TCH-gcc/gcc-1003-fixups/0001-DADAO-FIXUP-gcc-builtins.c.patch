@@ -1,0 +1,29 @@
+From 35273861e26fb7f1a05fe04d9e2871a5cc8778f4 Mon Sep 17 00:00:00 2001
+From: Zhu Guangtao <zhuguangtao@pkunity.com>
+Date: Tue, 11 Jan 2022 11:41:54 +0800
+Subject: [PATCH] DADAO-FIXUP-gcc: builtins.c
+
+Signed-off-by: Zhu Guangtao <zhuguangtao@pkunity.com>
+---
+ gcc/builtins.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/gcc/builtins.c b/gcc/builtins.c
+index 10b6fd3bb4d..6d215803f17 100644
+--- a/gcc/builtins.c
++++ b/gcc/builtins.c
+@@ -5763,8 +5763,9 @@ expand_builtin_frame_address (tree fndecl, tree exp)
+ 	{
+ 	  /* Warn since no effort is made to ensure that any frame
+ 	     beyond the current one exists or can be safely reached.  */
+-	  warning (OPT_Wframe_address, "calling %qD with "
+-		   "a nonzero argument is unsafe", fndecl);
++//FIXME
++//	  warning (OPT_Wframe_address, "calling %qD with "
++//		   "a nonzero argument is unsafe", fndecl);
+ 	}
+ 
+       /* For __builtin_frame_address, return what we've got.  */
+-- 
+2.17.1
+
