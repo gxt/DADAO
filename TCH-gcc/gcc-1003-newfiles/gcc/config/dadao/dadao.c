@@ -176,9 +176,15 @@ void dadao_setup_frame_addresses (void)
 /* RETURN_ADDR_RTX.  */
 rtx dadao_return_addr_rtx (int count, rtx frame ATTRIBUTE_UNUSED)
 {
-  return count == 0
-    ? get_hard_reg_initial_val (Pmode, DADAO_RETURN_ADDRESS_REGNUM)
-    : NULL_RTX;
+/*
+  return count == -1
+   ? gen_rtx_REG (Pmode, DADAO_RETURN_ADDRESS_REGNUM)
+   : gen_rtx_MEM (Pmode,
+		  memory_address (Pmode, plus_constant (Pmode, frame, 0))); 
+*/
+//	return count == 0
+
+  return get_hard_reg_initial_val (Pmode, DADAO_RETURN_ADDRESS_REGNUM - count);
 }
 
 /* XXX gccint 18.9.2 Node: Exception Handling Support */
