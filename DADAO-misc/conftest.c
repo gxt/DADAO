@@ -1,7 +1,9 @@
-int
-main ()
+int foo()
 {
+	return 1;
+}
 
-  ;
-  return 0;
+int main ()
+{
+	return foo();
 }
