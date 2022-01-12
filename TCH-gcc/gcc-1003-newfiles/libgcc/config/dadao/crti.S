@@ -4,7 +4,13 @@
 	.text
 	.global _start
 _start:
+	call	_init
 	call	main
+	call	_fini
+
+	# To exit, generate an exception by return from empty RAS
+	ret
+	swym
 
 	.section .init,"ax",@progbits
 	.global	_init
