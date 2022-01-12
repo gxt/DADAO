@@ -55,7 +55,7 @@ void cpu_loop(CPUDADAOState *env)
             queue_signal(env, info.si_signo, QEMU_SI_FAULT, &info);
             break;
         case DADAO_EXCP_DEBG:
-            cpu_dump_state(cs, stdout, 0);
+            cpu_dump_state(cs, stderr, 0);
             break;
         case DADAO_EXCP_FPER:
             info.si_signo = TARGET_SIGFPE;
@@ -65,6 +65,7 @@ void cpu_loop(CPUDADAOState *env)
             queue_signal(env, info.si_signo, QEMU_SI_FAULT, &info);
             break;
         default:
+            cpu_dump_state(cs, stderr, 0);
             g_assert_not_reached();
         }
         process_pending_signals(env);

@@ -1059,7 +1059,7 @@ static void dadao_tr_init_disas_context(DisasContextBase *dcbase, CPUState *cs)
     
     ctx->mem_idx = cpu_mmu_index(env, false);
 
-    cpu_dump_state(cs, stdout, 0);
+    cpu_dump_state(cs, stderr, 0);
 }
 
 static void dadao_tr_tb_start(DisasContextBase *dcbase, CPUState *cs)
