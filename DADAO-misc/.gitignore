@@ -1,6 +1,7 @@
-
+conftest
 *.i
 *.s
 *.o
 *.dump
 *.elf
+*.log
