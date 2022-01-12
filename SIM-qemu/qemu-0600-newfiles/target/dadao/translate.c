@@ -1148,26 +1148,38 @@ void dadao_cpu_dump_state(CPUState *cs, FILE *f, int flags)
     DADAOCPU *cpu = DADAO_CPU(cs);
     CPUDADAOState *env = &cpu->env;
 
-    qemu_fprintf(f, "rd:\n");
+    qemu_log("--- pc at: %016lx ---\n", env->REG_PC);
+    qemu_log("rd\n");
     for (int i = 0; i < 64; i += 4) {
         if (env->rd[i + 0] || env->rd[i + 1] || env->rd[i + 2] || env->rd[i + 3]) {
-            qemu_fprintf(f, "rd%02d=%016lx ", i + 0, env->rd[i + 0]);
-            qemu_fprintf(f, "rd%02d=%016lx ", i + 1, env->rd[i + 1]);
-            qemu_fprintf(f, "rd%02d=%016lx ", i + 2, env->rd[i + 2]);
-            qemu_fprintf(f, "rd%02d=%016lx ", i + 3, env->rd[i + 3]);
-            qemu_fprintf(f, "\n");
+            qemu_log("[%02d]=%016lx ", i + 0, env->rd[i + 0]);
+            qemu_log("[%02d]=%016lx ", i + 1, env->rd[i + 1]);
+            qemu_log("[%02d]=%016lx ", i + 2, env->rd[i + 2]);
+            qemu_log("[%02d]=%016lx ", i + 3, env->rd[i + 3]);
+            qemu_log("\n");
         }
     }
-    qemu_fprintf(f, "rb:\n");
+    qemu_log("rb\n");
     for (int i = 0; i < 64; i += 4) {
         if (env->rb[i + 0] || env->rb[i + 1] || env->rb[i + 2] || env->rb[i + 3]) {
-            qemu_fprintf(f, "rb%02d=%016lx ", i + 0, env->rb[i + 0]);
-            qemu_fprintf(f, "rb%02d=%016lx ", i + 1, env->rb[i + 1]);
-            qemu_fprintf(f, "rb%02d=%016lx ", i + 2, env->rb[i + 2]);
-            qemu_fprintf(f, "rb%02d=%016lx ", i + 3, env->rb[i + 3]);
-            qemu_fprintf(f, "\n");
+            qemu_log("[%02d]=%016lx ", i + 0, env->rb[i + 0]);
+            qemu_log("[%02d]=%016lx ", i + 1, env->rb[i + 1]);
+            qemu_log("[%02d]=%016lx ", i + 2, env->rb[i + 2]);
+            qemu_log("[%02d]=%016lx ", i + 3, env->rb[i + 3]);
+            qemu_log("\n");
         }
     }
+    qemu_log("ra\n");
+    for (int i = 0; i < 64; i += 4) {
+        if (env->ra[i + 0] || env->ra[i + 1] || env->ra[i + 2] || env->ra[i + 3]) {
+            qemu_log("[%02d]=%016lx ", i + 0, env->ra[i + 0]);
+            qemu_log("[%02d]=%016lx ", i + 1, env->ra[i + 1]);
+            qemu_log("[%02d]=%016lx ", i + 2, env->ra[i + 2]);
+            qemu_log("[%02d]=%016lx ", i + 3, env->ra[i + 3]);
+            qemu_log("\n");
+        }
+    }
+    qemu_log("\n");
 }
 
 void restore_state_to_opc(CPUDADAOState *env, TranslationBlock *tb,
