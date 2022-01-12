@@ -466,12 +466,12 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 					bfd_arch_bits_per_address (abfd),
 					value);
 		if (r == bfd_reloc_ok) {
-			bfd_put_32 (abfd, insn_origin | ((value >> 2) & 0x3FFFF),
+			bfd_put_32 (abfd, DADAO_INSN_JUMP_IIII | ((value >> 2) & 0x3FFFF),
 				(bfd_byte *) datap);
 
 			return bfd_reloc_ok;
 		} else {
-			bfd_put_32 (abfd, (insn_origin ^ DADAO_INSN_ALTMODE) | (4),
+			bfd_put_32 (abfd, (DADAO_INSN_JUMP_IIII) | (4),
 				 (bfd_byte *) datap);
 
 			bfd_put_32 (abfd, DADAO_INSN_SETZW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WH |
@@ -484,7 +484,7 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 				(value & 0xffff), (bfd_byte *) datap + 16);
 
 			/* Put a "jump $3, $0, 0" after the common sequence.  */
-			bfd_put_32 (abfd, DADAO_INSN_JUMP | (DADAO_REGP_TAO << 18), (bfd_byte *) datap + 20);
+			bfd_put_32 (abfd, DADAO_INSN_JUMP_RRII | (DADAO_REGP_TAO << 18), (bfd_byte *) datap + 20);
 		}
 
 		return bfd_reloc_ok;
@@ -499,8 +499,8 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 					bfd_arch_bits_per_address (abfd),
 					value);
 		if (r == bfd_reloc_ok) {
-			bfd_put_32 (abfd, insn_origin | DADAO_INSN_ALTMODE | ((value >> 2) & 0xFFFFFF),
-				(bfd_byte *) datap);
+			/* FIXME: offset in .rela.text is 4 bytes after real position */
+			bfd_put_32 (abfd, DADAO_INSN_CALL_IIII | ((value >> 2) & 0xFFFFFF), (bfd_byte *) datap - 4);
 		} else {
 			bfd_put_32 (abfd, DADAO_INSN_SETZW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WH |
 				((value >> 48) & 0xffff), (bfd_byte *) datap);
@@ -511,7 +511,7 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 			bfd_put_32 (abfd, DADAO_INSN_ORW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WL |
 				(value & 0xffff), (bfd_byte *) datap + 12);
 
-			bfd_put_32 (abfd, (insn_origin & ~DADAO_INSN_ALTMODE) | (DADAO_REGP_TAO << 18), (bfd_byte *) datap + 16);
+			bfd_put_32 (abfd, (DADAO_INSN_CALL_RRII) | (DADAO_REGP_TAO << 18), (bfd_byte *) datap + 16);
 		}
 
 		return bfd_reloc_ok;

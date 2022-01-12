@@ -68,9 +68,6 @@ extern const struct dadao_opcode dadao_opcodes[];
 			 instruction->name, operands, (msg));					\
 	} while (0)
 
-/* Some insn values we use when padding and synthesizing address loads.  */
-#define	DADAO_INSN_ALTMODE		(1 << 24)	/* The alternative addressing mode, generally bigger immediate */
-
 #define	DADAO_REGP_PC			0		/* No. 0 reg is pc, read only */
 #define	DADAO_REGP_TAO			3		/* No. 3 reg is reserved for insn expand */
 
@@ -89,8 +86,10 @@ extern const struct dadao_opcode dadao_opcodes[];
 #define	DADAO_INSN_ANDNW			((unsigned int)(0x17 << 24))
 
 #define	DADAO_INSN_GETA			((unsigned int)(0x18 << 24))
-#define	DADAO_INSN_CALL			((unsigned int)(0xC8 << 24))
-#define	DADAO_INSN_JUMP			((unsigned int)(0xD8 << 24))
+#define	DADAO_INSN_CALL_IIII		((unsigned int)(0x6C << 24))
+#define	DADAO_INSN_CALL_RRII		((unsigned int)(0x6D << 24))
+#define	DADAO_INSN_JUMP_IIII		((unsigned int)(0x64 << 24))
+#define	DADAO_INSN_JUMP_RRII		((unsigned int)(0x65 << 24))
 
 /* Dadao bit-field definition:
  *   OP: 8-bit, [31..24]
