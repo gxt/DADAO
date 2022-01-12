@@ -175,9 +175,9 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		offset = (insn & 0xFFFFFF) << 2;
 		if (offset & 0x2000000)		offset -= 0x4000000;	/* backward */
 
-		info->target = memaddr + 4 + offset;
+		info->target = memaddr + offset;
 
-		(*info->print_address_func) (memaddr + 4 + offset, info);
+		(*info->print_address_func) (memaddr + offset, info);
 		return 4;
 
 	case dadao_operand_op:
@@ -213,9 +213,9 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		offset = (insn & 0x3FFFF) << 2;
 		if (offset & 0x80000)		offset -= 0x100000;	/* backward */
 
-		info->target = memaddr + 4 + offset;
+		info->target = memaddr + offset;
 
-		(*info->print_address_func) (memaddr + 4 + offset, info);
+		(*info->print_address_func) (memaddr + offset, info);
 		return 4;
 
 	case dadao_operand_u18:
