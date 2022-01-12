@@ -24,11 +24,19 @@ void cpu_loop(CPUDADAOState *env)
     abi_long ret;
     target_siginfo_t info;
 
+    /* debug */
+    qemu_log("program started\n");
+    cpu_dump_state(cs, stderr, 0);
+
     for (;;) {
         cpu_exec_start(cs);
         trapnr = cpu_exec(cs);
         cpu_exec_end(cs);
         process_queued_cpu_work(cs);
+
+        /* debug */
+        qemu_log("exception occurred: %d\n", trapnr);
+        cpu_dump_state(cs, stderr, 0);
 
         switch (trapnr) {
         case DADAO_EXCP_TRAP:
@@ -55,7 +63,6 @@ void cpu_loop(CPUDADAOState *env)
             queue_signal(env, info.si_signo, QEMU_SI_FAULT, &info);
             break;
         case DADAO_EXCP_DEBG:
-            cpu_dump_state(cs, stderr, 0);
             break;
         case DADAO_EXCP_FPER:
             info.si_signo = TARGET_SIGFPE;
@@ -65,7 +72,6 @@ void cpu_loop(CPUDADAOState *env)
             queue_signal(env, info.si_signo, QEMU_SI_FAULT, &info);
             break;
         default:
-            cpu_dump_state(cs, stderr, 0);
             g_assert_not_reached();
         }
         process_pending_signals(env);

@@ -123,13 +123,6 @@ void dadao_translate_init(void)
                                           "trap_num");
 }
 
-/*
-static int times_4(DisasContext *ctx, int x)
-{
-    return x * 4;
-}
-*/
-
 bool disas_dadao(DisasContext *ctx, uint32_t insn);
 
 #include "decode-dadao.inc.c"
@@ -1058,8 +1051,6 @@ static void dadao_tr_init_disas_context(DisasContextBase *dcbase, CPUState *cs)
     CPUDADAOState *env = cs->env_ptr;
     
     ctx->mem_idx = cpu_mmu_index(env, false);
-
-    cpu_dump_state(cs, stderr, 0);
 }
 
 static void dadao_tr_tb_start(DisasContextBase *dcbase, CPUState *cs)
@@ -1091,10 +1082,17 @@ static void dadao_tr_translate_insn(DisasContextBase *dcbase, CPUState *cs)
     uint32_t insn = translator_ldl(&cpu->env, ctx->base.pc_next);
 
     tcg_gen_movi_i64(cpu_pc, ctx->base.pc_next);
-    
+
     if (!disas_dadao(ctx, insn)) {
         gen_exception(DADAO_EXCP_ILLI);
         ctx->base.is_jmp = DISAS_NORETURN;
+        return;
+    }
+
+    if (ctx->base.max_insns == 1) {  /* single step mode */
+        gen_exception(DADAO_EXCP_DEBG);
+        ctx->base.is_jmp = DISAS_NORETURN;
+        return;
     }
 
     ctx->base.pc_next += 4;
@@ -1115,7 +1113,7 @@ static void dadao_tr_tb_stop(DisasContextBase *dcbase, CPUState *cs)
 
     if (ctx->base.is_jmp == DISAS_TOO_MANY) {
         tcg_gen_movi_i64(cpu_pc, ctx->base.pc_next);
-        gen_exception(DADAO_EXCP_DEBG);
+        tcg_gen_lookup_and_goto_ptr();
         return;
     }
 
