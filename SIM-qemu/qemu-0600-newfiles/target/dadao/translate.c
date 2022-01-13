@@ -1081,43 +1081,39 @@ static void dadao_tr_translate_insn(DisasContextBase *dcbase, CPUState *cs)
     DADAOCPU *cpu = DADAO_CPU(cs);
     uint32_t insn = translator_ldl(&cpu->env, ctx->base.pc_next);
 
-    tcg_gen_movi_i64(cpu_pc, ctx->base.pc_next);
-
     if (!disas_dadao(ctx, insn)) {
         gen_exception(DADAO_EXCP_ILLI);
         ctx->base.is_jmp = DISAS_NORETURN;
         return;
     }
 
+    if (ctx->base.is_jmp == DISAS_NEXT) {
+        ctx->base.pc_next += 4;
+        tcg_gen_movi_i64(cpu_pc, ctx->base.pc_next);
+    }
+
     if (ctx->base.max_insns == 1) {  /* single step mode */
         gen_exception(DADAO_EXCP_DEBG);
         ctx->base.is_jmp = DISAS_NORETURN;
-        return;
     }
-
-    ctx->base.pc_next += 4;
 }
 
 static void dadao_tr_tb_stop(DisasContextBase *dcbase, CPUState *cs)
 {
     DisasContext *ctx = container_of(dcbase, DisasContext, base);
 
-    if (ctx->base.is_jmp == DISAS_NORETURN) {
-        return;
-    }
-
-    if (ctx->base.is_jmp == DISAS_JUMP) {
-        tcg_gen_lookup_and_goto_ptr();
-        return;
-    }
-
-    if (ctx->base.is_jmp == DISAS_TOO_MANY) {
+    switch (ctx->base.is_jmp) {
+    case DISAS_NORETURN:
+        break;
+    case DISAS_TOO_MANY:
         tcg_gen_movi_i64(cpu_pc, ctx->base.pc_next);
+        /* fall through */
+    case DISAS_JUMP:
         tcg_gen_lookup_and_goto_ptr();
-        return;
+        break;
+    default:
+        g_assert_not_reached();
     }
-
-    tcg_gen_exit_tb(NULL, 0);
 }
 
 static void dadao_tr_disas_log(const DisasContextBase *dcbase, CPUState *cs)
