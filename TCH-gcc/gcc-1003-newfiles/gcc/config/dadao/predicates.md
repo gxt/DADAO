@@ -101,19 +101,6 @@
 	  && !SYMBOL_REF_TLS_MODEL (op));
 })
 
-(define_predicate "dd_symbolic_operand"
-  (match_code "symbol_ref, label_ref")
-{
-  switch (GET_CODE(op))
-    {
-    case SYMBOL_REF:
-    case LABEL_REF:
-      return 1;
-    default:
-      return 0;
-    }
-})
-
 (define_predicate "dadao_symbolic_or_address_operand"
   (match_code "symbol_ref, label_ref, const, subreg, reg, plus")
 {
