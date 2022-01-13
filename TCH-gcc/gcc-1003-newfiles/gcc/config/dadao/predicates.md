@@ -66,9 +66,21 @@
   (match_code "ne, eq, le, ge, lt, gt, ordered, unordered"))
 
 ;; True if this is an address_operand or a symbolic operand.
+(define_predicate "dd_label_operand"
+  (match_code "label_ref,const")
+{
+  if (GET_CODE (op) == CONST
+      && GET_CODE (XEXP (op, 0)) == PLUS
+      && CONST_INT_P (XEXP (XEXP (op, 0), 1)))
+    op = XEXP (XEXP (op, 0), 0);
+
+  if (GET_CODE (op) == LABEL_REF)
+    return 1;
+  return 0;
+})
 
 (define_predicate "local_symbolic_operand"
-  (match_code "label_ref,const,symbol_ref")
+  (match_code "const,symbol_ref")
 {
   if (GET_CODE (op) == CONST
       && GET_CODE (XEXP (op, 0)) == PLUS
