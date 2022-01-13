@@ -499,8 +499,7 @@ dadao_elf_perform_relocation (asection *isec, reloc_howto_type *howto,
 					bfd_arch_bits_per_address (abfd),
 					value);
 		if (r == bfd_reloc_ok) {
-			/* FIXME: offset in .rela.text is 4 bytes after real position */
-			bfd_put_32 (abfd, DADAO_INSN_CALL_IIII | ((value >> 2) & 0xFFFFFF), (bfd_byte *) datap - 4);
+			bfd_put_32 (abfd, DADAO_INSN_CALL_IIII | ((value >> 2) & 0xFFFFFF), (bfd_byte *) datap);
 		} else {
 			bfd_put_32 (abfd, DADAO_INSN_SETZW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WH |
 				((value >> 48) & 0xffff), (bfd_byte *) datap);

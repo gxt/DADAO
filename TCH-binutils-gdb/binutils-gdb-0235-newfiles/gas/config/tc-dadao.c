@@ -810,7 +810,7 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
   know (fragP->fr_type == rs_machine_dependent);
 
   var_part_offset = fragP->fr_fix;
-  var_partp = fragP->fr_literal + var_part_offset;
+  var_partp = fragP->fr_literal + var_part_offset - 4;
   opcodep = fragP->fr_opcode;
 
   symbolP = fragP->fr_symbol;
@@ -819,7 +819,7 @@ md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
     = ((symbolP ? S_GET_VALUE (symbolP) : 0) + fragP->fr_offset);
 
   /* The opcode that would be extended is the last four "fixed" bytes.  */
-  opcode_address = fragP->fr_address + fragP->fr_fix;
+  opcode_address = fragP->fr_address + fragP->fr_fix - 4;
 
 	switch (fragP->fr_subtype) {
 	case ENCODE_RELAX (STATE_CALL, STATE_ZERO):
