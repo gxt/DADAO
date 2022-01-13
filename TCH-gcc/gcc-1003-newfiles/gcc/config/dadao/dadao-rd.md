@@ -11,17 +11,44 @@
 	""
 	"<rd_arith_insn>	%0, %1, %2")
 
+(define_insn "setrd<mode>_addr_label"
+  [(set (match_operand:QHSD 0 "rd_class_operand" "=Rd")
+        (match_operand:QHSD 1 "dd_label_operand" ""))]
+	""
+	{
+	// Strange if it is constant
+	  if (GET_CODE (operands[1]) == CONST) {
+		return "setrd	%0, %1";
+	  }
+	  else
+	  	return "swym";
+	})
+
 (define_insn "setrd<mode>_addr_local"
   [(set (match_operand:QHSD 0 "rd_class_operand" "=Rd")
         (match_operand:QHSD 1 "local_symbolic_operand" ""))]
 	""
-	"swym")
+	{
+	  if (GET_CODE (operands[1]) == CONST) {
+		return "swym"; // "setrd	%0, %1";
+	  }
+	  else {
+		/* (SYMBOL_REF_LOCAL_P (operands[1]) */
+		return "swym";
+	  }
+	})
 
 (define_insn "setrd<mode>_addr_global"
   [(set (match_operand:QHSD 0 "rd_class_operand"  "=Rd")
         (match_operand:QHSD 1 "global_symbolic_operand" ""))]
         ""
-	"swym")
+	{
+	  if (GET_CODE (operands[1]) == CONST) {
+		return	"swym";
+	  }
+	  else
+		return "swym";
+	})
 
 (define_insn "setrd<mode>_const"
   [(set (match_operand:QHSD 0 "rd_class_operand"  "=Rd")
