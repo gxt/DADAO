@@ -14,8 +14,7 @@
    load the remaining arguments to register. */
 
 ENTRY (syscall)
-	rd2rd	rd31, rd16, 0
-	rd2rd	rd16, rd17, 6
+	rd2rd	rd15, rd16, 7
 	trap	cp0, 0
 	brnn	rd31, 101f
 	rd2rd	rd7, rd31, 0

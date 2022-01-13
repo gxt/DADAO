@@ -17,7 +17,7 @@
 #ifdef	__ASSEMBLER__
 
 #define __DO_SYSCALL(syscall_name, args)			\
-	setzwl	rd31, SYS_ify(syscall_name);			\
+	setrd	rd15, SYS_ify(syscall_name);			\
 	trap	cp0, 0;
 
 #define PSEUDO(name, syscall_name, args)			\
@@ -63,18 +63,18 @@
  * value to use within the context of the syscall */
 #define	INTERNAL_SYSCALL_DECL(err)	do { } while (0)
 
-#define	INTERNAL_SYSCALL_RAW(name, err, nr, args...)		\
-	({							\
-		register int _nr asm ("rd31");			\
-		LOAD_ARGS_##nr (args)				\
-		_nr = name;					\
-		asm volatile (					\
-			"# syscall " #name			\
-			"trap	cp0, 0"				\
-			: "=r" (_nr)				\
-			: "r" (_nr) ASM_ARGS_##nr		\
-			: "memory");				\
-	(long int) _nr; })
+#define	INTERNAL_SYSCALL_RAW(name, err, nr, args...)			\
+	({								\
+		register int _res asm ("rd31"), _nr asm ("rd15");	\
+		LOAD_ARGS_##nr (args)					\
+		_nr = name;						\
+		asm volatile (						\
+			"# syscall " #name				\
+			"trap	cp0, 0"					\
+			: "=r" (_res)					\
+			: "r" (_nr) ASM_ARGS_##nr			\
+			: "memory");					\
+	(long int) _res; })
 
 /* Similar to INLINE_SYSCALL but we don't set errno */
 #define	INTERNAL_SYSCALL(name, err, nr, args...)		\
