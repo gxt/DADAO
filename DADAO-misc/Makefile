@@ -57,10 +57,11 @@ test-gcc-highfive:
 
 TEST_QEMU_NAME		?= conftest
 TEST_QEMU_TARGET	:= $(TEST_DSTDIR)/$(TEST_QEMU_NAME)
-TEST_QEMU_LOG		:= $(TEST_DSTDIR)/$(TEST_QEMU_NAME).log
+TEST_QEMU_FLAGS		:= -D $(TEST_DSTDIR)/$(TEST_QEMU_NAME).log
+TEST_QEMU_FLAGS		+= -singlestep -strace
 
 test-qemu-run:
-	$(DD_QEMU_USER) -singlestep -strace -D $(TEST_QEMU_LOG) $(TEST_QEMU_TARGET)
+	$(DD_QEMU_USER) $(TEST_QEMU_FLAGS) $(TEST_QEMU_TARGET)
 
 test-clean:
-	@rm -f *.i *.s *.o *.dump *.elf $(TEST_GCC_NAME) $(TEST_GAS_NAME)
+	@rm -f *.i *.s *.o *.dump *.elf *.log $(TEST_GCC_NAME) $(TEST_GAS_NAME)
