@@ -1,5 +1,6 @@
 config DADAO
 	def_bool y
+	select GENERIC_ATOMIC64
 
 config MMU
 	def_bool y
