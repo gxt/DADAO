@@ -47,7 +47,7 @@
 		return	"swym";
 	  }
 	  else
-		return "swym";
+		return "";
 	})
 
 (define_insn "setrd<mode>_const"
@@ -58,9 +58,9 @@
 
 ;; FIXME
 (define_expand "adddi3"
-  [(set      (match_operand:DI 0 "register_operand"	"= Rd,Rd,Rd,Rb,Rb,Rb")
-    (plus:DI (match_operand:DI 1 "register_operand"	"% Rd,Rd,Rd,Rb,Rb,Rb")
-             (match_operand:DI 2 "general_operand"	"  Rd, i,It,Rd, i,It")))]
+  [(set      (match_operand:DI 0 "register_operand"	"= Rd,Rd,Rd,Rb")
+    (plus:DI (match_operand:DI 1 "register_operand"	"% Rd,Rd,Rd,Rb")
+             (match_operand:DI 2 "general_operand"	"  Rd, i,It,Rd")))]
 	""
 	"{
 		if (REG_P(operands[0]) &&
@@ -68,8 +68,8 @@
 			if (REG_P(operands[2]) &&
 			    REGNO_REG_CLASS(REGNO(operands[2]))==GENERAL_REGS) 
 				emit_insn (gen_addrb_rd(operands[0], operands[1], operands[2]));
-			else
-				emit_insn (gen_addrb_imm(operands[0], operands[1], operands[2]));
+//			else
+//				emit_insn (gen_addrb_imm(operands[0], operands[1], operands[2]));
 			DONE;
 		}
 		if (REG_P(operands[0]) &&
