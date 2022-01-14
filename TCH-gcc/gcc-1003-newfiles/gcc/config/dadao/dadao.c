@@ -1160,13 +1160,12 @@ dadao_expand_prologue (void)
 							 offset)),
 			     hard_frame_pointer_rtx);
       RTX_FRAME_RELATED_P (insn) = 1;
-      insn = emit_insn (gen_setrddi_const (gen_rtx_REG(DImode, 7),
-					   GEN_INT (offset + 8)));
+
+      insn = emit_move_insn (hard_frame_pointer_rtx, stack_pointer_rtx);
       RTX_FRAME_RELATED_P (insn) = 1;
 
-      insn = emit_insn (gen_addrb_rd (hard_frame_pointer_rtx,
-				      stack_pointer_rtx,
-				      gen_rtx_REG(DImode, 7)));
+      insn = emit_insn (gen_addrb_imm (hard_frame_pointer_rtx,
+			      	       hard_frame_pointer_rtx, GEN_INT (offset + 8)));
       RTX_FRAME_RELATED_P (insn) = 1;
       offset -= 8;
     }
@@ -1229,8 +1228,8 @@ dadao_expand_epilogue (void)
 
   /* We do not need to restore pretended incoming args, just add back
      offset to sp.  */
-//  if (stack_space_to_deallocate != 0)
-//    dadao_emit_sp_add (stack_space_to_deallocate);
+  if (stack_space_to_deallocate != 0)
+    dadao_emit_sp_add (stack_space_to_deallocate);
 
 }
 
@@ -1345,31 +1344,8 @@ static void
 dadao_emit_sp_add (HOST_WIDE_INT offset)
 {
   rtx insn;
-
-  if (offset < 0)
-    {
-      /* Negative stack-pointer adjustments are allocations and appear in
-	 the prologue only.  We mark them as frame-related so unwind and
-	 debug info is properly emitted for them.  */
-
-	rtx tmpr = gen_rtx_REG (DImode, 7);
-	RTX_FRAME_RELATED_P (emit_move_insn (tmpr, GEN_INT (offset))) = 1;
-
-	insn = emit_insn (gen_addrb_rd (stack_pointer_rtx,
-					stack_pointer_rtx, tmpr));
-	RTX_FRAME_RELATED_P (insn) = 1;
-    }
-  else
-    {
-      /* Positive adjustments are in the epilogue only.  Don't mark them
-	 as "frame-related" for unwind info.  */
-	{
-	  rtx tmpr = gen_rtx_REG (DImode, 7);
-	  emit_move_insn (tmpr, GEN_INT (offset));
-	  insn = emit_insn (gen_addrb_rd (stack_pointer_rtx,
-					  stack_pointer_rtx, tmpr));
-	}
-     }
+  insn = emit_insn (gen_addrb_imm (stack_pointer_rtx,
+				   stack_pointer_rtx, GEN_INT (offset)));
 }
 
 /* Print operator suitable for doing something with a shiftable
