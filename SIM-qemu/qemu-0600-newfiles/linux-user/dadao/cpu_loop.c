@@ -41,14 +41,15 @@ void cpu_loop(CPUDADAOState *env)
         switch (trapnr) {
         case DADAO_EXCP_TRAP:
             ret = do_syscall(env,
-                             env->trap_num,
+                             DDABI_SYSCALL_NUM(env),
                              DDABI_ARG(env, 0),
                              DDABI_ARG(env, 1),
                              DDABI_ARG(env, 2),
                              DDABI_ARG(env, 3),
                              DDABI_ARG(env, 4),
                              DDABI_ARG(env, 5),
-                             0, 0);
+                             DDABI_ARG(env, 6),
+                             0);
             if (ret == -TARGET_ERESTARTSYS) {
                 env->REG_PC -= 4;
             } else if (ret != -TARGET_QEMU_ESIGRETURN) {

@@ -51,7 +51,6 @@ static TCGv_i64 cpu_rd[64];
 static TCGv_i64 cpu_rb[64];
 static TCGv_i64 cpu_rf[64];
 static TCGv_i64 cpu_ra[64];
-static TCGv_i32 cpu_trap_num;
 
 #define cpu_pc   cpu_rb[0]
 #define cpu_rasp cpu_ra[0]
@@ -97,30 +96,26 @@ static const char *regnames[] = {
 /* Map TCG globals to CPU context.  */
 void dadao_translate_init(void)
 {
-    int i;
-    for (i = 0; i < 64; i++) {
+    for (int i = 0; i < 64; i++) {
         cpu_rd[i] = tcg_global_mem_new_i64(cpu_env, 
                                            offsetof(CPUDADAOState, rd[i]), 
                                            regnames[i + 64 * 0]);
     }
-    for (i = 0; i < 64; i++) {
+    for (int i = 0; i < 64; i++) {
         cpu_rb[i] = tcg_global_mem_new_i64(cpu_env,
                                            offsetof(CPUDADAOState, rb[i]), 
                                            regnames[i + 64 * 1]);
     }
-    for (i = 0; i < 64; i++) {
+    for (int i = 0; i < 64; i++) {
         cpu_rf[i] = tcg_global_mem_new_i64(cpu_env,
                                            offsetof(CPUDADAOState, rf[i]), 
                                            regnames[i + 64 * 2]);
     }
-    for (i = 0; i < 64; i++) {
+    for (int i = 0; i < 64; i++) {
         cpu_ra[i] = tcg_global_mem_new_i64(cpu_env,
                                            offsetof(CPUDADAOState, ra[i]), 
                                            regnames[i + 64 * 3]);
     }
-    cpu_trap_num = tcg_global_mem_new_i32(cpu_env,
-                                          offsetof(CPUDADAOState, trap_num),
-                                          "trap_num");
 }
 
 bool disas_dadao(DisasContext *ctx, uint32_t insn);
@@ -1011,10 +1006,9 @@ static bool trans_brev(DisasContext *ctx, arg_brev *a)
 
 static bool trans_trap(DisasContext *ctx, arg_trap *a)
 {
-    if (a->cp != 0) {
+    if (a->cp != 0 || a->imm != 0) {
         return false;
     }
-    tcg_gen_movi_i32(cpu_trap_num, a->num);
     gen_exception(DADAO_EXCP_TRAP);
     ctx->base.is_jmp = DISAS_NORETURN;
     return true;

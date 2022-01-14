@@ -25,8 +25,6 @@ typedef struct CPUDADAOState {
     uint64_t rf[64];        /* floating-point registers */
     uint64_t ra[64];        /* return address registers */
 
-    int32_t trap_num;       /* system call number */
-
     /* System control coprocessor (cp0) */
     struct {
         uint32_t c0_cpuid;
