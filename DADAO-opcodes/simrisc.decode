@@ -193,7 +193,7 @@ brev    00101111 ...... ..................      @riii
 # System Instructions
 #
 
-trap    01110000 cp:6   num:18
+trap    01110000 cp:6   imm:18
 cpcoop  01110001 cp:6   imm:18
 rd2cr   01110010 cp:6   crhb:6 crhc:6 rd:6
 cr2rd   01110011 cp:6   crhb:6 crhc:6 rd:6
