@@ -21,7 +21,7 @@
 		return "setrd	%0, %1";
 	  }
 	  else
-	  	return "swym";
+	  	return "swym";	// FIXME: only get used when switch-case exists
 	})
 
 (define_insn "setrd<mode>_addr_local"
