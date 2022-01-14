@@ -41,6 +41,10 @@
        (and (match_code "const_int")
             (match_test "satisfies_constraint_Id(op)"))))
 
+(define_predicate "dd_sign_18_operand"
+       (and (match_code "const_int")
+            (match_test "satisfies_constraint_It(op)")))
+
 (define_predicate "dd_rd_s18_operand"
   (ior (match_operand 0 "rd_class_operand")
        (and (match_code "const_int")
