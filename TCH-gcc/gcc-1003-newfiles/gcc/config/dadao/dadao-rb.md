@@ -29,20 +29,28 @@
 	""
 	"addrb	%0, %1, %2")
 
+(define_expand "dd_addrb_imm"
+  [(set       (match_operand:DI 0 "rb_class_operand"  "= Rb")
+     (plus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb")
+              (match_operand:DI 2 "const_int_operand" "  i")))]
+        ""
+	"{
+		if (!satisfies_constraint_It (operands[2])) {
+			operands[2] = force_reg (DImode, operands[2]);
+		}
+	}")
 
 (define_insn "addrb_imm"
   [(set       (match_operand:DI 0 "rb_class_operand"  "= Rb")
      (plus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb")
-              (match_operand:DI 2 "immediate_operand" "  i")))]
+              (match_operand:DI 2 "dd_sign_18_operand"   "i")))]
         ""
         {
-          if (!satisfies_constraint_It(operands[2]))
-                return  "setrd  rd7, %2 \;addrb	%0, %1, rd7";
           if (operands[1] == operands[0])
                 return  "addrb	%0, %2";
           else
                 return  "rb2rb  %0, %1, 0       \;addrb	%0, %2";
-        })
+       })
 
 (define_insn "addrb_ctry"
   [(set      (match_operand:DI 0 "rb_class_operand"  "=Rb")
@@ -104,12 +112,29 @@
 		return "addrb   rb7, %1, rd0    \;addrb rb7, %2 \;stmrb  rb7, %0, 0 \;";
 	})
 
-(define_insn "dd_get_addr"
+(define_insn "dd_rb_get_imm"
   [(set (match_operand:DI 0 "rb_class_operand" "=Rb")
-        (match_operand:DI 1 "immediate_operand"  "s"))]
+        (match_operand:DI 1 "const_int_operand"  ""))]
 	""
 	"swym");
-;	"setrb	%0, %1")
+
+(define_insn "dd_rb_get_label"
+  [(set (match_operand:DI 0 "rb_class_operand" "=Rb")
+        (match_operand:DI 1 "dd_label_operand"  ""))]
+	""
+	"swym");
+
+(define_insn "dd_rb_get_local_symbol"
+  [(set (match_operand:DI 0 "rb_class_operand" "=Rb")
+        (match_operand:DI 1 "local_symbolic_operand"  ""))]
+	""
+	"swym");
+
+(define_insn "dd_rb_get_global_symbol"
+  [(set (match_operand:DI 0 "rb_class_operand" "=Rb")
+        (match_operand:DI 1 "global_symbolic_operand"  ""))]
+	""
+	"swym");
 
 (define_expand "dd_plus_rb"
   [(set      (match_operand:DI 0 "rd_class_operand")
