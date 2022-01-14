@@ -1346,6 +1346,7 @@ dadao_emit_sp_add (HOST_WIDE_INT offset)
   rtx insn;
   insn = emit_insn (gen_addrb_imm (stack_pointer_rtx,
 				   stack_pointer_rtx, GEN_INT (offset)));
+  RTX_FRAME_RELATED_P (insn) = 1;
 }
 
 /* Print operator suitable for doing something with a shiftable
