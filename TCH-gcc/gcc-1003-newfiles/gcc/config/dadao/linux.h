@@ -19,6 +19,7 @@ You should have received a copy of the GNU General Public License
 along with GCC; see the file COPYING3.  If not see
 <http://www.gnu.org/licenses/>.  */
 
+#ifndef TARGET_OS_CPP_BUILTINS
 #define TARGET_OS_CPP_BUILTINS()				\
     do {							\
 	builtin_define ("__gnu_linux__");			\
@@ -28,6 +29,7 @@ along with GCC; see the file COPYING3.  If not see
 	builtin_assert ("system=unix");				\
 	builtin_assert ("system=posix");			\
     } while (0)
+#endif
 
 #undef LIB_SPEC
 #define LIB_SPEC \
@@ -70,31 +72,6 @@ along with GCC; see the file COPYING3.  If not see
 
 #define TARGET_POSIX_IO
 
-/* Provide a STARTFILE_SPEC appropriate for ELF.  Here we add the
-   (even more) magical crtbegin.o file which provides part of the
-   support for getting C++ file-scope static object constructed
-   before entering `main'.  */
-
-#undef	STARTFILE_SPEC
-#ifdef HAVE_LD_PIE
-#define STARTFILE_SPEC \
-  "%{!shared: %{pg|p:gcrt1.o%s;pie:Scrt1.o%s;:crt1.o%s}}\
-   crti.o%s %{static:crtbeginT.o%s;shared|pie:crtbeginS.o%s;:crtbegin.o%s}"
-#else
-#define STARTFILE_SPEC \
-  "%{!shared: %{pg|p:gcrt1.o%s;:crt1.o%s}}\
-   crti.o%s %{static:crtbeginT.o%s;shared|pie:crtbeginS.o%s;:crtbegin.o%s}"
-#endif
-
-/* Provide a ENDFILE_SPEC appropriate for ELF.  Here we tack on the
-   magical crtend.o file which provides part of the support for
-   getting C++ file-scope static object constructed before entering
-   `main', followed by a normal ELF "finalizer" file, `crtn.o'.  */
-
-#undef	ENDFILE_SPEC
-#define ENDFILE_SPEC \
-   "%{shared|pie:crtendS.o%s;:crtend.o%s} crtn.o%s"
-
 /* Use --as-needed -lgcc_s for eh support.  */
 #ifdef HAVE_LD_AS_NEEDED
 #define USE_LD_AS_NEEDED 1
@@ -102,19 +79,3 @@ along with GCC; see the file COPYING3.  If not see
 
 /* Define if long doubles should be mangled as 'g'.  */
 #define TARGET_ALTERNATE_LONG_DOUBLE_MANGLING
-
-/* -mcpu=native handling only makes sense with compiler running on
-   an Alpha chip.  */
-#if defined(__dadao__) || defined(__dadao)
-extern const char *host_detect_local_cpu (int argc, const char **argv);
-# define EXTRA_SPEC_FUNCTIONS						\
-  { "local_cpu_detect", host_detect_local_cpu },
-
-# define MCPU_MTUNE_NATIVE_SPECS					\
-   " %{mcpu=native:%<mcpu=native %:local_cpu_detect(cpu)}"		\
-   " %{mtune=native:%<mtune=native %:local_cpu_detect(tune)}"
-#else
-# define MCPU_MTUNE_NATIVE_SPECS ""
-#endif
-
-#define DRIVER_SELF_SPECS MCPU_MTUNE_NATIVE_SPECS

@@ -6,9 +6,7 @@
 #ifndef GCC_DADAO_H
 #define GCC_DADAO_H
 
-#ifndef	OBJECT_FORMAT_ELF
-#error	DADAO ONLY SUPPORT ELF FORMAT!
-#endif
+#define OBJECT_FORMAT_ELF
 
 #define	DADAO_REG_RD_START			0x00
 #define	DADAO_REG_RB_START			0x40
@@ -83,9 +81,32 @@ struct GTY(()) machine_function
 #define STARTFILE_SPEC			"crti%O%s crtbegin%O%s"
 #endif
 
-#ifndef ENDFILE_SPEC
-#define ENDFILE_SPEC			"crtend%O%s crtn%O%s"
+/* Provide a STARTFILE_SPEC appropriate for ELF.  Here we add the
+   (even more) magical crtbegin.o file which provides part of the
+   support for getting C++ file-scope static object constructed
+   before entering `main'.  */
+
+#if (DEFAULT_LIBC==LIBC_GLIBC)
+  #undef STARTFILE_SPEC
+  #ifdef HAVE_LD_PIE
+	#define STARTFILE_SPEC \
+	  "%{!shared: %{pg|p:gcrt1.o%s;pie:Scrt1.o%s;:crt1.o%s}}\
+	   crti.o%s %{static:crtbeginT.o%s;shared|pie:crtbeginS.o%s;:crtbegin.o%s}"
+  #else
+	#define STARTFILE_SPEC \
+	  "%{!shared: %{pg|p:gcrt1.o%s;:crt1.o%s}}\
+	   crti.o%s %{static:crtbeginT.o%s;shared|pie:crtbeginS.o%s;:crtbegin.o%s}"
+  #endif
 #endif
+
+/* Provide a ENDFILE_SPEC appropriate for ELF.  Here we tack on the
+   magical crtend.o file which provides part of the support for
+   getting C++ file-scope static object constructed before entering
+   `main', followed by a normal ELF "finalizer" file, `crtn.o'.  */
+
+#undef	ENDFILE_SPEC
+#define ENDFILE_SPEC \
+   "%{shared|pie:crtendS.o%s;:crtend.o%s} crtn.o%s"
 
 /* XXX gccint 18.3 Node: Run-time Target Specification */
 
