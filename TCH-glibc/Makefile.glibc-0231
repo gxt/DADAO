@@ -4,7 +4,7 @@
 GLIBC_0231_ORIGIN	:= $(DIR_GIT_ORIGIN)/glibc.git
 GLIBC_0231_VERSION	:= glibc-2.31
 GLIBC_0231_BRANCH	:= dadao-0231
-GLIBC_0231_TARGET	:= dadao-linux-gnu
+GLIBC_0231_TARGET	?= dadao-linux-gnu
 
 GLIBC_0231_NEWFILES	:= $(DIR_DADAO_TOP)/TCH-glibc/glibc-0231-newfiles
 GLIBC_0231_PATCHES	:= $(DIR_DADAO_TOP)/TCH-glibc/glibc-0231-patches
@@ -82,7 +82,7 @@ glibc-0231-install:
 	@PATH=$(GLIBC_0231_PATH) make -C $(GLIBC_0231_BUILD) install
 
 glibc-0231-highfive:
-	# BEGIN TO BUILD glibc-0231!
+	@echo "--- BUILD glibc-0231 $(GLIBC_0231_TARGET) BEGIN ---"
 	# 0. Remove old glibc logfiles
 	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
 	@rm -fr $(GLIBC_0231_LOG_STDOUT) $(GLIBC_0231_LOG_STDERR)
@@ -96,7 +96,7 @@ glibc-0231-highfive:
 	@make -s glibc-0231-build			1>> $(GLIBC_0231_LOG_STDOUT) 2>> $(GLIBC_0231_LOG_STDERR)
 	# 5. Install glibc ...
 	@make -s glibc-0231-install			1>> $(GLIBC_0231_LOG_STDOUT) 2>> $(GLIBC_0231_LOG_STDERR)
-	# BUILD glibc-0231 DONE!
+	@echo "--- BUILD glibc-0231 $(GLIBC_0231_TARGET) DONE! ---"
 
 glibc-0231-update-syscall-lists:
 	# @touch $(GLIBC_0231_SOURCE)/sysdeps/unix/sysv/linux/dadao/arch-syscall.h
