@@ -36,7 +36,12 @@
         ""
 	"{
 		if (!satisfies_constraint_It (operands[2])) {
-			operands[2] = force_reg (DImode, operands[2]);
+			if (can_create_pseudo_p ()) operands[2] = force_reg (DImode, operands[2]);
+			else {
+				rtx ip = gen_rtx_REG (DImode, 7);
+				emit_insn (gen_rtx_SET (ip, operands[2]));
+				operands[2] = ip;
+			}
 		}
 	}")
 
