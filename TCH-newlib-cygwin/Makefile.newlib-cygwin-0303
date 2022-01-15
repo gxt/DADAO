@@ -4,7 +4,7 @@
 NEWLIB_CYGWIN_0303_ORIGIN	:= $(DIR_GIT_ORIGIN)/newlib-cygwin.git
 NEWLIB_CYGWIN_0303_VERSION	:= newlib-3.3.0
 NEWLIB_CYGWIN_0303_BRANCH	:= dadao-0303
-NEWLIB_CYGWIN_0303_TARGET	:= dadao-linux-elf
+NEWLIB_CYGWIN_0303_TARGET	?= dadao-linux-elf
 
 NEWLIB_CYGWIN_0303_NEWFILES	:= $(DIR_DADAO_TOP)/TCH-newlib-cygwin/newlib-cygwin-0303-newfiles
 NEWLIB_CYGWIN_0303_PATCHES	:= $(DIR_DADAO_TOP)/TCH-newlib-cygwin/newlib-cygwin-0303-patches
@@ -105,23 +105,19 @@ newlib-cygwin-0303-install:
 	@PATH=$(NEWLIB_CYGWIN_0303_PATH) make -C $(NEWLIB_CYGWIN_0303_BUILD) install
 
 newlib-cygwin-0303-highfive:
-	@echo "BEGIN TO BUILD newlib-cygwin-0303!"
-	@echo "0. Remove old newlib-cygwin logfiles"
+	@echo "--- BUILD newlib-cygwin-0303 $(NEWLIB_CYGWIN_0303_TARGET) BEGIN ---"
+	# 0. Remove old newlib-cygwin logfiles
 	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
 	@rm -fr $(NEWLIB_CYGWIN_0303_LOG_STDOUT) $(NEWLIB_CYGWIN_0303_LOG_STDERR)
-	@echo "1. Clean old newlib-cygwin ..."
+	# 1. Clean old newlib-cygwin ...
 	@make -s newlib-cygwin-0303-clean			1>> $(NEWLIB_CYGWIN_0303_LOG_STDOUT) 2>> $(NEWLIB_CYGWIN_0303_LOG_STDERR)
-	@echo "2. Clone and patch new newlib-cygwin ..."
+	# 2. Clone and patch new newlib-cygwin ...
 	@make -s newlib-cygwin-0303-source			1>> $(NEWLIB_CYGWIN_0303_LOG_STDOUT) 2>> $(NEWLIB_CYGWIN_0303_LOG_STDERR)
-	@echo "2. Clone and patch new newlib-cygwin complete."
-	@echo "3. Configure newlib-cygwin ..."
+	# 3. Configure newlib-cygwin ...
 	@make -s newlib-cygwin-0303-build-new			1>> $(NEWLIB_CYGWIN_0303_LOG_STDOUT) 2>> $(NEWLIB_CYGWIN_0303_LOG_STDERR)
-	@echo "3. Configure newlib-cygwin complete."
-	@echo "4. Make all-newlib-cygwin ..."
+	# 4. Make all-newlib-cygwin ...
 	@make -s newlib-cygwin-0303-build			1>> $(NEWLIB_CYGWIN_0303_LOG_STDOUT) 2>> $(NEWLIB_CYGWIN_0303_LOG_STDERR)
-	@echo "4. Make all-newlib-cygwin complete."
-	@echo "5. Install newlib-cygwin ..."
+	# 5. Install newlib-cygwin ...
 	@make -s newlib-cygwin-0303-install			1>> $(NEWLIB_CYGWIN_0303_LOG_STDOUT) 2>> $(NEWLIB_CYGWIN_0303_LOG_STDERR)
-	@echo "5. Install newlib-cygwin complete."
-	@echo "BUILD newlib-cygwin-0303 DONE!"
+	@echo "--- BUILD newlib-cygwin-0303 $(NEWLIB_CYGWIN_0303_TARGET) DONE! ---"
 
