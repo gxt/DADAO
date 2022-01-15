@@ -129,7 +129,7 @@ binutils-gdb-0235-install:
 	@make -C $(BINUTILS_GDB_0235_BUILD) install
 
 binutils-gdb-0235-highfive:
-	# --- BUILD binutils-gdb-0235 BEGIN ---
+	@echo "--- BUILD binutils-gdb-0235 $(BINUTILS_GDB_0235_TARGET) BEGIN ---"
 	# 0. Remove old binutils logfiles
 	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
 	@rm -fr $(BINUTILS_GDB_0235_LOG_STDOUT) $(BINUTILS_GDB_0235_LOG_STDERR)
@@ -143,7 +143,7 @@ binutils-gdb-0235-highfive:
 	@make -s binutils-gdb-0235-build			1>> $(BINUTILS_GDB_0235_LOG_STDOUT) 2>> $(BINUTILS_GDB_0235_LOG_STDERR)
 	# 5. Install binutils-gdb ...
 	@make -s binutils-gdb-0235-install			1>> $(BINUTILS_GDB_0235_LOG_STDOUT) 2>> $(BINUTILS_GDB_0235_LOG_STDERR)
-	# --- BUILD binutils-gdb-0235 DONE! ---
+	@echo "--- BUILD binutils-gdb-0235 $(BINUTILS_GDB_0235_TARGET) DONE! ---"
 
 binutils-gdb-0235-check:
 	@rm -fr $(BINUTILS_GDB_0235_LOG_CHECK)
