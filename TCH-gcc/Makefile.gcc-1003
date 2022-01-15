@@ -98,25 +98,21 @@ gcc-1003-install:
 #	@make -C $(GCC_1003_BUILD) install-gcc		; if ONLY gcc required, no libgcc and others
 
 gcc-1003-highfive:
-	@echo "BEGIN TO BUILD gcc-1003!"
-	@echo "0. Remove old gcc logfiles"
+	@echo "--- BUILD gcc-1003 $(GCC_1003_TARGET) BEGIN ---"
+	# 0. Remove old gcc logfiles
 	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
 	@rm -fr $(GCC_1003_LOG_STDOUT) $(GCC_1003_LOG_STDERR)
-	@echo "1. Clean old gcc ..."
+	# 1. Clean old gcc ...
 	@make -s gcc-1003-clean				1>> $(GCC_1003_LOG_STDOUT) 2>> $(GCC_1003_LOG_STDERR)
-	@echo "2. Clone and patch new gcc ..."
+	# 2. Clone and patch new gcc ...
 	@make -s gcc-1003-source			1>> $(GCC_1003_LOG_STDOUT) 2>> $(GCC_1003_LOG_STDERR)
-	@echo "2. Clone and patch new gcc complete."
-	@echo "3. Configure gcc ..."
+	# 3. Configure gcc ...
 	@make -s gcc-1003-build-new			1>> $(GCC_1003_LOG_STDOUT) 2>> $(GCC_1003_LOG_STDERR)
-	@echo "3. Configure gcc complete."
-	@echo "4. Make all-gcc ..."
+	# 4. Make all-gcc ...
 	@make -s gcc-1003-build				1>> $(GCC_1003_LOG_STDOUT) 2>> $(GCC_1003_LOG_STDERR)
-	@echo "4. Make all-gcc complete."
-	@echo "5. Install gcc ..."
+	# 5. Install gcc ...
 	@make -s gcc-1003-install			1>> $(GCC_1003_LOG_STDOUT) 2>> $(GCC_1003_LOG_STDERR)
-	@echo "5. Install gcc complete."
-	@echo "BUILD gcc-1003 DONE!"
+	@echo "--- BUILD gcc-1003 $(GCC_1003_TARGET) DONE! ---"
 
 gcc-1003-check:
 	@echo "MUST build/install binutils/gcc in the same dir (use tch-highfive)"
