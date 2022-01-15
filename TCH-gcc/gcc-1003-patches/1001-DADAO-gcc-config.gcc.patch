@@ -1,34 +1,37 @@
-From ef72573ca74d20dff5b033a802c718eb3ab51c0b Mon Sep 17 00:00:00 2001
+From 91dae7796a1b68d43e491aec82d197e09f4e578d Mon Sep 17 00:00:00 2001
 From: Zhu Guangtao <zhuguangtao@pkunity.com>
-Date: Sat, 15 Jan 2022 16:19:08 +0800
+Date: Sat, 15 Jan 2022 19:42:36 +0800
 Subject: [PATCH] DADAO-gcc: config.gcc
 
 Signed-off-by: Zhu Guangtao <zhuguangtao@pkunity.com>
 ---
- gcc/config.gcc | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ gcc/config.gcc | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
 diff --git a/gcc/config.gcc b/gcc/config.gcc
-index 6fcdd771d4c..d2b2184a9f3 100644
+index 6fcdd771d4c..9633bfafdf9 100644
 --- a/gcc/config.gcc
 +++ b/gcc/config.gcc
-@@ -1626,6 +1626,20 @@ csky-*-*)
+@@ -1626,6 +1626,23 @@ csky-*-*)
  		;;
  	esac
  	;;
-+dadao-*-*)
-+	tm_file="dbxelf.h elfos.h gnu-user.h ${tm_file}"
-+	tmake_file="${tmake_file}"
-+	case ${target} in
-+	dadao-*-elf*)
-+	  tm_file="${tm_file} newlib-stdint.h"
-+	  ;;
-+	dadao-*-gnu*)
-+	  tm_defines="$tm_defines DEFAULT_LIBC=LIBC_GLIBC"
-+	  tm_file="${tm_file} glibc-stdint.h dadao/linux.h"
-+	  ;;
-+	esac
++dadao-*-elf)
++	tm_file="${tm_file} dbxelf.h elfos.h newlib-stdint.h"
 +        use_gcc_stdint=wrap
++        ;;
++dadao-*-gnu | dadao-linux-gnu)
++	tm_file="${tm_file} gnu-user.h dbxelf.h elfos.h"
++        case ${target} in
++        dadao-*-gnu)
++          tm_file="${tm_file} dadao/linux.h glibc-stdint.h"
++	  tm_defines="$tm_defines DEFAULT_LIBC=LIBC_GLIBC"
++          ;;
++	dado-linux-gnu)
++	  tm_file="${tm_file} linux.h dadao/linux.h glibc-stdint.h"
++          tm_defines="$tm_defines DEFAULT_LIBC=LIBC_GLIBC"
++          ;;
++        esac
 +        ;;
  epiphany-*-elf | epiphany-*-rtems*)
  	tm_file="${tm_file} dbxelf.h elfos.h"
