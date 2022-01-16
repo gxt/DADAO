@@ -56,33 +56,25 @@
 	""
 	"setrd	%0, %1")
 
-;; FIXME
 (define_expand "adddi3"
-  [(set      (match_operand:DI 0 "register_operand"	"= Rd,Rd,Rd,Rb")
-    (plus:DI (match_operand:DI 1 "register_operand"	"% Rd,Rd,Rd,Rb")
-             (match_operand:DI 2 "general_operand"	"  Rd, i,It,Rd")))]
+  [(set      (match_operand:DI 0 "register_operand" "=r")
+    (plus:DI (match_operand:DI 1 "register_operand" "%r")
+             (match_operand:DI 2 "general_operand"  "")))]
 	""
 	"{
-		if (REG_P(operands[0]) &&
-		    REGNO_REG_CLASS(REGNO(operands[0]))==POINTER_REGS) {
-			if (REG_P(operands[2]) &&
-			    REGNO_REG_CLASS(REGNO(operands[2]))==GENERAL_REGS) 
-				emit_insn (gen_addrb_rd(operands[0], operands[1], operands[2]));
-//			else
-//				emit_insn (gen_addrb_imm(operands[0], operands[1], operands[2]));
-			DONE;
-		}
-		if (REG_P(operands[0]) &&
-		    REGNO_REG_CLASS(REGNO(operands[0]))==GENERAL_REGS) {
-			if (REG_P(operands[2]) &&
-			    REGNO_REG_CLASS(REGNO(operands[2]))==GENERAL_REGS)
-				emit_insn (gen_dd_addrd(operands[0], operands[1], operands[2]));
-			else if (GET_CODE(operands[2])==CONST_INT)
-				emit_insn (gen_dd_addrd_imm(operands[0], operands[1], operands[2]));
-			else if (MEM_P(operands[2]))
-				emit_insn (gen_dd_addrd_mem(operands[0], operands[1], operands[2]));
-			DONE;
-		}
+	  if (MEM_P(operands[2]) ||
+	     (GET_CODE(operands[2])==CONST_INT &&
+	     !satisfies_constraint_It (operands[2])))
+	  {
+	    if (can_create_pseudo_p())
+		operands[2] = force_reg (DImode, operands[2]);
+	    else
+	      {
+		rtx ip = gen_rtx_REG (DImode, 7);
+		emit_insn (gen_rtx_SET (ip, operands[2]));
+		operands[2] = ip;
+	      }
+	  }
 	}")
 
 (define_insn "dd_addrd_mem"
