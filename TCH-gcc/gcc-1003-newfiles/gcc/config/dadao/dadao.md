@@ -8,7 +8,9 @@
 ;; so that assigner will pick the fastest.
 
 (define_constants
-	[(DD_RA_REG		126)]
+	[(DD_IP_RD		  7)
+	 (DD_IP_RB		 71)
+	 (DD_RA_REG		126)]
 )
 
 (include "iterators.md")
@@ -31,59 +33,68 @@
         (match_operand:QHSD 1 "general_operand"      " Rd, m,Rd"))]
 	""
 	{
-	  if (MEM_P (operands[0]) && REG_P (operands[1]) && REGNO_REG_CLASS (REGNO(operands[1])) == GENERAL_REGS) {
-		if (satisfies_constraint_Wg (operands[0]))
-			return "stm<bwto>	%1, %0, 0";
-		else if (satisfies_constraint_Wm (operands[0])) {
-			rtx mem = operands[0];
+	  if (MEM_P (operands[0]) &&
+	      REG_P (operands[1]) &&
+	      REGNO_REG_CLASS (REGNO(operands[1])) == GENERAL_REGS)
+	    {
+		if (satisfies_constraint_Wg (operands[0])) return "stm<bwto>	%1, %0, 0";
+		else if
+		   (satisfies_constraint_Wm (operands[0]))
+		  {
+			rtx base_reg = XEXP(XEXP(operands[0], 0), 0);
+			rtx index_mem = XEXP(XEXP(operands[0], 0), 1);
 
-			rtx plus_op = XEXP(mem, 0);
-			rtx base_reg = XEXP(plus_op, 0);
-			rtx index_mem = XEXP(plus_op, 1);
+			bool flag = satisfies_constraint_Wg(index_mem);
 
-			machine_mode mmode = GET_MODE(index_mem);
+			fprintf (asm_out_file, "\tld%so	%s, ", flag ? "m" : "", reg_names[DD_IP_RD]);
+			dd_print_operand_address(asm_out_file, DImode, XEXP(index_mem, 0));
+			fprintf (asm_out_file, "%s\n", flag ? ", 0" : "");
 
-			rtx scratch = gen_rtx_REG(DImode, 7);
-
-			/* Strange we got here, since in most cases only will it happen
-			 * when the optimizations in reload pass are done, which means
-			 * creating pseudo registers is illegal */
-
-			if (can_create_pseudo_p()) {
-				scratch = gen_reg_rtx(DImode);
-			}
-
-			if (satisfies_constraint_Wg(index_mem)) {
-				fprintf (asm_out_file, "\tldm<bwto>%s	%s, ",mmode == DImode ? "" : "u", reg_names[REGNO (scratch)]);
-				dd_print_operand_address(asm_out_file, mmode, XEXP(index_mem, 0));
-				fprintf (asm_out_file, ", 0\n");
-			}
-			else {
-				fprintf (asm_out_file, "\tld<bwto>%s	%s, ", mmode == DImode ? "" : "u", reg_names[REGNO (scratch)]);
-				dd_print_operand_address(asm_out_file, mmode, XEXP(index_mem, 0));
-				fprintf (asm_out_file, "\n");
-			}
 			fprintf (asm_out_file, "\tstm<bwto>	%s, %s, %s, 0\n",
-								reg_names[REGNO (operands[1])],
-								reg_names[REGNO (base_reg)],
-								reg_names[REGNO (scratch)]);
+				 reg_names[REGNO (operands[1])], reg_names[REGNO (base_reg)], reg_names[DD_IP_RD]);
 			return "";
-		}
+		  }
 		else
 			return "st<bwto>	%1, %0";
-	  }
-          if (MEM_P (operands[1]) && REG_P (operands[0]) && REGNO_REG_CLASS (REGNO(operands[0])) == GENERAL_REGS) {
-                if (satisfies_constraint_Wg (operands[1])) {
-			if (GET_MODE (operands[0]) == DImode) return "ldmo	%0, %1, 0";
-			else
-				return "ldm<bwto>u	%0, %1, 0";
-		}
-                else {
-			if (GET_MODE (operands[0]) == DImode) return "ldo	%0, %1";
-                        else
-				return "ld<bwto>u	%0, %1";
-		}
-          }
+	    }
+          if (MEM_P (operands[1]) &&
+	      REG_P (operands[0]) &&
+	      REGNO_REG_CLASS (REGNO(operands[0])) == GENERAL_REGS)
+	    {
+		bool mul_flag =
+			(GET_MODE (operands[0]) == DImode);
+
+                if (satisfies_constraint_Wg (operands[1]))
+		  {
+		    if (mul_flag)
+			return "ldmo	%0, %1, 0";
+		    else
+			return "ldm<bwto>u	%0, %1, 0";
+		  }
+		else if (satisfies_constraint_Wm (operands[1]))
+		  {
+			rtx base_reg = XEXP(XEXP(operands[1], 0), 0);
+			rtx index_mem = XEXP(XEXP(operands[1], 0), 1);
+
+			bool flag = satisfies_constraint_Wg(index_mem);
+
+			fprintf (asm_out_file, "\tld%so	%s, ", flag ? "m" : "", reg_names[DD_IP_RD]);
+			dd_print_operand_address(asm_out_file, DImode, XEXP(index_mem, 0));
+			fprintf (asm_out_file, "%s\n", flag ? ", 0" : "");
+
+			fprintf (asm_out_file,
+				 "\tldm<bwto>%s	%s, %s, %s, 0\n", mul_flag ? "" : "u",
+				 reg_names[REGNO (operands[0])], reg_names[REGNO (base_reg)], reg_names[DD_IP_RD]);
+			return "";
+		  }
+                else
+		  {
+		    if (mul_flag)
+			return "ldo	%0, %1";
+		    else
+			return "ld<bwto>u	%0, %1";
+		  }
+            }
 	  if (REG_P (operands[0]) && REGNO_REG_CLASS (REGNO(operands[0])) == GENERAL_REGS &&
 	      REG_P (operands[1]) && REGNO_REG_CLASS (REGNO(operands[1])) == GENERAL_REGS)
 		return "orr	%0, %1, rd0";
