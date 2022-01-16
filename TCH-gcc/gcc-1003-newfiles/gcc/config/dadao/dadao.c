@@ -1352,8 +1352,15 @@ static void
 dadao_emit_sp_add (HOST_WIDE_INT offset)
 {
   rtx insn;
-  insn = emit_insn (gen_addrb_imm (stack_pointer_rtx,
-				   stack_pointer_rtx, GEN_INT (offset)));
+  if (satisfies_constraint_It (GEN_INT (offset)))
+	insn = emit_insn (gen_addrb_imm (stack_pointer_rtx,
+					 stack_pointer_rtx, GEN_INT (offset)));
+  else {
+	insn = emit_insn (gen_rtx_SET (gen_rtx_REG (DImode, 7), GEN_INT (offset)));
+	RTX_FRAME_RELATED_P (insn) = 1;
+	insn = emit_insn (gen_addrb_rd (stack_pointer_rtx,
+					stack_pointer_rtx, gen_rtx_REG (DImode, 7)));
+  }
   RTX_FRAME_RELATED_P (insn) = 1;
 }
 
