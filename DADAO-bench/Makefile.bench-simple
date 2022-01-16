@@ -1,0 +1,59 @@
+#
+# Makefile for simple test
+#
+DDB_SIMPLE_INSN		?= insn-simple
+
+bench-simple-insn-elf:
+	@test -d $(DDB_DST_DIR) || mkdir -p $(DDB_DST_DIR)
+	cd $(DDB_DST_DIR) ;								\
+		$(DDB_ELF_GAS) $(DDB_SRC_DIR)/$(DDB_SIMPLE_INSN).S			\
+			-o $(DDB_SIMPLE_INSN).o ;					\
+		$(DDB_ELF_READELF) -a $(DDB_SIMPLE_INSN).o > $(DDB_SIMPLE_INSN).o.elf ;	\
+		$(DDB_ELF_OBJDUMP) -d $(DDB_SIMPLE_INSN).o > $(DDB_SIMPLE_INSN).o.dump
+
+bench-simple-insn-gnu:
+	@test -d $(DDB_DST_DIR) || mkdir -p $(DDB_DST_DIR)
+	cd $(DDB_DST_DIR) ;								\
+		$(DDB_GNU_GAS) $(DDB_SRC_DIR)/$(DDB_SIMPLE_INSN).S			\
+			-o $(DDB_SIMPLE_INSN).o ;					\
+		$(DDB_GNU_READGNU) -a $(DDB_SIMPLE_INSN).o > $(DDB_SIMPLE_INSN).o.elf ;	\
+		$(DDB_GNU_OBJDUMP) -d $(DDB_SIMPLE_INSN).o > $(DDB_SIMPLE_INSN).o.dump
+
+
+DDB_SIMPLE_MAIN		?= main-simple
+#EXTRA_GCC_FLAGS	+= -fdump-tree-all -fdump-ipa-all -fdump-rtl-all
+
+bench-simple-main-elf:
+	@test -d $(DDB_DST_DIR) || mkdir -p $(DDB_DST_DIR)
+	cd $(DDB_DST_DIR) ;								\
+		$(DDB_ELF_GCC) $(DDB_SRC_DIR)/$(DDB_SIMPLE_MAIN).c			\
+			-save-temps							\
+			-o $(DDB_SIMPLE_MAIN) ;						\
+		$(DDB_ELF_READELF) -a $(DDB_SIMPLE_MAIN).o > $(DDB_SIMPLE_MAIN).o.elf ;	\
+		$(DDB_ELF_OBJDUMP) -d $(DDB_SIMPLE_MAIN).o > $(DDB_SIMPLE_MAIN).o.dump ;\
+		$(DDB_ELF_READELF) -a $(DDB_SIMPLE_MAIN) > $(DDB_SIMPLE_MAIN).elf ;	\
+		$(DDB_ELF_OBJDUMP) -d $(DDB_SIMPLE_MAIN) > $(DDB_SIMPLE_MAIN).dump
+
+bench-simple-main-gnu:
+	@test -d $(DDB_DST_DIR) || mkdir -p $(DDB_DST_DIR)
+	cd $(DDB_DST_DIR) ;								\
+		$(DDB_GNU_GCC) $(DDB_SRC_DIR)/$(DDB_SIMPLE_MAIN).c			\
+			-save-temps							\
+			$(DIR_DADAO_INSTALL)/lib/gcc/dadao-linux-gnu/10.3.0/crti.o	\
+			$(DIR_DADAO_INSTALL)/lib/gcc/dadao-linux-gnu/10.3.0/crtn.o	\
+			-nostdlib -lgcc							\
+			-B$(DIR_DADAO_BUILD)/gcc-$(VER_GCC)/gcc/			\
+			-B$(DIR_DADAO_INSTALL)/dadao-linux-gnu/bin/			\
+			-B$(DIR_DADAO_INSTALL)/dadao-linux-gnu/lib/			\
+			-isystem $(DIR_DADAO_INSTALL)/dadao-linux-gnu/include		\
+			-isystem $(DIR_DADAO_INSTALL)/dadao-linux-gnu/sys-include	\
+			-o $(DDB_DST_DIR)/$(DDB_SIMPLE_MAIN) ;				\
+		$(DDB_GNU_READGNU) -a $(DDB_SIMPLE_MAIN).o > $(DDB_SIMPLE_MAIN).o.elf ;	\
+		$(DDB_GNU_OBJDUMP) -d $(DDB_SIMPLE_MAIN).o > $(DDB_SIMPLE_MAIN).o.dump ;\
+		$(DDB_GNU_READGNU) -a $(DDB_SIMPLE_MAIN) > $(DDB_SIMPLE_MAIN).elf ;	\
+		$(DDB_GNU_OBJDUMP) -d $(DDB_SIMPLE_MAIN) > $(DDB_SIMPLE_MAIN).dump
+
+bench-simple-main-qemu:
+	$(DD_QEMU_USER) -singlestep -strace						\
+		-D $(DDB_DST_DIR)/$(DDB_SIMPLE_MAIN).qemulog				\
+		$(DDB_DST_DIR)/$(DDB_SIMPLE_MAIN)
