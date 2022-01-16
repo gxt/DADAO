@@ -142,36 +142,29 @@
 	"swym");
 
 (define_expand "dd_plus_rb"
-  [(set      (match_operand:DI 0 "rd_class_operand")
-    (plus:DI (match_operand:DI 1 "rb_class_operand")
-             (match_operand:DI 2 "nonmemory_operand")))]
+  [(set      (match_operand:DI 0 "rd_class_operand" "=Rd")
+    (plus:DI (match_operand:DI 1 "rb_class_operand" "%Rb")
+             (match_operand:DI 2 "const_int_operand" "i")))]
 	""
 	"{
-	  if (satisfies_constraint_It(operands[2]) ||
-	     (REG_P (operands[2]) &&
-	      REGNO_REG_CLASS(REGNO(operands[2])) == GENERAL_REGS))
-	    emit_insn (gen_addrb2rd (operands[0], operands[1], operands[2]));
-	  if (GET_CODE (operands[2]) == CONST_INT &&
-	     !satisfies_constraint_It (operands[2]))
-	   emit_insn (gen_addrb2rd_larde_scale (operands[0], operands[1], operands[2]));
+	  if (!satisfies_constraint_It (operands[2]))
+	    operands[2] = force_reg (DImode, operands[2]);
 	}")
 
 (define_insn "addrb2rd"
   [(set      (match_operand:DI 0 "rd_class_operand"  "= Rd, Rd")
     (plus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb, Rb")
-	     (match_operand:DI 2 "dd_rd_s18_operand" "  It, Rd")))
-	(clobber (reg:DI 71))]
+	     (match_operand:DI 2 "dd_rd_s18_operand" "  It, Rd")))]
 	""
 	"@
-	swym
-	swym")
-;	setrb	rb7, %2	\;addrb	rb7, %1, rd0	\;rb2rd	%0, rb7, 0	\;
-;	rb2rd	%0, %1, 0	\;add	rd0, %0, %2, %0	\;")
+	rb2rd	%0, %1, 0	\;add	%0, %2
+	rb2rd	%0, %1, 0	\;add	rd0, %0, %2, %0")
 
+;; Shall it stays ?
 (define_insn "addrb2rd_larde_scale"
-  [(set      (match_operand:DI 0 "rd_class_operand")
-    (plus:DI (match_operand:DI 1 "rb_class_operand")
-             (match_operand:DI 2 "immediate_operand")))
+  [(set      (match_operand:DI 0 "rd_class_operand" "=Rd")
+    (plus:DI (match_operand:DI 1 "rb_class_operand" "=Rb")
+             (match_operand:DI 2 "const_int_operand"  "i")))
 	(clobber (reg:DI 7))]
 	""
 	"rb2rd	%0, %1, 0	\;setrd	rd7, %2	\;add	rd0, %0, rd7, %0	\;")
