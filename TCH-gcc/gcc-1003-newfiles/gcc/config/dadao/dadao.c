@@ -953,6 +953,14 @@ static void dd_print_operand (FILE *stream, rtx x, int code)
 /* TARGET_PRINT_OPERAND_ADDRESS.  */
 void dd_print_operand_address (FILE *stream, machine_mode /*mode*/, rtx x)
 {
+	if (GET_CODE (x) == CONST_INT) {
+		/* (const) FIXME testsuite: gcc.c-torture/execute/multi-ix.c
+		 * Fatal asm insn: call rbx, mem (const)
+		 * Change (const): call rbx, rd0, const
+		 */
+		fprintf (stream, "%s, %d", reg_names[0], INTVAL(x));
+		return;
+	}
 	if (REG_P (x)) {
 		/* (mem rb) */
 		fprintf (stream, "%s, 0", reg_names[DADAO_OUTPUT_REGNO (REGNO (x))]);
