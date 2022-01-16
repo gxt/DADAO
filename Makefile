@@ -28,6 +28,7 @@ include TCH-glibc/Makefile.glibc-$(VER_GLIBC)
 include TCH-newlib-cygwin/Makefile.newlib-cygwin-$(VER_NEWLIB_CYGWIN)
 include ENV-linux/Makefile.linux-$(VER_LINUX)
 include SIM-qemu/Makefile.qemu-$(VER_QEMU)
+include DADAO-bench/Makefile.bench
 
 all:
 	@echo ""
