@@ -3,6 +3,7 @@ generic-y += atomic.h
 generic-y += bitops.h
 generic-y += bug.h
 generic-y += cmpxchg.h
+generic-y += current.h
 generic-y += div64.h
 generic-y += irqflags.h
 generic-y += linkage.h
