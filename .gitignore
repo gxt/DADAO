@@ -5,4 +5,5 @@ __build
 __install
 __target
 __log
+__ddbench
 .vscode
