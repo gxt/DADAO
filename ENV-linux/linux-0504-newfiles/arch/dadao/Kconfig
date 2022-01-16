@@ -5,6 +5,9 @@ config DADAO
 config MMU
 	def_bool y
 
+config CPU_BIG_ENDIAN
+	def_bool y
+
 menu "Kernel Features"
 
 source "kernel/Kconfig.hz"
