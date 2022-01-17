@@ -153,7 +153,7 @@
 	else if (GET_CODE (operands[0]) == CONST)
 	  {
 	// FIXME
-	    return "";
+	    return "call	%0";
 	  }
 	else if (GET_CODE (operands[0]) == PLUS)
 	  {
@@ -190,7 +190,7 @@
 	else if (GET_CODE (operands[1]) == CONST)
 	  {
 	// FIXME
-	    return "";
+	    return "call	%1";
 	  }
 	else if (GET_CODE (operands[1]) == PLUS)
 	  {
