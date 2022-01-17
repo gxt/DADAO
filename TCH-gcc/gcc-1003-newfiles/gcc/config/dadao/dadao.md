@@ -152,11 +152,7 @@
 	  }
 	else if (GET_CODE (operands[0]) == CONST)
 	  {
-	    rtx op1 = XEXP (operands[0], 0);
-	    rtx sbl1 = XEXP (op1, 0);
-	    rtx const1 = XEXP (op1, 1);
-	    fprintf (asm_out_file, "\tcall	%s, %s, %d\n", XSTR (sbl1, 0),
-			reg_names[REGNO(operands[2])], INTVAL(const1));
+	// FIXME
 	    return "";
 	  }
 	else if (GET_CODE (operands[0]) == PLUS)
@@ -193,11 +189,7 @@
 	  }
 	else if (GET_CODE (operands[1]) == CONST)
 	  {
-	    rtx op1 = XEXP (operands[1], 0);
-	    rtx sbl1 = XEXP (op1, 0);
-	    rtx const1 = XEXP (op1, 1);
-	    fprintf (asm_out_file, "\tcall	%s, %s, %d\n", XSTR (sbl1, 0),
-			reg_names[REGNO(operands[3])], INTVAL(const1));
+	// FIXME
 	    return "";
 	  }
 	else if (GET_CODE (operands[1]) == PLUS)
