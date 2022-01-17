@@ -108,19 +108,11 @@
 	      (clobber (reg:DI DD_RA_REG))])]
 	""
 {
-	/* The caller checks that the operand is generally valid as an
-	   address, but at -O0 nothing makes sure that it's also a valid
-	   call address for a *call*; a dadao_symbolic_or_address_operand.
-	   Force into a register if it isn't.  */
 	if (!dadao_symbolic_or_address_operand (XEXP (operands[0], 0),
 				GET_MODE (XEXP (operands[0], 0))))
 	operands[0] = replace_equiv_address (operands[0],
 				force_reg (Pmode, XEXP (operands[0], 0)));
 
-	/* FIXME: There's a bug in gcc which causes NULL to be passed as
-	   operand[2] when we get out of registers, which later confuses gcc.
-	   Work around it by replacing it with const_int 0.  Possibly documentation
-	   error too.  */
 	if (operands[2] == NULL_RTX)	operands[2] = const0_rtx;
 })
 
@@ -132,50 +124,55 @@
 	      (clobber (reg:DI DD_RA_REG))])]
 	""
 {
-	/* The caller checks that the operand is generally valid as an
-	   address, but at -O0 nothing makes sure that it's also a valid
-	   call address for a *call*; a dadao_symbolic_or_address_operand.
-	   Force into a register if it isn't.  */
 	if (!dadao_symbolic_or_address_operand (XEXP (operands[1], 0),
 				GET_MODE (XEXP (operands[1], 0))))
 	operands[1] = replace_equiv_address (operands[1],
 				force_reg (Pmode, XEXP (operands[1], 0)));
 
-	/* FIXME: See 'call'.  */
 	if (operands[3] == NULL_RTX)	operands[3] = const0_rtx;
-
-	/* FIXME: Documentation bug: operands[3] (operands[2] for 'call') is the
-	   *next* argument register, not the number of arguments in registers.
-	   (There used to be code here where that mattered.)  */
 })
 
-;; Don't use 'p' here.  A 'p' must stand first in constraints, or reload
-;; messes up, not registering the address for reload.  Several C++
-;; testcases, including g++.brendan/crash40.C.  FIXME: This is arguably a
-;; bug in gcc.  Note line ~2612 in reload.c, that does things on the
-;; condition <<else if (constraints[i][0] == 'p')>> and the comment on
-;; ~3017 that says:
-;; <<   case 'p':
-;;	     /* All necessary reloads for an address_operand
-;;	        were handled in find_reloads_address.  */>>
-;; Sorry, I have not dug deeper.  If symbolic addresses are used
-;; rarely compared to addresses in registers, disparaging the
-;; first ("p") alternative by adding ? in the first operand
-;; might do the trick.  We define 'Au' as a synonym to 'p', but without the
-;; caveats (and very small advantages) of 'p'.
-;; As of r190682 still so: newlib/libc/stdlib/dtoa.c ICEs if "p" is used.
-(define_insn "*call_real"
+(define_insn "dd_call_real"
   [(call (mem:SI
 	  (match_operand:DI 0 "dadao_symbolic_or_address_operand" "s,RbAu"))
 	 (match_operand 1 "" ""))
    (use (match_operand 2 "" ""))
    (clobber (reg:DI DD_RA_REG))]
   ""
-  "@
-	call	%0
-	call	%0, %a2")
+  {
+    if (GET_CODE (operands[0]) == SYMBOL_REF)
+      {
+	return "call	%0";
+      }
+    else
+      {
+	if (REG_P (operands[0]))
+	  {
+	    return "call	%0, %a2";
+	  }
+	else if (GET_CODE (operands[0]) == CONST)
+	  {
+	    rtx op1 = XEXP (operands[0], 0);
+	    rtx sbl1 = XEXP (op1, 0);
+	    rtx const1 = XEXP (op1, 1);
+	    fprintf (asm_out_file, "\tcall	%s, %s, %d\n", XSTR (sbl1, 0),
+			reg_names[REGNO(operands[2])], INTVAL(const1));
+	    return "";
+	  }
+	else if (GET_CODE (operands[0]) == PLUS)
+	  {
+	    fprintf (asm_out_file, "\tcall	");
+	    rtx op0 = XEXP (operands[0], 0);
+	    rtx op1 = XEXP (operands[0], 1);
+	    fprintf (asm_out_file, "%s, ", reg_names[REGNO(op0)]);
+	    fprintf (asm_out_file, "%s, %d\n", reg_names[REGNO(operands[2])], INTVAL(op1));
+	    return "";
+	  }
+	return "call	%0, %a2";
+      }
+  })
 
-(define_insn "*call_value_real"
+(define_insn "dd_call_value_real"
   [(set (match_operand 0 "register_operand" "=r,r")
 	(call (mem:SI
 	       (match_operand:DI 1 "dadao_symbolic_or_address_operand" "s,RbAu"))
@@ -183,9 +180,38 @@
   (use (match_operand 3 "" ""))
   (clobber (reg:DI DD_RA_REG))]
   ""
-  "@
-	call	%1
-	call	%1, %a3")
+  {
+    if (GET_CODE (operands[1]) == SYMBOL_REF)
+      {
+	return "call	%1";
+      }
+    else
+      {
+	if (REG_P (operands[1]))
+	  {
+	    return "call	%1, %a3";
+	  }
+	else if (GET_CODE (operands[1]) == CONST)
+	  {
+	    rtx op1 = XEXP (operands[1], 0);
+	    rtx sbl1 = XEXP (op1, 0);
+	    rtx const1 = XEXP (op1, 1);
+	    fprintf (asm_out_file, "\tcall	%s, %s, %d\n", XSTR (sbl1, 0),
+			reg_names[REGNO(operands[3])], INTVAL(const1));
+	    return "";
+	  }
+	else if (GET_CODE (operands[1]) == PLUS)
+	  {
+	    fprintf (asm_out_file, "\tcall	");
+	    rtx op0 = XEXP (operands[1], 0);
+	    rtx op1 = XEXP (operands[1], 1);
+	    fprintf (asm_out_file, "%s, ", reg_names[REGNO(op0)]);
+	    fprintf (asm_out_file, "%s, %d\n", reg_names[REGNO(operands[3])], INTVAL(op1));
+	    return "";
+	  }
+	return "call	%1, %a3";
+      }
+  })
 
 ;; I hope untyped_call and untyped_return are not needed for DADAO.
 ;; Users of Objective-C will notice.
