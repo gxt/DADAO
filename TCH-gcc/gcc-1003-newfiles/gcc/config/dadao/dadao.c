@@ -1053,7 +1053,14 @@ static void dd_option_override (void)
 /* (empty) */
 
 /* XXX gccint 18.31 Node: Miscellaneous Parameters */
-/* (empty) */
+
+static void dadao_reorg (void)
+{
+	// TODO
+}
+
+#undef	TARGET_MACHINE_DEPEDENT_REORG
+#define	TARGET_MACHINE_DEPEDENT_REORG dadao_reorg
 
 /* XXX End of gccint Chapter 18: Target Description Macros and Functions */
 
