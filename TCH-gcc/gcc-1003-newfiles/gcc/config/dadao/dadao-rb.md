@@ -54,7 +54,7 @@
           if (operands[1] == operands[0])
                 return  "addrb	%0, %2";
           else
-                return  "rb2rb  %0, %1, 0       \;addrb	%0, %2";
+                return  "rb2rb	%0, %1, 0       \;addrb	%0, %2";
        })
 
 (define_insn "addrb_ctry"
