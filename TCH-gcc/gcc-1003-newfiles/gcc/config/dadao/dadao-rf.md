@@ -7,74 +7,75 @@
 ;; Note that we move around the float as a collection of bits; no
 ;; conversion to double.
 
-(define_insn "mov_rr_ft"
-  [(set (match_operand:SI 0 "register_operand" "= Rf, Rd")
-        (match_operand:SI 1 "register_operand" "  Rd, Rf"))]
-	"REGNO_REG_CLASS(REGNO(operands[0])) == FLOATING_REGS ||
+(define_insn "mov_rft_exc"
+  [(set (match_operand:SF 0 "rf_class_operand" "=Rf")
+	(match_operand:SF 1 "rf_class_operand"  "Rf"))]
+	"REGNO_REG_CLASS(REGNO(operands[0])) == FLOATING_REGS &&
 	 REGNO_REG_CLASS(REGNO(operands[1])) == FLOATING_REGS"
-	"@
-	rd2rf	%0, %1, 0
-	rf2rd	%0, %1, 0")
+	"rf2rf	%0, %1, 0")
 
-(define_insn "mov_rr_fo"
-  [(set (match_operand:DI 0 "register_operand" "= Rf, Rd")
-        (match_operand:DI 1 "register_operand" "  Rd, Rf"))]
-	"REGNO_REG_CLASS(REGNO(operands[0])) == FLOATING_REGS ||
+(define_insn "mov_rfo_exc"
+  [(set (match_operand:DF 0 "rf_class_operand" "=Rf")
+	(match_operand:DF 1 "rf_class_operand"  "Rf"))]
+	"REGNO_REG_CLASS(REGNO(operands[0])) == FLOATING_REGS &&
 	 REGNO_REG_CLASS(REGNO(operands[1])) == FLOATING_REGS"
-	"@
-	rd2rf	%0, %1, 0
-	rf2rd	%0, %1, 0")
+	"rf2rf	%0, %1, 0")
 
-(define_insn "dd_st<mode>"
-  [(set (match_operand:SFDF 0 "memory_operand"	 "= Wi,Wz,Wg")
-	(match_operand:SFDF 1 "rf_class_operand" "  Rf,Rf,Rf"))]
+(define_insn "mov_rd2rft"
+  [(set (match_operand:SI 0 "rf_class_operand" "=Rf")
+	(match_operand:SI 1 "rd_class_operand"  "Rd"))]
+	"REGNO_REG_CLASS(REGNO(operands[0])) == FLOATING_REGS"
+	"rd2rf	%0, %1, 0")
+
+(define_insn "mov_rd2rfo"
+  [(set (match_operand:DI 0 "rf_class_operand" "=Rf")
+	(match_operand:DI 1 "rd_class_operand"  "Rd"))]
+	"REGNO_REG_CLASS(REGNO(operands[0])) == FLOATING_REGS"
+	"rd2rf	%0, %1, 0")
+
+(define_insn "mov_rft2rd"
+  [(set (match_operand:SI 0 "rd_class_operand" "=Rd")
+	(match_operand:SI 1 "rf_class_operand"  "Rf"))]
+	"REGNO_REG_CLASS(REGNO(operands[1])) == FLOATING_REGS"
+	"rf2rd	%0, %1, 0")
+
+(define_insn "mov_rfo2rd"
+  [(set (match_operand:DI 0 "rd_class_operand" "=Rd")
+	(match_operand:DI 1 "rf_class_operand"  "Rf"))]
+	"REGNO_REG_CLASS(REGNO(operands[1])) == FLOATING_REGS"
+	"rf2rd	%0, %1, 0")
+
+(define_insn "r<mode>_get_imm"
+  [(set (match_operand:SFDF 0 "rf_class_operand" "=Rf")
+        (match_operand:SFDF 1 "const_double_operand"  ""))]
 	""
-	"@
-	st<ftfo>	%1, %0
-	st<ftfo>	%1, %0
-	stm<ftfo>	%1, %0, 0")
+	"swym");
 
-(define_insn "dd_st<mode>_m2m"
-  [(set (match_operand:SFDF 0 "memory_operand" "= Wi,Wz,Wg,m,m,m,m")
-	(match_operand:SFDF 1 "memory_operand" "  m,m,m,m,Wi,Wz,Wg"))]
-	"!reload_completed"
-	"")
-
-(define_insn "dd_st<mode>_i2m"
-  [(set (match_operand:SFDF 0 "memory_operand"	  "= Wi,Wz,Wg")
-	(match_operand:SFDF 1 "immediate_operand" "   i, i, i"))]
-	"!reload_completed"
-	"@
-	setrd	rd1, %1	\;rd2rf	rf1, rd1, 0	\;st<ftfo>	rf1, %0
-	setrd   rd1, %1 \;rd2rf rf1, rd1, 0	\;st<ftfo>	rf1, %0
-	setrd   rd1, %1 \;rd2rf rf1, rd1, 0	\;stm<ftfo>	rf1, %0, 0")
-
-(define_insn "dd_ld<mode>"
-  [(set (match_operand:SFDF 0 "register_operand" "= Rd,Rf")
-	(match_operand:SFDF 1 "memory_operand"))]
+(define_insn "r<mode>_get_label"
+  [(set (match_operand:SFDF 0 "rf_class_operand" "=Rf")
+        (match_operand:SFDF 1 "dd_label_operand"  ""))]
 	""
-	"")
+	"swym");
 
-(define_insn "mov<mode>imm"
-  [(set (match_operand:SFDF 0 "register_operand" "= Rf,Rd")
-	(match_operand:SFDF 1 "const_double_operand"))]
+(define_insn "r<mode>_get_local_symbol"
+  [(set (match_operand:SFDF 0 "rf_class_operand" "=Rf")
+        (match_operand:SFDF 1 "local_symbolic_operand" ""))]
 	""
-	"@
-	setrd	rd1, %1\;rd2rf	%0, rd1, 0
-	setrd	%0, %1")
+	"swym");
 
-; TODO
+(define_insn "r<mode>_get_extern_symbol"
+  [(set (match_operand:SFDF 0 "rf_class_operand" "=Rf")
+        (match_operand:SFDF 1 "global_symbolic_operand" ""))]
+	""
+	"swym");
+
 (define_insn "mov<mode>"
-  [(set (match_operand:SFDF 0 "nonimmediate_operand" "= Rd,Rd,Rf,Wi,Wz,Wg")
-	(match_operand:SFDF 1 "general_operand"      "  Rd,Rf,Rd,Rd,Rd,Rd"))]
+  [(set (match_operand:SFDF 0 "nonimmediate_operand" "=m,Rf,Rd,Rf,Rd")
+	(match_operand:SFDF 1 "general_operand"      "Rf, m,Rf,Rd,Rd"))]
 	""
-	"@
-	orr	%0, %1, rd0
-	rf2rd	%0, %1, 0
-	rd2rf	%0, %1, 0
-	sto	%1, %0
-	sto	%1, %0
-	stmo	%1, %0, 0")
+	{
+	  return "swym";
+	})
 
 (define_insn "add<mode>3"
   [(set        (match_operand:SFDF 0 "rf_class_operand" "= Rf")
