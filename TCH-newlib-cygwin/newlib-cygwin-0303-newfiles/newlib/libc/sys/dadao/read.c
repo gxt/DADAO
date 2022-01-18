@@ -1,48 +1,16 @@
-#include <_ansi.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include "sys/syscall.h"
-#include <errno.h>
 
-int
-_read (int file,
-       char *ptr,
-       size_t len)
-{
-  long ret;
-
-  if ((unsigned int) file >= 32 || _DADAO_allocated_filehandle[file] == 0)
-    {
-      errno = EBADF;
-      return -1;
-    }
-
-  if (isatty(file))
-    {
-      ret = TRAP3f (SYS_Fgets, file, ptr, len);
-
-      if (ret == -1)
-        return 0;
-
-      return ret;
-    }
-
-  ret = TRAP3f (SYS_Fread, file, ptr, len);
-
-  /* Map the return codes:
-     -1-len: an error.  We return -1.
-     0: success.  We return len.
-     n-len: end-of-file after n chars read.  We return n. */
-  if (ret == 0)
-    return len;
-
-  if (ret == -1 - (long) len)
-    {
-      /* We don't know the nature of the failure, so this is an
-	 approximation.  */
-      errno = EIO;
-      return -1;
-    }
-
-  return ret + len;
+int read(int file, char *ptr, int len) {
+  int ret;
+  __asm__ (
+    "setzwl  rd15, 63     \n"
+    "rd2rd   rd16, %1, 0  \n"
+    "rd2rd   rd17, %2, 0  \n"
+    "rd2rd   rd18, %3, 0  \n"
+    "trap    cp0, 0       \n"
+    "rd2rd   %0, rd31, 0  \n"
+    : "=r" (ret)
+    : "r" (file), "r" (ptr), "r" (len)
+    : "memory"
+  );
+  return ret;
 }

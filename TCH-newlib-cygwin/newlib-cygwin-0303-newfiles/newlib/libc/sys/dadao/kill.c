@@ -7,7 +7,7 @@
 _kill (n, m)
 {
   if (n == 1)
-    return TRAP1i (SYS_halt, 0);
+    return _exit(0);
 
   errno = EPERM;
   return -1;
