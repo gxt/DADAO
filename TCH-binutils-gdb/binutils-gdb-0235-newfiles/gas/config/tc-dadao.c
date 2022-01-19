@@ -15,9 +15,9 @@
 #include "dw2gencfi.h"
 #include "dwarf2dbg.h"
 
-static int get_operands (char *, expressionS *);
+static int get_operands(char *, expressionS *);
 static void dd_set_addr_offset(char *, offsetT, int, int);
-static void dd_fill_nops (char *, int);
+static void dd_fill_nops(char *, int);
 
 /* The fragS of the instruction being assembled.  Only valid from within
    md_assemble.  */
@@ -30,13 +30,12 @@ const char *md_shortopts = "x";
 static int expand_op = 1;
 
 struct option md_longopts[] =
- {
-#define OPTION_NOEXPAND  (OPTION_MD_BASE)
-   {"no-expand", no_argument, NULL, OPTION_NOEXPAND},
-   {NULL, no_argument, NULL, 0}
- };
+    {
+#define OPTION_NOEXPAND (OPTION_MD_BASE)
+        {"no-expand", no_argument, NULL, OPTION_NOEXPAND},
+        {NULL, no_argument, NULL, 0}};
 
-size_t md_longopts_size = sizeof (md_longopts);
+size_t md_longopts_size = sizeof(md_longopts);
 
 static struct hash_control *dadao_opcode_hash;
 
@@ -61,20 +60,20 @@ static struct hash_control *dadao_opcode_hash;
       extra length: zero or four insns.
  */
 
-#define STATE_GETA	(1)
-#define STATE_BRCC	(2)
-#define STATE_CALL	(3)
-#define STATE_JUMP	(4)
+#define STATE_GETA (1)
+#define STATE_BRCC (2)
+#define STATE_CALL (3)
+#define STATE_JUMP (4)
 
 /* No fine-grainedness here.  */
-#define STATE_LENGTH_MASK	    (1)
+#define STATE_LENGTH_MASK (1)
 
-#define STATE_ZERO		    (0)
-#define STATE_MAX		    (1)
+#define STATE_ZERO (0)
+#define STATE_MAX (1)
 
 /* More descriptive name for convenience.  */
 /* FIXME: We should start on something different, not MAX.  */
-#define STATE_UNDF		    STATE_MAX
+#define STATE_UNDF STATE_MAX
 
 /* These displacements are relative to the address following the opcode
    word of the instruction.  The catch-all states have zero for "reach"
@@ -83,48 +82,47 @@ static struct hash_control *dadao_opcode_hash;
 #define RELAX_ENCODE_SHIFT 1
 #define ENCODE_RELAX(what, length) (((what) << RELAX_ENCODE_SHIFT) + (length))
 
-#define	DD_INSN_BYTES(n)	((n) * 4)
+#define DD_INSN_BYTES(n) ((n)*4)
 
 const relax_typeS dadao_relax_table[] = {
-   /* Error sentinel (0, 0).  */
-   {1,		1,		0,			0},
+    /* Error sentinel (0, 0).  */
+    {1, 1, 0, 0},
 
-   /* Unused (0, 1).  */
-   {1,		1,		0,			0},
+    /* Unused (0, 1).  */
+    {1, 1, 0, 0},
 
-   /* GETA (1, 0).  */
-   {(1 << 18),	-(1 << 18),	0,			ENCODE_RELAX (STATE_GETA, STATE_MAX)},
+    /* GETA (1, 0).  */
+    {(1 << 18), -(1 << 18), 0, ENCODE_RELAX(STATE_GETA, STATE_MAX)},
 
-   /* GETA (1, 1).  */
-   {0,		0,		DD_INSN_BYTES(3),	0},
+    /* GETA (1, 1).  */
+    {0, 0, DD_INSN_BYTES(3), 0},
 
-   /* BRCC (2, 0).  */
-   {(1 << 20),	-(1 << 20),	0,			ENCODE_RELAX (STATE_BRCC, STATE_MAX)},
+    /* BRCC (2, 0).  */
+    {(1 << 20), -(1 << 20), 0, ENCODE_RELAX(STATE_BRCC, STATE_MAX)},
 
-   /* BRCC (2, 1).  */
-   {0,		0,		DD_INSN_BYTES(5),	0},
+    /* BRCC (2, 1).  */
+    {0, 0, DD_INSN_BYTES(5), 0},
 
-   /* CALL (3, 0).  */
-   {(1 << 26),	-(1 << 26),	0,			ENCODE_RELAX (STATE_CALL, STATE_MAX)},
+    /* CALL (3, 0).  */
+    {(1 << 26), -(1 << 26), 0, ENCODE_RELAX(STATE_CALL, STATE_MAX)},
 
-   /* CALL (3, 1).  */
-   {0,		0,		DD_INSN_BYTES(4),	0},
+    /* CALL (3, 1).  */
+    {0, 0, DD_INSN_BYTES(4), 0},
 
-   /* JUMP (4, 0).  */
-   {(1 << 26),	-(1 << 26),	0,			ENCODE_RELAX (STATE_JUMP, STATE_MAX)},
+    /* JUMP (4, 0).  */
+    {(1 << 26), -(1 << 26), 0, ENCODE_RELAX(STATE_JUMP, STATE_MAX)},
 
-   /* JUMP (4, 1).  */
-   {0,		0,		DD_INSN_BYTES(4),	0},
+    /* JUMP (4, 1).  */
+    {0, 0, DD_INSN_BYTES(4), 0},
 };
 
 const pseudo_typeS md_pseudo_table[] = {
-	{"dd.b08", cons, 1},
-	{"dd.w16", cons, 2},
-	{"dd.t32", cons, 4},
-	{"dd.o64", cons, 8},
+    {"dd.b08", cons, 1},
+    {"dd.w16", cons, 2},
+    {"dd.t32", cons, 4},
+    {"dd.o64", cons, 8},
 
-	{NULL, 0, 0}
- };
+    {NULL, 0, 0}};
 
 const char comment_chars[] = "";
 const char line_comment_chars[] = "#";
@@ -137,628 +135,725 @@ const char FLT_CHARS[] = "rf";
 /* Fill in the offset-related part.  */
 static void dd_set_addr_offset(char *opcodep, offsetT value, int bitcount, int is_insn)
 {
-	if (is_insn) {
-		if ((value & 0x3) != 0)
-			as_fatal("instruction address not align correctly");
+    if (is_insn)
+    {
+        if ((value & 0x3) != 0)
+            as_fatal("instruction address not align correctly");
 
-		value /= 4;
-	}
+        value /= 4;
+    }
 
-	if ((value > 0) && (value >= (1 << bitcount)))
-		as_fatal("offset too large: 0x%llx", (unsigned long long)value);
-	if ((value < 0) && ((-value) > (1 << bitcount)))
-		as_fatal("offset too large: 0x%llx", (unsigned long long)value);
+    if ((value > 0) && (value >= (1 << bitcount)))
+        as_fatal("offset too large: 0x%llx", (unsigned long long)value);
+    if ((value < 0) && ((-value) > (1 << bitcount)))
+        as_fatal("offset too large: 0x%llx", (unsigned long long)value);
 
-	switch (bitcount) {
-	case 24:
-		DDOP_SET_FA(opcodep, (value >> 18) & 0x3F);
-		/* FALLTHROUGH */
-	case 18:
-		DDOP_SET_FB(opcodep, (value >> 12) & 0x3F);
-		/* FALLTHROUGH */
-	case 12:
-		DDOP_SET_FC(opcodep, (value >> 6) & 0x3F);
-		DDOP_SET_FD(opcodep, (value & 0x3F));
-		break;
-	default:
-		as_fatal("offset bitcount(%d) not support", bitcount);
-	}
+    switch (bitcount)
+    {
+    case 24:
+        DDOP_SET_FA(opcodep, (value >> 18) & 0x3F);
+        /* FALLTHROUGH */
+    case 18:
+        DDOP_SET_FB(opcodep, (value >> 12) & 0x3F);
+        /* FALLTHROUGH */
+    case 12:
+        DDOP_SET_FC(opcodep, (value >> 6) & 0x3F);
+        DDOP_SET_FD(opcodep, (value & 0x3F));
+        break;
+    default:
+        as_fatal("offset bitcount(%d) not support", bitcount);
+    }
 }
 
 /* Fill in NOP:s for the expanded part of GETA/JUMP/BRCC.  */
-static void dd_fill_nops (char *opcodep, int n)
+static void dd_fill_nops(char *opcodep, int n)
 {
-  int i;
+    int i;
 
-  for (i = 0; i < n; i++)
-    md_number_to_chars (opcodep + i * 4, 0 /* nop opcode is 0 */, 4);
+    for (i = 0; i < n; i++)
+        md_number_to_chars(opcodep + i * 4, 0 /* nop opcode is 0 */, 4);
 }
 
 /* Get up to four operands, filling them into the exp array.
    General idea and code stolen from the tic80 port.  */
 
 static int
-get_operands (char *s, expressionS *exp)
+get_operands(char *s, expressionS *exp)
 {
-  char *p = s;
-  int numexp = 0;
-  int max_operands = 4;
-  int nextchar = ',';
+    char *p = s;
+    int numexp = 0;
+    int max_operands = 4;
+    int nextchar = ',';
 
-  while (nextchar == ',')
+    while (nextchar == ',')
     {
-      /* Skip leading whitespace */
-      while (*p == ' ' || *p == '\t')
-	p++;
+        /* Skip leading whitespace */
+        while (*p == ' ' || *p == '\t')
+            p++;
 
-      /* Check to see if we have any operands left to parse */
-      if (*p == 0 || *p == '\n' || *p == '\r')
-	{
-	  break;
-	}
-      else if (numexp == max_operands)
-	{
-	  /* This seems more sane than saying "too many operands".  We'll
+        /* Check to see if we have any operands left to parse */
+        if (*p == 0 || *p == '\n' || *p == '\r')
+        {
+            break;
+        }
+        else if (numexp == max_operands)
+        {
+            /* This seems more sane than saying "too many operands".  We'll
 	     get here only if the trailing trash starts with a comma.  */
-	  as_bad (_("too many operands"));
-	  return 0;
-	}
+            as_bad(_("too many operands"));
+            return 0;
+        }
 
-      /* Begin operand parsing at the current scan point.  */
+        /* Begin operand parsing at the current scan point.  */
 
-      input_line_pointer = p;
-      expression (&exp[numexp]);
+        input_line_pointer = p;
+        expression(&exp[numexp]);
 
-      if (exp[numexp].X_op == O_illegal)
-	{
-	  as_bad (_("invalid operands"));
-	}
-      else if (exp[numexp].X_op == O_absent)
-	{
-	  as_bad (_("missing operand"));
-	}
+        if (exp[numexp].X_op == O_illegal)
+        {
+            as_bad(_("invalid operands"));
+        }
+        else if (exp[numexp].X_op == O_absent)
+        {
+            as_bad(_("missing operand"));
+        }
 
-      numexp++;
-      p = input_line_pointer;
+        numexp++;
+        p = input_line_pointer;
 
-      /* Skip leading whitespace */
-      while (*p == ' ' || *p == '\t')
-	p++;
-      nextchar = *p++;
+        /* Skip leading whitespace */
+        while (*p == ' ' || *p == '\t')
+            p++;
+        nextchar = *p++;
     }
 
-  /* If we allow "naked" comments, ignore the rest of the line.  */
-  if (nextchar != ',')
+    /* If we allow "naked" comments, ignore the rest of the line.  */
+    if (nextchar != ',')
     {
-      demand_empty_rest_of_line ();
-      input_line_pointer--;
+        demand_empty_rest_of_line();
+        input_line_pointer--;
     }
 
-  /* Mark the end of the valid operands with an illegal expression.  */
-  exp[numexp].X_op = O_illegal;
+    /* Mark the end of the valid operands with an illegal expression.  */
+    exp[numexp].X_op = O_illegal;
 
-  return (numexp);
+    return (numexp);
 }
 
 /* Handle DADAO-specific option.  */
 
-int
-md_parse_option (int c, const char *arg ATTRIBUTE_UNUSED)
+int md_parse_option(int c, const char *arg ATTRIBUTE_UNUSED)
 {
-  switch (c)
+    switch (c)
     {
     case 'x':
-      break;
+        break;
 
     case OPTION_NOEXPAND:
-      expand_op = 0;
-      break;
+        expand_op = 0;
+        break;
 
     default:
-      return 0;
+        return 0;
     }
 
-  return 1;
+    return 1;
 }
 
 /* Display DADAO-specific help text.  */
 
-void
-md_show_usage (FILE * stream)
+void md_show_usage(FILE *stream)
 {
-  fprintf (stream, _(" DADAO-specific command line options:\n"));
-  fprintf (stream, _("\
+    fprintf(stream, _(" DADAO-specific command line options:\n"));
+    fprintf(stream, _("\
   -no-expand              Do not expand GETA, branches or JUMP\n\
                           into multiple instructions.\n"));
-  fprintf (stream, _("\
+    fprintf(stream, _("\
   -x                      Do not warn when an operand to GETA, a branch,\n\
                           or JUMP is not known to be within range.\n\
                           The linker will catch any errors. \n"));
 }
 
 /* Standard calling conventions leave the CFA at SP on entry.  */
-void dadao_cfi_frame_initial_instructions (void)
+void dadao_cfi_frame_initial_instructions(void)
 {
-	cfi_add_CFA_def_cfa_register (1);
+    cfi_add_CFA_def_cfa_register(1);
 }
 
-int tc_dadao_regname_to_dw2regnum (char *regname)
+int tc_dadao_regname_to_dw2regnum(char *regname)
 {
-	as_bad (_("unknown register `%s'"), regname);
-	return -1;
+    as_bad(_("unknown register `%s'"), regname);
+    return -1;
 }
 
 /* Initialize GAS DADAO specifics.  */
-void dadao_md_begin (void)
+void dadao_md_begin(void)
 {
-	int i;
-	const struct dadao_opcode *opcode;
-	char buf[5];
+    int i;
+    const struct dadao_opcode *opcode;
+    char buf[5];
 
-	dadao_opcode_hash = hash_new ();
+    dadao_opcode_hash = hash_new();
 
-	for (opcode = dadao_opcodes; opcode->name; opcode++)
-		hash_insert (dadao_opcode_hash, opcode->name, (char *) opcode);
+    for (opcode = dadao_opcodes; opcode->name; opcode++)
+        hash_insert(dadao_opcode_hash, opcode->name, (char *)opcode);
 
-	for (i = 0; i < 64; i++) {
-		sprintf (buf, "rd%d", i);
-		symbol_table_insert (symbol_new (buf, reg_section, i, &zero_address_frag));
+    for (i = 0; i < 64; i++)
+    {
+        sprintf(buf, "rd%d", i);
+        symbol_table_insert(symbol_new(buf, reg_section, i, &zero_address_frag));
 
-		sprintf (buf, "rb%d", i);
-		symbol_table_insert (symbol_new (buf, reg_section, i + 64, &zero_address_frag));
+        sprintf(buf, "rb%d", i);
+        symbol_table_insert(symbol_new(buf, reg_section, i + 64, &zero_address_frag));
 
-		sprintf (buf, "rf%d", i);
-		symbol_table_insert (symbol_new (buf, reg_section, i + 128, &zero_address_frag));
+        sprintf(buf, "rf%d", i);
+        symbol_table_insert(symbol_new(buf, reg_section, i + 128, &zero_address_frag));
 
-		sprintf (buf, "ra%d", i);
-		symbol_table_insert (symbol_new (buf, reg_section, i + 192, &zero_address_frag));
-		
-		sprintf (buf, "cp%d", i);
-		symbol_table_insert (symbol_new (buf, reg_section, i + 256, &zero_address_frag));
+        sprintf(buf, "ra%d", i);
+        symbol_table_insert(symbol_new(buf, reg_section, i + 192, &zero_address_frag));
 
-		sprintf (buf, "cr%d", i);
-		symbol_table_insert (symbol_new (buf, reg_section, i + 320, &zero_address_frag));
-	}
+        sprintf(buf, "cp%d", i);
+        symbol_table_insert(symbol_new(buf, reg_section, i + 256, &zero_address_frag));
 
-	for (i = 0; dadao_reg_aliases[i].name != NULL; i++)
-		symbol_table_insert (symbol_new (dadao_reg_aliases[i].name, reg_section,
-				dadao_reg_aliases[i].number, &zero_address_frag));
+        sprintf(buf, "cr%d", i);
+        symbol_table_insert(symbol_new(buf, reg_section, i + 320, &zero_address_frag));
+    }
+
+    for (i = 0; dadao_reg_aliases[i].name != NULL; i++)
+        symbol_table_insert(symbol_new(dadao_reg_aliases[i].name, reg_section,
+                                       dadao_reg_aliases[i].number, &zero_address_frag));
 }
 
 static void dd_pseudo_setrd(char *opcodep, int setrd_fa, unsigned long long setrd_octa)
 {
-	int setrd_flag;
-	unsigned int setrd_w16_1, setrd_w16_2, setrd_w16_3,setrd_w16_4;
+    int setrd_flag;
+    unsigned int setrd_w16_1, setrd_w16_2, setrd_w16_3, setrd_w16_4;
 
-	/* setrd rd, imm64 */
-	setrd_flag = 0; // use setow or setzw
+    /* setrd rd, imm64 */
+    setrd_flag = 0; // use setow or setzw
 
-	setrd_w16_1 = (setrd_octa) & 0xFFFF;
-	setrd_w16_2 = (setrd_octa >> 16) & 0xFFFF;
-	setrd_w16_3 = (setrd_octa >> 32) & 0xFFFF;
-	setrd_w16_4 = (setrd_octa >> 48) & 0xFFFF;
+    setrd_w16_1 = (setrd_octa)&0xFFFF;
+    setrd_w16_2 = (setrd_octa >> 16) & 0xFFFF;
+    setrd_w16_3 = (setrd_octa >> 32) & 0xFFFF;
+    setrd_w16_4 = (setrd_octa >> 48) & 0xFFFF;
 
-	if(((setrd_w16_4 == 0)+(setrd_w16_3 == 0)+(setrd_w16_2 == 0))
-		<((setrd_w16_4 == 0xFFFF)+(setrd_w16_3 == 0xFFFF)+(setrd_w16_2 == 0xFFFF))){
-		setrd_flag = 1;
-	}
-	
-	if (setrd_flag)
-		md_number_to_chars(opcodep, DADAO_INSN_SETOW | (setrd_fa << 18) | DADAO_WYDE_WL | setrd_w16_1, 4);
-	else
-		md_number_to_chars(opcodep, DADAO_INSN_SETZW | (setrd_fa << 18) | DADAO_WYDE_WL | setrd_w16_1, 4);
+    if (((setrd_w16_4 == 0) + (setrd_w16_3 == 0) + (setrd_w16_2 == 0)) < ((setrd_w16_4 == 0xFFFF) + (setrd_w16_3 == 0xFFFF) + (setrd_w16_2 == 0xFFFF)))
+    {
+        setrd_flag = 1;
+    }
 
-	if (setrd_flag){
-		if(setrd_w16_2 != 0xFFFF){
-			opcodep = frag_more (4);
-			md_number_to_chars(opcodep, DADAO_INSN_ANDNW | (setrd_fa << 18) | DADAO_WYDE_WK | setrd_w16_2, 4);
-		}
-	}
-	else{
-		if(setrd_w16_2 != 0){
-			opcodep = frag_more (4);
-			md_number_to_chars(opcodep, DADAO_INSN_ORW | (setrd_fa << 18) | DADAO_WYDE_WK | setrd_w16_2, 4);
-		}
-	}
+    if (setrd_flag)
+        md_number_to_chars(opcodep, DADAO_INSN_SETOW | (setrd_fa << 18) | DADAO_WYDE_WL | setrd_w16_1, 4);
+    else
+        md_number_to_chars(opcodep, DADAO_INSN_SETZW | (setrd_fa << 18) | DADAO_WYDE_WL | setrd_w16_1, 4);
 
-	if (setrd_flag){
-		if(setrd_w16_3 != 0xFFFF){
-			opcodep = frag_more (4);
-			md_number_to_chars(opcodep, DADAO_INSN_ANDNW | (setrd_fa << 18) | DADAO_WYDE_WJ | setrd_w16_3, 4);
-		}
-	}
-	else{
-		if(setrd_w16_3 != 0){
-			opcodep = frag_more (4);
-			md_number_to_chars(opcodep, DADAO_INSN_ORW | (setrd_fa << 18) | DADAO_WYDE_WJ | setrd_w16_3, 4);
-		}
-	}
+    if (setrd_flag)
+    {
+        if (setrd_w16_2 != 0xFFFF)
+        {
+            opcodep = frag_more(4);
+            md_number_to_chars(opcodep, DADAO_INSN_ANDNW | (setrd_fa << 18) | DADAO_WYDE_WK | setrd_w16_2, 4);
+        }
+    }
+    else
+    {
+        if (setrd_w16_2 != 0)
+        {
+            opcodep = frag_more(4);
+            md_number_to_chars(opcodep, DADAO_INSN_ORW | (setrd_fa << 18) | DADAO_WYDE_WK | setrd_w16_2, 4);
+        }
+    }
 
-	if (setrd_flag){
-		if(setrd_w16_4 != 0xFFFF){
-			opcodep = frag_more (4);
-			md_number_to_chars(opcodep, DADAO_INSN_ANDNW | (setrd_fa << 18) | DADAO_WYDE_WH | setrd_w16_4, 4);
-		}
-	}
-	else{
-		if(setrd_w16_4 != 0){
-			opcodep = frag_more (4);
-			md_number_to_chars(opcodep, DADAO_INSN_ORW | (setrd_fa << 18) | DADAO_WYDE_WH | setrd_w16_4, 4);
-		}
-	}
+    if (setrd_flag)
+    {
+        if (setrd_w16_3 != 0xFFFF)
+        {
+            opcodep = frag_more(4);
+            md_number_to_chars(opcodep, DADAO_INSN_ANDNW | (setrd_fa << 18) | DADAO_WYDE_WJ | setrd_w16_3, 4);
+        }
+    }
+    else
+    {
+        if (setrd_w16_3 != 0)
+        {
+            opcodep = frag_more(4);
+            md_number_to_chars(opcodep, DADAO_INSN_ORW | (setrd_fa << 18) | DADAO_WYDE_WJ | setrd_w16_3, 4);
+        }
+    }
+
+    if (setrd_flag)
+    {
+        if (setrd_w16_4 != 0xFFFF)
+        {
+            opcodep = frag_more(4);
+            md_number_to_chars(opcodep, DADAO_INSN_ANDNW | (setrd_fa << 18) | DADAO_WYDE_WH | setrd_w16_4, 4);
+        }
+    }
+    else
+    {
+        if (setrd_w16_4 != 0)
+        {
+            opcodep = frag_more(4);
+            md_number_to_chars(opcodep, DADAO_INSN_ORW | (setrd_fa << 18) | DADAO_WYDE_WH | setrd_w16_4, 4);
+        }
+    }
 }
 
+#define __DD_EXP_SHOULD_BE_RD(e, f) \
+    if (e.X_op != O_register)       \
+        return -1;                  \
+    if (e.X_add_number > 0x3F)      \
+        return -1;                  \
+    f = e.X_add_number;
 
-#define	__DD_EXP_SHOULD_BE_RD(e, f)			\
-	if (e.X_op != O_register)	return -1;	\
-	if (e.X_add_number > 0x3F)	return -1;	\
-	f = e.X_add_number;
+#define __DD_EXP_SHOULD_BE_RB(e, f) \
+    if (e.X_op != O_register)       \
+        return -1;                  \
+    if (e.X_add_number > 0x7F)      \
+        return -1;                  \
+    if (e.X_add_number < 0x40)      \
+        return -1;                  \
+    f = e.X_add_number - 0x40;
 
-#define	__DD_EXP_SHOULD_BE_RB(e, f)			\
-	if (e.X_op != O_register)	return -1;	\
-	if (e.X_add_number > 0x7F)	return -1;	\
-	if (e.X_add_number < 0x40)	return -1;	\
-	f = e.X_add_number - 0x40;
+#define __DD_EXP_SHOULD_BE_RF(e, f) \
+    if (e.X_op != O_register)       \
+        return -1;                  \
+    if (e.X_add_number > 0xBF)      \
+        return -1;                  \
+    if (e.X_add_number < 0x80)      \
+        return -1;                  \
+    f = e.X_add_number - 0x80;
 
-#define	__DD_EXP_SHOULD_BE_RF(e, f)			\
-	if (e.X_op != O_register)	return -1;	\
-	if (e.X_add_number > 0xBF)	return -1;	\
-	if (e.X_add_number < 0x80)	return -1;	\
-	f = e.X_add_number - 0x80;
+#define __DD_EXP_SHOULD_BE_RA(e, f) \
+    if (e.X_op != O_register)       \
+        return -1;                  \
+    if (e.X_add_number > 0xFF)      \
+        return -1;                  \
+    if (e.X_add_number < 0xC0)      \
+        return -1;                  \
+    f = e.X_add_number - 0xC0;
 
-#define	__DD_EXP_SHOULD_BE_RA(e, f)			\
-	if (e.X_op != O_register)	return -1;	\
-	if (e.X_add_number > 0xFF)	return -1;	\
-	if (e.X_add_number < 0xC0)	return -1;	\
-	f = e.X_add_number - 0xC0;
+#define __DD_EXP_SHOULD_BE_CP(e, f) \
+    if (e.X_op != O_register)       \
+        return -1;                  \
+    if (e.X_add_number > 0x13F)     \
+        return -1;                  \
+    if (e.X_add_number < 0x100)     \
+        return -1;                  \
+    f = e.X_add_number - 0x100;
 
-#define	__DD_EXP_SHOULD_BE_CP(e, f)			\
-	if (e.X_op != O_register)	return -1;	\
-	if (e.X_add_number > 0x13F)	return -1;	\
-	if (e.X_add_number < 0x100)	return -1;	\
-	f = e.X_add_number - 0x100;
+#define __DD_EXP_SHOULD_BE_CR(e, f) \
+    if (e.X_op != O_register)       \
+        return -1;                  \
+    if (e.X_add_number > 0x17F)     \
+        return -1;                  \
+    if (e.X_add_number < 0x140)     \
+        return -1;                  \
+    f = e.X_add_number - 0x140;
 
-#define	__DD_EXP_SHOULD_BE_CR(e, f)			\
-	if (e.X_op != O_register)	return -1;	\
-	if (e.X_add_number > 0x17F)	return -1;	\
-	if (e.X_add_number < 0x140)	return -1;	\
-	f = e.X_add_number - 0x140;
-
-#define	__DD_EXP_SHOULD_BE_IMM(e, min, max)		\
-	if (e.X_op != O_constant)	return -1;	\
-	if (e.X_add_number > max)	return -1;	\
-	if (e.X_add_number < min)	return -1;
+#define __DD_EXP_SHOULD_BE_IMM(e, min, max) \
+    if (e.X_op != O_constant)               \
+        return -1;                          \
+    if (e.X_add_number > max)               \
+        return -1;                          \
+    if (e.X_add_number < min)               \
+        return -1;
 
 /* return 0 success, return -1 fail, otherwise return insn->type for more handling */
 static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n_operands, unsigned int *insn_code)
 {
-	int n_exp = 0;
-	unsigned int fa, fb, fc, fd;
-	expressionS *exp_next;
-	expressionS *exp_last;
+    int n_exp = 0;
+    unsigned int fa, fb, fc, fd;
+    expressionS *exp_next;
+    expressionS *exp_last;
 
-	if (n_operands != insn->operands_num)
-		return -1;
+    if (n_operands != insn->operands_num)
+        return -1;
 
-	switch (insn->op_fa) {
-	case dadao_operand_rd:	__DD_EXP_SHOULD_BE_RD(exp[n_exp], fa);	n_exp++;	break;
-	case dadao_operand_rb:	__DD_EXP_SHOULD_BE_RB(exp[n_exp], fa);	n_exp++;	break;
-	case dadao_operand_rf:	__DD_EXP_SHOULD_BE_RF(exp[n_exp], fa);	n_exp++;	break;
-	case dadao_operand_ra:	__DD_EXP_SHOULD_BE_RA(exp[n_exp], fa);	n_exp++;	break;
-	case dadao_operand_cp:	__DD_EXP_SHOULD_BE_CP(exp[n_exp], fa);  n_exp++;	break;
+    switch (insn->op_fa)
+    {
+    case dadao_operand_rd:
+        __DD_EXP_SHOULD_BE_RD(exp[n_exp], fa);
+        n_exp++;
+        break;
+    case dadao_operand_rb:
+        __DD_EXP_SHOULD_BE_RB(exp[n_exp], fa);
+        n_exp++;
+        break;
+    case dadao_operand_rf:
+        __DD_EXP_SHOULD_BE_RF(exp[n_exp], fa);
+        n_exp++;
+        break;
+    case dadao_operand_ra:
+        __DD_EXP_SHOULD_BE_RA(exp[n_exp], fa);
+        n_exp++;
+        break;
+    case dadao_operand_cp:
+        __DD_EXP_SHOULD_BE_CP(exp[n_exp], fa);
+        n_exp++;
+        break;
 
-	case dadao_operand_op:
-		fa = insn->minor_opcode;
-		break;
+    case dadao_operand_op:
+        fa = insn->minor_opcode;
+        break;
 
-	case dadao_operand_s24:
-		/* ONLY call or jump be here */
-		if (exp[n_exp].X_op == O_constant) {
-			__DD_EXP_SHOULD_BE_IMM(exp[n_exp], -0x800000, 0x7FFFFF);
-			*insn_code = ((insn->major_opcode << 24)
-				| (exp[n_exp].X_add_number & 0xFFFFFF));
-			return 0;
-		} else {
-			*insn_code = (insn->major_opcode << 24);
-			return insn->type;
-		}
+    case dadao_operand_s24:
+        /* ONLY call or jump be here */
+        if (exp[n_exp].X_op == O_constant)
+        {
+            __DD_EXP_SHOULD_BE_IMM(exp[n_exp], -0x800000, 0x7FFFFF);
+            *insn_code = ((insn->major_opcode << 24) | (exp[n_exp].X_add_number & 0xFFFFFF));
+            return 0;
+        }
+        else
+        {
+            *insn_code = (insn->major_opcode << 24);
+            return insn->type;
+        }
 
-	case dadao_operand_none:
-		fa = 0;
-		break;
+    case dadao_operand_none:
+        fa = 0;
+        break;
 
-	default:
-		return -1;
-	}
+    default:
+        return -1;
+    }
 
-	switch (insn->op_fb) {
-	case dadao_operand_rd:	__DD_EXP_SHOULD_BE_RD(exp[n_exp], fb);	n_exp++;	break;
-	case dadao_operand_rb:	__DD_EXP_SHOULD_BE_RB(exp[n_exp], fb);	n_exp++;	break;
-	case dadao_operand_rf:	__DD_EXP_SHOULD_BE_RF(exp[n_exp], fb);	n_exp++;	break;
-	case dadao_operand_ra:	__DD_EXP_SHOULD_BE_RA(exp[n_exp], fb);	n_exp++;	break;
-	case dadao_operand_cr:	__DD_EXP_SHOULD_BE_CR(exp[n_exp], fb);	n_exp++;	break;
+    switch (insn->op_fb)
+    {
+    case dadao_operand_rd:
+        __DD_EXP_SHOULD_BE_RD(exp[n_exp], fb);
+        n_exp++;
+        break;
+    case dadao_operand_rb:
+        __DD_EXP_SHOULD_BE_RB(exp[n_exp], fb);
+        n_exp++;
+        break;
+    case dadao_operand_rf:
+        __DD_EXP_SHOULD_BE_RF(exp[n_exp], fb);
+        n_exp++;
+        break;
+    case dadao_operand_ra:
+        __DD_EXP_SHOULD_BE_RA(exp[n_exp], fb);
+        n_exp++;
+        break;
+    case dadao_operand_cr:
+        __DD_EXP_SHOULD_BE_CR(exp[n_exp], fb);
+        n_exp++;
+        break;
 
-	case dadao_operand_w16:
-		__DD_EXP_SHOULD_BE_IMM(exp[n_exp], 0, 0xFFFF);
-		if (insn->minor_opcode > 3)		return -1;
-		*insn_code = ((insn->major_opcode << 24) | (fa << 18)
-			| (insn->minor_opcode << 16)
-			| (exp[n_exp].X_add_number & 0xFFFF));
-		return 0;
+    case dadao_operand_w16:
+        __DD_EXP_SHOULD_BE_IMM(exp[n_exp], 0, 0xFFFF);
+        if (insn->minor_opcode > 3)
+            return -1;
+        *insn_code = ((insn->major_opcode << 24) | (fa << 18) | (insn->minor_opcode << 16) | (exp[n_exp].X_add_number & 0xFFFF));
+        return 0;
 
-	case dadao_operand_s18:
-		/* condbranch */
-		/* addrb rb, imm18 */
-		/* add rb, imm18 */
-		if (exp[n_exp].X_op == O_constant) {
-			__DD_EXP_SHOULD_BE_IMM(exp[n_exp], -0x20000, 0x1FFFF);
-			*insn_code = ((insn->major_opcode << 24) | (fa << 18)
-				| (exp[n_exp].X_add_number & 0x3FFFF));
-			return 0;
-		} else {
-			*insn_code = ((insn->major_opcode << 24) | (fa << 18));
-			return insn->type;
-		}
+    case dadao_operand_s18:
+        /* condbranch */
+        /* addrb rb, imm18 */
+        /* add rb, imm18 */
+        if (exp[n_exp].X_op == O_constant)
+        {
+            __DD_EXP_SHOULD_BE_IMM(exp[n_exp], -0x20000, 0x1FFFF);
+            *insn_code = ((insn->major_opcode << 24) | (fa << 18) | (exp[n_exp].X_add_number & 0x3FFFF));
+            return 0;
+        }
+        else
+        {
+            *insn_code = ((insn->major_opcode << 24) | (fa << 18));
+            return insn->type;
+        }
 
-	case dadao_operand_u18:
-		__DD_EXP_SHOULD_BE_IMM(exp[n_exp], 0, 0x3FFFF);
-		*insn_code = ((insn->major_opcode << 24) | (fa << 18)
-			| (exp[n_exp].X_add_number & 0x3FFFF));
-		return 0;
+    case dadao_operand_u18:
+        __DD_EXP_SHOULD_BE_IMM(exp[n_exp], 0, 0x3FFFF);
+        *insn_code = ((insn->major_opcode << 24) | (fa << 18) | (exp[n_exp].X_add_number & 0x3FFFF));
+        return 0;
 
-	case dadao_operand_none:
-		fb = 0;
-		break;
+    case dadao_operand_none:
+        fb = 0;
+        break;
 
-	default:
-		return -1;
-	}
+    default:
+        return -1;
+    }
 
-	if ((n_operands == 3) && (exp[2].X_op == O_left_shift)) {
-		/* To accept: rg << i6 */
-		if ((insn->op_fc != dadao_operand_rd) || (insn->op_fd != dadao_operand_i6))
-			return -1;
-		exp_next = symbol_get_value_expression (exp[2].X_add_symbol);
-		exp_last = symbol_get_value_expression (exp[2].X_op_symbol);
-	} else {
-		exp_next = &exp[n_exp];
-		exp_last = &exp[n_exp+1];
-	}
+    if ((n_operands == 3) && (exp[2].X_op == O_left_shift))
+    {
+        /* To accept: rg << i6 */
+        if ((insn->op_fc != dadao_operand_rd) || (insn->op_fd != dadao_operand_i6))
+            return -1;
+        exp_next = symbol_get_value_expression(exp[2].X_add_symbol);
+        exp_last = symbol_get_value_expression(exp[2].X_op_symbol);
+    }
+    else
+    {
+        exp_next = &exp[n_exp];
+        exp_last = &exp[n_exp + 1];
+    }
 
-	switch (insn->op_fc) {
-	case dadao_operand_rd:	__DD_EXP_SHOULD_BE_RD(exp_next[0], fc);	break;
-	case dadao_operand_rb:	__DD_EXP_SHOULD_BE_RB(exp_next[0], fc);	break;
-	case dadao_operand_rf:	__DD_EXP_SHOULD_BE_RF(exp_next[0], fc);	break;
-	case dadao_operand_ra:	__DD_EXP_SHOULD_BE_RA(exp_next[0], fc);	break;
-	case dadao_operand_cr:	__DD_EXP_SHOULD_BE_CR(exp_next[0], fc);	break;
+    switch (insn->op_fc)
+    {
+    case dadao_operand_rd:
+        __DD_EXP_SHOULD_BE_RD(exp_next[0], fc);
+        break;
+    case dadao_operand_rb:
+        __DD_EXP_SHOULD_BE_RB(exp_next[0], fc);
+        break;
+    case dadao_operand_rf:
+        __DD_EXP_SHOULD_BE_RF(exp_next[0], fc);
+        break;
+    case dadao_operand_ra:
+        __DD_EXP_SHOULD_BE_RA(exp_next[0], fc);
+        break;
+    case dadao_operand_cr:
+        __DD_EXP_SHOULD_BE_CR(exp_next[0], fc);
+        break;
 
-	case dadao_operand_s12:
-		__DD_EXP_SHOULD_BE_IMM(exp_next[0], -0x800, 0x7FF);
-		/* call rb0, rd0, 0 doesn't exist */
-		if (insn->major_opcode == 0x6D && insn->operands_num == 3) {
-			if(fa == 0 && fb == 0 && (exp_next[0].X_add_number & 0xFFF) == 0)
-				return -1;
-		}
-		*insn_code = ((insn->major_opcode << 24) | (fa << 18) | (fb << 12)
-			| (exp_next[0].X_add_number & 0xFFF));
-		return 0;
+    case dadao_operand_s12:
+        __DD_EXP_SHOULD_BE_IMM(exp_next[0], -0x800, 0x7FF);
+        /* call rb0, rd0, 0 doesn't exist */
+        if (insn->major_opcode == 0x6D && insn->operands_num == 3)
+        {
+            if (fa == 0 && fb == 0 && (exp_next[0].X_add_number & 0xFFF) == 0)
+                return -1;
+        }
+        *insn_code = ((insn->major_opcode << 24) | (fa << 18) | (fb << 12) | (exp_next[0].X_add_number & 0xFFF));
+        return 0;
 
-	case dadao_operand_u12:
-		__DD_EXP_SHOULD_BE_IMM(exp_next[0], 0, 0xFFF);
-		*insn_code = ((insn->major_opcode << 24) | (fa << 18) | (fb << 12)
-			| (exp_next[0].X_add_number & 0xFFF));
-		return 0;
+    case dadao_operand_u12:
+        __DD_EXP_SHOULD_BE_IMM(exp_next[0], 0, 0xFFF);
+        *insn_code = ((insn->major_opcode << 24) | (fa << 18) | (fb << 12) | (exp_next[0].X_add_number & 0xFFF));
+        return 0;
 
-	case dadao_operand_none:
-		fc = 0;
-		break;
+    case dadao_operand_none:
+        fc = 0;
+        break;
 
-	default:
-		return -1;
-	}
+    default:
+        return -1;
+    }
 
-	switch (insn->op_fd) {
-	case dadao_operand_rd:	__DD_EXP_SHOULD_BE_RD(exp_last[0], fd);	break;
-	case dadao_operand_rb:	__DD_EXP_SHOULD_BE_RB(exp_last[0], fd);	break;
-	case dadao_operand_rf:	__DD_EXP_SHOULD_BE_RF(exp_last[0], fd);	break;
-	case dadao_operand_ra:	__DD_EXP_SHOULD_BE_RA(exp_last[0], fd);	break;
-	case dadao_operand_cr:	__DD_EXP_SHOULD_BE_CR(exp_last[0], fd);	break;
+    switch (insn->op_fd)
+    {
+    case dadao_operand_rd:
+        __DD_EXP_SHOULD_BE_RD(exp_last[0], fd);
+        break;
+    case dadao_operand_rb:
+        __DD_EXP_SHOULD_BE_RB(exp_last[0], fd);
+        break;
+    case dadao_operand_rf:
+        __DD_EXP_SHOULD_BE_RF(exp_last[0], fd);
+        break;
+    case dadao_operand_ra:
+        __DD_EXP_SHOULD_BE_RA(exp_last[0], fd);
+        break;
+    case dadao_operand_cr:
+        __DD_EXP_SHOULD_BE_CR(exp_last[0], fd);
+        break;
 
-	case dadao_operand_i6:
-		/* << i6 can be omitted, thus i6 will be 0 */
-		if (exp_last[0].X_op == O_constant) {
-			__DD_EXP_SHOULD_BE_IMM(exp_last[0], 0, 0x3F);
-			fd = exp_last[0].X_add_number;
-			break;
-		}
-		/* FALLTHROUGH */
-	case dadao_operand_none:
-		fd = 0;
-		break;
+    case dadao_operand_i6:
+        /* << i6 can be omitted, thus i6 will be 0 */
+        if (exp_last[0].X_op == O_constant)
+        {
+            __DD_EXP_SHOULD_BE_IMM(exp_last[0], 0, 0x3F);
+            fd = exp_last[0].X_add_number;
+            break;
+        }
+        /* FALLTHROUGH */
+    case dadao_operand_none:
+        fd = 0;
+        break;
 
-	default:
-		return -1;
-	}
+    default:
+        return -1;
+    }
 
-	*insn_code = ((insn->major_opcode << 24) | (fa << 18) | (fb << 12) | (fc << 6) | fd);
-	return 0;
+    *insn_code = ((insn->major_opcode << 24) | (fa << 18) | (fb << 12) | (fc << 6) | fd);
+    return 0;
 }
-#undef	__DD_EXP_SHOULD_BE_RD
-#undef	__DD_EXP_SHOULD_BE_RB
-#undef	__DD_EXP_SHOULD_BE_RF
-#undef	__DD_EXP_SHOULD_BE_RA
-#undef	__DD_EXP_SHOULD_BE_CP
-#undef	__DD_EXP_SHOULD_BE_CR
-#undef	__DD_EXP_SHOULD_BE_IMM
+#undef __DD_EXP_SHOULD_BE_RD
+#undef __DD_EXP_SHOULD_BE_RB
+#undef __DD_EXP_SHOULD_BE_RF
+#undef __DD_EXP_SHOULD_BE_RA
+#undef __DD_EXP_SHOULD_BE_CP
+#undef __DD_EXP_SHOULD_BE_CR
+#undef __DD_EXP_SHOULD_BE_IMM
 
 /* Assemble one insn in STR.  */
-void dadao_md_assemble (char *str)
+void dadao_md_assemble(char *str)
 {
-	char *operands = str;
-	struct dadao_opcode *instruction;
-	char insn_alt[16];
-	int insn_alt_i = 0;
-	fragS *opc_fragP = NULL;
+    char *operands = str;
+    struct dadao_opcode *instruction;
+    char insn_alt[16];
+    int insn_alt_i = 0;
+    fragS *opc_fragP = NULL;
 
-	/* Note that the struct frag member fr_literal in frags.h is char[], so
+    /* Note that the struct frag member fr_literal in frags.h is char[], so
 	   I have to make this a plain char *.  */
-	char *opcodep = NULL;
+    char *opcodep = NULL;
 
-	expressionS exp[4];
-	int n_operands = 0;
+    expressionS exp[4];
+    int n_operands = 0;
 
-	unsigned int insn_code;
-	int ret_code;
+    unsigned int insn_code;
+    int ret_code;
 
-	/* Move to end of opcode.  */
-	for (operands = str; is_part_of_name (*operands); ++operands) {
-		insn_alt[++insn_alt_i] = *operands;
-	}
+    /* Move to end of opcode.  */
+    for (operands = str; is_part_of_name(*operands); ++operands)
+    {
+        insn_alt[++insn_alt_i] = *operands;
+    }
 
-	input_line_pointer = operands;
+    input_line_pointer = operands;
 
-	n_operands = get_operands (operands, exp);
+    n_operands = get_operands(operands, exp);
 
-	opcodep = frag_more (4);
-	dadao_opcode_frag = opc_fragP = frag_now;
-	frag_now->fr_opcode = opcodep;
+    opcodep = frag_more(4);
+    dadao_opcode_frag = opc_fragP = frag_now;
+    frag_now->fr_opcode = opcodep;
 
-	/* Mark start of insn for DWARF2 debug features.  */
-	if (OUTPUT_FLAVOR == bfd_target_elf_flavour)
-		dwarf2_emit_insn (4);
+    /* Mark start of insn for DWARF2 debug features.  */
+    if (OUTPUT_FLAVOR == bfd_target_elf_flavour)
+        dwarf2_emit_insn(4);
 
-	insn_alt[++insn_alt_i] = '\0';
-	instruction = (struct dadao_opcode *) hash_find (dadao_opcode_hash, &insn_alt[1]);
-	if ((insn_alt[1] == '_') || (instruction == NULL)) {
-		as_bad_where(__FILE__, __LINE__, "(%s %s) unknown insn", &insn_alt[1], operands);
-		return;
-	}
+    insn_alt[++insn_alt_i] = '\0';
+    instruction = (struct dadao_opcode *)hash_find(dadao_opcode_hash, &insn_alt[1]);
+    if ((insn_alt[1] == '_') || (instruction == NULL))
+    {
+        as_bad_where(__FILE__, __LINE__, "(%s %s) unknown insn", &insn_alt[1], operands);
+        return;
+    }
 
-	if (instruction->type == dadao_type_pseudo) {
-		switch (instruction->major_opcode) {
-		case 0:
-			/* setrd rd, imm64 */
-			if (n_operands != 2)			break;
-			if (exp[0].X_op != O_register)		break;
-			if (exp[0].X_add_number >= 0x40)	break;
-			if (exp[1].X_op != O_constant)		break;
-			dd_pseudo_setrd(opcodep, exp[0].X_add_number, exp[1].X_add_number);
-			return;
-		case 1:
-			/* setrb rb, imm64 : wait to add */
-		default:
-			break;
-		}
-		as_bad_where(__FILE__, __LINE__, "(%s %s) unknown insn", &insn_alt[1], operands);
-		return;
-	}
+    if (instruction->type == dadao_type_pseudo)
+    {
+        switch (instruction->major_opcode)
+        {
+        case 0:
+            /* setrd rd, imm64 */
+            if (n_operands != 2)
+                break;
+            if (exp[0].X_op != O_register)
+                break;
+            if (exp[0].X_add_number >= 0x40)
+                break;
+            if (exp[1].X_op != O_constant)
+                break;
+            dd_pseudo_setrd(opcodep, exp[0].X_add_number, exp[1].X_add_number);
+            return;
+        case 1:
+            /* setrb rb, imm64 : wait to add */
+        default:
+            break;
+        }
+        as_bad_where(__FILE__, __LINE__, "(%s %s) unknown insn", &insn_alt[1], operands);
+        return;
+    }
 
-	ret_code = dd_get_insn_code(instruction, exp, n_operands, &insn_code);
+    ret_code = dd_get_insn_code(instruction, exp, n_operands, &insn_code);
 
-	if (ret_code == -1) {
-		/* five possibles */
-		/* iiii_rrii / orrr_orri / orrr_rrii */
-		/* orrr_riii / riii_rrrr */
-		insn_alt[0] = '_';
+    if (ret_code == -1)
+    {
+        /* five possibles */
+        /* iiii_rrii / orrr_orri / orrr_rrii */
+        /* orrr_riii / riii_rrrr */
+        insn_alt[0] = '_';
 
-		instruction = (struct dadao_opcode *) hash_find (dadao_opcode_hash, insn_alt);
-		if (instruction != NULL)
-			ret_code = dd_get_insn_code(instruction, exp, n_operands, &insn_code);
-	}
+        instruction = (struct dadao_opcode *)hash_find(dadao_opcode_hash, insn_alt);
+        if (instruction != NULL)
+            ret_code = dd_get_insn_code(instruction, exp, n_operands, &insn_code);
+    }
 
-	switch (ret_code) {
-	case dadao_type_condbranch:
-		md_number_to_chars (opcodep, insn_code, 4);
-		if (! expand_op)
-			fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_BRCC);
-		else
-			frag_var (rs_machine_dependent, DD_INSN_BYTES(5), 0, ENCODE_RELAX (STATE_BRCC, STATE_UNDF),
-				exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
-		break;
+    switch (ret_code)
+    {
+    case dadao_type_condbranch:
+        md_number_to_chars(opcodep, insn_code, 4);
+        if (!expand_op)
+            fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_BRCC);
+        else
+            frag_var(rs_machine_dependent, DD_INSN_BYTES(5), 0, ENCODE_RELAX(STATE_BRCC, STATE_UNDF),
+                     exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
+        break;
 
-	case dadao_type_geta:
-		md_number_to_chars (opcodep, insn_code, 4);
-		if (! expand_op)
-			fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_GETA);
-		else
-			frag_var (rs_machine_dependent, DD_INSN_BYTES(3), 0, ENCODE_RELAX (STATE_GETA, STATE_UNDF),
-				exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
-		break;
+    case dadao_type_geta:
+        md_number_to_chars(opcodep, insn_code, 4);
+        if (!expand_op)
+            fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_GETA);
+        else
+            frag_var(rs_machine_dependent, DD_INSN_BYTES(3), 0, ENCODE_RELAX(STATE_GETA, STATE_UNDF),
+                     exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
+        break;
 
-	case dadao_type_branch:
-		md_number_to_chars (opcodep, insn_code, 4);
-		if (! expand_op)
-			fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_JUMP);
-		else
-			frag_var (rs_machine_dependent, DD_INSN_BYTES(4), 0, ENCODE_RELAX (STATE_JUMP, STATE_UNDF),
-				exp[0].X_add_symbol, exp[0].X_add_number, opcodep);
-		break;
+    case dadao_type_branch:
+        md_number_to_chars(opcodep, insn_code, 4);
+        if (!expand_op)
+            fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_JUMP);
+        else
+            frag_var(rs_machine_dependent, DD_INSN_BYTES(4), 0, ENCODE_RELAX(STATE_JUMP, STATE_UNDF),
+                     exp[0].X_add_symbol, exp[0].X_add_number, opcodep);
+        break;
 
-	case dadao_type_jsr:
-		md_number_to_chars (opcodep, insn_code, 4);
-		if (! expand_op)
-			fix_new_exp (opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_CALL);
-		else
-			frag_var (rs_machine_dependent, DD_INSN_BYTES(4), 0, ENCODE_RELAX (STATE_CALL, STATE_UNDF),
-				exp[0].X_add_symbol, exp[0].X_add_number, opcodep);
-		break;
+    case dadao_type_jsr:
+        md_number_to_chars(opcodep, insn_code, 4);
+        if (!expand_op)
+            fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_CALL);
+        else
+            frag_var(rs_machine_dependent, DD_INSN_BYTES(4), 0, ENCODE_RELAX(STATE_CALL, STATE_UNDF),
+                     exp[0].X_add_symbol, exp[0].X_add_number, opcodep);
+        break;
 
-	case 0:
-		md_number_to_chars (opcodep, insn_code, 4);
-		break;
+    case 0:
+        md_number_to_chars(opcodep, insn_code, 4);
+        break;
 
-	default:	/* -1 */
-		as_bad_where(__FILE__, __LINE__, "(%s %s) unknown insn", &insn_alt[1], operands);
-	}
+    default: /* -1 */
+        as_bad_where(__FILE__, __LINE__, "(%s %s) unknown insn", &insn_alt[1], operands);
+    }
 }
 
 /* Set fragP->fr_var to the initial guess of the size of a relaxable insn
    and return it.  Sizes of other instructions are not known.  This
    function may be called multiple times.  */
 
-int
-md_estimate_size_before_relax (fragS *fragP, segT segment)
+int md_estimate_size_before_relax(fragS *fragP, segT segment)
 {
-  int length;
+    int length;
 
-#define HANDLE_RELAXABLE(state)						\
- case ENCODE_RELAX (state, STATE_UNDF):					\
-   if (fragP->fr_symbol != NULL						\
-       && S_GET_SEGMENT (fragP->fr_symbol) == segment			\
-       && !S_IS_WEAK (fragP->fr_symbol))				\
-     {									\
-       /* The symbol lies in the same segment - a relaxable case.  */	\
-       fragP->fr_subtype						\
-	 = ENCODE_RELAX (state, STATE_ZERO);				\
-     }
+#define HANDLE_RELAXABLE(state)                                                                                     \
+    case ENCODE_RELAX(state, STATE_UNDF):                                                                           \
+        if (fragP->fr_symbol != NULL && S_GET_SEGMENT(fragP->fr_symbol) == segment && !S_IS_WEAK(fragP->fr_symbol)) \
+        {                                                                                                           \
+            /* The symbol lies in the same segment - a relaxable case.  */                                          \
+            fragP->fr_subtype = ENCODE_RELAX(state, STATE_ZERO);                                                    \
+        }
 
-  switch (fragP->fr_subtype)
+    switch (fragP->fr_subtype)
     {
-      HANDLE_RELAXABLE (STATE_GETA);
-	break;
-      HANDLE_RELAXABLE (STATE_BRCC);
-	break;
-      HANDLE_RELAXABLE (STATE_JUMP);
-	break;
-      HANDLE_RELAXABLE (STATE_CALL);
-	break;
+        HANDLE_RELAXABLE(STATE_GETA);
+        break;
+        HANDLE_RELAXABLE(STATE_BRCC);
+        break;
+        HANDLE_RELAXABLE(STATE_JUMP);
+        break;
+        HANDLE_RELAXABLE(STATE_CALL);
+        break;
 
-    case ENCODE_RELAX (STATE_CALL, STATE_ZERO):
-    case ENCODE_RELAX (STATE_GETA, STATE_ZERO):
-    case ENCODE_RELAX (STATE_BRCC, STATE_ZERO):
-    case ENCODE_RELAX (STATE_JUMP, STATE_ZERO):
-      /* When relaxing a section for the second time, we don't need to do
+    case ENCODE_RELAX(STATE_CALL, STATE_ZERO):
+    case ENCODE_RELAX(STATE_GETA, STATE_ZERO):
+    case ENCODE_RELAX(STATE_BRCC, STATE_ZERO):
+    case ENCODE_RELAX(STATE_JUMP, STATE_ZERO):
+        /* When relaxing a section for the second time, we don't need to do
 	 anything except making sure that fr_var is set right.  */
-      break;
+        break;
 
     default:
-      BAD_CASE (fragP->fr_subtype);
+        BAD_CASE(fragP->fr_subtype);
     }
 
-  length = dadao_relax_table[fragP->fr_subtype].rlx_length;
-  fragP->fr_var = length;
+    length = dadao_relax_table[fragP->fr_subtype].rlx_length;
+    fragP->fr_var = length;
 
-  return length;
+    return length;
 }
 
 /* Turn a string in input_line_pointer into a floating point constant of type
@@ -767,141 +862,132 @@ md_estimate_size_before_relax (fragS *fragP, segT segment)
    OK.  */
 
 const char *
-md_atof (int type, char *litP, int *sizeP)
+md_atof(int type, char *litP, int *sizeP)
 {
-  if (type == 'r')
-    type = 'f';
-  /* FIXME: Having 'f' in FLT_CHARS (and here) makes it
+    if (type == 'r')
+        type = 'f';
+    /* FIXME: Having 'f' in FLT_CHARS (and here) makes it
      problematic to also have a forward reference in an expression.
      The testsuite wants it, and it's customary.
      We'll deal with the real problems when they come; we share the
      problem with most other ports.  */
-  return ieee_md_atof (type, litP, sizeP, TRUE);
+    return ieee_md_atof(type, litP, sizeP, TRUE);
 }
 
 /* Convert variable-sized frags into one or more fixups.  */
 
-void
-md_convert_frag (bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
-		 fragS *fragP)
+void md_convert_frag(bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
+                     fragS *fragP)
 {
-  /* Pointer to first byte in variable-sized part of the frag.  */
-  char *var_partp;
+    /* Pointer to first byte in variable-sized part of the frag.  */
+    char *var_partp;
 
-  /* Pointer to first opcode byte in frag.  */
-  char *opcodep;
+    /* Pointer to first opcode byte in frag.  */
+    char *opcodep;
 
-  /* Size in bytes of variable-sized part of frag.  */
-  int var_part_size = 0;
+    /* Size in bytes of variable-sized part of frag.  */
+    int var_part_size = 0;
 
-  /* This is part of *fragP.  It contains all information about addresses
+    /* This is part of *fragP.  It contains all information about addresses
      and offsets to varying parts.  */
-  symbolS *symbolP;
-  unsigned long var_part_offset;
+    symbolS *symbolP;
+    unsigned long var_part_offset;
 
-  /* This is the frag for the opcode.  It, rather than fragP, must be used
+    /* This is the frag for the opcode.  It, rather than fragP, must be used
      when emitting a frag for the opcode.  */
-  fixS *tmpfixP;
+    fixS *tmpfixP;
 
-  /* Where, in file space, does addr point?  */
-  bfd_vma target_address;
-  bfd_vma opcode_address;
+    /* Where, in file space, does addr point?  */
+    bfd_vma target_address;
+    bfd_vma opcode_address;
 
-  know (fragP->fr_type == rs_machine_dependent);
+    know(fragP->fr_type == rs_machine_dependent);
 
-  var_part_offset = fragP->fr_fix;
-  var_partp = fragP->fr_literal + var_part_offset;
-  opcodep = fragP->fr_opcode;
+    var_part_offset = fragP->fr_fix;
+    var_partp = fragP->fr_literal + var_part_offset;
+    opcodep = fragP->fr_opcode;
 
-  symbolP = fragP->fr_symbol;
+    symbolP = fragP->fr_symbol;
 
-  target_address
-    = ((symbolP ? S_GET_VALUE (symbolP) : 0) + fragP->fr_offset);
+    target_address = ((symbolP ? S_GET_VALUE(symbolP) : 0) + fragP->fr_offset);
 
-  /* The opcode that would be extended is the last four "fixed" bytes.  */
-  opcode_address = fragP->fr_address + fragP->fr_fix - 4;
+    /* The opcode that would be extended is the last four "fixed" bytes.  */
+    opcode_address = fragP->fr_address + fragP->fr_fix - 4;
 
-	switch (fragP->fr_subtype) {
-	case ENCODE_RELAX (STATE_CALL, STATE_ZERO):
-	case ENCODE_RELAX (STATE_JUMP, STATE_ZERO):
-		dd_set_addr_offset(opcodep, target_address - opcode_address, 24, 1);
-		var_part_size = 0;
-		break;
+    switch (fragP->fr_subtype)
+    {
+    case ENCODE_RELAX(STATE_CALL, STATE_ZERO):
+    case ENCODE_RELAX(STATE_JUMP, STATE_ZERO):
+        dd_set_addr_offset(opcodep, target_address - opcode_address, 24, 1);
+        var_part_size = 0;
+        break;
 
-	case ENCODE_RELAX (STATE_GETA, STATE_ZERO):
-		dd_set_addr_offset(opcodep, target_address - opcode_address, 18, 0);
-		var_part_size = 0;
-		break;
+    case ENCODE_RELAX(STATE_GETA, STATE_ZERO):
+        dd_set_addr_offset(opcodep, target_address - opcode_address, 18, 0);
+        var_part_size = 0;
+        break;
 
-	case ENCODE_RELAX (STATE_BRCC, STATE_ZERO):
-		dd_set_addr_offset(opcodep, target_address - opcode_address, 18, 1);
-		var_part_size = 0;
-		break;
+    case ENCODE_RELAX(STATE_BRCC, STATE_ZERO):
+        dd_set_addr_offset(opcodep, target_address - opcode_address, 18, 1);
+        var_part_size = 0;
+        break;
 
-#define HANDLE_MAX_RELOC(state, reloc)					\
-  case ENCODE_RELAX (state, STATE_MAX):					\
-    var_part_size							\
-      = dadao_relax_table[ENCODE_RELAX (state, STATE_MAX)].rlx_length;	\
-    dd_fill_nops (var_partp, var_part_size / 4);			\
-    tmpfixP = fix_new (fragP, var_partp - fragP->fr_literal, 8,		\
-		       fragP->fr_symbol, fragP->fr_offset, 1, reloc);	\
-    tmpfixP->fx_file = fragP->fr_file;					\
-    tmpfixP->fx_line = fragP->fr_line;					\
-    break
+#define HANDLE_MAX_RELOC(state, reloc)                                                \
+    case ENCODE_RELAX(state, STATE_MAX):                                              \
+        var_part_size = dadao_relax_table[ENCODE_RELAX(state, STATE_MAX)].rlx_length; \
+        dd_fill_nops(var_partp, var_part_size / 4);                                   \
+        tmpfixP = fix_new(fragP, var_partp - fragP->fr_literal, 8,                    \
+                          fragP->fr_symbol, fragP->fr_offset, 1, reloc);              \
+        tmpfixP->fx_file = fragP->fr_file;                                            \
+        tmpfixP->fx_line = fragP->fr_line;                                            \
+        break
 
-      HANDLE_MAX_RELOC (STATE_GETA, BFD_RELOC_DADAO_GETA);
-      HANDLE_MAX_RELOC (STATE_BRCC, BFD_RELOC_DADAO_BRCC);
-      HANDLE_MAX_RELOC (STATE_CALL, BFD_RELOC_DADAO_CALL);
-      HANDLE_MAX_RELOC (STATE_JUMP, BFD_RELOC_DADAO_JUMP);
+        HANDLE_MAX_RELOC(STATE_GETA, BFD_RELOC_DADAO_GETA);
+        HANDLE_MAX_RELOC(STATE_BRCC, BFD_RELOC_DADAO_BRCC);
+        HANDLE_MAX_RELOC(STATE_CALL, BFD_RELOC_DADAO_CALL);
+        HANDLE_MAX_RELOC(STATE_JUMP, BFD_RELOC_DADAO_JUMP);
 
     default:
-      BAD_CASE (fragP->fr_subtype);
-      break;
+        BAD_CASE(fragP->fr_subtype);
+        break;
     }
 
-  fragP->fr_fix += var_part_size;
-  fragP->fr_var = 0;
+    fragP->fr_fix += var_part_size;
+    fragP->fr_var = 0;
 }
 
 /* Applies the desired value to the specified location.
    Also sets up addends for RELA type relocations.
    Stolen from tc-mcore.c. */
 
-void
-md_apply_fix (fixS *fixP, valueT *valP, segT segment)
+void md_apply_fix(fixS *fixP, valueT *valP, segT segment)
 {
-  char *buf  = fixP->fx_where + fixP->fx_frag->fr_literal;
-  /* Note: use offsetT because it is signed, valueT is unsigned.  */
-  offsetT val  = (offsetT) * valP;
-  segT symsec
-    = (fixP->fx_addsy == NULL
-       ? absolute_section : S_GET_SEGMENT (fixP->fx_addsy));
+    char *buf = fixP->fx_where + fixP->fx_frag->fr_literal;
+    /* Note: use offsetT because it is signed, valueT is unsigned.  */
+    offsetT val = (offsetT)*valP;
+    segT symsec = (fixP->fx_addsy == NULL
+                       ? absolute_section
+                       : S_GET_SEGMENT(fixP->fx_addsy));
 
-  /* If the fix is relative to a symbol which is not defined, or, (if
+    /* If the fix is relative to a symbol which is not defined, or, (if
      pcrel), not in the same segment as the fix, we cannot resolve it
      here.  */
-  if (fixP->fx_addsy != NULL
-      && (! S_IS_DEFINED (fixP->fx_addsy)
-	  || S_IS_WEAK (fixP->fx_addsy)
-	  || (fixP->fx_pcrel && symsec != segment)
-	  || (! fixP->fx_pcrel
-	      && symsec != absolute_section)))
+    if (fixP->fx_addsy != NULL && (!S_IS_DEFINED(fixP->fx_addsy) || S_IS_WEAK(fixP->fx_addsy) || (fixP->fx_pcrel && symsec != segment) || (!fixP->fx_pcrel && symsec != absolute_section)))
     {
-      fixP->fx_done = 0;
-      return;
+        fixP->fx_done = 0;
+        return;
     }
-  else if (fixP->fx_r_type == BFD_RELOC_VTABLE_INHERIT
-	   || fixP->fx_r_type == BFD_RELOC_VTABLE_ENTRY)
+    else if (fixP->fx_r_type == BFD_RELOC_VTABLE_INHERIT || fixP->fx_r_type == BFD_RELOC_VTABLE_ENTRY)
     {
-      /* These are never "fixed".  */
-      fixP->fx_done = 0;
-      return;
+        /* These are never "fixed".  */
+        fixP->fx_done = 0;
+        return;
     }
-  else
-    /* We assume every other relocation is "fixed".  */
-    fixP->fx_done = 1;
+    else
+        /* We assume every other relocation is "fixed".  */
+        fixP->fx_done = 1;
 
-  switch (fixP->fx_r_type)
+    switch (fixP->fx_r_type)
     {
     case BFD_RELOC_64:
     case BFD_RELOC_32:
@@ -913,77 +999,74 @@ md_apply_fix (fixS *fixP, valueT *valP, segT segment)
     case BFD_RELOC_24_PCREL:
     case BFD_RELOC_16_PCREL:
     case BFD_RELOC_8_PCREL:
-      md_number_to_chars (buf, val, fixP->fx_size);
-      break;
+        md_number_to_chars(buf, val, fixP->fx_size);
+        break;
 
-	case BFD_RELOC_DADAO_GETA:
-		dd_set_addr_offset(buf, val, 18, 0);
-		break;
+    case BFD_RELOC_DADAO_GETA:
+        dd_set_addr_offset(buf, val, 18, 0);
+        break;
 
-	case BFD_RELOC_DADAO_BRCC:
-		dd_set_addr_offset(buf, val, 18, 1);
-		break;
+    case BFD_RELOC_DADAO_BRCC:
+        dd_set_addr_offset(buf, val, 18, 1);
+        break;
 
-	case BFD_RELOC_DADAO_CALL:
-	case BFD_RELOC_DADAO_JUMP:
-		dd_set_addr_offset(buf, val, 24, 1);
-		break;
+    case BFD_RELOC_DADAO_CALL:
+    case BFD_RELOC_DADAO_JUMP:
+        dd_set_addr_offset(buf, val, 24, 1);
+        break;
 
     default:
-      BAD_CASE (fixP->fx_r_type);
-      break;
+        BAD_CASE(fixP->fx_r_type);
+        break;
     }
 
-  if (fixP->fx_done)
-    /* Make sure that for completed fixups we have the value around for
+    if (fixP->fx_done)
+        /* Make sure that for completed fixups we have the value around for
        use by e.g. dadao_frob_file.  */
-    fixP->fx_offset = val;
+        fixP->fx_offset = val;
 }
 
 /* Generate a machine-dependent relocation.  */
 
 arelent *
-tc_gen_reloc (asection *section ATTRIBUTE_UNUSED, fixS *fixP)
+tc_gen_reloc(asection *section ATTRIBUTE_UNUSED, fixS *fixP)
 {
-  bfd_signed_vma val
-    = fixP->fx_offset
-    + (fixP->fx_addsy != NULL
-       && !S_IS_WEAK (fixP->fx_addsy)
-       && !S_IS_COMMON (fixP->fx_addsy)
-       ? S_GET_VALUE (fixP->fx_addsy) : 0);
-  arelent *relP;
-  bfd_reloc_code_real_type code = BFD_RELOC_NONE;
-  char *buf  = fixP->fx_where + fixP->fx_frag->fr_literal;
-  symbolS *addsy = fixP->fx_addsy;
-  asection *addsec = addsy == NULL ? NULL : S_GET_SEGMENT (addsy);
-  asymbol *baddsy = addsy != NULL ? symbol_get_bfdsym (addsy) : NULL;
-  bfd_vma addend
-    = val - (baddsy == NULL || S_IS_COMMON (addsy) || S_IS_WEAK (addsy)
-	     ? 0 : bfd_asymbol_value (baddsy));
+    bfd_signed_vma val = fixP->fx_offset + (fixP->fx_addsy != NULL && !S_IS_WEAK(fixP->fx_addsy) && !S_IS_COMMON(fixP->fx_addsy)
+                                                ? S_GET_VALUE(fixP->fx_addsy)
+                                                : 0);
+    arelent *relP;
+    bfd_reloc_code_real_type code = BFD_RELOC_NONE;
+    char *buf = fixP->fx_where + fixP->fx_frag->fr_literal;
+    symbolS *addsy = fixP->fx_addsy;
+    asection *addsec = addsy == NULL ? NULL : S_GET_SEGMENT(addsy);
+    asymbol *baddsy = addsy != NULL ? symbol_get_bfdsym(addsy) : NULL;
+    bfd_vma addend = val - (baddsy == NULL || S_IS_COMMON(addsy) || S_IS_WEAK(addsy)
+                                ? 0
+                                : bfd_asymbol_value(baddsy));
 
-  /* FIXME: Range tests for all these.  */
-  switch (fixP->fx_r_type)
+    /* FIXME: Range tests for all these.  */
+    switch (fixP->fx_r_type)
     {
     case BFD_RELOC_64:
     case BFD_RELOC_32:
     case BFD_RELOC_24:
     case BFD_RELOC_16:
     case BFD_RELOC_8:
-      code = fixP->fx_r_type;
+        code = fixP->fx_r_type;
 
-      if (addsy == NULL || bfd_is_abs_section (addsec))
-	{
-	  /* Resolve this reloc now, as md_apply_fix would have done.
+        if (addsy == NULL || bfd_is_abs_section(addsec))
+        {
+            /* Resolve this reloc now, as md_apply_fix would have done.
 	     There is no point in keeping a reloc
 	     to an absolute symbol.  No reloc that is subject to
 	     relaxation must be to an absolute symbol; difference
 	     involving symbols in a specific section must be signalled as
 	     an error if the relaxing cannot be expressed; having a reloc
 	     to the resolved (now absolute) value does not help.  */
-	  md_number_to_chars (buf, val, fixP->fx_size);
-	  return NULL;
-	}
-      break;
+            md_number_to_chars(buf, val, fixP->fx_size);
+            return NULL;
+        }
+        break;
 
     case BFD_RELOC_64_PCREL:
     case BFD_RELOC_32_PCREL:
@@ -996,77 +1079,72 @@ tc_gen_reloc (asection *section ATTRIBUTE_UNUSED, fixS *fixP)
     case BFD_RELOC_DADAO_BRCC:
     case BFD_RELOC_DADAO_CALL:
     case BFD_RELOC_DADAO_JUMP:
-      code = fixP->fx_r_type;
-      break;
+        code = fixP->fx_r_type;
+        break;
 
     default:
-      as_bad_where
-	(fixP->fx_file, fixP->fx_line,
-	 _("operands were not reducible at assembly-time"));
+        as_bad_where(fixP->fx_file, fixP->fx_line,
+                     _("operands were not reducible at assembly-time"));
 
-      /* Unmark this symbol as used in a reloc, so we don't bump into a BFD
+        /* Unmark this symbol as used in a reloc, so we don't bump into a BFD
 	 assert when trying to output reg_section.  FIXME: A gas bug.  */
-      fixP->fx_addsy = NULL;
-      return NULL;
+        fixP->fx_addsy = NULL;
+        return NULL;
     }
 
-  relP = XNEW (arelent);
-  gas_assert (relP != 0);
-  relP->sym_ptr_ptr = XNEW (asymbol *);
-  *relP->sym_ptr_ptr = baddsy;
-  relP->address = fixP->fx_frag->fr_address + fixP->fx_where;
+    relP = XNEW(arelent);
+    gas_assert(relP != 0);
+    relP->sym_ptr_ptr = XNEW(asymbol *);
+    *relP->sym_ptr_ptr = baddsy;
+    relP->address = fixP->fx_frag->fr_address + fixP->fx_where;
 
-  relP->addend = addend;
+    relP->addend = addend;
 
-  /* If this had been a.out, we would have had a kludge for weak symbols
+    /* If this had been a.out, we would have had a kludge for weak symbols
      here.  */
 
-  relP->howto = bfd_reloc_type_lookup (stdoutput, code);
-  if (! relP->howto)
+    relP->howto = bfd_reloc_type_lookup(stdoutput, code);
+    if (!relP->howto)
     {
-      const char *name;
+        const char *name;
 
-      name = S_GET_NAME (addsy);
-      if (name == NULL)
-	name = _("<unknown>");
-      as_fatal (_("cannot generate relocation type for symbol %s, code %s"),
-		name, bfd_get_reloc_code_name (code));
+        name = S_GET_NAME(addsy);
+        if (name == NULL)
+            name = _("<unknown>");
+        as_fatal(_("cannot generate relocation type for symbol %s, code %s"),
+                 name, bfd_get_reloc_code_name(code));
     }
 
-  return relP;
+    return relP;
 }
 
 /* See whether we need to force a relocation into the output file.
    This is used to force out switch and PC relative relocations when
    relaxing.  */
 
-int
-dadao_force_relocation (fixS *fixP)
+int dadao_force_relocation(fixS *fixP)
 {
-  /* All our pcrel relocations are must-keep.  Note that md_apply_fix is
+    /* All our pcrel relocations are must-keep.  Note that md_apply_fix is
      called *after* this, and will handle getting rid of the presumed
      reloc; a relocation isn't *forced* other than to be handled by
      md_apply_fix.  */
-  if (fixP->fx_pcrel)
-    return 1;
+    if (fixP->fx_pcrel)
+        return 1;
 
-  return generic_force_reloc (fixP);
+    return generic_force_reloc(fixP);
 }
 
 /* The location from which a PC relative jump should be calculated,
    given a PC relative reloc.  */
 
-long
-md_pcrel_from_section (fixS *fixP, segT sec)
+long md_pcrel_from_section(fixS *fixP, segT sec)
 {
-  if (fixP->fx_addsy != (symbolS *) NULL
-      && (! S_IS_DEFINED (fixP->fx_addsy)
-	  || S_GET_SEGMENT (fixP->fx_addsy) != sec))
+    if (fixP->fx_addsy != (symbolS *)NULL && (!S_IS_DEFINED(fixP->fx_addsy) || S_GET_SEGMENT(fixP->fx_addsy) != sec))
     {
-      /* The symbol is undefined (or is defined but not in this section).
+        /* The symbol is undefined (or is defined but not in this section).
 	 Let the linker figure it out.  */
-      return 0;
+        return 0;
     }
 
-  return (fixP->fx_frag->fr_address + fixP->fx_where);
+    return (fixP->fx_frag->fr_address + fixP->fx_where);
 }
