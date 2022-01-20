@@ -64,7 +64,8 @@
 	"{
 	  if (MEM_P(operands[2]) ||
 	     (GET_CODE(operands[2])==CONST_INT &&
-	     !satisfies_constraint_It (operands[2])))
+	     !satisfies_constraint_It (operands[2])) ||
+	     (GET_CODE(operands[2])!=CONST_INT && !REG_P(operands[2])))
 	  {
 	    if (can_create_pseudo_p())
 		operands[2] = force_reg (DImode, operands[2]);
@@ -89,17 +90,10 @@
 (define_insn "dd_addrd_imm"
   [(set      (match_operand:DI 0 "rd_class_operand" "=Rd")
     (plus:DI (match_operand:DI 1 "rd_class_operand" "%Rd")
-             (match_operand:DI 2 "immediate_operand"  "i")))]
+             (match_operand:DI 2 "const_int_operand"  "i")))]
         ""
 	{
-	  /* constraint Ai --> label \ symbol & plus (label \ symbol + imm)
-	   * constraint Au --> rb & plus [(rb + imm) & (rb + rd)]
-	   * other ?
-	   */
-	  if (satisfies_constraint_Ai(operands[2])) {
-		return "swym";
-	  }
-	  else if (satisfies_constraint_It(operands[2])) {
+	  if (satisfies_constraint_It(operands[2])) {
 		if (operands[0] == operands[1]) 
 			return "add	%0, %2";
 		else	return "setrd	%0, %2	\;add	rd0, %0, %1, %0";
