@@ -109,16 +109,58 @@
 	""
 	"add	rd0, %0, %1, %2")
 
-;; FIXME
-(define_insn "subdi3"
-  [(set       (match_operand:DI 0 "rd_class_operand"	"= Rd,Rd")
-    (minus:DI (match_operand:DI 1 "rd_class_operand"	"  Rd,Rd")
-              (match_operand:DI 2 "general_operand"	"  Rd, i")))]
+(define_expand "subdi3"
+  [(set       (match_operand:DI 0 "register_operand" "=r")
+    (minus:DI (match_operand:DI 1 "register_operand" "%r")
+              (match_operand:DI 2 "general_operand"  "")))]
 	""
+	"{
+	  if (MEM_P(operands[2]) ||
+	     (GET_CODE(operands[2])==CONST_INT &&
+	     !satisfies_constraint_It (operands[2])) ||
+	     (GET_CODE(operands[2])!=CONST_INT && !REG_P(operands[2])))
+	  {
+	    if (can_create_pseudo_p())
+		operands[2] = force_reg (DImode, operands[2]);
+	    else
+	      {
+		rtx ip = gen_rtx_REG (DImode, 7);
+		emit_insn (gen_rtx_SET (ip, operands[2]));
+		operands[2] = ip;
+	      }
+	  }
+	}")
+
+(define_insn "dd_subrd_mem"
+  [(set      (match_operand:DI 0 "rd_class_operand" "=Rd,Rd")
+   (minus:DI (match_operand:DI 1 "rd_class_operand" "%Rd,Rd")
+             (match_operand:DI 2 "memory_operand"    "Wg,m")))]
+        ""
 	"@
-	sub	rd0, %0, %1, %2
-	swym")
-;	setrd	%0, %2	\;add	rd0, %0, %1, %0	\;")
+	ldmo	%0, %2, 0	\;sub	rd0, %0, %1, %0
+	ldo	%0, %2	\;sub	rd0, %0, %1, %0")
+
+(define_insn "dd_subrd_imm"
+  [(set      (match_operand:DI 0 "rd_class_operand" "=Rd")
+   (minus:DI (match_operand:DI 1 "rd_class_operand" "%Rd")
+             (match_operand:DI 2 "const_int_operand"  "i")))]
+        ""
+	{
+	  if (satisfies_constraint_It(operands[2])) {
+		if (operands[0] == operands[1]) 
+			return "add	%0, %n2";
+		else	return "setrd	%0, %2	\;sub	rd0, %0, %1, %0";
+	  }
+	  else
+		return "setrd	%0, %2	\;sub	rd0, %0, %1, %0";
+	})
+
+(define_insn "dd_subrd"
+  [(set      (match_operand:DI 0 "rd_class_operand" "=Rd")
+   (minus:DI (match_operand:DI 1 "rd_class_operand" "%Rd")
+             (match_operand:DI 2 "rd_class_operand"  "Rd")))]
+	""
+	"sub	rd0, %0, %1, %2")
 
 (define_insn "muldi3"
   [(set      (match_operand:DI 0 "rd_class_operand" "= Rd")
