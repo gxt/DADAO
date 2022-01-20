@@ -29,6 +29,13 @@
 	""
 	"addrb	%0, %1, %2")
 
+(define_insn "subrb_rd"
+  [(set      (match_operand:DI 0 "rb_class_operand" "=Rb")
+   (minus:DI (match_operand:DI 1 "rb_class_operand" "%Rb")
+             (match_operand:DI 2 "rd_class_operand" "Rd")))]
+	""
+	"subrb	%0, %1, %2")
+
 (define_expand "dd_addrb_imm"
   [(set       (match_operand:DI 0 "rb_class_operand"  "= Rb")
      (plus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb")
@@ -45,6 +52,22 @@
 		}
 	}")
 
+(define_expand "dd_subrb_imm"
+  [(set       (match_operand:DI 0 "rb_class_operand"  "= Rb")
+    (minus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb")
+              (match_operand:DI 2 "const_int_operand" "  i")))]
+        ""
+	"{
+	  if (!satisfies_constraint_It (operands[2])) {
+	    if (can_create_pseudo_p ()) operands[2] = force_reg (DImode, operands[2]);
+		else {
+		    rtx ip = gen_rtx_REG (DImode, 7);
+		    emit_insn (gen_rtx_SET (ip, operands[2]));
+		    operands[2] = ip;
+		  }
+	      }
+	}")
+
 (define_insn "addrb_imm"
   [(set       (match_operand:DI 0 "rb_class_operand"  "= Rb")
      (plus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb")
@@ -57,12 +80,32 @@
                 return  "rb2rb	%0, %1, 0       \;addrb	%0, %2";
        })
 
+(define_insn "subrb_imm"
+  [(set       (match_operand:DI 0 "rb_class_operand"  "= Rb")
+    (minus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb")
+              (match_operand:DI 2 "dd_sign_18_operand"   "i")))]
+        ""
+        {
+          if (operands[1] == operands[0])
+                return  "addrb	%0, %n2";
+          else
+                return  "rb2rb	%0, %1, 0       \;addrb	%0, %n2";
+       })
+
 (define_insn "addrb_ctry"
   [(set      (match_operand:DI 0 "rb_class_operand"  "=Rb")
     (plus:DI (match_operand:DI 1 "rd_class_operand"  "%Rd")
              (match_operand:DI 2 "rb_class_operand"  " Rb")))]
 	""
 	"addrb	%0, %2, %1")
+
+; XXX
+(define_insn "subrb_ctry"
+  [(set      (match_operand:DI 0 "rb_class_operand"  "=Rb")
+   (minus:DI (match_operand:DI 1 "rd_class_operand"  "%Rd")
+             (match_operand:DI 2 "rb_class_operand"  " Rb")))]
+	""
+	"subrb	%0, %2, %1")
 
 (define_insn "dd_ld_rb"
   [(set (match_operand:DI 0 "rb_class_operand" "=Rb")
@@ -101,6 +144,20 @@
 	  FAIL;
 	}")
 
+; XXX
+(define_expand "store_address_sub"
+  [(set      (match_operand:DI 0 "memory_operand"    "=m")
+   (minus:DI (match_operand:DI 1 "rb_class_operand"  "Rb")
+             (match_operand:DI 2 "dd_rd_s12_operand" "")))]
+	""
+	"{
+	  if (satisfies_constraint_It(operands[2])) {
+	     emit_insn (gen_dd_store_address_sub (operands[0], operands[1], operands[2]));
+	     DONE;
+	  }
+	  FAIL;
+	}")
+
 ; Only used in optimization
 (define_insn "dd_store_address"
   [(set      (match_operand:DI 0 "memory_operand"    "=m")
@@ -115,6 +172,21 @@
 	    }
 	  else
 		return "addrb   rb7, %1, rd0    \;addrb rb7, %2 \;stmrb  rb7, %0, 0 \;";
+	})
+
+(define_insn "dd_store_address_sub"
+  [(set      (match_operand:DI 0 "memory_operand"    "=m")
+   (minus:DI (match_operand:DI 1 "rb_class_operand"  "Rb")
+	     (match_operand:DI 2 "dd_rd_s12_operand" "Id")))
+	(clobber (reg:DI 71))]
+	""
+	{
+	  if (!satisfies_constraint_Wg(operands[0]))
+	    {
+		return "subrb	rb7, %1, rd0	\;addrb	rb7, %n2	\;strb	rb7, %0	\;";
+	    }
+	  else
+		return "subrb   rb7, %1, rd0    \;addrb rb7, %n2	\;stmrb  rb7, %0, 0 \;";
 	})
 
 (define_insn "dd_rb_get_imm"
@@ -151,6 +223,16 @@
 	    operands[2] = force_reg (DImode, operands[2]);
 	}")
 
+(define_expand "dd_minus_rb"
+  [(set      (match_operand:DI 0 "rd_class_operand" "=Rd")
+   (minus:DI (match_operand:DI 1 "rb_class_operand" "%Rb")
+             (match_operand:DI 2 "const_int_operand" "i")))]
+	""
+	"{
+	  if (!satisfies_constraint_It (operands[2]))
+	    operands[2] = force_reg (DImode, operands[2]);
+	}")
+
 (define_insn "addrb2rd"
   [(set      (match_operand:DI 0 "rd_class_operand"  "= Rd, Rd")
     (plus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb, Rb")
@@ -159,6 +241,15 @@
 	"@
 	rb2rd	%0, %1, 0	\;add	%0, %2
 	rb2rd	%0, %1, 0	\;add	rd0, %0, %2, %0")
+
+(define_insn "subrb2rd"
+  [(set      (match_operand:DI 0 "rd_class_operand"  "= Rd, Rd")
+   (minus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb, Rb")
+	     (match_operand:DI 2 "dd_rd_s18_operand" "  It, Rd")))]
+	""
+	"@
+	rb2rd	%0, %1, 0	\;add	%0, %n2
+	rb2rd	%0, %1, 0	\;sub	rd0, %0, %0, %2")
 
 ;; Shall it stays ?
 (define_insn "addrb2rd_larde_scale"
