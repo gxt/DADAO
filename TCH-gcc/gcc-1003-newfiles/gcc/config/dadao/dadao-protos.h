@@ -43,6 +43,7 @@ extern void dadao_canonicalize_comparison (enum rtx_code *, rtx *, rtx *);
 extern rtx dadao_gen_compare_reg (enum rtx_code, rtx, rtx);
 #endif
 
+extern rtx dadao_expand_memmov_indirect (rtx *, FILE *);
 /*
  * Local variables:
  * eval: (c-set-style "gnu")

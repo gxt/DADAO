@@ -1064,6 +1064,19 @@ static void dadao_reorg (void)
 
 /* XXX End of gccint Chapter 18: Target Description Macros and Functions */
 
+rtx dadao_expand_memmov_indirect (rtx *operands, FILE *fout)
+{
+  rtx base = XEXP(XEXP(operands[1], 0), 0);
+  rtx index = XEXP(XEXP(operands[1], 0), 1);	/* MEM as index */
+
+  bool flag = satisfies_constraint_Wg(index);
+
+  fprintf (fout, "\tld%so	%s, ", flag ? "m" : "", reg_names[7]);
+  dd_print_operand_address(fout, DImode, XEXP(index, 0));
+  fprintf (fout, "%s\n", flag ? ", 0" : "");
+
+  return base;
+}
 
 /* Wrapper for get_hard_reg_initial_val since integrate.h isn't included
    from insn-emit.c.  */
@@ -1073,9 +1086,6 @@ dadao_get_hard_reg_initial_val (machine_mode mode, int regno)
 {
   return get_hard_reg_initial_val (mode, regno);
 }
-
-/* Nonzero when the function epilogue is simple enough that a single
-   "POP %d,0" should be used even within the function.  */
 
 int
 dadao_use_simple_return (void)
