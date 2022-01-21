@@ -34,8 +34,7 @@ _start:
 	rd2ra	ra1, rd2, 3
 	ra2rd	rd1, ra2, 3
 	# 0001-0xxx
-	addrb	rb1, 4
-	add	rd1, 2
+	addi	rd1, 2
 	add	rd1, rd2, rd3, rd4
 	sub	rd1, rd2, rd3, rd4
 	muls	rd1, rd2, rd3, rd4
@@ -107,7 +106,16 @@ _start:
 	ldmtu	rd1, rb2, rd3, 4
 	ldmrb	rb1, rb2, rd3, 4
 	# 0100-1xxx
-	strb	rb1, rb2, 3
+	addi	rb1, 1
+	strb	rb1, rb2, 2
+	setzwh	rb1, 3
+	setzwj	rb1, 3
+	setzwk	rb1, 3
+	setzwl	rb1, 3
+	orwh	rb1, 3
+	orwj	rb1, 3
+	orwk	rb1, 3
+	orwl	rb1, 3
 	stmrb	rb1, rb2, rd3, 4
 	# 0101-0000L MISC-RF
 	ft2fo	rf1, rf2, 3
