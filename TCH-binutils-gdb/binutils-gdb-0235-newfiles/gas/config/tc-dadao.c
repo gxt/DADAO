@@ -403,22 +403,25 @@ static void dd_pseudo_setrb(char *opcodep, int setrb_fa, unsigned long long setr
 {
     /* setrb rb, imm64 */
     unsigned int setrb_w16_1, setrb_w16_2, setrb_w16_3, setrb_w16_4;
-    setrb_w16_1 = (setrb_octa)&0xFFFF;
+    setrb_w16_1 = (setrb_octa) & 0xFFFF;
     setrb_w16_2 = (setrb_octa >> 16) & 0xFFFF;
     setrb_w16_3 = (setrb_octa >> 32) & 0xFFFF;
     setrb_w16_4 = (setrb_octa >> 48) & 0xFFFF;
 
-    md_number_to_chars(opcodep, DADAO_INSN_SETZW | (setrb_fa << 18) | DADAO_WYDE_WL | setrb_w16_1, 4);
+    md_number_to_chars(opcodep, DADAO_INSN_SETZW_RB | (setrb_fa << 18) | DADAO_WYDE_WL | setrb_w16_1, 4);
 
-    opcodep = frag_more(4);
-    md_number_to_chars(opcodep, DADAO_INSN_ORW | (setrb_fa << 18) | DADAO_WYDE_WK | setrb_w16_2, 4);
-
-    opcodep = frag_more(4);
-    md_number_to_chars(opcodep, DADAO_INSN_ORW | (setrb_fa << 18) | DADAO_WYDE_WJ | setrb_w16_3, 4);
-
-    opcodep = frag_more(4);
-    md_number_to_chars(opcodep, DADAO_INSN_ORW | (setrb_fa << 18) | DADAO_WYDE_WH | setrb_w16_4, 4);
-
+    if(setrb_w16_2!=0){
+        opcodep = frag_more(4);
+        md_number_to_chars(opcodep, DADAO_INSN_ORW_RB | (setrb_fa << 18) | DADAO_WYDE_WK | setrb_w16_2, 4);
+    }
+    if(setrb_w16_3!=0){
+        opcodep = frag_more(4);
+        md_number_to_chars(opcodep, DADAO_INSN_ORW_RB | (setrb_fa << 18) | DADAO_WYDE_WJ | setrb_w16_3, 4);
+    }
+    if(setrb_w16_4!=0){
+        opcodep = frag_more(4);
+        md_number_to_chars(opcodep, DADAO_INSN_ORW_RB | (setrb_fa << 18) | DADAO_WYDE_WH | setrb_w16_4, 4);
+    }
 }
 
 #define __DD_EXP_SHOULD_BE_RD(e, f) \
@@ -574,7 +577,7 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
     case dadao_operand_s18:
         /* condbranch */
         /* addi rb, imm18 */
-        /* addi rb, imm18 */
+        /* addi rd, imm18 */
         if (exp[n_exp].X_op == O_constant)
         {
             __DD_EXP_SHOULD_BE_IMM(exp[n_exp], -0x20000, 0x1FFFF);
@@ -766,6 +769,7 @@ void dadao_md_assemble(char *str)
         case 1:
             /* setrb rb, imm64 : wait to fix */
             dd_pseudo_setrb(opcodep, exp[0].X_add_number, exp[1].X_add_number);
+            return;
         default:
             break;
         }

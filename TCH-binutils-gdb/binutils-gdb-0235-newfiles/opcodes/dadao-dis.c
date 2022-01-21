@@ -202,7 +202,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		return 4;
 
 	case dadao_operand_s18:
-		if ((insn & 0xFF000000) == 0x18000000 || (insn & 0xFF000000) == 0x19000000) {		/* addrb riii / add riii */
+		if ((insn & 0xFF000000) == 0x19000000 || (insn & 0xFF000000) == 0x49000000) {		/* addi riii */
 			if (insn & 0x20000)
 				(*info->fprintf_func) (info->stream, "%d", (int) (0xFFFC0000 | (insn & 0x3FFFF)));
 			else
