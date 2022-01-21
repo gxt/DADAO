@@ -768,6 +768,14 @@ void dadao_md_assemble(char *str)
             return;
         case 1:
             /* setrb rb, imm64 : wait to fix */
+            if (n_operands != 2)
+                break;
+            if (exp[0].X_op != O_register)
+                break;
+            if (exp[0].X_add_number < 0x40 || exp[0].X_add_number > 0x7F )
+                break;
+            if (exp[1].X_op != O_constant)
+                break;
             dd_pseudo_setrb(opcodep, exp[0].X_add_number, exp[1].X_add_number);
             return;
         default:
