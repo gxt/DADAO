@@ -573,8 +573,8 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
 
     case dadao_operand_s18:
         /* condbranch */
-        /* addrb rb, imm18 */
-        /* add rb, imm18 */
+        /* addi rb, imm18 */
+        /* addi rb, imm18 */
         if (exp[n_exp].X_op == O_constant)
         {
             __DD_EXP_SHOULD_BE_IMM(exp[n_exp], -0x20000, 0x1FFFF);
