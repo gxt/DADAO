@@ -41,17 +41,9 @@
 		else if
 		   (satisfies_constraint_Wm (operands[0]))
 		  {
-			rtx base_reg = XEXP(XEXP(operands[0], 0), 0);
-			rtx index_mem = XEXP(XEXP(operands[0], 0), 1);
-
-			bool flag = satisfies_constraint_Wg(index_mem);
-
-			fprintf (asm_out_file, "\tld%so	%s, ", flag ? "m" : "", reg_names[DD_IP_RD]);
-			dd_print_operand_address(asm_out_file, DImode, XEXP(index_mem, 0));
-			fprintf (asm_out_file, "%s\n", flag ? ", 0" : "");
-
+			rtx base = dadao_expand_memmov_indirect (operands, asm_out_file);
 			fprintf (asm_out_file, "\tstm<bwto>	%s, %s, %s, 0\n",
-				 reg_names[REGNO (operands[1])], reg_names[REGNO (base_reg)], reg_names[DD_IP_RD]);
+				 reg_names[REGNO (operands[1])], reg_names[REGNO (base)], reg_names[DD_IP_RD]);
 			return "";
 		  }
 		else
@@ -71,20 +63,11 @@
 		    else
 			return "ldm<bwto>u	%0, %1, 0";
 		  }
-		else if (satisfies_constraint_Wm (operands[1]))
-		  {
-			rtx base_reg = XEXP(XEXP(operands[1], 0), 0);
-			rtx index_mem = XEXP(XEXP(operands[1], 0), 1);
-
-			bool flag = satisfies_constraint_Wg(index_mem);
-
-			fprintf (asm_out_file, "\tld%so	%s, ", flag ? "m" : "", reg_names[DD_IP_RD]);
-			dd_print_operand_address(asm_out_file, DImode, XEXP(index_mem, 0));
-			fprintf (asm_out_file, "%s\n", flag ? ", 0" : "");
-
+		else if (satisfies_constraint_Wm (operands[1])) {
+			rtx base = dadao_expand_memmov_indirect (operands, asm_out_file);
 			fprintf (asm_out_file,
 				 "\tldm<bwto>%s	%s, %s, %s, 0\n", mul_flag ? "" : "u",
-				 reg_names[REGNO (operands[0])], reg_names[REGNO (base_reg)], reg_names[DD_IP_RD]);
+				 reg_names[REGNO (operands[0])], reg_names[REGNO (base)], reg_names[DD_IP_RD]);
 			return "";
 		  }
                 else
