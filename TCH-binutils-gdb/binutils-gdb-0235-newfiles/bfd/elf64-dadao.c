@@ -510,7 +510,32 @@ dadao_elf_perform_relocation(asection *isec, reloc_howto_type *howto,
         }
 
         return bfd_reloc_ok;
+    case R_DADAO_JUMP:
+        if ((value & 3) != 0)
+            return bfd_reloc_notsupported;
 
+        insn_origin = bfd_get_32(abfd, (bfd_byte *)datap);
+
+        r = bfd_check_overflow(complain_overflow_bitfield,
+                               howto->bitsize, 0,
+                               bfd_arch_bits_per_address(abfd),
+                               value);
+        if (r == bfd_reloc_ok)
+        {
+            bfd_put_32(abfd, DADAO_INSN_JUMP_IIII | ((value >> 2) & 0xFFFFFF), (bfd_byte *)datap);
+        }
+        else
+        {
+            bfd_put_32(abfd, DADAO_INSN_SETZW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WH | ((value >> 48) & 0xffff), (bfd_byte *)datap);
+            bfd_put_32(abfd, DADAO_INSN_ORW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WJ | ((value >> 32) & 0xffff), (bfd_byte *)datap + 4);
+            bfd_put_32(abfd, DADAO_INSN_ORW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WK | ((value >> 16) & 0xffff), (bfd_byte *)datap + 8);
+            bfd_put_32(abfd, DADAO_INSN_ORW | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WL | (value & 0xffff), (bfd_byte *)datap + 12);
+
+            bfd_put_32(abfd, (DADAO_INSN_JUMP_IIII) | (DADAO_REGP_TAO << 18), (bfd_byte *)datap + 16);
+        }
+
+        return bfd_reloc_ok;
+    
     default:
         BAD_CASE(howto->type);
     }
