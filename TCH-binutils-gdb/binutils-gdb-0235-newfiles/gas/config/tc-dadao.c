@@ -399,6 +399,28 @@ static void dd_pseudo_setrd(char *opcodep, int setrd_fa, unsigned long long setr
     }
 }
 
+static void dd_pseudo_setrb(char *opcodep, int setrb_fa, unsigned long long setrb_octa)
+{
+    /* setrb rb, imm64 */
+    unsigned int setrb_w16_1, setrb_w16_2, setrb_w16_3, setrb_w16_4;
+    setrb_w16_1 = (setrb_octa)&0xFFFF;
+    setrb_w16_2 = (setrb_octa >> 16) & 0xFFFF;
+    setrb_w16_3 = (setrb_octa >> 32) & 0xFFFF;
+    setrb_w16_4 = (setrb_octa >> 48) & 0xFFFF;
+
+    md_number_to_chars(opcodep, DADAO_INSN_SETZW | (setrb_fa << 18) | DADAO_WYDE_WL | setrb_w16_1, 4);
+
+    opcodep = frag_more(4);
+    md_number_to_chars(opcodep, DADAO_INSN_ORW | (setrb_fa << 18) | DADAO_WYDE_WK | setrb_w16_2, 4);
+
+    opcodep = frag_more(4);
+    md_number_to_chars(opcodep, DADAO_INSN_ORW | (setrb_fa << 18) | DADAO_WYDE_WJ | setrb_w16_3, 4);
+
+    opcodep = frag_more(4);
+    md_number_to_chars(opcodep, DADAO_INSN_ORW | (setrb_fa << 18) | DADAO_WYDE_WH | setrb_w16_4, 4);
+
+}
+
 #define __DD_EXP_SHOULD_BE_RD(e, f) \
     if (e.X_op != O_register)       \
         return -1;                  \
@@ -742,7 +764,8 @@ void dadao_md_assemble(char *str)
             dd_pseudo_setrd(opcodep, exp[0].X_add_number, exp[1].X_add_number);
             return;
         case 1:
-            /* setrb rb, imm64 : wait to add */
+            /* setrb rb, imm64 : wait to fix */
+            dd_pseudo_setrb(opcodep, exp[0].X_add_number, exp[1].X_add_number);
         default:
             break;
         }
