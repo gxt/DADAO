@@ -2,9 +2,12 @@
  * tc-dadao.c -- Assemble code for dadao
  * Copyright (C) 2019-2033 Guan Xuetao (AT) Peking Univ.
  *
+ * codestyle: clangFormat
+ * 
  * Contributed by:
  *   2019:
  *	Guan Xuetao <gxt@pku.edu.cn>
+ *  Yang Chen <yang_chen@pku.edu.cn>
  */
 #include "as.h"
 #include <limits.h>

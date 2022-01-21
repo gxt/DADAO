@@ -2,10 +2,11 @@
  * DADAO-specific support for 64-bit ELF
  * Copyright (C) 2019-2033 Guan Xuetao (AT) Peking Univ.
  *
+ * codestyle: clangFormat
  * Contributed by:
  *   2019:
  *	Guan Xuetao <gxt@pku.edu.cn>
- *
+ *  Yang Chen <yang_chen@pku.edu.cn>
  * This file is part of BFD, the Binary File Descriptor library.
  */
 #include "sysdep.h"
