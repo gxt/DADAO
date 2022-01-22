@@ -10,8 +10,10 @@
 #define PAGE_SIZE		(_AC(1, UL) << PAGE_SHIFT)
 #define PAGE_MASK		(~(PAGE_SIZE-1))
 
+#include <asm/arch_memory.h>
+
 /* PAGE_OFFSET - the virtual address of the start of the kernel image */
-#define PAGE_OFFSET		UL(0xDADA00000000)
+#define PAGE_OFFSET		__DD_MEMORY_PAGE_OFFSET
 
 #ifndef __ASSEMBLY__
 

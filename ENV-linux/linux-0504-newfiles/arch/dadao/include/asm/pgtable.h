@@ -9,9 +9,10 @@
 #include <asm-generic/pgtable-nopmd.h>
 
 #include <asm/pgtable-bits.h>
+#include <asm/arch_memory.h>
 
-#define	VMALLOC_START			(PAGE_OFFSET + SZ_2G)
-#define	VMALLOC_END			(PAGE_OFFSET + SZ_4G)
+#define	VMALLOC_START			__DD_MEMORY_VMALLOC_START
+#define	VMALLOC_END			__DD_MEMORY_VMALLOC_END
 
 #define PTRS_PER_PTE			1024
 #define PTRS_PER_PGD			1024
