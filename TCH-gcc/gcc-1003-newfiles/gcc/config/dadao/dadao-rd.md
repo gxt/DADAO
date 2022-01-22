@@ -95,7 +95,7 @@
 	{
 	  if (satisfies_constraint_It(operands[2])) {
 		if (operands[0] == operands[1]) 
-			return "add	%0, %2";
+			return "addi	%0, %2";
 		else	return "setrd	%0, %2	\;add	rd0, %0, %1, %0";
 	  }
 	  else
@@ -148,7 +148,7 @@
 	{
 	  if (satisfies_constraint_It(operands[2])) {
 		if (operands[0] == operands[1]) 
-			return "add	%0, %n2";
+			return "addi	%0, %n2";
 		else	return "setrd	%0, %2	\;sub	rd0, %0, %1, %0";
 	  }
 	  else

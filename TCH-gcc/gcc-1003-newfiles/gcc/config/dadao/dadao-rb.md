@@ -75,9 +75,9 @@
         ""
         {
           if (operands[1] == operands[0])
-                return  "addrb	%0, %2";
+                return  "addi	%0, %2";
           else
-                return  "rb2rb	%0, %1, 0       \;addrb	%0, %2";
+                return  "rb2rb	%0, %1, 0       \;addi	%0, %2";
        })
 
 (define_insn "subrb_imm"
@@ -87,9 +87,9 @@
         ""
         {
           if (operands[1] == operands[0])
-                return  "addrb	%0, %n2";
+                return  "addi	%0, %n2";
           else
-                return  "rb2rb	%0, %1, 0       \;addrb	%0, %n2";
+                return  "rb2rb	%0, %1, 0       \;addi	%0, %n2";
        })
 
 (define_insn "addrb_ctry"
@@ -168,10 +168,10 @@
 	{
 	  if (!satisfies_constraint_Wg(operands[0]))
 	    {
-		return "addrb	rb7, %1, rd0	\;addrb	rb7, %2	\;strb	rb7, %0	\;";
+		return "addrb	rb7, %1, rd0	\;addi	rb7, %2	\;strb	rb7, %0	\;";
 	    }
 	  else
-		return "addrb   rb7, %1, rd0    \;addrb rb7, %2 \;stmrb  rb7, %0, 0 \;";
+		return "addrb   rb7, %1, rd0    \;addi	rb7, %2	\;stmrb  rb7, %0, 0 \;";
 	})
 
 (define_insn "dd_store_address_sub"
@@ -183,10 +183,10 @@
 	{
 	  if (!satisfies_constraint_Wg(operands[0]))
 	    {
-		return "subrb	rb7, %1, rd0	\;addrb	rb7, %n2	\;strb	rb7, %0	\;";
+		return "subrb	rb7, %1, rd0	\;addi	rb7, %n2	\;strb	rb7, %0	\;";
 	    }
 	  else
-		return "subrb   rb7, %1, rd0    \;addrb rb7, %n2	\;stmrb  rb7, %0, 0 \;";
+		return "subrb   rb7, %1, rd0    \;addi	rb7, %n2	\;stmrb  rb7, %0, 0 \;";
 	})
 
 (define_insn "dd_rb_get_imm"
@@ -239,7 +239,7 @@
 	     (match_operand:DI 2 "dd_rd_s18_operand" "  It, Rd")))]
 	""
 	"@
-	rb2rd	%0, %1, 0	\;add	%0, %2
+	rb2rd	%0, %1, 0	\;addi	%0, %2
 	rb2rd	%0, %1, 0	\;add	rd0, %0, %2, %0")
 
 (define_insn "subrb2rd"
@@ -248,7 +248,7 @@
 	     (match_operand:DI 2 "dd_rd_s18_operand" "  It, Rd")))]
 	""
 	"@
-	rb2rd	%0, %1, 0	\;add	%0, %n2
+	rb2rd	%0, %1, 0	\;addi	%0, %n2
 	rb2rd	%0, %1, 0	\;sub	rd0, %0, %0, %2")
 
 ;; Shall it stays ?

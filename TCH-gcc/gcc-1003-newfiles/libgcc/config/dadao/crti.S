@@ -4,17 +4,17 @@
 	.text
 	.global _start
 _start:
-	addrb	rb1, -8
+	addi	rb1, -8
 	strb	rb2, rb1, 0
 	rb2rb	rb2, rb1, 0
-	addrb	rb2, 8
+	addi	rb2, 8
 
 	call	_init
 	call	main
 	call	_fini
 
 	ldrb    rb2, rb1, 0
-	addrb	rb1, 8
+	addi	rb1, 8
 	# To exit, generate an exception by return from empty RAS
 	ret
 	swym
@@ -23,12 +23,12 @@ _start:
 	.global	_init
 _init:
 #	rb2rb	rb2, rb1, 0
-#	addrb	rb2, -8
+#	addi	rb2, -8
 	swym
 
 	.section .fini,"ax",@progbits
 	.global	_fini
 _fini:
 #	rb2rb	rb2, rb1, 0
-#	addrb	rb2, -8
+#	addi	rb2, -8
 	swym
