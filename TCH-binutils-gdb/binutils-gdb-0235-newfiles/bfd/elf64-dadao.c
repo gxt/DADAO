@@ -471,16 +471,8 @@ dadao_elf_perform_relocation(asection *isec, reloc_howto_type *howto,
         }
         else
         {
-            bfd_put_32(abfd, (DADAO_INSN_JUMP_IIII) | (4),
-                       (bfd_byte *)datap);
-
-            bfd_put_32(abfd, DADAO_INSN_SETZW_RD | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WH | ((value >> 48) & 0xffff), (bfd_byte *)datap + 4);
-            bfd_put_32(abfd, DADAO_INSN_ORW_RD | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WJ | ((value >> 32) & 0xffff), (bfd_byte *)datap + 8);
-            bfd_put_32(abfd, DADAO_INSN_ORW_RD | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WK | ((value >> 16) & 0xffff), (bfd_byte *)datap + 12);
-            bfd_put_32(abfd, DADAO_INSN_ORW_RD | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WL | (value & 0xffff), (bfd_byte *)datap + 16);
-
-            /* Put a "jump $3, $0, 0" after the common sequence.  */
-            bfd_put_32(abfd, DADAO_INSN_JUMP_RRII | (DADAO_REGP_TAO << 18), (bfd_byte *)datap + 20);
+            //wait to fix
+            return bfd_reloc_notsupported;
         }
 
         return bfd_reloc_ok;
@@ -501,12 +493,8 @@ dadao_elf_perform_relocation(asection *isec, reloc_howto_type *howto,
         }
         else
         {
-            bfd_put_32(abfd, DADAO_INSN_SETZW_RD | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WH | ((value >> 48) & 0xffff), (bfd_byte *)datap);
-            bfd_put_32(abfd, DADAO_INSN_ORW_RD | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WJ | ((value >> 32) & 0xffff), (bfd_byte *)datap + 4);
-            bfd_put_32(abfd, DADAO_INSN_ORW_RD | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WK | ((value >> 16) & 0xffff), (bfd_byte *)datap + 8);
-            bfd_put_32(abfd, DADAO_INSN_ORW_RD | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WL | (value & 0xffff), (bfd_byte *)datap + 12);
-
-            bfd_put_32(abfd, (DADAO_INSN_CALL_RRII) | (DADAO_REGP_TAO << 18), (bfd_byte *)datap + 16);
+            // wait to fix
+            return bfd_reloc_notsupported;
         }
 
         return bfd_reloc_ok;
@@ -526,12 +514,8 @@ dadao_elf_perform_relocation(asection *isec, reloc_howto_type *howto,
         }
         else
         {
-            bfd_put_32(abfd, DADAO_INSN_SETZW_RD | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WH | ((value >> 48) & 0xffff), (bfd_byte *)datap);
-            bfd_put_32(abfd, DADAO_INSN_ORW_RD | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WJ | ((value >> 32) & 0xffff), (bfd_byte *)datap + 4);
-            bfd_put_32(abfd, DADAO_INSN_ORW_RD | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WK | ((value >> 16) & 0xffff), (bfd_byte *)datap + 8);
-            bfd_put_32(abfd, DADAO_INSN_ORW_RD | (DADAO_REGP_TAO << 18) | DADAO_WYDE_WL | (value & 0xffff), (bfd_byte *)datap + 12);
-
-            bfd_put_32(abfd, (DADAO_INSN_JUMP_IIII) | (DADAO_REGP_TAO << 18), (bfd_byte *)datap + 16);
+            // wait to fix
+            return bfd_reloc_notsupported;
         }
 
         return bfd_reloc_ok;

@@ -69,7 +69,6 @@ extern const struct dadao_opcode dadao_opcodes[];
 	} while (0)
 
 #define	DADAO_REGP_PC			0		/* No. 0 reg is pc, read only */
-#define	DADAO_REGP_TAO			3		/* No. 3 reg is reserved for insn expand */
 
 /* One octa, four wydes, named wh/wj/wk/wl */
 #define	DADAO_WYDE_WH			(3 << 16)
