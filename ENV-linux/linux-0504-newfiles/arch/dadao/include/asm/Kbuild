@@ -15,3 +15,4 @@ generic-y += shmparam.h
 generic-y += string.h
 generic-y += timex.h
 generic-y += topology.h
+generic-y += trace_clock.h
