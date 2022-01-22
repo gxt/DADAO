@@ -90,6 +90,18 @@
 	"@internal"
 	(match_operand 0 "dadao_address_operand"))
 
+(define_address_constraint "Al"
+	"@internal"
+	(match_operand 0 "dd_label_operand"))
+
+(define_address_constraint "As"
+	"@internal"
+	(match_operand 0 "local_symbolic_operand"))
+
+(define_address_constraint "Ao"
+	"@internal"
+	(match_operand 0 "global_symbolic_operand"))
+
 ;; Memory constraint
 ;; W = M upside down ( M stands for Memory )
 ;; g = second operand is GENERAL_REGS
