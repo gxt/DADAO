@@ -8,7 +8,7 @@
 #define __ARCH_USE_5LEVEL_HACK
 #include <asm-generic/pgtable-nopmd.h>
 
-#include <asm/pgtable-bits.h>
+#include <asm/arch_pgtable.h>
 #include <asm/arch_memory.h>
 
 #define	VMALLOC_START			__DD_MEMORY_VMALLOC_START
