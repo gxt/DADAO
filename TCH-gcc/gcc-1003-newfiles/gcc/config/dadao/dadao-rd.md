@@ -4,6 +4,12 @@
 ;; Copyright (C) 2020-2033 Guan Xuetao (AT) Peking Univ.
 ;; Contributed by Guan Xuetao <gxt@pku.edu.cn>
 
+(define_insn "mov_rd2rd"
+  [(set (match_operand:DI 0 "rd_class_operand" "=Rd")
+        (match_operand:DI 1 "rd_class_operand" " Rd"))]
+	""
+	"rd2rd	%0, %1, 0")
+
 (define_insn "<code>di3"
   [(set          (match_operand:DI 0 "rd_class_operand" "=   Rd")
     (RD_ARITH:DI (match_operand:DI 1 "rd_class_operand" "%   Rd")
@@ -11,44 +17,22 @@
 	""
 	"<rd_arith_insn>	%0, %1, %2")
 
+; FIXME
 (define_insn "setrd<mode>_addr_label"
   [(set (match_operand:QHSD 0 "rd_class_operand" "=Rd")
         (match_operand:QHSD 1 "dd_label_operand" ""))]
 	""
-	{
-	// Strange if it is constant
-	  if (GET_CODE (operands[1]) == CONST) {
-		return "setrd	%0, %1";
-	  }
-	  else
-	  	return "swym";	// FIXME: only get used when switch-case exists
-	})
+	"setrd	%0, %1")
 
 (define_insn "setrd<mode>_addr_local"
   [(set (match_operand:QHSD 0 "rd_class_operand" "=Rd")
         (match_operand:QHSD 1 "local_symbolic_operand" ""))]
 	""
-	{
-	  if (GET_CODE (operands[1]) == CONST) {
-		return "swym"; // "setrd	%0, %1";
-	  }
+	{ if (GET_CODE (operands[1]) == CONST) { return "setrd	%0, %1"; }
 	  else {
 		/* (SYMBOL_REF_LOCAL_P (operands[1]) */
-		return "swym";
-	  }
-	})
-
-(define_insn "setrd<mode>_addr_global"
-  [(set (match_operand:QHSD 0 "rd_class_operand"  "=Rd")
-        (match_operand:QHSD 1 "global_symbolic_operand" ""))]
-        ""
-	{
-	  if (GET_CODE (operands[1]) == CONST) {
-		return	"swym";
-	  }
-	  else
-		return "";
-	})
+		return "setrd   %0, %1";
+	  }})
 
 (define_insn "setrd<mode>_const"
   [(set (match_operand:QHSD 0 "rd_class_operand"  "=Rd")
