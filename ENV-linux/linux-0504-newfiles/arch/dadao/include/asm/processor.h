@@ -5,8 +5,10 @@
 #ifndef __DADAO_ASM_PROCESSOR_H__
 #define __DADAO_ASM_PROCESSOR_H__
 
+#include <asm/arch_memory.h>
+
 /* the whole 48-bit address space, 47-bit for user address space */
-#define TASK_SIZE		(0x800000000000UL)
+#define TASK_SIZE		__DD_MEMORY_TASK_SIZE
 /* where the kernel will search for a free chunk of vm space during mmap's. */
 #define TASK_UNMAPPED_BASE	(TASK_SIZE / 8)
 
