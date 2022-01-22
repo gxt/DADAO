@@ -346,16 +346,16 @@ static void dd_pseudo_setrd(char *opcodep, int setrd_fa, unsigned long long setr
     }
 
     if (setrd_flag)
-        md_number_to_chars(opcodep, DADAO_INSN_SETOW | (setrd_fa << 18) | DADAO_WYDE_WL | setrd_w16_1, 4);
+        md_number_to_chars(opcodep, DADAO_INSN_SETOW_RD | (setrd_fa << 18) | DADAO_WYDE_WL | setrd_w16_1, 4);
     else
-        md_number_to_chars(opcodep, DADAO_INSN_SETZW | (setrd_fa << 18) | DADAO_WYDE_WL | setrd_w16_1, 4);
+        md_number_to_chars(opcodep, DADAO_INSN_SETZW_RD | (setrd_fa << 18) | DADAO_WYDE_WL | setrd_w16_1, 4);
 
     if (setrd_flag)
     {
         if (setrd_w16_2 != 0xFFFF)
         {
             opcodep = frag_more(4);
-            md_number_to_chars(opcodep, DADAO_INSN_ANDNW | (setrd_fa << 18) | DADAO_WYDE_WK | setrd_w16_2, 4);
+            md_number_to_chars(opcodep, DADAO_INSN_ANDNW_RD | (setrd_fa << 18) | DADAO_WYDE_WK | setrd_w16_2, 4);
         }
     }
     else
@@ -363,7 +363,7 @@ static void dd_pseudo_setrd(char *opcodep, int setrd_fa, unsigned long long setr
         if (setrd_w16_2 != 0)
         {
             opcodep = frag_more(4);
-            md_number_to_chars(opcodep, DADAO_INSN_ORW | (setrd_fa << 18) | DADAO_WYDE_WK | setrd_w16_2, 4);
+            md_number_to_chars(opcodep, DADAO_INSN_ORW_RD | (setrd_fa << 18) | DADAO_WYDE_WK | setrd_w16_2, 4);
         }
     }
 
@@ -372,7 +372,7 @@ static void dd_pseudo_setrd(char *opcodep, int setrd_fa, unsigned long long setr
         if (setrd_w16_3 != 0xFFFF)
         {
             opcodep = frag_more(4);
-            md_number_to_chars(opcodep, DADAO_INSN_ANDNW | (setrd_fa << 18) | DADAO_WYDE_WJ | setrd_w16_3, 4);
+            md_number_to_chars(opcodep, DADAO_INSN_ANDNW_RD | (setrd_fa << 18) | DADAO_WYDE_WJ | setrd_w16_3, 4);
         }
     }
     else
@@ -380,7 +380,7 @@ static void dd_pseudo_setrd(char *opcodep, int setrd_fa, unsigned long long setr
         if (setrd_w16_3 != 0)
         {
             opcodep = frag_more(4);
-            md_number_to_chars(opcodep, DADAO_INSN_ORW | (setrd_fa << 18) | DADAO_WYDE_WJ | setrd_w16_3, 4);
+            md_number_to_chars(opcodep, DADAO_INSN_ORW_RD | (setrd_fa << 18) | DADAO_WYDE_WJ | setrd_w16_3, 4);
         }
     }
 
@@ -389,7 +389,7 @@ static void dd_pseudo_setrd(char *opcodep, int setrd_fa, unsigned long long setr
         if (setrd_w16_4 != 0xFFFF)
         {
             opcodep = frag_more(4);
-            md_number_to_chars(opcodep, DADAO_INSN_ANDNW | (setrd_fa << 18) | DADAO_WYDE_WH | setrd_w16_4, 4);
+            md_number_to_chars(opcodep, DADAO_INSN_ANDNW_RD | (setrd_fa << 18) | DADAO_WYDE_WH | setrd_w16_4, 4);
         }
     }
     else
@@ -397,7 +397,7 @@ static void dd_pseudo_setrd(char *opcodep, int setrd_fa, unsigned long long setr
         if (setrd_w16_4 != 0)
         {
             opcodep = frag_more(4);
-            md_number_to_chars(opcodep, DADAO_INSN_ORW | (setrd_fa << 18) | DADAO_WYDE_WH | setrd_w16_4, 4);
+            md_number_to_chars(opcodep, DADAO_INSN_ORW_RD | (setrd_fa << 18) | DADAO_WYDE_WH | setrd_w16_4, 4);
         }
     }
 }
