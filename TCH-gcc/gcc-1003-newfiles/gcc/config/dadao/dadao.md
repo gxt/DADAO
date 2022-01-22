@@ -28,60 +28,138 @@
 	""
 	"swym")
 
+(define_expand "movdi"
+  [(set (match_operand:DI 0 "general_operand" "")
+        (match_operand:DI 1 "general_operand" ""))]
+	""
+	"{
+	  if (satisfies_constraint_Ao (operands[0]))
+	    {
+		emit_insn (gen_rtx_SET (gen_rtx_REG (DImode, 71), operands[0]));
+		operands[0] = gen_rtx_REG (DImode, 71);
+	    }
+	  if (satisfies_constraint_Ao (operands[1]))
+	    {
+		emit_insn (gen_rtx_SET (gen_rtx_REG (DImode, 71), operands[1]));
+		operands[1] = gen_rtx_REG (DImode, 71);
+	    }
+	  if (MEM_P (operands[0]))
+	    {
+		if (!REG_P (operands[1]))
+		  {
+		    if (can_create_pseudo_p ())
+		      {
+			rtx ip = gen_reg_rtx (DImode);
+			emit_insn (gen_movdi (ip, operands[1]));
+			operands[1] = ip;
+		      }
+		    else
+		      {
+			rtx ip = gen_rtx_REG (DImode, 7);
+			emit_insn (gen_movdi (ip, operands[1]));
+			operands[1] = ip;
+		      }
+		  }
+		DONE;
+	    }
+	  else if (MEM_P (operands[1]))
+	    {
+		if (!REG_P (operands[0]))
+		  {
+		    if (can_create_pseudo_p ())
+                      {
+			rtx ip = gen_reg_rtx (DImode);
+			emit_insn (gen_movdi (ip, operands[0]));
+			operands[0] = ip;
+                      }
+                    else
+                      {
+                        rtx ip = gen_rtx_REG (DImode, 7);
+                        emit_insn (gen_movdi (ip, operands[0]));
+                        operands[0] = ip;
+                      }
+		  }
+		DONE;
+	    }
+	}")
+
 (define_insn "mov<mode>"
-  [(set (match_operand:QHSD 0 "nonimmediate_operand" "=Rd,Rd, m")
-        (match_operand:QHSD 1 "general_operand"      " Rd, m,Rd"))]
+  [(set (match_operand:LTO 0 "nonimmediate_operand" "=m,Rd,Rd")
+        (match_operand:LTO 1 "general_operand"	    "Rd,Rd, m"))]
 	""
 	{
 	  if (MEM_P (operands[0]) &&
 	      REG_P (operands[1]) &&
 	      REGNO_REG_CLASS (REGNO(operands[1])) == GENERAL_REGS)
 	    {
-		if (satisfies_constraint_Wg (operands[0])) return "stm<bwto>	%1, %0, 0";
+		if (satisfies_constraint_Wg (operands[0])) return "stm<qhs>	%1, %0, 0";
 		else if
 		   (satisfies_constraint_Wm (operands[0]))
 		  {
 			rtx base = dadao_expand_memmov_indirect (operands, asm_out_file);
-			fprintf (asm_out_file, "\tstm<bwto>	%s, %s, %s, 0\n",
+			fprintf (asm_out_file, "\tstm<qhs>	%s, %s, %s, 0\n",
 				 reg_names[REGNO (operands[1])], reg_names[REGNO (base)], reg_names[DD_IP_RD]);
 			return "";
 		  }
-		else
-			return "st<bwto>	%1, %0";
+		else	return "st<qhs>	%1, %0";
 	    }
           if (MEM_P (operands[1]) &&
 	      REG_P (operands[0]) &&
 	      REGNO_REG_CLASS (REGNO(operands[0])) == GENERAL_REGS)
 	    {
-		bool mul_flag =
-			(GET_MODE (operands[0]) == DImode);
-
-                if (satisfies_constraint_Wg (operands[1]))
-		  {
-		    if (mul_flag)
-			return "ldmo	%0, %1, 0";
-		    else
-			return "ldm<bwto>u	%0, %1, 0";
-		  }
-		else if (satisfies_constraint_Wm (operands[1])) {
+                if (satisfies_constraint_Wg (operands[1])) return "ldm<qhs>u	%0, %1, 0";
+		else if
+		   (satisfies_constraint_Wm (operands[1]))
+		   {
 			rtx base = dadao_expand_memmov_indirect (operands, asm_out_file);
+
 			fprintf (asm_out_file,
-				 "\tldm<bwto>%s	%s, %s, %s, 0\n", mul_flag ? "" : "u",
-				 reg_names[REGNO (operands[0])], reg_names[REGNO (base)], reg_names[DD_IP_RD]);
+				 "\tldm<qhs>	%s, %s, %s, 0\n", reg_names[REGNO (operands[0])],
+								  reg_names[REGNO (base)],
+								  reg_names[DD_IP_RD]);
 			return "";
-		  }
-                else
-		  {
-		    if (mul_flag)
-			return "ldo	%0, %1";
-		    else
-			return "ld<bwto>u	%0, %1";
-		  }
+		   }
+                else	return "ld<qhs>u	%0, %1";
             }
 	  if (REG_P (operands[0]) && REGNO_REG_CLASS (REGNO(operands[0])) == GENERAL_REGS &&
 	      REG_P (operands[1]) && REGNO_REG_CLASS (REGNO(operands[1])) == GENERAL_REGS)
 		return "orr	%0, %1, rd0";
-	  return "xxx";
+
+	  return "";
+	})
+
+(define_insn "dd_st<mode>"
+  [(set (match_operand:LTO 0 "memory_operand"   "=m")
+        (match_operand:LTO 1 "rd_class_operand" "Rd"))]
+	""
+	{
+	  if (satisfies_constraint_Wg (operands[0])) return "stm<qhs>	%1, %0, 0";
+	  else if
+	     (satisfies_constraint_Wm (operands[0]))
+	     {
+		rtx base = dadao_expand_memmov_indirect (operands, asm_out_file);
+		fprintf (asm_out_file, "\tstm<qhs>	%s, %s, %s, 0\n",
+			 reg_names[REGNO (operands[1])], reg_names[REGNO (base)], reg_names[DD_IP_RD]);
+		return "";
+	      }
+	  else	return "st<qhs>	%1, %0";
+	})
+
+(define_insn "dd_ld<mode>"
+  [(set (match_operand:LTO 0 "rd_class_operand" "=Rd")
+        (match_operand:LTO 1 "memory_operand"   " m"))]
+	""
+	{
+          if (satisfies_constraint_Wg (operands[1]))
+		return "ldm<qhs>u	%0, %1, 0";
+	  else if (satisfies_constraint_Wm (operands[1]))
+	    {
+	      rtx base = dadao_expand_memmov_indirect (operands, asm_out_file);
+	      fprintf (asm_out_file, "\tldm<qhs>	%s, %s, %s, 0\n",
+				   reg_names[REGNO (operands[0])], reg_names[REGNO (base)], reg_names[DD_IP_RD]);
+	      return "";
+	    }
+	  else return "ld<qhs>u	%0, %1";
 	})
 
 (define_expand "call"
