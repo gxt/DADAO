@@ -1,0 +1,24 @@
+From 254d6b77e14563d2fa0d7b194f5120b1880e4d3d Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sat, 22 Jan 2022 22:21:42 +0800
+Subject: [PATCH] DADAO: include/uapi/linux/elf-em.h
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ include/uapi/linux/elf-em.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/uapi/linux/elf-em.h b/include/uapi/linux/elf-em.h
+index f47e853546fa..db9ab6788c67 100644
+--- a/include/uapi/linux/elf-em.h
++++ b/include/uapi/linux/elf-em.h
+@@ -66,5 +66,6 @@
+ /* Also Panasonic/MEI MN10300, AM33 */
+ #define EM_CYGNUS_MN10300 0xbeef
+ 
++#define EM_DADAO	0xDADA
+ 
+ #endif /* _LINUX_ELF_EM_H */
+-- 
+2.17.1
+
