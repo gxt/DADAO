@@ -128,23 +128,6 @@
 	  return "";
 	})
 
-(define_insn "dd_st<mode>"
-  [(set (match_operand:LTO 0 "memory_operand"   "=m")
-        (match_operand:LTO 1 "rd_class_operand" "Rd"))]
-	""
-	{
-	  if (satisfies_constraint_Wg (operands[0])) return "stm<qhs>	%1, %0, 0";
-	  else if
-	     (satisfies_constraint_Wm (operands[0]))
-	     {
-		rtx base = dadao_expand_memmov_indirect (operands, asm_out_file);
-		fprintf (asm_out_file, "\tstm<qhs>	%s, %s, %s, 0\n",
-			 reg_names[REGNO (operands[1])], reg_names[REGNO (base)], reg_names[DD_IP_RD]);
-		return "";
-	      }
-	  else	return "st<qhs>	%1, %0";
-	})
-
 (define_insn "dd_ld<mode>"
   [(set (match_operand:LTO 0 "rd_class_operand" "=Rd")
         (match_operand:LTO 1 "memory_operand"   " m"))]
@@ -160,6 +143,40 @@
 	      return "";
 	    }
 	  else return "ld<qhs>u	%0, %1";
+	})
+
+(define_insn "dd_st<mode>"
+  [(set (match_operand:QHSD 0 "memory_operand"   "=m")
+        (match_operand:QHSD 1 "rd_class_operand" "Rd"))]
+	""
+	{
+	  if (satisfies_constraint_Wg (operands[0])) return "stm<bwto>	%1, %0, 0";
+	  else if
+	     (satisfies_constraint_Wm (operands[0]))
+	     {
+		rtx base = dadao_expand_memmov_indirect (operands, asm_out_file);
+		fprintf (asm_out_file, "\tstm<bwto>	%s, %s, %s, 0\n",
+			 reg_names[REGNO (operands[1])], reg_names[REGNO (base)], reg_names[DD_IP_RD]);
+		return "";
+	      }
+	  else	return "st<bwto>	%1, %0";
+	})
+
+(define_insn "dd_lddi"
+  [(set (match_operand:DI 0 "rd_class_operand" "=Rd")
+        (match_operand:DI 1 "memory_operand"   " m"))]
+	""
+	{
+          if (satisfies_constraint_Wg (operands[1]))
+		return "ldmo	%0, %1, 0";
+	  else if (satisfies_constraint_Wm (operands[1]))
+	    {
+	      rtx base = dadao_expand_memmov_indirect (operands, asm_out_file);
+	      fprintf (asm_out_file, "\tldmo	%s, %s, %s, 0\n",
+				   reg_names[REGNO (operands[0])], reg_names[REGNO (base)], reg_names[DD_IP_RD]);
+	      return "";
+	    }
+	  else return "ldo	%0, %1";
 	})
 
 (define_expand "call"
