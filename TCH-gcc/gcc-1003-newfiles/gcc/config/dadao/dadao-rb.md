@@ -195,6 +195,13 @@
 	""
 	"setrb	%0, %1");
 
+; FIXME: Add this back ONLY for SWITCH-CASE problem report
+(define_insn "dd_rb_get_local_symbol"
+  [(set (match_operand:DI 0 "rb_class_operand" "=Rb")
+        (match_operand:DI 1 "local_symbolic_operand"  ""))]
+	""
+	"setrb	%0, %1");
+
 (define_insn "dd_rb_get_global_symbol"
   [(set (match_operand:DI 0 "rb_class_operand" "=Rb")
         (match_operand:DI 1 "global_symbolic_operand"  ""))]
