@@ -1,6 +1,5 @@
 config DADAO
 	def_bool y
-	select GENERIC_ATOMIC64
 
 config 64BIT
 	def_bool y
