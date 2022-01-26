@@ -36,7 +36,8 @@
 	  if (satisfies_constraint_Ao (operands[1]))
 	    {
 		emit_insn (gen_rtx_SET (gen_rtx_REG (DImode, 71), operands[1]));
-		operands[1] = gen_rtx_REG (DImode, 71);
+		emit_insn (gen_rtx_SET (gen_rtx_REG (DImode, 7), gen_rtx_REG (DImode, 71)));
+		operands[1] = gen_rtx_REG (DImode, 7);
 	    }
 	  if (MEM_P (operands[0]))
 	    {
