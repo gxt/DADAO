@@ -1,0 +1,33 @@
+#
+# Makefile for multich comparison
+#
+DDB_MULTI_ARCH	= aarch64-linux-gnu	\
+		  arm-linux-gnueabi	\
+		  riscv64-linux-gnu	\
+		  x86_64-linux-gnu	\
+		  m68k-linux-gnu
+DDB_MULTI_GCC	= $(foreach var, $(DDB_MULTI_ARCH), $(var)-gcc)
+
+DDB_MULTI_ARCH_CFLAGS_DEFAULT	:= -w -O0
+DDB_MULTI_ARCH_CFLAGS_DEFAULT	+= -save-temps		\
+				   -fdump-rtl-final	\
+				   -fdump-rtl-vregs	\
+				   -fdump-rtl-reload
+
+# Enable: relate to TOP_DIR <== $(DIR_DADAO_TOP)/relate-file-address
+DDB_MULTI_ARCH_TESTFILE	:= $(DIR_DADAO_TOP)/DADAO-bench/helloworld.c
+DDB_MULTI_ARCH_TESTNAME	:= $(basename $(notdir $(DDB_MULTI_ARCH_TESTFILE)))
+
+bench-multi-arch:
+	@for eabi in $(DDB_MULTI_ARCH);	do 		\
+		test -d $(DDB_DST_DIR)/$$eabi ||	\
+		mkdir -p $(DDB_DST_DIR)/$$eabi ;	\
+	 cd $(DDB_DST_DIR)/$$eabi ;			\
+		cp $(DDB_MULTI_ARCH_TESTFILE) ./temp-$(DDB_MULTI_ARCH_TESTNAME).c;	\
+		$$eabi-gcc ./temp-$(DDB_MULTI_ARCH_TESTNAME).c 				\
+		  -o ./out-$(DDB_MULTI_ARCH_TESTNAME) $(DDB_MULTI_ARCH_CFLAGS_DEFAULT);	\
+		$$eabi-objdump -D ./temp-$(DDB_MULTI_ARCH_TESTNAME).o > ./rel-obj-$(DDB_MULTI_ARCH_TESTNAME).dump;	\
+		$$eabi-readelf -a ./temp-$(DDB_MULTI_ARCH_TESTNAME).o > ./elf-obj-$(DDB_MULTI_ARCH_TESTNAME).elf;	\
+		$$eabi-objdump -D ./out-$(DDB_MULTI_ARCH_TESTNAME) > ./rel-out-$(DDB_MULTI_ARCH_TESTNAME).dump;	\
+		$$eabi-readelf -a ./out-$(DDB_MULTI_ARCH_TESTNAME) > ./elf-out-$(DDB_MULTI_ARCH_TESTNAME).elf;	\
+	 done
