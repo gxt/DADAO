@@ -33,11 +33,6 @@
         (match_operand:DI 1 "general_operand" ""))]
 	""
 	"{
-	  if (satisfies_constraint_Ao (operands[0]))
-	    {
-		emit_insn (gen_rtx_SET (gen_rtx_REG (DImode, 71), operands[0]));
-		operands[0] = gen_rtx_REG (DImode, 71);
-	    }
 	  if (satisfies_constraint_Ao (operands[1]))
 	    {
 		emit_insn (gen_rtx_SET (gen_rtx_REG (DImode, 71), operands[1]));
