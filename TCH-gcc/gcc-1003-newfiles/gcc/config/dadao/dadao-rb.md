@@ -193,20 +193,20 @@
   [(set (match_operand:DI 0 "rb_class_operand" "=Rb")
         (match_operand:DI 1 "const_int_operand"  ""))]
 	""
-	"setrb	%0, %1");
+	"move	%0, %1");
 
 ; FIXME: Add this back ONLY for SWITCH-CASE problem report
 (define_insn "dd_rb_get_local_symbol"
   [(set (match_operand:DI 0 "rb_class_operand" "=Rb")
         (match_operand:DI 1 "local_symbolic_operand"  ""))]
 	""
-	"setrb	%0, %1");
+	"move	%0, %1");
 
 (define_insn "dd_rb_get_global_symbol"
   [(set (match_operand:DI 0 "rb_class_operand" "=Rb")
         (match_operand:DI 1 "global_symbolic_operand"  ""))]
 	""
-	"setrb	%0, %1");
+	"move	%0, %1");
 
 (define_expand "dd_plus_rb"
   [(set      (match_operand:DI 0 "rd_class_operand" "=Rd")
@@ -253,4 +253,4 @@
              (match_operand:DI 2 "const_int_operand"  "i")))
 	(clobber (reg:DI 7))]
 	""
-	"rb2rd	%0, %1, 0	\;setrd	rd7, %2	\;add	rd0, %0, rd7, %0	\;")
+	"rb2rd	%0, %1, 0	\;move	rd7, %2	\;add	rd0, %0, rd7, %0	\;")

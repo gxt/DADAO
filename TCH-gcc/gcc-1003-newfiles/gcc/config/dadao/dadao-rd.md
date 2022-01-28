@@ -18,27 +18,27 @@
 	"<rd_arith_insn>	%0, %1, %2")
 
 ; FIXME
-(define_insn "setrd<mode>_addr_label"
+(define_insn "move<mode>_addr_label"
   [(set (match_operand:QHSD 0 "rd_class_operand" "=Rd")
         (match_operand:QHSD 1 "dd_label_operand" ""))]
 	""
-	"setrd	%0, %1")
+	"move	%0, %1")
 
-(define_insn "setrd<mode>_addr_local"
+(define_insn "move<mode>_addr_local"
   [(set (match_operand:QHSD 0 "rd_class_operand" "=Rd")
         (match_operand:QHSD 1 "local_symbolic_operand" ""))]
 	""
-	{ if (GET_CODE (operands[1]) == CONST) { return "setrd	%0, %1"; }
+	{ if (GET_CODE (operands[1]) == CONST) { return "move	%0, %1"; }
 	  else {
 		/* (SYMBOL_REF_LOCAL_P (operands[1]) */
-		return "setrd   %0, %1";
+		return "move	%0, %1";
 	  }})
 
-(define_insn "setrd<mode>_const"
+(define_insn "move<mode>_const"
   [(set (match_operand:QHSD 0 "rd_class_operand"  "=Rd")
         (match_operand:QHSD 1 "const_int_operand" "  i"))]
 	""
-	"setrd	%0, %1")
+	"move	%0, %1")
 
 (define_expand "adddi3"
   [(set      (match_operand:DI 0 "register_operand" "=r")
@@ -80,10 +80,10 @@
 	  if (satisfies_constraint_It(operands[2])) {
 		if (operands[0] == operands[1]) 
 			return "addi	%0, %2";
-		else	return "setrd	%0, %2	\;add	rd0, %0, %1, %0";
+		else	return "move	%0, %2	\;add	rd0, %0, %1, %0";
 	  }
 	  else
-		return "setrd	%0, %2	\;add	rd0, %0, %1, %0";
+		return "move	%0, %2	\;add	rd0, %0, %1, %0";
 	})
 
 (define_insn "dd_addrd"
@@ -133,10 +133,10 @@
 	  if (satisfies_constraint_It(operands[2])) {
 		if (operands[0] == operands[1]) 
 			return "addi	%0, %n2";
-		else	return "setrd	%0, %2	\;sub	rd0, %0, %1, %0";
+		else	return "move	%0, %2	\;sub	rd0, %0, %1, %0";
 	  }
 	  else
-		return "setrd	%0, %2	\;sub	rd0, %0, %1, %0";
+		return "move	%0, %2	\;sub	rd0, %0, %1, %0";
 	})
 
 (define_insn "dd_subrd"
