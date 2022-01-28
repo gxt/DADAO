@@ -402,29 +402,27 @@ static void dd_pseudo_move_imm(char *opcodep, int reg_dst, unsigned long long sr
     }
 }
 
-static void dd_pseudo_move_symbol(char *opcodep, int reg_dst, unsigned long long src_symbol)
+static void dd_pseudo_move_symbol(char *opcodep, expressionS exp[4], fragS *opc_fragP)
 {
-    /* setrb rb, imm64 */
-    unsigned int setrb_w16_1, setrb_w16_2, setrb_w16_3, setrb_w16_4;
-    setrb_w16_1 = (src_symbol) & 0xFFFF;
-    setrb_w16_2 = (src_symbol >> 16) & 0xFFFF;
-    setrb_w16_3 = (src_symbol >> 32) & 0xFFFF;
-    setrb_w16_4 = (src_symbol >> 48) & 0xFFFF;
-
-    md_number_to_chars(opcodep, DADAO_INSN_SETZW_RB | (reg_dst << 18) | DADAO_WYDE_WL | setrb_w16_1, 4);
-
-    if(setrb_w16_2!=0){
-        opcodep = frag_more(4);
-        md_number_to_chars(opcodep, DADAO_INSN_ORW_RB | (reg_dst << 18) | DADAO_WYDE_WK | setrb_w16_2, 4);
+    if(exp[0].X_add_number < 0x40){ // move rd, symbol
+        md_number_to_chars(opcodep, DADAO_INSN_SETZW_RD, 4);
+        if (!expand_op) {
+            fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_GETA);
+        }
+        else
+            frag_var(rs_machine_dependent, DD_INSN_BYTES(3), 0, ENCODE_RELAX(STATE_GETA, STATE_UNDF),
+                    exp[1].X_add_symbol, exp[1].X_add_number, opcodep);    
     }
-    if(setrb_w16_3!=0){
-        opcodep = frag_more(4);
-        md_number_to_chars(opcodep, DADAO_INSN_ORW_RB | (reg_dst << 18) | DADAO_WYDE_WJ | setrb_w16_3, 4);
+    else { // move rb, symbol
+        md_number_to_chars(opcodep, DADAO_INSN_SETZW_RB, 4);
+        if (!expand_op) {
+            fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_GETA);
+        }
+        else
+            frag_var(rs_machine_dependent, DD_INSN_BYTES(3), 0, ENCODE_RELAX(STATE_GETA, STATE_UNDF),
+                    exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
     }
-    if(setrb_w16_4!=0){
-        opcodep = frag_more(4);
-        md_number_to_chars(opcodep, DADAO_INSN_ORW_RB | (reg_dst << 18) | DADAO_WYDE_WH | setrb_w16_4, 4);
-    }
+    return;
 }
 
 #define __DD_EXP_SHOULD_BE_RD(e, f) \
@@ -768,7 +766,7 @@ void dadao_md_assemble(char *str)
             if (exp[1].X_op == O_constant)
                 dd_pseudo_move_imm(opcodep, exp[0].X_add_number, exp[1].X_add_number);
             else
-                dd_pseudo_move_symbol(opcodep, exp[0].X_add_number, exp[1].X_add_number);
+                dd_pseudo_move_symbol(opcodep, exp, opc_fragP);
             return;
         case 1:
             /* move rb, imm64 : wait to fix */
@@ -781,7 +779,7 @@ void dadao_md_assemble(char *str)
             if (exp[1].X_op == O_constant)
                 dd_pseudo_move_imm(opcodep, exp[0].X_add_number, exp[1].X_add_number);
             else
-                dd_pseudo_move_symbol(opcodep, exp[0].X_add_number, exp[1].X_add_number);
+                dd_pseudo_move_symbol(opcodep, exp, opc_fragP);
             return;
         default:
             break;
@@ -963,7 +961,8 @@ void md_convert_frag(bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
         break;
 
     case ENCODE_RELAX(STATE_GETA, STATE_ZERO):
-        dd_set_addr_offset(opcodep, target_address - opcode_address, 18, 0);
+        dd_set_addr_offset(opcodep, target_address & 0xFFFF, 18, 0);
+        // need to fix higher_address addr
         var_part_size = 0;
         break;
 
