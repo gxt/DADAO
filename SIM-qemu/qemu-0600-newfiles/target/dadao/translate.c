@@ -509,27 +509,6 @@ static bool trans_csev(DisasContext *ctx, arg_csev *a)
     return trans_cs_od_ev(ctx, a, false);
 }
 
-static bool trans_setow(DisasContext *ctx, arg_setow *a)
-{
-    if (a->rd == 0) {
-        return false;
-    }
-    int64_t arg = ((int64_t)a->imm << (a->j * 16)) |
-                  ~((int64_t)0xFFFF << (a->j * 16));
-    tcg_gen_movi_i64(cpu_rd[a->rd], arg);
-    return true;
-}
-
-static bool trans_setzw(DisasContext *ctx, arg_setzw *a)
-{
-    if (a->rd == 0) {
-        return false;
-    }
-    int64_t arg = (int64_t)a->imm << (a->j * 16);
-    tcg_gen_movi_i64(cpu_rd[a->rd], arg);
-    return true;
-}
-
 static bool trans_orw(DisasContext *ctx, arg_orw *a)
 {
     if (a->rd == 0) {
@@ -553,6 +532,60 @@ static bool trans_andnw(DisasContext *ctx, arg_andnw *a)
     return true;
 }
 
+static bool trans_setzw(DisasContext *ctx, arg_setzw *a)
+{
+    if (a->rd == 0) {
+        return false;
+    }
+    int64_t arg = (int64_t)a->imm << (a->j * 16);
+    tcg_gen_movi_i64(cpu_rd[a->rd], arg);
+    return true;
+}
+
+static bool trans_setow(DisasContext *ctx, arg_setow *a)
+{
+    if (a->rd == 0) {
+        return false;
+    }
+    int64_t arg = ((int64_t)a->imm << (a->j * 16)) |
+                  ~((int64_t)0xFFFF << (a->j * 16));
+    tcg_gen_movi_i64(cpu_rd[a->rd], arg);
+    return true;
+}
+
+static bool trans_orwrb(DisasContext *ctx, arg_orwrb *a)
+{
+    if (a->rb == 0) {
+        return false;
+    }
+    int64_t arg = (int64_t)a->imm << (a->j * 16);
+    tcg_gen_ori_i64(cpu_rb[a->rb], cpu_rb[a->rb], arg);
+    return true;
+}
+
+static bool trans_andnwrb(DisasContext *ctx, arg_andnwrb *a)
+{
+    if (a->rb == 0) {
+        return false;
+    }
+    int64_t arg = ((int64_t)a->imm << (a->j * 16)) |
+                  ~((int64_t)0xFFFF << (a->j * 16));
+    int64_t xor = (int64_t)0xFFFF << (a->j * 16);
+    tcg_gen_andi_i64(cpu_rb[a->rb], cpu_rb[a->rb], arg);
+    tcg_gen_xori_i64(cpu_rb[a->rb], cpu_rb[a->rb], xor);
+    return true;
+}
+
+static bool trans_setzwrb(DisasContext *ctx, arg_setzwrb *a)
+{
+    if (a->rb == 0) {
+        return false;
+    }
+    int64_t arg = (int64_t)a->imm << (a->j * 16);
+    tcg_gen_movi_i64(cpu_rb[a->rb], arg);
+    return true;
+}
+
 /* arithmetic instructions */
 
 static bool trans_addi(DisasContext *ctx, arg_addi *a)
@@ -564,7 +597,7 @@ static bool trans_addi(DisasContext *ctx, arg_addi *a)
     return true;
 }
 
-static bool trans_addrbi(DisasContext *ctx, arg_addrbi *a)
+static bool trans_addirb(DisasContext *ctx, arg_addirb *a)
 {
     if (a->rb == 0) {
         return false;
