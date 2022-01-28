@@ -34,9 +34,9 @@ const struct dadao_opcode dadao_opcodes[] = {
 
 	/* pseudo instructions */
 	/* name		op-num	maj-op	min-op	fa		fb		fc		fd		insn-type */
-	{"setrd",	2,	0,	0,	_OP(rd),	_OP(noop),	_OP(none),	_OP(none),	_T(pseudo)},
+	{"move",	2,	0,	0,	_OP(rd),	_OP(noop),	_OP(none),	_OP(none),	_T(pseudo)},
 
-	{"setrb",	2,	1,	0,	_OP(rb),	_OP(noop),	_OP(none),	_OP(none),	_T(pseudo)},
+	{"move",	2,	1,	0,	_OP(rb),	_OP(noop),	_OP(none),	_OP(none),	_T(pseudo)},
 
 	{NULL,		0,	0,	0,	_OP(noop),	_OP(noop),	_OP(noop),	_OP(noop),	_T(pseudo)},
 

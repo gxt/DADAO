@@ -327,7 +327,7 @@ void dadao_md_begin(void)
                                        dadao_reg_aliases[i].number, &zero_address_frag));
 }
 
-static void dd_pseudo_setrd(char *opcodep, int setrd_fa, unsigned long long setrd_octa)
+static void dd_pseudo_move_imm(char *opcodep, int reg_dst, unsigned long long src_imm)
 {
     int setrd_flag;
     unsigned int setrd_w16_1, setrd_w16_2, setrd_w16_3, setrd_w16_4;
@@ -335,10 +335,10 @@ static void dd_pseudo_setrd(char *opcodep, int setrd_fa, unsigned long long setr
     /* setrd rd, imm64 */
     setrd_flag = 0; // use setow or setzw
 
-    setrd_w16_1 = (setrd_octa)&0xFFFF;
-    setrd_w16_2 = (setrd_octa >> 16) & 0xFFFF;
-    setrd_w16_3 = (setrd_octa >> 32) & 0xFFFF;
-    setrd_w16_4 = (setrd_octa >> 48) & 0xFFFF;
+    setrd_w16_1 = (src_imm)&0xFFFF;
+    setrd_w16_2 = (src_imm >> 16) & 0xFFFF;
+    setrd_w16_3 = (src_imm >> 32) & 0xFFFF;
+    setrd_w16_4 = (src_imm >> 48) & 0xFFFF;
 
     if (((setrd_w16_4 == 0) + (setrd_w16_3 == 0) + (setrd_w16_2 == 0)) < ((setrd_w16_4 == 0xFFFF) + (setrd_w16_3 == 0xFFFF) + (setrd_w16_2 == 0xFFFF)))
     {
@@ -346,16 +346,16 @@ static void dd_pseudo_setrd(char *opcodep, int setrd_fa, unsigned long long setr
     }
 
     if (setrd_flag)
-        md_number_to_chars(opcodep, DADAO_INSN_SETOW_RD | (setrd_fa << 18) | DADAO_WYDE_WL | setrd_w16_1, 4);
+        md_number_to_chars(opcodep, DADAO_INSN_SETOW_RD | (reg_dst << 18) | DADAO_WYDE_WL | setrd_w16_1, 4);
     else
-        md_number_to_chars(opcodep, DADAO_INSN_SETZW_RD | (setrd_fa << 18) | DADAO_WYDE_WL | setrd_w16_1, 4);
+        md_number_to_chars(opcodep, DADAO_INSN_SETZW_RD | (reg_dst << 18) | DADAO_WYDE_WL | setrd_w16_1, 4);
 
     if (setrd_flag)
     {
         if (setrd_w16_2 != 0xFFFF)
         {
             opcodep = frag_more(4);
-            md_number_to_chars(opcodep, DADAO_INSN_ANDNW_RD | (setrd_fa << 18) | DADAO_WYDE_WK | setrd_w16_2, 4);
+            md_number_to_chars(opcodep, DADAO_INSN_ANDNW_RD | (reg_dst << 18) | DADAO_WYDE_WK | setrd_w16_2, 4);
         }
     }
     else
@@ -363,7 +363,7 @@ static void dd_pseudo_setrd(char *opcodep, int setrd_fa, unsigned long long setr
         if (setrd_w16_2 != 0)
         {
             opcodep = frag_more(4);
-            md_number_to_chars(opcodep, DADAO_INSN_ORW_RD | (setrd_fa << 18) | DADAO_WYDE_WK | setrd_w16_2, 4);
+            md_number_to_chars(opcodep, DADAO_INSN_ORW_RD | (reg_dst << 18) | DADAO_WYDE_WK | setrd_w16_2, 4);
         }
     }
 
@@ -372,7 +372,7 @@ static void dd_pseudo_setrd(char *opcodep, int setrd_fa, unsigned long long setr
         if (setrd_w16_3 != 0xFFFF)
         {
             opcodep = frag_more(4);
-            md_number_to_chars(opcodep, DADAO_INSN_ANDNW_RD | (setrd_fa << 18) | DADAO_WYDE_WJ | setrd_w16_3, 4);
+            md_number_to_chars(opcodep, DADAO_INSN_ANDNW_RD | (reg_dst << 18) | DADAO_WYDE_WJ | setrd_w16_3, 4);
         }
     }
     else
@@ -380,7 +380,7 @@ static void dd_pseudo_setrd(char *opcodep, int setrd_fa, unsigned long long setr
         if (setrd_w16_3 != 0)
         {
             opcodep = frag_more(4);
-            md_number_to_chars(opcodep, DADAO_INSN_ORW_RD | (setrd_fa << 18) | DADAO_WYDE_WJ | setrd_w16_3, 4);
+            md_number_to_chars(opcodep, DADAO_INSN_ORW_RD | (reg_dst << 18) | DADAO_WYDE_WJ | setrd_w16_3, 4);
         }
     }
 
@@ -389,7 +389,7 @@ static void dd_pseudo_setrd(char *opcodep, int setrd_fa, unsigned long long setr
         if (setrd_w16_4 != 0xFFFF)
         {
             opcodep = frag_more(4);
-            md_number_to_chars(opcodep, DADAO_INSN_ANDNW_RD | (setrd_fa << 18) | DADAO_WYDE_WH | setrd_w16_4, 4);
+            md_number_to_chars(opcodep, DADAO_INSN_ANDNW_RD | (reg_dst << 18) | DADAO_WYDE_WH | setrd_w16_4, 4);
         }
     }
     else
@@ -397,33 +397,33 @@ static void dd_pseudo_setrd(char *opcodep, int setrd_fa, unsigned long long setr
         if (setrd_w16_4 != 0)
         {
             opcodep = frag_more(4);
-            md_number_to_chars(opcodep, DADAO_INSN_ORW_RD | (setrd_fa << 18) | DADAO_WYDE_WH | setrd_w16_4, 4);
+            md_number_to_chars(opcodep, DADAO_INSN_ORW_RD | (reg_dst << 18) | DADAO_WYDE_WH | setrd_w16_4, 4);
         }
     }
 }
 
-static void dd_pseudo_setrb(char *opcodep, int setrb_fa, unsigned long long setrb_octa)
+static void dd_pseudo_move_symbol(char *opcodep, int reg_dst, unsigned long long src_symbol)
 {
     /* setrb rb, imm64 */
     unsigned int setrb_w16_1, setrb_w16_2, setrb_w16_3, setrb_w16_4;
-    setrb_w16_1 = (setrb_octa) & 0xFFFF;
-    setrb_w16_2 = (setrb_octa >> 16) & 0xFFFF;
-    setrb_w16_3 = (setrb_octa >> 32) & 0xFFFF;
-    setrb_w16_4 = (setrb_octa >> 48) & 0xFFFF;
+    setrb_w16_1 = (src_symbol) & 0xFFFF;
+    setrb_w16_2 = (src_symbol >> 16) & 0xFFFF;
+    setrb_w16_3 = (src_symbol >> 32) & 0xFFFF;
+    setrb_w16_4 = (src_symbol >> 48) & 0xFFFF;
 
-    md_number_to_chars(opcodep, DADAO_INSN_SETZW_RB | (setrb_fa << 18) | DADAO_WYDE_WL | setrb_w16_1, 4);
+    md_number_to_chars(opcodep, DADAO_INSN_SETZW_RB | (reg_dst << 18) | DADAO_WYDE_WL | setrb_w16_1, 4);
 
     if(setrb_w16_2!=0){
         opcodep = frag_more(4);
-        md_number_to_chars(opcodep, DADAO_INSN_ORW_RB | (setrb_fa << 18) | DADAO_WYDE_WK | setrb_w16_2, 4);
+        md_number_to_chars(opcodep, DADAO_INSN_ORW_RB | (reg_dst << 18) | DADAO_WYDE_WK | setrb_w16_2, 4);
     }
     if(setrb_w16_3!=0){
         opcodep = frag_more(4);
-        md_number_to_chars(opcodep, DADAO_INSN_ORW_RB | (setrb_fa << 18) | DADAO_WYDE_WJ | setrb_w16_3, 4);
+        md_number_to_chars(opcodep, DADAO_INSN_ORW_RB | (reg_dst << 18) | DADAO_WYDE_WJ | setrb_w16_3, 4);
     }
     if(setrb_w16_4!=0){
         opcodep = frag_more(4);
-        md_number_to_chars(opcodep, DADAO_INSN_ORW_RB | (setrb_fa << 18) | DADAO_WYDE_WH | setrb_w16_4, 4);
+        md_number_to_chars(opcodep, DADAO_INSN_ORW_RB | (reg_dst << 18) | DADAO_WYDE_WH | setrb_w16_4, 4);
     }
 }
 
@@ -758,28 +758,30 @@ void dadao_md_assemble(char *str)
         switch (instruction->major_opcode)
         {
         case 0:
-            /* setrd rd, imm64 */
+            /* move rd, imm64 */
             if (n_operands != 2)
                 break;
             if (exp[0].X_op != O_register)
                 break;
             if (exp[0].X_add_number >= 0x40)
                 break;
-            if (exp[1].X_op != O_constant)
-                break;
-            dd_pseudo_setrd(opcodep, exp[0].X_add_number, exp[1].X_add_number);
+            if (exp[1].X_op == O_constant)
+                dd_pseudo_move_imm(opcodep, exp[0].X_add_number, exp[1].X_add_number);
+            else
+                dd_pseudo_move_symbol(opcodep, exp[0].X_add_number, exp[1].X_add_number);
             return;
         case 1:
-            /* setrb rb, imm64 : wait to fix */
+            /* move rb, imm64 : wait to fix */
             if (n_operands != 2)
                 break;
             if (exp[0].X_op != O_register)
                 break;
             if (exp[0].X_add_number < 0x40 || exp[0].X_add_number > 0x7F )
                 break;
-            if (exp[1].X_op != O_constant)
-                break;
-            dd_pseudo_setrb(opcodep, exp[0].X_add_number, exp[1].X_add_number);
+            if (exp[1].X_op == O_constant)
+                dd_pseudo_move_imm(opcodep, exp[0].X_add_number, exp[1].X_add_number);
+            else
+                dd_pseudo_move_symbol(opcodep, exp[0].X_add_number, exp[1].X_add_number);
             return;
         default:
             break;
