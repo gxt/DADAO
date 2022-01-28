@@ -44,14 +44,6 @@ _start:
 	# 0001-1xxx
 	cmps	rd1, rd2, 3
 	cmpu	rd1, rd2, 3
-	setowh	rd1, 2
-	setowj	rd1, 2
-	setowk	rd1, 2
-	setowl	rd1, 2
-	setzwh	rd1, 2
-	setzwj	rd1, 2
-	setzwk	rd1, 2
-	setzwl	rd1, 2
 	orwh	rd1, 2
 	orwj	rd1, 2
 	orwk	rd1, 2
@@ -60,6 +52,14 @@ _start:
 	andnwj	rd1, 2
 	andnwk	rd1, 2
 	andnwl	rd1, 2
+	setzwh	rd1, 2
+	setzwj	rd1, 2
+	setzwk	rd1, 2
+	setzwl	rd1, 2
+	setowh	rd1, 2
+	setowj	rd1, 2
+	setowk	rd1, 2
+	setowl	rd1, 2
 	# 0010-0xxx
 	csn	rd1, rd2, rd3, rd4
 	csnn	rd1, rd2, rd3, rd4
@@ -108,14 +108,18 @@ _start:
 	# 0100-1xxx
 	addi	rb1, 1
 	strb	rb1, rb2, 2
-	setzwh	rb1, 3
-	setzwj	rb1, 3
-	setzwk	rb1, 3
-	setzwl	rb1, 3
 	orwh	rb1, 3
 	orwj	rb1, 3
 	orwk	rb1, 3
 	orwl	rb1, 3
+	andnwh	rb1, 3
+	andnwj	rb1, 3
+	andnwk	rb1, 3
+	andnwl	rb1, 3
+	setzwh	rb1, 3
+	setzwj	rb1, 3
+	setzwk	rb1, 3
+	setzwl	rb1, 3
 	stmrb	rb1, rb2, rd3, 4
 	# 0101-0000L MISC-RF
 	ft2fo	rf1, rf2, 3
