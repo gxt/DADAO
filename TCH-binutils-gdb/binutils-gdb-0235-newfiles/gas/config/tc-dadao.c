@@ -753,37 +753,31 @@ void dadao_md_assemble(char *str)
 
     if (instruction->type == dadao_type_pseudo)
     {
-        switch (instruction->major_opcode)
-        {
-        case 0:
-            /* move rd, imm64 */
-            if (n_operands != 2)
-                break;
-            if (exp[0].X_op != O_register)
-                break;
-            if (exp[0].X_add_number >= 0x40)
-                break;
-            if (exp[1].X_op == O_constant)
-                dd_pseudo_move_imm(opcodep, exp[0].X_add_number, exp[1].X_add_number);
-            else
-                dd_pseudo_move_symbol(opcodep, exp, opc_fragP);
-            return;
-        case 1:
-            /* move rb, imm64 : wait to fix */
-            if (n_operands != 2)
-                break;
-            if (exp[0].X_op != O_register)
-                break;
-            if (exp[0].X_add_number < 0x40 || exp[0].X_add_number > 0x7F )
-                break;
-            if (exp[1].X_op == O_constant)
-                dd_pseudo_move_imm(opcodep, exp[0].X_add_number, exp[1].X_add_number);
-            else
-                dd_pseudo_move_symbol(opcodep, exp, opc_fragP);
-            return;
-        default:
-            break;
+        /* move rd, imm/symbol */
+        if (n_operands == 2 && exp[0].X_op == O_register) {
+            if(exp[0].X_add_number < 0x40){
+                if (exp[1].X_op == O_constant)
+                    dd_pseudo_move_imm(opcodep, exp[0].X_add_number, exp[1].X_add_number);
+                else
+                    dd_pseudo_move_symbol(opcodep, exp, opc_fragP);
+                return;
+            }   
         }
+
+        insn_alt[0] = '_';
+        instruction = (struct dadao_opcode *)hash_find(dadao_opcode_hash, insn_alt);
+        
+        /* move rb, imm/symbol */
+        if (instruction != NULL && n_operands == 2 && exp[0].X_op == O_register) {
+            if(exp[0].X_add_number >= 0x40 && exp[0].X_add_number <= 0x7F){
+                if (exp[1].X_op == O_constant)
+                    dd_pseudo_move_imm(opcodep, exp[0].X_add_number, exp[1].X_add_number);
+                else
+                    dd_pseudo_move_symbol(opcodep, exp, opc_fragP);
+                return;
+            }   
+        }
+        
         as_bad_where(__FILE__, __LINE__, "(%s %s) unknown insn", &insn_alt[1], operands);
         return;
     }
