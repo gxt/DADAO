@@ -179,3 +179,10 @@ _start:
 	cr2rd	cp1, rd2, cr3, cr4
 	cpload	cp1, rb2, 3
 	cpstor	cp1, rb2, 3
+	# pseudo insn
+	move	rd1, 0xabcdabcdabcdabcd
+	move	rd2, -1
+	move	rd3, _start
+	move	rb1, 0xabcdabcdabcdabcd
+	move	rb2, -1
+	move	rb3, _start
