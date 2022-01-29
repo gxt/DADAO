@@ -16,7 +16,7 @@ bench-simple-insn-gnu:
 	cd $(DDB_DST_DIR) ;								\
 		$(DDB_GNU_GAS) $(DDB_SRC_DIR)/$(DDB_SIMPLE_INSN).S			\
 			-o $(DDB_SIMPLE_INSN).o ;					\
-		$(DDB_GNU_READGNU) -a $(DDB_SIMPLE_INSN).o > $(DDB_SIMPLE_INSN).o.elf ;	\
+		$(DDB_GNU_READELF) -a $(DDB_SIMPLE_INSN).o > $(DDB_SIMPLE_INSN).o.elf ;	\
 		$(DDB_GNU_OBJDUMP) -d $(DDB_SIMPLE_INSN).o > $(DDB_SIMPLE_INSN).o.dump
 
 
@@ -48,9 +48,9 @@ bench-simple-main-gnu:
 			-isystem $(DIR_DADAO_INSTALL)/dadao-linux-gnu/include		\
 			-isystem $(DIR_DADAO_INSTALL)/dadao-linux-gnu/sys-include	\
 			-o $(DDB_DST_DIR)/$(DDB_SIMPLE_MAIN) ;				\
-		$(DDB_GNU_READGNU) -a $(DDB_SIMPLE_MAIN).o > $(DDB_SIMPLE_MAIN).o.elf ;	\
+		$(DDB_GNU_READELF) -a $(DDB_SIMPLE_MAIN).o > $(DDB_SIMPLE_MAIN).o.elf ;	\
 		$(DDB_GNU_OBJDUMP) -d $(DDB_SIMPLE_MAIN).o > $(DDB_SIMPLE_MAIN).o.dump ;\
-		$(DDB_GNU_READGNU) -a $(DDB_SIMPLE_MAIN) > $(DDB_SIMPLE_MAIN).elf ;	\
+		$(DDB_GNU_READELF) -a $(DDB_SIMPLE_MAIN) > $(DDB_SIMPLE_MAIN).elf ;	\
 		$(DDB_GNU_OBJDUMP) -d $(DDB_SIMPLE_MAIN) > $(DDB_SIMPLE_MAIN).dump
 
 bench-simple-main-qemu:
