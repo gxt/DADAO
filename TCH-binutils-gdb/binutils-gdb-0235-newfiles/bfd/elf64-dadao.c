@@ -234,11 +234,11 @@ static reloc_howto_type elf_dadao_howto_table[] =
               0,                            /* dst_mask */
               FALSE),                       /* pcrel_offset */
 
-	    /* The GETA relocation is supposed to get any address that could
-   		possibly be reached by the GETA instruction.  It can silently expand
+	    /* The ABS relocation is supposed to get any address that could
+   		possibly be reached by the ABS instruction.  It can silently expand
    		to get a 64-bit operand, but will complain if any of the two least
-   		significant bits are set.  The howto members reflect a simple GETA.  */
-        HOWTO(R_DADAO_GETA,               /* type */
+   		significant bits are set.  The howto members reflect a simple ABS.  */
+        HOWTO(R_DADAO_ABS,               /* type */
               0,                          /* rightshift */
               0,                          /* size (0 = byte, 1 = short, 2 = long) */
               18,                         /* bitsize */
@@ -246,7 +246,7 @@ static reloc_howto_type elf_dadao_howto_table[] =
               0,                          /* bitpos */
               complain_overflow_bitfield, /* complain_on_overflow */
               dadao_elf_reloc,            /* special_function */
-              "R_DADAO_GETA",             /* name */
+              "R_DADAO_ABS",             /* name */
               FALSE,                      /* partial_inplace */
               ~0x0000ffff,                /* src_mask */
               0x0000ffff,                 /* dst_mask */
@@ -330,7 +330,7 @@ static const struct dadao_reloc_map dadao_reloc_map[] =
         {BFD_RELOC_64_PCREL, R_DADAO_PC_64},
         {BFD_RELOC_VTABLE_INHERIT, R_DADAO_GNU_VTINHERIT},
         {BFD_RELOC_VTABLE_ENTRY, R_DADAO_GNU_VTENTRY},
-        {BFD_RELOC_DADAO_GETA, R_DADAO_GETA},
+        {BFD_RELOC_DADAO_ABS, R_DADAO_ABS},
         {BFD_RELOC_DADAO_BRCC, R_DADAO_BRCC},
         {BFD_RELOC_DADAO_CALL, R_DADAO_CALL},
         {BFD_RELOC_DADAO_JUMP, R_DADAO_JUMP},
@@ -375,10 +375,10 @@ bfd_elf64_bfd_reloc_name_lookup(bfd *abfd ATTRIBUTE_UNUSED,
    looks like the smallest instruction with SWYM:s (nop:s) appended to the
    max size.  We fill in those nop:s.
 
-	FIXME: GETA should be pc-relative, but expansion is absolute addr
+	FIXME: ABS should be pc-relative, but expansion is absolute addr
 
-   R_DADAO_GETA: (FIXME: Relaxation should break this up in 1, 2, 3 tetra)
-    GETA $N,foo
+   R_DADAO_ABS: (FIXME: Relaxation should break this up in 1, 2, 3 tetra)
+    ABS $N,foo
    ->
     SETZWH $N, (foo >> 48) & 0xffff
     ORWJ $N, (foo >> 32) & 0xffff
@@ -428,7 +428,7 @@ dadao_elf_perform_relocation(asection *isec, reloc_howto_type *howto,
 
     switch (howto->type)
     {
-    case R_DADAO_GETA:
+    case R_DADAO_ABS:
         insn_origin = bfd_get_32(abfd, (bfd_byte *)datap);
 
         r = bfd_check_overflow(complain_overflow_bitfield,
@@ -785,7 +785,7 @@ dadao_final_link_relocate(reloc_howto_type *howto, asection *input_section,
     {
 
     /* All these are PC-relative.  */
-    case R_DADAO_GETA:
+    case R_DADAO_ABS:
     case R_DADAO_BRCC:
     case R_DADAO_CALL:
     case R_DADAO_JUMP:
