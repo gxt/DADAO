@@ -50,7 +50,7 @@ static struct hash_control *dadao_opcode_hash;
 
    Groups for DADAO relaxing:
 
-   1. GETA
+   1. ABS
       extra length: zero or three insns.
 
    2. BRCC
@@ -63,7 +63,7 @@ static struct hash_control *dadao_opcode_hash;
       extra length: zero or four insns.
  */
 
-#define STATE_GETA (1)
+#define STATE_ABS (1)
 #define STATE_BRCC (2)
 #define STATE_CALL (3)
 #define STATE_JUMP (4)
@@ -94,10 +94,10 @@ const relax_typeS dadao_relax_table[] = {
     /* Unused (0, 1).  */
     {1, 1, 0, 0},
 
-    /* GETA (1, 0).  */
-    {(1 << 18), -(1 << 18), 0, ENCODE_RELAX(STATE_GETA, STATE_MAX)},
+    /* ABS (1, 0).  */
+    {(1 << 18), -(1 << 18), 0, ENCODE_RELAX(STATE_ABS, STATE_MAX)},
 
-    /* GETA (1, 1).  */
+    /* ABS (1, 1).  */
     {0, 0, DD_INSN_BYTES(3), 0},
 
     /* BRCC (2, 0).  */
@@ -168,7 +168,7 @@ static void dd_set_addr_offset(char *opcodep, offsetT value, int bitcount, int i
     }
 }
 
-/* Fill in NOP:s for the expanded part of GETA/JUMP/BRCC.  */
+/* Fill in NOP:s for the expanded part of ABS/JUMP/BRCC.  */
 static void dd_fill_nops(char *opcodep, int n)
 {
     int i;
@@ -269,10 +269,10 @@ void md_show_usage(FILE *stream)
 {
     fprintf(stream, _(" DADAO-specific command line options:\n"));
     fprintf(stream, _("\
-  -no-expand              Do not expand GETA, branches or JUMP\n\
+  -no-expand              Do not expand ABS, branches or JUMP\n\
                           into multiple instructions.\n"));
     fprintf(stream, _("\
-  -x                      Do not warn when an operand to GETA, a branch,\n\
+  -x                      Do not warn when an operand to ABS, a branch,\n\
                           or JUMP is not known to be within range.\n\
                           The linker will catch any errors. \n"));
 }
@@ -407,19 +407,19 @@ static void dd_pseudo_move_symbol(char *opcodep, expressionS exp[4], fragS *opc_
     if(exp[0].X_add_number < 0x40){ // move rd, symbol
         md_number_to_chars(opcodep, DADAO_INSN_SETZW_RD, 4);
         if (!expand_op) {
-            fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_GETA);
+            fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ABS);
         }
         else
-            frag_var(rs_machine_dependent, DD_INSN_BYTES(3), 0, ENCODE_RELAX(STATE_GETA, STATE_UNDF),
+            frag_var(rs_machine_dependent, DD_INSN_BYTES(3), 0, ENCODE_RELAX(STATE_ABS, STATE_UNDF),
                     exp[1].X_add_symbol, exp[1].X_add_number, opcodep);    
     }
     else { // move rb, symbol
         md_number_to_chars(opcodep, DADAO_INSN_SETZW_RB, 4);
         if (!expand_op) {
-            fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_GETA);
+            fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ABS);
         }
         else
-            frag_var(rs_machine_dependent, DD_INSN_BYTES(3), 0, ENCODE_RELAX(STATE_GETA, STATE_UNDF),
+            frag_var(rs_machine_dependent, DD_INSN_BYTES(3), 0, ENCODE_RELAX(STATE_ABS, STATE_UNDF),
                     exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
     }
     return;
@@ -810,9 +810,9 @@ void dadao_md_assemble(char *str)
     case dadao_type_geta:
         md_number_to_chars(opcodep, insn_code, 4);
         if (!expand_op)
-            fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_GETA);
+            fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ABS);
         else
-            frag_var(rs_machine_dependent, DD_INSN_BYTES(3), 0, ENCODE_RELAX(STATE_GETA, STATE_UNDF),
+            frag_var(rs_machine_dependent, DD_INSN_BYTES(3), 0, ENCODE_RELAX(STATE_ABS, STATE_UNDF),
                      exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
         break;
 
@@ -861,7 +861,7 @@ int md_estimate_size_before_relax(fragS *fragP, segT segment)
 
     switch (fragP->fr_subtype)
     {
-        HANDLE_RELAXABLE(STATE_GETA);
+        HANDLE_RELAXABLE(STATE_ABS);
         break;
         HANDLE_RELAXABLE(STATE_BRCC);
         break;
@@ -871,7 +871,7 @@ int md_estimate_size_before_relax(fragS *fragP, segT segment)
         break;
 
     case ENCODE_RELAX(STATE_CALL, STATE_ZERO):
-    case ENCODE_RELAX(STATE_GETA, STATE_ZERO):
+    case ENCODE_RELAX(STATE_ABS, STATE_ZERO):
     case ENCODE_RELAX(STATE_BRCC, STATE_ZERO):
     case ENCODE_RELAX(STATE_JUMP, STATE_ZERO):
         /* When relaxing a section for the second time, we don't need to do
@@ -954,7 +954,7 @@ void md_convert_frag(bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
         var_part_size = 0;
         break;
 
-    case ENCODE_RELAX(STATE_GETA, STATE_ZERO):
+    case ENCODE_RELAX(STATE_ABS, STATE_ZERO):
         dd_set_addr_offset(opcodep, target_address & 0xFFFF, 18, 0);
         // need to fix higher_address addr
         var_part_size = 0;
@@ -975,7 +975,7 @@ void md_convert_frag(bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
         tmpfixP->fx_line = fragP->fr_line;                                            \
         break
 
-        HANDLE_MAX_RELOC(STATE_GETA, BFD_RELOC_DADAO_GETA);
+        HANDLE_MAX_RELOC(STATE_ABS, BFD_RELOC_DADAO_ABS);
         HANDLE_MAX_RELOC(STATE_BRCC, BFD_RELOC_DADAO_BRCC);
         HANDLE_MAX_RELOC(STATE_CALL, BFD_RELOC_DADAO_CALL);
         HANDLE_MAX_RELOC(STATE_JUMP, BFD_RELOC_DADAO_JUMP);
@@ -1035,7 +1035,7 @@ void md_apply_fix(fixS *fixP, valueT *valP, segT segment)
         md_number_to_chars(buf, val, fixP->fx_size);
         break;
 
-    case BFD_RELOC_DADAO_GETA:
+    case BFD_RELOC_DADAO_ABS:
         dd_set_addr_offset(buf, val, 18, 0);
         break;
 
@@ -1108,7 +1108,7 @@ tc_gen_reloc(asection *section ATTRIBUTE_UNUSED, fixS *fixP)
     case BFD_RELOC_8_PCREL:
     case BFD_RELOC_VTABLE_INHERIT:
     case BFD_RELOC_VTABLE_ENTRY:
-    case BFD_RELOC_DADAO_GETA:
+    case BFD_RELOC_DADAO_ABS:
     case BFD_RELOC_DADAO_BRCC:
     case BFD_RELOC_DADAO_CALL:
     case BFD_RELOC_DADAO_JUMP:
