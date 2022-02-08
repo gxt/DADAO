@@ -157,6 +157,10 @@ _start:
 	# 0101-0xxx
 	ldft	rf1, rb2, 3
 	ldfo	rf1, rb2, 3
+	setwh	rf1, 1
+	setwj	rf1, 2
+	setwk   rf1, 3
+	setwl	rf1, 4
 	ldmft	rf1, rb2, rd3, 4
 	ldmfo	rf1, rb2, rd3, 4
 	stft	rf1, rb2, 3
