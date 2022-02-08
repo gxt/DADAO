@@ -329,75 +329,96 @@ void dadao_md_begin(void)
 
 static void dd_pseudo_move_imm(char *opcodep, int reg_dst, unsigned long long src_imm)
 {
-    int setrd_flag;
-    unsigned int setrd_w16_1, setrd_w16_2, setrd_w16_3, setrd_w16_4;
+    unsigned int imm_w16_1, imm_w16_2, imm_w16_3, imm_w16_4;
 
-    /* setrd rd, imm64 */
-    setrd_flag = 0; // use setow or setzw
+    imm_w16_1 = (src_imm) & 0xFFFF;
+    imm_w16_2 = (src_imm >> 16) & 0xFFFF;
+    imm_w16_3 = (src_imm >> 32) & 0xFFFF;
+    imm_w16_4 = (src_imm >> 48) & 0xFFFF;
+    
+    if(exp[0].X_add_number < 0x40){ // move rd, imm64
+        int flag;
 
-    setrd_w16_1 = (src_imm)&0xFFFF;
-    setrd_w16_2 = (src_imm >> 16) & 0xFFFF;
-    setrd_w16_3 = (src_imm >> 32) & 0xFFFF;
-    setrd_w16_4 = (src_imm >> 48) & 0xFFFF;
+        flag = 0; // use setow or setzw
 
-    if (((setrd_w16_4 == 0) + (setrd_w16_3 == 0) + (setrd_w16_2 == 0)) < ((setrd_w16_4 == 0xFFFF) + (setrd_w16_3 == 0xFFFF) + (setrd_w16_2 == 0xFFFF)))
-    {
-        setrd_flag = 1;
-    }
-
-    if (setrd_flag)
-        md_number_to_chars(opcodep, DADAO_INSN_SETOW_RD | (reg_dst << 18) | DADAO_WYDE_WL | setrd_w16_1, 4);
-    else
-        md_number_to_chars(opcodep, DADAO_INSN_SETZW_RD | (reg_dst << 18) | DADAO_WYDE_WL | setrd_w16_1, 4);
-
-    if (setrd_flag)
-    {
-        if (setrd_w16_2 != 0xFFFF)
+        if (((imm_w16_4 == 0) + (imm_w16_3 == 0) + (imm_w16_2 == 0)) < ((imm_w16_4 == 0xFFFF) + (imm_w16_3 == 0xFFFF) + (imm_w16_2 == 0xFFFF)))
         {
-            opcodep = frag_more(4);
-            md_number_to_chars(opcodep, DADAO_INSN_ANDNW_RD | (reg_dst << 18) | DADAO_WYDE_WK | setrd_w16_2, 4);
+            flag = 1;
+        }
+
+        if (flag)
+            md_number_to_chars(opcodep, DADAO_INSN_SETOW_RD | (reg_dst << 18) | DADAO_WYDE_WL | imm_w16_1, 4);
+        else
+            md_number_to_chars(opcodep, DADAO_INSN_SETZW_RD | (reg_dst << 18) | DADAO_WYDE_WL | imm_w16_1, 4);
+
+        if (flag)
+        {
+            if (imm_w16_2 != 0xFFFF)
+            {
+                opcodep = frag_more(4);
+                md_number_to_chars(opcodep, DADAO_INSN_ANDNW_RD | (reg_dst << 18) | DADAO_WYDE_WK | imm_w16_2, 4);
+            }
+        }
+        else
+        {
+            if (imm_w16_2 != 0)
+            {
+                opcodep = frag_more(4);
+                md_number_to_chars(opcodep, DADAO_INSN_ORW_RD | (reg_dst << 18) | DADAO_WYDE_WK | imm_w16_2, 4);
+            }
+        }
+
+        if (flag)
+        {
+            if (imm_w16_3 != 0xFFFF)
+            {
+                opcodep = frag_more(4);
+                md_number_to_chars(opcodep, DADAO_INSN_ANDNW_RD | (reg_dst << 18) | DADAO_WYDE_WJ | imm_w16_3, 4);
+            }
+        }
+        else
+        {
+            if (imm_w16_3 != 0)
+            {
+                opcodep = frag_more(4);
+                md_number_to_chars(opcodep, DADAO_INSN_ORW_RD | (reg_dst << 18) | DADAO_WYDE_WJ | imm_w16_3, 4);
+            }
+        }
+
+        if (flag)
+        {
+            if (imm_w16_4 != 0xFFFF)
+            {
+                opcodep = frag_more(4);
+                md_number_to_chars(opcodep, DADAO_INSN_ANDNW_RD | (reg_dst << 18) | DADAO_WYDE_WH | imm_w16_4, 4);
+            }
+        }
+        else
+        {
+            if (imm_w16_4 != 0)
+            {
+                opcodep = frag_more(4);
+                md_number_to_chars(opcodep, DADAO_INSN_ORW_RD | (reg_dst << 18) | DADAO_WYDE_WH | imm_w16_4, 4);
+            }
         }
     }
-    else
-    {
-        if (setrd_w16_2 != 0)
-        {
-            opcodep = frag_more(4);
-            md_number_to_chars(opcodep, DADAO_INSN_ORW_RD | (reg_dst << 18) | DADAO_WYDE_WK | setrd_w16_2, 4);
-        }
-    }
+    else { // move rb, imm64
+        md_number_to_chars(opcodep, DADAO_INSN_SETZW_RB | (reg_dst << 18) | DADAO_WYDE_WL | imm_w16_1, 4);
 
-    if (setrd_flag)
-    {
-        if (setrd_w16_3 != 0xFFFF)
+        if (imm_w16_2 != 0)
         {
             opcodep = frag_more(4);
-            md_number_to_chars(opcodep, DADAO_INSN_ANDNW_RD | (reg_dst << 18) | DADAO_WYDE_WJ | setrd_w16_3, 4);
+            md_number_to_chars(opcodep, DADAO_INSN_ORW_RD | (reg_dst << 18) | DADAO_WYDE_WK | imm_w16_2, 4);
         }
-    }
-    else
-    {
-        if (setrd_w16_3 != 0)
+        if (imm_w16_3 != 0)
         {
             opcodep = frag_more(4);
-            md_number_to_chars(opcodep, DADAO_INSN_ORW_RD | (reg_dst << 18) | DADAO_WYDE_WJ | setrd_w16_3, 4);
+            md_number_to_chars(opcodep, DADAO_INSN_ORW_RD | (reg_dst << 18) | DADAO_WYDE_WJ | imm_w16_3, 4);
         }
-    }
-
-    if (setrd_flag)
-    {
-        if (setrd_w16_4 != 0xFFFF)
+        if (imm_w16_4 != 0)
         {
             opcodep = frag_more(4);
-            md_number_to_chars(opcodep, DADAO_INSN_ANDNW_RD | (reg_dst << 18) | DADAO_WYDE_WH | setrd_w16_4, 4);
-        }
-    }
-    else
-    {
-        if (setrd_w16_4 != 0)
-        {
-            opcodep = frag_more(4);
-            md_number_to_chars(opcodep, DADAO_INSN_ORW_RD | (reg_dst << 18) | DADAO_WYDE_WH | setrd_w16_4, 4);
+            md_number_to_chars(opcodep, DADAO_INSN_ORW_RD | (reg_dst << 18) | DADAO_WYDE_WH | imm_w16_4, 4);
         }
     }
 }

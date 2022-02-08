@@ -378,7 +378,7 @@ bfd_elf64_bfd_reloc_name_lookup(bfd *abfd ATTRIBUTE_UNUSED,
 	FIXME: ABS should be pc-relative, but expansion is absolute addr
 
    R_DADAO_ABS: (FIXME: Relaxation should break this up in 1, 2, 3 tetra)
-    ABS $N,foo
+    move $N,foo
    ->
     SETZWH $N, (foo >> 48) & 0xffff
     ORWJ $N, (foo >> 32) & 0xffff
