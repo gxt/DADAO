@@ -1,8 +1,9 @@
-From 30a1ff8fa6fab3378df593cf40fcd3d8ad5fb389 Mon Sep 17 00:00:00 2001
-From: Guan Xuetao <gxt@pku.edu.cn>
-Date: Mon, 6 Apr 2020 09:09:54 +0000
+From f8daeb91f4eaeb090859e32f2c9777ea9a320ce4 Mon Sep 17 00:00:00 2001
+From: Yang Chen <yang_chen@pku.edu.cn>
+Date: Tue, 8 Feb 2022 19:20:42 +0800
 Subject: [PATCH] DADAO-bfd: reloc.c
 
+Signed-off-by: Yang Chen <yang_chen@pku.edu.cn>
 Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
 ---
  bfd/reloc.c | 17 ++++++++++++++++++++++++++++++
@@ -17,9 +18,9 @@ index 9ca68ca61da..1d7c0d42ad3 100644
    S12Z relocations.
  
 +ENUM
-+  BFD_RELOC_DADAO_GETA
++  BFD_RELOC_DADAO_ABS
 +ENUMDOC
-+  These are relocations for the GETA instruction.
++  These are relocations for ABS 64bit-address.
 +ENUM
 +  BFD_RELOC_DADAO_BRCC
 +ENUMDOC
