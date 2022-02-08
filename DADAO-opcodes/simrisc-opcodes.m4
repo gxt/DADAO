@@ -170,6 +170,12 @@ insn(	focle,		orrr,	0x50,	0x2F,	op,	rd,	rf,	rf,	normal)
 
 insn(	ldft,		rrii,	0x52,	0,	rf,	rb,	s12,	-,	dref)
 insn(	ldfo,		rrii,	0x53,	0,	rf,	rb,	s12,	-,	dref)
+
+insn(	setwl,		rjii,	0x54,	0,	rf,	w16,	-,	-,	normal)
+insn(	setwk,		rjii,	0x54,	1,	rf,	w16,	-,	-,	normal)
+insn(	setwj,		rjii,	0x54,	2,	rf,	w16,	-,	-,	normal)
+insn(	setwh,		rjii,	0x54,	3,	rf,	w16,	-,	-,	normal)
+
 insn(	ldmft,		rrri,	0x56,	0,	rf,	rb,	rd,	i6,	dref)
 insn(	ldmfo,		rrri,	0x57,	0,	rf,	rb,	rd,	i6,	dref)
 
