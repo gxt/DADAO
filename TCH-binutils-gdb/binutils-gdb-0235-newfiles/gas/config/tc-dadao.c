@@ -336,7 +336,7 @@ static void dd_pseudo_move_imm(char *opcodep, int reg_dst, unsigned long long sr
     imm_w16_3 = (src_imm >> 32) & 0xFFFF;
     imm_w16_4 = (src_imm >> 48) & 0xFFFF;
     
-    if(exp[0].X_add_number < 0x40){ // move rd, imm64
+    if (reg_dst < 0x40){ // move rd, imm64
         int flag;
 
         flag = 0; // use setow or setzw
