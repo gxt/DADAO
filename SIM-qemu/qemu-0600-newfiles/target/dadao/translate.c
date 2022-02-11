@@ -586,6 +586,18 @@ static bool trans_setzwrb(DisasContext *ctx, arg_setzwrb *a)
     return true;
 }
 
+static bool trans_setw(DisasContext *ctx, arg_setw *a)
+{
+    if (a->rf == 0) {
+        return false;
+    }
+    int64_t mask = ~((int64_t)0xFFFF << (a->j * 16));
+    int64_t arg = (int64_t)a->imm << (a->j * 16);
+    tcg_gen_andi_i64(cpu_rf[a->rf], cpu_rf[a->rf], mask);
+    tcg_gen_ori_i64(cpu_rf[a->rf], cpu_rf[a->rf], arg);
+    return true;
+}
+
 /* arithmetic instructions */
 
 static bool trans_addi(DisasContext *ctx, arg_addi *a)
