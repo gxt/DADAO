@@ -109,6 +109,9 @@ orwrb   01001100 rb:6   j:2 imm:16
 andnwrb 01001101 rb:6   j:2 imm:16
 setzwrb 01001110 rb:6   j:2 imm:16
 
+setw    01010100 rf:6   j:2 imm:16
+
+
 
 #
 # Arithmetic Instructions
