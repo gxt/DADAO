@@ -9,7 +9,7 @@ bench-simple-insn-elf:
 		$(DDB_ELF_GAS) $(DDB_SRC_DIR)/$(DDB_SIMPLE_INSN).S			\
 			-o $(DDB_SIMPLE_INSN).o ;					\
 		$(DDB_ELF_READELF) -a $(DDB_SIMPLE_INSN).o > $(DDB_SIMPLE_INSN).o.elf ;	\
-		$(DDB_ELF_OBJDUMP) -d $(DDB_SIMPLE_INSN).o > $(DDB_SIMPLE_INSN).o.dump
+		$(DDB_ELF_OBJDUMP) -lDS $(DDB_SIMPLE_INSN).o > $(DDB_SIMPLE_INSN).o.dump
 
 bench-simple-insn-gnu:
 	@test -d $(DDB_DST_DIR) || mkdir -p $(DDB_DST_DIR)
@@ -17,7 +17,7 @@ bench-simple-insn-gnu:
 		$(DDB_GNU_GAS) $(DDB_SRC_DIR)/$(DDB_SIMPLE_INSN).S			\
 			-o $(DDB_SIMPLE_INSN).o ;					\
 		$(DDB_GNU_READELF) -a $(DDB_SIMPLE_INSN).o > $(DDB_SIMPLE_INSN).o.elf ;	\
-		$(DDB_GNU_OBJDUMP) -d $(DDB_SIMPLE_INSN).o > $(DDB_SIMPLE_INSN).o.dump
+		$(DDB_GNU_OBJDUMP) -lDS $(DDB_SIMPLE_INSN).o > $(DDB_SIMPLE_INSN).o.dump
 
 
 DDB_SIMPLE_MAIN		?= main-simple
@@ -30,9 +30,9 @@ bench-simple-main-elf:
 			-save-temps							\
 			-o $(DDB_SIMPLE_MAIN) ;						\
 		$(DDB_ELF_READELF) -a $(DDB_SIMPLE_MAIN).o > $(DDB_SIMPLE_MAIN).o.elf ;	\
-		$(DDB_ELF_OBJDUMP) -d $(DDB_SIMPLE_MAIN).o > $(DDB_SIMPLE_MAIN).o.dump ;\
+		$(DDB_ELF_OBJDUMP) -lDS $(DDB_SIMPLE_MAIN).o > $(DDB_SIMPLE_MAIN).o.dump ;\
 		$(DDB_ELF_READELF) -a $(DDB_SIMPLE_MAIN) > $(DDB_SIMPLE_MAIN).elf ;	\
-		$(DDB_ELF_OBJDUMP) -d $(DDB_SIMPLE_MAIN) > $(DDB_SIMPLE_MAIN).dump
+		$(DDB_ELF_OBJDUMP) -lDS $(DDB_SIMPLE_MAIN) > $(DDB_SIMPLE_MAIN).dump
 
 bench-simple-main-gnu:
 	@test -d $(DDB_DST_DIR) || mkdir -p $(DDB_DST_DIR)
@@ -49,9 +49,9 @@ bench-simple-main-gnu:
 			-isystem $(DIR_DADAO_INSTALL)/dadao-linux-gnu/sys-include	\
 			-o $(DDB_DST_DIR)/$(DDB_SIMPLE_MAIN) ;				\
 		$(DDB_GNU_READELF) -a $(DDB_SIMPLE_MAIN).o > $(DDB_SIMPLE_MAIN).o.elf ;	\
-		$(DDB_GNU_OBJDUMP) -d $(DDB_SIMPLE_MAIN).o > $(DDB_SIMPLE_MAIN).o.dump ;\
+		$(DDB_GNU_OBJDUMP) -lDS $(DDB_SIMPLE_MAIN).o > $(DDB_SIMPLE_MAIN).o.dump ;\
 		$(DDB_GNU_READELF) -a $(DDB_SIMPLE_MAIN) > $(DDB_SIMPLE_MAIN).elf ;	\
-		$(DDB_GNU_OBJDUMP) -d $(DDB_SIMPLE_MAIN) > $(DDB_SIMPLE_MAIN).dump
+		$(DDB_GNU_OBJDUMP) -lDS $(DDB_SIMPLE_MAIN) > $(DDB_SIMPLE_MAIN).dump
 
 bench-simple-main-qemu:
 	$(DD_QEMU_USER) -singlestep -strace						\
