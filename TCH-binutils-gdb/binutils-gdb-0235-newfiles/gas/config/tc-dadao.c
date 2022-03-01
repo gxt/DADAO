@@ -427,17 +427,17 @@ static void dd_pseudo_move_imm(char *opcodep, int reg_dst, unsigned long long sr
 static void dd_pseudo_move_symbol(char *opcodep, expressionS exp[4], fragS *opc_fragP)
 {
     if(exp[0].X_add_number < 0x40){ // move rd, symbol
-        md_number_to_chars(opcodep, DADAO_INSN_SETZW_RD, 4);
+        md_number_to_chars(opcodep, DADAO_INSN_SETZW_RD | exp[0].X_add_number << 18, 4);
         if (!expand_op) {
             fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ABS);
         }
         else
             frag_var(rs_machine_dependent, DD_INSN_BYTES(3), 0, ENCODE_RELAX(STATE_ABS, STATE_UNDF),
-                    exp[1].X_add_symbol, exp[1].X_add_number, opcodep);    
+                    exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
     }
     else { // move rb, symbol
         exp[0].X_add_number -= 0x40;
-        md_number_to_chars(opcodep, DADAO_INSN_SETZW_RB, 4);
+        md_number_to_chars(opcodep, DADAO_INSN_SETZW_RB | exp[0].X_add_number << 18, 4);
         if (!expand_op) {
             fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ABS);
         }
