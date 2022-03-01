@@ -403,6 +403,7 @@ static void dd_pseudo_move_imm(char *opcodep, int reg_dst, unsigned long long sr
         }
     }
     else { // move rb, imm64
+        reg_dst -= 0x40;
         md_number_to_chars(opcodep, DADAO_INSN_SETZW_RB | (reg_dst << 18) | DADAO_WYDE_WL | imm_w16_1, 4);
 
         if (imm_w16_2 != 0)
@@ -435,6 +436,7 @@ static void dd_pseudo_move_symbol(char *opcodep, expressionS exp[4], fragS *opc_
                     exp[1].X_add_symbol, exp[1].X_add_number, opcodep);    
     }
     else { // move rb, symbol
+        exp[0].X_add_number -= 0x40;
         md_number_to_chars(opcodep, DADAO_INSN_SETZW_RB, 4);
         if (!expand_op) {
             fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ABS);
