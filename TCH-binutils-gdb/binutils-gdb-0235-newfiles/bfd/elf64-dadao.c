@@ -789,10 +789,10 @@ dadao_final_link_relocate(reloc_howto_type *howto, asection *input_section,
     case R_DADAO_BRCC:
     case R_DADAO_CALL:
     case R_DADAO_JUMP:
-        contents += r_offset;
+        contents += r_offset - 4;
 
         addr_abs = relocation + (bfd_vma)r_addend;
-        addr_rel = addr_abs - (input_section->output_section->vma + input_section->output_offset + r_offset);
+        addr_rel = addr_abs - (input_section->output_section->vma + input_section->output_offset + r_offset) + 4;
 
         r = dadao_elf_perform_relocation(input_section, howto, contents,
                                          addr_abs, addr_rel, error_message);
