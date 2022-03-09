@@ -17,7 +17,7 @@
 #ifdef	__ASSEMBLER__
 
 #define __DO_SYSCALL(syscall_name, args)			\
-	setrd	rd15, SYS_ify(syscall_name);			\
+	move	rd15, SYS_ify(syscall_name);			\
 	trap	cp0, 0;
 
 #define PSEUDO(name, syscall_name, args)			\

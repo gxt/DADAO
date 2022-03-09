@@ -18,7 +18,7 @@
         .text
 ENTRY(__clone)
 	/* TODO: prepare args */
-	setrd	rd15, SYS_ify(clone)
+	move	rd15, SYS_ify(clone)
 	trap	cp0, 0
 
 	brz	rd31, thread_start
@@ -34,7 +34,7 @@ thread_start:
 	/* TODO: Pick the function arg and execute.  */
 
 	/* We are done, pass the return value through x0.  */
-	setrd	rd15, SYS_ify(exit)
+	move	rd15, SYS_ify(exit)
 	trap	cp0, 0
 	cfi_endproc
 	.size thread_start, .-thread_start
