@@ -18,7 +18,7 @@ ENTRY (syscall)
 	trap	cp0, 0
 	brnn	rd31, 101f
 	rd2rd	rd7, rd31, 0
-	add	rd7, 4096
+	addi	rd7, 4096
 	brp	rd7, 102f
 101:
 	RET
