@@ -54,6 +54,6 @@ bench-simple-main-gnu:
 		$(DDB_GNU_OBJDUMP) -lDS $(DDB_SIMPLE_MAIN) > $(DDB_SIMPLE_MAIN).dump
 
 bench-simple-main-qemu:
-	$(DD_QEMU_USER) -singlestep -strace						\
+	$(DDB_QEMU_USER) -singlestep -strace						\
 		-D $(DDB_DST_DIR)/$(DDB_SIMPLE_MAIN).qemulog				\
 		$(DDB_DST_DIR)/$(DDB_SIMPLE_MAIN)
