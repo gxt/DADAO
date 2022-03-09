@@ -314,7 +314,23 @@
 (define_insn "indirect_jump"
   [(set (pc) (match_operand 0 "address_operand" "p"))]
   ""
-  	"jump	%0")
+  {
+    if (GET_CODE (operands[0]) == PLUS)
+    {
+      rtx base = XEXP (operands[0], 0);
+      rtx offset = XEXP (operands[0], 1);
+
+      gcc_assert (REG_P (base) && REG_P (offset));
+
+      fprintf (asm_out_file, "\tjump	%s, %s, 0\n",
+			reg_names[REGNO(base)],
+			reg_names[REGNO(offset)]);
+
+      return "";
+    }
+    else
+        return "jump	%0";
+  })
 
 ;; FIXME: This is just a jump, and should be expanded to one.
 (define_insn "tablejump"
