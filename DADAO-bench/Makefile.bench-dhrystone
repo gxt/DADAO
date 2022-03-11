@@ -1,0 +1,22 @@
+#
+# Makefile for dhry test
+#
+DDB_DHRY_SRC		?= $(DDB_SRC_DIR)/dhry-c/dhry_1.c $(DDB_SRC_DIR)/dhry-c/dhry_2.c
+DDB_DHRY_DST		?= dhry
+
+bench-dhry-elf:
+	@test -d $(DDB_DST_DIR) || mkdir -p $(DDB_DST_DIR)
+	@cd $(DDB_DST_DIR) ;								\
+		$(DDB_ELF_GCC)								\
+			-static								\
+			-save-temps							\
+			-DHZ=250							\
+			-DTIME								\
+			-o $(DDB_DHRY_DST) $(DDB_DHRY_SRC) ;				\
+		$(DDB_ELF_READELF) -a $(DDB_DHRY_DST) > $(DDB_DHRY_DST).elf ;		\
+		$(DDB_ELF_OBJDUMP) -lDS $(DDB_DHRY_DST) > $(DDB_DHRY_DST).dump
+
+bench-dhry-qemu:
+	$(DDB_QEMU_USER) -singlestep -strace						\
+		-D $(DDB_DST_DIR)/$(DDB_DHRY_DST).qemulog				\
+		$(DDB_DST_DIR)/$(DDB_DHRY_DST)
