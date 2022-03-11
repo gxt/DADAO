@@ -44,6 +44,20 @@
 #define	PSEUDO_ERRVAL		.error NOT support PSEUDO_ERRVAL
 #define	ret_ERRVAL		ret
 
+#if !IS_IN (libc)
+#   define SYSCALL_ERROR	.Lsyscall_error
+#   define SYSCALL_ERROR_HANDLER				\
+.Lsyscall_error:						\
+	move	rd0, -1;					\
+	RET;
+
+#else	/* IS_IN (libc) */
+#   define SYSCALL_ERROR	__syscall_error
+#   define SYSCALL_ERROR_HANDLER				\
+.Lsyscall_error:						\
+	jump	__syscall_error;
+#endif
+
 #else	/* __ASSEMBLER__ */
 
 /* In order to get __set_errno() definition in INLINE_SYSCALL.  */
