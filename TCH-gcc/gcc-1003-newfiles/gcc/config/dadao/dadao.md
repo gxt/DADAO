@@ -222,7 +222,7 @@
       {
 	if (REG_P (operands[0]))
 	  {
-	    return "call	%0, %a2";
+	    return "call	%0, rd0, 0";
 	  }
 	else if (GET_CODE (operands[0]) == CONST)
 	  {
