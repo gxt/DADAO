@@ -424,7 +424,8 @@ dadao_elf_perform_relocation(asection *isec, reloc_howto_type *howto,
     bfd_reloc_status_type r;
 
     bfd_vma insn_origin;
-    int reg, opcode;
+    int reg, opcode, tmp;
+    unsigned int imm_w16_1, imm_w16_2, imm_w16_3, imm_w16_4;
 
     switch (howto->type)
     {
@@ -444,18 +445,49 @@ dadao_elf_perform_relocation(asection *isec, reloc_howto_type *howto,
         {
             reg = (insn_origin >> 18) & 0x3F;
             opcode = (insn_origin >> 24) & 0xFF;
+            tmp = 0;
+
+            imm_w16_1 = (addr) & 0xFFFF;
+            imm_w16_2 = (addr >> 16) & 0xFFFF;
+            imm_w16_3 = (addr >> 32) & 0xFFFF;
+            imm_w16_4 = (addr >> 48) & 0xFFFF;
 
             if(opcode == DADAO_INSN_SETZW_RD) {
-                bfd_put_32(abfd, DADAO_INSN_SETZW_RD | (reg << 18) | DADAO_WYDE_WH | ((addr >> 48) & 0xffff), (bfd_byte *)datap);
-                bfd_put_32(abfd, DADAO_INSN_ORW_RD | (reg << 18) | DADAO_WYDE_WJ | ((addr >> 32) & 0xffff), (bfd_byte *)datap + 4);
-                bfd_put_32(abfd, DADAO_INSN_ORW_RD | (reg << 18) | DADAO_WYDE_WK | ((addr >> 16) & 0xffff), (bfd_byte *)datap + 8);
-                bfd_put_32(abfd, DADAO_INSN_ORW_RD | (reg << 18) | DADAO_WYDE_WL | (addr & 0xffff), (bfd_byte *)datap + 12);
+                bfd_put_32(abfd, DADAO_INSN_SETZW_RD | (reg << 18) | DADAO_WYDE_WL | imm_w16_1, (bfd_byte *)datap);
+                tmp += 4;
+
+                if(imm_w16_2) {
+                    bfd_put_32(abfd, DADAO_INSN_ORW_RD | (reg << 18) | DADAO_WYDE_WK | imm_w16_2, (bfd_byte *)datap + tmp);
+                    tmp += 4;
+                }
+                if(imm_w16_3) {
+                    bfd_put_32(abfd, DADAO_INSN_ORW_RD | (reg << 18) | DADAO_WYDE_WJ | imm_w16_3, (bfd_byte *)datap + tmp);
+                    tmp += 4;
+                }
+                if(imm_w16_4) {
+                    bfd_put_32(abfd, DADAO_INSN_ORW_RD | (reg << 18) | DADAO_WYDE_WH | imm_w16_4, (bfd_byte *)datap + tmp);
+                }
             }
             else {
-                bfd_put_32(abfd, DADAO_INSN_SETZW_RB | (reg << 18) | DADAO_WYDE_WH | ((addr >> 48) & 0xffff), (bfd_byte *)datap);
+                bfd_put_32(abfd, DADAO_INSN_SETZW_RB | (reg << 18) | DADAO_WYDE_WL | imm_w16_1, (bfd_byte *)datap);
+                tmp += 4;
+
+                if(imm_w16_2) {
+                    bfd_put_32(abfd, DADAO_INSN_ORW_RB | (reg << 18) | DADAO_WYDE_WK | imm_w16_2, (bfd_byte *)datap + tmp);
+                    tmp += 4;
+                }
+                if(imm_w16_3) {
+                    bfd_put_32(abfd, DADAO_INSN_ORW_RB | (reg << 18) | DADAO_WYDE_WJ | imm_w16_3, (bfd_byte *)datap + tmp);
+                    tmp += 4;
+                }
+                if(imm_w16_4) {
+                    bfd_put_32(abfd, DADAO_INSN_ORW_RB | (reg << 18) | DADAO_WYDE_WH | imm_w16_4, (bfd_byte *)datap + tmp);
+                }
+                /*bfd_put_32(abfd, DADAO_INSN_SETZW_RB | (reg << 18) | DADAO_WYDE_WH | ((addr >> 48) & 0xffff), (bfd_byte *)datap);
                 bfd_put_32(abfd, DADAO_INSN_ORW_RB | (reg << 18) | DADAO_WYDE_WJ | ((addr >> 32) & 0xffff), (bfd_byte *)datap + 4);
                 bfd_put_32(abfd, DADAO_INSN_ORW_RB | (reg << 18) | DADAO_WYDE_WK | ((addr >> 16) & 0xffff), (bfd_byte *)datap + 8);
                 bfd_put_32(abfd, DADAO_INSN_ORW_RB | (reg << 18) | DADAO_WYDE_WL | (addr & 0xffff), (bfd_byte *)datap + 12);   
+                */
             }
         }
 
