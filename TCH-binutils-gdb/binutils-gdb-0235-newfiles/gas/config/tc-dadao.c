@@ -409,17 +409,17 @@ static void dd_pseudo_move_imm(char *opcodep, int reg_dst, unsigned long long sr
         if (imm_w16_2 != 0)
         {
             opcodep = frag_more(4);
-            md_number_to_chars(opcodep, DADAO_INSN_ORW_RD | (reg_dst << 18) | DADAO_WYDE_WK | imm_w16_2, 4);
+            md_number_to_chars(opcodep, DADAO_INSN_ORW_RB | (reg_dst << 18) | DADAO_WYDE_WK | imm_w16_2, 4);
         }
         if (imm_w16_3 != 0)
         {
             opcodep = frag_more(4);
-            md_number_to_chars(opcodep, DADAO_INSN_ORW_RD | (reg_dst << 18) | DADAO_WYDE_WJ | imm_w16_3, 4);
+            md_number_to_chars(opcodep, DADAO_INSN_ORW_RB | (reg_dst << 18) | DADAO_WYDE_WJ | imm_w16_3, 4);
         }
         if (imm_w16_4 != 0)
         {
             opcodep = frag_more(4);
-            md_number_to_chars(opcodep, DADAO_INSN_ORW_RD | (reg_dst << 18) | DADAO_WYDE_WH | imm_w16_4, 4);
+            md_number_to_chars(opcodep, DADAO_INSN_ORW_RB | (reg_dst << 18) | DADAO_WYDE_WH | imm_w16_4, 4);
         }
     }
 }
@@ -427,7 +427,7 @@ static void dd_pseudo_move_imm(char *opcodep, int reg_dst, unsigned long long sr
 static void dd_pseudo_move_symbol(char *opcodep, expressionS exp[4], fragS *opc_fragP)
 {
     if(exp[0].X_add_number < 0x40){ // move rd, symbol
-        md_number_to_chars(opcodep, DADAO_INSN_SETZW_RD | exp[0].X_add_number << 18, 4);
+        md_number_to_chars(opcodep, DADAO_INSN_SETZW_RD | DADAO_WYDE_WL | exp[0].X_add_number << 18, 4);
         if (!expand_op) {
             fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ABS);
         }
@@ -437,7 +437,7 @@ static void dd_pseudo_move_symbol(char *opcodep, expressionS exp[4], fragS *opc_
     }
     else { // move rb, symbol
         exp[0].X_add_number -= 0x40;
-        md_number_to_chars(opcodep, DADAO_INSN_SETZW_RB | exp[0].X_add_number << 18, 4);
+        md_number_to_chars(opcodep, DADAO_INSN_SETZW_RB | DADAO_WYDE_WL | exp[0].X_add_number << 18, 4);
         if (!expand_op) {
             fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ABS);
         }

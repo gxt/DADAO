@@ -424,7 +424,7 @@ dadao_elf_perform_relocation(asection *isec, reloc_howto_type *howto,
     bfd_reloc_status_type r;
 
     bfd_vma insn_origin;
-    int reg;
+    int reg, opcode;
 
     switch (howto->type)
     {
@@ -443,11 +443,20 @@ dadao_elf_perform_relocation(asection *isec, reloc_howto_type *howto,
         else
         {
             reg = (insn_origin >> 18) & 0x3F;
+            opcode = (insn_origin >> 24) & 0xFF;
 
-            bfd_put_32(abfd, DADAO_INSN_SETZW_RD | (reg << 18) | DADAO_WYDE_WH | ((addr >> 48) & 0xffff), (bfd_byte *)datap);
-            bfd_put_32(abfd, DADAO_INSN_ORW_RD | (reg << 18) | DADAO_WYDE_WJ | ((addr >> 32) & 0xffff), (bfd_byte *)datap + 4);
-            bfd_put_32(abfd, DADAO_INSN_ORW_RD | (reg << 18) | DADAO_WYDE_WK | ((addr >> 16) & 0xffff), (bfd_byte *)datap + 8);
-            bfd_put_32(abfd, DADAO_INSN_ORW_RD | (reg << 18) | DADAO_WYDE_WL | (addr & 0xffff), (bfd_byte *)datap + 12);
+            if(opcode == DADAO_INSN_SETZW_RD) {
+                bfd_put_32(abfd, DADAO_INSN_SETZW_RD | (reg << 18) | DADAO_WYDE_WH | ((addr >> 48) & 0xffff), (bfd_byte *)datap);
+                bfd_put_32(abfd, DADAO_INSN_ORW_RD | (reg << 18) | DADAO_WYDE_WJ | ((addr >> 32) & 0xffff), (bfd_byte *)datap + 4);
+                bfd_put_32(abfd, DADAO_INSN_ORW_RD | (reg << 18) | DADAO_WYDE_WK | ((addr >> 16) & 0xffff), (bfd_byte *)datap + 8);
+                bfd_put_32(abfd, DADAO_INSN_ORW_RD | (reg << 18) | DADAO_WYDE_WL | (addr & 0xffff), (bfd_byte *)datap + 12);
+            }
+            else {
+                bfd_put_32(abfd, DADAO_INSN_SETZW_RB | (reg << 18) | DADAO_WYDE_WH | ((addr >> 48) & 0xffff), (bfd_byte *)datap);
+                bfd_put_32(abfd, DADAO_INSN_ORW_RB | (reg << 18) | DADAO_WYDE_WJ | ((addr >> 32) & 0xffff), (bfd_byte *)datap + 4);
+                bfd_put_32(abfd, DADAO_INSN_ORW_RB | (reg << 18) | DADAO_WYDE_WK | ((addr >> 16) & 0xffff), (bfd_byte *)datap + 8);
+                bfd_put_32(abfd, DADAO_INSN_ORW_RB | (reg << 18) | DADAO_WYDE_WL | (addr & 0xffff), (bfd_byte *)datap + 12);   
+            }
         }
 
         return bfd_reloc_ok;
