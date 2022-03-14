@@ -70,8 +70,8 @@
 	"swym");
 
 (define_insn "mov<mode>"
-  [(set (match_operand:SFDF 0 "nonimmediate_operand" "=m,Rf,Rd,Rf,Rd")
-	(match_operand:SFDF 1 "general_operand"      "Rf, m,Rf,Rd,Rd"))]
+  [(set (match_operand:SFDF 0 "nonimmediate_operand" "=m,Rf, m,Rd,Rd,Rf,Rd")
+	(match_operand:SFDF 1 "general_operand"      "Rf, m,Rd, m,Rf,Rd,Rd"))]
 	""
 	{
 	  return "swym";
