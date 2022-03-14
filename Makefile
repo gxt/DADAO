@@ -91,4 +91,5 @@ dadao-clean:
 	@rm -fr $(DIR_DADAO_TARGET)
 	@rm -fr $(DIR_DADAO_LOG)
 	@rm -fr $(DIR_DADAO_TMP)
+	@make --silent bench-clean
 	@echo "CLEAR EVERYTHING DONE!"
