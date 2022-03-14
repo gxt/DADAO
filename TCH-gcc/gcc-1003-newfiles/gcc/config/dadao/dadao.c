@@ -1474,6 +1474,70 @@ dadao_output_shifted_value (FILE *stream, int64_t value)
   fprintf (stream, "0");
 }
 
+char*
+dadao_print_ldst_operand (machine_mode mode,
+			  rtx dest, rtx src, bool strict)
+{
+  if (strict)	/* loading src data --> dest */
+    {
+      rtx addr = XEXP (src, 0);
+
+      if (REG_P (addr))
+        {
+	  return "ldo	%0, %1";
+	}
+      if (GET_CODE (addr) == PLUS)
+        {
+	  rtx op0 = XEXP (addr, 0);
+	  rtx op1 = XEXP (addr, 1);
+
+	  if (REG_P (op0) && REG_P (op1)
+	  && (REGNO_REG_CLASS(REGNO(op0)) == GENERAL_REGS)
+	  && (REGNO_REG_CLASS(REGNO(op1)) == POINTER_REGS))
+		  std::swap (op0, op1);
+
+	  switch (GET_CODE (op1))
+	    {
+		case CONST_INT:
+		  return "ldo	%0, %1";
+		case REG:
+		  return "ldmo	%0, %1, 0";
+		  /* Add the mode in */
+		default:
+		  return "move	%0, %1 [Internal Compiler error]";
+	    }
+	}
+      return "";
+    }
+  else
+    {
+      rtx addr = XEXP (dest, 0);
+      if (REG_P (addr)) return "sto	%1, %0";
+      if (GET_CODE (addr) == PLUS)
+	{
+	  rtx op0 = XEXP (addr, 0);
+	  rtx op1 = XEXP (addr, 1);
+
+	  if (REG_P (op0) && REG_P (op1)
+              && (REGNO_REG_CLASS(REGNO(op0)) == GENERAL_REGS)
+	      && (REGNO_REG_CLASS(REGNO(op1)) == POINTER_REGS))
+		std::swap (op0, op1);
+
+          switch (GET_CODE (op1))
+            {
+              case CONST_INT:
+                return "sto   %1, %0";
+              case REG:
+                return "stmo  %1, %0, 0";
+		/* FIXME */
+              default:
+                return "move  %0, %1 [Internal Compiler error]";
+            }
+	}
+      return "";
+    }
+}
+
 /* Return the bit-value for a const_int or const_double.  */
 
 int64_t
