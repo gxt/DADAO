@@ -12,3 +12,7 @@ int close(int file) {
   );
   return ret;
 }
+
+int _close(int file) {
+  return close(file);
+}

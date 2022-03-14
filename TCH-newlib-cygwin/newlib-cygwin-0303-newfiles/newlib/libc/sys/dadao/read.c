@@ -14,3 +14,7 @@ int read(int file, char *ptr, int len) {
   );
   return ret;
 }
+
+int _read(int file, char *ptr, int len) {
+  return read(file, ptr, len);
+}

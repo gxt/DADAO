@@ -14,3 +14,7 @@ int write(int file, char *ptr, int len) {
   );
   return ret;
 }
+
+int _write(int file, char *ptr, int len) {
+  return write(file, ptr, len);
+}
