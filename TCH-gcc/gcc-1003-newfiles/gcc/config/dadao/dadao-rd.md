@@ -4,9 +4,9 @@
 ;; Copyright (C) 2020-2033 Guan Xuetao (AT) Peking Univ.
 ;; Contributed by Guan Xuetao <gxt@pku.edu.cn>
 
-(define_insn "mov_rd2rd"
-  [(set (match_operand:DI 0 "rd_class_operand" "=Rd")
-        (match_operand:DI 1 "rd_class_operand" " Rd"))]
+(define_insn "rd2rd_<mode>"
+  [(set (match_operand:QHSD 0 "rd_class_operand" "=Rd")
+        (match_operand:QHSD 1 "rd_class_operand" " Rd"))]
 	""
 	"rd2rd	%0, %1, 0")
 
@@ -31,6 +31,16 @@
 	{ if (GET_CODE (operands[1]) == CONST) { return "move	%0, %1"; }
 	  else {
 		/* (SYMBOL_REF_LOCAL_P (operands[1]) */
+		return "move	%0, %1";
+	  }})
+
+(define_insn "move<mode>_addr_global"
+  [(set (match_operand:QHSD 0 "rd_class_operand" "=Rd")
+        (match_operand:QHSD 1 "global_symbolic_operand" ""))]
+	""
+	{ if (GET_CODE (operands[1]) == CONST) { return "move	%0, %1"; }
+	  else {
+		/* (SYMBOL_REF_GLOBAL_P (operands[1]) */
 		return "move	%0, %1";
 	  }})
 
