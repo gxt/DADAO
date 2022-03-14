@@ -208,6 +208,12 @@
 	""
 	"move	%0, %1");
 
+(define_insn "dd_rb_get_labol"
+  [(set (match_operand:DI 0 "rb_class_operand" "=Rb")
+        (match_operand:DI 1 "dd_label_operand"  ""))]
+	""
+	"move	%0, %1");
+
 (define_expand "dd_plus_rb"
   [(set      (match_operand:DI 0 "rd_class_operand" "=Rd")
     (plus:DI (match_operand:DI 1 "rb_class_operand" "%Rb")
