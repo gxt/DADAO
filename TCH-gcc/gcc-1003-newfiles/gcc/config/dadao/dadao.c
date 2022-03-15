@@ -1054,14 +1054,6 @@ static void dd_option_override (void)
 
 /* XXX gccint 18.31 Node: Miscellaneous Parameters */
 
-static void dadao_reorg (void)
-{
-	// TODO
-}
-
-#undef	TARGET_MACHINE_DEPEDENT_REORG
-#define	TARGET_MACHINE_DEPEDENT_REORG dadao_reorg
-
 /* XXX End of gccint Chapter 18: Target Description Macros and Functions */
 
 /* Wrapper for get_hard_reg_initial_val since integrate.h isn't included
