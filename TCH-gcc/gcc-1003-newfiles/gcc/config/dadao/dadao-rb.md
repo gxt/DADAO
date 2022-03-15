@@ -208,7 +208,7 @@
 	""
 	"move	%0, %1");
 
-(define_insn "dd_rb_get_labol"
+(define_insn "dd_rb_get_label"
   [(set (match_operand:DI 0 "rb_class_operand" "=Rb")
         (match_operand:DI 1 "dd_label_operand"  ""))]
 	""
