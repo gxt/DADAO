@@ -17,9 +17,6 @@ extern int dadao_initial_elimination_offset (int, int);
 extern void dadao_function_profiler (FILE *, int);
 
 /* gccint 18.13 Node: Addressing Modes */
-extern bool dd_load_legitimate_address_rbzero (rtx);
-extern bool dd_load_legitimate_address_rbimm (rtx);
-extern bool dd_load_legitimate_address_rbmem (rtx);
 extern bool dd_load_legitimate_address_rbrd (rtx);
 
 /* XXX gccint 18.15.2 Node: Representation of condition codes using registers */
