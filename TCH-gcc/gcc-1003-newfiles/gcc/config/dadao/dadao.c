@@ -1474,68 +1474,110 @@ dadao_output_shifted_value (FILE *stream, int64_t value)
   fprintf (stream, "0");
 }
 
-char*
+/*
+ * E_QImode = [ (7 % 4) == 3 ] --> b
+ * E_HImode = [ (8 % 4) == 0 ] --> w
+ * E_SImode = [ (9 % 4) == 1 ] --> t
+ * E_DImode = [(10 % 4) == 2 ] --> o
+ */
+static const char * const ldst_mmodes[] =
+{ "w", "t", "o", "b" };
+
+/* This function returns the assembly output for load / store operations.
+ * MODE is the machine mode of this ld/st op pair; DEST is destination op
+ * SRC is source op; STRICT is to seperate the loading / storing pattern.
+ * When strict is true then the function is for loading, otherwise for storing. */
+
+const char*
 dadao_print_ldst_operand (machine_mode mode,
 			  rtx dest, rtx src, bool strict)
 {
-  if (strict)	/* loading src data --> dest */
+  FILE *stream = asm_out_file;
+#define _DD_SWAP_OP_(OP0, OP1) ((REG_P (OP0) && REG_P (OP1))		\
+		  && (REGNO_REG_CLASS(REGNO(OP0)) == GENERAL_REGS)	\
+		  && (REGNO_REG_CLASS(REGNO(OP1)) == POINTER_REGS))
+  if (strict)
     {
+      const char * ldst_suffix = \
+	      (mode == E_DImode) ? "" : "u";
+
       rtx addr = XEXP (src, 0);
 
       if (REG_P (addr))
         {
-	  return "ldo	%0, %1";
+	  asm_fprintf (stream, "\tld%s%s",
+		       ldst_mmodes [mode % 4],
+		       ldst_suffix);
+
+	  return "%0, %1";
 	}
-      if (GET_CODE (addr) == PLUS)
+      else if
+	 (GET_CODE (addr) == PLUS)
         {
 	  rtx op0 = XEXP (addr, 0);
 	  rtx op1 = XEXP (addr, 1);
 
-	  if (REG_P (op0) && REG_P (op1)
-	  && (REGNO_REG_CLASS(REGNO(op0)) == GENERAL_REGS)
-	  && (REGNO_REG_CLASS(REGNO(op1)) == POINTER_REGS))
-		  std::swap (op0, op1);
+	  if (_DD_SWAP_OP_(op0, op1))
+	    std::swap (op0, op1);
 
 	  switch (GET_CODE (op1))
 	    {
 		case CONST_INT:
-		  return "ldo	%0, %1";
+		  asm_fprintf (stream, "\tld%s%s",
+			       ldst_mmodes [mode % 4],
+			       ldst_suffix);
+
+		  return "%0, %1";
 		case REG:
-		  return "ldmo	%0, %1, 0";
-		  /* Add the mode in */
+		  asm_fprintf (stream, "\tldm%s%s",
+			       ldst_mmodes [mode % 4],
+			       ldst_suffix);
+
+		  return "%0, %1, 0";
 		default:
-		  return "move	%0, %1 [Internal Compiler error]";
+		  gcc_unreachable ();
 	    }
 	}
-      return "";
+      else
+	gcc_unreachable ();
     }
   else
     {
       rtx addr = XEXP (dest, 0);
-      if (REG_P (addr)) return "sto	%1, %0";
-      if (GET_CODE (addr) == PLUS)
+
+      if (REG_P (addr))
+        {
+	  asm_fprintf (stream, "\tst%s",
+		       ldst_mmodes [mode % 4]);
+	  return "%1, %0";
+	}
+      else if
+	 (GET_CODE (addr) == PLUS)
 	{
 	  rtx op0 = XEXP (addr, 0);
 	  rtx op1 = XEXP (addr, 1);
 
-	  if (REG_P (op0) && REG_P (op1)
-              && (REGNO_REG_CLASS(REGNO(op0)) == GENERAL_REGS)
-	      && (REGNO_REG_CLASS(REGNO(op1)) == POINTER_REGS))
-		std::swap (op0, op1);
+	  if (_DD_SWAP_OP_(op0, op1))
+	    std::swap (op0, op1);
 
           switch (GET_CODE (op1))
             {
               case CONST_INT:
-                return "sto   %1, %0";
+		asm_fprintf (stream, "\tst%s",
+			     ldst_mmodes [mode % 4]);
+                return "%1, %0";
               case REG:
-                return "stmo  %1, %0, 0";
-		/* FIXME */
+		asm_fprintf (stream, "\tstm%s",
+			     ldst_mmodes [mode % 4]);
+                return "%1, %0, 0";
               default:
-                return "move  %0, %1 [Internal Compiler error]";
+		gcc_unreachable ();
             }
 	}
-      return "";
+      else
+	gcc_unreachable ();
     }
+#undef _DD_SWAP_OPERATOR_
 }
 
 /* Return the bit-value for a const_int or const_double.  */
@@ -1590,3 +1632,5 @@ struct gcc_target targetm = TARGET_INITIALIZER;
  * indent-tabs-mode: t
  * End:
  */
+
+
