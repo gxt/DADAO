@@ -7,9 +7,6 @@
 (define_mode_iterator	QHSD		[QI HI SI DI])
 (define_mode_attr	bwto		[(QI "b") (HI "w") (SI "t") (DI "o")])
 
-(define_mode_iterator	LTO		[QI HI SI])
-(define_mode_attr	qhs		[(QI "b") (HI "w") (SI "t")])
-
 (define_mode_iterator	SFDF		[SF DF])
 (define_mode_attr	ftfo		[(SF "ft") (DF "fo")])
 
