@@ -449,10 +449,6 @@ static void dd_asm_trampoline_template (FILE *stream)
      static chain is stored at offset 16, and the function address is
      stored at offset 24.  */
 /* FIXME the assembly for trampoline is not correct. */
-  fprintf (stream, "\tsetrd	rd63, 1f\n");
-  fprintf (stream, "\tldo	rd63, rb63, 0\n");
-  fprintf (stream, "\tcall	rb0, rd63, 0\n");
-  fprintf (stream, "1:\t.dd.o64	0\n");
 }
 
 #undef	TARGET_ASM_TRAMPOLINE_TEMPLATE
