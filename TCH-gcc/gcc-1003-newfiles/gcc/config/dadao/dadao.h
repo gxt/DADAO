@@ -388,6 +388,14 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 #define DATA_SECTION_ASM_OP			"\t.data"
 #define BSS_SECTION_ASM_OP			"\t.section\t.bss"
 
+#define CTORS_SECTION_ASM_OP "\t.section\t.init_array,\"aw\",%init_array"
+#define DTORS_SECTION_ASM_OP "\t.section\t.fini_array,\"aw\",%fini_array"
+
+#undef INIT_SECTION_ASM_OP
+#undef FINI_SECTION_ASM_OP
+#define INIT_ARRAY_SECTION_ASM_OP CTORS_SECTION_ASM_OP
+#define FINI_ARRAY_SECTION_ASM_OP DTORS_SECTION_ASM_OP
+
 /* XXX gccint 18.19 Node: Position Independent Code */
 /* (empty) */
 
