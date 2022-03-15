@@ -452,7 +452,7 @@ dadao_elf_perform_relocation(asection *isec, reloc_howto_type *howto,
             imm_w16_3 = (addr >> 32) & 0xFFFF;
             imm_w16_4 = (addr >> 48) & 0xFFFF;
 
-            if(opcode == DADAO_INSN_SETZW_RD) {
+            if(opcode == DADAO_INSN_SETZW_RD >> 24) {
                 bfd_put_32(abfd, DADAO_INSN_SETZW_RD | (reg << 18) | DADAO_WYDE_WL | imm_w16_1, (bfd_byte *)datap);
                 tmp += 4;
 
