@@ -591,13 +591,6 @@ static bool dd_legitimate_address_p (machine_mode mode ATTRIBUTE_UNUSED,
 #undef	TARGET_LEGITIMATE_ADDRESS_P
 #define	TARGET_LEGITIMATE_ADDRESS_P		dd_legitimate_address_p
 
-bool dd_load_legitimate_address_rbzero (rtx x)
-{
-	if (_DD_LEGITIMATE_ADDR_GENERAL(x, POINTER_REGS))
-		return 1;
-	return 0;
-}
-
 bool dd_load_legitimate_address_rbrd (rtx x)
 {
 	if (GET_CODE(x) != PLUS)
@@ -610,37 +603,6 @@ bool dd_load_legitimate_address_rbrd (rtx x)
 	if (_DD_LEGITIMATE_ADDR_GENERAL(x2, POINTER_REGS)
 	 && _DD_LEGITIMATE_ADDR_GENERAL(x1, GENERAL_REGS))
 		return 1;
-	return 0;
-}
-
-/* Return 1 if the address is OK, otherwise 0.  */
-bool dd_load_legitimate_address_rbimm (rtx x)
-{
-	if (GET_CODE(x) != PLUS)
-		return 0;
-	rtx x1 = XEXP (x, 0);
-	rtx x2 = XEXP (x, 1);
-
-	/* (mem (plus (rb) (-0x800, 0x7FF))) */
-	if (_DD_LEGITIMATE_ADDR_GENERAL(x1, POINTER_REGS) && satisfies_constraint_Id (x2))
-		return 1;
-	return 0;
-}
-
-/* Return 1 if the address is OK, otherwise 0.  */
-bool dd_load_legitimate_address_rbmem (rtx x)
-{
-	if (GET_CODE(x) != PLUS)
-		return 0;
-
-	rtx x1 = XEXP (x, 0);
-	rtx x2 = XEXP (x, 1);
-
-	/* (mem (plus (rb) (mem))) */
-	if (((REGNO_REG_CLASS(REGNO(x1)) == POINTER_REGS) && (MEM_P(x2)))
-	 || (_DD_LEGITIMATE_ADDR_GENERAL(x2, POINTER_REGS) && (MEM_P(x1))))
-		return dd_judge_legitimate_address (MEM_P(x1) ? x1 : x2);
-
 	return 0;
 }
 
