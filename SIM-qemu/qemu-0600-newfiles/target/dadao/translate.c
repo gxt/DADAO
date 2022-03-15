@@ -910,7 +910,7 @@ static bool trans_jump(DisasContext *ctx, arg_jump *a)
 
 static bool trans_jumpaa(DisasContext *ctx, arg_jumpaa *a)
 {
-    tcg_gen_movi_i64(cpu_pc, a->rb);
+    tcg_gen_mov_i64(cpu_pc, cpu_rb[a->rb]);
     tcg_gen_add_i64(cpu_pc, cpu_pc, cpu_rd[a->rd]);
     tcg_gen_addi_i64(cpu_pc, cpu_pc, a->imm * 4);
     ctx->base.is_jmp = DISAS_JUMP;
