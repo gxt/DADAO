@@ -241,7 +241,7 @@ static reloc_howto_type elf_dadao_howto_table[] =
         HOWTO(R_DADAO_ABS,               /* type */
               0,                          /* rightshift */
               0,                          /* size (0 = byte, 1 = short, 2 = long) */
-              18,                         /* bitsize */
+              16,                         /* bitsize */
               TRUE,                       /* pc_relative */
               0,                          /* bitpos */
               complain_overflow_bitfield, /* complain_on_overflow */
@@ -435,10 +435,10 @@ dadao_elf_perform_relocation(asection *isec, reloc_howto_type *howto,
         r = bfd_check_overflow(complain_overflow_bitfield,
                                howto->bitsize, 0,
                                bfd_arch_bits_per_address(abfd),
-                               value);
+                               addr);
         if (r == bfd_reloc_ok)
         {
-            bfd_put_32(abfd, insn_origin | ((value >> 2) & 0x3FFFF),
+            bfd_put_32(abfd, insn_origin | addr & 0xFFFF ,
                        (bfd_byte *)datap);
         }
         else
@@ -483,11 +483,6 @@ dadao_elf_perform_relocation(asection *isec, reloc_howto_type *howto,
                 if(imm_w16_4) {
                     bfd_put_32(abfd, DADAO_INSN_ORW_RB | (reg << 18) | DADAO_WYDE_WH | imm_w16_4, (bfd_byte *)datap + tmp);
                 }
-                /*bfd_put_32(abfd, DADAO_INSN_SETZW_RB | (reg << 18) | DADAO_WYDE_WH | ((addr >> 48) & 0xffff), (bfd_byte *)datap);
-                bfd_put_32(abfd, DADAO_INSN_ORW_RB | (reg << 18) | DADAO_WYDE_WJ | ((addr >> 32) & 0xffff), (bfd_byte *)datap + 4);
-                bfd_put_32(abfd, DADAO_INSN_ORW_RB | (reg << 18) | DADAO_WYDE_WK | ((addr >> 16) & 0xffff), (bfd_byte *)datap + 8);
-                bfd_put_32(abfd, DADAO_INSN_ORW_RB | (reg << 18) | DADAO_WYDE_WL | (addr & 0xffff), (bfd_byte *)datap + 12);   
-                */
             }
         }
 
