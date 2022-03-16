@@ -1,31 +1,28 @@
-#include <_ansi.h>
 #include <sys/types.h>
-#include <sys/stat.h>
-#include "sys/syscall.h"
 
-extern char *_Sbrk_high;
+static caddr_t brk(caddr_t addr) {
+  int ret;
+  __asm__ (
+    "setzwl  rd15, 214    \n"
+    "rd2rd   rd16, %1, 0  \n"
+    "trap    cp0, 0       \n"
+    "rd2rd   %0, rd31, 0  \n"
+    : "=r" (ret)
+    : "r" (addr)
+    : "memory"
+  );
+  return ret;
+}
 
-/* When the program is loaded, the first location in Pool_Segment holds
-   the first available octabyte in the memory pool (a.k.a. the heap);
-   somewhere after the command-line parameters.  We don't have to
-   initialize that location, we can just use it straight up as a pointer;
-   just point the symbol there.
+static caddr_t _Sbrk_high = 0;
 
-   This file will be compiled with -no-builtin-syms, so we need to define
-   Pool_Segment and any other symbols that would be predefined.  */
-
-__asm__ (" .global _Sbrk_high\n"
-	 "_Sbrk_high:		. =	0x40<<32\n"
-	 "# _Sbrk_high:		. =	0x40<<56\n"
-	 "# Pool_Segment:	. =	0x40<<56");
-
-caddr_t
-_sbrk (size_t incr)
+caddr_t _sbrk(size_t incr)
 {
-  char *prev_heap_end;
-
-  prev_heap_end = _Sbrk_high;
-
+  if(_Sbrk_high == 0) {
+    _Sbrk_high = brk(_Sbrk_high);
+  }
+  caddr_t prev_heap_end = _Sbrk_high;
   _Sbrk_high += incr;
-  return (caddr_t) prev_heap_end;
+  _Sbrk_high = brk(_Sbrk_high);
+  return prev_heap_end;
 }
