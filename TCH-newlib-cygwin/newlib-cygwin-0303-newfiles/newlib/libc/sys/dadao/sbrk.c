@@ -15,7 +15,7 @@ extern char *_Sbrk_high;
    Pool_Segment and any other symbols that would be predefined.  */
 
 __asm__ (" .global _Sbrk_high\n"
-	 "_Sbrk_high:	. =	0x40<<6\n"
+	 "_Sbrk_high:		. =	0x40<<32\n"
 	 "# _Sbrk_high:		. =	0x40<<56\n"
 	 "# Pool_Segment:	. =	0x40<<56");
 
