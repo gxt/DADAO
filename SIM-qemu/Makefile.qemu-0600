@@ -2,6 +2,7 @@
 # Makefile for simulator
 #
 QEMU_0600_ORIGIN	:= $(DIR_GIT_ORIGIN)/qemu.git
+QEMU_0600_PROJECT	:= $(DIR_GIT_ORIGIN)/qemu-project
 QEMU_0600_VERSION	:= v6.0.1
 QEMU_0600_BRANCH	:= dadao-0600
 QEMU_0600_TARGETS	:= dadao-softmmu,dadao-linux-user
@@ -33,6 +34,23 @@ qemu-0600-source:
 	@echo "Clone official repo"
 	@git clone -q $(QEMU_0600_ORIGIN) -- $(QEMU_0600_SOURCE)
 	@cd $(QEMU_0600_SOURCE); git checkout -qb $(QEMU_0600_BRANCH) $(QEMU_0600_VERSION)
+	# get modules
+	@cd $(QEMU_0600_SOURCE);		git clone $(QEMU_0600_PROJECT)/capstone.git
+	@cd $(QEMU_0600_SOURCE);		git clone $(QEMU_0600_PROJECT)/dtc.git
+	@cd $(QEMU_0600_SOURCE);		git clone $(QEMU_0600_PROJECT)/meson.git
+	@cd $(QEMU_0600_SOURCE);		git clone $(QEMU_0600_PROJECT)/libslirp.git slirp
+	@cd $(QEMU_0600_SOURCE)/ui;		git clone $(QEMU_0600_PROJECT)/keycodemapdb.git
+	@cd $(QEMU_0600_SOURCE)/tests/fp;	git clone $(QEMU_0600_PROJECT)/berkeley-softfloat-3.git
+	@cd $(QEMU_0600_SOURCE)/tests/fp;	git clone $(QEMU_0600_PROJECT)/berkeley-testfloat-3.git
+	# checkout to the right commit for each module
+	# see commit id in https://gitlab.com/qemu-project/qemu/-/tree/v6.0.1
+	@cd $(QEMU_0600_SOURCE)/capstone;			git checkout f8b1b833
+	@cd $(QEMU_0600_SOURCE)/dtc;				git checkout 85e5d839
+	@cd $(QEMU_0600_SOURCE)/meson;				git checkout 776acd2a
+	@cd $(QEMU_0600_SOURCE)/slirp;				git checkout 8f43a991
+	@cd $(QEMU_0600_SOURCE)/ui/keycodemapdb;		git checkout 6119e6e1
+	@cd $(QEMU_0600_SOURCE)/tests/fp/berkeley-softfloat-3;	git checkout b64af41c
+	@cd $(QEMU_0600_SOURCE)/tests/fp/berkeley-testfloat-3;	git checkout 5a59dcec
 	# include and arch-init
 	@echo "INCLUDE and arch-init patches"
 	@cd $(QEMU_0600_SOURCE); git am $(QEMU_0600_PATCHES)/0*.patch
