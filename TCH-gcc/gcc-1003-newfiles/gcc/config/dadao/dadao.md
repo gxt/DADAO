@@ -144,7 +144,7 @@
       {
 	if (REG_P (operands[1]))
 	  {
-	    return "call	%1, %a3";
+	    return "call	%1, rd0, 0";
 	  }
 	else if (GET_CODE (operands[1]) == CONST)
 	  {
@@ -160,7 +160,7 @@
 	    fprintf (asm_out_file, "%s, %d\n", reg_names[REGNO(operands[3])], INTVAL(op1));
 	    return "";
 	  }
-	return "call	%1, %a3";
+	return "call 	%1, %a3";
       }
   })
 
