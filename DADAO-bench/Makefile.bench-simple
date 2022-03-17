@@ -57,3 +57,40 @@ bench-simple-main-qemu:
 	$(DDB_QEMU_USER) -singlestep -strace						\
 		-D $(DDB_DST_DIR)/$(DDB_SIMPLE_MAIN).qemulog				\
 		$(DDB_DST_DIR)/$(DDB_SIMPLE_MAIN)
+
+DDB_HELLOWORLD		?= helloworld
+
+bench-helloworld-elf:
+	@test -d $(DDB_DST_DIR) || mkdir -p $(DDB_DST_DIR)
+	cd $(DDB_DST_DIR) ;								\
+		$(DDB_ELF_GCC) $(DDB_SRC_DIR)/$(DDB_HELLOWORLD).c			\
+			-save-temps							\
+			-o $(DDB_HELLOWORLD) ;						\
+		$(DDB_ELF_READELF) -a $(DDB_HELLOWORLD).o > $(DDB_HELLOWORLD).o.elf ;	\
+		$(DDB_ELF_OBJDUMP) -lDS $(DDB_HELLOWORLD).o > $(DDB_HELLOWORLD).o.dump ;\
+		$(DDB_ELF_READELF) -a $(DDB_HELLOWORLD) > $(DDB_HELLOWORLD).elf ;	\
+		$(DDB_ELF_OBJDUMP) -lDS $(DDB_HELLOWORLD) > $(DDB_HELLOWORLD).dump
+
+bench-helloworld-gnu:
+	@test -d $(DDB_DST_DIR) || mkdir -p $(DDB_DST_DIR)
+	cd $(DDB_DST_DIR) ;								\
+		$(DDB_GNU_GCC) $(DDB_SRC_DIR)/$(DDB_HELLOWORLD).c			\
+			-save-temps							\
+			$(DIR_DADAO_INSTALL)/lib/gcc/dadao-linux-gnu/10.3.0/crti.o	\
+			$(DIR_DADAO_INSTALL)/lib/gcc/dadao-linux-gnu/10.3.0/crtn.o	\
+			-nostdlib -lgcc							\
+			-B$(DIR_DADAO_BUILD)/gcc-$(VER_GCC)/gcc/			\
+			-B$(DIR_DADAO_INSTALL)/dadao-linux-gnu/bin/			\
+			-B$(DIR_DADAO_INSTALL)/dadao-linux-gnu/lib/			\
+			-isystem $(DIR_DADAO_INSTALL)/dadao-linux-gnu/include		\
+			-isystem $(DIR_DADAO_INSTALL)/dadao-linux-gnu/sys-include	\
+			-o $(DDB_DST_DIR)/$(DDB_HELLOWORLD) ;				\
+		$(DDB_GNU_READELF) -a $(DDB_HELLOWORLD).o > $(DDB_HELLOWORLD).o.elf ;	\
+		$(DDB_GNU_OBJDUMP) -lDS $(DDB_HELLOWORLD).o > $(DDB_HELLOWORLD).o.dump ;\
+		$(DDB_GNU_READELF) -a $(DDB_HELLOWORLD) > $(DDB_HELLOWORLD).elf ;	\
+		$(DDB_GNU_OBJDUMP) -lDS $(DDB_HELLOWORLD) > $(DDB_HELLOWORLD).dump
+
+bench-helloworld-qemu:
+	$(DDB_QEMU_USER) -singlestep -strace						\
+		-D $(DDB_DST_DIR)/$(DDB_HELLOWORLD).qemulog				\
+		$(DDB_DST_DIR)/$(DDB_HELLOWORLD)
