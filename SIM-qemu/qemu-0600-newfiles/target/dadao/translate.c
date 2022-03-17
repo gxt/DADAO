@@ -1006,6 +1006,7 @@ static bool trans_br_od_ev(DisasContext* ctx, arg_riii* a, bool is_od)
     tcg_temp_free_i64(zero);
     tcg_temp_free_i64(next);
     tcg_temp_free_i64(dest);
+    ctx->base.is_jmp = DISAS_JUMP;
     return true;
 }
 
