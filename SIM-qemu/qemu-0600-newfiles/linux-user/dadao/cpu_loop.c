@@ -50,6 +50,7 @@ void cpu_loop(CPUDADAOState *env)
                              DDABI_ARG(env, 5),
                              DDABI_ARG(env, 6),
                              0);
+            env->REG_PC += 4;
             if (ret == -TARGET_ERESTARTSYS) {
                 env->REG_PC -= 4;
             } else if (ret != -TARGET_QEMU_ESIGRETURN) {
