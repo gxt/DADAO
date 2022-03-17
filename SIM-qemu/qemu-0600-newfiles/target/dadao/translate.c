@@ -623,6 +623,12 @@ static bool trans_add(DisasContext *ctx, arg_add *a)
     TCGv_i64 zero = tcg_const_i64(0);
     tcg_gen_add2_i64(cpu_rd[a->rdhb], cpu_rd[a->rdha],
                      cpu_rd[a->rdhc], zero, cpu_rd[a->rdhd], zero);
+    if (a->rdha == 0) {
+        tcg_gen_movi_i64(cpu_rd[a->rdha], 0);
+    }
+    if (a->rdhb == 0) {
+        tcg_gen_movi_i64(cpu_rd[a->rdhb], 0);
+    }
     tcg_temp_free_i64(zero);
     return true;
 }
@@ -632,6 +638,12 @@ static bool trans_sub(DisasContext *ctx, arg_sub *a)
     TCGv_i64 zero = tcg_const_i64(0);
     tcg_gen_sub2_i64(cpu_rd[a->rdhb], cpu_rd[a->rdha],
                      cpu_rd[a->rdhc], zero, cpu_rd[a->rdhd], zero);
+    if (a->rdha == 0) {
+        tcg_gen_movi_i64(cpu_rd[a->rdha], 0);
+    }
+    if (a->rdhb == 0) {
+        tcg_gen_movi_i64(cpu_rd[a->rdhb], 0);
+    }
     tcg_temp_free_i64(zero);
     return true;
 }
@@ -640,6 +652,12 @@ static bool trans_muls(DisasContext *ctx, arg_muls *a)
 {
     tcg_gen_muls2_i64(cpu_rd[a->rdhb], cpu_rd[a->rdha],
                       cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
+    if (a->rdha == 0) {
+        tcg_gen_movi_i64(cpu_rd[a->rdha], 0);
+    }
+    if (a->rdhb == 0) {
+        tcg_gen_movi_i64(cpu_rd[a->rdhb], 0);
+    }
     return true;
 }
 
@@ -647,6 +665,12 @@ static bool trans_mulu(DisasContext *ctx, arg_mulu *a)
 {
     tcg_gen_mulu2_i64(cpu_rd[a->rdhb], cpu_rd[a->rdha],
                       cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
+    if (a->rdha == 0) {
+        tcg_gen_movi_i64(cpu_rd[a->rdha], 0);
+    }
+    if (a->rdhb == 0) {
+        tcg_gen_movi_i64(cpu_rd[a->rdhb], 0);
+    }
     return true;
 }
 
@@ -657,8 +681,12 @@ static bool trans_divs(DisasContext *ctx, arg_divs *a)
     tcg_gen_brcond_i64(TCG_COND_NE, cpu_rd[a->rdhd], zero, label_not_zero);
     gen_exception(DADAO_EXCP_FPER);
     gen_set_label(label_not_zero);
-    tcg_gen_div_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
-    tcg_gen_rem_i64(cpu_rd[a->rdha], cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
+    if (a->rdhb != 0) {
+        tcg_gen_div_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
+    }
+    if (a->rdha != 0) {
+        tcg_gen_rem_i64(cpu_rd[a->rdha], cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
+    }
     tcg_temp_free_i64(zero);
     return true;
 }
@@ -670,8 +698,12 @@ static bool trans_divu(DisasContext *ctx, arg_divu *a)
     tcg_gen_brcond_i64(TCG_COND_NE, cpu_rd[a->rdhd], zero, label_not_zero);
     gen_exception(DADAO_EXCP_FPER);
     gen_set_label(label_not_zero);
-    tcg_gen_divu_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
-    tcg_gen_remu_i64(cpu_rd[a->rdha], cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
+    if (a->rdhb != 0) {
+        tcg_gen_divu_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
+    }
+    if (a->rdha != 0) {
+        tcg_gen_remu_i64(cpu_rd[a->rdha], cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
+    }
     tcg_temp_free_i64(zero);
     return true;
 }
@@ -772,12 +804,18 @@ static bool trans_cmprb(DisasContext *ctx, arg_cmprb *a)
 
 static bool trans_addrb(DisasContext *ctx, arg_addrb *a)
 {
+    if (a->rbhb == 0) {
+        return false;
+    }
     tcg_gen_add_i64(cpu_rb[a->rbhb], cpu_rb[a->rbhc], cpu_rd[a->rdhd]);
     return true;
 }
 
 static bool trans_subrb(DisasContext *ctx, arg_subrb *a)
 {
+    if (a->rbhb == 0) {
+        return false;
+    }
     tcg_gen_sub_i64(cpu_rb[a->rbhb], cpu_rb[a->rbhc], cpu_rd[a->rdhd]);
     return true;
 }
@@ -811,24 +849,36 @@ static bool trans_xor(DisasContext *ctx, arg_xor *a)
 
 static bool trans_shlu(DisasContext *ctx, arg_shlu *a)
 {
+    if (a->rdhb == 0) {
+        return false;
+    }
     tcg_gen_shl_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
     return true;
 }
 
 static bool trans_shrs(DisasContext *ctx, arg_shrs *a)
 {
+    if (a->rdhb == 0) {
+        return false;
+    }
     tcg_gen_sar_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
     return true;
 }
 
 static bool trans_shru(DisasContext *ctx, arg_shru *a)
 {
+    if (a->rdhb == 0) {
+        return false;
+    }
     tcg_gen_shr_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
     return true;
 }
 
 static bool trans_exts(DisasContext *ctx, arg_exts *a)
 {
+    if (a->rdhb == 0) {
+        return false;
+    }
     TCGv_i64 imm = tcg_temp_new_i64();
     tcg_gen_subfi_i64(imm, 63, cpu_rd[a->rdhd]);
     tcg_gen_shl_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], imm);
@@ -839,6 +889,9 @@ static bool trans_exts(DisasContext *ctx, arg_exts *a)
 
 static bool trans_extz(DisasContext *ctx, arg_extz *a)
 {
+    if (a->rdhb == 0) {
+        return false;
+    }
     TCGv_i64 imm = tcg_temp_new_i64();
     tcg_gen_subfi_i64(imm, 63, cpu_rd[a->rdhd]);
     tcg_gen_shl_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], imm);
@@ -849,6 +902,9 @@ static bool trans_extz(DisasContext *ctx, arg_extz *a)
 
 static bool trans_not(DisasContext *ctx, arg_not *a)
 {
+    if (a->rdhb == 0) {
+        return false;
+    }
     TCGv_i64 imm = tcg_const_i64((int64_t)~0);
     tcg_gen_shl_i64(imm, imm, cpu_rd[a->rdhd]);
     tcg_gen_xor_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], imm);
@@ -858,24 +914,36 @@ static bool trans_not(DisasContext *ctx, arg_not *a)
 
 static bool trans_shlui(DisasContext *ctx, arg_shlui *a)
 {
+    if (a->rdhb == 0) {
+        return false;
+    }
     tcg_gen_shli_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], a->imm);
     return true;
 }
 
 static bool trans_shrsi(DisasContext *ctx, arg_shrsi *a)
 {
+    if (a->rdhb == 0) {
+        return false;
+    }
     tcg_gen_sari_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], a->imm);
     return true;
 }
 
 static bool trans_shrui(DisasContext *ctx, arg_shrui *a)
 {
+    if (a->rdhb == 0) {
+        return false;
+    }
     tcg_gen_shri_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], a->imm);
     return true;
 }
 
 static bool trans_extsi(DisasContext *ctx, arg_extsi *a)
 {
+    if (a->rdhb == 0) {
+        return false;
+    }
     tcg_gen_shli_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], 63 - a->imm);
     tcg_gen_sari_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], 63 - a->imm);
     return true;
@@ -883,6 +951,9 @@ static bool trans_extsi(DisasContext *ctx, arg_extsi *a)
 
 static bool trans_extzi(DisasContext *ctx, arg_extzi *a)
 {
+    if (a->rdhb == 0) {
+        return false;
+    }
     tcg_gen_shli_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], 63 - a->imm);
     tcg_gen_shri_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], 63 - a->imm);
     return true;
@@ -890,6 +961,9 @@ static bool trans_extzi(DisasContext *ctx, arg_extzi *a)
 
 static bool trans_noti(DisasContext *ctx, arg_noti *a)
 {
+    if (a->rdhb == 0) {
+        return false;
+    }
     tcg_gen_xori_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], (int64_t)~0 << a->imm);
     return true;
 }
