@@ -15,3 +15,7 @@ int open(const char *name, int flags, int mode) {
   );
   return ret;
 }
+
+int _open(const char *name, int flags, int mode) {
+  return open(name, flags, mode);
+}
