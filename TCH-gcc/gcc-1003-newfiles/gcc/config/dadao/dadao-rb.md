@@ -23,11 +23,13 @@
 	"rb2rd	%0, %1, 0")
 
 (define_insn "addrb_rd"
-  [(set      (match_operand:DI 0 "rb_class_operand" "=Rb")
-    (plus:DI (match_operand:DI 1 "rb_class_operand" "%Rb")
-             (match_operand:DI 2 "rd_class_operand" "Rd")))]
+  [(set      (match_operand:DI 0 "rb_class_operand" "=Rb,Rb")
+    (plus:DI (match_operand:DI 1 "rb_class_operand" "%Rb,Rb")
+             (match_operand:DI 2 "dd_rd_ls_operand" " Rd, i")))]
 	""
-	"addrb	%0, %1, %2")
+	"@
+	addrb	%0, %1, %2
+	move	rd7, %2	\;addrb	%0, %1, rd7")
 
 (define_insn "subrb_rd"
   [(set      (match_operand:DI 0 "rb_class_operand" "=Rb")
@@ -36,45 +38,13 @@
 	""
 	"subrb	%0, %1, %2")
 
-(define_expand "dd_addrb_imm"
-  [(set       (match_operand:DI 0 "rb_class_operand"  "= Rb")
-     (plus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb")
-              (match_operand:DI 2 "const_int_operand" "  i")))]
-        ""
-	"{
-		if (!satisfies_constraint_It (operands[2])) {
-			if (can_create_pseudo_p ()) operands[2] = force_reg (DImode, operands[2]);
-			else {
-				rtx ip = gen_rtx_REG (DImode, 7);
-				emit_insn (gen_rtx_SET (ip, operands[2]));
-				operands[2] = ip;
-			}
-		}
-	}")
-
-(define_expand "dd_subrb_imm"
-  [(set       (match_operand:DI 0 "rb_class_operand"  "= Rb")
-    (minus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb")
-              (match_operand:DI 2 "const_int_operand" "  i")))]
-        ""
-	"{
-	  if (!satisfies_constraint_It (operands[2])) {
-	    if (can_create_pseudo_p ()) operands[2] = force_reg (DImode, operands[2]);
-		else {
-		    rtx ip = gen_rtx_REG (DImode, 7);
-		    emit_insn (gen_rtx_SET (ip, operands[2]));
-		    operands[2] = ip;
-		  }
-	      }
-	}")
-
 (define_insn "addrb_imm"
   [(set       (match_operand:DI 0 "rb_class_operand"  "= Rb")
      (plus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb")
               (match_operand:DI 2 "dd_sign_18_operand"   "i")))]
         ""
         {
-          if (operands[1] == operands[0])
+          if (REGNO(operands[1]) == REGNO(operands[0]))
                 return  "addi	%0, %2";
           else
                 return  "rb2rb	%0, %1, 0       \;addi	%0, %2";
