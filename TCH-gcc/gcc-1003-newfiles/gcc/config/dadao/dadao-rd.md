@@ -51,26 +51,31 @@
 	"move	%0, %1")
 
 (define_expand "adddi3"
-  [(set      (match_operand:DI 0 "register_operand" "=r")
-    (plus:DI (match_operand:DI 1 "register_operand" "%r")
-             (match_operand:DI 2 "general_operand"  "")))]
-	""
-	"{
-	  if (MEM_P(operands[2]) ||
-	     (GET_CODE(operands[2])==CONST_INT &&
-	     !satisfies_constraint_It (operands[2])) ||
-	     (GET_CODE(operands[2])!=CONST_INT && !REG_P(operands[2])))
-	  {
-	    if (can_create_pseudo_p())
-		operands[2] = force_reg (DImode, operands[2]);
-	    else
-	      {
-		rtx ip = gen_rtx_REG (DImode, 7);
-		emit_insn (gen_rtx_SET (ip, operands[2]));
-		operands[2] = ip;
-	      }
-	  }
-	}")
+  [(set      (match_operand:DI 0 "")
+    (plus:DI (match_operand:DI 1 "")
+             (match_operand:DI 2 "")))]
+  ""
+{
+  if (can_create_pseudo_p())
+    {
+      if (!REG_P (operands[0]))
+	{
+	  rtx reg = gen_reg_rtx (Pmode);
+	  emit_move_insn (reg,
+			  gen_rtx_PLUS (Pmode, operands[1],
+					       operands[2]));
+	  emit_move_insn (operands[0], reg);
+
+	  DONE;
+	}
+
+      if (!REG_P (operands[1]))
+	operands[1] = force_reg (DImode, operands[1]);
+
+      if (!REG_P (operands[2]))
+	operands[2] = force_reg (DImode, operands[2]);
+    }
+})
 
 (define_insn "dd_addrd_mem"
   [(set      (match_operand:DI 0 "rd_class_operand" "=Rd,Rd")
@@ -109,26 +114,31 @@
 	"add	rd0, %0, %1, %2")
 
 (define_expand "subdi3"
-  [(set       (match_operand:DI 0 "register_operand" "=r")
-    (minus:DI (match_operand:DI 1 "register_operand" "%r")
-              (match_operand:DI 2 "general_operand"  "")))]
-	""
-	"{
-	  if (MEM_P(operands[2]) ||
-	     (GET_CODE(operands[2])==CONST_INT &&
-	     !satisfies_constraint_It (operands[2])) ||
-	     (GET_CODE(operands[2])!=CONST_INT && !REG_P(operands[2])))
-	  {
-	    if (can_create_pseudo_p())
-		operands[2] = force_reg (DImode, operands[2]);
-	    else
-	      {
-		rtx ip = gen_rtx_REG (DImode, 7);
-		emit_insn (gen_rtx_SET (ip, operands[2]));
-		operands[2] = ip;
-	      }
-	  }
-	}")
+  [(set      (match_operand:DI 0 "")
+   (minus:DI (match_operand:DI 1 "")
+             (match_operand:DI 2 "")))]
+  ""
+{
+  if (can_create_pseudo_p())
+    {
+      if (!REG_P (operands[0]))
+	{
+	  rtx reg = gen_reg_rtx (Pmode);
+	  emit_move_insn (reg,
+			  gen_rtx_PLUS (Pmode, operands[1],
+					       operands[2]));
+	  emit_move_insn (operands[0], reg);
+
+	  DONE;
+	}
+
+      if (!REG_P (operands[1]))
+	operands[1] = force_reg (DImode, operands[1]);
+
+      if (!REG_P (operands[2]))
+	operands[2] = force_reg (DImode, operands[2]);
+    }
+})
 
 (define_insn "dd_subrd_mem"
   [(set      (match_operand:DI 0 "rd_class_operand" "=Rd,Rd")
@@ -213,3 +223,4 @@
             (not:DI (match_operand:DI 2 "rd_class_operand" "    Rd"))))]
 	""
 	"orr	%0, %1, %2	\;	not	%0, %0, rd0")
+
