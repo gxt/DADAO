@@ -106,6 +106,18 @@
   add	rd0, %0, %1, %2
   move	rd7, %2	\;add	rd0, %0, %1, rd7")
 
+;; Pr: gcc.c-torture/execute/960209-1.c
+;; -O2 This pattern is called when the program wants to get
+;;     the address of a union-array member like "&array[a]"
+;;P.S: rb7 would be better because operands [2] is no doubt
+;;     a label_ref / symbol_ref, which is symbolic operand.
+(define_insn "*dd_add_symbolic"
+  [(set      (match_operand:DI 0 "register_operand" "")
+    (plus:DI (match_operand:DI 1 "register_operand" "")
+             (match_operand:DI 2 "dadao_symbolic_or_address_operand" "")))]
+	""
+	"move	rd7, %2	\;add	rd0, %0, %1, rd7")
+
 (define_insn "dd_addrd"
   [(set      (match_operand:DI 0 "rd_class_operand" "=Rd")
     (plus:DI (match_operand:DI 1 "rd_class_operand" "%Rd")
