@@ -205,16 +205,16 @@
       rtx base = XEXP (operands[0], 0);
       rtx offset = XEXP (operands[0], 1);
 
-      gcc_assert (REG_P (base) && REG_P (offset));
+      gcc_assert (REG_P (base) && (REG_P (offset) || CONST_INT_P (offset)));
 
-      fprintf (asm_out_file, "\tjump	%s, %s, 0\n",
-			reg_names[REGNO(base)],
-			reg_names[REGNO(offset)]);
+      int off_flag = CONST_INT_P (offset);
 
+      fprintf (asm_out_file, "\tjump\t%s, %s, 0\n",
+		reg_names[REGNO(base)], (off_flag) ? "rd0" : reg_names[REGNO(offset)],
+					(off_flag) ? INTVAL(offset) : 0);
       return "";
     }
-    else
-        return "jump	%0";
+    else return "jump\t%0";
   })
 
 ;; FIXME: This is just a jump, and should be expanded to one.
