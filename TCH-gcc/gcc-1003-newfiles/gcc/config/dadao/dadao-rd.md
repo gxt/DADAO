@@ -60,6 +60,9 @@
     {
       if (!REG_P (operands[0]))
 	{
+	  operands[1] = force_reg (DImode, operands[1]);
+	  operands[2] = force_reg (DImode, operands[2]);
+
 	  rtx reg = gen_reg_rtx (Pmode);
 	  emit_move_insn (reg,
 			  gen_rtx_PLUS (Pmode, operands[1],
@@ -112,11 +115,13 @@
 ;;P.S: rb7 would be better because operands [2] is no doubt
 ;;     a label_ref / symbol_ref, which is symbolic operand.
 (define_insn "*dd_add_symbolic"
-  [(set      (match_operand:DI 0 "register_operand" "")
-    (plus:DI (match_operand:DI 1 "register_operand" "")
-             (match_operand:DI 2 "dadao_symbolic_or_address_operand" "")))]
+  [(set      (match_operand:DI 0 "register_operand" "=Rd,Rb")
+    (plus:DI (match_operand:DI 1 "register_operand" "=Rd,Rd")
+             (match_operand:DI 2 "general_symbolic_operand" "")))]
 	""
-	"move	rd7, %2	\;add	rd0, %0, %1, rd7")
+	"@
+	move\trd7, %2\t\;add\trd0, %0, %1, rd7
+	move\trd7, %2\t\;add\trd0, rd7, %1, rd7\t\;rd2rb\t%0, rd7, 0")
 
 (define_insn "dd_addrd"
   [(set      (match_operand:DI 0 "rd_class_operand" "=Rd")
