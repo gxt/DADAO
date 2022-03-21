@@ -42,25 +42,21 @@
   [(set       (match_operand:DI 0 "rb_class_operand"  "= Rb")
      (plus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb")
               (match_operand:DI 2 "dd_sign_18_operand"   "i")))]
-        ""
-        {
-          if (REGNO(operands[1]) == REGNO(operands[0]))
-                return  "addi	%0, %2";
-          else
-                return  "rb2rb	%0, %1, 0       \;addi	%0, %2";
-       })
+  ""
+  { if (REGNO(operands[1])
+     == REGNO(operands[0])) return  "addi\t%0, %2";
+    else return "rb2rb\t%0, %1, 0\t\;addi\t%0, %2";
+  })
 
 (define_insn "subrb_imm"
   [(set       (match_operand:DI 0 "rb_class_operand"  "= Rb")
     (minus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb")
               (match_operand:DI 2 "dd_sign_18_operand"   "i")))]
-        ""
-        {
-          if (operands[1] == operands[0])
-                return  "addi	%0, %n2";
-          else
-                return  "rb2rb	%0, %1, 0       \;addi	%0, %n2";
-       })
+  ""
+  { if (REGNO(operands[1])
+     == REGNO(operands[0])) return  "addi\t%0, %n2";
+    else return "rb2rb\t%0, %1, 0\t\;addi\t%0, %n2";
+  })
 
 (define_insn "addrb_ctry"
   [(set      (match_operand:DI 0 "rb_class_operand"  "=Rb")
