@@ -136,7 +136,6 @@
 (define_insn "addrb2rd_larde_scale"
   [(set      (match_operand:DI 0 "rd_class_operand" "=Rd")
     (plus:DI (match_operand:DI 1 "rb_class_operand" "=Rb")
-             (match_operand:DI 2 "const_int_operand"  "i")))
-	(clobber (reg:DI 7))]
+             (match_operand:DI 2 "const_int_operand"  "i")))]
 	""
-	"rb2rd	%0, %1, 0	\;move	rd7, %2	\;add	rd0, %0, rd7, %0	\;")
+	"rb2rd\t%0, %1, 0\t\;move\trd7, %2\t\;add\trd0, %0, rd7, %0")
