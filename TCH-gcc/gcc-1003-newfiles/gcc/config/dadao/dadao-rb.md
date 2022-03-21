@@ -74,28 +74,20 @@
 	"subrb	%0, %2, %1")
 
 (define_insn "dd_ld_rb"
-  [(set (match_operand:DI 0 "rb_class_operand" "=Rb")
-        (match_operand:DI 1 "memory_operand"     "m"))]
+  [(set (match_operand:DI 0 "rb_class_operand" "=Rb,Rb")
+        (match_operand:DI 1 "memory_operand"    "Wg, m"))]
 	""
-	{
-	  if (satisfies_constraint_Wg(operands[1])) {
-                return "ldmrb   %0, %1, 0";
-          }
-          else
-                return "ldrb    %0, %1";
-	})
+	"@
+	ldmrb	%0, %1, 0
+	ldrb	%0, %1")
 
 (define_insn "dd_st_rb"
-  [(set (match_operand:DI 0 "memory_operand"   "=m")
-        (match_operand:DI 1 "rb_class_operand" "Rb"))]
+  [(set (match_operand:DI 0 "memory_operand"  "=Wg, m")
+        (match_operand:DI 1 "rb_class_operand" "Rb,Rb"))]
 	""
-	{
-	  if (satisfies_constraint_Wg(operands[0])) {
-		return "stmrb	%1, %0, 0";
-	  }
-	  else
-		return "strb	%1, %0";
-	})
+	"@
+	stmrb	%1, %0, 0
+	strb	%1, %0")
 
 (define_expand "store_address"
   [(set      (match_operand:DI 0 "memory_operand"    "=m")
