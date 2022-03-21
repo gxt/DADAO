@@ -74,6 +74,14 @@
 (define_predicate "ccff_comparison_operator"
   (match_code "ne, eq, le, ge, lt, gt, ordered, unordered"))
 
+(define_predicate "general_symbolic_operand"
+  (match_code "symbol_ref, label_ref")
+{
+  if (GET_CODE (op) == LABEL_REF)  return 1;
+  if (GET_CODE (op) == SYMBOL_REF) return 1;
+  return 0;
+})
+
 ;; True if this is an address_operand or a symbolic operand.
 (define_predicate "dd_label_operand"
   (match_code "label_ref,const")
