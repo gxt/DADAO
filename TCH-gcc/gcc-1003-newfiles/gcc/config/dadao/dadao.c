@@ -1410,6 +1410,64 @@ dadao_output_shifted_value (FILE *stream, int64_t value)
   fprintf (stream, "0");
 }
 
+/* This function returns the container for indirect memory access.
+ * This function is going to print the mem operand which acted as
+ * an offset during the indirect memory access procedure. It will
+ * use SRC as the memory operand while DEST as the data container. */
+
+static rtx
+dadao_print_indirect_operand (rtx dest, rtx src)
+{
+  FILE *stream = asm_out_file;
+
+  gcc_assert (MEM_P (src));
+
+  rtx addr = XEXP (src, 0);
+
+  if (REG_P (addr))
+  {
+    asm_fprintf (stream, "\tldo\t%s, %s, 0",
+		 reg_names[REGNO(dest)],
+		 reg_names[REGNO(addr)]);
+    return dest;
+  }
+  if (GET_CODE (addr) == PLUS)
+  {
+    rtx op0 = XEXP (addr, 0);
+    rtx op1 = XEXP (addr, 1);
+
+    if (MEM_P (op1))	/* Indirect's indirect. */
+    {			/* rd7 as IP clobber rd */
+      rtx reg;		/* can be used >=1 time */
+      reg = gen_rtx_REG (Pmode, 7);
+      reg = dadao_print_indirect_operand (reg, op1);
+      op1 = reg;
+    }
+
+    if (REG_P (op1))
+    {
+      asm_fprintf (stream,
+	    "\tldmo\t%s, %s, %s, 0\n",
+	      reg_names[REGNO(dest)],
+	      reg_names[REGNO(op0)], reg_names[REGNO(op1)]);
+    }
+    else if (CONST_INT_P (op1))
+    {
+      asm_fprintf (stream,
+	    "\tldo\t%s, %s, %d\n",
+	      reg_names[REGNO(dest)],
+	      reg_names[REGNO(op0)], INTVAL(op1));
+    }
+    else
+      goto err;
+
+    return dest;
+  }
+err:
+  gcc_unreachable ();
+  return NULL_RTX;
+}
+
 /*
  * E_QImode = [ (7 % 4) == 3 ] --> b
  * E_HImode = [ (8 % 4) == 0 ] --> w
@@ -1464,11 +1522,35 @@ dadao_print_ldst_operand (machine_mode mode,
 			       ldst_suffix);
 
 		  return "%0, %1";
+		case MEM:
+		  strict = false;
+		  /*
+		   * This module describes the case when the program
+		   * is loading the data through one INDIRECT memory
+		   * access. It is hardly seemed without On (n >= 2)
+		   * The legitimate address would be like: rb + mem.
+		   */
+		  rtx reg;
+
+		  /* This register is clobber to save the data loaded
+		   * the internal memory operand which was used as an
+		   * offset in the process of an indirect mem access.
+		   */
+		  reg = gen_rtx_REG (DImode, 7);
+		  reg = dadao_print_indirect_operand (reg, op1);
+
+		  /* Fall through */
 		case REG:
 		  asm_fprintf (stream, "\tldm%s%s",
 			       ldst_mmodes [mode % 4],
 			       ldst_suffix);
 
+		  if (!strict)      /* indirect memory access loading */
+		  {		    /* dest: rd (strict = 1 -> load)  */
+		    asm_fprintf (stream, "\t%s, %s, rd7, 0\n",
+				    reg_names[REGNO(dest)], reg_names[REGNO(op0)]);
+		    return "";	    /* ldm<bwto>(u) rdx, rby, rd7, 0  */
+		  }
 		  return "%0, %1, 0";
 		default:
 		  gcc_unreachable ();
@@ -1502,9 +1584,33 @@ dadao_print_ldst_operand (machine_mode mode,
 		asm_fprintf (stream, "\tst%s",
 			     ldst_mmodes [mode % 4]);
                 return "%1, %0";
+	      case MEM:
+		  strict = true;
+		  /*
+		   * This module describes the case when the program
+		   * is loading the data through one INDIRECT memory
+		   * access. It is hardly seemed without On (n >= 2)
+		   * The legitimate address would be like: rb + mem.
+		   */
+		  rtx reg;
+
+		  /* This register is clobber to save the data loaded
+		   * the internal memory operand which was used as an
+		   * offset in the process of an indirect mem access.
+		   */
+		  reg = gen_rtx_REG (DImode, 7);
+		  reg = dadao_print_indirect_operand (reg, op1);
+
+		  /* Fall through */
               case REG:
 		asm_fprintf (stream, "\tstm%s",
 			     ldst_mmodes [mode % 4]);
+		  if (strict)       /* indirect memory access storing */
+		  {		    /* dest: rd (strict = 1 -> store) */
+		    asm_fprintf (stream, "\t%s, %s, rd7, 0\n",
+				    reg_names[REGNO(src)], reg_names[REGNO(op0)]);
+		    return "";	    /* stm<bwto> rdx, rby, rd7, 0     */
+		  }
                 return "%1, %0, 0";
               default:
 		gcc_unreachable ();
