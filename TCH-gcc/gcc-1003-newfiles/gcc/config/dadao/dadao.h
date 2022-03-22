@@ -491,10 +491,10 @@ typedef struct { int regs; int lib; }		CUMULATIVE_ARGS;
 
 /* XXX gccint 18.20.8 Node: Output of Dispatch Tables */
 #define	ASM_OUTPUT_ADDR_DIFF_ELT(STREAM, BODY, VALUE, REL)		\
-	fprintf (STREAM, "\t.dd.t32\tL%d-L%d\n", VALUE, REL)
+	fprintf (STREAM, "\t.dd.t32\t.L%d-.L%d\n", VALUE, REL)
 
 #define	ASM_OUTPUT_ADDR_VEC_ELT(STREAM, VALUE)				\
-	fprintf (STREAM, "\t.dd.o64\tL%d\n", VALUE)
+	fprintf (STREAM, "\t.dd.o64\t.L%d\n", VALUE)
 
 /* XXX gccint 18.20.9 Node: Assembler Commands for Exception Regions */
 /* (empty) */
