@@ -51,32 +51,19 @@
 	"move	%0, %1")
 
 (define_expand "adddi3"
-  [(set      (match_operand:DI 0 "")
-    (plus:DI (match_operand:DI 1 "")
-             (match_operand:DI 2 "")))]
+  [(set      (match_operand:DI 0 "register_operand")
+    (plus:DI (match_operand:DI 1 "register_operand")
+             (match_operand:DI 2 "general_operand")))]
   ""
 {
   if (can_create_pseudo_p())
     {
-      if (!REG_P (operands[0]))
-	{
-	  operands[1] = force_reg (DImode, operands[1]);
-	  operands[2] = force_reg (DImode, operands[2]);
-
-	  rtx reg = gen_reg_rtx (Pmode);
-	  emit_move_insn (reg,
-			  gen_rtx_PLUS (Pmode, operands[1],
-					       operands[2]));
-	  emit_move_insn (operands[0], reg);
-
-	  DONE;
-	}
-
-      if (!REG_P (operands[1]))
-	operands[1] = force_reg (DImode, operands[1]);
-
-      if (!REG_P (operands[2]))
-	operands[2] = force_reg (DImode, operands[2]);
+      if (MEM_P (operands[2])
+	  || (CONSTANT_P (operands[2])
+		&& (LABEL_REF_P (operands[2])
+		|| SYMBOL_REF_P (operands[2]))))
+	operands[2] =	\
+		force_reg (Pmode, operands[2]);
     }
 })
 
@@ -131,29 +118,19 @@
 	"add	rd0, %0, %1, %2")
 
 (define_expand "subdi3"
-  [(set      (match_operand:DI 0 "")
-   (minus:DI (match_operand:DI 1 "")
-             (match_operand:DI 2 "")))]
+  [(set      (match_operand:DI 0 "register_operand")
+   (minus:DI (match_operand:DI 1 "register_operand")
+             (match_operand:DI 2 "general_operand")))]
   ""
 {
   if (can_create_pseudo_p())
     {
-      if (!REG_P (operands[0]))
-	{
-	  rtx reg = gen_reg_rtx (Pmode);
-	  emit_move_insn (reg,
-			  gen_rtx_PLUS (Pmode, operands[1],
-					       operands[2]));
-	  emit_move_insn (operands[0], reg);
-
-	  DONE;
-	}
-
-      if (!REG_P (operands[1]))
-	operands[1] = force_reg (DImode, operands[1]);
-
-      if (!REG_P (operands[2]))
-	operands[2] = force_reg (DImode, operands[2]);
+      if (MEM_P (operands[2])
+	  || (CONSTANT_P (operands[2])
+		&& (LABEL_REF_P (operands[2])
+		|| SYMBOL_REF_P (operands[2]))))
+	operands[2] =	\
+		force_reg (Pmode, operands[2]);
     }
 })
 
