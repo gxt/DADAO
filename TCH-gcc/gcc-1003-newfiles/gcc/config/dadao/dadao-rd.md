@@ -76,18 +76,18 @@
 	ldmo	%0, %2, 0	\;add	rd0, %0, %1, %0
 	ldo	%0, %2	\;add	rd0, %0, %1, %0")
 
-(define_insn "dd_addrd_imm"
+(define_insn "dd_addrd_const"
   [(set      (match_operand:DI 0 "rd_class_operand" "=Rd")
     (plus:DI (match_operand:DI 1 "rd_class_operand" "%Rd")
              (match_operand:DI 2 "dd_sign_18_operand" "i")))]
   ""
   {
     if (REGNO(operands[0])
-      ==REGNO(operands[1])) return "addi	%0, %2";
-    else return "move  rd7, %2 \;add   rd0, %0, %1, rd7";
+      ==REGNO(operands[1])) return "addi\t%0, %2";
+    else return "move\trd7, %2 \;add\trd0, %0, %1, rd7";
   })
 
-(define_insn "dd_addrd_imm_ls"
+(define_insn "dd_addrd_regls"
   [(set      (match_operand:DI 0 "rd_class_operand" "=Rd,Rd")
     (plus:DI (match_operand:DI 1 "rd_class_operand" "%Rd,Rd")
              (match_operand:DI 2 "dd_rd_ls_operand"  "Rd, i")))]
@@ -143,27 +143,25 @@
 	ldmo	%0, %2, 0	\;sub	rd0, %0, %1, %0
 	ldo	%0, %2	\;sub	rd0, %0, %1, %0")
 
-(define_insn "dd_subrd_imm"
+(define_insn "dd_subrd_const"
   [(set      (match_operand:DI 0 "rd_class_operand" "=Rd")
    (minus:DI (match_operand:DI 1 "rd_class_operand" "%Rd")
-             (match_operand:DI 2 "const_int_operand"  "i")))]
-        ""
-	{
-	  if (satisfies_constraint_It(operands[2])) {
-		if (operands[0] == operands[1]) 
-			return "addi	%0, %n2";
-		else	return "move	%0, %2	\;sub	rd0, %0, %1, %0";
-	  }
-	  else
-		return "move	%0, %2	\;sub	rd0, %0, %1, %0";
-	})
+             (match_operand:DI 2 "dd_sign_18_operand" "i")))]
+  ""
+{
+  if (REGNO(operands[0])
+    ==REGNO(operands[1])) return "addi\t%0, %n2";
+  else return "move\trd7, %n2 \;add\trd0, %0, %1, rd7";
+})
 
-(define_insn "dd_subrd"
-  [(set      (match_operand:DI 0 "rd_class_operand" "=Rd")
-   (minus:DI (match_operand:DI 1 "rd_class_operand" "%Rd")
-             (match_operand:DI 2 "rd_class_operand"  "Rd")))]
+(define_insn "dd_subrd_regls"
+  [(set      (match_operand:DI 0 "rd_class_operand" "=Rd,Rd")
+   (minus:DI (match_operand:DI 1 "rd_class_operand" "%Rd,Rd")
+             (match_operand:DI 2 "dd_rd_ls_operand"  "Rd, i")))]
 	""
-	"sub	rd0, %0, %1, %2")
+	"@
+	sub	rd0, %0, %1, %2
+	move	rd7, %n2	\;add	rd0, %0, %1, rd7")
 
 (define_insn "muldi3"
   [(set      (match_operand:DI 0 "rd_class_operand" "= Rd")
