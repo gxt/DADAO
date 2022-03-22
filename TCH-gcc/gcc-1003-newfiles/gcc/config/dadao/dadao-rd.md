@@ -61,7 +61,9 @@
       if (MEM_P (operands[2])
 	  || (CONSTANT_P (operands[2])
 		&& (LABEL_REF_P (operands[2])
-		|| SYMBOL_REF_P (operands[2]))))
+		|| SYMBOL_REF_P (operands[2])))
+	  || (CONSTANT_P (operands[2])
+		&& !CONST_INT_P (operands[2])))
 	operands[2] =	\
 		force_reg (Pmode, operands[2]);
     }
@@ -128,7 +130,9 @@
       if (MEM_P (operands[2])
 	  || (CONSTANT_P (operands[2])
 		&& (LABEL_REF_P (operands[2])
-		|| SYMBOL_REF_P (operands[2]))))
+		|| SYMBOL_REF_P (operands[2])))
+	  || (CONSTANT_P (operands[2])
+		&& !CONST_INT_P (operands[2])))
 	operands[2] =	\
 		force_reg (Pmode, operands[2]);
     }
