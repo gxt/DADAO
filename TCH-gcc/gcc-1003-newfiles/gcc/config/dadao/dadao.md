@@ -40,7 +40,7 @@
     }
 })
 
-(define_insn "dadao_load<mode>"
+(define_insn "dadao_dload<mode>"
   [(set (match_operand:QHSD 0 "rd_class_operand" "=Rd")
 	(match_operand:QHSD 1 "memory_operand"    " m"))]
   ""
@@ -50,7 +50,7 @@
 			   operands[0], operands[1], true);
   })
 
-(define_insn "dadao_store<mode>"
+(define_insn "dadao_dstore<mode>"
   [(set (match_operand:QHSD 0 "memory_operand"   "=m")
 	(match_operand:QHSD 1 "rd_class_operand" "Rd"))]
   ""
@@ -76,6 +76,44 @@
 	}
     }
 })
+
+;; Floating-point data-reg load / store
+;; ------------------------------------
+
+(define_insn "dadao_dload<mode>"
+  [(set (match_operand:SFDF 0 "rd_class_operand" "=Rd")
+	(match_operand:SFDF 1 "memory_operand"   "  m"))]
+  ""
+  {
+    return dadao_print_ldst_operand
+		(GET_MODE (operands[0]),
+			   operands[0], operands[1], true);
+  })
+
+(define_insn "dadao_dstore<mode>"
+  [(set (match_operand:SFDF 0 "memory_operand"   "=m")
+	(match_operand:SFDF 1 "rd_class_operand" "Rd"))]
+  ""
+  {
+    return dadao_print_ldst_operand
+		(GET_MODE (operands[0]),
+			   operands[0], operands[1], false);
+  })
+
+;; Floating-point floating-reg load / store
+;; ----------------------------------------
+
+(define_insn "dadao_fload<mode>"
+  [(set (match_operand:SFDF 0 "rf_class_operand" "=Rf")
+	(match_operand:SFDF 1 "memory_operand"   "  m"))]
+  ""
+  "")
+
+(define_insn "dadao_fstore<mode>"
+  [(set (match_operand:SFDF 0 "memory_operand"   "=m")
+	(match_operand:SFDF 1 "rf_class_operand" "Rf"))]
+  ""
+  "")
 
 (define_expand "call"
   [(parallel [(call (match_operand 0 "memory_operand" "")
