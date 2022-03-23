@@ -60,6 +60,23 @@
 			   operands[0], operands[1], false);
   })
 
+;; Floating-point move insn pattern
+;; --------------------------------
+
+(define_expand "mov<mode>"
+  [(set (match_operand:SFDF 0 "")
+	(match_operand:SFDF 1 ""))]
+  ""
+{
+  if (can_create_pseudo_p ())
+    {
+      if (!REG_P (operands[0]))
+	{
+	  operands[1] = force_reg (<MODE>mode, operands[1]);
+	}
+    }
+})
+
 (define_expand "call"
   [(parallel [(call (match_operand 0 "memory_operand" "")
 		    (match_operand 1 "general_operand" ""))
