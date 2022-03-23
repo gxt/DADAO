@@ -7,6 +7,24 @@
 ;; Note that we move around the float as a collection of bits; no
 ;; conversion to double.
 
+(define_insn "rmov<mode>"
+  [(set (match_operand:SFDF 0 "register_operand" "=Rd,Rd,Rf,Rf")
+	(match_operand:SFDF 1 "register_operand" " Rf,Rd,Rf,Rd"))]
+  ""
+  "@
+  rf2rd\t%0, %1, 0
+  rd2rd\t%0, %1, 0
+  rf2rf\t%0, %1, 0
+  rd2rf\t%0, %1, 0")
+
+(define_insn "dmov<mode>"
+  [(set (match_operand:SFDF 0 "register_operand" "=Rf,Rd")
+	(match_operand:SFDF 1 "const_double_operand" ""))]
+  ""
+  "@
+  move	rd7, %0\t\;rd2rf\t%0, rd7, 0
+  move	%0, %1")
+
 (define_insn "add<mode>3"
   [(set        (match_operand:SFDF 0 "rf_class_operand" "= Rf")
     (plus:SFDF (match_operand:SFDF 1 "rf_class_operand" "% Rf")
