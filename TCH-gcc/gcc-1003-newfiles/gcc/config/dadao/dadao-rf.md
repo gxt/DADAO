@@ -71,29 +71,33 @@
 	""
 	"<ftfo>sqrt	%0, %1, 0")
 
+;; TODO
+;; Floating-point <--> Fixed-point converting insn pattern
+;; -------------------------------------------------------
+
 (define_insn "floatdi<mode>2"
-  [(set         (match_operand:SFDF 0 "rf_class_operand" "= Rf")
-    (float:SFDF (match_operand:DI   1 "rd_class_operand" "  Rd")))]
-	"" "")
-;	"<ftfo>_i2f	%1, %0")
+  [(set         (match_operand:SFDF 0 "register_operand" "=Rd,Rf")
+    (float:SFDF (match_operand:DI   1 "register_operand" " Rd,Rd")))]
+	""
+	"")
 
-(define_insn "floatundi<mode>2"
-  [(set                  (match_operand:SFDF 0 "rf_class_operand" "= Rf")
-    (unsigned_float:SFDF (match_operand:DI   1 "rd_class_operand" "  Rd")))]
-	"" "")
-;	"<ftfo>_u2f	%1, %0")
+(define_insn "floatunsdi<mode>2"
+  [(set                  (match_operand:SFDF 0 "register_operand" "=Rd,Rf")
+    (unsigned_float:SFDF (match_operand:DI   1 "register_operand" " Rd,Rd")))]
+	""
+	"")
 
-(define_insn "fix<mode>di2"
-  [(set     (match_operand:DI   0 "rd_class_operand" "= Rd")
-    (fix:DI (match_operand:SFDF 1 "rf_class_operand" "  Rf")))]
-	"" "")
-;	"<ftfo>_f2i	%0, %1")
+(define_insn "fix_trunc<mode>di2"
+  [(set     (match_operand:DI   0 "register_operand" "=Rd,Rd")
+    (fix:DI (match_operand:SFDF 1 "register_operand" " Rf,Rd")))]
+	""
+	"")
 
-(define_insn "fix<mode>undi2"
-  [(set              (match_operand:DI   0 "rd_class_operand" "= Rd")
-    (unsigned_fix:DI (match_operand:SFDF 1 "rf_class_operand" "  Rf")))]
-	"" "")
-;	"<ftfo>_f2u	%0, %1")
+(define_insn "fixuns_trunc<mode>di2"
+  [(set              (match_operand:DI   0 "register_operand" "=Rd,Rd")
+    (unsigned_fix:DI (match_operand:SFDF 1 "register_operand" " Rf,Rd")))]
+	""
+	"")
 
 (define_insn "truncdfsf2"
   [(set                (match_operand:SF 0 "rf_class_operand" "= Rf")
