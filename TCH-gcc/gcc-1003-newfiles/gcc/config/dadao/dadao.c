@@ -1490,6 +1490,14 @@ dadao_print_ldst_operand (machine_mode mode,
 #define _DD_SWAP_OP_(OP0, OP1) ((REG_P (OP0) && REG_P (OP1))		\
 		  && (REGNO_REG_CLASS(REGNO(OP0)) == GENERAL_REGS)	\
 		  && (REGNO_REG_CLASS(REGNO(OP1)) == POINTER_REGS))
+
+  /* This function handles Floating 'load' / 'store' instructions,
+   * whose non-memory operation is data-type register, with normal
+   * ldo / ldmo / sto / stmo assembly instructions. So Float modes
+   * here are all treated as E_DImode. */
+  
+  if (GET_MODE_CLASS (mode) \
+		== MODE_FLOAT) mode = E_DImode;
   if (strict)
     {
       const char * ldst_suffix = \
