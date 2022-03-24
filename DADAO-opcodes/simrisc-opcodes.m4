@@ -133,6 +133,10 @@ insn(	stmrb,		rrri,	0x4F,	0,	rb,	rb,	rd,	i6,	dref)
 
 insn(	ft2fo,		orri,	0x50,	0x01,	op,	rf,	rf,	i6,	normal)
 insn(	fo2ft,		orri,	0x50,	0x04,	op,	rf,	rf,	i6,	normal)
+insn(	ft2rd,		orri,	0x50,	0x03,	op,	rd,	rf,	i6,	normal)
+insn(	fo2rd,		orri,	0x50,	0x07,	op,	rd,	rf,	i6,	normal)
+insn(	rd2ft,		orri,	0x50,	0x0c,	op,	rf,	rd,	i6,	normal)
+insn(	rd2fo,		orri,	0x50,	0x0d,	op,	rf,	rd,	i6,	normal)
 
 insn(	ftadd,		orrr,	0x50,	0x10,	op,	rf,	rf,	rf,	normal)
 insn(	ftsub,		orrr,	0x50,	0x11,	op,	rf,	rf,	rf,	normal)
