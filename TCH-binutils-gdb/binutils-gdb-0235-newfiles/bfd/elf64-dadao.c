@@ -438,7 +438,7 @@ dadao_elf_perform_relocation(asection *isec, reloc_howto_type *howto,
                                addr);
         if (r == bfd_reloc_ok)
         {
-            bfd_put_32(abfd, insn_origin | addr & 0xFFFF ,
+            bfd_put_32(abfd, insn_origin | addr ,
                        (bfd_byte *)datap);
         }
         else
