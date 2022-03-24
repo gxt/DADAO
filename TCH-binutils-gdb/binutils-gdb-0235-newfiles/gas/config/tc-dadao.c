@@ -948,6 +948,9 @@ void md_convert_frag(bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
     symbolS *symbolP;
     unsigned long var_part_offset;
 
+    /* opcode and register in orignal insn */
+    unsigned int opc, reg;
+
     /* This is the frag for the opcode.  It, rather than fragP, must be used
      when emitting a frag for the opcode.  */
     fixS *tmpfixP;
@@ -978,9 +981,19 @@ void md_convert_frag(bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
         break;
 
     case ENCODE_RELAX(STATE_ABS, STATE_ZERO):
+        // need to fix higher addr
+        opc = *opcodep;
+        reg = *(opcodep + 1);
         dd_set_addr_offset(opcodep, target_address & 0xFFFF, 18, 0);
-        // need to fix higher_address addr
         var_part_size = 0;
+        if(((target_address>>16) & 0xFFFF) != 0) {
+            if(opc == 0x14)
+                md_number_to_chars(opcodep + 4, DADAO_INSN_ORW_RD | DADAO_WYDE_WK | (reg << 18) | ((target_address>>16) & 0xFFFF), 4);
+            else {
+                md_number_to_chars(opcodep + 4, DADAO_INSN_ORW_RB | DADAO_WYDE_WK | (reg << 18) | ((target_address>>16) & 0xFFFF), 4);
+            }
+            var_part_size = 0;
+        }
         break;
 
     case ENCODE_RELAX(STATE_BRCC, STATE_ZERO):
@@ -1059,6 +1072,7 @@ void md_apply_fix(fixS *fixP, valueT *valP, segT segment)
         break;
 
     case BFD_RELOC_DADAO_ABS:
+        printf("what?\n");
         dd_set_addr_offset(buf, val, 18, 0);
         break;
 
