@@ -74,57 +74,15 @@
 (define_predicate "ccff_comparison_operator"
   (match_code "ne, eq, le, ge, lt, gt, ordered, unordered"))
 
-(define_predicate "general_symbolic_operand"
-  (match_code "symbol_ref, label_ref")
-{
-  if (GET_CODE (op) == LABEL_REF)  return 1;
-  if (GET_CODE (op) == SYMBOL_REF) return 1;
-  return 0;
-})
-
-;; True if this is an address_operand or a symbolic operand.
-(define_predicate "dd_label_operand"
-  (match_code "label_ref,const")
+(define_predicate "symbolic_operand"
+  (match_code "label_ref, symbol_ref, const")
 {
   if (GET_CODE (op) == CONST
       && GET_CODE (XEXP (op, 0)) == PLUS
       && CONST_INT_P (XEXP (XEXP (op, 0), 1)))
     op = XEXP (XEXP (op, 0), 0);
 
-  if (GET_CODE (op) == LABEL_REF)
-    return 1;
-  return 0;
-})
-
-(define_predicate "local_symbolic_operand"
-  (match_code "const,symbol_ref")
-{
-  if (GET_CODE (op) == CONST
-      && GET_CODE (XEXP (op, 0)) == PLUS
-      && CONST_INT_P (XEXP (XEXP (op, 0), 1)))
-    op = XEXP (XEXP (op, 0), 0);
-
-  if (GET_CODE (op) != SYMBOL_REF)
-    return 0;
-
-  return (SYMBOL_REF_LOCAL_P (op)
-	  && !SYMBOL_REF_WEAK (op)
-	  && !SYMBOL_REF_TLS_MODEL (op));
-})
-
-(define_predicate "global_symbolic_operand"
-  (match_code "const,symbol_ref")
-{
-  if (GET_CODE (op) == CONST
-      && GET_CODE (XEXP (op, 0)) == PLUS
-      && CONST_INT_P (XEXP (XEXP (op, 0), 1)))
-    op = XEXP (XEXP (op, 0), 0);
-
-  if (GET_CODE (op) != SYMBOL_REF)
-    return 0;
-
-  return ((!SYMBOL_REF_LOCAL_P (op) || SYMBOL_REF_WEAK (op))
-	  && !SYMBOL_REF_TLS_MODEL (op));
+  return (SYMBOL_REF_P (op) || LABEL_REF_P (op));
 })
 
 (define_predicate "dadao_symbolic_or_address_operand"
