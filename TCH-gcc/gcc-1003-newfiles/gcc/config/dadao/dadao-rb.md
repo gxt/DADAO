@@ -89,28 +89,9 @@
 	stmrb	%1, %0, 0
 	strb	%1, %0")
 
-(define_insn "dd_rb_get_imm"
+(define_insn "dd_ldrbimm"
   [(set (match_operand:DI 0 "rb_class_operand" "=Rb")
-        (match_operand:DI 1 "const_int_operand"  ""))]
-	""
-	"move	%0, %1");
-
-; FIXME: Add this back ONLY for SWITCH-CASE problem report
-(define_insn "dd_rb_get_local_symbol"
-  [(set (match_operand:DI 0 "rb_class_operand" "=Rb")
-        (match_operand:DI 1 "local_symbolic_operand"  ""))]
-	""
-	"move	%0, %1");
-
-(define_insn "dd_rb_get_global_symbol"
-  [(set (match_operand:DI 0 "rb_class_operand" "=Rb")
-        (match_operand:DI 1 "global_symbolic_operand"  ""))]
-	""
-	"move	%0, %1");
-
-(define_insn "dd_rb_get_label"
-  [(set (match_operand:DI 0 "rb_class_operand" "=Rb")
-        (match_operand:DI 1 "dd_label_operand"  ""))]
+        (match_operand:DI 1 "immediate_operand" ""))]
 	""
 	"move	%0, %1");
 
