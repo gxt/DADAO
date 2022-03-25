@@ -17,34 +17,13 @@
 	""
 	"<rd_arith_insn>	%0, %1, %2")
 
-; FIXME
-(define_insn "move<mode>_addr_label"
-  [(set (match_operand:QHSD 0 "rd_class_operand" "=Rd")
-        (match_operand:QHSD 1 "dd_label_operand" ""))]
+(define_insn "dd_ldimm_symbolic"
+  [(set (match_operand:DI 0 "rd_class_operand" "=Rd")
+        (match_operand:DI 1 "symbolic_operand" ""))]
 	""
 	"move	%0, %1")
 
-(define_insn "move<mode>_addr_local"
-  [(set (match_operand:QHSD 0 "rd_class_operand" "=Rd")
-        (match_operand:QHSD 1 "local_symbolic_operand" ""))]
-	""
-	{ if (GET_CODE (operands[1]) == CONST) { return "move	%0, %1"; }
-	  else {
-		/* (SYMBOL_REF_LOCAL_P (operands[1]) */
-		return "move	%0, %1";
-	  }})
-
-(define_insn "move<mode>_addr_global"
-  [(set (match_operand:QHSD 0 "rd_class_operand" "=Rd")
-        (match_operand:QHSD 1 "global_symbolic_operand" ""))]
-	""
-	{ if (GET_CODE (operands[1]) == CONST) { return "move	%0, %1"; }
-	  else {
-		/* (SYMBOL_REF_GLOBAL_P (operands[1]) */
-		return "move	%0, %1";
-	  }})
-
-(define_insn "move<mode>_const"
+(define_insn "dd_ldimm_const<mode>"
   [(set (match_operand:QHSD 0 "rd_class_operand"  "=Rd")
         (match_operand:QHSD 1 "const_int_operand" "  i"))]
 	""
