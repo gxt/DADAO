@@ -79,25 +79,33 @@
   [(set         (match_operand:SFDF 0 "register_operand" "=Rd,Rf")
     (float:SFDF (match_operand:DI   1 "register_operand" " Rd,Rd")))]
 	""
-	"")
+	"@
+	rd2<ftfo>\trf7, %1, 0\t\;rf2rd\t%0, rf7, 0
+	rd2<ftfo>\t%0, %1, 0")
 
 (define_insn "floatunsdi<mode>2"
   [(set                  (match_operand:SFDF 0 "register_operand" "=Rd,Rf")
     (unsigned_float:SFDF (match_operand:DI   1 "register_operand" " Rd,Rd")))]
 	""
-	"")
+	"@
+	rd2<ftfo>\trf7, %1, 0\t\;rf2rd\t%0, rf7, 0
+	rd2<ftfo>\t%0, %1, 0")
 
 (define_insn "fix_trunc<mode>di2"
   [(set     (match_operand:DI   0 "register_operand" "=Rd,Rd")
     (fix:DI (match_operand:SFDF 1 "register_operand" " Rf,Rd")))]
 	""
-	"")
+	"@
+	<ftfo>2rd\t%0, %1, 0
+	rd2<ftfo>\trf7, %1, 0\t\;rf2rd\t%0, rf7, 0")
 
 (define_insn "fixuns_trunc<mode>di2"
   [(set              (match_operand:DI   0 "register_operand" "=Rd,Rd")
     (unsigned_fix:DI (match_operand:SFDF 1 "register_operand" " Rf,Rd")))]
 	""
-	"")
+	"@
+	<ftfo>2rd\t%0, %1, 0
+	rd2<ftfo>\trf7, %1, 0\t\;rf2rd\t%0, rf7, 0")
 
 (define_insn "truncdfsf2"
   [(set                (match_operand:SF 0 "rf_class_operand" "= Rf")
