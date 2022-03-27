@@ -978,6 +978,238 @@ static bool trans_noti(DisasContext *ctx, arg_noti *a)
     return true;
 }
 
+/* floating point instructions */
+
+static bool trans_fcvt_all(DisasContext *ctx, arg_fcvt *a,
+                           TCGv_i64* cpu_hb, TCGv_i64* cpu_hc,
+                           void (*fn)(TCGv_i64, TCGv_env, TCGv_i64))
+{
+    if (a->hb == 0 || a->hb + a->cnt >= 64 || a->hc + a->cnt >= 64) {
+        return false;
+    }
+    if (a->hb <= a->hc) {
+        while (a->cnt-- >= 0) {
+            fn(cpu_hb[a->hb++], cpu_env, cpu_hc[a->hc++]);
+        }
+    } else {
+        a->hb += a->cnt; a->hc += a->cnt;
+        while (a->cnt-- >= 0) {
+            fn(cpu_hb[a->hb--], cpu_env, cpu_hc[a->hc--]);
+        }
+    }
+    return true;
+}
+
+static bool trans_fop1_all(DisasContext *ctx, arg_fop1 *a,
+                           void (*fn)(TCGv_i64, TCGv_env, TCGv_i64))
+{
+    if (a->rfb == 0) {
+        return false;
+    }
+    fn(cpu_rf[a->rfb], cpu_env, cpu_rf[a->rfc]);
+    return true;
+}
+
+static bool trans_fop2_all(DisasContext *ctx, arg_fop2 *a,
+                           void (*fn)(TCGv_i64, TCGv_env, TCGv_i64, TCGv_i64))
+{
+    if (a->rfb == 0) {
+        return false;
+    }
+    fn(cpu_rf[a->rfb], cpu_env, cpu_rf[a->rfc], cpu_rf[a->rfd]);
+    return true;
+}
+
+static bool trans_fcmp_all(DisasContext *ctx, arg_fcmp *a,
+                           void (*fn)(TCGv_i64, TCGv_env, TCGv_i64, TCGv_i64))
+{
+    if (a->rd == 0) {
+        return false;
+    }
+    fn(cpu_rd[a->rd], cpu_env, cpu_rf[a->rfc], cpu_rf[a->rfd]);
+    return true;
+}
+
+static bool trans_ft2fo(DisasContext *ctx, arg_ft2fo *a)
+{
+    return trans_fcvt_all(ctx, a, cpu_rf, cpu_rf, gen_helper_ft2fo);
+}
+
+static bool trans_fo2ft(DisasContext *ctx, arg_fo2ft *a)
+{
+    return trans_fcvt_all(ctx, a, cpu_rf, cpu_rf, gen_helper_fo2ft);
+}
+
+static bool trans_ft2rd(DisasContext *ctx, arg_ft2rd *a)
+{
+    return trans_fcvt_all(ctx, a, cpu_rd, cpu_rf, gen_helper_ft2rd);
+}
+
+static bool trans_fo2rd(DisasContext *ctx, arg_fo2rd *a)
+{
+    return trans_fcvt_all(ctx, a, cpu_rd, cpu_rf, gen_helper_fo2rd);
+}
+
+static bool trans_rd2ft(DisasContext *ctx, arg_rd2ft *a)
+{
+    return trans_fcvt_all(ctx, a, cpu_rf, cpu_rd, gen_helper_rd2ft);
+}
+
+static bool trans_rd2fo(DisasContext *ctx, arg_rd2fo *a)
+{
+    return trans_fcvt_all(ctx, a, cpu_rf, cpu_rd, gen_helper_rd2fo);
+}
+
+static bool trans_ftadd(DisasContext *ctx, arg_ftadd *a)
+{
+    return trans_fop2_all(ctx, a, gen_helper_ftadd);
+}
+
+static bool trans_ftsub(DisasContext *ctx, arg_ftsub *a)
+{
+    return trans_fop2_all(ctx, a, gen_helper_ftsub);
+}
+
+static bool trans_ftmul(DisasContext *ctx, arg_ftmul *a)
+{
+    return trans_fop2_all(ctx, a, gen_helper_ftmul);
+}
+
+static bool trans_ftdiv(DisasContext *ctx, arg_ftdiv *a)
+{
+    return trans_fop2_all(ctx, a, gen_helper_ftdiv);
+}
+
+static bool trans_ftabs(DisasContext *ctx, arg_ftabs *a)
+{
+    return trans_fop1_all(ctx, a, gen_helper_ftabs);
+}
+
+static bool trans_ftneg(DisasContext *ctx, arg_ftneg *a)
+{
+    return trans_fop1_all(ctx, a, gen_helper_ftneg);
+}
+
+static bool trans_ftsqrt(DisasContext *ctx, arg_ftsqrt *a)
+{
+    return trans_fop1_all(ctx, a, gen_helper_ftsqrt);
+}
+
+static bool trans_foadd(DisasContext *ctx, arg_foadd *a)
+{
+    return trans_fop2_all(ctx, a, gen_helper_foadd);
+}
+
+static bool trans_fosub(DisasContext *ctx, arg_fosub *a)
+{
+    return trans_fop2_all(ctx, a, gen_helper_fosub);
+}
+
+static bool trans_fomul(DisasContext *ctx, arg_fomul *a)
+{
+    return trans_fop2_all(ctx, a, gen_helper_fomul);
+}
+
+static bool trans_fodiv(DisasContext *ctx, arg_fodiv *a)
+{
+    return trans_fop2_all(ctx, a, gen_helper_fodiv);
+}
+
+static bool trans_foabs(DisasContext *ctx, arg_foabs *a)
+{
+    return trans_fop1_all(ctx, a, gen_helper_foabs);
+}
+
+static bool trans_foneg(DisasContext *ctx, arg_foneg *a)
+{
+    return trans_fop1_all(ctx, a, gen_helper_foneg);
+}
+
+static bool trans_fosqrt(DisasContext *ctx, arg_fosqrt *a)
+{
+    return trans_fop1_all(ctx, a, gen_helper_fosqrt);
+}
+
+static bool trans_ftcun(DisasContext *ctx, arg_ftcun *a)
+{
+    return trans_fcmp_all(ctx, a, gen_helper_ftcun);
+}
+
+static bool trans_ftcor(DisasContext *ctx, arg_ftcor *a)
+{
+    return trans_fcmp_all(ctx, a, gen_helper_ftcor);
+}
+
+static bool trans_ftcne(DisasContext *ctx, arg_ftcne *a)
+{
+    return trans_fcmp_all(ctx, a, gen_helper_ftcne);
+}
+
+static bool trans_ftceq(DisasContext *ctx, arg_ftceq *a)
+{
+    return trans_fcmp_all(ctx, a, gen_helper_ftceq);
+}
+
+static bool trans_ftclt(DisasContext *ctx, arg_ftclt *a)
+{
+    return trans_fcmp_all(ctx, a, gen_helper_ftclt);
+}
+
+static bool trans_ftcge(DisasContext *ctx, arg_ftcge *a)
+{
+    return trans_fcmp_all(ctx, a, gen_helper_ftcge);
+}
+
+static bool trans_ftcgt(DisasContext *ctx, arg_ftcgt *a)
+{
+    return trans_fcmp_all(ctx, a, gen_helper_ftcgt);
+}
+
+static bool trans_ftcle(DisasContext *ctx, arg_ftcle *a)
+{
+    return trans_fcmp_all(ctx, a, gen_helper_ftcle);
+}
+
+static bool trans_focun(DisasContext *ctx, arg_focun *a)
+{
+    return trans_fcmp_all(ctx, a, gen_helper_focun);
+}
+
+static bool trans_focor(DisasContext *ctx, arg_focor *a)
+{
+    return trans_fcmp_all(ctx, a, gen_helper_focor);
+}
+
+static bool trans_focne(DisasContext *ctx, arg_focne *a)
+{
+    return trans_fcmp_all(ctx, a, gen_helper_focne);
+}
+
+static bool trans_foceq(DisasContext *ctx, arg_foceq *a)
+{
+    return trans_fcmp_all(ctx, a, gen_helper_foceq);
+}
+
+static bool trans_foclt(DisasContext *ctx, arg_foclt *a)
+{
+    return trans_fcmp_all(ctx, a, gen_helper_foclt);
+}
+
+static bool trans_focge(DisasContext *ctx, arg_focge *a)
+{
+    return trans_fcmp_all(ctx, a, gen_helper_focge);
+}
+
+static bool trans_focgt(DisasContext *ctx, arg_focgt *a)
+{
+    return trans_fcmp_all(ctx, a, gen_helper_focgt);
+}
+
+static bool trans_focle(DisasContext *ctx, arg_focle *a)
+{
+    return trans_fcmp_all(ctx, a, gen_helper_focle);
+}
+
 /* control flow instructions */
 
 static bool trans_swym(DisasContext *ctx, arg_swym *a)
@@ -1284,6 +1516,16 @@ void dadao_cpu_dump_state(CPUState *cs, FILE *f, int flags)
             qemu_log("[%02d]=%016lx ", i + 1, env->rb[i + 1]);
             qemu_log("[%02d]=%016lx ", i + 2, env->rb[i + 2]);
             qemu_log("[%02d]=%016lx ", i + 3, env->rb[i + 3]);
+            qemu_log("\n");
+        }
+    }
+    qemu_log("rf\n");
+    for (int i = 0; i < 64; i += 4) {
+        if (env->rf[i + 0] || env->rf[i + 1] || env->rf[i + 2] || env->rf[i + 3]) {
+            qemu_log("[%02d]=%016lx ", i + 0, env->rf[i + 0]);
+            qemu_log("[%02d]=%016lx ", i + 1, env->rf[i + 1]);
+            qemu_log("[%02d]=%016lx ", i + 2, env->rf[i + 2]);
+            qemu_log("[%02d]=%016lx ", i + 3, env->rf[i + 3]);
             qemu_log("\n");
         }
     }

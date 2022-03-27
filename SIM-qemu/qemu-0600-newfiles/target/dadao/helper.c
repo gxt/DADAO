@@ -3,6 +3,8 @@
  * Copyright (C) 2019-2033 Guan Xuetao (AT) Peking Univ.
  *
  * Contributed by:
+ *   2021:
+ *  Hao Chenqi <hchenqi@pku.edu.cn>
  *   2019:
  *  Liang Shuhao <1700012741@pku.edu.cn>
  *  Guan Xuetao <gxt@pku.edu.cn>
@@ -15,6 +17,7 @@
 #include "exec/gdbstub.h"
 #include "exec/helper-proto.h"
 #include "qemu/host-utils.h"
+#include "fpu/softfloat.h"
 #ifndef CONFIG_USER_ONLY
 #include "ui/console.h"
 #endif
@@ -243,54 +246,210 @@ target_ulong cpu_asr_read(CPUDADAOState *env)
     return 0;
 }
 
-#define MASK63 0x7FFFFFFFFFFFFFFFUL
-
-uint64_t HELPER(seq)(uint64_t arg1, uint64_t arg2)
+uint64_t HELPER(ft2fo)(CPUDADAOState* env, uint64_t arg1)
 {
-    return arg1 == arg2;
+    return float32_to_float64(arg1, &env->fp_status);
 }
 
-uint64_t HELPER(sne)(uint64_t arg1, uint64_t arg2)
+uint64_t HELPER(fo2ft)(CPUDADAOState* env, uint64_t arg1)
 {
-    return arg1 != arg2;
+    return float64_to_float32(arg1, &env->fp_status);
 }
 
-uint64_t HELPER(slt)(uint64_t arg1, uint64_t arg2)
+uint64_t HELPER(ft2rd)(CPUDADAOState* env, uint64_t arg1)
 {
-    return (int64_t)arg1 < (int64_t)arg2;
+    return float32_to_int64(arg1, &env->fp_status);
 }
 
-uint64_t HELPER(sgt)(uint64_t arg1, uint64_t arg2)
+uint64_t HELPER(fo2rd)(CPUDADAOState* env, uint64_t arg1)
 {
-    return (int64_t)arg1 > (int64_t)arg2;
+    return float64_to_int64(arg1, &env->fp_status);
 }
 
-uint64_t HELPER(sle)(uint64_t arg1, uint64_t arg2)
+uint64_t HELPER(rd2ft)(CPUDADAOState* env, uint64_t arg1)
 {
-    return (int64_t)arg1 <= (int64_t)arg2;
+    return int64_to_float32(arg1, &env->fp_status);
 }
 
-uint64_t HELPER(sge)(uint64_t arg1, uint64_t arg2)
+uint64_t HELPER(rd2fo)(CPUDADAOState* env, uint64_t arg1)
 {
-    return (int64_t)arg1 >= (int64_t)arg2;
+    return int64_to_float64(arg1, &env->fp_status);
 }
 
-uint64_t HELPER(sab)(uint64_t arg1, uint64_t arg2)
+uint64_t HELPER(ftadd)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
 {
-    return arg1 > arg2;
+    return float32_add(arg1, arg2, &env->fp_status);
 }
 
-uint64_t HELPER(sae)(uint64_t arg1, uint64_t arg2)
+uint64_t HELPER(ftsub)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
 {
-    return arg1 >= arg2;
+    return float32_sub(arg1, arg2, &env->fp_status);
 }
 
-uint64_t HELPER(sbl)(uint64_t arg1, uint64_t arg2)
+uint64_t HELPER(ftmul)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
 {
-    return arg1 < arg2;
+    return float32_mul(arg1, arg2, &env->fp_status);
 }
 
-uint64_t HELPER(sbe)(uint64_t arg1, uint64_t arg2)
+uint64_t HELPER(ftdiv)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
 {
-    return arg1 <= arg2;
+    return float32_div(arg1, arg2, &env->fp_status);
+}
+
+uint64_t HELPER(ftabs)(CPUDADAOState* env, uint64_t arg1)
+{
+    return float32_abs(arg1);
+}
+
+uint64_t HELPER(ftneg)(CPUDADAOState* env, uint64_t arg1)
+{
+    return float32_sub(0, arg1, &env->fp_status);
+}
+
+uint64_t HELPER(ftsqrt)(CPUDADAOState* env, uint64_t arg1)
+{
+    return float32_sqrt(arg1, &env->fp_status);
+}
+
+uint64_t HELPER(foadd)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
+{
+    return float64_add(arg1, arg2, &env->fp_status);
+}
+
+uint64_t HELPER(fosub)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
+{
+    return float64_sub(arg1, arg2, &env->fp_status);
+}
+
+uint64_t HELPER(fomul)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
+{
+    return float64_mul(arg1, arg2, &env->fp_status);
+}
+
+uint64_t HELPER(fodiv)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
+{
+    return float64_div(arg1, arg2, &env->fp_status);
+}
+
+uint64_t HELPER(foabs)(CPUDADAOState* env, uint64_t arg1)
+{
+    return float64_abs(arg1);
+}
+
+uint64_t HELPER(foneg)(CPUDADAOState* env, uint64_t arg1)
+{
+    return float64_sub(0, arg1, &env->fp_status);
+}
+
+uint64_t HELPER(fosqrt)(CPUDADAOState* env, uint64_t arg1)
+{
+    return float64_sqrt(arg1, &env->fp_status);
+}
+
+uint64_t HELPER(ftcun)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
+{
+    FloatRelation result = float32_compare(arg1, arg2, &env->fp_status);
+    return result == float_relation_unordered;
+}
+
+uint64_t HELPER(ftcor)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
+{
+    FloatRelation result = float32_compare(arg1, arg2, &env->fp_status);
+    return result != float_relation_unordered;
+}
+
+uint64_t HELPER(ftcne)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
+{
+    FloatRelation result = float32_compare(arg1, arg2, &env->fp_status);
+    if (result == float_relation_unordered) { return -1; }
+    return result != float_relation_equal;
+}
+
+uint64_t HELPER(ftceq)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
+{
+    FloatRelation result = float32_compare(arg1, arg2, &env->fp_status);
+    if (result == float_relation_unordered) { return -1; }
+    return result == float_relation_equal;
+}
+
+uint64_t HELPER(ftclt)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
+{
+    FloatRelation result = float32_compare(arg1, arg2, &env->fp_status);
+    if (result == float_relation_unordered) { return -1; }
+    return result == float_relation_less;
+}
+
+uint64_t HELPER(ftcge)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
+{
+    FloatRelation result = float32_compare(arg1, arg2, &env->fp_status);
+    if (result == float_relation_unordered) { return -1; }
+    return result != float_relation_less;
+}
+
+uint64_t HELPER(ftcgt)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
+{
+    FloatRelation result = float32_compare(arg1, arg2, &env->fp_status);
+    if (result == float_relation_unordered) { return -1; }
+    return result == float_relation_greater;
+}
+
+uint64_t HELPER(ftcle)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
+{
+    FloatRelation result = float32_compare(arg1, arg2, &env->fp_status);
+    if (result == float_relation_unordered) { return -1; }
+    return result != float_relation_greater;
+}
+
+uint64_t HELPER(focun)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
+{
+    FloatRelation result = float64_compare(arg1, arg2, &env->fp_status);
+    return result == float_relation_unordered;
+}
+
+uint64_t HELPER(focor)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
+{
+    FloatRelation result = float64_compare(arg1, arg2, &env->fp_status);
+    return result != float_relation_unordered;
+}
+
+uint64_t HELPER(focne)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
+{
+    FloatRelation result = float64_compare(arg1, arg2, &env->fp_status);
+    if (result == float_relation_unordered) { return -1; }
+    return result != float_relation_equal;
+}
+
+uint64_t HELPER(foceq)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
+{
+    FloatRelation result = float64_compare(arg1, arg2, &env->fp_status);
+    if (result == float_relation_unordered) { return -1; }
+    return result == float_relation_equal;
+}
+
+uint64_t HELPER(foclt)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
+{
+    FloatRelation result = float64_compare(arg1, arg2, &env->fp_status);
+    if (result == float_relation_unordered) { return -1; }
+    return result == float_relation_less;
+}
+
+uint64_t HELPER(focge)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
+{
+    FloatRelation result = float64_compare(arg1, arg2, &env->fp_status);
+    if (result == float_relation_unordered) { return -1; }
+    return result != float_relation_less;
+}
+
+uint64_t HELPER(focgt)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
+{
+    FloatRelation result = float64_compare(arg1, arg2, &env->fp_status);
+    if (result == float_relation_unordered) { return -1; }
+    return result == float_relation_greater;
+}
+
+uint64_t HELPER(focle)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
+{
+    FloatRelation result = float64_compare(arg1, arg2, &env->fp_status);
+    if (result == float_relation_unordered) { return -1; }
+    return result != float_relation_greater;
 }
