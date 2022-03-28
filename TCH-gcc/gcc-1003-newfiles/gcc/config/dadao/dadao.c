@@ -984,8 +984,25 @@ static void dd_option_override (void)
 	   They could be relative if we just elide them to after all pertinent
 	   labels.  */
 	if (flag_pic) {
-	//	warning (0, "%<-f%s%> not supported: ignored", (flag_pic > 1) ? "PIC" : "pic");
 		flag_pic = 0;
+	}
+
+	/* TODO:
+	 * -O2 optimize option ignored */
+	if (flag_inline_small_functions) {
+		flag_inline_small_functions = 0;
+	}
+	if (flag_cse_follow_jumps) {
+		flag_cse_follow_jumps = 0;
+	}
+	if (flag_code_hoisting) {
+		flag_code_hoisting = 0;
+	}
+	if (flag_caller_saves) {
+		flag_caller_saves = 0;
+	}
+	if (flag_gcse) {
+		flag_gcse = 0;
 	}
 }
 
