@@ -24,4 +24,21 @@ along with GCC; see the file COPYING3.  If not see
 #include "common/common-target.h"
 #include "common/common-target-def.h"
 
+/* Change optimizations to be performed, depending on the
+   optimization level.  */
+
+static const struct default_options dadao_option_optimization_table[] =
+  {
+    { OPT_LEVELS_2_PLUS, OPT_finline_small_functions , NULL, 0 },
+    { OPT_LEVELS_2_PLUS, OPT_fcse_follow_jumps , NULL, 0 },
+    { OPT_LEVELS_2_PLUS, OPT_fcode_hoisting , NULL, 0 },
+    { OPT_LEVELS_2_PLUS, OPT_fcaller_saves, NULL, 0 },
+    { OPT_LEVELS_2_PLUS, OPT_fgcse , NULL, 0 },
+
+    { OPT_LEVELS_NONE, 0, NULL, 0 }
+  };
+
+#undef TARGET_OPTION_OPTIMIZATION_TABLE
+#define TARGET_OPTION_OPTIMIZATION_TABLE dadao_option_optimization_table
+
 struct gcc_targetm_common targetm_common = TARGETM_COMMON_INITIALIZER;
