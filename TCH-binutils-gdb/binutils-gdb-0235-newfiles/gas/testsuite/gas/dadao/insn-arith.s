@@ -1,10 +1,10 @@
 # Da Dao Zhi Jian
 _start:
-	# addrb/add/sub
-	addrb	rb1, 131071
-	addrb	rb1, -131072
-	add	rd1, 131071
-	add	rd1, -131072
+	# addi/add/sub
+	addi	rd1, 131071
+	addi	rd1, -131072
+	addi	rb1, 131071
+	addi	rb1, -131072
 	add	rd1, rd2, rd3, rd4
 	sub	rd1, rd2, rd3, rd4
 
