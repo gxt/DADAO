@@ -741,7 +741,7 @@ static void dd_encode_section_info (tree decl, rtx rtl, int first)
       const char *str = XSTR (XEXP (rtl, 0), 0);
       int len = strlen (str);
       char *newstr = XALLOCAVEC (char, len + 2);
-      newstr[0] = '.';
+      newstr[0] = '_';
       strcpy (newstr + 1, str);
       XSTR (XEXP (rtl, 0), 0) = ggc_alloc_string (newstr, len + 1);
     }
