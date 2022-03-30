@@ -1647,6 +1647,132 @@ dadao_print_ldst_operand (machine_mode mode,
 #undef _DD_SWAP_OPERATOR_
 }
 
+const char*
+dadao_print_fldst_operand (machine_mode mode,
+			   rtx dest, rtx src, bool strict)
+{
+  FILE *stream = asm_out_file;
+#define _DD_SWAP_OP_(OP0, OP1) ((REG_P (OP0) && REG_P (OP1))		\
+		  && (REGNO_REG_CLASS(REGNO(OP0)) == GENERAL_REGS)	\
+		  && (REGNO_REG_CLASS(REGNO(OP1)) == POINTER_REGS))
+
+  const char *suffix = (mode == E_SFmode) ? "ft" : "fo";
+  if (strict) /* float load: SET (REG_OP 0) with (MEM_OP 1) */
+  {
+    rtx addr = XEXP (src, 0);
+
+    if (REG_P (addr))
+      {
+	asm_fprintf (stream, "\tld%s", suffix);
+	return "%0, %1";
+      }
+    else if (GET_CODE (addr) == PLUS)
+      {
+	rtx op0 = XEXP (addr, 0);
+	rtx op1 = XEXP (addr, 1);
+
+	if (_DD_SWAP_OP_(op0, op1))
+	  std::swap (op0, op1);
+
+	switch (GET_CODE (op1))
+	  {
+	    case CONST_INT:
+	      asm_fprintf (stream, "\tld%s", suffix);
+	      return "%0, %1";
+	    case MEM:
+	      strict = false;
+	      /*
+	       * This module describes the case when the program
+	       * is loading the data through one INDIRECT memory
+	       * access. It is hardly seemed without On (n >= 2)
+	       * The legitimate address would be like: rb + mem.
+	       */
+	      rtx reg;
+
+	      /* This register is clobber to save the data loaded
+	       * the internal memory operand which was used as an
+	       * offset in the process of an indirect mem access.
+	       */
+	      reg = gen_rtx_REG (DImode, 7);
+	      reg = dadao_print_indirect_operand (reg, op1);
+
+	      /* Fall through */
+	    case REG:
+	      asm_fprintf (stream, "\tldm%s", suffix);
+	      if (!strict)
+		{
+		  asm_fprintf (stream, "\t%s, %s, rd7, 0",
+				  reg_names[REGNO(dest)], reg_names[REGNO(op0)]);
+		  return "";
+		}
+	      return "%0, %1, 0";
+	    default:
+	      gcc_unreachable ();
+	  }
+      }
+    else
+      gcc_unreachable ();
+  }
+  else
+  {
+    rtx addr = XEXP (dest, 0);
+    if (REG_P (addr))
+      {
+	asm_fprintf (stream, "\tst%s", suffix);
+	return "%1, %0";
+      }
+    else if (GET_CODE (addr) == PLUS)
+      {
+	rtx op0 = XEXP (addr, 0);
+	rtx op1 = XEXP (addr, 1);
+
+	if (_DD_SWAP_OP_(op0, op1))
+	  std::swap (op0, op1);
+
+        switch (GET_CODE (op1))
+          {
+            case CONST_INT:
+	      asm_fprintf (stream, "\tst%s", suffix);
+              return "%1, %0";
+	    case MEM:
+	      strict = true;
+	      /*
+	       * This module describes the case when the program
+	       * is loading the data through one INDIRECT memory
+	       * access. It is hardly seemed without On (n >= 2)
+	       * The legitimate address would be like: rb + mem.
+	       */
+	      rtx reg;
+
+	      /* This register is clobber to save the data loaded
+	       * the internal memory operand which was used as an
+	       * offset in the process of an indirect mem access.
+	       */
+	      reg = gen_rtx_REG (DImode, 7);
+	      reg = dadao_print_indirect_operand (reg, op1);
+
+	      /* Fall through */
+            case REG:
+	      asm_fprintf (stream, "\tstm%s", suffix);
+	      if (strict)       /* indirect memory access storing */
+		{		/* dest: rd (strict = 1 -> store) */
+		  asm_fprintf (stream, "\t%s, %s, rd7, 0\n",
+			       reg_names[REGNO(src)], reg_names[REGNO(op0)]);
+		    return "";	    /* stm<ftfo> rfx, rby, rd7, 0     */
+		  }
+              return "%1, %0, 0";
+            default:
+	      gcc_unreachable ();
+          }
+      }
+    else
+      gcc_unreachable ();
+  }
+
+#undef _DD_SWAP_OP_
+  return "";
+}
+
 /* Return the bit-value for a const_int or const_double.  */
 
 int64_t
