@@ -22,7 +22,7 @@
 	(match_operand:SFDF 1 "const_double_operand" ""))]
   ""
   "@
-  move	rd7, %0\t\;rd2rf\t%0, rd7, 0
+  move	rd7, %1\t\;rd2rf\t%0, rd7, 0
   move	%0, %1")
 
 (define_insn "add<mode>3"
