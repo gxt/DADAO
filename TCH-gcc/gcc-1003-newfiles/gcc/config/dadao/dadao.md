@@ -107,13 +107,21 @@
   [(set (match_operand:SFDF 0 "rf_class_operand" "=Rf")
 	(match_operand:SFDF 1 "memory_operand"   "  m"))]
   ""
-  "")
+  {
+    return dadao_print_fldst_operand
+		(GET_MODE (operands[0]),
+			   operands[0], operands[1], true);
+  })
 
 (define_insn "dadao_fstore<mode>"
   [(set (match_operand:SFDF 0 "memory_operand"   "=m")
 	(match_operand:SFDF 1 "rf_class_operand" "Rf"))]
   ""
-  "")
+  {
+    return dadao_print_fldst_operand
+		(GET_MODE (operands[0]),
+			   operands[0], operands[1], false);
+  })
 
 (define_expand "call"
   [(parallel [(call (match_operand 0 "memory_operand" "")
@@ -164,11 +172,6 @@
 	  {
 	    return "call	%0, rd0, 0";
 	  }
-	else if (GET_CODE (operands[0]) == CONST)
-	  {
-	// FIXME
-	    return "call	%0";
-	  }
 	else if (GET_CODE (operands[0]) == PLUS)
 	  {
 	    fprintf (asm_out_file, "\tcall	");
@@ -200,11 +203,6 @@
 	if (REG_P (operands[1]))
 	  {
 	    return "call	%1, rd0, 0";
-	  }
-	else if (GET_CODE (operands[1]) == CONST)
-	  {
-	// FIXME
-	    return "call	%1";
 	  }
 	else if (GET_CODE (operands[1]) == PLUS)
 	  {
