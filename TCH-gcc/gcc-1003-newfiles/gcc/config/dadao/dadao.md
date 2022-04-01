@@ -275,4 +275,32 @@
   [(set (pc) (match_operand:DI 0 "address_operand" "p"))
    (use (label_ref (match_operand 1 "" "")))]
   ""
-  "jump	%0")
+  {
+    if (GET_CODE (operands[0]) == PLUS)
+    {
+      rtx base = XEXP (operands[0], 0);
+      rtx offset = XEXP (operands[0], 1);
+
+      gcc_assert (REG_P (base) && (REG_P (offset) || CONST_INT_P (offset)));
+
+      int off_flag = CONST_INT_P (offset);
+
+      fprintf (asm_out_file, "\tjump\t%s, %s, 0\n",
+		reg_names[REGNO(base)], (off_flag) ? "rd0" : reg_names[REGNO(offset)],
+					(off_flag) ? INTVAL(offset) : 0);
+      return "";
+    }
+    else if (REG_P (operands[0]))	return "jump\t%0, rd0, 0";
+    else if (CONSTANT_P(operands[0]))
+    {
+      rtx op = operands[0];
+      if (GET_CODE (op) == CONST
+	  && GET_CODE (XEXP (op, 0)) == PLUS
+	  && CONST_INT_P (XEXP (XEXP (op, 0), 1)))
+	op = XEXP (XEXP (op, 0), 0);
+
+      if (SYMBOL_REF_P (op) || LABEL_REF_P (op))
+	return "jump\t%0";
+    }
+    gcc_unreachable ();
+  })
