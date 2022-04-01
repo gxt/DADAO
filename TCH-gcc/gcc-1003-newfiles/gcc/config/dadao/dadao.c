@@ -253,19 +253,25 @@ static rtx dd_function_arg (cumulative_args_t argsp_v,
 			    const function_arg_info &arg)
 {
   CUMULATIVE_ARGS *argsp = get_cumulative_args (argsp_v);
+  unsigned int DADAO_ARG_REGNUM_P = DADAO_FIRST_ARG_REGNUM;
+  unsigned int DADAO_ARG_REGNUM_M = DADAO_MAX_ARGS_IN_REGS;
 
+  if (GET_MODE_CLASS (arg.mode) == MODE_FLOAT) DADAO_ARG_REGNUM_P += 128;
   /* Last-argument marker.  */
   if (arg.end_marker_p ())
-    return (argsp->regs < DADAO_MAX_ARGS_IN_REGS)
-      ? gen_rtx_REG (arg.mode, DADAO_FIRST_ARG_REGNUM + argsp->regs)
-      : NULL_RTX;
+    {
+      if (argsp->regs < DADAO_ARG_REGNUM_M)
+	return gen_rtx_REG (arg.mode, DADAO_ARG_REGNUM_P + argsp->regs);
+      else
+	internal_error ("internal compiler error: args overflow.");
+    }
 
-  return (argsp->regs < DADAO_MAX_ARGS_IN_REGS
+  return (argsp->regs < DADAO_ARG_REGNUM_M
 	  && !targetm.calls.must_pass_in_stack (arg)
 	  && (GET_MODE_BITSIZE (arg.mode) <= 64
 	      || argsp->lib
 	      || TARGET_LIBFUNC))
-    ? gen_rtx_REG (arg.mode, DADAO_FIRST_ARG_REGNUM + argsp->regs)
+    ? gen_rtx_REG (arg.mode, DADAO_ARG_REGNUM_P + argsp->regs)
     : NULL_RTX;
 }
 
