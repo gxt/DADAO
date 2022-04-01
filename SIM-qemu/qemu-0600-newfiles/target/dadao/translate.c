@@ -1497,8 +1497,6 @@ void dadao_cpu_dump_state(CPUState *cs, FILE *f, int flags)
 {
     DADAOCPU *cpu = DADAO_CPU(cs);
     CPUDADAOState *env = &cpu->env;
-
-    qemu_log("--- pc at: %016lx ---\n", env->REG_PC);
     qemu_log("rd\n");
     for (int i = 0; i < 64; i += 4) {
         if (env->rd[i + 0] || env->rd[i + 1] || env->rd[i + 2] || env->rd[i + 3]) {

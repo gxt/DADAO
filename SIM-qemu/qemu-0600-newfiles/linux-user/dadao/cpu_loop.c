@@ -25,7 +25,7 @@ void cpu_loop(CPUDADAOState *env)
     target_siginfo_t info;
 
     /* debug */
-    qemu_log("program started\n");
+    qemu_log("--- %016lx : program start ---\n", env->REG_PC);
     cpu_dump_state(cs, stderr, 0);
 
     for (;;) {
@@ -34,12 +34,9 @@ void cpu_loop(CPUDADAOState *env)
         cpu_exec_end(cs);
         process_queued_cpu_work(cs);
 
-        /* debug */
-        qemu_log("exception occurred: %d\n", trapnr);
-        cpu_dump_state(cs, stderr, 0);
-
         switch (trapnr) {
         case DADAO_EXCP_TRAP:
+            qemu_log("--- %016lx : system call ---\n", env->REG_PC);
             ret = do_syscall(env,
                              DDABI_SYSCALL_NUM(env),
                              DDABI_ARG(env, 0),
@@ -58,6 +55,7 @@ void cpu_loop(CPUDADAOState *env)
             }
             break;
         case DADAO_EXCP_ILLI:
+            qemu_log("--- %016lx : illegal instruction ---\n", env->REG_PC);
             info.si_signo = TARGET_SIGILL;
             info.si_errno = 0;
             info.si_code = TARGET_ILL_ILLOPC;
@@ -65,14 +63,20 @@ void cpu_loop(CPUDADAOState *env)
             queue_signal(env, info.si_signo, QEMU_SI_FAULT, &info);
             break;
         case DADAO_EXCP_DEBG:
+            qemu_log("--- %016lx : breakpoint ---\n", env->REG_PC);
+            cpu_dump_state(cs, stderr, 0);
             break;
         case DADAO_EXCP_FPER:
+            qemu_log("--- %016lx : floating point exception ---\n", env->REG_PC);
             info.si_signo = TARGET_SIGFPE;
             info.si_errno = 0;
             info.si_code = 0;
             info._sifields._sigfault._addr = env->REG_PC;
             queue_signal(env, info.si_signo, QEMU_SI_FAULT, &info);
             break;
+        case DADAO_EXCP_TRIP:
+            qemu_log("--- %016lx : trip exception ---\n", env->REG_PC);
+            /* fall through */
         default:
             g_assert_not_reached();
         }
