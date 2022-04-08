@@ -46,13 +46,7 @@
    Don't translate while outputting the prologue.  */
 #define DADAO_OUTPUT_REGNO(N)	(N)
 
-/* The canonical saved comparison operands for non-cc0 machines, set in
-   the compare expander.  */
-rtx dadao_compare_op0;
-rtx dadao_compare_op1;
-
 /* Declarations of locals.  */
-
 /* Intermediate for insn output.  */
 static int dadao_output_destination_register;
 
@@ -60,7 +54,6 @@ static void dadao_output_shiftvalue_op_from_str
   (FILE *, const char *, int64_t);
 static void dadao_output_shifted_value (FILE *, int64_t);
 static void dadao_output_octa (FILE *, int64_t, int);
-static void dadao_emit_sp_add (HOST_WIDE_INT offset);
 
 #undef TARGET_HAVE_SPECULATION_SAFE_VALUE
 #define TARGET_HAVE_SPECULATION_SAFE_VALUE speculation_safe_value_not_needed
@@ -157,33 +150,9 @@ static reg_class_t dd_secondary_reload (bool in_p ATTRIBUTE_UNUSED,
 
 /* XXX gccint 18.9.1 Node: Basic Stack Layout */
 
-/* DYNAMIC_CHAIN_ADDRESS.  */
-rtx dadao_dynamic_chain_address (rtx frame)
-{
-  /* FIXME: the frame-pointer is stored at offset -8 from the current
-     frame-pointer.  Unfortunately, the caller assumes that a
-     frame-pointer is present for *all* previous frames.  There should be
-     a way to say that that cannot be done, like for RETURN_ADDR_RTX.  */
-  return plus_constant (Pmode, frame, -8);
-}
-
-/* SETUP_FRAME_ADDRESSES.  */
-void dadao_setup_frame_addresses (void)
-{
-  /* Nothing needed at the moment.  */
-}
-
 /* RETURN_ADDR_RTX.  */
 rtx dadao_return_addr_rtx (int count, rtx frame ATTRIBUTE_UNUSED)
 {
-/*
-  return count == -1
-   ? gen_rtx_REG (Pmode, DADAO_RETURN_ADDRESS_REGNUM)
-   : gen_rtx_MEM (Pmode,
-		  memory_address (Pmode, plus_constant (Pmode, frame, 0))); 
-*/
-//	return count == 0
-
   return get_hard_reg_initial_val (Pmode, DADAO_RETURN_ADDRESS_REGNUM - count);
 }
 
@@ -447,38 +416,7 @@ static void dd_setup_incoming_varargs (cumulative_args_t args_so_farp_v,
 #define	TARGET_SETUP_INCOMING_VARARGS		dd_setup_incoming_varargs
 
 /* XXX gccint 18.11 Node: Support for Nested Functions */
-
-/* TARGET_ASM_TRAMPOLINE_TEMPLATE.  */
-static void dd_asm_trampoline_template (FILE *stream)
-{
-  /* Read a value into the static-chain register and jump somewhere.  The
-     static chain is stored at offset 16, and the function address is
-     stored at offset 24.  */
-/* FIXME the assembly for trampoline is not correct. */
-}
-
-#undef	TARGET_ASM_TRAMPOLINE_TEMPLATE
-#define	TARGET_ASM_TRAMPOLINE_TEMPLATE		dd_asm_trampoline_template
-
-/* Set the static chain and function pointer field in the trampoline.
-   We also SYNCID here to be sure (doesn't matter in the simulator, but
-   some day it will).  */
-static void dd_trampoline_init (rtx m_tramp, tree fndecl, rtx static_chain)
-{
-  rtx fnaddr = XEXP (DECL_RTL (fndecl), 0);
-  rtx mem;
-
-  emit_block_move (m_tramp, assemble_trampoline_template (),
-		   GEN_INT (2*UNITS_PER_WORD), BLOCK_OP_NORMAL);
-
-  mem = adjust_address (m_tramp, DImode, 2*UNITS_PER_WORD);
-  emit_move_insn (mem, static_chain);
-  mem = adjust_address (m_tramp, DImode, 3*UNITS_PER_WORD);
-  emit_move_insn (mem, fnaddr);
-}
-
-#undef	TARGET_TRAMPOLINE_INIT
-#define	TARGET_TRAMPOLINE_INIT			dd_trampoline_init
+/* (empty) */
 
 /* XXX gccint 18.12 Node: Implicit Calls to Library Routines */
 /* (empty) */
@@ -1069,99 +1007,6 @@ dadao_use_simple_return (void)
 void
 dadao_expand_prologue (void)
 {
-  HOST_WIDE_INT locals_size = get_frame_size ();
-  int regno;
-  HOST_WIDE_INT stack_space_to_allocate
-    = (crtl->outgoing_args_size
-       + crtl->args.pretend_args_size
-       + locals_size + 7) & ~7;
-  HOST_WIDE_INT offset = -8;
-
-  /* If we do have a frame-pointer, add room for it.  */
-  if (frame_pointer_needed)
-    stack_space_to_allocate += 8;
-
-  /* Make sure we don't get an unaligned stack.  */
-  if ((stack_space_to_allocate % 8) != 0)
-    internal_error ("stack frame not a multiple of 8 bytes: %wd",
-		    stack_space_to_allocate);
-
-  if (crtl->args.pretend_args_size)
-    {
-      int dadao_first_vararg_reg
-	= (DADAO_FIRST_ARG_REGNUM
-	   + (DADAO_MAX_ARGS_IN_REGS
-	      - crtl->args.pretend_args_size / 8));
-
-      for (regno
-	     = DADAO_FIRST_ARG_REGNUM + DADAO_MAX_ARGS_IN_REGS - 1;
-	   regno >= dadao_first_vararg_reg;
-	   regno--)
-	{
-	  if (offset < 0)
-	    {
-	      HOST_WIDE_INT stack_chunk
-		= stack_space_to_allocate > (256 - 8)
-		? (256 - 8) : stack_space_to_allocate;
-
-	      dadao_emit_sp_add (-stack_chunk);
-	      offset += stack_chunk;
-	      stack_space_to_allocate -= stack_chunk;
-	    }
-
-	  /* These registers aren't actually saved (as in "will be
-	     restored"), so don't tell DWARF2 they're saved.  */
-	  emit_move_insn (gen_rtx_MEM (DImode,
-				       plus_constant (Pmode, stack_pointer_rtx,
-						      offset)),
-			  gen_rtx_REG (DImode, regno));
-	  offset -= 8;
-	}
-    }
-
-  /* Store the frame-pointer.  */
-
-  if (frame_pointer_needed)
-    {
-      rtx insn;
-
-      if (offset < 0)
-	{
-	  /* Get 8 less than otherwise, since we need to reach offset + 8.  */
-	  HOST_WIDE_INT stack_chunk
-	    = stack_space_to_allocate > (256 - 8 - 8)
-	    ? (256 - 8 - 8) : stack_space_to_allocate;
-
-	  dadao_emit_sp_add (-stack_chunk);
-
-	  offset += stack_chunk;
-	  stack_space_to_allocate -= stack_chunk;
-	}
-
-      insn = emit_move_insn (gen_rtx_MEM (DImode,
-					  plus_constant (Pmode,
-							 stack_pointer_rtx,
-							 offset)),
-			     hard_frame_pointer_rtx);
-      RTX_FRAME_RELATED_P (insn) = 1;
-
-      insn = emit_move_insn (hard_frame_pointer_rtx, stack_pointer_rtx);
-      RTX_FRAME_RELATED_P (insn) = 1;
-
-      insn = emit_insn (gen_addrb_imm (hard_frame_pointer_rtx,
-			      	       hard_frame_pointer_rtx, GEN_INT (offset + 8)));
-      RTX_FRAME_RELATED_P (insn) = 1;
-      offset -= 8;
-    }
-
-  /* After the return-address and the frame-pointer, we have the local
-     variables.  They're the ones that may have an "unaligned" size.  */
-  offset -= (locals_size + 7) & ~7;
-
-  /* Finally, allocate room for outgoing args and local vars if room
-     wasn't allocated above.  */
-  if (stack_space_to_allocate)
-    dadao_emit_sp_add (-stack_space_to_allocate);
 }
 
 /* Expands the function epilogue into RTX.  */
@@ -1169,52 +1014,6 @@ dadao_expand_prologue (void)
 void
 dadao_expand_epilogue (void)
 {
-/* TODO */
-  HOST_WIDE_INT locals_size = get_frame_size ();
-  HOST_WIDE_INT stack_space_to_deallocate
-    = (crtl->outgoing_args_size
-       + crtl->args.pretend_args_size
-       + locals_size + 7) & ~7;
-
-  /* The first address to access is beyond the outgoing_args area.  */
-  HOST_WIDE_INT offset = crtl->outgoing_args_size;
-
-  /* Add in the frame-pointer.  */
-  if (frame_pointer_needed)
-    stack_space_to_deallocate += 8;
-
-  /* Make sure we don't get an unaligned stack.  */
-  if ((stack_space_to_deallocate % 8) != 0)
-    internal_error ("stack frame not a multiple of octabyte: %wd",
-		    stack_space_to_deallocate);
-
-  /* Here is where the local variables were.  As in the prologue, they
-     might be of an unaligned size.  */
-  offset += (locals_size + 7) & ~7;
-
-  /* Get back the old frame-pointer-value.  */
-  if (frame_pointer_needed)
-    {
-      if (offset > 255)
-	{
-	  dadao_emit_sp_add (offset);
-
-	  stack_space_to_deallocate -= offset;
-	  offset = 0;
-	}
-
-      emit_move_insn (hard_frame_pointer_rtx,
-		      gen_rtx_MEM (DImode,
-				   plus_constant (Pmode, stack_pointer_rtx,
-						  offset)));
-      offset += 8;
-    }
-
-  /* We do not need to restore pretended incoming args, just add back
-     offset to sp.  */
-  if (stack_space_to_deallocate != 0)
-    dadao_emit_sp_add (stack_space_to_deallocate);
-
 }
 
 /* Output an optimal sequence for setting a register to a specific
@@ -1320,24 +1119,6 @@ dadao_gen_compare_reg (RTX_CODE code, rtx x, rtx y)
 {
   machine_mode ccmode = SELECT_CC_MODE (code, x, y);
   return gen_reg_rtx (ccmode);
-}
-
-/* Local (static) helper functions.  */
-
-static void
-dadao_emit_sp_add (HOST_WIDE_INT offset)
-{
-  rtx insn;
-  if (satisfies_constraint_It (GEN_INT (offset)))
-	insn = emit_insn (gen_addrb_imm (stack_pointer_rtx,
-					 stack_pointer_rtx, GEN_INT (offset)));
-  else {
-	insn = emit_insn (gen_rtx_SET (gen_rtx_REG (DImode, 7), GEN_INT (offset)));
-	RTX_FRAME_RELATED_P (insn) = 1;
-	insn = emit_insn (gen_addrb_rd (stack_pointer_rtx,
-					stack_pointer_rtx, gen_rtx_REG (DImode, 7)));
-  }
-  RTX_FRAME_RELATED_P (insn) = 1;
 }
 
 /* Print operator suitable for doing something with a shiftable

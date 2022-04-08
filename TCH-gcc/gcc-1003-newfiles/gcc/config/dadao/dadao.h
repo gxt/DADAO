@@ -263,10 +263,6 @@ enum reg_class {
 
 #define FIRST_PARM_OFFSET(FUNDECL)		0
 
-#define DYNAMIC_CHAIN_ADDRESS(FRAMEADDR)	dadao_dynamic_chain_address (FRAMEADDR)
-
-#define SETUP_FRAME_ADDRESSES()			dadao_setup_frame_addresses ()
-
 #define RETURN_ADDR_RTX(COUNT, FRAME)		dadao_return_addr_rtx (COUNT, FRAME)
 
 #define INCOMING_RETURN_ADDR_RTX		gen_rtx_REG (Pmode, DADAO_RETURN_ADDRESS_REGNUM)
