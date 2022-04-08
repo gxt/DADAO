@@ -978,12 +978,83 @@ dadao_use_simple_return (void)
   return stack_space_to_allocate == 0;
 }
 
+/* Return whether REGNO a Callee-Saved or Fixed register which must be saved/restored. */
+
+static inline bool
+dadao_call_saved_reg_p (unsigned int regno)
+{
+  return !call_used_or_fixed_reg_p (regno) && df_regs_ever_live_p (regno);
+}
 
 /* Expands the function prologue into RTX.  */
 
 void
 dadao_expand_prologue (void)
 {
+  /* callee_saved_regs_p = number of Callee_Saved regs
+   * which will have to be stored on the frame page.
+   * */
+  int callee_saved_regs_p = 0;
+
+  /* get_frame_size = argsize + varsize */
+  HOST_WIDE_INT fsize = get_frame_size ();
+  machine_mode mode;
+  rtx x;
+
+  /* Stored the old Frame Pointer register at the beginning
+   * of the new Frame storage layout, if FP actually exists.
+   * */
+  if (frame_pointer_needed)
+  {
+    emit_move_insn (gen_rtx_MEM (Pmode,
+			    	 plus_constant (Pmode,
+					 	stack_pointer_rtx, -8)),
+		    frame_pointer_rtx);
+
+    emit_insn (gen_adddi3 (stack_pointer_rtx,
+			   stack_pointer_rtx, GEN_INT (-8)));
+  }
+
+  /* Stored all used-Callee_Saved register beyond FP if FP exists.
+   * If FP does not exist, stored these registers before the vars
+   * or args are stored onto the stack by referencing SP as base.
+   * */
+  for (int rtype = 0; rtype < 3; rtype++)
+  {
+    for (unsigned regno = 32 + rtype * 64;
+		  regno < 64 + rtype * 64; regno++)
+    {
+	if (dadao_call_saved_reg_p (regno))
+        {
+	  /* Float Callee_Saved rf must be stored under floatmode */
+	  mode = rtype > 1 ? E_DFmode : E_DImode;
+	  x = gen_rtx_MEM (mode,
+			   plus_constant (Pmode,
+				   	  stack_pointer_rtx,
+					  -8 * ++callee_saved_regs_p));
+	  emit_move_insn (x, gen_rtx_REG (mode, regno));
+        }
+    }
+  }
+
+  /* SP will have to Increase 'SIZEOF(64/8) * CALLEE_SAVED_REGS_P'
+   * to allocate space for the Callee_Saved registers. If FP exists,
+   * FP will have to be the new SP, which means Callee_Saved regs
+   * are stored beyond the Frame Pointer register.
+   * */
+  if (callee_saved_regs_p)
+    emit_insn (gen_adddi3 (stack_pointer_rtx,
+			   stack_pointer_rtx, GEN_INT (callee_saved_regs_p * -8)));
+
+  if (frame_pointer_needed)
+  {
+    emit_move_insn (frame_pointer_rtx, stack_pointer_rtx);
+  }
+
+  /* Make local variable space.  */
+  if (fsize)
+    emit_insn (gen_adddi3 (stack_pointer_rtx, stack_pointer_rtx,
+			   GEN_INT (-fsize)));
 }
 
 /* Expands the function epilogue into RTX.  */
@@ -991,6 +1062,48 @@ dadao_expand_prologue (void)
 void
 dadao_expand_epilogue (void)
 {
+  int callee_saved_regs_p = 0;
+  HOST_WIDE_INT fsize = get_frame_size ();
+  machine_mode mode;
+  rtx x, reg;
+
+  /* Deallocate the local variables.  */
+  if (fsize)
+    emit_insn (gen_adddi3 (stack_pointer_rtx,
+			   stack_pointer_rtx, GEN_INT (fsize)));
+
+  /* We've stored all of the used-Callee_Saved registers in a
+   * order that smaller the regno is, further the reg will be
+   * stored from the new SP / FP during the function prologue.
+   * So when we try to restored these reg, since the new SP is
+   * the only address that we know, the only way to recovered
+   * the context is to load these regs by scanning the reglist
+   * backwards. Regs with the bigger regno will be stored first.
+   * */
+  for (int rtype = 2; rtype >= 0; --rtype)
+  for (unsigned int regno = 63 + rtype * 64;
+		    regno > 31 + rtype * 64; --regno)
+    if (dadao_call_saved_reg_p (regno))
+      {
+	mode = rtype > 1 ? E_DFmode : E_DImode;
+	x = gen_rtx_MEM (mode,
+			 plus_constant (Pmode,
+				 	stack_pointer_rtx,
+					8 * callee_saved_regs_p++));
+	emit_move_insn (gen_rtx_REG (mode, regno), x);
+      }
+
+  if (callee_saved_regs_p)
+    emit_insn (gen_adddi3 (stack_pointer_rtx,
+			   stack_pointer_rtx, GEN_INT (callee_saved_regs_p * 8)));
+
+  if (frame_pointer_needed)
+  {
+    emit_insn (gen_rtx_SET (frame_pointer_rtx,
+			    gen_rtx_MEM (Pmode, stack_pointer_rtx)));
+    emit_insn (gen_adddi3 (stack_pointer_rtx,
+			   stack_pointer_rtx, GEN_INT (8)));
+  }
 }
 
 /* Output an optimal sequence for setting a register to a specific
