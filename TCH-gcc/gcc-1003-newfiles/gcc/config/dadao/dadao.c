@@ -922,32 +922,9 @@ void dd_print_operand_address (FILE *stream, machine_mode /*mode*/, rtx x)
 
 static void dd_option_override (void)
 {
-	/* Should we err or should we warn?  Hmm.  At least we must neutralize
-	   it.  For example the wrong kind of case-tables will be generated with
-	   PIC; we use absolute address items for dadaoal compatibility.  FIXME:
-	   They could be relative if we just elide them to after all pertinent
-	   labels.  */
-	if (flag_pic) {
-		flag_pic = 0;
-	}
-
-	/* TODO:
-	 * -O2 optimize option ignored */
-	if (flag_inline_small_functions) {
-		flag_inline_small_functions = 0;
-	}
-	if (flag_cse_follow_jumps) {
-		flag_cse_follow_jumps = 0;
-	}
-	if (flag_code_hoisting) {
-		flag_code_hoisting = 0;
-	}
-	if (flag_caller_saves) {
-		flag_caller_saves = 0;
-	}
-	if (flag_gcse) {
-		flag_gcse = 0;
-	}
+  /* Nothing more will have to be added in as override
+   * optimization options for -O2 or for debugging now. */
+  flag_pic = 0;
 }
 
 #undef	TARGET_OPTION_OVERRIDE
