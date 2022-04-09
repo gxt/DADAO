@@ -48,16 +48,10 @@
 
 /* Declarations of locals.  */
 /* Intermediate for insn output.  */
-static int dadao_output_destination_register;
-
-static void dadao_output_shiftvalue_op_from_str
-  (FILE *, const char *, int64_t);
-static void dadao_output_shifted_value (FILE *, int64_t);
 static void dadao_output_octa (FILE *, int64_t, int);
 
 #undef TARGET_HAVE_SPECULATION_SAFE_VALUE
 #define TARGET_HAVE_SPECULATION_SAFE_VALUE speculation_safe_value_not_needed
-
 
 /* XXX gccint Chapter 18: Target Description Macros and Functions */
 
@@ -746,57 +740,9 @@ static void dd_print_operand (FILE *stream, rtx x, int code)
 
   switch (code)
     {
-      /* Unrelated codes are in alphabetic order.  */
-    case 'B':
-      if (GET_CODE (x) != CONST_INT)
-	fatal_insn ("DADAO Internal: Expected a CONST_INT, not this", x);
-      fprintf (stream, "%d", (int) (INTVAL (x) & 0xff));
-      return;
-
-    case 'i':
-      dadao_output_shiftvalue_op_from_str (stream, "inc", (uint64_t) dadao_intval (x));
-      return;
-
-    case 's':
-      dadao_output_shiftvalue_op_from_str (stream, "setz", (uint64_t) dadao_intval (x));
-      return;
-
-    case 'r':
-      /* Store the register to output a constant to.  */
-      if (! REG_P (x))
-	fatal_insn ("DADAO Internal: Expected a register, not this", x);
-      dadao_output_destination_register = DADAO_OUTPUT_REGNO (regno);
-      return;
-
-    case 'I':
-      /* Output the constant.  Note that we use this for floats as well.  */
-      if (GET_CODE (x) != CONST_INT && (GET_CODE (x) != CONST_DOUBLE
-	      || (GET_MODE (x) != VOIDmode && GET_MODE (x) != DFmode
-		  && GET_MODE (x) != SFmode)))
-	fatal_insn ("DADAO Internal: Expected a constant, not this", x);
-      dadao_output_register_setting (stream,
-				    dadao_output_destination_register,
-				    dadao_intval (x), 0);
-      return;
-
-    case 'v':
-      dadao_output_shifted_value (stream, (int64_t) dadao_intval (x));
-      return;
-
-    case 'V':
-      dadao_output_shifted_value (stream, (int64_t) ~dadao_intval (x));
-      return;
-
-    case 'W':
-      if (GET_CODE (x) != CONST_INT)
-	fatal_insn ("DADAO Internal: Expected a CONST_INT, not this", x);
-      fprintf (stream, "0x%x", (int) (INTVAL (x) & 0xffff));
-      return;
-
     case 0:
       /* Nothing to do.  */
       break;
-
     default:
       /* Presumably there's a missing case above if we get here.  */
       internal_error ("DADAO Internal: Missing %qc case in dd_print_operand", code);
@@ -809,10 +755,6 @@ static void dd_print_operand (FILE *stream, rtx x, int code)
       if (regno >= FIRST_PSEUDO_REGISTER)
 	internal_error ("DADAO Internal: Bad register: %d", regno);
       fprintf (stream, "%s", reg_names[DADAO_OUTPUT_REGNO (regno)]);
-      return;
-
-/* TODO */
-    case PLUS:
       return;
 
     case MEM:
@@ -1106,101 +1048,6 @@ dadao_expand_epilogue (void)
   }
 }
 
-/* Output an optimal sequence for setting a register to a specific
-   constant.  Used in an alternative for const_ints in movdi, and when
-   using large stack-frame offsets.
-
-   Use do_begin_end to say if a line-starting TAB and newline before the
-   first insn and after the last insn is wanted.  */
-
-void
-dadao_output_register_setting (FILE *stream,
-			      int regno,
-			      int64_t value,
-			      int do_begin_end)
-{
-  if (do_begin_end)
-    fprintf (stream, "\t");
-
-  if (insn_const_int_ok_for_constraint (value, CONSTRAINT_Nd))
-    fprintf (stream, "sub	rd0, %s, rd0, %" PRId64, reg_names[regno], -value);
-  else if (dadao_shiftable_wyde_value ((uint64_t) value))
-    {
-      /* First, the one-insn cases.  */
-      dadao_output_shiftvalue_op_from_str (stream, "setz",
-					  (uint64_t)
-					  value);
-      fprintf (stream, "\t%s, ", reg_names[regno]);
-      dadao_output_shifted_value (stream, (uint64_t) value);
-    }
-  else if (dadao_shiftable_wyde_value (-(uint64_t) value))
-    {
-      /* We do this to get a bit more legible assembly code.  The next
-	 alternative is mostly redundant with this.  */
-
-      dadao_output_shiftvalue_op_from_str (stream, "setz",
-					  -(uint64_t)
-					  value);
-      fprintf (stream, " %s,", reg_names[regno]);
-      dadao_output_shifted_value (stream, -(uint64_t) value);
-      fprintf (stream, "\n\tsub	rd0, %s, rd0, %s", reg_names[regno],
-	       reg_names[regno]);
-    }
-  else if (dadao_shiftable_wyde_value (~(uint64_t) value))
-    {
-      /* Slightly more expensive, the two-insn cases.  */
-
-      /* FIXME: We could of course also test if 0..255-N or ~(N | 1..255)
-	 is shiftable, or any other one-insn transformation of the value.
-	 FIXME: Check first if the value is "shiftable" by two loading
-	 with two insns, since it makes more readable assembly code (if
-	 anyone else cares).  */
-
-      dadao_output_shiftvalue_op_from_str (stream, "setz",
-					  ~(uint64_t)
-					  value);
-      fprintf (stream, "\t%s,", reg_names[regno]);
-      dadao_output_shifted_value (stream, ~(uint64_t) value);
-      fprintf (stream, "\n\tnot	%s, %s, rd0", reg_names[regno],
-	       reg_names[regno]);
-    }
-  else
-    {
-	fprintf (stream, "setz	%s, ", reg_names[regno]);
-	dadao_output_octa (stream, value, 0);
-    }
-
-  if (do_begin_end)
-    fprintf (stream, "\n");
-}
-
-/* Return 1 if value is 0..65535*2**(16*N) for N=0..3.
-   else return 0.  */
-
-int
-dadao_shiftable_wyde_value (uint64_t value)
-{
-  /* Shift by 16 bits per group, stop when we've found two groups with
-     nonzero bits.  */
-  int i;
-  int has_candidate = 0;
-
-  for (i = 0; i < 4; i++)
-    {
-      if (value & 65535)
-	{
-	  if (has_candidate)
-	    return 0;
-	  else
-	    has_candidate = 1;
-	}
-
-      value >>= 16;
-    }
-
-  return 1;
-}
-
 /* X and Y are two things to compare using CODE.  Return the rtx for
    the cc-reg in the proper mode.  */
 
@@ -1209,40 +1056,6 @@ dadao_gen_compare_reg (RTX_CODE code, rtx x, rtx y)
 {
   machine_mode ccmode = SELECT_CC_MODE (code, x, y);
   return gen_reg_rtx (ccmode);
-}
-
-/* Print operator suitable for doing something with a shiftable
-   wyde.  The type of operator is passed as an asm output modifier.  */
-
-static void
-dadao_output_shiftvalue_op_from_str (FILE *stream,
-				    const char *mainop,
-				    int64_t value)
-{
-  static const char *const op_part[] = {"wl", "wk", "wj", "wh"};
-  int i;
-
-  if (! dadao_shiftable_wyde_value (value))
-    {
-      char s[sizeof ("0xffffffffffffffff")];
-      sprintf (s, "%#" PRIx64, value);
-      internal_error ("DADAO Internal: %s is not a shiftable int", s);
-    }
-
-  for (i = 0; i < 4; i++)
-    {
-      /* We know we're through when we find one-bits in the low
-	 16 bits.  */
-      if (value & 0xffff)
-	{
-	  fprintf (stream, "%s%s", mainop, op_part[i]);
-	  return;
-	}
-      value >>= 16;
-    }
-
-  /* No bits set?  Then it must have been zero.  */
-  fprintf (stream, "%swl", mainop);
 }
 
 /* Print a 64-bit value, optionally prefixed by assembly pseudo.  */
@@ -1271,37 +1084,6 @@ dadao_output_octa (FILE *stream, int64_t value, int do_begin_end)
 
   if (do_begin_end)
     fprintf (stream, "\n");
-}
-
-/* Print the presumed shiftable wyde argument shifted into place (to
-   be output with an operand).  */
-
-static void
-dadao_output_shifted_value (FILE *stream, int64_t value)
-{
-  int i;
-
-  if (! dadao_shiftable_wyde_value (value))
-    {
-      char s[16+2+1];
-      sprintf (s, "%#" PRIx64, value);
-      internal_error ("DADAO Internal: %s is not a shiftable int", s);
-    }
-
-  for (i = 0; i < 4; i++)
-    {
-      /* We know we're through when we find one-bits in the low 16 bits.  */
-      if (value & 0xffff)
-	{
-	  fprintf (stream, "0x%x", (int) (value & 0xffff));
-	  return;
-	}
-
-    value >>= 16;
-  }
-
-  /* No bits set?  Then it must have been zero.  */
-  fprintf (stream, "0");
 }
 
 /* This function returns the container for indirect memory access.
