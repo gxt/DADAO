@@ -40,22 +40,11 @@
 	(and (match_code "const_int")
 	     (match_test "IN_RANGE (ival, -0x20000, 0x1FFFF)")))
 
-(define_constraint "Iw"
-	"Shiftable wyde integer"
-	(and (match_code "const_int")
-	     (match_test "dadao_shiftable_wyde_value (ival)")))
-
-(define_constraint "Iz"
-	"The value 0."
-	(and (match_code "const_int")
-	     (match_test "ival == 0")))
-
 ;; Negative immediate constraints
 (define_constraint "Nd"
 	"Negative 12-bit integer"
 	(and (match_code "const_int")
 	     (match_test "IN_RANGE (ival, -4095, 0)")))
-
 
 ;; Unsigned immediate constraints (DONT use U as prefix, since constraint type ERROR)
 (define_constraint "Js"
