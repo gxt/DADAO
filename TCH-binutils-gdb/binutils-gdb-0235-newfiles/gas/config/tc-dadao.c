@@ -884,7 +884,7 @@ int md_estimate_size_before_relax(fragS *fragP, segT segment)
 
     switch (fragP->fr_subtype)
     {
-        HANDLE_RELAXABLE(STATE_ABS);
+        case ENCODE_RELAX(STATE_ABS, STATE_UNDF):
         break;
         HANDLE_RELAXABLE(STATE_BRCC);
         break;
@@ -979,23 +979,6 @@ void md_convert_frag(bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
         dd_set_addr_offset(opcodep, target_address - opcode_address, 24, 1);
         var_part_size = 0;
         break;
-
-    case ENCODE_RELAX(STATE_ABS, STATE_ZERO):
-        // need to fix higher addr
-        opc = *opcodep;
-        reg = *(opcodep + 1);
-        dd_set_addr_offset(opcodep, target_address & 0xFFFF, 18, 0);
-        var_part_size = 0;
-        if(((target_address>>16) & 0xFFFF) != 0) {
-            if(opc == 0x14)
-                md_number_to_chars(opcodep + 4, DADAO_INSN_ORW_RD | DADAO_WYDE_WK | (reg << 18) | ((target_address>>16) & 0xFFFF), 4);
-            else {
-                md_number_to_chars(opcodep + 4, DADAO_INSN_ORW_RB | DADAO_WYDE_WK | (reg << 18) | ((target_address>>16) & 0xFFFF), 4);
-            }
-            var_part_size = 0;
-        }
-        break;
-
     case ENCODE_RELAX(STATE_BRCC, STATE_ZERO):
         dd_set_addr_offset(opcodep, target_address - opcode_address, 18, 1);
         var_part_size = 0;
@@ -1046,7 +1029,7 @@ void md_apply_fix(fixS *fixP, valueT *valP, segT segment)
         fixP->fx_done = 0;
         return;
     }
-    else if (fixP->fx_r_type == BFD_RELOC_VTABLE_INHERIT || fixP->fx_r_type == BFD_RELOC_VTABLE_ENTRY)
+    else if (fixP->fx_r_type == BFD_RELOC_DADAO_ABS || fixP->fx_r_type == BFD_RELOC_VTABLE_INHERIT || fixP->fx_r_type == BFD_RELOC_VTABLE_ENTRY)
     {
         /* These are never "fixed".  */
         fixP->fx_done = 0;
@@ -1072,7 +1055,6 @@ void md_apply_fix(fixS *fixP, valueT *valP, segT segment)
         break;
 
     case BFD_RELOC_DADAO_ABS:
-        printf("what?\n");
         dd_set_addr_offset(buf, val, 18, 0);
         break;
 
