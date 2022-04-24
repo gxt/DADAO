@@ -219,7 +219,8 @@ static rtx dd_function_arg (cumulative_args_t argsp_v,
   unsigned int DADAO_ARG_REGNUM_P = DADAO_FIRST_ARG_REGNUM;
   unsigned int DADAO_ARG_REGNUM_M = DADAO_MAX_ARGS_IN_REGS;
 
-  if (GET_MODE_CLASS (arg.mode) == MODE_FLOAT) DADAO_ARG_REGNUM_P += 128;
+  if (arg.mode == VOIDmode) return const0_rtx;
+
   /* Last-argument marker.  */
   if (arg.end_marker_p ())
     {
