@@ -391,14 +391,26 @@ void dadao_function_profiler (FILE *stream ATTRIBUTE_UNUSED,
 static void dd_setup_incoming_varargs (cumulative_args_t args_so_farp_v,
 				       const function_arg_info &arg,
 				       int *pretend_sizep,
-				       int second_time ATTRIBUTE_UNUSED)
+				       int second_time)
 {
   CUMULATIVE_ARGS *args_so_farp = get_cumulative_args (args_so_farp_v);
 
-  /* The last named variable has been handled, but
-     args_so_farp has not been advanced for it.  */
-  if (args_so_farp->regs + 1 < DADAO_MAX_ARGS_IN_REGS)
-    *pretend_sizep = (DADAO_MAX_ARGS_IN_REGS - (args_so_farp->regs + 1)) * 8;
+  if (args_so_farp->regs < DADAO_MAX_ARGS_IN_REGS)
+  {
+    int first_reg_offset = args_so_farp->regs;
+    if (!second_time)
+    {
+      rtx ptr = virtual_incoming_args_rtx;
+      rtx mem = gen_rtx_MEM (BLKmode, ptr);
+      emit_insn (gen_blockage ());
+
+      move_block_from_reg (first_reg_offset + DADAO_FIRST_ARG_REGNUM,
+		           mem, DADAO_MAX_ARGS_IN_REGS - first_reg_offset);
+      emit_insn (gen_blockage ());
+    }
+
+    *pretend_sizep = (DADAO_MAX_ARGS_IN_REGS - (args_so_farp->regs)) * 8;
+  }
 
   /* We assume that one argument takes up one register here.  That should
      be true until we start messing with multi-reg parameters.  */
