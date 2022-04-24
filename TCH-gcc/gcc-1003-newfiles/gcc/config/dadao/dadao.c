@@ -242,6 +242,18 @@ static rtx dd_function_arg (cumulative_args_t argsp_v,
 #undef	TARGET_FUNCTION_ARG
 #define	TARGET_FUNCTION_ARG		dd_function_arg
 
+/* Return true if we should pass an argument on the stack rather than
+   in registers.  */
+
+static bool
+dd_must_pass_in_stack (const function_arg_info &arg)
+{
+  return arg.mode == BLKmode || arg.aggregate_type_p ();
+}
+
+#undef TARGET_MUST_PASS_IN_STACK
+#define TARGET_MUST_PASS_IN_STACK	dd_must_pass_in_stack
+
 /* Returns nonzero for everything that goes by reference, 0 for
    everything that goes by value.  */
 static bool dd_pass_by_reference (cumulative_args_t argsp_v,
