@@ -148,8 +148,10 @@
    (set     (match_operand:DI 3 "rd_class_operand" "= Rd")
             (mod:DI (match_dup 1) (match_dup 2)))]
 	""
-	"divs	%0, %1, %2, %3")
+	"divs	%3, %0, %1, %2")
 
+;; FIXME
+;; %1 should be as large as (8 * 2) bytes
 (define_insn "udivmoddi4"
   [(set      (match_operand:DI 0 "rd_class_operand" "= Rd")
     (udiv:DI (match_operand:DI 1 "rd_class_operand" "  Rd")
@@ -157,7 +159,7 @@
    (set      (match_operand:DI 3 "rd_class_operand" "= Rd")
              (umod:DI (match_dup 1) (match_dup 2)))]
 	""
-	"divu	%0, %1, %2, %3")
+	"divu	%3, %0, %1, %2")
 
 (define_insn "<rd_shift_name>di3"
   [(set          (match_operand:DI 0 "rd_class_operand" "=   Rd")
