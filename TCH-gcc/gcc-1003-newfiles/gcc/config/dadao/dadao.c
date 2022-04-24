@@ -210,6 +210,16 @@ int dadao_initial_elimination_offset (int fromreg, int toreg)
 
 /* XXX gccint 18.9.7 Node: Passing Arguments in Registers */
 
+bool dd_can_eliminate (const int from_reg, const int to_reg)
+{
+  return (from_reg == ARG_POINTER_REGNUM && to_reg == STACK_POINTER_REGNUM)
+	  ? ! frame_pointer_needed
+	  : true;
+}
+
+#undef TARGET_CAN_ELIMINATE
+#define TARGET_CAN_ELIMINATE dd_can_eliminate
+
 /* Return an rtx for a function argument to go in a register, and 0 for
    one that must go on stack.  */
 static rtx dd_function_arg (cumulative_args_t argsp_v,
