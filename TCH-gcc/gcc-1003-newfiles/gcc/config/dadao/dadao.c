@@ -937,6 +937,7 @@ dadao_expand_prologue (void)
    * which will have to be stored on the frame page.
    * */
   int callee_saved_regs_p = 0;
+  int regs_saved_offsets  = 0;
 
   /* get_frame_size = argsize + varsize */
   HOST_WIDE_INT fsize = get_frame_size ();
@@ -948,13 +949,11 @@ dadao_expand_prologue (void)
    * */
   if (frame_pointer_needed)
   {
+    regs_saved_offsets -= 8;
     emit_move_insn (gen_rtx_MEM (Pmode,
 			    	 plus_constant (Pmode,
-					 	stack_pointer_rtx, -8)),
+						stack_pointer_rtx, regs_saved_offsets)),
 		    frame_pointer_rtx);
-
-    emit_insn (gen_adddi3 (stack_pointer_rtx,
-			   stack_pointer_rtx, GEN_INT (-8)));
   }
 
   /* Stored all used-Callee_Saved register beyond FP if FP exists.
@@ -970,10 +969,12 @@ dadao_expand_prologue (void)
         {
 	  /* Float Callee_Saved rf must be stored under floatmode */
 	  mode = rtype > 1 ? E_DFmode : E_DImode;
+
 	  x = gen_rtx_MEM (mode,
 			   plus_constant (Pmode,
 				   	  stack_pointer_rtx,
-					  -8 * ++callee_saved_regs_p));
+					  regs_saved_offsets +
+					  (-8 * ++callee_saved_regs_p)));
 	  emit_move_insn (x, gen_rtx_REG (mode, regno));
         }
     }
@@ -985,8 +986,14 @@ dadao_expand_prologue (void)
    * are stored beyond the Frame Pointer register.
    * */
   if (callee_saved_regs_p)
+    regs_saved_offsets -= callee_saved_regs_p * UNITS_PER_WORD;
+
+  if (crtl->args.pretend_args_size)
+    regs_saved_offsets -= crtl->args.pretend_args_size;
+
+  if (regs_saved_offsets)
     emit_insn (gen_adddi3 (stack_pointer_rtx,
-			   stack_pointer_rtx, GEN_INT (callee_saved_regs_p * -8)));
+			   stack_pointer_rtx, GEN_INT (regs_saved_offsets)));
 
   if (frame_pointer_needed)
   {
@@ -1005,14 +1012,19 @@ void
 dadao_expand_epilogue (void)
 {
   int callee_saved_regs_p = 0;
+  int regs_saved_frame_offsets = 0;
+
   HOST_WIDE_INT fsize = get_frame_size ();
   machine_mode mode;
   rtx x, reg;
 
-  /* Deallocate the local variables.  */
-  if (fsize)
+  /* Garbage collection: local variables and varargs */
+  if (fsize + crtl->args.pretend_args_size)
+  {
+    regs_saved_frame_offsets += (fsize + crtl->args.pretend_args_size);
     emit_insn (gen_adddi3 (stack_pointer_rtx,
-			   stack_pointer_rtx, GEN_INT (fsize)));
+			   stack_pointer_rtx, GEN_INT (regs_saved_frame_offsets)));
+  }
 
   /* We've stored all of the used-Callee_Saved registers in a
    * order that smaller the regno is, further the reg will be
@@ -1028,13 +1040,20 @@ dadao_expand_epilogue (void)
     if (dadao_call_saved_reg_p (regno))
       {
 	mode = rtype > 1 ? E_DFmode : E_DImode;
+
+	/* NOTICE:
+	 * offset from stack_pointer_rtx to the callee-saved
+	 * register storing area may be too large for some
+	 * function which contains many local variables to
+	 * get stored. So we need to compute the offset first
+	 */
 	x = gen_rtx_MEM (mode,
-			 plus_constant (Pmode,
-				 	stack_pointer_rtx,
-					8 * callee_saved_regs_p++));
+			 plus_constant (Pmode, stack_pointer_rtx,
+					(8 * callee_saved_regs_p++)));
 	emit_move_insn (gen_rtx_REG (mode, regno), x);
       }
 
+  /* Garbage collection: callee-saved registers */
   if (callee_saved_regs_p)
     emit_insn (gen_adddi3 (stack_pointer_rtx,
 			   stack_pointer_rtx, GEN_INT (callee_saved_regs_p * 8)));
