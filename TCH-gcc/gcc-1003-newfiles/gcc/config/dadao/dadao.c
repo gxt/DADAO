@@ -418,6 +418,8 @@ static void dd_setup_incoming_varargs (cumulative_args_t args_so_farp_v,
 {
   CUMULATIVE_ARGS *args_so_farp = get_cumulative_args (args_so_farp_v);
 
+  dd_function_arg_advance (pack_cumulative_args (args_so_farp), arg);
+
   if (args_so_farp->regs < DADAO_MAX_ARGS_IN_REGS)
   {
     int first_reg_offset = args_so_farp->regs;
