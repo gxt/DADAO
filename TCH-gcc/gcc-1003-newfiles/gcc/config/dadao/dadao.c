@@ -165,7 +165,12 @@ rtx dadao_return_addr_rtx (int count, rtx frame ATTRIBUTE_UNUSED)
    of it; we can deduce the value.  */
 static bool dd_frame_pointer_required (void)
 {
-  return (cfun->has_nonlocal_label);
+  if ((!crtl->is_leaf) || (get_frame_size()!=0)
+     || (cfun->stdarg) || (!crtl->sp_is_unchanging)
+     || (profile_flag))
+    return true;
+
+  return false;
 }
 
 #undef	TARGET_FRAME_POINTER_REQUIRED
@@ -173,36 +178,49 @@ static bool dd_frame_pointer_required (void)
 
 /* The difference between the (imaginary) frame pointer and the stack
    pointer.  Used to eliminate the frame pointer.  */
+
+/* for DADAO architecture:
+ * |	    ....	 |
+ * |---------------------| <--{old "stack" pointer}
+ * | old "frame" pointer | := [optional] if frame_pointer_required
+ * |---------------------| := "rd32"-"rd63" "rb32"-"rb63"
+ * |  callee saved regs  |    "rf32"-"rf63"
+ * |---------------------|
+ * |			 | := ["stdargs.h"] ["varargs.h"]
+ * |  variable argument  |    args which must pass on the stack
+ * |			 |
+ * |---------------------| <--{new "arg" pointer} (eliminated "sp"|"fp")
+ * |---------------------| <--{new "frame" pointer} (same as "arg")
+ * |  incoming argument  |
+ * |---------------------||---
+ * |   local variables   |    \
+ * |---------------------||----==> := "get_frame_size()"
+ * |  caller saved regs  |    /
+ * |---------------------||---
+ * |  outgoing argument  | := optional "outgoing_args_size"
+ * |---------------------| <--{new "stack" pointer}
+ *
+ * FIXME ???
+ * Only {ARG_POINTER}   to {STACK_POINTER}
+ *      {ARG_POINTER}   to {FRAME_POINTER}
+ *      {FRAME_POINTER} to {STACK_POINTER}
+ * can be eliminated.
+ */
 int dadao_initial_elimination_offset (int fromreg, int toreg)
 {
-  int fp_sp_offset = (get_frame_size () + crtl->outgoing_args_size + 7) & ~7;
-
-  /* There is no actual offset between these two virtual values, but for
-     the frame-pointer, we have the old one in the stack position below
-     it, so the offset for the frame-pointer to the stack-pointer is one
-     octabyte larger.  */
-  if (fromreg == DADAO_ARG_POINTER_REGNUM
-      && toreg == FRAME_POINTER_REGNUM)
+  if (fromreg == DADAO_ARG_POINTER_REGNUM)
     return 0;
 
-  /* The difference is the size of local variables plus the size of
-     outgoing function arguments that would normally be passed as
-     registers but must be passed on stack because we're out of
-     function-argument registers.  Only global saved registers are
-     counted; the others go on the register stack.
-
-     The frame-pointer is counted too if it is what is eliminated, as we
-     need to balance the offset for it from TARGET_STARTING_FRAME_OFFSET.
-
-     Unfortunately, we can't access $0..$14, from unwinder code easily, so
-     store the return address in a frame slot too.  FIXME: Only for
-     non-leaf functions.
-
-     We have to do alignment here; get_frame_size will not return a
-     multiple of STACK_BOUNDARY.  FIXME: Add note in manual.  */
-
-  return fp_sp_offset
-    + (fromreg == DADAO_ARG_POINTER_REGNUM ? 0 : 8);
+  /* hard_frame_pointer = frame_pointer
+   *
+   * We are going to store the local variables
+   * as well as outgoing args and caller-saved
+   * registers. They can be computed by adding
+   * the length of outgoing_args_size & fsize.
+   */
+  int fp_sp_offset = (crtl->outgoing_args_size
+			+ get_frame_size() + 7) & ~7;
+  return fp_sp_offset;
 }
 
 /* XXX gccint 18.9.6 Node: Passing Function Arguments on the Stack */
