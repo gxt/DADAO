@@ -139,7 +139,7 @@
    (set      (match_scratch:DI 3                    "= Rd")
              (us_mult:DI (match_dup 1) (match_dup 2)))]
 	""
-	"mulu	%0, %1, %2, %3")
+	"mulu	%3, %0, %1, %2")
 
 (define_insn "divmoddi4"
   [(set     (match_operand:DI 0 "rd_class_operand" "= Rd")
