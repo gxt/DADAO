@@ -1528,9 +1528,17 @@ dadao_print_call_operand (rtx * op, bool strict)
       { rtx BIADDR = (strict) ? op[0]: op[1];
 	rtx OFFSET = (strict) ? op[2]: op[3];
 
-	fprintf (file, "\tcall\t%s, %s, %d\n",
-		reg_names[REGNO (XEXP (BIADDR, 0))],
-		reg_names[REGNO (XEXP (BIADDR, 1))], INTVAL (OFFSET)); }
+	if (REG_P (XEXP (BIADDR, 1)))
+	  fprintf (file, "\tcall\t%s, %s, %d\n",
+		  reg_names[REGNO (XEXP (BIADDR, 0))],
+		  reg_names[REGNO (XEXP (BIADDR, 1))], INTVAL (OFFSET));
+	else if (CONSTANT_P (XEXP (BIADDR, 1)))
+	  fprintf (file, "\tcall\t%s, rd0, %d\n",
+		  reg_names[REGNO (XEXP (BIADDR, 0))],
+		  INTVAL (OFFSET) + INTVAL (XEXP (BIADDR, 1)));
+	else
+	  gcc_unreachable ();
+      }
   };
   return "";
 }
