@@ -1506,6 +1506,35 @@ dadao_print_fldst_operand (machine_mode mode,
   return "";
 }
 
+const char *
+dadao_print_call_operand (rtx * op, bool strict)
+{
+  int callobj = (strict) ? GET_CODE(op[0]) : GET_CODE(op[1]);
+  FILE * file = asm_out_file;
+
+  switch (callobj)
+  {
+    case REG:	/* REGS=(rbx)+(rdx)+(INT) */
+    case SUBREG:	return (strict) ? "call\t%0, rd0, 0":
+					  "call\t%1, rd0, 0";
+    case CONST:	/* CONST=(SYMBOL_REF)+(INT) */
+    case SYMBOL_REF:	return (strict) ? "call\t%0":
+					  "call\t%1";
+    case LABEL_REF: /* fall through: illegal call addr.
+		     * we can't call a symbolic operand
+		     * in data section, so let it fail. */
+    default:	gcc_unreachable ();
+    case PLUS:
+      { rtx BIADDR = (strict) ? op[0]: op[1];
+	rtx OFFSET = (strict) ? op[2]: op[3];
+
+	fprintf (file, "\tcall\t%s, %s, %d\n",
+		reg_names[REGNO (XEXP (BIADDR, 0))],
+		reg_names[REGNO (XEXP (BIADDR, 1))], INTVAL (OFFSET)); }
+  };
+  return "";
+}
+
 /* Return the bit-value for a const_int or const_double.  */
 
 int64_t

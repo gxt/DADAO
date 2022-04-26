@@ -42,6 +42,7 @@ extern rtx dadao_gen_compare_reg (enum rtx_code, rtx, rtx);
 
 extern const char* dadao_print_ldst_operand (machine_mode, rtx, rtx, bool);
 extern const char* dadao_print_fldst_operand (machine_mode, rtx, rtx, bool);
+extern const char* dadao_print_call_operand (rtx *, bool);
 /*
  * Local variables:
  * eval: (c-set-style "gnu")
