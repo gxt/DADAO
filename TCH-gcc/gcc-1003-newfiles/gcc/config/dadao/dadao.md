@@ -162,27 +162,7 @@
    (clobber (reg:DI DD_RA_REG))]
   ""
   {
-    if (GET_CODE (operands[0]) == SYMBOL_REF)
-      {
-	return "call	%0";
-      }
-    else
-      {
-	if (REG_P (operands[0]))
-	  {
-	    return "call	%0, rd0, 0";
-	  }
-	else if (GET_CODE (operands[0]) == PLUS)
-	  {
-	    fprintf (asm_out_file, "\tcall	");
-	    rtx op0 = XEXP (operands[0], 0);
-	    rtx op1 = XEXP (operands[0], 1);
-	    fprintf (asm_out_file, "%s, ", reg_names[REGNO(op0)]);
-	    fprintf (asm_out_file, "%s, %d\n", reg_names[REGNO(operands[2])], INTVAL(op1));
-	    return "";
-	  }
-	return "call	%0, %a2";
-      }
+    return dadao_print_call_operand (operands, true);
   })
 
 (define_insn "dd_call_value_real"
@@ -194,27 +174,7 @@
   (clobber (reg:DI DD_RA_REG))]
   ""
   {
-    if (GET_CODE (operands[1]) == SYMBOL_REF)
-      {
-	return "call	%1";
-      }
-    else
-      {
-	if (REG_P (operands[1]))
-	  {
-	    return "call	%1, rd0, 0";
-	  }
-	else if (GET_CODE (operands[1]) == PLUS)
-	  {
-	    fprintf (asm_out_file, "\tcall	");
-	    rtx op0 = XEXP (operands[1], 0);
-	    rtx op1 = XEXP (operands[1], 1);
-	    fprintf (asm_out_file, "%s, ", reg_names[REGNO(op0)]);
-	    fprintf (asm_out_file, "%s, %d\n", reg_names[REGNO(operands[3])], INTVAL(op1));
-	    return "";
-	  }
-	return "call 	%1, %a3";
-      }
+    return dadao_print_call_operand (operands, false);
   })
 
 ;; I hope untyped_call and untyped_return are not needed for DADAO.
