@@ -681,12 +681,18 @@ static bool trans_divs(DisasContext *ctx, arg_divs *a)
     tcg_gen_brcond_i64(TCG_COND_NE, cpu_rd[a->rdhd], zero, label_not_zero);
     gen_exception(DADAO_EXCP_FPER);
     gen_set_label(label_not_zero);
+    TCGv_i64 temp1 = tcg_temp_new_i64();
+    TCGv_i64 temp2 = tcg_temp_new_i64();
+    tcg_gen_div_i64(temp1, cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
+    tcg_gen_rem_i64(temp2, cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
     if (a->rdhb != 0) {
-        tcg_gen_div_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
+        tcg_gen_mov_i64(cpu_rd[a->rdhb], temp1);
     }
     if (a->rdha != 0) {
-        tcg_gen_rem_i64(cpu_rd[a->rdha], cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
+        tcg_gen_mov_i64(cpu_rd[a->rdha], temp2);
     }
+    tcg_temp_free_i64(temp1);
+    tcg_temp_free_i64(temp2);
     tcg_temp_free_i64(zero);
     return true;
 }
@@ -698,12 +704,18 @@ static bool trans_divu(DisasContext *ctx, arg_divu *a)
     tcg_gen_brcond_i64(TCG_COND_NE, cpu_rd[a->rdhd], zero, label_not_zero);
     gen_exception(DADAO_EXCP_FPER);
     gen_set_label(label_not_zero);
+    TCGv_i64 temp1 = tcg_temp_new_i64();
+    TCGv_i64 temp2 = tcg_temp_new_i64();
+    tcg_gen_divu_i64(temp1, cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
+    tcg_gen_remu_i64(temp2, cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
     if (a->rdhb != 0) {
-        tcg_gen_divu_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
+        tcg_gen_mov_i64(cpu_rd[a->rdhb], temp1);
     }
     if (a->rdha != 0) {
-        tcg_gen_remu_i64(cpu_rd[a->rdha], cpu_rd[a->rdhc], cpu_rd[a->rdhd]);
+        tcg_gen_mov_i64(cpu_rd[a->rdha], temp2);
     }
+    tcg_temp_free_i64(temp1);
+    tcg_temp_free_i64(temp2);
     tcg_temp_free_i64(zero);
     return true;
 }
@@ -915,7 +927,7 @@ static bool trans_not(DisasContext *ctx, arg_not *a)
     if (a->rdhb == 0) {
         return false;
     }
-    TCGv_i64 imm = tcg_const_i64((int64_t)~0);
+    TCGv_i64 imm = tcg_const_i64(~(int64_t)0);
     tcg_gen_shl_i64(imm, imm, cpu_rd[a->rdhd]);
     tcg_gen_xor_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], imm);
     tcg_temp_free_i64(imm);
@@ -974,7 +986,7 @@ static bool trans_noti(DisasContext *ctx, arg_noti *a)
     if (a->rdhb == 0) {
         return false;
     }
-    tcg_gen_xori_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], (int64_t)~0 << a->imm);
+    tcg_gen_xori_i64(cpu_rd[a->rdhb], cpu_rd[a->rdhc], ~(int64_t)0 << a->imm);
     return true;
 }
 
