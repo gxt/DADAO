@@ -1,0 +1,38 @@
+#
+# Makefile for DEJAGNU initialization
+#
+
+DEJAGNU_NEWFILES		:= $(DDB_SRC_DIR)
+DEJAGNU_INSTALL_ORI		:= $(DIR_DADAO_INSTALL)/usr
+DEJAGNU_INSTALL_BIN		:= $(DEJAGNU_INSTALL_ORI)/bin
+DEJAGNU_INSTALL_BBD		:= $(DEJAGNU_INSTALL_ORI)/share/dejagnu/baseboards
+SIMULAT_RUNNING_BUILD		:= $(DIR_DADAO_BUILD)/sim/dadao
+DEJAGNU_ENVIRNOMENT		:= $(DIR_DADAO_INSTALL)/usr/bin:$(PATH)
+
+bench-gcc-testsuite-dejagnu-clean:
+	@echo "REMOVE DEJAGNU INSTALL DIR (ING)"
+	@rm -rf $(DEJAGNU_INSTALL_BIN)/runtest
+	@rm -rf $(SIMULAT_RUNNING_BUILD)/run
+	@rm -rf $(DEJAGNU_INSTALL_ORI)
+	@rm -rf $(DIR_DADAO_BUILD)/sim
+	@rm -rf $(SIMULAT_RUNNING_BUILD)
+	@echo "REMOVE DEJAGNU INSTALL DIR DONE."
+
+bench-gcc-testsuite-dejagnu-init:
+	@make bench-gcc-testsuite-dejagnu-clean
+	@echo "CREATE LINK TO /usr/bin/runtest (ING)"
+	@test -d $(DEJAGNU_INSTALL_BIN) || mkdir -p $(DEJAGNU_INSTALL_BIN)
+	@ln -s /usr/bin/runtest $(DEJAGNU_INSTALL_BIN)/runtest
+	@echo "CREATE LINK TO (pwd)/INSTALL/qemu-dadao"
+	@test -d $(SIMULAT_RUNNING_BUILD) || mkdir -p $(SIMULAT_RUNNING_BUILD)
+	@ln -s $(DIR_DADAO_INSTALL)/bin/qemu-dadao $(SIMULAT_RUNNING_BUILD)/run
+	@test -d $(DEJAGNU_INSTALL_BBD) || mkdir -p $(DEJAGNU_INSTALL_BBD)
+	@echo "CREATE LINK TO DEJAGNU FILES"
+	@ln -s /usr/share/dejagnu/*.c		$(DEJAGNU_INSTALL_ORI)/share/dejagnu/
+	@ln -s /usr/share/dejagnu/*.exp		$(DEJAGNU_INSTALL_ORI)/share/dejagnu/
+	@ln -s /usr/share/dejagnu/libexec	$(DEJAGNU_INSTALL_ORI)/share/dejagnu/libexec
+	@ln -s /usr/share/dejagnu/config	$(DEJAGNU_INSTALL_ORI)/share/dejagnu/config
+	@ln -s /usr/share/dejagnu/baseboards/basic-sim.exp $(DEJAGNU_INSTALL_BBD)
+	@echo "COPY qemu-dadao.exp FOR DEJAGNU"
+	@cp $(DEJAGNU_NEWFILES)/qemu-dadao.exp $(DEJAGNU_INSTALL_BBD)
+	@echo "ENJOY DEJAGNU AND RUN THE GCC-TESTSUITE NOW"
