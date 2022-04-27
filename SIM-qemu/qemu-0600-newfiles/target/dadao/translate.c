@@ -618,6 +618,17 @@ static bool trans_addirb(DisasContext *ctx, arg_addirb *a)
     return true;
 }
 
+static bool trans_adrp(DisasContext *ctx, arg_adrp *a)
+{
+    if (a->rb == 0) {
+        return false;
+    }
+    tcg_gen_movi_i64(cpu_rb[a->rb], ctx->base.pc_next);
+    tcg_gen_andi_i64(cpu_rb[a->rb], cpu_rb[a->rb], ~(int64_t)0xFFF);
+    tcg_gen_addi_i64(cpu_rb[a->rb], cpu_rb[a->rb], a->imm << 12);
+    return true;
+}
+
 static bool trans_add(DisasContext *ctx, arg_add *a)
 {
     TCGv_i64 zero = tcg_const_i64(0);
