@@ -25,7 +25,7 @@ bench-gcc-testsuite-dejagnu-init:
 	@ln -s /usr/bin/runtest $(DEJAGNU_INSTALL_BIN)/runtest
 	@echo "CREATE LINK TO (pwd)/INSTALL/qemu-dadao"
 	@test -d $(SIMULAT_RUNNING_BUILD) || mkdir -p $(SIMULAT_RUNNING_BUILD)
-	@ln -s $(DIR_DADAO_INSTALL)/bin/qemu-dadao $(SIMULAT_RUNNING_BUILD)/simulator
+	@ln -s $(DIR_DADAO_INSTALL)/bin/qemu-dadao $(SIMULAT_RUNNING_BUILD)/run
 	@test -d $(DEJAGNU_INSTALL_BBD) || mkdir -p $(DEJAGNU_INSTALL_BBD)
 	@echo "CREATE LINK TO DEJAGNU FILES"
 	@ln -s /usr/share/dejagnu/*.c		$(DEJAGNU_INSTALL_ORI)/share/dejagnu/
