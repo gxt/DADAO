@@ -1,5 +1,5 @@
 
-int write(int file, char *ptr, int len) {
+int dadao_write(int file, char *ptr, int len) {
   int ret;
   __asm__ (
     "setzwl  rd15, 64     \n"
@@ -16,5 +16,5 @@ int write(int file, char *ptr, int len) {
 }
 
 int _write(int file, char *ptr, int len) {
-  return write(file, ptr, len);
+  return dadao_write(file, ptr, len);
 }
