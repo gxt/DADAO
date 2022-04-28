@@ -115,6 +115,7 @@ insn(	ldmwu,		rrri,	0x45,	0,	rd,	rb,	rd,	i6,	dref)
 insn(	ldmtu,		rrri,	0x46,	0,	rd,	rb,	rd,	i6,	dref)
 insn(	ldmrb,		rrri,	0x47,	0,	rb,	rb,	rd,	i6,	dref)
 
+insn(   adrp,       riii,   0x48,   0,  rb, s18,    -,  -,  normal)
 insn(	_addi,		riii,	0x49,	0,	rb,	s18,	-,	-,	normal)
 insn(	strb,		rrii,	0x4B,	0,	rb,	rb,	s12,	-,	dref)
 insn(	_orwl,		rjii,	0x4C,	0,	rb,	w16,	-,	-,	normal)
