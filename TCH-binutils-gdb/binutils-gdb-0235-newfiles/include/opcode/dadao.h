@@ -25,6 +25,7 @@ enum dadao_insn_type {
 	dadao_type_dref,
 	dadao_type_jsr,
 	dadao_type_pseudo,
+	dadao_type_adrp,
 };
 
 /* Type of operand an instruction takes. */

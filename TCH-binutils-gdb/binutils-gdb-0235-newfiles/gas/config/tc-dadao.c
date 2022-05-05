@@ -61,12 +61,16 @@ static struct hash_control *dadao_opcode_hash;
 
    4. JUMP
       extra length: zero or four insns.
+
+   5. ADRP
+      extra length: zero of three insns.
  */
 
 #define STATE_ABS (1)
 #define STATE_BRCC (2)
 #define STATE_CALL (3)
 #define STATE_JUMP (4)
+#define STATE_ADRP (5)
 
 /* No fine-grainedness here.  */
 #define STATE_LENGTH_MASK (1)
@@ -117,6 +121,12 @@ const relax_typeS dadao_relax_table[] = {
 
     /* JUMP (4, 1).  */
     {0, 0, DD_INSN_BYTES(4), 0},
+
+    /* ADRP (5, 0). */
+    {(1 << 14), -(1 << 14), 0, ENCODE_RELAX(STATE_ADRP, STATE_MAX)},
+
+    /* ADRP (5, 1). */
+    {0, 0, DD_INSN_BYTES(4), 0}
 };
 
 const pseudo_typeS md_pseudo_table[] = {
@@ -857,6 +867,15 @@ void dadao_md_assemble(char *str)
                      exp[0].X_add_symbol, exp[0].X_add_number, opcodep);
         break;
 
+    case dadao_type_adrp:
+	md_number_to_chars(opcodep, insn_code, 4);
+	if(!expand_op)
+	   fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ADRP);
+	else
+	    frag_var(rs_machine_dependent, DD_INSN_BYTES(4), 0, ENCODE_RELAX(STATE_ADRP, STATE_UNDF),
+		     exp[0].X_add_symbol, exp[0].X_add_number,opcodep);
+	break;
+
     case 0:
         md_number_to_chars(opcodep, insn_code, 4);
         break;
@@ -884,19 +903,22 @@ int md_estimate_size_before_relax(fragS *fragP, segT segment)
 
     switch (fragP->fr_subtype)
     {
-        case ENCODE_RELAX(STATE_ABS, STATE_UNDF):
+    case ENCODE_RELAX(STATE_ABS, STATE_UNDF):
         break;
-        HANDLE_RELAXABLE(STATE_BRCC);
+    HANDLE_RELAXABLE(STATE_BRCC);
         break;
-        HANDLE_RELAXABLE(STATE_JUMP);
+    HANDLE_RELAXABLE(STATE_JUMP);
         break;
-        HANDLE_RELAXABLE(STATE_CALL);
+    HANDLE_RELAXABLE(STATE_CALL);
+        break;
+    HANDLE_RELAXABLE(STATE_ADRP);
         break;
 
     case ENCODE_RELAX(STATE_CALL, STATE_ZERO):
     case ENCODE_RELAX(STATE_ABS, STATE_ZERO):
     case ENCODE_RELAX(STATE_BRCC, STATE_ZERO):
     case ENCODE_RELAX(STATE_JUMP, STATE_ZERO):
+    case ENCODE_RELAX(STATE_ADRP, STATE_ZERO):
         /* When relaxing a section for the second time, we don't need to do
 	 anything except making sure that fr_var is set right.  */
         break;
@@ -980,6 +1002,7 @@ void md_convert_frag(bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
         var_part_size = 0;
         break;
     case ENCODE_RELAX(STATE_BRCC, STATE_ZERO):
+    case ENCODE_RELAX(STATE_ADRP, STATE_ZERO):
         dd_set_addr_offset(opcodep, target_address - opcode_address, 18, 1);
         var_part_size = 0;
         break;
@@ -998,6 +1021,7 @@ void md_convert_frag(bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
         HANDLE_MAX_RELOC(STATE_BRCC, BFD_RELOC_DADAO_BRCC);
         HANDLE_MAX_RELOC(STATE_CALL, BFD_RELOC_DADAO_CALL);
         HANDLE_MAX_RELOC(STATE_JUMP, BFD_RELOC_DADAO_JUMP);
+	HANDLE_MAX_RELOC(STATE_ADRP, BFD_RELOC_DADAO_ADRP);
 
     default:
         BAD_CASE(fragP->fr_subtype);
@@ -1067,6 +1091,10 @@ void md_apply_fix(fixS *fixP, valueT *valP, segT segment)
         dd_set_addr_offset(buf, val, 24, 1);
         break;
 
+    case BFD_RELOC_DADAO_ADRP:
+	dd_set_addr_offset(buf, val, 18, 1);
+        break;	
+
     default:
         BAD_CASE(fixP->fx_r_type);
         break;
@@ -1131,6 +1159,7 @@ tc_gen_reloc(asection *section ATTRIBUTE_UNUSED, fixS *fixP)
     case BFD_RELOC_DADAO_BRCC:
     case BFD_RELOC_DADAO_CALL:
     case BFD_RELOC_DADAO_JUMP:
+    case BFD_RELOC_DADAO_ADRP:
         code = fixP->fx_r_type;
         break;
 
