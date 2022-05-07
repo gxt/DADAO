@@ -93,6 +93,7 @@ extern const struct dadao_opcode dadao_opcodes[];
 #define	DADAO_INSN_CALL_RRII		((unsigned int)(0x6D << 24))
 #define	DADAO_INSN_JUMP_IIII		((unsigned int)(0x64 << 24))
 #define	DADAO_INSN_JUMP_RRII		((unsigned int)(0x65 << 24))
+#define DADAO_INSN_ADRP_RIII		((unsigned int)(0x66 << 24))
 
 /* Dadao bit-field definition:
  *   OP: 8-bit, [31..24]

@@ -349,6 +349,21 @@ static reloc_howto_type elf_dadao_howto_table[] =
               ~0xffffff,                  /* src_mask */
               0xffffff,                   /* dst_mask */
               TRUE),                      /* pcrel_offset */
+
+	/* ADRP can reach +-512M; ((PG(S+A)-PG(P)) >> 12) & 0x1fffff */
+	HOWTO(R_DADAO_ADRP,               /* type */
+              12,                         /* rightshift */
+              2,                          /* size (0 = byte, 1 = short, 2 = long) */
+	      18,                         /* bitsize */
+	      TRUE,                       /* pc_relative */
+	      0,                          /* bitpos */
+	      complain_overflow_bitfield, /* complain_on_overflow */
+	      dadao_elf_reloc,            /* special_function */
+	      "R_DADAO_ADRP",             /* name */
+	      FALSE,                      /* partial_inplace */
+	      0x1fffff,                   /* src_mask */
+	      0x1fffff,                   /* dst_mask */
+	      TRUE),                      /* pcrel_offset */
 };
 
 /* Map BFD reloc types to DADAO ELF reloc types.  */
@@ -378,6 +393,7 @@ static const struct dadao_reloc_map dadao_reloc_map[] =
         {BFD_RELOC_DADAO_BRCC, R_DADAO_BRCC},
         {BFD_RELOC_DADAO_CALL, R_DADAO_CALL},
         {BFD_RELOC_DADAO_JUMP, R_DADAO_JUMP},
+	{BFD_RELOC_DADAO_ADRP, R_DADAO_ADRP},
 };
 
 static reloc_howto_type *
@@ -536,6 +552,7 @@ dadao_elf_perform_relocation(asection *isec, reloc_howto_type *howto,
         }
 
         return bfd_reloc_ok;
+
     case R_DADAO_JUMP:
         if ((value & 3) != 0)
             return bfd_reloc_notsupported;
@@ -557,6 +574,28 @@ dadao_elf_perform_relocation(asection *isec, reloc_howto_type *howto,
         }
 
         return bfd_reloc_ok;
+
+    case R_DADAO_ADRP:
+	if((value & 3) != 0)
+           return bfd_reloc_notsupported;
+
+        insn_origin = bfd_get_32(abfd, (bfd_byte *)datap);
+
+	r = bfd_check_overflow(complain_overflow_bitfield,
+			       howto->bitsize, 0,
+			       bfd_arch_bits_per_address(abfd),
+			       value);
+	if (r == bfd_reloc_ok)
+	{
+	    bfd_put_32(abfd, DADAO_INSN_ADRP_RIII | ((value >> 12) & 0x1FFFFF), (bfd_byte *)datap);
+        }
+	else
+        {
+	    //wait to fix
+	    return bfd_reloc_notsupported;
+	}
+
+	return bfd_reloc_ok;
     
     default:
         BAD_CASE(howto->type);
@@ -827,6 +866,7 @@ dadao_final_link_relocate(reloc_howto_type *howto, asection *input_section,
     case R_DADAO_BRCC:
     case R_DADAO_CALL:
     case R_DADAO_JUMP:
+    case R_DADAO_ADRP:
         contents += r_offset - 4;
 
         addr_abs = relocation + (bfd_vma)r_addend;
