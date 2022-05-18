@@ -17,3 +17,8 @@ bench-coremark-build:
 		XCFLAGS="-static"					\
 		NO_LIBRT=true						\
 		make compile
+
+bench-coremark-qemu:
+	$(DDB_QEMU_USER)						\
+		-D $(DDB_DST_DIR)/coremark.qemulog			\
+		$(DDB_COREMARK_BUILD)/coremark.exe
