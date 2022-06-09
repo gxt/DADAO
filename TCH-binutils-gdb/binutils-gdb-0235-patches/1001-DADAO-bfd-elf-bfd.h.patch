@@ -1,0 +1,25 @@
+From 074fa376f13d545d9e9824f9ca37028c74a474b9 Mon Sep 17 00:00:00 2001
+From: zengxiaofeng <zengxiaofeng@pkunity.com>
+Date: Thu, 19 May 2022 15:20:08 +0800
+Subject: [PATCH] TCH-bin: add DADAO_ELF_DATA
+
+Signed-off-by: zengxiaofeng <zengxiaofeng@pkunity.com>
+---
+ bfd/elf-bfd.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/bfd/elf-bfd.h b/bfd/elf-bfd.h
+index c203e089525..0687d827812 100644
+--- a/bfd/elf-bfd.h
++++ b/bfd/elf-bfd.h
+@@ -523,6 +523,7 @@ enum elf_target_id
+   TILEGX_ELF_DATA,
+   TILEPRO_ELF_DATA,
+   RISCV_ELF_DATA,
++  DADAO_ELF_DATA,
+   GENERIC_ELF_DATA
+ };
+ 
+-- 
+2.17.1
+
