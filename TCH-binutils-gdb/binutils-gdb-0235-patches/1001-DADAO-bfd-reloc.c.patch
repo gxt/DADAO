@@ -6,14 +6,14 @@ Subject: [PATCH] DADAO-bfd: reloc.c
 Signed-off-by: Yang Chen <yang_chen@pku.edu.cn>
 Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
 ---
- bfd/reloc.c | 21 ++++++++++++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ bfd/reloc.c | 43 ++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
 diff --git a/bfd/reloc.c b/bfd/reloc.c
 index 9ca68ca61da..1d7c0d42ad3 100644
 --- a/bfd/reloc.c
 +++ b/bfd/reloc.c
-@@ -8150,6 +8150,27 @@ ENUM
+@@ -8150,6 +8150,49 @@ ENUM
  ENUMDOC
    S12Z relocations.
  
@@ -37,6 +37,28 @@ index 9ca68ca61da..1d7c0d42ad3 100644
 +  BFD_RELOC_DADAO_ADRP
 +ENUMDOC
 +  These are relocations for ADRP instruction.
++ENUM
++  BFD_RELOC_DADAO_ADD_LO12
++ENUMDOC
++  DADAO ADD immediate instruction, holding bits 0 to 11 of the address.
++  Used in conjunction with BFD_RELOC_DADAO_ADR_HI21_PCREL.
++ENUM
++  BFD_RELOC_DADAO_ADR_HI21_PCREL
++ENUMDOC
++  DADAO ADRP instruction, with bits 12 to 32 of a pc-relative page
++  offset, giving a 4KB aligned page base address.
++ENUM
++  BFD_RELOC_DADAO_LDST64_LO12
++ENUMDOC
++  DADAO 64-bit load/store instruction, holding bits 0 to 11 of the
++  address.  Used in conjunction with BFD_RELOC_DADAO_ADR_HI21_PCREL.
++ENUM
++  BFD_RELOC_DADAO_RELOC_START
++ENUMDOC
++  DADAO pseudo relocation code to mark the start of the DADAO
++  relocation enumerators.  N.B. the order of the enumerators is
++  important as several tables in the DADAO bfd backend are indexed
++  by these enumerators; make sure they are all synced.
 +
  ENDSENUM
    BFD_RELOC_UNUSED
