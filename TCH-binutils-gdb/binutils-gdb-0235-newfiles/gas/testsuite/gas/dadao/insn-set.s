@@ -10,6 +10,3 @@ _start:
 	move	rd7, 0xFFFFFFFE
 	move	rd8, 0xFFFF0000FFFF
 	move	rd9, 0xFFFF0000FFFF0000
-
-_rec:
-	move	rb1, _start

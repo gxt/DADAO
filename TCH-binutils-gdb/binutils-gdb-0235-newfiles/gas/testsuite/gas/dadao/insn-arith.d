@@ -6,7 +6,6 @@ tmpdir/insn-arith.o:     file format elf64-dadao
 Disassembly of section .text:
 
 0000000000000000 <_start>:
-_start():
    0:	1905ffff 	addi	rd1, 131071
    4:	19060000 	addi	rd1, -131072
    8:	4905ffff 	addi	rb1, 131071

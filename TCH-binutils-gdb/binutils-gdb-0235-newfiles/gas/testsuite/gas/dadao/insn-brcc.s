@@ -3,27 +3,27 @@
 	.p2align
 	.global	_start
 _start:
-1:	brn		rd1, 1f
-1:	brn		rd2, 1b
-	brn		rd3, _start
-2:	brz		rd1, 2f
-2:	brz		rd2, 2b
-	brz		rd3, _start
-3:	brp		rd1, 3f
-3:	brp		rd2, 3b
-	brp		rd3, _start
-4:	brod	rd1, 4f
-4:	brod	rd2, 4b
-	brod	rd3, _start
-5:	brnn	rd1, 5f
-5:	brnn	rd2, 5b
-	brnn	rd3, _start
-6:	brnz	rd1, 6f
-6:	brnz	rd2, 6b
-	brnz	rd3, _start
-7:	brnp	rd1, 7f
-7:	brnp	rd2, 7b
-	brnp	rd3, _start
-8:	brev	rd1, 8f
-8:	brev	rd2, 8b
-	brev	rd3, _start
+	brn		rd1, _rec1
+	brn		rd2, _start
+_rec1:
+	brz		rd1, _rec1
+	brz		rd2, _rec2
+_rec2:
+	brp		rd1, _rec2
+	brp		rd2, _rec3
+_rec3:
+	brod	rd1, _rec3
+	brod	rd2, _rec4
+_rec4:
+	brnn	rd1, _rec4
+	brnn	rd2, _rec5
+_rec5:
+	brnz	rd1, _rec5
+	brnz	rd2, _rec6
+_rec6:
+	brnp	rd1, _rec6
+	brnp	rd2, _rec7
+_rec7:
+	brev	rd1, _rec8
+_rec8:
+	brev	rd2, _start

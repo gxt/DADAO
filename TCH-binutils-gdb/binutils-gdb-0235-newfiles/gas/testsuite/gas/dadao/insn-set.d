@@ -1,11 +1,10 @@
 # objdump: -dr
-tmpdir/insn-seto.o:     file format elf64-dadao
+tmpdir/insn-set.o:     file format elf64-dadao
 
 
 Disassembly of section .text:
 
 0000000000000000 <_start>:
-_start():
    0:	1604abcd 	setzwl	rd1, 0xabcd
    4:	1405abcd 	orwk	rd1, 0xabcd
    8:	16084680 	setzwl	rd2, 0x4680
@@ -23,7 +22,3 @@ _start():
   38:	1422ffff 	orwj	rd8, 0xffff
   3c:	17240000 	setowl	rd9, 0x0
   40:	15260000 	andnwj	rd9, 0x0
-
-0000000000000044 <_rec>:
-_rec():
-  44:	4e040000 	setzwl	rb1, 0x0
