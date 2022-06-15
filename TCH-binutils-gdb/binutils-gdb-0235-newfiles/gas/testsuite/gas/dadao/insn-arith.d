@@ -1,4 +1,3 @@
-insn-arith.d
 # objdump: -dr
 tmpdir/insn-arith.o:     file format elf64-dadao
 

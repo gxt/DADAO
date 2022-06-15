@@ -1,4 +1,6 @@
 # Da Dao Zhi Jian
+	.text
+	.global	_start
 _start:
 	# addi/add/sub
 	addi	rd1, 131071
