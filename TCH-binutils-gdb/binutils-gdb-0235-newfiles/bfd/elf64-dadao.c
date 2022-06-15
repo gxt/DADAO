@@ -981,6 +981,294 @@ dadao_elf_check_relocs(bfd *abfd,
     return TRUE;
 }
 
+static bfd_boolean
+dadao_elf_relax_delete_bytes (bfd *abfd,
+                asection *sec, bfd_vma addr, int count)
+{
+    Elf_Internal_Shdr *symtab_hdr;
+    unsigned int sec_shndx;
+    bfd_byte *contents;
+    Elf_Internal_Rela *irel, *irelend;
+    Elf_Internal_Sym *isym;
+    Elf_Internal_Sym *isymend;
+    struct elf_link_hash_entry **sym_hashes;
+    struct elf_link_hash_entry **end_hashes;
+    struct elf_link_hash_entry **start_hashes;
+    unsigned int symcount;
+
+    sec_shndx = _bfd_elf_section_from_bfd_section (abfd, sec);
+    contents = elf_section_data (sec)->this_hdr.contents;
+
+    irel = elf_section_data (sec)->relocs;
+    irelend = irel + sec->reloc_count;
+
+    /* Actually delete the bytes */
+    memmove (contents + addr, contents + addr + count,
+        (size_t) (sec->size - addr - count));
+    sec->size -= count;
+
+    /* Adjust all the relocs */
+    for (irel = elf_section_data (sec)->relocs; irel < irelend; irel++)
+    {
+        /* Get the new reloc addr */
+        if (irel->r_offset > addr) {
+            irel->r_offset -= count;
+        }
+    }
+    BFD_ASSERT (addr % 2 == 0);
+    BFD_ASSERT (count % 2 == 0);
+
+    /* Adjust the local symbols defined in this section. */
+    symtab_hdr = &elf_tdata(abfd)->symtab_hdr;
+    isym = (Elf_Internal_Sym*) symtab_hdr->contents;
+    for (isymend = isym + symtab_hdr->sh_info; isym < isymend; isym++)
+    {
+        if(isym->st_shndx == sec_shndx && isym->st_value > addr)
+            isym->st_value -= count;
+    }
+
+    /* Now adjust the global symbols defined in this section. */
+    symcount = (symtab_hdr->sh_size / sizeof(Elf64_External_Sym)
+            - symtab_hdr->sh_info);
+    sym_hashes = start_hashes = elf_sym_hashes (abfd);
+    end_hashes = sym_hashes + symcount;
+
+    for(; sym_hashes < end_hashes; sym_hashes++ )
+    {
+        struct elf_link_hash_entry *sym_hash = *sym_hashes;
+
+        if((sym_hash->root.type == bfd_link_hash_defined
+            || sym_hash->root.type == bfd_link_hash_defweak)
+            && sym_hash->root.u.def.section == sec)
+        {
+            bfd_vma value = sym_hash->root.u.def.value;
+
+            if (value > addr) {
+                sym_hash->root.u.def.value -= count;
+            }
+        }
+    }
+    return TRUE;
+}
+
+static bfd_boolean
+dadao_elf_relax_section (bfd *abfd, asection *sec,
+		       struct bfd_link_info *link_info, bfd_boolean *again)
+{
+    Elf_Internal_Shdr *symtab_hdr;
+    Elf_Internal_Rela *internal_relocs;
+    Elf_Internal_Rela *irel, *irelend;
+    bfd_byte *contents = NULL;
+    Elf_Internal_Sym *isymbuf = NULL;
+
+    /* Assume nothing changes.  */
+    *again = FALSE;
+
+    /* We don't have to do anything for a relocatable link, if this
+        section does not have relocs, or if this is not a code
+        section.  */
+    if (bfd_link_relocatable (link_info)
+        || (sec->flags & SEC_RELOC) == 0
+        || sec->reloc_count == 0
+        || (sec->flags & SEC_CODE) == 0)
+        return TRUE;
+
+    symtab_hdr = &elf_tdata (abfd)->symtab_hdr;
+
+    /* Get a copy of the native relocations.  */
+    internal_relocs = _bfd_elf_link_read_relocs (abfd, sec, NULL, NULL,
+                                                link_info->keep_memory);
+    if (internal_relocs == NULL)
+        goto error_return;
+
+    /* Walk through them looking for relaxing opportunities.  */
+    irelend = internal_relocs + sec->reloc_count;
+    int i = 0;
+    for (irel = internal_relocs; irel < irelend; irel++)
+    {
+        unsigned long r_symndx = ELF64_R_SYM (irel->r_info);
+        unsigned int r_type = ELF64_R_TYPE (irel->r_info);
+        unsigned int opcode, nextopc;
+        bfd_vma symval;
+        bfd_vma pcrval;
+        bfd_byte *ptr;
+
+        /* The number of bytes to delete for relaxation and from where
+        to delete these bytes starting at irel->r_offset. */
+        int delcnt = 0;
+        int deloff = 0;
+
+        /* Get the section contents if we haven't done so already.  */
+        if (contents == NULL)
+        {
+            /* Get cached copy if it exists.  */
+            if (elf_section_data (sec)->this_hdr.contents != NULL)
+            contents = elf_section_data (sec)->this_hdr.contents;
+            /* Go get them off disk.  */
+            else if (!bfd_malloc_and_get_section (abfd, sec, &contents))
+            goto error_return;
+        }
+
+        ptr = contents + irel->r_offset - 4;
+
+        /* Read this BFD's local symbols if we haven't done so already.  */
+        if (isymbuf == NULL && symtab_hdr->sh_info != 0)
+        {
+            isymbuf = (Elf_Internal_Sym *) symtab_hdr->contents;
+            if (isymbuf == NULL)
+            isymbuf = bfd_elf_get_elf_syms (abfd, symtab_hdr,
+                                            symtab_hdr->sh_info, 0,
+                                            NULL, NULL, NULL);
+            if (isymbuf == NULL)
+            goto error_return;
+        }
+
+        /* Get the value of the symbol refferd to by the reloc. */
+        if (r_symndx >= symtab_hdr->sh_info)
+        {
+            /* An external symbol.  */
+            unsigned long indx;
+            struct elf_link_hash_entry *h;
+
+            indx = r_symndx - symtab_hdr->sh_info;
+            h = elf_sym_hashes (abfd)[indx];
+            BFD_ASSERT (h != NULL);
+
+            if(h->root.type != bfd_link_hash_defined
+            && h->root.type != bfd_link_hash_defweak){
+                continue;
+            }
+            /* This appears to be a reference to an undefined
+                symbol.  Just ignore it -- it will be caught by the
+                regular reloc processing.  */
+
+            symval = (h->root.u.def.value
+                + h->root.u.def.section->output_section->vma
+                + h->root.u.def.section->output_offset);
+        }
+        else {
+            continue;
+            Elf_Internal_Sym *isym;
+            asection *sym_sec;
+
+            switch (isym->st_shndx) {
+                case SHN_UNDEF:
+                    sym_sec = bfd_und_section_ptr;
+                    break;
+                case SHN_ABS:
+                    sym_sec = bfd_abs_section_ptr;
+                    break;
+                case SHN_COMMON:
+                    sym_sec = bfd_com_section_ptr;
+                    break;
+                default:
+                    sym_sec = bfd_section_from_elf_index (abfd, isym->st_shndx);
+                    break;
+            }
+            symval = (isym->st_value
+                    + sym_sec->output_section->vma
+                    + sym_sec->output_offset);
+        }
+
+        /* For simplicity of coding, we are going to modify the
+        section contents, the section relocs, and the BFD symbol
+        table.  We must tell the rest of the code not to free up this
+        information.  It would be possible to instead create a table
+        of changes which have to be made, as is done in coff-mips.c;
+        that would be more work, but would require less memory when
+        the linker is run.  */
+
+        opcode = bfd_get_32 (abfd, ptr);
+        nextopc = bfd_get_32 (abfd, ptr + 4);
+        /* Only do relax when next insn is noop */
+        if(!nextopc) {
+            /* This is the pc-relative distance from the instruction the
+            relocation is applied to, to the symbol referred.  */
+            pcrval = symval - (sec->output_section->vma + sec->output_offset + irel->r_offset) + 4;
+
+            if (r_type == R_DADAO_CALL && MATCH (opcode, DADAO_INSN_CALL_IIII))
+            {
+                /* Delete 16 bytes from irel->r_offset */
+                delcnt = 16;
+                deloff = 0;
+            }
+            if (r_type == R_DADAO_BRCC && ((opcode>>24) >= 0x28 && (opcode>>24) <= 0x2F))
+            {
+                /* Delete 20 bytes from irel->r_offset */
+                delcnt = 20;
+                deloff = 0;
+            }
+            if (r_type == R_DADAO_JUMP && MATCH (opcode, DADAO_INSN_JUMP_IIII))
+            {
+                delcnt = 16;
+                deloff = 0;
+            }
+            if (r_type == R_DADAO_ABS && (MATCH (opcode, DADAO_INSN_SETZW_RD)
+                || MATCH (opcode, DADAO_INSN_SETOW_RD) || MATCH (opcode, DADAO_INSN_SETZW_RB)))
+            {
+                delcnt = 16 - dd_fill_abs(opcode & 0xFF000000,opcode & 0x00FC0000,symval,abfd,ptr);
+                deloff = 0;
+            }
+        }
+        else {
+          /* FIXME: need to adjust the addr if the relocation has been relaxed. */
+            delcnt = 0;
+        }
+
+        if (delcnt != 0) {
+            /* Note that we've changed the relocs, section contents, etc. */
+            elf_section_data (sec)->relocs = internal_relocs;
+            elf_section_data (sec)->this_hdr.contents = contents;
+            symtab_hdr->contents = (unsigned char *) isymbuf;
+
+            /* Delete bytes depending on the delcnt and deloff. */
+            if(!dadao_elf_relax_delete_bytes (abfd, sec, irel->r_offset + deloff, delcnt))
+                goto error_return;
+
+            /* That will change things, so we shold relax again.
+                Note that this is not required, and it may be slow. */
+            *again = TRUE;
+        }
+    }
+
+
+    if (isymbuf != NULL
+      && symtab_hdr->contents != (unsigned char *) isymbuf)
+    {
+      if (!link_info->keep_memory)
+        free (isymbuf);
+      else
+       /* Cache the symbols for elf_link_input_bfd.  */
+       symtab_hdr->contents = (unsigned char *) isymbuf;
+    }
+
+    if (contents != NULL
+      && elf_section_data (sec)->this_hdr.contents != contents)
+    {
+      if (!link_info->keep_memory)
+        free (contents);
+      else
+       /* Cache the section contents for elf_link_input_bfd.  */
+       elf_section_data (sec)->this_hdr.contents = contents;
+    }
+
+    if (elf_section_data (sec)->relocs != internal_relocs)
+    free (internal_relocs);
+
+    return TRUE;
+
+    error_return:
+    if (symtab_hdr->contents != (unsigned char *) isymbuf)
+        free (isymbuf);
+    if (elf_section_data (sec)->this_hdr.contents != contents)
+        free (contents);
+    if (elf_section_data (sec)->relocs != internal_relocs)
+        free (internal_relocs);
+
+    return FALSE;
+}
+
+
 #define ELF_ARCH bfd_arch_dadao
 #define ELF_MACHINE_CODE EM_DADAO
 
@@ -1005,5 +1293,7 @@ dadao_elf_check_relocs(bfd *abfd,
 #define elf_backend_default_use_rela_p 1
 
 #define elf_backend_can_gc_sections 1
+
+#define bfd_elf64_bfd_relax_section dadao_elf_relax_section
 
 #include "elf64-target.h"
