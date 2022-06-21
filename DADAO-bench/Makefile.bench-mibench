@@ -1,0 +1,27 @@
+#
+# Makefile for mibench
+#
+DDB_MIBENCH_ORIGIN      := $(DIR_GIT_ORIGIN)/mibench.git
+DDB_MIBENCH_BRANCH      := mibench
+DDB_MIBENCH_SOURCE      := $(DDB_DST_DIR)/mibench
+DDB_MIBENCH_BUILD       := $(DDB_DST_DIR)/mibench
+DDB_MIBENCH_PATCHES     := $(DDB_SRC_DIR)/mibench-patches
+
+bench-mibench-clean:
+	# Remove old mibench source dir ...
+	@rm -fr $(DDB_MIBENCH_SOURCE)
+	# Remove old build dir ...
+	@rm -fr $(DDB_MIBENCH_BUILD)
+
+bench-mibench-source:
+	# Remove old mibench source dir ...
+	@test -d $(DDB_MIBENCH_SOURCE) || mkdir -p $(DDB_MIBENCH_SOURCE)
+	# Clone official repo
+	@git clone -q $(DDB_MIBENCH_ORIGIN) -- $(DDB_MIBENCH_SOURCE)
+	@cd $(DDB_MIBENCH_SOURCE); git checkout -qb $(DDB_MIBENCH_BRANCH)
+	# Apply patches
+	@cd $(DDB_MIBENCH_SOURCE); git am $(DDB_MIBENCH_PATCHES)/*.patch
+
+bench-mibench-build:
+	@cd $(DDB_MIBENCH_SOURCE);      \
+        make CC=$(DDB_ELF_GCC) PLATFORM=$(PLATFORM)

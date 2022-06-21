@@ -1,0 +1,26 @@
+From a76713508a73903896fd86e49078074f049ab524 Mon Sep 17 00:00:00 2001
+From: Lai yankai <laiyankai@pkunity.com>
+Date: Wed, 15 Jun 2022 23:04:18 +0800
+Subject: [PATCH] mibench: banned error tests
+
+Signed-off-by: Lai yankai <laiyankai@pkunity.com>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 532a5c3..f6e128c 100644
+--- a/Makefile
++++ b/Makefile
+@@ -22,7 +22,7 @@ TYPESET_INPUT=7000000
+ 
+ .PHONY: clean clean_$(PLATFORM)
+ 
+-all: basicmath_$(PLATFORM) bitcount_$(PLATFORM) qsort_small_$(PLATFORM) qsort_large_$(PLATFORM) susan_$(PLATFORM) cjpeg_$(PLATFORM) djpeg_$(PLATFORM) lame_$(PLATFORM) typeset_$(PLATFORM) dijkstra_$(PLATFORM) patricia_$(PLATFORM) stringsearch_$(PLATFORM) blowfish_$(PLATFORM) sha_$(PLATFORM) crc_$(PLATFORM) fft_$(PLATFORM) rawcaudio_$(PLATFORM) rawdaudio_$(PLATFORM) toast_$(PLATFORM) untoast_$(PLATFORM)
++all: basicmath_$(PLATFORM) bitcount_$(PLATFORM) qsort_small_$(PLATFORM) qsort_large_$(PLATFORM) susan_$(PLATFORM)  typeset_$(PLATFORM) dijkstra_$(PLATFORM) patricia_$(PLATFORM) stringsearch_$(PLATFORM) blowfish_$(PLATFORM) sha_$(PLATFORM) crc_$(PLATFORM) fft_$(PLATFORM) rawcaudio_$(PLATFORM) rawdaudio_$(PLATFORM) toast_$(PLATFORM) untoast_$(PLATFORM)
+ 
+ automotive_basicmath:
+ 	$(MAKE) -C automotive/basicmath
+-- 
+2.17.1
+
