@@ -17,7 +17,7 @@ index 532a5c3..f6e128c 100644
  .PHONY: clean clean_$(PLATFORM)
  
 -all: basicmath_$(PLATFORM) bitcount_$(PLATFORM) qsort_small_$(PLATFORM) qsort_large_$(PLATFORM) susan_$(PLATFORM) cjpeg_$(PLATFORM) djpeg_$(PLATFORM) lame_$(PLATFORM) typeset_$(PLATFORM) dijkstra_$(PLATFORM) patricia_$(PLATFORM) stringsearch_$(PLATFORM) blowfish_$(PLATFORM) sha_$(PLATFORM) crc_$(PLATFORM) fft_$(PLATFORM) rawcaudio_$(PLATFORM) rawdaudio_$(PLATFORM) toast_$(PLATFORM) untoast_$(PLATFORM)
-+all: basicmath_$(PLATFORM) bitcount_$(PLATFORM) qsort_small_$(PLATFORM) qsort_large_$(PLATFORM) susan_$(PLATFORM)  typeset_$(PLATFORM) dijkstra_$(PLATFORM) patricia_$(PLATFORM) stringsearch_$(PLATFORM) blowfish_$(PLATFORM) sha_$(PLATFORM) crc_$(PLATFORM) fft_$(PLATFORM) rawcaudio_$(PLATFORM) rawdaudio_$(PLATFORM) toast_$(PLATFORM) untoast_$(PLATFORM)
++all: basicmath_$(PLATFORM) bitcount_$(PLATFORM) qsort_small_$(PLATFORM) qsort_large_$(PLATFORM) susan_$(PLATFORM)  cjpeg_$(PLATFORM) djpeg_$(PLATFORM) typeset_$(PLATFORM) dijkstra_$(PLATFORM)  stringsearch_$(PLATFORM)  sha_$(PLATFORM) crc_$(PLATFORM) fft_$(PLATFORM) rawcaudio_$(PLATFORM) rawdaudio_$(PLATFORM)
  
  automotive_basicmath:
  	$(MAKE) -C automotive/basicmath
