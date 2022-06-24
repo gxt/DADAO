@@ -1,0 +1,26 @@
+From 7a9e19511d91783dacb5adfa59c33596886167c6 Mon Sep 17 00:00:00 2001
+From: Lai yankai <laiyankai@pkunity.com>
+Date: Wed, 22 Jun 2022 21:12:54 +0800
+Subject: [PATCH] mibench: ban LOCALE_ON
+
+Signed-off-by: Lai yankai <laiyankai@pkunity.com>
+---
+ consumer/typeset/lout-3.24/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/consumer/typeset/lout-3.24/Makefile b/consumer/typeset/lout-3.24/Makefile
+index 22615f8..69ab431 100755
+--- a/consumer/typeset/lout-3.24/Makefile
++++ b/consumer/typeset/lout-3.24/Makefile
+@@ -291,7 +291,7 @@ LIBLOCA = locale
+ CHARIN	= 1
+ CHAROUT	= 0
+ 
+-USELOC	= 1
++USELOC	= 0
+ LOC_FR	= fr
+ LOC_DE	= de
+ 
+-- 
+2.17.1
+
