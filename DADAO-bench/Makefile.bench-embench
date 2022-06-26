@@ -7,11 +7,15 @@ DDB_EMBENCH_NEWFILES	:= $(DDB_SRC_DIR)/embench-iot
 DDB_EMBENCH_BUILD	:= $(DDB_DST_DIR)/embench-build
 DDB_EMBENCH_LOG		:= $(DDB_DST_DIR)/embench-log
 
-bench-embench-source:
+bench-embench-clean:
 	# Remove old embench source dir ...
 	@rm -fr $(DDB_EMBENCH_SOURCE)
 	# Remove old build dir ...
 	@rm -fr $(DDB_EMBENCH_BUILD)
+	# Remove old log dir ...
+	@rm -fr $(DDB_EMBENCH_LOG)
+
+bench-embench-source:
 	# Clone official repo
 	@git clone -q $(DDB_EMBENCH_ORIGIN) -- $(DDB_EMBENCH_SOURCE)
 	# Add dadao support
@@ -46,6 +50,7 @@ bench-embench-benchmark-speed:
 		--target-module run_qemu
 
 bench-embench-highfive:
+	@make -s bench-embench-clean
 	@make -s bench-embench-source
 	@make -s bench-embench-build-all
 	@make -s bench-embench-benchmark-size
