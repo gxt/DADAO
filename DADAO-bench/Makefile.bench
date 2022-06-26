@@ -25,3 +25,8 @@ include DADAO-bench/Makefile.bench-embench
 
 bench-clean:
 	@rm -fr $(DDB_DST_DIR)
+
+bench-elf-highfive:
+	@make -s bench-dhry-highfive
+	@make -s bench-coremark-highfive
+	@make -s bench-embench-highfive
