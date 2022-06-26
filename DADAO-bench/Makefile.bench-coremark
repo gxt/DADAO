@@ -4,9 +4,12 @@
 DDB_COREMARK_ORIGIN	:= $(DIR_GIT_ORIGIN)/coremark.git
 DDB_COREMARK_BUILD	:= $(DDB_DST_DIR)/coremark
 
-bench-coremark-source:
+bench-coremark-clean:
 	# Remove old coremark source dir ...
 	@rm -fr $(DDB_COREMARK_BUILD)
+	@rm -fr $(DDB_DST_DIR)/coremark.qemulog
+
+bench-coremark-source:
 	# Clone official repo
 	@git clone -q $(DDB_COREMARK_ORIGIN) -- $(DDB_COREMARK_BUILD)
 
@@ -14,7 +17,7 @@ bench-coremark-build:
 	@cd $(DDB_COREMARK_BUILD);					\
 		PORT_DIR=linux						\
 		CC=$(DDB_ELF_GCC)					\
-		XCFLAGS="-static"					\
+		XCFLAGS="-static -O0"					\
 		NO_LIBRT=true						\
 		make compile
 
@@ -22,3 +25,9 @@ bench-coremark-qemu:
 	$(DDB_QEMU_USER)						\
 		-D $(DDB_DST_DIR)/coremark.qemulog			\
 		$(DDB_COREMARK_BUILD)/coremark.exe
+
+bench-coremark-highfive:
+	@make -s bench-coremark-clean
+	@make -s bench-coremark-source
+	@make -s bench-coremark-build
+	@make -s bench-coremark-qemu
