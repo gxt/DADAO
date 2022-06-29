@@ -120,7 +120,8 @@ binutils-gdb-0235-build-new:
 			--disable-nls					\
 			--target=$(BINUTILS_GDB_0235_TARGET)		\
 			--srcdir=$(BINUTILS_GDB_0235_SOURCE)		\
-			--prefix=$(BINUTILS_GDB_0235_INSTALL)
+			--prefix=$(BINUTILS_GDB_0235_INSTALL)		\
+			--disable-dependency-tracking
 
 binutils-gdb-0235-build:
 	@make -C $(BINUTILS_GDB_0235_BUILD) -j8
