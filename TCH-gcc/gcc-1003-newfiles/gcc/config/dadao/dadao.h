@@ -255,6 +255,8 @@ enum reg_class {
 
 #define CLASS_MAX_NREGS(CLASS, MODE)		targetm.hard_regno_nregs (CLASS, MODE)
 
+#define PREFERRED_RELOAD_CLASS(X,CLASS)		dadao_preferred_reload_class (X, CLASS)
+
 /* XXX gccint 18.9 Node: Stack Layout and Calling Conventions */
 
 /* XXX gccint 18.9.1 Node: Basic Stack Layout */
