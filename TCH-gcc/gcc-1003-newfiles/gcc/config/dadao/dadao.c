@@ -137,6 +137,53 @@ static reg_class_t dd_secondary_reload (bool in_p ATTRIBUTE_UNUSED,
 #undef	TARGET_SECONDARY_RELOAD
 #define	TARGET_SECONDARY_RELOAD			dd_secondary_reload
 
+enum reg_class
+dadao_secondary_reload_class (enum reg_class rclass,
+			      machine_mode mode, rtx x)
+{
+  int regno;
+
+  regno = true_regnum (x);
+
+  /* If one operand of a movqi is an address register, the other
+     operand must be a general register or constant.  Other types
+     of operand must be reloaded through a data register.  */
+  if (GET_MODE_SIZE (mode) == 1
+      && reg_classes_intersect_p (rclass, POINTER_REGS)
+      && !(INT_REGNO_P (regno) || CONSTANT_P (x)))
+    return GENERAL_REGS;
+
+  /* PC-relative addresses must be loaded into an address register first.  */
+  if (!reg_class_subset_p (rclass, POINTER_REGS)
+      && symbolic_operand (x, VOIDmode))
+    return POINTER_REGS;
+
+  return NO_REGS;
+}
+
+enum reg_class
+dadao_preferred_reload_class (rtx x, enum reg_class rclass)
+{
+  enum reg_class secondary_class;
+  secondary_class = dadao_secondary_reload_class (rclass, GET_MODE (x), x);
+  if (secondary_class != NO_REGS
+     && reg_class_subset_p (secondary_class, rclass))
+    return secondary_class;
+
+  if (GET_CODE (x) == CONST_INT
+      && reg_class_subset_p (GENERAL_REGS, rclass)
+      && IN_RANGE (INTVAL (x), -0x80, 0x7f))
+    return GENERAL_REGS;
+
+  if (GET_CODE (x) == CONST_DOUBLE
+      && GET_MODE_CLASS (GET_MODE (x)) == MODE_FLOAT) {
+    if (reg_class_subset_p (FLOATING_REGS, rclass))
+      return FLOATING_REGS;
+    return NO_REGS;
+  }
+  return rclass;
+}
+
 #undef	TARGET_LRA_P
 #define	TARGET_LRA_P				hook_bool_void_false
 

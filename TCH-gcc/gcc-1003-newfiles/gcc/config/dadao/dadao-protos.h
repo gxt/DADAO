@@ -11,6 +11,10 @@ extern void dd_print_operand_address (FILE *, machine_mode, rtx);
 extern rtx dadao_dynamic_chain_address (rtx);
 extern void dadao_setup_frame_addresses (void);
 extern rtx dadao_return_addr_rtx (int, rtx);
+
+extern enum reg_class dadao_secondary_reload_class (enum reg_class, machine_mode, rtx);
+extern enum reg_class dadao_preferred_reload_class (rtx, enum reg_class);
+
 /* XXX gccint 18.9.5 Node: Eliminating Frame Pointer and Arg Pointer */
 extern int dadao_initial_elimination_offset (int, int);
 /* XXX gccint 18.9.12 Node: Generating Code for Profiling */
