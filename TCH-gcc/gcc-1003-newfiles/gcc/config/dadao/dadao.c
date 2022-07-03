@@ -150,7 +150,7 @@ dadao_secondary_reload_class (enum reg_class rclass,
      of operand must be reloaded through a data register.  */
   if (GET_MODE_SIZE (mode) == 1
       && reg_classes_intersect_p (rclass, POINTER_REGS)
-      && !(INT_REGNO_P (regno) || CONSTANT_P (x)))
+      && !(IN_RANGE (regno, 0, 127) || CONSTANT_P (x)))
     return GENERAL_REGS;
 
   /* PC-relative addresses must be loaded into an address register first.  */
