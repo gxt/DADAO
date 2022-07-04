@@ -17,7 +17,7 @@ NEWLIB_CYGWIN_0303_LOG_STDOUT	:= $(DIR_DADAO_LOG)/newlib-cygwin-0303.out
 NEWLIB_CYGWIN_0303_LOG_STDERR	:= $(DIR_DADAO_LOG)/newlib-cygwin-0303.err
 
 # newlib need PATH to find target binaries, like as/gcc
-NEWLIB_CYGWIN_0303_PATH		:= $(addsuffix :$(DIR_DADAO_INSTALL)/bin/, $(PATH))
+NEWLIB_CYGWIN_0303_PATH		:= $(DIR_DADAO_INSTALL)/bin/:/bin:/usr/bin
 
 newlib-cygwin-0303-clean:
 	@echo "Remove old newlib-cygwin source dir ..."
