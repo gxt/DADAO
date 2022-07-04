@@ -58,7 +58,7 @@ gcc-1003-source:
 	@cd $(GCC_1003_SOURCE); git am $(GCC_1003_PATCHES)/9*.patch
 	# re-generate configure and Makefile.in in root dir
 	@cd $(GCC_1003_SOURCE);						\
-		autoreconf;						\
+		autoreconf2.69;						\
 		git add .;						\
 		git commit -sm"DADAO: re-generate root configure"
 
