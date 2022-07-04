@@ -54,7 +54,7 @@ binutils-gdb-0235-source:
 		git am $(BINUTILS_GDB_0235_PATCHES)/1*.patch
 	# BFD: re-generate configure and Makefile.in
 	@cd $(BINUTILS_GDB_0235_SOURCE)/bfd;				\
-		autoreconf;						\
+		autoreconf2.69;						\
 		git add .;						\
 		git commit -sm"DADAO: re-generate bfd configure and Makefile.in"
 	# BFD: re-generate bfd-in2.h and libbfd.h
@@ -75,7 +75,7 @@ binutils-gdb-0235-source:
 		git am $(BINUTILS_GDB_0235_PATCHES)/2*.patch
 	# GAS: re-generate configure and Makefile.in
 	@cd $(BINUTILS_GDB_0235_SOURCE)/gas;				\
-		autoreconf;						\
+		autoreconf2.69;						\
 		git add .;						\
 		git commit -sm"DADAO: re-generate gas configure and Makefile.in"
 	# handle ld dir
@@ -86,7 +86,7 @@ binutils-gdb-0235-source:
 		git am $(BINUTILS_GDB_0235_PATCHES)/3*.patch
 	# LD: re-generate configure and Makefile.in
 	@cd $(BINUTILS_GDB_0235_SOURCE)/ld;				\
-		autoreconf;						\
+		autoreconf2.69;						\
 		git add .;						\
 		git commit -sm"DADAO: re-generate ld configure and Makefile.in"
 	# handle opcodes dir
@@ -99,7 +99,7 @@ binutils-gdb-0235-source:
 		git am $(BINUTILS_GDB_0235_PATCHES)/4*.patch
 	# OPCODES: re-generate configure and Makefile.in
 	@cd $(BINUTILS_GDB_0235_SOURCE)/opcodes;			\
-		autoreconf;						\
+		autoreconf2.69;						\
 		git add .;						\
 		git commit -sm"DADAO: re-generate opcodes configure and Makefile.in"
 	# handle binutils dir
@@ -108,7 +108,7 @@ binutils-gdb-0235-source:
 	@cd $(BINUTILS_GDB_0235_SOURCE); git am $(BINUTILS_GDB_0235_PATCHES)/9*.patch
 	# CONFIG: re-generate configure and Makefile.in in root dir
 	@cd $(BINUTILS_GDB_0235_SOURCE);				\
-		autoreconf;						\
+		autoreconf2.69;						\
 		git add .;						\
 		git commit -sm"DADAO: re-generate root configure"
 
