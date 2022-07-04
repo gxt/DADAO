@@ -18,7 +18,7 @@
 	"<rd_arith_insn>	%0, %1, %2")
 
 (define_insn "dd_ldimm_symbolic"
-  [(set (match_operand:DI 0 "rd_class_operand" "=Rd")
+  [(set (match_operand:DI 0 "register_operand" "=g,Rb<,Rd")
         (match_operand:DI 1 "symbolic_operand" ""))]
 	""
 	"move	%0, %1")
