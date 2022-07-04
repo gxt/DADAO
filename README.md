@@ -1,22 +1,21 @@
 ## Da Dao Zhi Jian: The Greatest TAO is Simplest
 
 ### Overview
-DADAO-SimRISC project aims at teaching and scientific research as a whole. It is trying to design a RISC type instruction system and hopes the system can offer guidance from the perspective of software development to the architecture design. The main content of the project is to develop a series of sys-softwares supporting SimRISC, involving toolchain (compiler, binary tools, runtime), simulation environment, operating system kernel and other components.
+DADAO-SimRISC project aims at teaching and scientific research as a whole. It is trying to design a RISC type instruction set system and hopes the system can offer guidance from the perspective of software development to the architecture design. The main content of the project is to develop a series of system-softwares supporting SimRISC, involving toolchain (compiler, binary tools, libraries), simulation environment, operating system kernel and other components.
 ### Prerequisites
 Before the installation starts, we need to make sure that the operating system has enough support for the software system. Here goes the details:
 ##### 1. Source repository control
 It will be good for you to modify the Makefile files in the DADAO directory to individualize your installation. But it is not bad if you want to use the default installation plan, except that you will be required to create a directory `/pub/GIT-ORIGIN`.
 
-`/pub/GIT-ORIGIN` is created to stored the source of the softwares needed by this project. In this directory, the source files should be organised into code repositories, and maintained by the famous version control utility :  `Git` . As a matter of fact, OSS (Open Source Software) is the basis of this project, each SimRISC related developments are made on OSS frameworks. By using Pro `Git`, it is possible to fetch the source of the software we need from OSS repository managing platform, and by using the `Git` command line option `'--bare'`, fetching the OSS releases with different versions becomes feasible.
+`/pub/GIT-ORIGIN` is created to store the source of the softwares needed by this project. In this directory, the source files should be organised into code repositories, and maintained by the famous version control utility: `Git` . As a matter of fact, OSS (Open Source Software) is the basis of this project, each SimRISC related developments are made on OSS frameworks. By using `Git`, it is possible to fetch the source of the software we need from OSS repository managing platform, and by using the `Git` command line option `'--bare'`, constructing a temperary OSS mirror becomes feasible.
 
-Initialize the keeper directory for the OSS source repositories. If you don't have the authorization, creating it elsewhere is feasible too. No matter where it is going to be set, in order to facilitate the project to work smoothly, all of the bare git repos will be **DOWNLOADED** here, and it is a must that we modify the `Makefile` to implement the changes.
+Initialize the keeper directory for the OSS source repositories. If you don't have the authorization, creating it elsewhere is feasible too. No matter where it is going to be set, in order to facilitate the project to work smoothly, all of the bare git repos will be **DOWNLOADED** here, and it is a must that the top `Makefile` maintain the changes.
 ```shell
-$ rm -rf /pub/GIT-ORIGIN
 $ mkdir -p /pub/GIT-ORIGIN
 $ cd /pub/GIT-ORIGIN
 ```
 
-Downloaded git repos for Toolchain and system softwares, including `gcc`, `binutils`, `libc` ... Remeber to use the git option `'--bare'` to download the git repos.
+Downloaded git repos for Toolchain and system softwares, including `gcc`, `binutils`, `glibc`, `newlib` ... Remeber to use the git option `'--bare'` to download the git repos.
 
 **`binutils` for binary tools:** linker, loader, assembler, readelf, objdump...
 ```shell
@@ -31,36 +30,41 @@ $ git clone https://github.com/gcc-mirror/gcc.git  --bare
 **`newlib` and `glibc` for libc:** standard libraries
 ```shell
 $ git clone https://github.com/mirror/newlib-cygwin.git --bare
-$ git clone https://github.com/torvalds/linux.git --bare
 $ git clone https://github.com/lattera/glibc.git --bare
 ```
 
-**`qemu` for simulator:** qemu and other qemu-project tools
+**`linux` for headers:** linux headers
+
+```shell
+$ git clone https://github.com/torvalds/linux.git --bare
+```
+
+**`qemu` and `qemu-project` for simulator:** qemu and other qemu-project tools
+Except for the Qemu6.0 simulator itself, we still need to download other tools for its running. The required tools can be found at [qemu-project](https://gitlab.com/qemu-project), we need 7 of them here: `capstone`, `dtc`, `meson`, `libslirp`, `keycodemapdb`, `berkeley-softfloat-3`, `berkeley-testfloat-3`. The recommended way to download these tools is the same as how we download other OSS source.
 ```shell
 $ git clone https://gitlab.com/qemu-project/qemu.git --bare
-$ rm -rf /pub/GIT-ORIGIN/qemu-project
 $ mkdir /pub/GIT-ORIGIN/qemu-project
 $ cd /pub/GIT-ORIGIN/qemu-project
+$ git clone ... --bare
 ```
 
-**`qemu-project` for simulator:** extra support to aid qemu
-
-Except for the Qemu6.0 simulator itself, we still need to download other tools for its running. The required tools can be found at [qemu-project](https://gitlab.com/qemu-project), we use 7 of them here: `capstone`, `dtc`, `meson`, `libslirp`, `keycodemapdb`, `berkeley-softfloat-3`, `berkeley-testfloat-3`. The recommended way to download these tools is the same as how we download other OSS source.
-
-##### 2. Software dependency for Simulator
-DADAO-SimRISC project use `Qemu6.0` as simulator to replace SimRISC hardware, `Qemu6.0` requires `python2`, `re2c` and `ninja` to build, the recommended version of these software is `2.7` for `python2`, `1.3` for `re2c` and `1.11` for `ninja`, other versions may still work well but it is likely to have warning during the installation. (We may need to downdload  `ninja`  from its source file)
+##### 2. Software dependency for Toolchain
+You can use `apt-get`  to install some necessary softwares if you are using a Ubuntu Linux OS:
 ```shell
-$ sudo apt-get install python re2c 
+$ sudo apt-get install build-essential flex bison m4 libtool texinfo
 ```
-
-##### 3. Software dependency for Toolchain
-DADAO-SimRISC project use `GNU Make` and `autotools` to process toolchain installation. It also use `Binutils-gdb2.35`, `GCC10.3.0`, `newlib-cygwin3.03`, `Glibc2.31` to construct the toolchain software stack. Before we install all of these, some related software are required. You can use `apt-get`  to install some of the softwares if you are using a Ubuntu Linux OS, here goes the example command for `Ubuntu20.04` : (default version for `autoconf` is `2.69`)
+Expect for these, `autoconf2.64` is required by `Newlib` and `autoconf2.69` is required by `GCC` and `Binutils`. In addition, GCC requires `gmp`, `mpc`, `mpfr`:
 ```shell
-$ sudo apt-get install flex bison m4 autoconf libtool
+$ sudo apt-get install autoconf2.64 autoconf2.69
+$ sudo apt-get install libgmp-dev libmpc-dev libmpfr-dev
 ```
-Expect for these, we still need to download other extra tools for `Newlib` and `GCC`. In some antique released version OS, the installation of GCC requires `gmp`, `mfc`, `mpfr`, while in all OS `Newlib` requires `autoconf2.64`.
 
-We may have to download `autoconf2.64` through this [link](https://ftp.gnu.org/gnu/autoconf) and install it with the suffix : `2.64`, you can implement that by using the configure option: `--with-program-suffix`, remeber to add it to your OS' environmental `$PATH`. (P.S: If you are installing `autoconf2.64` through its source, a matched `automake` is required too, normally `automake1.11`, remember to install it with suffix either!)
+##### 3. Software dependency for Simulator
+`Qemu6.0` is a simulator to simulate SimRISC hardware, some necessary softwares are needed: 
+```shell
+$ sudo apt-get install pkg-config libglib2.0-dev ninja-build libpixman-1-dev libncurses-dev
+```
+
 ### Install
 The installation of the DADAO-SimRISC project v0.2 now basically covers two part:
 1. DADAO-SimRISC ELF/GNU Toolchain
