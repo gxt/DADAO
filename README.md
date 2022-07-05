@@ -49,7 +49,7 @@ $ git clone ... --bare
 ```
 
 ##### 2. Software dependency for Toolchain
-You can use `apt-get`  to install some necessary softwares if you are using a Ubuntu Linux OS:
+You can use `apt-get`  to install some necessary softwares if you are using a Ubuntu 22.04 Linux OS:
 ```shell
 $ sudo apt-get install build-essential flex bison m4 libtool texinfo
 ```
