@@ -1,0 +1,98 @@
+From 87a260f63c39e8048b379086bfc141c10dd6aa9f Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Wed, 6 Jul 2022 14:19:48 +0800
+Subject: [PATCH] DADAO: scripts/init-submodules-no-riscv-tools-nolog.sh
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ .../init-submodules-no-riscv-tools-nolog.sh   | 51 +++++++++++++++++--
+ 1 file changed, 48 insertions(+), 3 deletions(-)
+
+diff --git a/scripts/init-submodules-no-riscv-tools-nolog.sh b/scripts/init-submodules-no-riscv-tools-nolog.sh
+index e2379ecc..ef3b0bcf 100755
+--- a/scripts/init-submodules-no-riscv-tools-nolog.sh
++++ b/scripts/init-submodules-no-riscv-tools-nolog.sh
+@@ -4,7 +4,7 @@
+ set -e
+ set -o pipefail
+ 
+-SKIP_VALIDATE=false
++SKIP_VALIDATE=true
+ 
+ function usage
+ {
+@@ -89,11 +89,17 @@ cd "$CHIPYARD_DIR"
+             toolchains/qemu \
+             generators/sha3 \
+             generators/gemmini \
++            generators/cva6 \
++            generators/ibex \
++            generators/nvdla \
++            rocket-chip \
++            tools/torture \
+             sims/firesim \
+             software/nvdla-workload \
+             software/coremark \
+             software/firemarshal \
+             software/spec2017 \
++            vlsi/hammer \
+             vlsi/hammer-cadence-plugins \
+             vlsi/hammer-synopsys-plugins \
+             vlsi/hammer-mentor-plugins \
+@@ -115,12 +121,51 @@ cd "$CHIPYARD_DIR"
+ 
+ set -x
+ 
++# Non-recursive clone from local repos
++git clone /pub/GIT-ORIGIN/chipyard-modules/chipsalliance/rocket-chip.git		-- generators/rocket-chip
++git clone /pub/GIT-ORIGIN/chipyard-modules/ucb-bar/berkeley-hardfloat.git		-- generators/rocket-chip/hardfloat
++git clone /pub/GIT-ORIGIN/chipyard-modules/ucb-bar/berkeley-softfloat-3.git		-- generators/rocket-chip/hardfloat/berkeley-softfloat-3
++git clone /pub/GIT-ORIGIN/chipyard-modules/ucb-bar/berkeley-testfloat-3.git		-- generators/rocket-chip/hardfloat/berkeley-testfloat-3
++git clone /pub/GIT-ORIGIN/chipyard-modules/ucb-bar/riscv-torture.git			-- generators/rocket-chip/torture
++git clone /pub/GIT-ORIGIN/chipyard-modules/riscv/riscv-test-env.git			-- generators/rocket-chip/torture/env
++git clone /pub/GIT-ORIGIN/chipyard-modules/chipsalliance/api-config-chipsalliance.git	-- generators/rocket-chip/api-config-chipsalliance
++
++git clone /pub/GIT-ORIGIN/chipyard-modules/ucb-bar/cva6-wrapper.git			-- generators/cva6
++git clone /pub/GIT-ORIGIN/chipyard-modules/openhwgroup/cva6.git				-- generators/cva6/src/main/resources/vsrc/cva6
++git clone /pub/GIT-ORIGIN/chipyard-modules/pulp-platform/axi_mem_if.git			-- generators/cva6/src/main/resources/vsrc/cva6/corev_apu/axi_mem_if
++git clone /pub/GIT-ORIGIN/chipyard-modules/pulp-platform/fpga-support.git		-- generators/cva6/src/main/resources/vsrc/cva6/corev_apu/fpga-support
++git clone /pub/GIT-ORIGIN/chipyard-modules/pulp-platform/common_cells.git		-- generators/cva6/src/main/resources/vsrc/cva6/common/submodules/common_cells
++git clone /pub/GIT-ORIGIN/chipyard-modules/pulp-platform/axi.git			-- generators/cva6/src/main/resources/vsrc/cva6/corev_apu/axi
++git clone /pub/GIT-ORIGIN/chipyard-modules/pulp-platform/register_interface.git		-- generators/cva6/src/main/resources/vsrc/cva6/corev_apu/register_interface
++git clone /pub/GIT-ORIGIN/chipyard-modules/pulp-platform/apb_uart.git			-- generators/cva6/src/main/resources/vsrc/cva6/corev_apu/fpga/src/apb_uart
++git clone /pub/GIT-ORIGIN/chipyard-modules/pulp-platform/apb_node.git			-- generators/cva6/src/main/resources/vsrc/cva6/corev_apu/fpga/src/apb_node
++git clone /pub/GIT-ORIGIN/chipyard-modules/pulp-platform/axi2apb.git			-- generators/cva6/src/main/resources/vsrc/cva6/corev_apu/fpga/src/axi2apb
++git clone /pub/GIT-ORIGIN/chipyard-modules/pulp-platform/axi_slice.git			-- generators/cva6/src/main/resources/vsrc/cva6/corev_apu/fpga/src/axi_slice
++git clone /pub/GIT-ORIGIN/chipyard-modules/pulp-platform/tech_cells_generic.git		-- generators/cva6/src/main/resources/vsrc/cva6/corev_apu/src/tech_cells_generic
++git clone /pub/GIT-ORIGIN/chipyard-modules/pulp-platform/fpnew.git			-- generators/cva6/src/main/resources/vsrc/cva6/core/fpu
++git clone /pub/GIT-ORIGIN/chipyard-modules/pulp-platform/common_cells.git		-- generators/cva6/src/main/resources/vsrc/cva6/core/fpu/src/common_cells
++git clone /pub/GIT-ORIGIN/chipyard-modules/pulp-platform/fpu_div_sqrt_mvp.git		-- generators/cva6/src/main/resources/vsrc/cva6/core/fpu/src/fpu_div_sqrt_mvp
++git clone /pub/GIT-ORIGIN/chipyard-modules/oprecomp/flexfloat.git			-- generators/cva6/src/main/resources/vsrc/cva6/core/fpu/tb/flexfloat
++git clone /pub/GIT-ORIGIN/chipyard-modules/lowRISC/ariane-ethernet.git			-- generators/cva6/src/main/resources/vsrc/cva6/corev_apu/fpga/src/ariane-ethernet
++git clone /pub/GIT-ORIGIN/chipyard-modules/pulp-platform/axi_riscv_atomics.git		-- generators/cva6/src/main/resources/vsrc/cva6/corev_apu/src/axi_riscv_atomics
++git clone /pub/GIT-ORIGIN/chipyard-modules/pulp-platform/riscv-dbg.git			-- generators/cva6/src/main/resources/vsrc/cva6/corev_apu/riscv-dbg
++git clone /pub/GIT-ORIGIN/chipyard-modules/pulp-platform/rv_plic.git			-- generators/cva6/src/main/resources/vsrc/cva6/corev_apu/rv_plic
++git clone /pub/GIT-ORIGIN/chipyard-modules/pulp-platform/apb_timer.git			-- generators/cva6/src/main/resources/vsrc/cva6/corev_apu/fpga/src/apb_timer
++git clone /pub/GIT-ORIGIN/chipyard-modules/kabylkas/dromajo.git				-- generators/cva6/src/main/resources/vsrc/cva6/corev_apu/tb/dromajo
++git clone /pub/GIT-ORIGIN/chipyard-modules/pulp-platform/common_verification.git	-- generators/cva6/src/main/resources/vsrc/cva6/corev_apu/tb/common_verification
++
++git clone /pub/GIT-ORIGIN/chipyard-modules/ucb-bar/nvdla-wrapper.git			-- generators/nvdla
++git clone /pub/GIT-ORIGIN/chipyard-modules/nvdla/hw.git					-- generators/nvdla/src/main/resources/hw
++
++git clone /pub/GIT-ORIGIN/chipyard-modules/ucb-bar/riscv-torture.git			-- tools/torture
++git clone /pub/GIT-ORIGIN/chipyard-modules/riscv/riscv-test-env.git			-- tools/torture/env
++
+ # Non-recursive clone to exclude riscv-linux
+ git submodule update --init generators/sha3
+ 
+ # Non-recursive clone to exclude gemmini-software
+-git submodule update --init generators/gemmini
+-git -C generators/gemmini/ submodule update --init --recursive software/gemmini-rocc-tests
++#git submodule update --init generators/gemmini
++#git -C generators/gemmini/ submodule update --init --recursive software/gemmini-rocc-tests
+ 
+ # Minimal non-recursive clone to initialize sbt dependencies
+ git submodule update --init sims/firesim
+-- 
+2.34.1
+
