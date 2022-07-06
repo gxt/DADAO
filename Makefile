@@ -19,6 +19,7 @@ VER_GLIBC		:= 0231
 VER_NEWLIB_CYGWIN	:= 0303
 VER_LINUX		:= 0504
 VER_QEMU		:= 0600
+VER_CHIPYARD		:= 0107
 
 include TCH-binutils-gdb/Makefile.binutils-gdb-$(VER_BINUTILS_GDB)
 include TCH-gcc/Makefile.gcc-$(VER_GCC)
@@ -26,6 +27,8 @@ include TCH-glibc/Makefile.glibc-$(VER_GLIBC)
 include TCH-newlib-cygwin/Makefile.newlib-cygwin-$(VER_NEWLIB_CYGWIN)
 include ENV-linux/Makefile.linux-$(VER_LINUX)
 include SIM-qemu/Makefile.qemu-$(VER_QEMU)
+include SOC-chipyard/Makefile.chipyard-$(VER_CHIPYARD)
+
 include DADAO-bench/Makefile.bench
 
 all:
@@ -57,6 +60,11 @@ sim-highfive:
 	@echo "=== BUILD Simulators BEGIN ==="
 	@make -s qemu-$(VER_QEMU)-highfive
 	@echo "=== BUILD Simulators DONE! ==="
+
+soc-highfive:
+	@echo "=== BUILD SoC BEGIN ==="
+	@make -s chipyard-$(VER_CHIPYARD)-highfive
+	@echo "=== BUILD SoC DONE! ==="
 
 dadao-highfive:
 	@make --silent dadao-reboot
