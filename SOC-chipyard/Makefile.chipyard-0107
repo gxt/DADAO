@@ -1,0 +1,66 @@
+#
+# Makefile for SoC in chipyard
+#
+CHIPYARD_0107_ORIGIN		:= $(DIR_GIT_ORIGIN)/chipyard.git
+CHIPYARD_0107_VERSION		:= 1.7.0
+CHIPYARD_0107_BRANCH		:= dadao
+
+CHIPYARD_0107_SOURCE		:= $(DIR_DADAO_SOURCE)/chipyard-0107
+CHIPYARD_0107_BUILD		:= $(DIR_DADAO_BUILD)/chipyard-0107
+CHIPYARD_0107_LOG_STDOUT	:= $(DIR_DADAO_LOG)/chipyard-0107.out
+CHIPYARD_0107_LOG_STDERR	:= $(DIR_DADAO_LOG)/chipyard-0107.err
+
+CHIPYARD_0107_CONFIG		:= $(DIR_DADAO_TOP)/SOC-chipyard/chipyard-0107-config
+CHIPYARD_0107_PATCHES		:= $(DIR_DADAO_TOP)/SOC-chipyard/chipyard-0107-patches
+
+CHIPYARD_0107_DADAO_WUMING	:= $(DIR_DADAO_TOP)/SOC-chipyard/dadao-wuming
+CHIPYARD_0107_DADAO_CONFIG	:= Wuming1StageConfig
+
+chipyard-0107-clean:
+	@echo "Remove old chipyard source dir ..."
+	@rm -fr $(CHIPYARD_0107_SOURCE)
+	@echo "Remove old chipyard build dir ..."
+	@rm -fr $(CHIPYARD_0107_BUILD)
+
+chipyard-0107-source:
+	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
+	@rm -fr $(CHIPYARD_0107_SOURCE)
+	# Clone official repo
+	@git clone -q $(CHIPYARD_0107_ORIGIN) -- $(CHIPYARD_0107_SOURCE)
+	@cd $(CHIPYARD_0107_SOURCE); git checkout -qb $(CHIPYARD_0107_BRANCH) $(CHIPYARD_0107_VERSION)
+	# Setup submodules
+	@cd $(CHIPYARD_0107_SOURCE);								\
+		sed -i 's\https://github.com\/pub/GIT-ORIGIN/chipyard-modules\g' .gitmodules;	\
+		git commit -asm"DADAO: replace github.com with local repos in .gitmodule";	\
+		git am $(CHIPYARD_0107_PATCHES)/*;						\
+		./scripts/init-submodules-no-riscv-tools.sh
+	# Copy dadao configs into chipyard
+	@cp -a $(CHIPYARD_0107_CONFIG)/* $(CHIPYARD_0107_SOURCE)/generators/chipyard/src/main/scala/config/
+	@cd $(CHIPYARD_0107_SOURCE);								\
+		git add generators/chipyard/src/main/scala/config/;				\
+		git commit -asm"DADAO: add chipyard-config"
+	# Copy dadao generators into chipyard
+	@cp -a $(CHIPYARD_0107_DADAO_WUMING) $(CHIPYARD_0107_SOURCE)/generators/
+	@cd $(CHIPYARD_0107_SOURCE);								\
+		git add generators/dadao-wuming;						\
+		git commit -asm"DADAO: add dadao-wuming"
+
+chipyard-0107-build-new:
+	@rm -fr $(CHIPYARD_0107_BUILD)
+	@mkdir -p $(CHIPYARD_0107_BUILD)
+	@cd $(CHIPYARD_0107_SOURCE)/sims/verilator;						\
+		RISCV=$(DIR_DADAO_INSTALL) make CONFIG=$(CHIPYARD_0107_DADAO_CONFIG)
+
+chipyard-0107-highfive:
+	@echo "--- BUILD chipyard-0107 BEGIN ---"
+	# 0. Remove old chipyard logfiles
+	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
+	@rm -fr $(CHIPYARD_0107_LOG_STDOUT) $(CHIPYARD_0107_LOG_STDERR)
+	# 1. Clean old chipyard ...
+	@make -s chipyard-0107-clean			1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
+	# 2. Clone and patch new chipyard ...
+	@make -s chipyard-0107-source			1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
+	# 3. Configure chipyard ...
+	@make -s chipyard-0107-build-new		1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
+	@echo "--- BUILD chipyard-0107 DONE! ---"
+
