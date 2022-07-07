@@ -15,6 +15,8 @@ CHIPYARD_0107_CONFIG		:= $(DIR_DADAO_TOP)/SOC-chipyard/chipyard-0107-config
 CHIPYARD_0107_DADAO_WUMING	:= $(DIR_DADAO_TOP)/SOC-chipyard/dadao-wuming
 CHIPYARD_0107_DADAO_CONFIG	:= Sodor1StageConfig
 
+include SOC-chipyard/Makefile.riscv-isa-sim
+
 chipyard-0107-clean:
 	@echo "Remove old chipyard source dir ..."
 	@rm -fr $(CHIPYARD_0107_SOURCE)
@@ -48,6 +50,10 @@ chipyard-0107-build-new:
 		git add generators/dadao-wuming;						\
 		git commit -asm"DADAO: add dadao-wuming"
 
+chipyard-0107-prepare:
+	# Check necessary fesvr headers
+	@test -d $(DIR_DADAO_RISCV)/include/fesvr || make -s -C $(DIR_DADAO_TOP) riscv-isa-sim-highfive
+
 chipyard-0107-build:
 	@rm -fr $(CHIPYARD_0107_BUILD)
 	@mkdir -p $(CHIPYARD_0107_BUILD)
@@ -63,7 +69,9 @@ chipyard-0107-highfive:
 	@make -s chipyard-0107-clean			1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
 	# 2. Clone and patch new chipyard ...
 	@make -s chipyard-0107-source-local		1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
-	# 3. Configure chipyard ...
+	# 3. Prepare chipyard ...
+	@make -s chipyard-0107-prepare			1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
+	# 4. Configure chipyard ...
 	@make -s chipyard-0107-build			1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
 	@echo "--- BUILD chipyard-0107 DONE! ---"
 

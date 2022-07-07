@@ -1,0 +1,60 @@
+#
+# Makefile for riscv-isa-sim for chipyard
+#
+RISCV_ISA_SIM_ORIGIN		:= $(DIR_GIT_ORIGIN)/chipyard-project/riscv/riscv-isa-sim.git
+
+RISCV_ISA_SIM_SOURCE		:= $(DIR_DADAO_SOURCE)/riscv-isa-sim
+RISCV_ISA_SIM_BUILD		:= $(DIR_DADAO_BUILD)/riscv-isa-sim
+RISCV_ISA_SIM_INSTALL		?= $(DIR_DADAO_RISCV)
+
+RISCV_ISA_SIM_LOG_STDOUT	:= $(DIR_DADAO_LOG)/riscv-isa-sim.out
+RISCV_ISA_SIM_LOG_STDERR	:= $(DIR_DADAO_LOG)/riscv-isa-sim.err
+
+riscv-isa-sim-clean:
+	# Remove old riscv-isa-sim source dir ...
+	@rm -fr $(RISCV_ISA_SIM_SOURCE)
+	# Remove old riscv-isa-sim build dir ...
+	@rm -fr $(RISCV_ISA_SIM_BUILD)
+	# Remove old riscv-isa-sim install dir ...
+	@rm -fr $(RISCV_ISA_SIM_INSTALL)
+
+riscv-isa-sim-source:
+	# Remove old riscv-isa-sim source dir ...
+	@rm -fr $(RISCV_ISA_SIM_SOURCE)
+	# Clone official repo
+	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
+	@git clone -q $(RISCV_ISA_SIM_ORIGIN) -- $(RISCV_ISA_SIM_SOURCE)
+
+riscv-isa-sim-build-new:
+	# Remove old riscv-isa-sim build dir ...
+	@rm -fr $(RISCV_ISA_SIM_BUILD)
+	@mkdir -p $(RISCV_ISA_SIM_BUILD)
+	# Configure
+	@cd $(RISCV_ISA_SIM_BUILD);						\
+		$(RISCV_ISA_SIM_SOURCE)/configure				\
+			--srcdir=$(RISCV_ISA_SIM_SOURCE)			\
+			--prefix=$(RISCV_ISA_SIM_INSTALL)
+
+riscv-isa-sim-build:
+	@make -C $(RISCV_ISA_SIM_BUILD) -j8
+
+riscv-isa-sim-install:
+	@make -C $(RISCV_ISA_SIM_BUILD) install
+
+riscv-isa-sim-highfive:
+	@echo "--- BUILD riscv-isa-sim BEGIN ---"
+	# 0. Remove old riscv-isa-sim logfiles
+	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
+	@rm -fr $(RISCV_ISA_SIM_LOG_STDOUT) $(RISCV_ISA_SIM_LOG_STDERR)
+	# 1. Clean old riscv-isa-sim ...
+	@make -s riscv-isa-sim-clean			1>> $(RISCV_ISA_SIM_LOG_STDOUT) 2>> $(RISCV_ISA_SIM_LOG_STDERR)
+	# 2. Clone riscv-isa-sim ...
+	@make -s riscv-isa-sim-source			1>> $(RISCV_ISA_SIM_LOG_STDOUT) 2>> $(RISCV_ISA_SIM_LOG_STDERR)
+	# 3. Configure riscv-isa-sim ...
+	@make -s riscv-isa-sim-build-new		1>> $(RISCV_ISA_SIM_LOG_STDOUT) 2>> $(RISCV_ISA_SIM_LOG_STDERR)
+	# 4. Make riscv-isa-sim ...
+	@make -s riscv-isa-sim-build			1>> $(RISCV_ISA_SIM_LOG_STDOUT) 2>> $(RISCV_ISA_SIM_LOG_STDERR)
+	# 5. Install riscv-isa-sim ...
+	@make -s riscv-isa-sim-install			1>> $(RISCV_ISA_SIM_LOG_STDOUT) 2>> $(RISCV_ISA_SIM_LOG_STDERR)
+	@echo "--- BUILD riscv-isa-sim DONE! ---"
+
