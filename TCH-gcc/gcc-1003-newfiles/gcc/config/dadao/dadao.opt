@@ -27,3 +27,6 @@ Set start-address of the program.
 mset-data-start=
 Target Report RejectNegative Joined
 Set start-address of data.
+
+mpcrel
+Target Report Mask(PCREL)
