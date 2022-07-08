@@ -58,7 +58,7 @@ chipyard-0107-build:
 	@rm -fr $(CHIPYARD_0107_BUILD)
 	@mkdir -p $(CHIPYARD_0107_BUILD)
 	@cd $(CHIPYARD_0107_SOURCE)/sims/verilator;						\
-		RISCV=$(DIR_DADAO_TOP)/__riscv make CONFIG=$(CHIPYARD_0107_DADAO_CONFIG)
+		RISCV=$(DIR_DADAO_TOP)/__riscv make CONFIG=$(CHIPYARD_0107_DADAO_CONFIG) sim_dir=$(CHIPYARD_0107_BUILD)
 
 chipyard-0107-highfive:
 	@echo "--- BUILD chipyard-0107 BEGIN ---"
