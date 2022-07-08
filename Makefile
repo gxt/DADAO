@@ -82,21 +82,19 @@ dadao-reboot:
 	@mkdir -p $(DIR_DADAO_TMP)/__build
 	@mkdir -p $(DIR_DADAO_TMP)/__install
 	@mkdir -p $(DIR_DADAO_TMP)/__target
+	@mkdir -p $(DIR_DADAO_TMP)/__riscv
 	@mkdir -p $(DIR_DADAO_TMP)/__log
 	@ln -s -t $(DIR_DADAO_TOP) $(DIR_DADAO_TMP)/__source
 	@ln -s -t $(DIR_DADAO_TOP) $(DIR_DADAO_TMP)/__build
 	@ln -s -t $(DIR_DADAO_TOP) $(DIR_DADAO_TMP)/__install
 	@ln -s -t $(DIR_DADAO_TOP) $(DIR_DADAO_TMP)/__target
+	@ln -s -t $(DIR_DADAO_TOP) $(DIR_DADAO_TMP)/__riscv
 	@ln -s -t $(DIR_DADAO_TOP) $(DIR_DADAO_TMP)/__log
 	@echo "Done: check $(DIR_DADAO_TMP) for all things"
 
 dadao-clean:
 	@echo "CLEAR EVERYTHING!"
-	@rm -fr $(DIR_DADAO_SOURCE)
-	@rm -fr $(DIR_DADAO_BUILD)
-	@rm -fr $(DIR_DADAO_INSTALL)
-	@rm -fr $(DIR_DADAO_TARGET)
-	@rm -fr $(DIR_DADAO_LOG)
+	@rm -fr __*
 	@rm -fr $(DIR_DADAO_TMP)
 	@make --silent bench-clean
 	@echo "CLEAR EVERYTHING DONE!"

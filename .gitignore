@@ -1,9 +1,4 @@
 *.swp
 *.pyc
-__source
-__build
-__install
-__target
-__log
-__ddbench
+__*
 .vscode
