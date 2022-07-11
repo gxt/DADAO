@@ -23,6 +23,7 @@ include DADAO-bench/Makefile.bench-gcc-testsuite-dejagnu-init
 include DADAO-bench/Makefile.bench-coremark
 include DADAO-bench/Makefile.bench-embench
 include DADAO-bench/Makefile.bench-mibench
+include DADAO-bench/Makefile.bench-dyntest
 
 bench-clean:
 	@rm -fr $(DDB_DST_DIR)
