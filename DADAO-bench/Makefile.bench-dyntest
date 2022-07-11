@@ -1,0 +1,23 @@
+#
+# Makefile for dynamic linking testing
+#
+DDB_DYNOBJ	:= dynl
+DDB_DYN_S1	:= dynl_s1
+DDB_DYN_S2	:= dynl_s2
+
+bench-dynl-elf:
+	@test -d $(DDB_DST_DIR) || mkdir -p $(DDB_DST_DIR)
+	@cd $(DDB_DST_DIR) ;	\
+		$(DDB_ELF_GCC) -c -fPIC			\
+			$(DDB_SRC_DIR)/$(DDB_DYN_S2).c	\
+			-o $(DDB_DYN_S2).o;		\
+		$(DDB_ELF_GCC) -shared $(DDB_DYN_S2).o	\
+			-o $(DDB_DYN_S2).so
+	@cd $(DDB_DST_DIR) ;	\
+		$(DDB_ELF_GCC) $(DDB_DYN_S2).so	\
+		$(DDB_SRC_DIR)/$(DDB_DYN_S1).c -o $(DDB_DYNOBJ)
+
+bench-dynl-qemu:
+	$(DDB_QEMU_USER) -singlestep -strace	\
+		-D $(DDB_DST_DIR)/dynl.qemulog	\
+		$(DDB_DST_DIR)/$(DDB_DYNOBJ)
