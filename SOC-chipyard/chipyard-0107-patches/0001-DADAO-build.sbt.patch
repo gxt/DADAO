@@ -1,0 +1,38 @@
+From 45cfaf13e9289fbbc2e50382129708d70ae571bb Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sun, 17 Jul 2022 10:10:12 +0800
+Subject: [PATCH] DADAO: build.sbt
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ build.sbt | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/build.sbt b/build.sbt
+index 5e559893..81e02e51 100644
+--- a/build.sbt
++++ b/build.sbt
+@@ -148,7 +148,7 @@ lazy val chipyard = (project in file("generators/chipyard"))
+   .dependsOn(testchipip, rocketchip, boom, hwacha, sifive_blocks, sifive_cache, iocell,
+     sha3, // On separate line to allow for cleaner tutorial-setup patches
+     dsptools, `rocket-dsp-utils`,
+-    gemmini, icenet, tracegen, cva6, nvdla, sodor, ibex, fft_generator)
++    gemmini, icenet, tracegen, cva6, nvdla, sodor, wuming, ibex, fft_generator)
+   .settings(libraryDependencies ++= rocketLibDeps.value)
+   .settings(commonSettings)
+ 
+@@ -192,6 +192,11 @@ lazy val sodor = (project in file("generators/riscv-sodor"))
+   .settings(libraryDependencies ++= rocketLibDeps.value)
+   .settings(commonSettings)
+ 
++lazy val wuming = (project in file("generators/dadao-wuming"))
++  .dependsOn(rocketchip)
++  .settings(libraryDependencies ++= rocketLibDeps.value)
++  .settings(commonSettings)
++
+ lazy val sha3 = (project in file("generators/sha3"))
+   .dependsOn(rocketchip, midasTargetUtils)
+   .settings(libraryDependencies ++= rocketLibDeps.value)
+-- 
+2.37.0
+
