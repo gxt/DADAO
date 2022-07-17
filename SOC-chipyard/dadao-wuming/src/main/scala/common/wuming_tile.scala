@@ -205,7 +205,7 @@ class WumingTileModuleImp(outer: WumingTile) extends BaseTileModuleImp(outer){
 class WithNWumingCores(
   n: Int = 1,
   overrideIdOffset: Option[Int] = None,
-  internalTile: WumingInternalTileFactory = Stage3Factory()
+  internalTile: WumingInternalTileFactory = Stage5Factory
 ) extends Config((site, here, up) => {
   case TilesLocated(InSubsystem) => {
     // Calculate the next available hart ID (since hart ID cannot be duplicated)
