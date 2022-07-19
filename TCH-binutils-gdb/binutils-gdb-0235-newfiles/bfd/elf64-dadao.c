@@ -349,6 +349,36 @@ static reloc_howto_type elf_dadao_howto_table[] =
               ~0xffffff,                  /* src_mask */
               0xffffff,                   /* dst_mask */
               TRUE),                      /* pcrel_offset */
+
+	/* High 18 bits of 30-bit absolute address. */
+	HOWTO(R_DADAO_HI18,		  /* type */
+	      0,			  /* rightshift */
+	      2,			  /* size */
+	      32,			  /* bitsize */
+	      FALSE,			  /* pc_relative */
+	      0,			  /* bitpos */
+	      complain_overflow_dont,	  /* complain_on_overflow */
+	      dadao_elf_reloc,		  /* special_function */
+	      "R_DADAO_HI18",		  /* name */
+	      FALSE,			  /* partial_inplace */
+	      ~0xffffff,		  /* src_mask */
+	      0xffffff,			  /* dst_mask */
+	      FALSE),			  /* pcrel_offset */
+
+	/* Low 12 bits of 30-bit load or add. */
+	HOWTO(R_DADAO_LO12,		  /* type */
+	      0,			  /* rightshift */
+	      2,			  /* size */
+	      32,			  /* bitsize */
+	      FALSE,			  /* pc_relative */
+	      0,			  /* bitpos */
+	      complain_overflow_dont,	  /* complaion_on_overflow */
+	      dadao_elf_reloc,		  /* special_function */
+	      "R_DADAO_LO12",		  /* name */
+	      FALSE,			  /* partial_inplace */
+	      ~0xffffff,		  /* src_mask */
+	      0xffffff,			  /* dst_mask */
+	      FALSE),			  /* pcrel_offset */
 };
 
 /* Map BFD reloc types to DADAO ELF reloc types.  */
@@ -378,6 +408,8 @@ static const struct dadao_reloc_map dadao_reloc_map[] =
         {BFD_RELOC_DADAO_BRCC, R_DADAO_BRCC},
         {BFD_RELOC_DADAO_CALL, R_DADAO_CALL},
         {BFD_RELOC_DADAO_JUMP, R_DADAO_JUMP},
+	{BFD_RELOC_DADAO_HI18, R_DADAO_HI18},
+	{BFD_RELOC_DADAO_LO12, R_DADAO_LO12},
 };
 
 static reloc_howto_type *

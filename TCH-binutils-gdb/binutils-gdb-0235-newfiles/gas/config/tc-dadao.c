@@ -18,7 +18,7 @@
 #include "dw2gencfi.h"
 #include "dwarf2dbg.h"
 
-static int get_operands(char *, expressionS *);
+static int get_operands(char *, expressionS *, int *, int *);
 static void dd_set_addr_offset(char *, offsetT, int, int);
 static void dd_fill_nops(char *, int);
 
@@ -61,12 +61,18 @@ static struct hash_control *dadao_opcode_hash;
 
    4. JUMP
       extra length: zero or four insns.
+
+   5. HI18
+
+   6. LO12
  */
 
 #define STATE_ABS (1)
 #define STATE_BRCC (2)
 #define STATE_CALL (3)
 #define STATE_JUMP (4)
+#define STATE_HI18 (5)
+#define STATE_LO12 (6)
 
 /* No fine-grainedness here.  */
 #define STATE_LENGTH_MASK (1)
@@ -117,6 +123,18 @@ const relax_typeS dadao_relax_table[] = {
 
     /* JUMP (4, 1).  */
     {0, 0, DD_INSN_BYTES(4), 0},
+
+    /* HI18 (5, 0).  */
+    {(1 << 32), -(1 << 32), 0, ENCODE_RELAX(STATE_HI18, STATE_MAX)},
+
+    /* HI18 (5, 1).  */
+    {0, 0, DD_INSN_BYTES(4), 0},
+
+    /* LO12 (6, 0). */
+    {(1 << 32), -(1 << 32), 0, ENCODE_RELAX(STATE_LO12, STATE_MAX)},
+
+    /* LO12 (6, 1). */
+    {0, 0, DD_INSN_BYTES(3), 0},
 };
 
 const pseudo_typeS md_pseudo_table[] = {
@@ -181,9 +199,10 @@ static void dd_fill_nops(char *opcodep, int n)
    General idea and code stolen from the tic80 port.  */
 
 static int
-get_operands(char *s, expressionS *exp)
+get_operands(char *s, expressionS *exp, int *ret_code, int *is_adrp)
 {
     char *p = s;
+    char *q;
     int numexp = 0;
     int max_operands = 4;
     int nextchar = ',';
@@ -193,6 +212,31 @@ get_operands(char *s, expressionS *exp)
         /* Skip leading whitespace */
         while (*p == ' ' || *p == '\t')
             p++;
+
+	/* if there is ()%hi or ()%lo */
+	if (*p == '(')
+	{
+            /* Get %hi or %lo */
+	    q = p;
+	    while (*q != '%')
+	        q++;
+            /* Get the right ret_code */
+            if (q != "")
+            {
+                if (q[1] == 'h' && q[2] == 'i')
+                {
+                    *ret_code = 7;
+                }
+                else if (q[1] == 'l' && q[2] == 'o')
+                {
+                    *ret_code = 8;
+                }
+                *is_adrp = 1;
+            }
+            /* Get symbol */
+	    p = strsep(&p, ")");
+	    p = p + 1;
+	}
 
         /* Check to see if we have any operands left to parse */
         if (*p == 0 || *p == '\n' || *p == '\r')
@@ -222,6 +266,11 @@ get_operands(char *s, expressionS *exp)
         }
 
         numexp++;
+
+        /* Skip %hi or %lo, so as to not think them as variables */
+        if ( *is_adrp == 1)
+            input_line_pointer = input_line_pointer + 4;
+
         p = input_line_pointer;
 
         /* Skip leading whitespace */
@@ -748,6 +797,9 @@ void dadao_md_assemble(char *str)
     unsigned int insn_code;
     int ret_code;
 
+    /* Is there %hi or %lo*/
+    int is_adrp = 0;
+
     /* Move to end of opcode.  */
     for (operands = str; is_part_of_name(*operands); ++operands)
     {
@@ -756,7 +808,7 @@ void dadao_md_assemble(char *str)
 
     input_line_pointer = operands;
 
-    n_operands = get_operands(operands, exp);
+    n_operands = get_operands(operands, exp, &ret_code, &is_adrp);
 
     opcodep = frag_more(4);
     dadao_opcode_frag = opc_fragP = frag_now;
@@ -805,7 +857,8 @@ void dadao_md_assemble(char *str)
         return;
     }
 
-    ret_code = dd_get_insn_code(instruction, exp, n_operands, &insn_code);
+    if(is_adrp == 0)
+        ret_code = dd_get_insn_code(instruction, exp, n_operands, &insn_code);
 
     if (ret_code == -1)
     {
@@ -857,6 +910,24 @@ void dadao_md_assemble(char *str)
                      exp[0].X_add_symbol, exp[0].X_add_number, opcodep);
         break;
 
+    case dadao_type_adrp:
+	md_number_to_chars(opcodep, insn_code, 4);
+	if(!expand_op)
+	   fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_HI18);
+	else
+	    frag_var(rs_machine_dependent, DD_INSN_BYTES(4), 0, ENCODE_RELAX(STATE_HI18, STATE_UNDF),
+		     exp[1].X_add_symbol, exp[1].X_add_number,opcodep);
+	break;
+
+    case dadao_type_lo12:
+	md_number_to_chars(opcodep, insn_code, 4);
+	if(!expand_op)
+	   fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_LO12);
+	else
+	    frag_var(rs_machine_dependent, DD_INSN_BYTES(4), 0, ENCODE_RELAX(STATE_LO12, STATE_UNDF),
+		     exp[2].X_add_symbol, exp[2].X_add_number,opcodep);
+	break;
+
     case 0:
         md_number_to_chars(opcodep, insn_code, 4);
         break;
@@ -892,11 +963,17 @@ int md_estimate_size_before_relax(fragS *fragP, segT segment)
         break;
         HANDLE_RELAXABLE(STATE_CALL);
         break;
+        HANDLE_RELAXABLE(STATE_HI18);
+        break;
+        HANDLE_RELAXABLE(STATE_LO12);
+        break;
 
     case ENCODE_RELAX(STATE_CALL, STATE_ZERO):
     case ENCODE_RELAX(STATE_ABS, STATE_ZERO):
     case ENCODE_RELAX(STATE_BRCC, STATE_ZERO):
     case ENCODE_RELAX(STATE_JUMP, STATE_ZERO):
+    case ENCODE_RELAX(STATE_HI18, STATE_ZERO):
+    case ENCODE_RELAX(STATE_LO12, STATE_ZERO):
         /* When relaxing a section for the second time, we don't need to do
 	 anything except making sure that fr_var is set right.  */
         break;
@@ -983,6 +1060,14 @@ void md_convert_frag(bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
         dd_set_addr_offset(opcodep, target_address - opcode_address, 18, 1);
         var_part_size = 0;
         break;
+    case ENCODE_RELAX(STATE_HI18, STATE_ZERO):
+        dd_set_addr_offset(opcodep, target_address - opcode_address, 30, 1);
+        var_part_size = 0;
+        break;
+    case ENCODE_RELAX(STATE_LO12, STATE_ZERO):
+        dd_set_addr_offset(opcodep, target_address - opcode_address, 30, 1);
+        var_part_size = 0;
+        break;
 
 #define HANDLE_MAX_RELOC(state, reloc)                                                \
     case ENCODE_RELAX(state, STATE_MAX):                                              \
@@ -998,6 +1083,8 @@ void md_convert_frag(bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
         HANDLE_MAX_RELOC(STATE_BRCC, BFD_RELOC_DADAO_BRCC);
         HANDLE_MAX_RELOC(STATE_CALL, BFD_RELOC_DADAO_CALL);
         HANDLE_MAX_RELOC(STATE_JUMP, BFD_RELOC_DADAO_JUMP);
+        HANDLE_MAX_RELOC(STATE_HI18, BFD_RELOC_DADAO_HI18);
+        HANDLE_MAX_RELOC(STATE_LO12, BFD_RELOC_DADAO_LO12);
 
     default:
         BAD_CASE(fragP->fr_subtype);
@@ -1131,6 +1218,8 @@ tc_gen_reloc(asection *section ATTRIBUTE_UNUSED, fixS *fixP)
     case BFD_RELOC_DADAO_BRCC:
     case BFD_RELOC_DADAO_CALL:
     case BFD_RELOC_DADAO_JUMP:
+    case BFD_RELOC_DADAO_HI18:
+    case BFD_RELOC_DADAO_LO12:
         code = fixP->fx_r_type;
         break;
 
