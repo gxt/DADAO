@@ -3,6 +3,7 @@
 #
 LINUX_0504_ORIGIN	:= $(DIR_GIT_ORIGIN)/linux.git
 LINUX_0504_VERSION	:= v5.4
+# official download site :	https://mirrors.edge.kernel.org/pub/linux/kernel/v5.x/
 LINUX_0504_VERSION_BASEURL	:= https://mirrors.tuna.tsinghua.edu.cn/kernel/v5.x/
 LINUX_0504_VERSION_PATCH	:= patch-5.4.100.xz
 LINUX_0504_ARCH		:= dadao
