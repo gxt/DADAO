@@ -1,23 +1,23 @@
 #
 # Makefile for linux-0504
 #
-LINUX_0504_ORIGIN	:= $(DIR_GIT_ORIGIN)/linux.git
-LINUX_0504_VERSION	:= v5.4
+LINUX_0504_ORIGIN		:= $(DIR_GIT_ORIGIN)/linux.git
+LINUX_0504_VERSION		:= v5.4
 # official download site :	https://mirrors.edge.kernel.org/pub/linux/kernel/v5.x/
 LINUX_0504_VERSION_BASEURL	:= https://mirrors.tuna.tsinghua.edu.cn/kernel/v5.x/
 LINUX_0504_VERSION_PATCH	:= patch-5.4.100.xz
-LINUX_0504_ARCH		:= dadao
-LINUX_0504_BRANCH	:= dadao-0504
-LINUX_0504_DEFCONFIG	:= dadao_defconfig
+LINUX_0504_ARCH			:= dadao
+LINUX_0504_BRANCH		:= dadao-0504
+LINUX_0504_DEFCONFIG		:= dadao_defconfig
 
-LINUX_0504_NEWFILES	:= $(DIR_DADAO_TOP)/ENV-linux/linux-0504-newfiles
-LINUX_0504_PATCHES	:= $(DIR_DADAO_TOP)/ENV-linux/linux-0504-patches
+LINUX_0504_NEWFILES		:= $(DIR_DADAO_TOP)/ENV-linux/linux-0504-newfiles
+LINUX_0504_PATCHES		:= $(DIR_DADAO_TOP)/ENV-linux/linux-0504-patches
 
-LINUX_0504_SOURCE	:= $(DIR_DADAO_SOURCE)/linux-0504
-LINUX_0504_BUILD	:= $(DIR_DADAO_BUILD)/linux-0504
-LINUX_0504_TARGET	?= $(DIR_DADAO_TARGET)
-LINUX_0504_LOG_STDOUT	:= $(DIR_DADAO_LOG)/linux-0504.out
-LINUX_0504_LOG_STDERR	:= $(DIR_DADAO_LOG)/linux-0504.err
+LINUX_0504_SOURCE		:= $(DIR_DADAO_SOURCE)/linux-0504
+LINUX_0504_BUILD		:= $(DIR_DADAO_BUILD)/linux-0504
+LINUX_0504_TARGET		?= $(DIR_DADAO_TARGET)
+LINUX_0504_LOG_STDOUT		:= $(DIR_DADAO_LOG)/linux-0504.out
+LINUX_0504_LOG_STDERR		:= $(DIR_DADAO_LOG)/linux-0504.err
 
 linux-0504-clean:
 	# Remove old linux source dir ...
@@ -33,21 +33,21 @@ linux-0504-source:
 	# Clone official repo
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@git clone -q $(LINUX_0504_ORIGIN) -- $(LINUX_0504_SOURCE)
-	@cd $(LINUX_0504_SOURCE);				\
+	@cd $(LINUX_0504_SOURCE);						\
 		git checkout -qb $(LINUX_0504_BRANCH) $(LINUX_0504_VERSION)
 	# Add official patch
-	@test -f $(DIR_TAO_TO_ALL)/$(LINUX_0504_VERSION_PATCH) ||	\
-		wget --directory-prefix=$(DIR_TAO_TO_ALL)		\
+	@test -f $(DIR_TAO_TO_ALL)/$(LINUX_0504_VERSION_PATCH) ||		\
+		wget --directory-prefix=$(DIR_TAO_TO_ALL)			\
 			$(LINUX_0504_VERSION_BASEURL)/$(LINUX_0504_VERSION_PATCH)
-	@cd $(LINUX_0504_SOURCE);					\
-		xzcat $(DIR_TAO_TO_ALL)/$(LINUX_0504_VERSION_PATCH)	\
-			| patch -p1;					\
-		git add .;						\
+	@cd $(LINUX_0504_SOURCE);						\
+		xzcat $(DIR_TAO_TO_ALL)/$(LINUX_0504_VERSION_PATCH)		\
+			| patch -p1;						\
+		git add .;							\
 		git commit -sm"LINUX $(LINUX_0504_VERSION_PATCH)"
 	# Copy arch/dadao dir
 	@cp -a $(LINUX_0504_NEWFILES)/arch/* $(LINUX_0504_SOURCE)/arch/
-	@cd $(LINUX_0504_SOURCE);				\
-		git add arch/dadao;				\
+	@cd $(LINUX_0504_SOURCE);						\
+		git add arch/dadao;						\
 		git commit -sm"DADAO: add arch/dadao dir"
 	# Apply linux-0504-patches ...
 	@cd $(LINUX_0504_SOURCE); git am $(LINUX_0504_PATCHES)/*.patch
@@ -57,21 +57,21 @@ linux-0504-build-new:
 	@rm -fr $(LINUX_0504_BUILD)
 	# make defconfig
 	@mkdir -p $(LINUX_0504_BUILD)
-	@make -C $(LINUX_0504_SOURCE)				\
-		O=$(LINUX_0504_BUILD)				\
-		ARCH=$(LINUX_0504_ARCH)				\
+	@make -C $(LINUX_0504_SOURCE)						\
+		O=$(LINUX_0504_BUILD)						\
+		ARCH=$(LINUX_0504_ARCH)						\
 		$(LINUX_0504_DEFCONFIG)
 
 linux-0504-build:
 	# Making (in several minutes) ...
-	@make -C $(LINUX_0504_BUILD)				\
+	@make -C $(LINUX_0504_BUILD)						\
 		ARCH=$(LINUX_0504_ARCH) -j8
 
 linux-0504-install:
 	# Make install ...
-	@make -C $(LINUX_0504_BUILD)				\
-		ARCH=$(LINUX_0504_ARCH)				\
-		INSTALL_PATH=$(LINUX_0504_TARGET)		\
+	@make -C $(LINUX_0504_BUILD)						\
+		ARCH=$(LINUX_0504_ARCH)						\
+		INSTALL_PATH=$(LINUX_0504_TARGET)				\
 		install
 
 linux-0504-highfive:
@@ -98,15 +98,15 @@ linux-0504-highfive:
 
 linux-0504-headers-check:
 	# Headers check ...
-	@make -C $(LINUX_0504_BUILD)				\
-		ARCH=$(LINUX_0504_ARCH)				\
+	@make -C $(LINUX_0504_BUILD)						\
+		ARCH=$(LINUX_0504_ARCH)						\
 		headers_check
 
 linux-0504-headers-install:
 	# Headers install ...
-	@make -C $(LINUX_0504_BUILD)				\
-		ARCH=$(LINUX_0504_ARCH)				\
-		INSTALL_HDR_PATH=$(LINUX_0504_TARGET)/usr	\
+	@make -C $(LINUX_0504_BUILD)						\
+		ARCH=$(LINUX_0504_ARCH)						\
+		INSTALL_HDR_PATH=$(LINUX_0504_TARGET)/usr			\
 		headers_install
 
 linux-0504-headers-highfive:
