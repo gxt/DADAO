@@ -65,6 +65,13 @@ $ sudo apt-get install libgmp-dev libmpc-dev libmpfr-dev
 $ sudo apt-get install pkg-config libglib2.0-dev ninja-build libpixman-1-dev libncurses-dev
 ```
 
+##### 4. Software dependency for chipyard
+`Chipyard` is a framework for designing and evaluating full-system hardware using agile teams.
+
+```shell
+$ sudo apt-get install device-tree-compiler default-jre scala verilator
+```
+
 ### Install
 The installation of the DADAO-SimRISC project v0.2 now basically covers two part:
 1. DADAO-SimRISC ELF/GNU Toolchain
