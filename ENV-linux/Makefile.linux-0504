@@ -36,11 +36,11 @@ linux-0504-source:
 	@cd $(LINUX_0504_SOURCE);						\
 		git checkout -qb $(LINUX_0504_BRANCH) $(LINUX_0504_VERSION)
 	# Add official patch
-	@test -f $(DIR_TAO_TO_ALL)/$(LINUX_0504_VERSION_PATCH) ||		\
-		wget --directory-prefix=$(DIR_TAO_TO_ALL)			\
+	@test -f $(DIR_GIT_ORIGIN)/linux-kernel/$(LINUX_0504_VERSION_PATCH) ||	\
+		wget --directory-prefix=$(DIR_GIT_ORIGIN)/linux-kernel		\
 			$(LINUX_0504_VERSION_BASEURL)/$(LINUX_0504_VERSION_PATCH)
 	@cd $(LINUX_0504_SOURCE);						\
-		xzcat $(DIR_TAO_TO_ALL)/$(LINUX_0504_VERSION_PATCH)		\
+		xzcat $(DIR_GIT_ORIGIN)/linux-kernel/$(LINUX_0504_VERSION_PATCH)	\
 			| patch -p1;						\
 		git add .;							\
 		git commit -sm"LINUX $(LINUX_0504_VERSION_PATCH)"

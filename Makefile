@@ -2,7 +2,6 @@
 # TOP Makefile
 #
 DIR_GIT_ORIGIN		:= /pub/GIT-ORIGIN/
-DIR_TAO_TO_ALL		:= /pub/to-all/
 
 DIR_DADAO_TMP		:= /tmp/__$(USER)-DADAO/
 DIR_DADAO_TOP		:= $(shell pwd)
