@@ -1,7 +1,7 @@
 #
 # Makefile for riscv-isa-sim for chipyard
 #
-RISCV_ISA_SIM_ORIGIN		:= $(DIR_GIT_ORIGIN)/chipyard-project/riscv/riscv-isa-sim.git
+RISCV_ISA_SIM_ORIGIN		:= https://github.com/riscv/riscv-isa-sim.git
 
 RISCV_ISA_SIM_SOURCE		:= $(DIR_DADAO_SOURCE)/riscv-isa-sim
 RISCV_ISA_SIM_BUILD		:= $(DIR_DADAO_BUILD)/riscv-isa-sim
