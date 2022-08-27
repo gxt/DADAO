@@ -31,13 +31,7 @@ chipyard-0107-prepare:
 	# Check necessary fesvr headers
 	@test -d $(DIR_DADAO_RISCV)/include/fesvr || make -s -C $(DIR_DADAO_TOP) riscv-isa-sim-highfive
 
-chipyard-0107-source-local:
-	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
-	@rm -fr $(CHIPYARD_0107_SOURCE)
-	# Simple life by copying from prepared dir
-	@cp -a $(HOME)/chipyard-0107-init-submodules-no-riscv-tools $(CHIPYARD_0107_SOURCE)
-
-chipyard-0107-source-github:
+chipyard-0107-source:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@rm -fr $(CHIPYARD_0107_SOURCE)
 	# Clone official repo
@@ -45,8 +39,6 @@ chipyard-0107-source-github:
 	@cd $(CHIPYARD_0107_SOURCE); git checkout -qb $(CHIPYARD_0107_BRANCH) $(CHIPYARD_0107_VERSION)
 	# Setup submodules by terribly downloading git repos from github.com
 	@cd $(CHIPYARD_0107_SOURCE); ./scripts/init-submodules-no-riscv-tools.sh
-
-chipyard-0107-source-add-wuming:
 	# Copy dadao generators into chipyard
 	@cp -a $(CHIPYARD_0107_DADAO_WUMING) $(CHIPYARD_0107_SOURCE)/generators/
 	@cd $(CHIPYARD_0107_SOURCE);								\
@@ -89,13 +81,11 @@ chipyard-0107-highfive:
 	@make -s chipyard-0107-clean			1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
 	# 2. Prepare chipyard ...
 	@make -s chipyard-0107-prepare			1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
-	# 3. Clone a local chipyard (alternative: from github) ...
-	@make -s chipyard-0107-source-local		1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
-	# 4. Add dadao-wuming into chipyard ...
-	@make -s chipyard-0107-source-add-wuming	1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
-	# 5. Clean chipyard build dir ...
+	# 3. Clone chipyard ...
+	@make -s chipyard-0107-source			1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
+	# 4. Clean chipyard build dir ...
 	@make -s chipyard-0107-build-new		1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
-	# 6. Build chipyard ...
+	# 5. Build chipyard ...
 	@make -s chipyard-0107-build			1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
 	@echo "--- BUILD chipyard-0107 DONE! ---"
 
