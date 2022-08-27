@@ -1,7 +1,7 @@
 #
 # Makefile for mibench
 #
-DDB_MIBENCH_ORIGIN      := $(DIR_GIT_ORIGIN)/mibench.git
+DDB_MIBENCH_ORIGIN      := https://github.com/ekut-es/mibench.git
 DDB_MIBENCH_BRANCH      := mibench
 DDB_MIBENCH_SOURCE      := $(DDB_DST_DIR)/mibench
 DDB_MIBENCH_BUILD       := $(DDB_DST_DIR)/mibench

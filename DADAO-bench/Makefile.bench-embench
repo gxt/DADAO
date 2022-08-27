@@ -1,7 +1,7 @@
 #
 # Makefile for embench
 #
-DDB_EMBENCH_ORIGIN	:= $(DIR_GIT_ORIGIN)/embench-iot.git
+DDB_EMBENCH_ORIGIN	:= https://github.com/embench/embench-iot.git
 DDB_EMBENCH_SOURCE	:= $(DDB_DST_DIR)/embench-iot
 DDB_EMBENCH_NEWFILES	:= $(DDB_SRC_DIR)/embench-iot
 DDB_EMBENCH_BUILD	:= $(DDB_DST_DIR)/embench-build
