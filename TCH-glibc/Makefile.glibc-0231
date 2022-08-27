@@ -1,7 +1,7 @@
 #
 # Makefile for glibc in toolchain
 #
-GLIBC_0231_ORIGIN	:= $(DIR_GIT_ORIGIN)/glibc.git
+GLIBC_0231_ORIGIN	:= https://github.com/bminor/glibc.git
 GLIBC_0231_VERSION	:= glibc-2.31
 GLIBC_0231_BRANCH	:= dadao-0231
 GLIBC_0231_TARGET	?= dadao-linux-gnu
