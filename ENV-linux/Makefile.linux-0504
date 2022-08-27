@@ -1,7 +1,7 @@
 #
 # Makefile for linux-0504
 #
-LINUX_0504_ORIGIN		:= $(DIR_GIT_ORIGIN)/linux.git
+LINUX_0504_ORIGIN		:= https://github.com/torvalds/linux.git
 LINUX_0504_VERSION		:= v5.4
 # official download site :	https://mirrors.edge.kernel.org/pub/linux/kernel/v5.x/
 LINUX_0504_VERSION_BASEURL	:= https://mirrors.tuna.tsinghua.edu.cn/kernel/v5.x/
@@ -36,11 +36,11 @@ linux-0504-source:
 	@cd $(LINUX_0504_SOURCE);						\
 		git checkout -qb $(LINUX_0504_BRANCH) $(LINUX_0504_VERSION)
 	# Add official patch
-	@test -f $(DIR_GIT_ORIGIN)/linux-kernel/$(LINUX_0504_VERSION_PATCH) ||	\
-		wget --directory-prefix=$(DIR_GIT_ORIGIN)/linux-kernel		\
+	@test -f $(HOME)/$(LINUX_0504_VERSION_PATCH) ||				\
+		wget --directory-prefix=$(HOME)/				\
 			$(LINUX_0504_VERSION_BASEURL)/$(LINUX_0504_VERSION_PATCH)
 	@cd $(LINUX_0504_SOURCE);						\
-		xzcat $(DIR_GIT_ORIGIN)/linux-kernel/$(LINUX_0504_VERSION_PATCH)	\
+		xzcat $(HOME)/$(LINUX_0504_VERSION_PATCH)			\
 			| patch -p1;						\
 		git add .;							\
 		git commit -sm"LINUX $(LINUX_0504_VERSION_PATCH)"
