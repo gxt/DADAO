@@ -1,8 +1,8 @@
 #
 # Makefile for simulator
 #
-QEMU_0600_ORIGIN	:= $(DIR_GIT_ORIGIN)/qemu.git
-QEMU_0600_PROJECT	:= $(DIR_GIT_ORIGIN)/qemu-project
+QEMU_0600_ORIGIN	:= https://gitlab.com/qemu-project/qemu.git
+QEMU_0600_PROJECT	:= https://gitlab.com/qemu-project/
 QEMU_0600_VERSION	:= v6.0.1
 QEMU_0600_BRANCH	:= dadao-0600
 QEMU_0600_TARGETS	:= dadao-softmmu,dadao-linux-user
