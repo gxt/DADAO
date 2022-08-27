@@ -1,8 +1,6 @@
 #
 # TOP Makefile
 #
-DIR_GIT_ORIGIN		?= $(HOME)/GIT-ORIGIN/
-
 DIR_DADAO_TMP		:= /tmp/__$(USER)-DADAO/
 DIR_DADAO_TOP		:= $(shell pwd)
 DIR_DADAO_OPCODES	:= $(DIR_DADAO_TOP)/DADAO-opcodes/
