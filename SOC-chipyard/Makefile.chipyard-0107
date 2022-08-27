@@ -1,7 +1,7 @@
 #
 # Makefile for SoC in chipyard
 #
-CHIPYARD_0107_ORIGIN		:= $(DIR_GIT_ORIGIN)/chipyard.git
+CHIPYARD_0107_ORIGIN		:= https://github.com/ucb-bar/chipyard.git
 CHIPYARD_0107_VERSION		:= 1.7.0
 CHIPYARD_0107_BRANCH		:= dadao
 
@@ -35,7 +35,7 @@ chipyard-0107-source-local:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@rm -fr $(CHIPYARD_0107_SOURCE)
 	# Simple life by copying from prepared dir
-	@cp -a $(DIR_GIT_ORIGIN)/chipyard-0107-init-submodules-no-riscv-tools $(CHIPYARD_0107_SOURCE)
+	@cp -a $(HOME)/chipyard-0107-init-submodules-no-riscv-tools $(CHIPYARD_0107_SOURCE)
 
 chipyard-0107-source-github:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
