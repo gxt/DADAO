@@ -1,7 +1,7 @@
 #
 # Makefile for gcc in toolchain
 #
-GCC_1003_ORIGIN		:= $(DIR_GIT_ORIGIN)/gcc.git
+GCC_1003_ORIGIN		:= https://github.com/gcc-mirror/gcc.git
 GCC_1003_VERSION	:= releases/gcc-10.3.0
 GCC_1003_BRANCH		:= dadao-1003
 GCC_1003_TARGET		?= dadao-linux-gnu
