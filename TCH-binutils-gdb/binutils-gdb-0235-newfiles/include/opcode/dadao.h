@@ -128,3 +128,24 @@ extern const struct dadao_opcode dadao_opcodes[];
 		ddop_insn_char_p[3] |= ((ddop_fd) & 0x3F);					\
 	} while (0)
 
+/* R_DADAO_HI18 */
+#define RV_X(x, s, n)  (((x) >> (s)) & ((1 << (n)) - 1))
+#define RV_IMM_SIGN(x) (-(((x) >> 29) & 1))
+
+#define EXTRACT_UTYPE_IMM(x) \
+  ((RV_X(x, 12, 18) << 12) | (RV_IMM_SIGN(x) << 30))
+
+#define ENCODE_UTYPE_IMM(x) \
+  (RV_X(x, 12, 18) << 12)
+
+#define VALID_UTYPE_IMM(x) (EXTRACT_UTYPE_IMM(ENCODE_UTYPE_IMM(x)) == (x))
+
+#define RISCV_CONST_HIGH_PART(VALUE) \
+  (((VALUE) + (DADAO_IMM_REACH/2)) & ~(DADAO_IMM_REACH-1))
+
+#define DADAO_IMM_BITS 12
+#define DADAO_IMM_REACH (1LL << DADAO_IMM_BITS)
+
+/* R_DADAO_LO12 */
+#define ENCODE_ITYPE_IMM(x) \
+  (RV_X(x, 0, 12) << 18)

@@ -125,13 +125,13 @@ const relax_typeS dadao_relax_table[] = {
     {0, 0, DD_INSN_BYTES(4), 0},
 
     /* HI18 (5, 0).  */
-    {(1 << 32), -(1 << 32), 0, ENCODE_RELAX(STATE_HI18, STATE_MAX)},
+    {(1 << 20), -(1 << 20), 0, ENCODE_RELAX(STATE_HI18, STATE_MAX)},
 
     /* HI18 (5, 1).  */
     {0, 0, DD_INSN_BYTES(4), 0},
 
     /* LO12 (6, 0). */
-    {(1 << 32), -(1 << 32), 0, ENCODE_RELAX(STATE_LO12, STATE_MAX)},
+    {(1 << 14), -(1 << 14), 0, ENCODE_RELAX(STATE_LO12, STATE_MAX)},
 
     /* LO12 (6, 1). */
     {0, 0, DD_INSN_BYTES(3), 0},
@@ -223,19 +223,24 @@ get_operands(char *s, expressionS *exp, int *ret_code, int *is_adrp)
             /* Get the right ret_code */
             if (q != "")
             {
-                if (q[1] == 'h' && q[2] == 'i')
-                {
-                    *ret_code = 7;
-                }
-                else if (q[1] == 'l' && q[2] == 'o')
+		if (q[1] == 'l' && q[2] == 'o')
                 {
                     *ret_code = 8;
+		    *is_adrp = 1;
                 }
-                *is_adrp = 1;
             }
             /* Get symbol */
-	    p = strsep(&p, ")");
-	    p = p + 1;
+	    q = p;
+	    while (*(q+1) != ')')
+	    {
+		*q = *(q + 1);
+		q++;
+	    }
+	    while(*q != '\0')
+	    {
+		*q = '\0';
+		q++;
+	    }
 	}
 
         /* Check to see if we have any operands left to parse */
@@ -266,10 +271,6 @@ get_operands(char *s, expressionS *exp, int *ret_code, int *is_adrp)
         }
 
         numexp++;
-
-        /* Skip %hi or %lo, so as to not think them as variables */
-        if ( *is_adrp == 1)
-            input_line_pointer = input_line_pointer + 4;
 
         p = input_line_pointer;
 
@@ -709,15 +710,23 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
         break;
 
     case dadao_operand_s12:
-        __DD_EXP_SHOULD_BE_IMM(exp_next[0], -0x800, 0x7FF);
-        /* call rb0, rd0, 0 doesn't exist */
-        if (insn->major_opcode == 0x6D && insn->operands_num == 3)
+        if (exp_next[0].X_op == O_constant)
         {
-            if (fa == 0 && fb == 0 && (exp_next[0].X_add_number & 0xFFF) == 0)
-                return -1;
+            __DD_EXP_SHOULD_BE_IMM(exp_next[0], -0x800, 0x7FF);
+	    /* call rb0, rd0, 0 doesn't exist */
+	    if (insn->major_opcode == 0x6D && insn->operands_num == 3)
+            {
+	        if (fa == 0 && fb == 0 && (exp_next[0].X_add_number & 0xFFF) == 0)
+	            return -1;
+	    }
+	    *insn_code = ((insn->major_opcode << 24) | (fa << 18) | (fb << 12) | (exp_next[0].X_add_number & 0xFFF));
+	    return 0;
         }
-        *insn_code = ((insn->major_opcode << 24) | (fa << 18) | (fb << 12) | (exp_next[0].X_add_number & 0xFFF));
-        return 0;
+	else
+	{
+	    *insn_code = ((insn->major_opcode << 24) | (fa << 18) | (fb << 12));
+	    return insn->type;
+	}
 
     case dadao_operand_u12:
         __DD_EXP_SHOULD_BE_IMM(exp_next[0], 0, 0xFFF);
@@ -857,8 +866,12 @@ void dadao_md_assemble(char *str)
         return;
     }
 
-    if(is_adrp == 0)
-        ret_code = dd_get_insn_code(instruction, exp, n_operands, &insn_code);
+    int temp_ret = ret_code;
+
+    ret_code = dd_get_insn_code(instruction, exp, n_operands, &insn_code);
+
+    if (is_adrp == 1)
+        ret_code = temp_ret;
 
     if (ret_code == -1)
     {

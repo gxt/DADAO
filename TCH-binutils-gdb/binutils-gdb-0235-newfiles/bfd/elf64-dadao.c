@@ -589,6 +589,16 @@ dadao_elf_perform_relocation(asection *isec, reloc_howto_type *howto,
         }
 
         return bfd_reloc_ok;
+
+    case R_DADAO_HI18:
+	if (!VALID_UTYPE_IMM(RISCV_CONST_HIGH_PART (value)))
+	    return bfd_reloc_overflow;
+	value = ENCODE_UTYPE_IMM (RISCV_CONST_HIGH_PART (value));
+	return bfd_reloc_ok;
+
+    case R_DADAO_LO12:
+	value = ENCODE_ITYPE_IMM (value);
+	return bfd_reloc_ok;
     
     default:
         BAD_CASE(howto->type);
