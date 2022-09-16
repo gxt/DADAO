@@ -591,13 +591,15 @@ dadao_elf_perform_relocation(asection *isec, reloc_howto_type *howto,
         return bfd_reloc_ok;
 
     case R_DADAO_HI18:
-	if (!VALID_UTYPE_IMM(RISCV_CONST_HIGH_PART (value)))
-	    return bfd_reloc_overflow;
-	value = ENCODE_UTYPE_IMM (RISCV_CONST_HIGH_PART (value));
+	addr = ENCODE_UTYPE_IMM (DADAO_CONST_HIGH_PART (addr));
+	insn_origin = bfd_get_32(abfd, (bfd_byte *)datap);
+	bfd_put_32(abfd, insn_origin | (addr >> 12) , (bfd_byte *)datap);
 	return bfd_reloc_ok;
 
     case R_DADAO_LO12:
-	value = ENCODE_ITYPE_IMM (value);
+	addr = ENCODE_ITYPE_IMM (addr);
+	insn_origin = bfd_get_32(abfd, (bfd_byte *)datap);
+	bfd_put_32(abfd, insn_origin | (addr >> 18) , (bfd_byte *)datap);
 	return bfd_reloc_ok;
     
     default:
@@ -869,6 +871,8 @@ dadao_final_link_relocate(reloc_howto_type *howto, asection *input_section,
     case R_DADAO_BRCC:
     case R_DADAO_CALL:
     case R_DADAO_JUMP:
+    case R_DADAO_HI18:
+    case R_DADAO_LO12:
         contents += r_offset - 4;
 
         addr_abs = relocation + (bfd_vma)r_addend;

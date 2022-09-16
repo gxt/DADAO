@@ -94,6 +94,8 @@ extern const struct dadao_opcode dadao_opcodes[];
 #define	DADAO_INSN_CALL_RRII		((unsigned int)(0x6D << 24))
 #define	DADAO_INSN_JUMP_IIII		((unsigned int)(0x64 << 24))
 #define	DADAO_INSN_JUMP_RRII		((unsigned int)(0x65 << 24))
+#define	DADAO_INSN_HI18_RIII		((unsigned int)(0x48 << 24))
+#define	DADAO_INSN_LO12_RRII		((unsigned int)(0x40 << 24))
 
 /* Dadao bit-field definition:
  *   OP: 8-bit, [31..24]
@@ -140,7 +142,7 @@ extern const struct dadao_opcode dadao_opcodes[];
 
 #define VALID_UTYPE_IMM(x) (EXTRACT_UTYPE_IMM(ENCODE_UTYPE_IMM(x)) == (x))
 
-#define RISCV_CONST_HIGH_PART(VALUE) \
+#define DADAO_CONST_HIGH_PART(VALUE) \
   (((VALUE) + (DADAO_IMM_REACH/2)) & ~(DADAO_IMM_REACH-1))
 
 #define DADAO_IMM_BITS 12
