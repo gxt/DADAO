@@ -591,9 +591,9 @@ dadao_elf_perform_relocation(asection *isec, reloc_howto_type *howto,
         return bfd_reloc_ok;
 
     case R_DADAO_HI18:
-	addr = ENCODE_UTYPE_IMM (DADAO_CONST_HIGH_PART (addr));
+	value = (addr >> 12) - ((addr - value) >> 12);
 	insn_origin = bfd_get_32(abfd, (bfd_byte *)datap);
-	bfd_put_32(abfd, insn_origin | (addr >> 12) , (bfd_byte *)datap);
+	bfd_put_32(abfd, insn_origin | value , (bfd_byte *)datap);
 	return bfd_reloc_ok;
 
     case R_DADAO_LO12:
