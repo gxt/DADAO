@@ -1289,8 +1289,8 @@ dadao_elf_relax_section (bfd *abfd, asection *sec,
 
 #define ELF_MAXPAGESIZE 0x1000
 
-#define TARGET_BIG_SYM dadao_elf64_vec
-#define TARGET_BIG_NAME "elf64-dadao"
+#define TARGET_LITTLE_SYM dadao_elf64_vec
+#define TARGET_LITTLE_NAME "elf64-dadao"
 
 #define elf_info_to_howto_rel NULL
 #define elf_info_to_howto dadao_info_to_howto_rela

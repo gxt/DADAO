@@ -12,7 +12,7 @@
 /* See gas/doc/internals.texi for explanation of these macros.  */
 #define TARGET_FORMAT			"elf64-dadao"
 #define TARGET_ARCH			bfd_arch_dadao
-#define TARGET_BYTES_BIG_ENDIAN		1
+#define TARGET_BYTES_BIG_ENDIAN		0
 
 extern void dadao_md_assemble (char *);
 extern void dadao_md_begin (void);
@@ -23,7 +23,7 @@ extern void dadao_md_begin (void);
 #define md_undefined_symbol(x) NULL
 #define	md_operand(x)
 
-#define md_number_to_chars number_to_chars_bigendian
+#define md_number_to_chars number_to_chars_littleendian
 
 #define WORKING_DOT_WORD
 

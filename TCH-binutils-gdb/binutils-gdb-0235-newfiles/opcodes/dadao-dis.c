@@ -112,7 +112,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	}
 
 	/* Present bytes in the order they are laid out in memory.  */
-	info->display_endian = BFD_ENDIAN_BIG;
+	info->display_endian = BFD_ENDIAN_LITTLE;
 
 	info->insn_info_valid = 1;
 	info->bytes_per_chunk = 4;
