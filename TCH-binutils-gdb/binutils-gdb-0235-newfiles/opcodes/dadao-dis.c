@@ -121,10 +121,12 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 
 	insn = bfd_getb32 (buffer);
 
-	fa = (insn >> 18) & 0x3F;
-	fb = (insn >> 12) & 0x3F;
-	fc = (insn >> 6) & 0x3F;
-	fd = (insn) & 0x3F;
+	fa = (insn >> 10) & 0x3F;
+	fb = (((insn >> 8) & 0x3) << 4) + ((insn >> 20) & 0xF);
+	fc = (((insn >> 16) & 0xF) << 2) + (insn >> 30);
+	fd = (insn >> 24) & 0x3F;
+
+	insn = ((insn & 0xFF) << 24) + (fa << 18) + (fb << 12) + (fc << 6) + fd;
 
 	switch (ddis_infop->ddis_optype[(insn >> 24)]) {
 	case dadao_operand_none:
