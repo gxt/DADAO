@@ -206,6 +206,7 @@ get_operands(char *s, expressionS *exp, int *ret_code, int *is_adrp)
     int numexp = 0;
     int max_operands = 4;
     int nextchar = ',';
+    int adrp_flag = 0;
 
     while (nextchar == ',')
     {
@@ -223,23 +224,31 @@ get_operands(char *s, expressionS *exp, int *ret_code, int *is_adrp)
             /* Get the right ret_code */
             if (q != "")
             {
+		if (q[1] == 'h' && q[2] == 'i')
+		{
+		    adrp_flag = 1;
+		}
 		if (q[1] == 'l' && q[2] == 'o')
                 {
                     *ret_code = 8;
 		    *is_adrp = 1;
+		    adrp_flag = 1;
                 }
             }
             /* Get symbol */
-	    q = p;
-	    while (*(q+1) != ')')
+	    if (adrp_flag == 1)
 	    {
-		*q = *(q + 1);
-		q++;
-	    }
-	    while(*q != '\0')
-	    {
-		*q = '\0';
-		q++;
+	        q = p;
+	        while (*(q+1) != ')')
+	        {
+		    *q = *(q + 1);
+		    q++;
+	        }
+	        while(*q != '\0')
+	        {
+		    *q = '\0';
+		    q++;
+	        }
 	    }
 	}
 
