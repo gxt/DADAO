@@ -1,7 +1,8 @@
 #
 # Makefile for linux-0504
 #
-LINUX_0504_ORIGIN		:= https://github.com/torvalds/linux.git
+LINUX_0504_LOCAL		:= /pub/GITHUB/torvalds/linux.git
+LINUX_0504_GITHUB		:= https://github.com/torvalds/linux.git
 LINUX_0504_VERSION		:= v5.4
 # official download site :	https://mirrors.edge.kernel.org/pub/linux/kernel/v5.x/
 LINUX_0504_VERSION_BASEURL	:= https://mirrors.tuna.tsinghua.edu.cn/kernel/v5.x/
@@ -30,9 +31,14 @@ linux-0504-clean:
 linux-0504-source:
 	# Remove old source dir
 	@rm -fr $(LINUX_0504_SOURCE)
-	# Clone official repo
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
-	@git clone -q $(LINUX_0504_ORIGIN) -- $(LINUX_0504_SOURCE)
+ifeq ($(wildcard $(LINUX_0504_LOCAL)),)
+	# Clone remote repo
+	@git clone -q $(LINUX_0504_GITHUB) -- $(LINUX_0504_SOURCE)
+else
+	# Clone local repo
+	@git clone -q $(LINUX_0504_LOCAL) -- $(LINUX_0504_SOURCE)
+endif
 	@cd $(LINUX_0504_SOURCE);						\
 		git checkout -qb $(LINUX_0504_BRANCH) $(LINUX_0504_VERSION)
 	# Add official patch
