@@ -1,7 +1,8 @@
 #
 # Makefile for SoC in chipyard
 #
-CHIPYARD_0107_ORIGIN		:= https://github.com/ucb-bar/chipyard.git
+CHIPYARD_0107_LOCAL		:= /pub/GITHUB/ucb-bar/chipyard.git
+CHIPYARD_0107_GITHUB		:= https://github.com/ucb-bar/chipyard.git
 CHIPYARD_0107_VERSION		:= 1.7.0
 CHIPYARD_0107_BRANCH		:= dadao
 
@@ -34,8 +35,13 @@ chipyard-0107-prepare:
 chipyard-0107-source:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@rm -fr $(CHIPYARD_0107_SOURCE)
-	# Clone official repo
-	@git clone -q $(CHIPYARD_0107_ORIGIN) -- $(CHIPYARD_0107_SOURCE)
+ifeq ($(wildcard $(CHIPYARD_0107_LOCAL)),)
+	# Clone remote repo
+	@git clone -q $(CHIPYARD_0107_GITHUB) -- $(CHIPYARD_0107_SOURCE)
+else
+	# Clone local repo
+	@git clone -q $(CHIPYARD_0107_LOCAL) -- $(CHIPYARD_0107_SOURCE)
+endif
 	@cd $(CHIPYARD_0107_SOURCE); git checkout -qb $(CHIPYARD_0107_BRANCH) $(CHIPYARD_0107_VERSION)
 	# Setup submodules by terribly downloading git repos from github.com
 	@cd $(CHIPYARD_0107_SOURCE); ./scripts/init-submodules-no-riscv-tools.sh

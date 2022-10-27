@@ -1,7 +1,8 @@
 #
 # Makefile for riscv-isa-sim for chipyard
 #
-RISCV_ISA_SIM_ORIGIN		:= https://github.com/riscv/riscv-isa-sim.git
+RISCV_ISA_SIM_LOCAL		:= /pub/GITHUB/riscv/riscv-isa-sim.git
+RISCV_ISA_SIM_GITHUB		:= https://github.com/riscv/riscv-isa-sim.git
 
 RISCV_ISA_SIM_SOURCE		:= $(DIR_DADAO_SOURCE)/riscv-isa-sim
 RISCV_ISA_SIM_BUILD		:= $(DIR_DADAO_BUILD)/riscv-isa-sim
@@ -21,9 +22,14 @@ riscv-isa-sim-clean:
 riscv-isa-sim-source:
 	# Remove old riscv-isa-sim source dir ...
 	@rm -fr $(RISCV_ISA_SIM_SOURCE)
-	# Clone official repo
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
-	@git clone -q $(RISCV_ISA_SIM_ORIGIN) -- $(RISCV_ISA_SIM_SOURCE)
+ifeq ($(wildcard $(RISCV_ISA_SIM_LOCAL)),)
+	# Clone remote repo
+	@git clone -q $(RISCV_ISA_SIM_GITHUB) -- $(RISCV_ISA_SIM_SOURCE)
+else
+	# Clone local repo
+	@git clone -q $(RISCV_ISA_SIM_LOCAL) -- $(RISCV_ISA_SIM_SOURCE)
+endif
 
 riscv-isa-sim-build-new:
 	# Remove old riscv-isa-sim build dir ...
