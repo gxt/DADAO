@@ -1,7 +1,8 @@
 #
 # Makefile for glibc in toolchain
 #
-GLIBC_0231_ORIGIN	:= https://github.com/bminor/glibc.git
+GLIBC_0231_LOCAL	:= /pub/GITHUB/bminor/glibc.git
+GLIBC_0231_GITHUB	:= https://github.com/bminor/glibc.git
 GLIBC_0231_VERSION	:= glibc-2.31
 GLIBC_0231_BRANCH	:= dadao-0231
 GLIBC_0231_TARGET	?= dadao-linux-gnu
@@ -32,9 +33,14 @@ endif
 glibc-0231-source:
 	# Remove old glibc source dir ...
 	@rm -fr $(GLIBC_0231_SOURCE)
-	# Clone official repo
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
-	@git clone -q $(GLIBC_0231_ORIGIN) -- $(GLIBC_0231_SOURCE)
+ifeq ($(wildcard $(GLIBC_0231_LOCAL)),)
+	# Clone remote repo
+	@git clone -q $(GLIBC_0231_GITHUB) -- $(GLIBC_0231_SOURCE)
+else
+	# Clone local repo
+	@git clone -q $(GLIBC_0231_LOCAL) -- $(GLIBC_0231_SOURCE)
+endif
 	@cd $(GLIBC_0231_SOURCE); git checkout -qb $(GLIBC_0231_BRANCH) $(GLIBC_0231_VERSION)
 	# glibc-ports-2.31: add dadao support
 	@cp -a $(GLIBC_0231_NEWFILES)/sysdeps/dadao $(GLIBC_0231_SOURCE)/sysdeps
