@@ -1,7 +1,8 @@
 #
 # Makefile for gcc in toolchain
 #
-GCC_1003_ORIGIN		:= https://github.com/gcc-mirror/gcc.git
+GCC_1003_LOCAL		:= /pub/GITHUB/gcc-mirror/gcc.git
+GCC_1003_GITHUB		:= https://github.com/gcc-mirror/gcc.git
 GCC_1003_VERSION	:= releases/gcc-10.3.0
 GCC_1003_BRANCH		:= dadao-1003
 GCC_1003_TARGET		?= dadao-linux-gnu
@@ -30,8 +31,13 @@ endif
 gcc-1003-source:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@rm -fr $(GCC_1003_SOURCE)
-	@echo "Clone official repo"
-	@git clone -q $(GCC_1003_ORIGIN) -- $(GCC_1003_SOURCE)
+ifeq ($(wildcard $(GCC_1003_LOCAL)),)
+	# Clone remote repo
+	@git clone -q $(GCC_1003_GITHUB) -- $(GCC_1003_SOURCE)
+else
+	# Clone local repo
+	@git clone -q $(GCC_1003_LOCAL) -- $(GCC_1003_SOURCE)
+endif
 	@cd $(GCC_1003_SOURCE); git checkout -qb $(GCC_1003_BRANCH) $(GCC_1003_VERSION)
 	# gcc/config
 	@cp -a $(GCC_1003_NEWFILES)/gcc/config/* $(GCC_1003_SOURCE)/gcc/config/
