@@ -1,7 +1,8 @@
 #
 # Makefile for simulator
 #
-QEMU_0600_ORIGIN	:= https://gitlab.com/qemu-project/qemu.git
+QEMU_0600_LOCAL		:= /pub/GITLAB/qemu-project/qemu.git
+QEMU_0600_GITLAB	:= https://gitlab.com/qemu-project/qemu.git
 QEMU_0600_VERSION	:= v6.0.1
 QEMU_0600_BRANCH	:= dadao-0600
 QEMU_0600_TARGETS	:= dadao-softmmu,dadao-linux-user
@@ -30,8 +31,13 @@ endif
 qemu-0600-source:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@rm -fr $(QEMU_0600_SOURCE)
-	@echo "Clone official repo"
-	@git clone -q $(QEMU_0600_ORIGIN) -- $(QEMU_0600_SOURCE)
+ifeq ($(wildcard $(QEMU_0600_LOCAL)),)
+	@echo "Clone remote repo"
+	@git clone -q $(QEMU_0600_GITLAB) -- $(QEMU_0600_SOURCE)
+else
+	@echo "Clone local repo"
+	@git clone -q $(QEMU_0600_LOCAL) -- $(QEMU_0600_SOURCE)
+endif
 	@cd $(QEMU_0600_SOURCE); git checkout -qb $(QEMU_0600_BRANCH) $(QEMU_0600_VERSION)
 	# include and arch-init
 	@echo "INCLUDE and arch-init patches"
