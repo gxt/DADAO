@@ -1,7 +1,8 @@
 #
 # Makefile for binutils-gdb in toolchain
 #
-BINUTILS_GDB_0235_ORIGIN		:= https://github.com/bminor/binutils-gdb.git
+BINUTILS_GDB_0235_LOCAL			:= /pub/GITHUB/bminor/binutils-gdb.git
+BINUTILS_GDB_0235_GITHUB		:= https://github.com/bminor/binutils-gdb.git
 BINUTILS_GDB_0235_VERSION		:= binutils-2_35_2
 BINUTILS_GDB_0235_BRANCH		:= dadao-0235
 BINUTILS_GDB_0235_TARGET		?= dadao-linux-gnu
@@ -31,8 +32,13 @@ endif
 binutils-gdb-0235-source:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@rm -fr $(BINUTILS_GDB_0235_SOURCE)
-	# Clone official repo
-	@git clone -q $(BINUTILS_GDB_0235_ORIGIN) -- $(BINUTILS_GDB_0235_SOURCE)
+ifeq ($(wildcard $(BINUTILS_GDB_0235_LOCAL)),)
+	# Clone remote repo
+	@git clone -q $(BINUTILS_GDB_0235_GITHUB) -- $(BINUTILS_GDB_0235_SOURCE)
+else
+	# Clone local repo
+	@git clone -q $(BINUTILS_GDB_0235_LOCAL) -- $(BINUTILS_GDB_0235_SOURCE)
+endif
 	@cd $(BINUTILS_GDB_0235_SOURCE);				\
 		git checkout -qb $(BINUTILS_GDB_0235_BRANCH) $(BINUTILS_GDB_0235_VERSION)
 	# replace cru with crUu
