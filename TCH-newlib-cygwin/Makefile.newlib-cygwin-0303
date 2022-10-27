@@ -1,7 +1,8 @@
 #
 # Makefile for newlib-cygwin in toolchain
 #
-NEWLIB_CYGWIN_0303_ORIGIN	:= https://github.com/mirror/newlib-cygwin.git
+NEWLIB_CYGWIN_0303_LOCAL	:= /pub/GITHUB/mirror/newlib-cygwin.git
+NEWLIB_CYGWIN_0303_GITHUB	:= https://github.com/mirror/newlib-cygwin.git
 NEWLIB_CYGWIN_0303_VERSION	:= newlib-3.3.0
 NEWLIB_CYGWIN_0303_BRANCH	:= dadao-0303
 NEWLIB_CYGWIN_0303_TARGET	?= dadao-linux-elf
@@ -32,8 +33,13 @@ endif
 newlib-cygwin-0303-source:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@rm -fr $(NEWLIB_CYGWIN_0303_SOURCE)
-	@echo "Clone official repo"
-	@git clone -q $(NEWLIB_CYGWIN_0303_ORIGIN) -- $(NEWLIB_CYGWIN_0303_SOURCE)
+ifeq ($(wildcard $(NEWLIB_CYGWIN_0303_LOCAL)),)
+	# Clone remote repo
+	@git clone -q $(NEWLIB_CYGWIN_0303_GITHUB) -- $(NEWLIB_CYGWIN_0303_SOURCE)
+else
+	# Clone local repo
+	@git clone -q $(NEWLIB_CYGWIN_0303_LOCAL) -- $(NEWLIB_CYGWIN_0303_SOURCE)
+endif
 	@cd $(NEWLIB_CYGWIN_0303_SOURCE); git checkout -qb $(NEWLIB_CYGWIN_0303_BRANCH) $(NEWLIB_CYGWIN_0303_VERSION)
 	# include
 	@echo "INCLUDE: Copy include dir from binutils-gdb (elf/dadao.h and opcode/dadao.h)"
