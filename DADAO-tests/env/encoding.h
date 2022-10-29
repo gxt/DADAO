@@ -1,0 +1,4 @@
+#ifndef DADAO_ENCODING_H
+#define DADAO_ENCODING_H
+
+#endif /* DADAO_ENCODING_H */
