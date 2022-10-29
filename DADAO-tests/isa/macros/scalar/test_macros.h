@@ -9,7 +9,8 @@
 test_ ## testnum:						\
 	move	TESTNUM, testnum;				\
 	code;							\
-	cmps	rd7, testreg, -1;				\
+	move	rd7, correctval;				\
+	cmps	rd7, testreg, rd7;				\
 	brnz	rd7, fail;
 
 #-----------------------------------------------------------------------
