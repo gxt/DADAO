@@ -21,11 +21,31 @@ test_ ## testnum:						\
 # Tests for an instruction with register-register operands
 #-----------------------------------------------------------------------
 
-#define TEST_ORRR_OP( testnum, inst, result, val1, val2 )	\
-    TEST_CASE( testnum, rd14, result,				\
-	move  rd1, val1;					\
-	move  rd2, val2;					\
-	inst  rd14, rd1, rd2;					\
+#define TEST_ORRR_OP( testnum, inst, result, val1, val2 )		\
+    TEST_CASE( testnum, rd14, result,					\
+	move  rd1, val1;						\
+	move  rd2, val2;						\
+	inst  rd14, rd1, rd2;						\
+    )
+
+#define TEST_ORRR_SRC1_EQ_DEST( testnum, inst, result, val1, val2 )	\
+    TEST_CASE( testnum, rd1, result,					\
+	move  rd1, val1;						\
+	move  rd2, val2;						\
+	inst  rd1, rd1, rd2;						\
+    )
+
+#define TEST_ORRR_SRC2_EQ_DEST( testnum, inst, result, val1, val2 )	\
+    TEST_CASE( testnum, rd2, result,					\
+	move  rd1, val1;						\
+	move  rd2, val2;						\
+	inst  rd2, rd1, rd2;						\
+    )
+
+#define TEST_ORRR_SRC12_EQ_DEST( testnum, inst, result, val1 )		\
+    TEST_CASE( testnum, rd1, result,					\
+	move  rd1, val1;						\
+	inst  rd1, rd1, rd1;						\
     )
 
 #-----------------------------------------------------------------------
