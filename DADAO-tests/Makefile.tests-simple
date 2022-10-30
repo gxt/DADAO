@@ -4,7 +4,7 @@
 TESTS_SIMPLE_SOURCE		:= $(DIR_DADAO_TOP)/DADAO-tests/simple
 TESTS_SIMPLE_BUILD		:= $(DIR_DADAO_TOP)/__tests/simple
 
-include $(DIR_DADAO_TOP)/DADAO-tests/Makefile.tests-rules
+include $(DIR_DADAO_TOP)/DADAO-tests/Makerules
 
 TESTS_SIMPLE_INSN		?= insn-simple
 
