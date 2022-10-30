@@ -16,7 +16,6 @@ DDB_GNU_GCC		:= $(DIR_DADAO_INSTALL)/bin/dadao-linux-gnu-gcc
 DDB_QEMU_USER		:= $(DIR_DADAO_INSTALL)/bin/qemu-dadao
 DDB_QEMU_SYS		:= $(DIR_DADAO_INSTALL)/bin/qemu-system-dadao
 
-include DADAO-bench/Makefile.bench-simple
 include DADAO-bench/Makefile.bench-dhrystone
 include DADAO-bench/Makefile.bench-multi-arch
 include DADAO-bench/Makefile.bench-gcc-testsuite-dejagnu-init
