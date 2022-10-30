@@ -24,9 +24,36 @@ DDTEST_CODE_BEGIN
   # Source/Destination tests
   #-------------------------------------------------------------
 
-  TEST_ORRR_SRC1_EQ_DEST( 6, and, 0x0f000f00, 0xff00ff00, 0x0f0f0f0f );
-  TEST_ORRR_SRC2_EQ_DEST( 7, and, 0x00f000f0, 0x0ff00ff0, 0xf0f0f0f0 );
+  TEST_ORRR_SRC1_EQ_DEST ( 6, and, 0x0f000f00, 0xff00ff00, 0x0f0f0f0f );
+  TEST_ORRR_SRC2_EQ_DEST ( 7, and, 0x00f000f0, 0x0ff00ff0, 0xf0f0f0f0 );
   TEST_ORRR_SRC12_EQ_DEST( 8, and, 0xff00ff00, 0xff00ff00 );
+
+  #-------------------------------------------------------------
+  # Bypassing tests
+  #-------------------------------------------------------------
+
+  TEST_ORRR_DEST_BYPASS( 9,  0, and, 0x0f000f00, 0xff00ff00, 0x0f0f0f0f );
+  TEST_ORRR_DEST_BYPASS( 10, 1, and, 0x00f000f0, 0x0ff00ff0, 0xf0f0f0f0 );
+  TEST_ORRR_DEST_BYPASS( 11, 2, and, 0x000f000f, 0x00ff00ff, 0x0f0f0f0f );
+
+  TEST_ORRR_SRC12_BYPASS( 12, 0, 0, and, 0x0f000f00, 0xff00ff00, 0x0f0f0f0f );
+  TEST_ORRR_SRC12_BYPASS( 13, 0, 1, and, 0x00f000f0, 0x0ff00ff0, 0xf0f0f0f0 );
+  TEST_ORRR_SRC12_BYPASS( 14, 0, 2, and, 0x000f000f, 0x00ff00ff, 0x0f0f0f0f );
+  TEST_ORRR_SRC12_BYPASS( 15, 1, 0, and, 0x0f000f00, 0xff00ff00, 0x0f0f0f0f );
+  TEST_ORRR_SRC12_BYPASS( 16, 1, 1, and, 0x00f000f0, 0x0ff00ff0, 0xf0f0f0f0 );
+  TEST_ORRR_SRC12_BYPASS( 17, 2, 0, and, 0x000f000f, 0x00ff00ff, 0x0f0f0f0f );
+
+  TEST_ORRR_SRC21_BYPASS( 18, 0, 0, and, 0x0f000f00, 0xff00ff00, 0x0f0f0f0f );
+  TEST_ORRR_SRC21_BYPASS( 19, 0, 1, and, 0x00f000f0, 0x0ff00ff0, 0xf0f0f0f0 );
+  TEST_ORRR_SRC21_BYPASS( 20, 0, 2, and, 0x000f000f, 0x00ff00ff, 0x0f0f0f0f );
+  TEST_ORRR_SRC21_BYPASS( 21, 1, 0, and, 0x0f000f00, 0xff00ff00, 0x0f0f0f0f );
+  TEST_ORRR_SRC21_BYPASS( 22, 1, 1, and, 0x00f000f0, 0x0ff00ff0, 0xf0f0f0f0 );
+  TEST_ORRR_SRC21_BYPASS( 23, 2, 0, and, 0x000f000f, 0x00ff00ff, 0x0f0f0f0f );
+
+  TEST_ORRR_ZEROSRC1 ( 24, and, 0, 0xff00ff00 );
+  TEST_ORRR_ZEROSRC2 ( 25, and, 0, 0x00ff00ff );
+  TEST_ORRR_ZEROSRC12( 26, and, 0 );
+  TEST_ORRR_ZERODEST ( 27, and, 0x11111111, 0x22222222 );
 
   TEST_PASSFAIL
 
