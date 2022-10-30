@@ -33,6 +33,7 @@ include SIM-qemu/Makefile.qemu-$(VER_QEMU)
 include SOC-chipyard/Makefile.chipyard-$(VER_CHIPYARD)
 
 include DADAO-tests/Makefile.tests-isa
+include DADAO-tests/Makefile.tests-simple
 include DADAO-bench/Makefile.bench
 
 tch-gnu-highfive:
