@@ -34,6 +34,7 @@ include SOC-chipyard/Makefile.chipyard-$(VER_CHIPYARD)
 
 include DADAO-tests/Makefile.tests-isa
 include DADAO-tests/Makefile.tests-simple
+include DADAO-tests/Makefile.tests-dejagnu
 include DADAO-bench/Makefile.bench
 
 tch-gnu-highfive:

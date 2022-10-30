@@ -18,7 +18,6 @@ DDB_QEMU_SYS		:= $(DIR_DADAO_INSTALL)/bin/qemu-system-dadao
 
 include DADAO-bench/Makefile.bench-dhrystone
 include DADAO-bench/Makefile.bench-multi-arch
-include DADAO-bench/Makefile.bench-gcc-testsuite-dejagnu-init
 include DADAO-bench/Makefile.bench-coremark
 include DADAO-bench/Makefile.bench-embench
 include DADAO-bench/Makefile.bench-mibench
