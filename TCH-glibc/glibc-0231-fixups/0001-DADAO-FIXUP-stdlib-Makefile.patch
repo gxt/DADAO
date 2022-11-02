@@ -1,0 +1,26 @@
+From 9fca6d27f0face5cb19b08f9bc95516a7c568dd7 Mon Sep 17 00:00:00 2001
+From: zhangzebo <zhangzebo@pkunity.com>
+Date: Mon, 31 Oct 2022 15:40:07 +0800
+Subject: [PATCH] TCH-glibc: FIXUP-__source/glibc-0231/stdlib
+
+Signed-off-by: zhangzebo <zhangzebo@pkunity.com>
+---
+ stdlib/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/stdlib/Makefile b/stdlib/Makefile
+index 45214b59e4..ca697d2c11 100644
+--- a/stdlib/Makefile
++++ b/stdlib/Makefile
+@@ -146,7 +146,7 @@ CFLAGS-system.os = -fomit-frame-pointer
+ CFLAGS-fmtmsg.c += -fexceptions
+ 
+ CFLAGS-strfmon.c += $(libio-mtsafe)
+-CFLAGS-strfmon_l.c += $(libio-mtsafe)
++CFLAGS-strfmon_l.c += $(libio-mtsafe) -O1
+ 
+ # The strfrom class of functions call __printf_fp in order to convert the
+ # floating-point value to characters.  This requires the value of IO_MTSAFE_IO.
+-- 
+2.34.1
+

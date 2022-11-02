@@ -1,0 +1,26 @@
+From f8e8f31afb2b44d073eb9e9db219016f0a0ca91b Mon Sep 17 00:00:00 2001
+From: zhangzebo <zhangzebo@pkunity.com>
+Date: Mon, 31 Oct 2022 15:45:29 +0800
+Subject: [PATCH] TCH-glibc: FIXUP-glibc-0231/posix/Makefile
+
+Signed-off-by: zhangzebo <zhangzebo@pkunity.com>
+---
+ posix/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/posix/Makefile b/posix/Makefile
+index 4507d84bf1..a90a523a13 100644
+--- a/posix/Makefile
++++ b/posix/Makefile
+@@ -247,7 +247,7 @@ CFLAGS-execl.os = -fomit-frame-pointer
+ CFLAGS-execvp.os = -fomit-frame-pointer
+ CFLAGS-execlp.os = -fomit-frame-pointer
+ CFLAGS-nanosleep.c += -fexceptions -fasynchronous-unwind-tables
+-
++CFLAGS-fnmatch.c += -O1
+ tstgetopt-ARGS = -a -b -cfoobar --required foobar --optional=bazbug \
+ 		--none random --col --color --colour
+ 
+-- 
+2.34.1
+
