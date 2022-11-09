@@ -56,7 +56,7 @@ test_ ## testnum:						\
 	inst	rd14, rd1, rd2;						\
 	.rept	swym_cycles						\
 		swym;							\
-	.endr								\
+	.endr;								\
 	rd2rd	rd6, rd14, 0;						\
 	addi	rd4, 1;							\
 	cmps	rd5, rd4, 2;						\
@@ -69,11 +69,11 @@ test_ ## testnum:						\
 1:	move	rd1, val1;						\
 	.rept	src1_swyms						\
 		swym;							\
-	.endr								\
+	.endr;								\
 	move	rd2, val2;						\
 	.rept	src2_swyms						\
 		swym;							\
-	.endr								\
+	.endr;								\
 	inst	rd14, rd1, rd2;						\
 	addi	rd4, 1;							\
 	cmps	rd5, rd4, 2;						\
@@ -86,11 +86,11 @@ test_ ## testnum:						\
 1:	move	rd2, val1;						\
 	.rept	src1_swyms						\
 		swym;							\
-	.endr								\
+	.endr;								\
 	move	rd1, val2;						\
 	.rept	src2_swyms						\
 		swym;							\
-	.endr								\
+	.endr;								\
 	inst	rd14, rd1, rd2;						\
 	addi	rd4, 1;							\
 	cmps	rd5, rd4, 2;						\
