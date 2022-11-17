@@ -101,7 +101,6 @@ elf_machine_runtime_setup (struct link_map *l, int lazy, int profile)
 _start:						\n\
 	swym					\n\
 	call	_dl_start			\n\
-	.end	_start				\n\
 						\n\
 	.global	_dl_start_user			\n\
 	.type	_dl_start_user, @function	\n\
