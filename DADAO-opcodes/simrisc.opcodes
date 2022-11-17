@@ -1,0 +1,263 @@
+# DADAO instructions opcodes
+
+#
+# Load Store Instructions
+#
+
+[ rrii	op:8	ha:6	hb:6	imms:12 ]
+& @mem	rd@ha rb@hb (ha!=000000)
+ldbs	00110000
+ldws	00110001
+ldts	00110010
+ldo	00110011
+ldbu	01000000
+ldwu	01000001
+ldtu	01000010
+
+& @mem rd@ha rb@hb
+stb	00111000
+stw	00111001
+stt	00111010
+sto	00111011
+
+& @mem rb@ha rb@hb
+ldrb	01000011		&& (ha!=000000)
+strb	01001011
+
+& @mem rf@ha rb@hb
+ldft	01010010
+ldfo	01010011
+stft	01011010
+stfo	01011011
+
+[ rrri	op:8	ha:6	hb:6	hc:6	immu:6 ]
+& @mem @reg rd@ha rb@hb (ha!=000000) (ha+immu<111111)
+ldmbs	00110100
+ldmws	00110101
+ldmts	00110110
+ldmo	00110111
+ldmbu	01000100
+ldmwu	01000101
+ldmtu	01000110
+
+& @mem @reg rd@ha rb@hb (ha+immu<=111111)
+stmb	00111100
+stmw	00111101
+stmt	00111110
+stmo	00111111
+
+& @mem @reg rb@ha rb@hb
+ldmrb	01000111		&& (ha!=000000) (ha+immu<111111)
+stmrb	01001111
+
+& @mem @reg rf@ha rb@hb (ha+immu<=111111)
+ldmft	01010110
+ldmfo	01010111
+stmft	01011110
+stmfo	01011111
+
+& @mem @reg ra@ha rb@hb (ha+immu<=111111)
+ldmra	01100111
+stmra	01101111
+
+#
+# Register Assignment Instructions
+#
+
+[ orri	op:14	ha:6	hb:6	immu:6 ]
+& @reg
+rd2rd	00010000 101000		&& rd@ha rd@hb
+rd2rb	00010000 101001		&& rd@ha rb@hb
+rb2rd	00010000 101010		&& rb@ha rd@hb
+rb2rb	00010000 101011		&& rb@ha rb@hb
+rd2rf	00010000 110001		&& rd@ha rf@hb
+rf2rd	00010000 110010		&& rf@ha rd@hb
+rf2rf	00010000 110011		&& rf@ha rf@hb
+rd2ra	00010000 111001		&& rd@ha ra@hb
+ra2rd	00010000 111010		&& ra@ha rd@hb
+
+[ rrrr	op:8	ha:6	hb:6	hc:6	hd:6 ]
+& rd@ha rd@hb rd@hc rd@hd (hc!=000000) (hd!=000000)
+csn	00100000
+csnn	00100001
+csz	00100010
+csnz	00100011
+csp	00100100
+csnp	00100101
+csod	00100110
+csev	00100111
+
+[ rjii	op:8	ha:6	ww:2	immu:16 ]
+& rd@ha (ha!=000000)
+orw	00010100
+andnw	00010101
+setzw	00010110
+setow	00010111
+
+& rb@ha (ha!=000000)
+orw	01001100
+andnw	01001101
+setzw	01001110
+
+& rf@ha
+setw	01010100
+
+#
+# Arithmetic Instructions
+#
+[ rrrr	op:8	ha:6	hb:6	hc:6	hd:6 ]
+& rd@ha rd@hb rd@hc rd@hd
+add	00011010
+sub	00011011
+muls	00011100
+mulu	00011101
+divs	00011110
+divu	00011111
+
+[ riii	op:8	ha:6	imms:18 ]
+& (ha!=000000)
+addi	00011001		&& rd@ha
+addi	01001001		&& rb@ha
+adrp	01001000		&& rb@ha
+
+[ rrii	op:8	ha:6	hb:6	imms:12]
+cmps	00010010		&& rd@ha rd@hb
+
+[ rrii	op:8	ha:6	hb:6	immu:12]
+cmpu	00010011		&& rd@ha rd@hb
+
+[ orrr	op:14	hb:6	hc:6	hd:6 ]
+& (hb!=000000)
+addrb	00010000 101110		&& rb@hb rb@hc rd@hd
+subrb	00010000 101111		&& rb@hb rb@hc rd@hd
+
+cmps	00010000 100100		&& rd@hb rd@hc rd@hd
+cmpu	00010000 100101		&& rd@hb rd@hc rd@hd
+cmprb	00010000 101101		&& rd@hb rb@hc rb@hd
+
+& rd@hb rd@hc rd@hd (hb!=000000)
+and	00010000 001000
+orr	00010000 001001
+xor	00010000 001010
+
+shlu	00010000 010001
+shrs	00010000 010010
+shru	00010000 010011
+exts	00010000 010100
+extz	00010000 010101
+not	00010000 010110
+
+[ orri	op:14	ha:6	hb:6	immu:6 ]
+& rd@hb rd@hc (hb!=000000)
+shlu	00010000 011001
+shrs	00010000 011010
+shru	00010000 011011
+exts	00010000 011100
+extz	00010000 011101
+not	00010000 011110
+
+#
+# Floating Point Instructions
+#
+[ orri	op:14	ha:6	hb:6	immu:6 ]
+& @reg rf@hb rf@hc
+ft2fo	01010000 000001
+fo2ft	01010000 000100
+
+& @reg rd@hb rf@hc (hb!=000000)
+ft2rd	01010000 000011
+fo2rd	01010000 000111
+
+& @reg rf@hb rd@hc
+rd2ft	01010000 001100
+rd2fo	01010000 001101
+
+[ orrr	op:14	hb:6	hc:6	hd:6 ]
+& rf@hb rf@hc rf@hd
+ftadd	01010000 010000
+ftsub	01010000 010001
+ftmul	01010000 010010
+ftdiv	01010000 010011
+foadd	01010000 100000
+fosub	01010000 100001
+fomul	01010000 100010
+fodiv	01010000 100011
+
+[ orri	op:14	hb:6	hc:6	immu:6 ]
+& @reg rf@hb rf@hc
+ftabs	01010000 010100
+ftneg	01010000 010101
+ftsqrt	01010000 010110
+foabs	01010000 100100
+foneg	01010000 100101
+fosqrt	01010000 100110
+
+[ orrr	op:14	hb:6	hc:6	hd:6 ]
+& rd@hb rf@hc rf@hd (hb!=000000)
+ftcun	01010000 011000
+ftcor	01010000 011001
+ftcne	01010000 011010
+ftceq	01010000 011011
+ftclt	01010000 011100
+ftcge	01010000 011101
+ftcgt	01010000 011110
+ftcle	01010000 011111
+
+focun	01010000 101000
+focor	01010000 101001
+focne	01010000 101010
+foceq	01010000 101011
+foclt	01010000 101100
+focge	01010000 101101
+focgt	01010000 101110
+focle	01010000 101111
+
+#
+# Control Flow Instructions
+#
+[ oiii	op:14	immu:18 ]
+& (immu==000000000000000000)
+swym	00010000 000000
+
+[ riii	op:8	ha:6	imms:18 ]
+& @jmp @bpd rd@ha
+brn	00101000
+brnn	00101001
+brz	00101010
+brnz	00101011
+brp	00101100
+brnp	00101101
+brod	00101110
+brev	00101111
+
+& @jmp @mem rd@ha
+ret	01101110
+
+[ iiii	op:8	imms:24 ]
+& @jmp
+jump	01100100
+call	01101100		&& @mem
+
+[ rrii	op:8	ha:6	hb:6	imms:12 ]
+& @jmp rb@ha rd@hb
+jump	01100101
+call	01101101		&& @mem
+
+#
+# System Instructions
+#
+[ riii	op:8	ha:6	immu:18 ]
+& @rmu cp@ha
+trap	01110000		&& @jmp
+cpcoop	01110001
+
+[ rrii	op:8	ha:6	hb:6	immu:12 ]
+& @rmu cp@ha rb@hb
+cpload	01110100		&& @mem
+cpstor	01110101		&& @mem
+
+[ rrrr	op:8	ha:6	hb:6	hc:6	hd:6 ]
+& @rmu cp@ha cr@hb cr@hc rd@hd
+rd2cr	01110010
+cr2rd	01110011
+
