@@ -1,0 +1,106 @@
+From 8d253374461f3a64785103d721be8efd74ae17e0 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 17 Nov 2022 08:38:44 +0800
+Subject: [PATCH] DADAO-fixup: .gitmodule
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ .gitmodules | 44 ++++++++++++++++++++++----------------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
+
+diff --git a/.gitmodules b/.gitmodules
+index 08b1b48a09..0852ecdd8a 100644
+--- a/.gitmodules
++++ b/.gitmodules
+@@ -1,66 +1,66 @@
+ [submodule "roms/seabios"]
+ 	path = roms/seabios
+-	url = https://gitlab.com/qemu-project/seabios.git/
++	url = /pub/GITLAB/qemu-project/seabios.git/
+ [submodule "roms/SLOF"]
+ 	path = roms/SLOF
+-	url = https://gitlab.com/qemu-project/SLOF.git
++	url = /pub/GITLAB/qemu-project/SLOF.git
+ [submodule "roms/ipxe"]
+ 	path = roms/ipxe
+-	url = https://gitlab.com/qemu-project/ipxe.git
++	url = /pub/GITLAB/qemu-project/ipxe.git
+ [submodule "roms/openbios"]
+ 	path = roms/openbios
+-	url = https://gitlab.com/qemu-project/openbios.git
++	url = /pub/GITLAB/qemu-project/openbios.git
+ [submodule "roms/qemu-palcode"]
+ 	path = roms/qemu-palcode
+-	url = https://gitlab.com/qemu-project/qemu-palcode.git
++	url = /pub/GITLAB/qemu-project/qemu-palcode.git
+ [submodule "roms/sgabios"]
+ 	path = roms/sgabios
+-	url = https://gitlab.com/qemu-project/sgabios.git
++	url = /pub/GITLAB/qemu-project/sgabios.git
+ [submodule "dtc"]
+ 	path = dtc
+-	url = https://gitlab.com/qemu-project/dtc.git
++	url = /pub/GITLAB/qemu-project/dtc.git
+ [submodule "roms/u-boot"]
+ 	path = roms/u-boot
+-	url = https://gitlab.com/qemu-project/u-boot.git
++	url = /pub/GITLAB/qemu-project/u-boot.git
+ [submodule "roms/skiboot"]
+ 	path = roms/skiboot
+-	url = https://gitlab.com/qemu-project/skiboot.git
++	url = /pub/GITLAB/qemu-project/skiboot.git
+ [submodule "roms/QemuMacDrivers"]
+ 	path = roms/QemuMacDrivers
+-	url = https://gitlab.com/qemu-project/QemuMacDrivers.git
++	url = /pub/GITLAB/qemu-project/QemuMacDrivers.git
+ [submodule "ui/keycodemapdb"]
+ 	path = ui/keycodemapdb
+-	url = https://gitlab.com/qemu-project/keycodemapdb.git
++	url = /pub/GITLAB/qemu-project/keycodemapdb.git
+ [submodule "capstone"]
+ 	path = capstone
+-	url = https://gitlab.com/qemu-project/capstone.git
++	url = /pub/GITLAB/qemu-project/capstone.git
+ [submodule "roms/seabios-hppa"]
+ 	path = roms/seabios-hppa
+-	url = https://gitlab.com/qemu-project/seabios-hppa.git
++	url = /pub/GITLAB/qemu-project/seabios-hppa.git
+ [submodule "roms/u-boot-sam460ex"]
+ 	path = roms/u-boot-sam460ex
+-	url = https://gitlab.com/qemu-project/u-boot-sam460ex.git
++	url = /pub/GITLAB/qemu-project/u-boot-sam460ex.git
+ [submodule "tests/fp/berkeley-testfloat-3"]
+ 	path = tests/fp/berkeley-testfloat-3
+-	url = https://gitlab.com/qemu-project/berkeley-testfloat-3.git
++	url = /pub/GITLAB/qemu-project/berkeley-testfloat-3.git
+ [submodule "tests/fp/berkeley-softfloat-3"]
+ 	path = tests/fp/berkeley-softfloat-3
+-	url = https://gitlab.com/qemu-project/berkeley-softfloat-3.git
++	url = /pub/GITLAB/qemu-project/berkeley-softfloat-3.git
+ [submodule "roms/edk2"]
+ 	path = roms/edk2
+-	url = https://gitlab.com/qemu-project/edk2.git
++	url = /pub/GITLAB/qemu-project/edk2.git
+ [submodule "slirp"]
+ 	path = slirp
+-	url = https://gitlab.com/qemu-project/libslirp.git
++	url = /pub/GITLAB/qemu-project/libslirp.git
+ [submodule "roms/opensbi"]
+ 	path = roms/opensbi
+-	url = 	https://gitlab.com/qemu-project/opensbi.git
++	url = 	/pub/GITLAB/qemu-project/opensbi.git
+ [submodule "roms/qboot"]
+ 	path = roms/qboot
+-	url = https://gitlab.com/qemu-project/qboot.git
++	url = /pub/GITLAB/qemu-project/qboot.git
+ [submodule "meson"]
+ 	path = meson
+-	url = https://gitlab.com/qemu-project/meson.git
++	url = /pub/GITLAB/qemu-project/meson.git
+ [submodule "roms/vbootrom"]
+ 	path = roms/vbootrom
+-	url = https://gitlab.com/qemu-project/vbootrom.git
++	url = /pub/GITLAB/qemu-project/vbootrom.git
+-- 
+2.34.1
+

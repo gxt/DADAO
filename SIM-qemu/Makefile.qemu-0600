@@ -9,6 +9,7 @@ QEMU_0600_TARGETS	:= dadao-softmmu,dadao-linux-user
 
 QEMU_0600_NEWFILES	:= $(DIR_DADAO_TOP)/SIM-qemu/qemu-0600-newfiles
 QEMU_0600_PATCHES	:= $(DIR_DADAO_TOP)/SIM-qemu/qemu-0600-patches
+QEMU_0600_FIXUPS	:= $(DIR_DADAO_TOP)/SIM-qemu/qemu-0600-fixups
 
 QEMU_0600_SOURCE	:= $(DIR_DADAO_SOURCE)/qemu-0600
 QEMU_0600_DECODE	:= $(QEMU_0600_SOURCE)/target/dadao/decode-dadao.inc.c
@@ -74,6 +75,8 @@ endif
 	# root config
 	@echo "CONFIG: Apply patches"
 	@cd $(QEMU_0600_SOURCE); git am $(QEMU_0600_PATCHES)/9*.patch
+	# FIXUP
+	@cd $(QEMU_0600_SOURCE); git am $(QEMU_0600_FIXUPS)/*.patch
 
 qemu-0600-build-new:
 	@rm -fr $(QEMU_0600_BUILD)
