@@ -23,6 +23,9 @@ def regfile_fillin(field, regfile_restrictions):
         regname = regfile_restrictions[field]
     return regname
 
+def append_immlen(field, field_len):
+    return field + str(field_len)
+
 def get_mask_match(fields, opcode, cond_restrictions):
     mask = ''
     match = ''
@@ -49,6 +52,8 @@ def parse_line(line: str):
         fields = {}
         for field in info[1:]:
             field_name, field_len = field.split(':')
+            if field_name[0:3] == 'imm':
+                field_name = append_immlen(field_name, int(field_len))
             fields[field_name] = int(field_len)
         return line_type, optype, fields
     if line[0] == '&':
@@ -155,18 +160,12 @@ def read_opcodes(file_name: str):
 
 
 def gen_decode_file(insts: dict, output_file: str):
-    ## problem: orw* should use different binary code to define
-    ## solution: use field_bincode to fill the fields that can be known
-    ## problem: ret is covered in call
-    ## solution: check ret instructions separately
     with open(output_file, 'w') as f:
         print('''# This file is processed by scripts/decodetree.py
 
 
         ''', file=f)
         for inst_name, inst_description in insts.items():
-            if inst_name == 'ret':  ## not very good？
-                continue
             line = inst_name + ' ' * (10 - len(inst_name))
             if len(inst_description['opcode']) == 8:
                 line = line + inst_description['opcode'] + ' '
@@ -189,7 +188,10 @@ def gen_decode_file(insts: dict, output_file: str):
 def gen_opc_file(insts: dict, output_file: str):
     with open(output_file, 'w') as f:
         for inst_name, inst_description in insts.items():
-            fields = list(inst_description['fields'].keys())[1:]
+            if inst_description['fields']['op'] == 8:
+                fields = list(inst_description['fields'].keys())[1:]
+            else:
+                fields = list(inst_description['fields'].keys())
             regfile_restrictions = inst_description['regfile_restrictions']
             operands = fields + ['none'] * (4 - len(fields))
             operands = [regfile_fillin(operands[i], regfile_restrictions) for i in range(len(operands))]

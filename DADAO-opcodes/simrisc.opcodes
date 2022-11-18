@@ -31,7 +31,7 @@ stft	01011010
 stfo	01011011
 
 [ rrri	op:8	ha:6	hb:6	hc:6	immu:6 ]
-& @mem @reg rd@ha rb@hb (ha!=000000) (ha+immu<111111)
+& @mem @reg rd@ha rb@hb rd@hc (ha!=000000) (ha+immu<111111)
 ldmbs	00110100
 ldmws	00110101
 ldmts	00110110
@@ -40,23 +40,23 @@ ldmbu	01000100
 ldmwu	01000101
 ldmtu	01000110
 
-& @mem @reg rd@ha rb@hb (ha+immu<=111111)
+& @mem @reg rd@ha rb@hb rd@hc (ha+immu<=111111)
 stmb	00111100
 stmw	00111101
 stmt	00111110
 stmo	00111111
 
-& @mem @reg rb@ha rb@hb
+& @mem @reg rb@ha rb@hb rd@hc
 ldmrb	01000111		&& (ha!=000000) (ha+immu<111111)
 stmrb	01001111
 
-& @mem @reg rf@ha rb@hb (ha+immu<=111111)
+& @mem @reg rf@ha rb@hb rd@hc (ha+immu<=111111)
 ldmft	01010110
 ldmfo	01010111
 stmft	01011110
 stmfo	01011111
 
-& @mem @reg ra@ha rb@hb (ha+immu<=111111)
+& @mem @reg ra@ha rb@hb rd@hc (ha+immu<=111111)
 ldmra	01100111
 stmra	01101111
 
