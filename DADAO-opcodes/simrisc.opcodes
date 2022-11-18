@@ -87,7 +87,7 @@ csnp	00100101
 csod	00100110
 csev	00100111
 
-[ rjii	op:8	ha:6	ww:2	immu:16 ]
+[ rwii	op:8	ha:6	ww:2	immu:16 ]
 & rd@ha (ha!=000000)
 orw	00010100
 andnw	00010101
