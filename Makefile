@@ -3,7 +3,6 @@
 #
 DIR_DADAO_TMP		:= /tmp/__$(USER)-DADAO/
 DIR_DADAO_TOP		:= $(shell pwd)
-DIR_DADAO_OPCODES	:= $(DIR_DADAO_TOP)/DADAO-opcodes/
 DIR_DADAO_SOURCE	:= $(DIR_DADAO_TOP)/__source
 DIR_DADAO_BUILD		:= $(DIR_DADAO_TOP)/__build
 DIR_DADAO_INSTALL	:= $(DIR_DADAO_TOP)/__install
@@ -31,6 +30,8 @@ include TCH-newlib-cygwin/Makefile.newlib-cygwin-$(VER_NEWLIB_CYGWIN)
 include ENV-linux/Makefile.linux-$(VER_LINUX)
 include SIM-qemu/Makefile.qemu-$(VER_QEMU)
 include SOC-chipyard/Makefile.chipyard-$(VER_CHIPYARD)
+
+include DADAO-opcodes/Makefile.opcodes
 
 include DADAO-tests/Makefile.tests-isa
 include DADAO-tests/Makefile.tests-simple

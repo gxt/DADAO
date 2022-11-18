@@ -55,7 +55,7 @@ endif
 	@echo "TARGET: Copy target/dadao dir"
 	@cp -a $(QEMU_0600_NEWFILES)/target/* $(QEMU_0600_SOURCE)/target/
 	@echo "TARGET-DECODE: Generate dadao decodetree file"
-	@make TARGET_DECODE_QEMU=$(QEMU_0600_DECODE) -C $(DIR_DADAO_OPCODES) decode-qemu
+	@make TARGET_DECODE_QEMU=$(QEMU_0600_DECODE) decode-qemu
 	@cd $(QEMU_0600_SOURCE);					\
 		git add target/dadao;					\
 		git commit -sm"DADAO-target: add dadao support"
