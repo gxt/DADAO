@@ -98,7 +98,8 @@ endif
 	# handle opcodes dir
 	@cp -a $(BINUTILS_GDB_0235_NEWFILES)/opcodes/* $(BINUTILS_GDB_0235_SOURCE)/opcodes/
 	# OPCODES: Generate dadao opcodes file
-	@make TARGET_OPCODES=$(BINUTILS_GDB_0235_OPCODES) opcodes-binutils
+	@test -f $(OPCODES_OUTPUT_BIN) || make -s -C $(DIR_DADAO_TOP) opcodes-parse
+	@cp $(OPCODES_OUTPUT_BIN) $(BINUTILS_GDB_0235_OPCODES)
 	@cd $(BINUTILS_GDB_0235_SOURCE);				\
 		git add opcodes;					\
 		git commit -sm"DADAO: add opcodes support";		\
