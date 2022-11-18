@@ -120,10 +120,10 @@ addi	00011001		&& rd@ha
 addi	01001001		&& rb@ha
 adrp	01001000		&& rb@ha
 
-[ rrii	op:8	ha:6	hb:6	imms:12]
+[ rrii	op:8	ha:6	hb:6	imms:12 ]
 cmps	00010010		&& rd@ha rd@hb
 
-[ rrii	op:8	ha:6	hb:6	immu:12]
+[ rrii	op:8	ha:6	hb:6	immu:12 ]
 cmpu	00010011		&& rd@ha rd@hb
 
 [ orrr	op:14	hb:6	hc:6	hd:6 ]
