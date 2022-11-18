@@ -1,22 +1,18 @@
-all:
-	@echo ""
-	@echo "Use m4 to generate opcodes"
-	@echo ""
-
-clean:
-	@rm -f *.inc.c *.opc
-
-M4			:= m4
-GEN_OPCODES		:= gen-opcodes-binutils.m4
-TARGET_OPCODES		?= target-opcodes.opc
-
-opcodes-binutils:
-	$(M4) $(GEN_OPCODES)	> $(TARGET_OPCODES)
-
 PYTHON			:= /usr/bin/python3
-# copy from qemu-0600/scripts/decodetree.py
-DECODETREE		?= decodetree-0600.py
-TARGET_DECODE_QEMU	?= $(shell pwd)/target-decode.inc.c
 
-decode-qemu: simrisc.decode $(DECODETREE)
-	$(PYTHON) $(DECODETREE) --decode disas_dadao -o $(TARGET_DECODE_QEMU) $<
+OPCODES_SRC_DIR		:= $(DIR_DADAO_TOP)/DADAO-opcodes
+OPCODES_DST_DIR		?= $(DIR_DADAO_SOURCE)/__opcodes/
+
+OPCODES_PARSE		:= $(OPCODES_SRC_DIR)/parse.py
+OPCODES_INPUT		:= $(OPCODES_SRC_DIR)/simrisc.opcodes
+OPCODES_OUTPUT_QEMU	:= $(OPCODES_DST_DIR)/output.qemu
+OPCODES_OUTPUT_BIN	:= $(OPCODES_DST_DIR)/output.bin
+OPCODES_OUTPUT_ENV	:= $(OPCODES_DST_DIR)/output.env
+
+opcodes-parse:
+	@make -s opcodes-clean
+	@mkdir -p $(OPCODES_DST_DIR)
+	$(PYTHON) $(OPCODES_PARSE) $(OPCODES_INPUT) $(OPCODES_OUTPUT_QEMU) $(OPCODES_OUTPUT_BIN) $(OPCODES_OUTPUT_ENV)
+
+opcodes-clean:
+	@rm -fr $(OPCODES_DST_DIR)

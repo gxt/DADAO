@@ -225,9 +225,9 @@ def gen_encoding_file(insts: dict, output_file: str):
 
 if __name__ == '__main__':
     import os
-    insts = read_opcodes('simrisc.opcodes')
-    if not os.path.exists('output-files'):
-        os.makedirs('output-files')
-    gen_decode_file(insts, 'output-files/output.decode')
-    gen_opc_file(insts, 'output-files/output.opc')
-    gen_encoding_file(insts, 'output-files/output.encoding')
+    import sys
+    insts = read_opcodes(sys.argv[1])
+    gen_decode_file(insts, sys.argv[2])
+    gen_opc_file(insts, sys.argv[3])
+    gen_encoding_file(insts, sys.argv[4])
+
