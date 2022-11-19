@@ -147,7 +147,7 @@ exts	00010000 010100
 extz	00010000 010101
 not	00010000 010110
 
-[ orri	op:14	ha:6	hb:6	immu:6 ]
+[ orri	op:14	hb:6	hc:6	immu:6 ]
 & rd@hb rd@hc (hb!=000000)
 shlu	00010000 011001
 shrs	00010000 011010
@@ -159,7 +159,7 @@ not	00010000 011110
 #
 # Floating Point Instructions
 #
-[ orri	op:14	ha:6	hb:6	immu:6 ]
+[ orri	op:14	hb:6	hc:6	immu:6 ]
 & @reg rf@hb rf@hc
 ft2fo	01010000 000001
 fo2ft	01010000 000100
