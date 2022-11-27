@@ -59,17 +59,6 @@ static struct dadao_dis_info *initialize_dadao_dis_info (void)
 			continue;
 		}
 
-		if (opcodep->op_fb == dadao_operand_w16) {
-			minor_opcodep = ddis_infop->ddis_minorp[i];
-			if (minor_opcodep == NULL) {
-				minor_opcodep = xcalloc (4, sizeof (struct dadao_opcode *));
-				ddis_infop->ddis_minorp[i] = minor_opcodep;
-				ddis_infop->ddis_optype[i] = dadao_operand_w16;
-			}
-			minor_opcodep[opcodep->minor_opcode] = opcodep;
-			continue;
-		}
-
 		ddis_infop->ddis_majorp[i] = opcodep;
 		ddis_infop->ddis_optype[i] = dadao_operand_none;
 	}
@@ -142,11 +131,6 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		opcodep = minor_opcodep[fa];
 		break;
 
-	case dadao_operand_w16:
-		minor_opcodep = ddis_infop->ddis_minorp[(insn >> 24)];
-		opcodep = minor_opcodep[(fb >> 4)];
-		break;
-
 	default:
 		opcodep = NULL;
 	}
@@ -199,9 +183,9 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	case dadao_operand_ra:	__DDIS_PRINT_REG("ra", fb);	i++;	break;
 	case dadao_operand_cr:	__DDIS_PRINT_REG("cr", fb); i++;	break;
 
-	case dadao_operand_w16:
-		(*info->fprintf_func) (info->stream, "0x%x", (insn & 0xFFFF));
-		return 4;
+	case dadao_operand_ww:
+		(*info->fprintf_func) (info->stream, "%x", ((insn>>16) & 0x3));
+		break;
 
 	case dadao_operand_imms18:
 		if ((insn & 0xFF000000) == 0x19000000 || (insn & 0xFF000000) == 0x49000000) {		/* addi riii */
@@ -236,6 +220,10 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	case dadao_operand_rf:	__DDIS_PRINT_REG("rf", fc);	i++;	break;
 	case dadao_operand_ra:	__DDIS_PRINT_REG("ra", fc);	i++;	break;
 	case dadao_operand_cr:	__DDIS_PRINT_REG("cr", fc); i++;	break;
+
+	case dadao_operand_immu16:
+		(*info->fprintf_func) (info->stream, "0x%x", (insn & 0xFFFF));
+		return 4;
 
 	case dadao_operand_imms12:
 		if (insn & 0x800) {

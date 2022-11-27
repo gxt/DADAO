@@ -43,7 +43,8 @@ enum dadao_operand_type {
 	dadao_operand_imms12,	/* signed imm 12-bit */
 	dadao_operand_imms18,	/* signed imm 18-bit */
 	dadao_operand_imms24,	/* signed imm 24-bit */
-	dadao_operand_w16,	/* setw/incw 16-bit word (unsigned) */
+	dadao_operand_ww,	/* wyde pointer 2-bit (unsigned) */
+	dadao_operand_immu16,	/* setw/incw 16-bit word (unsigned) */
 	dadao_operand_cp,	/* co-processor id */
 	dadao_operand_cr,	/* co-processor reg number */
 	dadao_operand_noop,	/* hard insn should not be here */

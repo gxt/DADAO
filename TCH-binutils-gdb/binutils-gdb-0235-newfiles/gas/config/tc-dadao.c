@@ -650,12 +650,10 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
         n_exp++;
         break;
 
-    case dadao_operand_w16:
-        __DD_EXP_SHOULD_BE_IMM(exp[n_exp], 0, 0xFFFF);
-        if (insn->minor_opcode > 3)
-            return -1;
-        *insn_code = ((insn->major_opcode << 24) | (fa << 18) | (insn->minor_opcode << 16) | (exp[n_exp].X_add_number & 0xFFFF));
-        return 0;
+    case dadao_operand_ww:
+        __DD_EXP_SHOULD_BE_IMM(exp[n_exp], 0, 0x3);
+	n_exp++;
+	break;
 
     case dadao_operand_imms18:
         /* condbranch */
@@ -740,6 +738,11 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
     case dadao_operand_immu12:
         __DD_EXP_SHOULD_BE_IMM(exp_next[0], 0, 0xFFF);
         *insn_code = ((insn->major_opcode << 24) | (fa << 18) | (fb << 12) | (exp_next[0].X_add_number & 0xFFF));
+        return 0;
+
+    case dadao_operand_immu16:
+        __DD_EXP_SHOULD_BE_IMM(exp[n_exp], 0, 0xFFFF);
+        *insn_code = ((insn->major_opcode << 24) | (fa << 18) | ((exp[n_exp-1].X_add_number & 0x3) << 16) | (exp[n_exp].X_add_number & 0xFFFF));
         return 0;
 
     case dadao_operand_none:
