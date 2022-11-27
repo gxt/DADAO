@@ -37,12 +37,12 @@ enum dadao_operand_type {
 	dadao_operand_rb,	/* rb reg class */
 	dadao_operand_rf,	/* rf reg class */
 	dadao_operand_ra,	/* ra reg class */
-	dadao_operand_i6,	/* shift left imm6 (unsigned) */
-	dadao_operand_u12,	/* unsigned imm 12-bit */
-	dadao_operand_u18,	/* unsigned imm 18-bit */
-	dadao_operand_s12,	/* signed imm 12-bit */
-	dadao_operand_s18,	/* signed imm 18-bit */
-	dadao_operand_s24,	/* signed imm 24-bit */
+	dadao_operand_immu6,	/* shift left imm6 (unsigned) */
+	dadao_operand_immu12,	/* unsigned imm 12-bit */
+	dadao_operand_immu18,	/* unsigned imm 18-bit */
+	dadao_operand_imms12,	/* signed imm 12-bit */
+	dadao_operand_imms18,	/* signed imm 18-bit */
+	dadao_operand_imms24,	/* signed imm 24-bit */
 	dadao_operand_w16,	/* setw/incw 16-bit word (unsigned) */
 	dadao_operand_cp,	/* co-processor id */
 	dadao_operand_cr,	/* co-processor reg number */

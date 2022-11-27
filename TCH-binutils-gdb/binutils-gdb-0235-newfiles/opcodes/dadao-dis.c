@@ -173,7 +173,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	case dadao_operand_ra:	__DDIS_PRINT_REG("ra", fa);	i++;	break;
 	case dadao_operand_cp:	__DDIS_PRINT_REG("cp", fa); i++;	break;
 
-	case dadao_operand_s24: /* ONLY call or jump be here */
+	case dadao_operand_imms24: /* ONLY call or jump be here */
 		offset = (insn & 0xFFFFFF) << 2;
 		if (offset & 0x2000000)		offset -= 0x4000000;	/* backward */
 
@@ -203,7 +203,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		(*info->fprintf_func) (info->stream, "0x%x", (insn & 0xFFFF));
 		return 4;
 
-	case dadao_operand_s18:
+	case dadao_operand_imms18:
 		if ((insn & 0xFF000000) == 0x19000000 || (insn & 0xFF000000) == 0x49000000) {		/* addi riii */
 			if (insn & 0x20000)
 				(*info->fprintf_func) (info->stream, "%d", (int) (0xFFFC0000 | (insn & 0x3FFFF)));
@@ -220,7 +220,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 		(*info->print_address_func) (memaddr + offset, info);
 		return 4;
 
-	case dadao_operand_u18:
+	case dadao_operand_immu18:
 		(*info->fprintf_func) (info->stream, "%d", (int) (insn & 0x3FFFF));
 		return 4;
 
@@ -237,13 +237,13 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	case dadao_operand_ra:	__DDIS_PRINT_REG("ra", fc);	i++;	break;
 	case dadao_operand_cr:	__DDIS_PRINT_REG("cr", fc); i++;	break;
 
-	case dadao_operand_s12:
+	case dadao_operand_imms12:
 		if (insn & 0x800) {
 			(*info->fprintf_func) (info->stream, "%d", (int) (0xFFFFF000 | (insn & 0xFFF)));
 			return 4;
 		}
 		/* FALLTHROUGH */
-	case dadao_operand_u12:
+	case dadao_operand_immu12:
 		(*info->fprintf_func) (info->stream, "%d", (int) (insn & 0xFFF));
 		return 4;
 
@@ -258,7 +258,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	case dadao_operand_ra:	__DDIS_PRINT_REG(", ra", fd);	break;
 	case dadao_operand_cr:	__DDIS_PRINT_REG(", cr", fd);	break;
 
-	case dadao_operand_i6:
+	case dadao_operand_immu6:
 		(*info->fprintf_func) (info->stream, ", %d", (int) (insn & 0x3F));
 		break;
 
