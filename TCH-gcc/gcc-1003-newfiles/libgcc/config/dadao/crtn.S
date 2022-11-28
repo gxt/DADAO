@@ -12,8 +12,8 @@
 
 	.section .init,"ax",@progbits
 	swym
-	ret
+	ret rd0, 0
 
 	.section .fini,"ax",@progbits
 	swym
-	ret
+	ret rd0, 0

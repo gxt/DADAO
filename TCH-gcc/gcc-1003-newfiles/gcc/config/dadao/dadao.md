@@ -190,7 +190,7 @@
 (define_insn "expanded_return"
   [(return)]
   ""
-	"ret")
+	"ret rd0, 0")
 
 (define_expand "prologue"
   [(const_int 0)]
