@@ -67,14 +67,14 @@ stmra	01101111
 [ orri	op:14	hb:6	hc:6	immu:6 ]
 & @reg
 rd2rd	00010000 101000		&& rd@hb rd@hc
-rd2rb	00010000 101001		&& rd@hb rb@hc
-rb2rd	00010000 101010		&& rb@hb rd@hc
+rd2rb	00010000 101001		&& rb@hb rd@hc
+rb2rd	00010000 101010		&& rd@hb rb@hc
 rb2rb	00010000 101011		&& rb@hb rb@hc
-rd2rf	00010000 110001		&& rd@hb rf@hc
-rf2rd	00010000 110010		&& rf@hb rd@hc
+rd2rf	00010000 110001		&& rf@hb rd@hc
+rf2rd	00010000 110010		&& rd@hb rf@hc
 rf2rf	00010000 110011		&& rf@hb rf@hc
-rd2ra	00010000 111001		&& rd@hb ra@hc
-ra2rd	00010000 111010		&& ra@hb rd@hc
+rd2ra	00010000 111001		&& ra@hb rd@hc
+ra2rd	00010000 111010		&& rd@hb ra@hc
 
 [ rrrr	op:8	ha:6	hb:6	hc:6	hd:6 ]
 & rd@ha rd@hb rd@hc rd@hd (hc!=000000) (hd!=000000)
