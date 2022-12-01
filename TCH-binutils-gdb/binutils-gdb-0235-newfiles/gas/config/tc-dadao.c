@@ -36,7 +36,11 @@ struct option md_longopts[] =
     {
 #define OPTION_NOEXPAND (OPTION_MD_BASE)
         {"no-expand", no_argument, NULL, OPTION_NOEXPAND},
+#define OPTION_MULTI_TO_SINGLE (OPTION_MD_BASE + 1)
+        {"multiple-to-single", no_argument, NULL, OPTION_MULTI_TO_SINGLE},
         {NULL, no_argument, NULL, 0}};
+
+static int multiple_to_single = 0;
 
 size_t md_longopts_size = sizeof(md_longopts);
 
@@ -315,6 +319,10 @@ int md_parse_option(int c, const char *arg ATTRIBUTE_UNUSED)
         expand_op = 0;
         break;
 
+    case OPTION_MULTI_TO_SINGLE:
+        multiple_to_single = 1;
+        break;
+
     default:
         return 0;
     }
@@ -334,6 +342,10 @@ void md_show_usage(FILE *stream)
   -x                      Do not warn when an operand to ABS, a branch,\n\
                           or JUMP is not known to be within range.\n\
                           The linker will catch any errors. \n"));
+    fprintf(stream, _("\
+  -multiple-to-single     Convert a multi-register instruction to \n\
+                          a series of single-register instructions,\n\
+                          such as ldmbs and rd2rd. \n"));
 }
 
 /* Standard calling conventions leave the CFA at SP on entry.  */
@@ -851,6 +863,70 @@ void dadao_md_assemble(char *str)
     {
         as_bad_where(__FILE__, __LINE__, "(%s %s) unknown insn", &insn_alt[1], operands);
         return;
+    }
+
+    if (multiple_to_single == 1)
+    { 
+
+        /* ldm/stm instruction */
+        if ((instruction->name[0] == 'l' && instruction->name[1] == 'd' && instruction->name[2] == 'm') || (instruction->name[0] == 's' && instruction->name[1] == 't' && instruction->name[2] == 'm'))
+        {
+            md_number_to_chars(opcodep, instruction->major_opcode << 24 | exp[0].X_add_number << 18 | (exp[1].X_add_number-64) << 12 | exp[2].X_add_number << 6 | 0, 4);
+            for (int i = 1; i <= exp[3].X_add_number; i++)
+            {
+                opcodep = frag_more(4);
+	        md_number_to_chars(opcodep, 0x19 << 24 | exp[2].X_add_number << 18 | 4, 4);
+                opcodep = frag_more(4);
+	        md_number_to_chars(opcodep, instruction->major_opcode << 24 | (exp[0].X_add_number + i) << 18 | (exp[1].X_add_number-64) << 12 | exp[2].X_add_number << 6 | 0, 4);
+            }
+            if (exp[3].X_add_number > 0)
+            {
+                opcodep = frag_more(4);
+                md_number_to_chars(opcodep, 0x19 << 24 | exp[2].X_add_number << 18 | (0x40000 - 4 * exp[3].X_add_number), 4);
+            }
+
+            return;
+        }
+
+        /* rd2rd and similar instruction */
+        if (instruction->name[2] == '2' && instruction->name[0] != 'c' && instruction->name[3] != 'c')
+        {
+            if (instruction->op_fb == dadao_operand_rb)
+            {
+                exp[0].X_add_number -= 64;
+            }
+            if (instruction->op_fb == dadao_operand_rf)
+            {
+                exp[0].X_add_number -= 128;
+            }
+            if (instruction->op_fb == dadao_operand_ra)
+            {
+                exp[0].X_add_number -= 192;
+            }
+
+            if (instruction->op_fc == dadao_operand_rb)
+            {
+                exp[1].X_add_number -= 64;
+            }
+            if (instruction->op_fb == dadao_operand_rf)
+            {
+                exp[1].X_add_number -= 128;
+            }
+            if (instruction->op_fb == dadao_operand_ra)
+            {
+                exp[1].X_add_number -= 192;
+            }
+
+            md_number_to_chars(opcodep, instruction->major_opcode << 24 | instruction->minor_opcode << 18 | exp[0].X_add_number << 12 | exp[1].X_add_number << 6 | 0, 4);
+            for (int i = 1; i < exp[2].X_add_number; i++)
+            {
+                opcodep = frag_more(4);
+	        md_number_to_chars(opcodep, instruction->major_opcode << 24 | instruction->minor_opcode << 18 | (exp[0].X_add_number + i) << 12 | (exp[1].X_add_number + i) << 6 | 0, 4);
+            }
+
+            return;
+        }
+
     }
 
     if (instruction->type == dadao_type_pseudo)
