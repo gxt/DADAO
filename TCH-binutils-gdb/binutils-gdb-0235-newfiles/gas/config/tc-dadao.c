@@ -581,7 +581,7 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
         return 0;
     }
     
-    if (n_operands + (insn->op_fa == dadao_operand_op) != insn->operands_num)
+    if (n_operands != insn->operands_num)
         return -1;
 
     switch (insn->op_fa)
