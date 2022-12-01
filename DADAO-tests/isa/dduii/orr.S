@@ -1,0 +1,68 @@
+#*****************************************************************************
+# orr.S
+#-----------------------------------------------------------------------------
+#
+# Test orr instruction.
+#
+
+#include "dadao_test.h"
+#include "test_macros.h"
+
+DDTEST_DDUII
+DDTEST_CODE_BEGIN
+
+  #-------------------------------------------------------------
+  # Logical tests
+  #-------------------------------------------------------------
+
+  TEST_ORRR_OP( 2, orr, 0xff0fff0f, 0xff00ff00, 0x0f0f0f0f );
+  TEST_ORRR_OP( 3, orr, 0xfff0fff0, 0x0ff00ff0, 0xf0f0f0f0 );
+  TEST_ORRR_OP( 4, orr, 0x0fff0fff, 0x00ff00ff, 0x0f0f0f0f );
+  TEST_ORRR_OP( 5, orr, 0xf0fff0ff, 0xf00ff00f, 0xf0f0f0f0 );
+
+  #-------------------------------------------------------------
+  # Source/Destination tests
+  #-------------------------------------------------------------
+
+  TEST_ORRR_SRC1_EQ_DEST ( 6, orr, 0xff0fff0f, 0xff00ff00, 0x0f0f0f0f );
+  TEST_ORRR_SRC2_EQ_DEST ( 7, orr, 0xff0fff0f, 0xff00ff00, 0x0f0f0f0f );
+  TEST_ORRR_SRC12_EQ_DEST( 8, orr, 0xff00ff00, 0xff00ff00 );
+
+  #-------------------------------------------------------------
+  # Bypassing tests
+  #-------------------------------------------------------------
+
+
+  TEST_ORRR_DEST_BYPASS( 9,  0, orr, 0xff0fff0f, 0xff00ff00, 0x0f0f0f0f );
+  TEST_ORRR_DEST_BYPASS( 10, 1, orr, 0xfff0fff0, 0x0ff00ff0, 0xf0f0f0f0 );
+  TEST_ORRR_DEST_BYPASS( 11, 2, orr, 0x0fff0fff, 0x00ff00ff, 0x0f0f0f0f );
+
+  TEST_ORRR_SRC12_BYPASS( 12, 0, 0, orr, 0xff0fff0f, 0xff00ff00, 0x0f0f0f0f );
+  TEST_ORRR_SRC12_BYPASS( 13, 0, 1, orr, 0xfff0fff0, 0x0ff00ff0, 0xf0f0f0f0 );
+  TEST_ORRR_SRC12_BYPASS( 14, 0, 2, orr, 0x0fff0fff, 0x00ff00ff, 0x0f0f0f0f );
+  TEST_ORRR_SRC12_BYPASS( 15, 1, 0, orr, 0xff0fff0f, 0xff00ff00, 0x0f0f0f0f );
+  TEST_ORRR_SRC12_BYPASS( 16, 1, 1, orr, 0xfff0fff0, 0x0ff00ff0, 0xf0f0f0f0 );
+  TEST_ORRR_SRC12_BYPASS( 17, 2, 0, orr, 0x0fff0fff, 0x00ff00ff, 0x0f0f0f0f );
+
+  TEST_ORRR_SRC21_BYPASS( 18, 0, 0, orr, 0xff0fff0f, 0xff00ff00, 0x0f0f0f0f );
+  TEST_ORRR_SRC21_BYPASS( 19, 0, 1, orr, 0xfff0fff0, 0x0ff00ff0, 0xf0f0f0f0 );
+  TEST_ORRR_SRC21_BYPASS( 20, 0, 2, orr, 0x0fff0fff, 0x00ff00ff, 0x0f0f0f0f );
+  TEST_ORRR_SRC21_BYPASS( 21, 1, 0, orr, 0xff0fff0f, 0xff00ff00, 0x0f0f0f0f );
+  TEST_ORRR_SRC21_BYPASS( 22, 1, 1, orr, 0xfff0fff0, 0x0ff00ff0, 0xf0f0f0f0 );
+  TEST_ORRR_SRC21_BYPASS( 23, 2, 0, orr, 0x0fff0fff, 0x00ff00ff, 0x0f0f0f0f );
+
+  TEST_ORRR_ZEROSRC1 ( 24, orr, 0xff00ff00, 0xff00ff00 );
+  TEST_ORRR_ZEROSRC2 ( 25, orr, 0x00ff00ff, 0x00ff00ff );
+  TEST_ORRR_ZEROSRC12( 26, orr, 0 );
+#  TEST_ORRR_ZERODEST ( 27, orr, 0x11111111, 0x22222222 );
+
+  TEST_PASSFAIL
+
+DDTEST_CODE_END
+
+  .data
+DDTEST_DATA_BEGIN
+
+  TEST_DATA
+
+DDTEST_DATA_END
