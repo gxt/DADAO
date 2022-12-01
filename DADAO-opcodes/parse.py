@@ -200,8 +200,12 @@ def gen_opc_file(insts: dict, output_file: str):
                 minop = 0
             else:
                 minop = hex(int(inst_description['opcode'][8:], base=2))
+            if operands[0] == 'op':
+                exop = 1
+            else:
+                exop = 0
             line = '   {{ "{}", {}, {}, {}, _OP({}), _OP({}), _OP({}), _OP({}), _T({})}},'\
-                .format(inst_name, len(fields), majop, minop,
+                .format(inst_name, len(fields) - exop, majop, minop,
                 operands[0], operands[1], operands[2], operands[3], inst_description['insn_type'])
             print(line, file=f)
         return 
