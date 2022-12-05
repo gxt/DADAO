@@ -22,12 +22,12 @@ setjmp:
 #	get.rs	rd60, rb01
 	sto	rd60, rb59, 8
 	sto	rd62, rb59, 16
-	setowl	outret, 0
+	setow	outret, 3, 0
 
 # Jump through hoops to get the value of rO *before* the setjmp call.
 # TODO	geta	rd63, 0f
 #	put.rs	rb01, rd63
-	ret
+	ret	rd0, 0
 0:
 #	get.rs	rd63, rO
 	sto	rd63, rb59, 24
@@ -59,7 +59,7 @@ longjmp:
 	cmpu	rd60, rd60, rd63
 	brnp	rd60, 1f
 	ldo	outret, rb59, 32
-	ret
+	ret	rd0, 0
 1:
 	ldo	rd61, rb59, 0
 	ldo	rd63, rb59, 8

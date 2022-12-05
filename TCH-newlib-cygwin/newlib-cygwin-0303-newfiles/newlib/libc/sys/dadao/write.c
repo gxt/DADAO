@@ -2,7 +2,7 @@
 int dadao_write(int file, char *ptr, int len) {
   int ret;
   __asm__ (
-    "setzwl  rd15, 64     \n"
+    "setzw   rd15, 3, 64  \n"
     "rd2rd   rd16, %1, 0  \n"
     "rd2rd   rd17, %2, 0  \n"
     "rd2rd   rd18, %3, 0  \n"

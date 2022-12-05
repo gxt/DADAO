@@ -3,7 +3,7 @@
 static caddr_t brk(caddr_t addr) {
   int ret;
   __asm__ (
-    "setzwl  rd15, 214    \n"
+    "setzw   rd15, 3, 214 \n"
     "rd2rd   rd16, %1, 0  \n"
     "trap    cp0, 0       \n"
     "rd2rd   %0, rd31, 0  \n"
