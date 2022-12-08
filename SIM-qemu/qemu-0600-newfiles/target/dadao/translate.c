@@ -148,7 +148,7 @@ static bool trans_st_all(DisasContext *ctx, arg_disas_dadao0 *a,
                          TCGv_i64* cpu_ha, MemOp mop)
 {
     TCGv_i64 addr = tcg_temp_new_i64();
-    tcg_gen_addi_i64(addr, cpu_rb[a>hb], a->imms12);
+    tcg_gen_addi_i64(addr, cpu_rb[a->hb], a->imms12);
     tcg_gen_qemu_st_i64(cpu_ha[a->ha], addr, ctx->mem_idx, mop);
     tcg_temp_free_i64(addr);
     return true;
@@ -731,7 +731,7 @@ static bool trans_divu(DisasContext *ctx, arg_divu *a)
     return true;
 }
 
-static bool trans__cmps(DisasContext *ctx, arg__cmps *a)
+static bool trans_cmps(DisasContext *ctx, arg_cmps *a)
 {
     if (a->ha == 0) {
         return false;
@@ -753,12 +753,12 @@ static bool trans__cmps(DisasContext *ctx, arg__cmps *a)
     return true;
 }
 
-static bool trans__cmpu(DisasContext *ctx, arg__cmpu *a)
+static bool trans_cmpu(DisasContext *ctx, arg_cmpu *a)
 {
     if (a->ha == 0) {
         return false;
     }
-    TCGv_i64 imm = tcg_const_i64(a->imms12);
+    TCGv_i64 imm = tcg_const_i64(a->immu12);
     TCGv_i64 zero = tcg_const_i64(0);
     TCGv_i64 pos = tcg_const_i64(1);
     TCGv_i64 neg = tcg_const_i64(-1);
@@ -775,7 +775,7 @@ static bool trans__cmpu(DisasContext *ctx, arg__cmpu *a)
     return true;
 }
 
-static bool trans_cmps(DisasContext *ctx, arg_cmps *a)
+static bool trans__cmps(DisasContext *ctx, arg__cmps *a)
 {
     if (a->hb == 0) {
         return false;
@@ -795,7 +795,7 @@ static bool trans_cmps(DisasContext *ctx, arg_cmps *a)
     return true;
 }
 
-static bool trans_cmpu(DisasContext *ctx, arg_cmpu *a)
+static bool trans__cmpu(DisasContext *ctx, arg__cmpu *a)
 {
     if (a->hb == 0) {
         return false;
@@ -1306,14 +1306,14 @@ static bool trans_call(DisasContext *ctx, arg_call *a)
 
 static bool trans__call(DisasContext *ctx, arg__call *a)
 {
-    if (a->ha == 0 && a->hb == 0 && a->imms12 == 0) {
-        goto trans_ret;
-    }
-
     push_return_address(ctx);
-    return trans_jumpaa(ctx, a);
+    return trans__jump(ctx, a);
+}
 
-trans_ret:
+static bool trans_ret(DisasContext *ctx, arg_ret *a)
+{
+    if (a->ha != 0)
+        tcg_gen_movi_i64(cpu_rd[a->ha], a->imms18);
     pop_return_address(ctx);
     ctx->base.is_jmp = DISAS_JUMP;
     return true;
