@@ -197,6 +197,11 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 			return 4;
 		}
 
+		if ((insn & 0xFF000000) == 0x48000000) {		/* adrp riii */
+			(*info->fprintf_func) (info->stream, "%d", (int) (insn & 0x3FFFF));
+			return 4;
+		}
+
 		offset = (insn & 0x3FFFF) << 2;
 		if (offset & 0x80000)		offset -= 0x100000;	/* backward */
 
