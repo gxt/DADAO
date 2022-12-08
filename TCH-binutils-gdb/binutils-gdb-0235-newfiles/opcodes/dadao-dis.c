@@ -69,6 +69,9 @@ static struct dadao_dis_info *initialize_dadao_dis_info (void)
 #define	__DDIS_PRINT_REG(prefix, regnum)						\
 	(*info->fprintf_func) (info->stream, "%s%d", prefix, (int)regnum)
 
+#define __DDIS_PRINT_WW(prefix, regnum)                                                \
+        (*info->fprintf_func) (info->stream, "%s%d", prefix, (int)(regnum >> 4))
+
 #define	__DDIS_EXIT_FAIL()								\
 	do {										\
 		(*info->fprintf_func) (info->stream, "*unknown* (0x%08x)", insn);	\
@@ -183,9 +186,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	case dadao_operand_ra:	__DDIS_PRINT_REG("ra", fb);	i++;	break;
 	case dadao_operand_cr:	__DDIS_PRINT_REG("cr", fb); i++;	break;
 
-	case dadao_operand_ww:
-		(*info->fprintf_func) (info->stream, "%x", ((insn>>16) & 0x3));
-		break;
+	case dadao_operand_ww:	__DDIS_PRINT_WW("w", fb);	i++;	break;
 
 	case dadao_operand_imms18:
 		if ((insn & 0xFF000000) == 0x19000000 || (insn & 0xFF000000) == 0x49000000) {		/* addi riii */

@@ -97,6 +97,10 @@ static struct hash_control *dadao_opcode_hash;
 
 #define DD_INSN_BYTES(n) ((n)*4)
 
+/* Extra expression type. */
+
+#define O_wyde	O_md1	/* wyde position */
+
 const relax_typeS dadao_relax_table[] = {
     /* Error sentinel (0, 0).  */
     {1, 1, 0, 0},
@@ -272,7 +276,16 @@ get_operands(char *s, expressionS *exp, int *ret_code, int *is_adrp)
         /* Begin operand parsing at the current scan point.  */
 
         input_line_pointer = p;
-        expression(&exp[numexp]);
+        if (*input_line_pointer == 'w')
+        {
+            exp[numexp].X_op = O_wyde;
+            exp[numexp].X_add_number = (int) (* ++input_line_pointer) - 48;
+            input_line_pointer++;
+        }
+        else
+        {
+            expression(&exp[numexp]);
+        }
 
         if (exp[numexp].X_op == O_illegal)
         {
@@ -579,6 +592,13 @@ static void dd_pseudo_move_symbol(char *opcodep, expressionS exp[4], fragS *opc_
     if (e.X_add_number < min)               \
         return -1;
 
+#define __DD_EXP_SHOULD_BE_WW(e, f) \
+    if (e.X_op != O_wyde)           \
+        return -1;                  \
+    if (e.X_add_number > 0x3)       \
+        return -1;                  \
+    f = e.X_add_number;
+
 /* return 0 success, return -1 fail, otherwise return insn->type for more handling */
 static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n_operands, unsigned int *insn_code)
 {
@@ -669,7 +689,7 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
         break;
 
     case dadao_operand_ww:
-        __DD_EXP_SHOULD_BE_IMM(exp[n_exp], 0, 0x3);
+        __DD_EXP_SHOULD_BE_WW(exp[n_exp], fb);
 	n_exp++;
 	break;
 
@@ -760,7 +780,7 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
 
     case dadao_operand_immu16:
         __DD_EXP_SHOULD_BE_IMM(exp[n_exp], 0, 0xFFFF);
-        *insn_code = ((insn->major_opcode << 24) | (fa << 18) | ((exp[n_exp-1].X_add_number & 0x3) << 16) | (exp[n_exp].X_add_number & 0xFFFF));
+        *insn_code = ((insn->major_opcode << 24) | (fa << 18) | (fb << 16) | (exp[n_exp].X_add_number & 0xFFFF));
         return 0;
 
     case dadao_operand_none:
