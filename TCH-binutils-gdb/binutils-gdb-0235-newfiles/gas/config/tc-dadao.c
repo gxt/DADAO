@@ -276,11 +276,12 @@ get_operands(char *s, expressionS *exp, int *ret_code, int *is_adrp)
         /* Begin operand parsing at the current scan point.  */
 
         input_line_pointer = p;
-        if (*input_line_pointer == 'w')
+	int ww_number = (int) (* (input_line_pointer + 1)) - 48;
+        if ((*input_line_pointer == 'w') && (0 <= ww_number <= 3) && *(input_line_pointer + 2) == ',')
         {
             exp[numexp].X_op = O_wyde;
-            exp[numexp].X_add_number = (int) (* ++input_line_pointer) - 48;
-            input_line_pointer++;
+            exp[numexp].X_add_number = ww_number;
+            input_line_pointer = input_line_pointer + 2;
         }
         else
         {
