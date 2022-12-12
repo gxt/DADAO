@@ -2,7 +2,7 @@
 int read(int file, char *ptr, int len) {
   int ret;
   __asm__ (
-    "setzw   rd15, 3, 63  \n"
+    "setzw   rd15, w3, 63  \n"
     "rd2rd   rd16, %1, 0  \n"
     "rd2rd   rd17, %2, 0  \n"
     "rd2rd   rd18, %3, 0  \n"
