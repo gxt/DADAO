@@ -166,6 +166,7 @@ def gen_decode_file(insts: dict, output_file: str):
 
         ''', file=f)
         for inst_name, inst_description in insts.items():
+            symbol = ''
             line = inst_name + ' ' * (10 - len(inst_name))
             if len(inst_description['opcode']) == 8:
                 line = line + inst_description['opcode'] + ' '
@@ -175,11 +176,13 @@ def gen_decode_file(insts: dict, output_file: str):
             for field_name, field_len in inst_description['fields'].items():
                 if field_name == 'op':
                     continue
+                if field_name[0:4] == 'imms':
+                    symbol = 's'
                 code = field_bincode(field_name, inst_description['cond_restrictions'])
                 if code != None:
                     line += code + ' '
                 else:
-                    line = line + field_name + ':' + str(field_len) + ' '
+                    line = line + field_name + ':' + symbol + str(field_len) + ' '
             print(line, file=f)
         return
     
