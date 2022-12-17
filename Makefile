@@ -6,7 +6,7 @@ DIR_DADAO_TOP		:= $(shell pwd)
 DIR_DADAO_SOURCE	:= $(DIR_DADAO_TOP)/__source
 DIR_DADAO_BUILD		:= $(DIR_DADAO_TOP)/__build
 DIR_DADAO_INSTALL	:= $(DIR_DADAO_TOP)/__install
-DIR_DADAO_TARGET	:= $(DIR_DADAO_TOP)/__target
+DIR_DADAO_TARGET	:= $(DIR_DADAO_TOP)/__dadao
 DIR_DADAO_RISCV		:= $(DIR_DADAO_TOP)/__riscv
 DIR_DADAO_LOG		:= $(DIR_DADAO_TOP)/__log
 
@@ -82,13 +82,13 @@ dadao-reboot:
 	@mkdir -p $(DIR_DADAO_TMP)/__source
 	@mkdir -p $(DIR_DADAO_TMP)/__build
 	@mkdir -p $(DIR_DADAO_TMP)/__install
-	@mkdir -p $(DIR_DADAO_TMP)/__target
+	@mkdir -p $(DIR_DADAO_TMP)/__dadao
 	@mkdir -p $(DIR_DADAO_TMP)/__riscv
 	@mkdir -p $(DIR_DADAO_TMP)/__log
 	@ln -s -t $(DIR_DADAO_TOP) $(DIR_DADAO_TMP)/__source
 	@ln -s -t $(DIR_DADAO_TOP) $(DIR_DADAO_TMP)/__build
 	@ln -s -t $(DIR_DADAO_TOP) $(DIR_DADAO_TMP)/__install
-	@ln -s -t $(DIR_DADAO_TOP) $(DIR_DADAO_TMP)/__target
+	@ln -s -t $(DIR_DADAO_TOP) $(DIR_DADAO_TMP)/__dadao
 	@ln -s -t $(DIR_DADAO_TOP) $(DIR_DADAO_TMP)/__riscv
 	@ln -s -t $(DIR_DADAO_TOP) $(DIR_DADAO_TMP)/__log
 	@echo "Done: check $(DIR_DADAO_TMP) for all things"
