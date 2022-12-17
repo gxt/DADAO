@@ -1,0 +1,10 @@
+RTE_SRC_DIR		:= $(DIR_DADAO_TOP)/DADAO-rte
+RTE_DST_DIR		?= $(DIR_DADAO_SOURCE)/__dadao/
+
+rte-prepare:
+	@make -s rte-clean
+	@mkdir -p $(RTE_DST_DIR)
+	@cp -a $(RTE_SRC_DIR)/include $(RTE_DST_DIR)
+
+rte-clean:
+	@rm -fr $(RTE_DST_DIR)
