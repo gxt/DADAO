@@ -32,6 +32,7 @@ include SIM-qemu/Makefile.qemu-$(VER_QEMU)
 include SOC-chipyard/Makefile.chipyard-$(VER_CHIPYARD)
 
 include DADAO-opcodes/Makefile.opcodes
+include DADAO-rte/Makefile.rte
 
 include DADAO-tests/Makefile.tests-isa
 include DADAO-tests/Makefile.tests-simple
