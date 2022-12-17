@@ -2,7 +2,7 @@
 # Makefile for DADAO-bench
 #
 DDB_SRC_DIR		:= $(DIR_DADAO_TOP)/DADAO-bench
-DDB_DST_DIR		:= $(DIR_DADAO_TOP)/__ddbench
+DDB_DST_DIR		:= $(DIR_DADAO_TOP)/__tests
 
 DDB_ELF_GAS		:= $(DIR_DADAO_INSTALL)/bin/dadao-linux-elf-as
 DDB_ELF_READELF		:= $(DIR_DADAO_INSTALL)/bin/dadao-linux-elf-readelf
