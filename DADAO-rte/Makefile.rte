@@ -8,6 +8,8 @@ RTE_SOURCE		:= $(DIR_DADAO_SOURCE)/rte
 RTE_BUILD		:= $(DIR_DADAO_BUILD)/rte
 RTE_INSTALL		?= $(DIR_DADAO_TARGET)
 
+RTE_PATCHES		:= $(DIR_DADAO_TOP)/DADAO-rte/rte-patches
+
 RTE_LOG_STDOUT		:= $(DIR_DADAO_LOG)/rte.out
 RTE_LOG_STDERR		:= $(DIR_DADAO_LOG)/rte.err
 
@@ -32,6 +34,8 @@ else
 	# Clone local repo
 	@git clone -q $(RTE_LOCAL) -- $(RTE_SOURCE)
 endif
+	# Apply patches
+	@cd $(RTE_SOURCE); git am $(RTE_PATCHES)/*.patch
 
 rte-build-new:
 	# Remove old rte build dir ...
