@@ -18,9 +18,7 @@ CHIPYARD_0107_DADAO_WUMING	:= $(DIR_DADAO_TOP)/SOC-chipyard/dadao-wuming
 CHIPYARD_0107_DADAO_CONFIG	?= Wuming1StageConfig
 CHIPYARD_0107_DADAO_BINARY	?= $(CHIPYARD_0107_SOURCE)/generators/riscv-sodor/riscv-bmarks/dhrystone.riscv
 
-CHIPYARD_0107_DADAO_PATH	:= $(DIR_DADAO_RISCV)/bin:/bin:/usr/bin
-
-include SOC-chipyard/Makefile.riscv-isa-sim
+CHIPYARD_0107_DADAO_PATH	:= $(DIR_DADAO_TARGET)/bin:/bin:/usr/bin
 
 chipyard-0107-clean:
 	@echo "Remove old chipyard source dir ..."
@@ -30,7 +28,7 @@ chipyard-0107-clean:
 
 chipyard-0107-prepare:
 	# Check necessary fesvr headers
-	@test -d $(DIR_DADAO_RISCV)/include/fesvr || make -s -C $(DIR_DADAO_TOP) riscv-isa-sim-highfive
+	@test -d $(DIR_DADAO_TARGET)/include/fesvr || make -s -C $(DIR_DADAO_TOP) rte-highfive
 
 chipyard-0107-source:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
@@ -63,12 +61,12 @@ chipyard-0107-build-new:
 
 chipyard-0107-build:
 	@cd $(CHIPYARD_0107_SOURCE)/sims/verilator;						\
-		RISCV=$(DIR_DADAO_TOP)/__riscv							\
+		RISCV=$(DIR_DADAO_TARGET)							\
 		make CONFIG=$(CHIPYARD_0107_DADAO_CONFIG) sim_dir=$(CHIPYARD_0107_BUILD)
 
 chipyard-0107-run-binary:
 	@cd $(CHIPYARD_0107_SOURCE)/sims/verilator;						\
-		RISCV=$(DIR_DADAO_TOP)/__riscv							\
+		RISCV=$(DIR_DADAO_TARGET)							\
 		PATH=$(CHIPYARD_0107_DADAO_PATH)						\
 		make CONFIG=$(CHIPYARD_0107_DADAO_CONFIG) sim_dir=$(CHIPYARD_0107_BUILD)	\
 			 run-binary BINARY=$(CHIPYARD_0107_DADAO_BINARY)
