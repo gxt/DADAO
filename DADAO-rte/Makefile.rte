@@ -1,10 +1,73 @@
-RTE_SRC_DIR		:= $(DIR_DADAO_TOP)/DADAO-rte
-RTE_DST_DIR		?= $(DIR_DADAO_SOURCE)/__dadao/
+#
+# Makefile for rte
+#
+RTE_LOCAL		:= /pub/GITHUB/riscv/riscv-isa-sim.git
+RTE_GITHUB		:= https://github.com/riscv/riscv-isa-sim.git
 
-rte-prepare:
-	@make -s rte-clean
-	@mkdir -p $(RTE_DST_DIR)
-	@cp -a $(RTE_SRC_DIR)/include $(RTE_DST_DIR)
+RTE_SOURCE		:= $(DIR_DADAO_SOURCE)/rte
+RTE_BUILD		:= $(DIR_DADAO_BUILD)/rte
+RTE_INSTALL		?= $(DIR_DADAO_TARGET)
+
+RTE_LOG_STDOUT		:= $(DIR_DADAO_LOG)/rte.out
+RTE_LOG_STDERR		:= $(DIR_DADAO_LOG)/rte.err
 
 rte-clean:
-	@rm -fr $(RTE_DST_DIR)
+	# Remove old rte source dir ...
+	@rm -fr $(RTE_SOURCE)
+	# Remove old rte build dir ...
+	@rm -fr $(RTE_BUILD)
+	# Remove old rte install dir ...
+	@rm -fr $(RTE_INSTALL)/bin
+	@rm -fr $(RTE_INSTALL)/include
+	@rm -fr $(RTE_INSTALL)/lib
+
+rte-source:
+	# Remove old rte source dir ...
+	@rm -fr $(RTE_SOURCE)
+	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
+ifeq ($(wildcard $(RTE_LOCAL)),)
+	# Clone remote repo
+	@git clone -q $(RTE_GITHUB) -- $(RTE_SOURCE)
+else
+	# Clone local repo
+	@git clone -q $(RTE_LOCAL) -- $(RTE_SOURCE)
+endif
+
+rte-build-new:
+	# Remove old rte build dir ...
+	@rm -fr $(RTE_BUILD)
+	@mkdir -p $(RTE_BUILD)
+	# Configure
+	@cd $(RTE_BUILD);					\
+		$(RTE_SOURCE)/configure				\
+			--srcdir=$(RTE_SOURCE)			\
+			--prefix=$(RTE_INSTALL)
+
+rte-build:
+	@make -C $(RTE_BUILD) -j8 libfesvr.a libfesvr.so
+
+rte-install:
+	@mkdir -p $(RTE_INSTALL)/lib
+	@cp -a $(RTE_BUILD)/libfesvr.* $(RTE_INSTALL)/lib
+	@mkdir -p $(RTE_INSTALL)/include/fesvr
+	@cp -a $(RTE_BUILD)/config.h $(RTE_INSTALL)/include/fesvr
+	@cp -a $(RTE_SOURCE)/fesvr/*.h $(RTE_INSTALL)/include/fesvr
+#	@make -C $(RTE_BUILD) install
+
+rte-highfive:
+	@echo "--- BUILD rte BEGIN ---"
+	# 0. Remove old rte logfiles
+	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
+	@rm -fr $(RTE_LOG_STDOUT) $(RTE_LOG_STDERR)
+	# 1. Clean old rte ...
+	@make -s rte-clean			1>> $(RTE_LOG_STDOUT) 2>> $(RTE_LOG_STDERR)
+	# 2. Clone rte ...
+	@make -s rte-source			1>> $(RTE_LOG_STDOUT) 2>> $(RTE_LOG_STDERR)
+	# 3. Configure rte ...
+	@make -s rte-build-new			1>> $(RTE_LOG_STDOUT) 2>> $(RTE_LOG_STDERR)
+	# 4. Make rte ...
+	@make -s rte-build			1>> $(RTE_LOG_STDOUT) 2>> $(RTE_LOG_STDERR)
+	# 5. Install rte ...
+	@make -s rte-install			1>> $(RTE_LOG_STDOUT) 2>> $(RTE_LOG_STDERR)
+	@echo "--- BUILD rte DONE! ---"
+
