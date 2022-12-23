@@ -22,7 +22,7 @@ setjmp:
 #	get.rs	rd60, rb01
 	sto	rd60, rb59, 8
 	sto	rd62, rb59, 16
-	setow	outret, w3, 0
+	setow	outret, w0, 0
 
 # Jump through hoops to get the value of rO *before* the setjmp call.
 # TODO	geta	rd63, 0f

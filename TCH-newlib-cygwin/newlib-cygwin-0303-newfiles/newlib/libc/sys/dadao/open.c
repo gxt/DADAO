@@ -2,8 +2,8 @@
 int open(const char *name, int flags, int mode) {
   int ret;
   __asm__ (
-    "setzw   rd15, w3, 56  \n"
-    "setow   rd16, w3, 65436  \n"
+    "setzw   rd15, w0, 56  \n"
+    "setow   rd16, w0, 65436  \n"
     "rd2rd   rd17, %1, 0  \n"
     "rd2rd   rd18, %2, 0  \n"
     "rd2rd   rd19, %3, 0  \n"

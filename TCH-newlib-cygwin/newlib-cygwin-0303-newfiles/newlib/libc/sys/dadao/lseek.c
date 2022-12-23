@@ -2,7 +2,7 @@
 int lseek(int file, int ptr, int dir) {
   int ret;
   __asm__ (
-    "setzw   rd15, w3, 62  \n"
+    "setzw   rd15, w0, 62  \n"
     "rd2rd   rd16, %1, 0  \n"
     "rd2rd   rd17, %2, 0  \n"
     "rd2rd   rd18, %3, 0  \n"
