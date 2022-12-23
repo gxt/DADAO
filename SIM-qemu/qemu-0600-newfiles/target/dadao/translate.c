@@ -824,10 +824,10 @@ static bool trans_cmprb(DisasContext *ctx, arg_cmprb *a)
     TCGv_i64 pos = tcg_const_i64(1);
     TCGv_i64 neg = tcg_const_i64(-1);
     TCGv_i64 temp = tcg_temp_new_i64();
-    tcg_gen_movcond_i64(TCG_COND_GTU, temp, cpu_rd[a->hc],
-                        cpu_rd[a->hd], pos, zero);
-    tcg_gen_movcond_i64(TCG_COND_LTU, cpu_rd[a->hb], cpu_rd[a->hc],
-                        cpu_rd[a->hd], neg, temp);
+    tcg_gen_movcond_i64(TCG_COND_GTU, temp, cpu_rb[a->hc],
+                        cpu_rb[a->hd], pos, zero);
+    tcg_gen_movcond_i64(TCG_COND_LTU, cpu_rd[a->hb], cpu_rb[a->hc],
+                        cpu_rb[a->hd], neg, temp);
     tcg_temp_free_i64(zero);
     tcg_temp_free_i64(pos);
     tcg_temp_free_i64(neg);
