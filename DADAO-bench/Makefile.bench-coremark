@@ -1,7 +1,8 @@
 #
 # Makefile for coremark
 #
-DDB_COREMARK_ORIGIN	:= https://github.com/eembc/coremark.git
+DDB_COREMARK_LOCAL	:= /pub/GITHUB/eembc/coremark.git
+DDB_COREMARK_GITHUB	:= https://github.com/eembc/coremark.git
 DDB_COREMARK_BUILD	:= $(DDB_DST_DIR)/coremark
 
 bench-coremark-clean:
@@ -11,7 +12,11 @@ bench-coremark-clean:
 
 bench-coremark-source:
 	# Clone official repo
-	@git clone -q $(DDB_COREMARK_ORIGIN) -- $(DDB_COREMARK_BUILD)
+ifeq ($(wildcard $(DDB_COREMARK_LOCAL)),)
+	@git clone -q $(DDB_COREMARK_GITHUB) -- $(DDB_COREMARK_BUILD)
+else
+	@git clone -q $(DDB_COREMARK_LOCAL) -- $(DDB_COREMARK_BUILD)
+endif
 
 bench-coremark-build:
 	@cd $(DDB_COREMARK_BUILD);					\

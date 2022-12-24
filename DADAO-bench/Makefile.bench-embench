@@ -1,7 +1,8 @@
 #
 # Makefile for embench
 #
-DDB_EMBENCH_ORIGIN	:= https://github.com/embench/embench-iot.git
+DDB_EMBENCH_LOCAL	:= /pub/GITHUB/embench/embench-iot.git
+DDB_EMBENCH_GITHUB	:= https://github.com/embench/embench-iot.git
 DDB_EMBENCH_SOURCE	:= $(DDB_DST_DIR)/embench-iot
 DDB_EMBENCH_NEWFILES	:= $(DDB_SRC_DIR)/embench-iot
 DDB_EMBENCH_BUILD	:= $(DDB_DST_DIR)/embench-build
@@ -17,7 +18,11 @@ bench-embench-clean:
 
 bench-embench-source:
 	# Clone official repo
-	@git clone -q $(DDB_EMBENCH_ORIGIN) -- $(DDB_EMBENCH_SOURCE)
+ifeq ($(wildcard $(DDB_EMBENCH_LOCAL)),)
+	@git clone -q $(DDB_EMBENCH_GITHUB) -- $(DDB_EMBENCH_SOURCE)
+else
+	@git clone -q $(DDB_EMBENCH_LOCAL) -- $(DDB_EMBENCH_SOURCE)
+endif
 	# Add dadao support
 	@cp -a $(DDB_EMBENCH_NEWFILES)/config/dadao $(DDB_EMBENCH_SOURCE)/config
 	@cd $(DDB_EMBENCH_SOURCE);				\

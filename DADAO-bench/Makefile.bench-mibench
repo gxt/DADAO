@@ -1,7 +1,8 @@
 #
 # Makefile for mibench
 #
-DDB_MIBENCH_ORIGIN      := https://github.com/ekut-es/mibench.git
+DDB_MIBENCH_LOCAL       := /pub/GITHUB/ekut-es/mibench.git
+DDB_MIBENCH_GITHUB      := https://github.com/ekut-es/mibench.git
 DDB_MIBENCH_BRANCH      := mibench
 DDB_MIBENCH_SOURCE      := $(DDB_DST_DIR)/mibench
 DDB_MIBENCH_BUILD       := $(DDB_DST_DIR)/mibench
@@ -17,7 +18,11 @@ bench-mibench-source:
 	# Remove old mibench source dir ...
 	@test -d $(DDB_MIBENCH_SOURCE) || mkdir -p $(DDB_MIBENCH_SOURCE)
 	# Clone official repo
-	@git clone -q $(DDB_MIBENCH_ORIGIN) -- $(DDB_MIBENCH_SOURCE)
+ifeq ($(wildcard $(DDB_MIBENCH_LOCAL)),)
+	@git clone -q $(DDB_MIBENCH_GITHUB) -- $(DDB_MIBENCH_SOURCE)
+else
+	@git clone -q $(DDB_MIBENCH_LOCAL) -- $(DDB_MIBENCH_SOURCE)
+endif
 	@cd $(DDB_MIBENCH_SOURCE); git checkout -qb $(DDB_MIBENCH_BRANCH)
 	# Apply patches
 	@cd $(DDB_MIBENCH_SOURCE); git am $(DDB_MIBENCH_PATCHES)/*.patch
