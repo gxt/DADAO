@@ -122,6 +122,94 @@ test_ ## testnum:						\
     )
 
 #-----------------------------------------------------------------------
+# Tests for an instruction with register-ww-immu16 operands
+#-----------------------------------------------------------------------
+
+#define TEST_RWII_RD_W0( testnum, inst, result, val1, val2 )		\
+    TEST_CASE( testnum, rd5, result,					\
+        move	rd5, val1;						\
+        inst	rd5, w0, val2;						\
+    )
+
+#define TEST_RWII_RD_W1( testnum, inst, result, val1, val2 )		\
+    TEST_CASE( testnum, rd5, result,					\
+        move	rd5, val1;						\
+        inst	rd5, w1, val2;						\
+    )
+
+#define TEST_RWII_RD_W2( testnum, inst, result, val1, val2 )		\
+    TEST_CASE( testnum, rd5, result,					\
+        move	rd5, val1;						\
+        inst	rd5, w2, val2;						\
+    )
+
+#define TEST_RWII_RD_W3( testnum, inst, result, val1, val2 )		\
+    TEST_CASE( testnum, rd5, result,					\
+        move	rd5, val1;						\
+        inst	rd5, w3, val2;						\
+    )
+
+#define TEST_RWII_RB_W0( testnum, inst, result, val1, val2 )		\
+    TEST_CASE( testnum, rd5, result,					\
+        move	rb5, val1;						\
+        inst	rb5, w0, val2;						\
+        rb2rd	rd5, rb5, 0;						\
+    )
+
+#define TEST_RWII_RB_W1( testnum, inst, result, val1, val2 )		\
+    TEST_CASE( testnum, rd5, result,					\
+        move	rb5, val1;						\
+        inst	rb5, w1, val2;						\
+        rb2rd	rd5, rb5, 0;						\
+    )
+
+#define TEST_RWII_RB_W2( testnum, inst, result, val1, val2 )		\
+    TEST_CASE( testnum, rd5, result,					\
+	move	rb5, val1;						\
+        inst	rb2, w2, val2;						\
+        rb2rd	rd2, rb2, 0;						\
+    )
+
+#define TEST_RWII_RB_W3( testnum, inst, result, val1, val2 )		\
+    TEST_CASE( testnum, rd5, result,					\
+        move	rb5, val1;						\
+        inst	rb5, w3, val2;						\
+        rb2rd	rd5, rb5, 0;						\
+    )
+
+#define TEST_RWII_RF_W0( testnum, inst, result, val1, val2 )		\
+    TEST_CASE( testnum, rd5, result,					\
+        move	rd5, val1;						\
+        rd2rf	rf5, rd5, 0;						\
+        inst	rf5, w0, val2;						\
+        rf2rd	rd5, rf5, 0;						\
+    )
+
+#define TEST_RWII_RF_W1( testnum, inst, result, val1, val2 )		\
+    TEST_CASE( testnum, rd5, result,					\
+        move	rd5, val1;						\
+        rd2rf	rf5, rd5, 0;						\
+        inst	rf5, w1, val2;						\
+        rf2rd	rd5, rf5, 0;						\
+    )
+
+#define TEST_RWII_RF_W2( testnum, inst, result, val1, val2 )		\
+    TEST_CASE( testnum, rd5, result,					\
+        move	rd5, val1;						\
+        rd2rf	rf5, rd5, 0;						\
+        inst	rf5, w2, val2;						\
+        rf2rd	rd5, rf5, 0;						\
+    )
+
+#define TEST_RWII_RF_W3( testnum, inst, result, val1, val2 )		\
+    TEST_CASE( testnum, rd5, result,					\
+        move	rd5, val1;						\
+        rd2rf	rf5, rd5, 0;						\
+        inst	rf5, w3, val2;						\
+        rf2rd	rd5, rf5, 0;						\
+    )
+
+#-----------------------------------------------------------------------
 # Pass and fail code (assumes test num is in TESTNUM)
 #-----------------------------------------------------------------------
 
