@@ -54,7 +54,7 @@ reset_vector:								\
 	move	rd15, 93;						\
 	trap	cp0, 0;
 
-#define TESTNUM rd1
+#define TESTNUM rd3
 #define DDTEST_FAIL							\
 	move rd15, 93;							\
 	trap cp0, 0; /* TODO */
