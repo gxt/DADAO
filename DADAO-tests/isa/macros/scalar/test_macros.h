@@ -210,6 +210,60 @@ test_ ## testnum:						\
     )
 
 #-----------------------------------------------------------------------
+# Tests for instructions with register-register-immediate operand
+#-----------------------------------------------------------------------
+
+#define TEST_RRII_OP( testnum, inst, result, val1, imm )		\
+    TEST_CASE( testnum, rd14, result,					\
+	move	rd1, val1;						\
+	inst	rd14, rd1, imm;						\
+    )
+
+#define TEST_RRII_SRC1_EQ_DEST( testnum, inst, result, val1, imm )	\
+    TEST_CASE( testnum, rd1, result,					\
+	move	rd1, val1;						\
+	inst	rd1, rd1, imm;						\
+    )
+
+#define TEST_RRII_DEST_BYPASS( testnum, swym_cycles, inst, result, val1, imm )	\
+    TEST_CASE( testnum, rd6, result,					\
+	move	rd4, 0;							\
+1:	move	rd1, val1;						\
+	inst	rd14, rd1, imm;						\
+	.rept	swym_cycles						\
+		swym;							\
+	.endr;								\
+	rd2rd	rd6, rd14, 0;						\
+	addi	rd4, 1;							\
+	cmps	rd5, rd4, 2;						\
+	brnz	rd5, 1b;						\
+    )
+
+#define TEST_RRII_SRC1_BYPASS( testnum, swym_cycles, inst, result, val1, imm )	\
+    TEST_CASE( testnum, rd14, result,					\
+	move	rd4, 0;							\
+1:	move	rd1, val1;						\
+	.rept	swym_cycles						\
+		swym;							\
+	.endr;								\
+	inst	rd14, rd1, imm;						\
+	addi	rd4, 1;							\
+	cmps	rd5, rd4, 2;						\
+	brnz	rd5, 1b;						\
+    )
+
+#define TEST_RRII_ZEROSRC1( testnum, inst, result, imm )		\
+    TEST_CASE( testnum, rd1, result,					\
+	inst	rd1, rd0, imm;						\
+    )
+
+#define TEST_RRII_ZERODEST( testnum, inst, val1, imm )			\
+    TEST_CASE( testnum, rd0, 0,						\
+	move	rd1, val1;						\
+	inst	rd0, rd1, imm;						\
+    )
+
+#-----------------------------------------------------------------------
 # Pass and fail code (assumes test num is in TESTNUM)
 #-----------------------------------------------------------------------
 
