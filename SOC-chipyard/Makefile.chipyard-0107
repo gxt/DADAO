@@ -16,7 +16,8 @@ CHIPYARD_0107_PATCHES		:= $(DIR_DADAO_TOP)/SOC-chipyard/chipyard-0107-patches
 
 CHIPYARD_0107_DADAO_WUMING	:= $(DIR_DADAO_TOP)/SOC-chipyard/dadao-wuming
 CHIPYARD_0107_DADAO_CONFIG	?= Wuming1StageConfig
-CHIPYARD_0107_DADAO_BINARY	?= $(CHIPYARD_0107_SOURCE)/generators/riscv-sodor/riscv-bmarks/dhrystone.riscv
+#CHIPYARD_0107_DADAO_BINARY	?= $(CHIPYARD_0107_SOURCE)/generators/riscv-sodor/riscv-bmarks/dhrystone.riscv
+CHIPYARD_0107_DADAO_BINARY	?= $(DIR_DADAO_TOP)/__tests/isa/dduii-p-and
 
 CHIPYARD_0107_DADAO_PATH	:= $(DIR_DADAO_TARGET)/bin:/bin:/usr/bin
 
