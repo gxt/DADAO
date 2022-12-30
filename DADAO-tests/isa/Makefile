@@ -48,7 +48,7 @@ $(eval $(call compile_template,dduii, ))
 
 tests_dump = $(addsuffix .dump, $(tests))
 tests_hex = $(addsuffix .hex, $(tests))
-tests_out = $(addsuffix .out, $(filter dadao%,$(tests)))
+tests_out = $(addsuffix .out, $(filter dd%,$(tests)))
 
 run: $(tests_out)
 
