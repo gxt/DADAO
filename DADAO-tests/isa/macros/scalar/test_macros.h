@@ -166,8 +166,8 @@ test_ ## testnum:						\
 #define TEST_RWII_RB_W2( testnum, inst, result, val1, val2 )		\
     TEST_CASE( testnum, rd5, result,					\
 	move	rb5, val1;						\
-        inst	rb2, w2, val2;						\
-        rb2rd	rd2, rb2, 0;						\
+        inst	rb5, w2, val2;						\
+        rb2rd	rd5, rb5, 0;						\
     )
 
 #define TEST_RWII_RB_W3( testnum, inst, result, val1, val2 )		\
