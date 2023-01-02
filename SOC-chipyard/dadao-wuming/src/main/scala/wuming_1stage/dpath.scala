@@ -117,22 +117,25 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val wb_wen = io.ctl.rf_wen && !io.ctl.exception && !interrupt_edge
 
    // Register File
-   val regfile = Mem(32, UInt(conf.xprlen.W))
+   val regfileD = Mem(64, UInt(conf.xprlen.W))
+   val regfilea = Mem(64, UInt(conf.xprlen.W))
+   val regfileA = Mem(64, UInt(conf.xprlen.W))
+   val regfileF = Mem(64, UInt(conf.xprlen.W))
 
    when (wb_wen && (wb_addr =/= 0.U))
    {
-      regfile(wb_addr) := wb_data
+      regfileD(wb_addr) := wb_data
    }
 
    //// DebugModule
-   io.ddpath.rdata := regfile(io.ddpath.addr)
+   io.ddpath.rdata := regfileD(io.ddpath.addr)
    when(io.ddpath.validreq){
-      regfile(io.ddpath.addr) := io.ddpath.wdata
+      regfileD(io.ddpath.addr) := io.ddpath.wdata
    }
    ///
 
-   val rs1_data = Mux((rs1_addr =/= 0.U), regfile(rs1_addr), 0.asUInt(conf.xprlen.W))
-   val rs2_data = Mux((rs2_addr =/= 0.U), regfile(rs2_addr), 0.asUInt(conf.xprlen.W))
+   val rs1_data = Mux((rs1_addr =/= 0.U), regfileD(rs1_addr), 0.asUInt(conf.xprlen.W))
+   val rs2_data = Mux((rs2_addr =/= 0.U), regfileD(rs2_addr), 0.asUInt(conf.xprlen.W))
 
 
    // immediates
