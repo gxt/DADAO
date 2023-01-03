@@ -441,7 +441,7 @@ static void dd_pseudo_move_imm(char *opcodep, int reg_dst, unsigned long long sr
             if (imm_w16_2 != 0xFFFF)
             {
                 opcodep = frag_more(4);
-                md_number_to_chars(opcodep, DADAO_INSN_ANDNW_RD | (reg_dst << 18) | DADAO_WYDE_WK | imm_w16_2, 4);
+                md_number_to_chars(opcodep, DADAO_INSN_ANDNW_RD | (reg_dst << 18) | DADAO_WYDE_WK | (~imm_w16_2) & 0xFFFF, 4);
             }
         }
         else
@@ -458,7 +458,7 @@ static void dd_pseudo_move_imm(char *opcodep, int reg_dst, unsigned long long sr
             if (imm_w16_3 != 0xFFFF)
             {
                 opcodep = frag_more(4);
-                md_number_to_chars(opcodep, DADAO_INSN_ANDNW_RD | (reg_dst << 18) | DADAO_WYDE_WJ | imm_w16_3, 4);
+                md_number_to_chars(opcodep, DADAO_INSN_ANDNW_RD | (reg_dst << 18) | DADAO_WYDE_WJ | (~imm_w16_3) & 0xFFFF, 4);
             }
         }
         else
@@ -475,7 +475,7 @@ static void dd_pseudo_move_imm(char *opcodep, int reg_dst, unsigned long long sr
             if (imm_w16_4 != 0xFFFF)
             {
                 opcodep = frag_more(4);
-                md_number_to_chars(opcodep, DADAO_INSN_ANDNW_RD | (reg_dst << 18) | DADAO_WYDE_WH | imm_w16_4, 4);
+                md_number_to_chars(opcodep, DADAO_INSN_ANDNW_RD | (reg_dst << 18) | DADAO_WYDE_WH | (~imm_w16_4) & 0xFFFF, 4);
             }
         }
         else
