@@ -249,15 +249,15 @@ call	01101101		&& @mem
 [ riii	op:8	ha:6	immu:18 ]
 & @rmu cp@ha
 trap	01110000		&& @jmp
-cpcoop	01110001
+cpco	01110001
 
 [ rrii	op:8	ha:6	hb:6	immu:12 ]
 & @rmu cp@ha rb@hb
-cpload	01110100		&& @mem
-cpstor	01110101		&& @mem
+cpld	01110100		&& @mem
+cpst	01110101		&& @mem
 
 [ rrrr	op:8	ha:6	hb:6	hc:6	hd:6 ]
 & @rmu cp@ha cr@hb cr@hc rd@hd
-rd2cr	01110010
-cr2rd	01110011
+cprd	01110010
+cpwr	01110011
 
