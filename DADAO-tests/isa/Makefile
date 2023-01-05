@@ -17,8 +17,12 @@ vpath %.S $(src_dir)
 %.dump: %
 	$(DADAO_ELF_OBJDUMP) $(DADAO_ELF_OBJDUMP_FLAGS) $< > $@
 
-%.out: %
+dduii-p%.out: dduii-p%
 	$(DADAO_QEMU_USER) $< 2> $@
+
+dduii-qemu%.out: dduii-qemu%
+	$(DADAO_QEMU_USER) $< 2> $@
+	@echo "		$<"
 
 define compile_template
 
@@ -38,6 +42,14 @@ $(1)_tests_dump = $$(addsuffix .dump, $$($(1)_tests))
 
 $(1): $$($(1)_tests_dump)
 
+$(1)_p_tests_dump = $$(addsuffix .dump, $$($(1)_p_tests))
+
+$(1)-p: $$($(1)_p_tests_dump)
+
+$(1)_qemu_tests_dump = $$(addsuffix .dump, $$($(1)_qemu_tests))
+
+$(1)-qemu: $$($(1)_qemu_tests_dump)
+
 .PHONY: $(1)
 
 COMPILER_SUPPORTS_$(1) := $$(shell $$(DADAO_ELF_GCC) $(2) -c -x c /dev/null -o /dev/null 2> /dev/null; echo $$$$?)
@@ -52,11 +64,13 @@ $(eval $(call compile_template,dduii, ))
 
 tests_dump = $(addsuffix .dump, $(tests))
 tests_hex = $(addsuffix .hex, $(tests))
-tests_out = $(addsuffix .out, $(filter dd%,$(tests)))
+tests_p_out = $(addsuffix .out, $(filter dduii-p%,$(tests)))
+tests_qemu_out = $(addsuffix .out, $(filter dduii-qemu%,$(tests)))
 
-run: $(tests_out)
+run-p: $(tests_p_out)
+run-qemu: $(tests_qemu_out)
 
-junk += $(tests) $(tests_dump) $(tests_hex) $(tests_out)
+junk += $(tests) $(tests_dump) $(tests_hex) $(tests_p_out) $(tests_qemu_out)
 
 #------------------------------------------------------------
 # Default

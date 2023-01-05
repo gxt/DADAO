@@ -11,10 +11,26 @@ tests-isa-source:
 	@test -d $(TESTS_ISA_BUILD) || mkdir -p $(TESTS_ISA_BUILD)
 	@ln -s $(TESTS_ISA_SOURCE)/Makefile $(TESTS_ISA_BUILD)/Makefile
 
-tests-isa-build:
-	@make src_dir=$(TESTS_ISA_SOURCE) -C $(TESTS_ISA_BUILD) dduii
+tests-isa-p-build:
+	@make src_dir=$(TESTS_ISA_SOURCE) -C $(TESTS_ISA_BUILD) dduii-p
 
-tests-isa-highfive:
+tests-isa-qemu-build:
+	@make src_dir=$(TESTS_ISA_SOURCE) -C $(TESTS_ISA_BUILD) dduii-qemu
+
+tests-isa-p-run:
+	@make src_dir=$(TESTS_ISA_SOURCE) -C $(TESTS_ISA_BUILD) run-p
+
+tests-isa-qemu-run:
+	@make src_dir=$(TESTS_ISA_SOURCE) -C $(TESTS_ISA_BUILD) run-qemu
+
+tests-isa-p-highfive:
 	@make -s tests-isa-clean
 	@make -s tests-isa-source
-	@make -s tests-isa-build
+	@make -s tests-isa-p-build
+	@make -s tests-isa-p-run
+
+tests-isa-qemu-highfive:
+	@make -s tests-isa-clean
+	@make -s tests-isa-source
+	@make -s tests-isa-qemu-build
+	@make -s tests-isa-qemu-run
