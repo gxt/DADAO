@@ -17,7 +17,7 @@ vpath %.S $(src_dir)
 %.dump: %
 	$(DADAO_ELF_OBJDUMP) $(DADAO_ELF_OBJDUMP_FLAGS) $< > $@
 
-dduii-p%.out: dduii-p%
+dduii-bare%.out: dduii-bare%
 	$(DADAO_QEMU_USER) $< 2> $@
 
 dduii-qemu%.out: dduii-qemu%
@@ -26,9 +26,9 @@ dduii-qemu%.out: dduii-qemu%
 
 define compile_template
 
-$$($(1)_p_tests): $(1)-p-%: $(1)/%.S
-	$$(DADAO_ELF_GCC) $(2) $$(DADAO_ELF_GCC_FLAGS) -I$(src_dir)/../env/p -I$(src_dir)/macros/scalar -T$(src_dir)/../env/p/link.ld $$< -o $$@
-$(1)_tests += $$($(1)_p_tests)
+$$($(1)_bare_tests): $(1)-bare-%: $(1)/%.S
+	$$(DADAO_ELF_GCC) $(2) $$(DADAO_ELF_GCC_FLAGS) -I$(src_dir)/../env/bare -I$(src_dir)/macros/scalar -T$(src_dir)/../env/bare/link.ld $$< -o $$@
+$(1)_tests += $$($(1)_bare_tests)
 
 $$($(1)_v_tests): $(1)-v-%: $(1)/%.S
 	$$(DADAO_ELF_GCC) $(2) $$(DADAO_ELF_GCC_FLAGS) -O2 -I$(src_dir)/../env/v -I$(src_dir)/macros/scalar -T$(src_dir)/../env/v/link.ld $(src_dir)/../env/v/entry.S $(src_dir)/../env/v/*.c $$< -o $$@
@@ -42,9 +42,9 @@ $(1)_tests_dump = $$(addsuffix .dump, $$($(1)_tests))
 
 $(1): $$($(1)_tests_dump)
 
-$(1)_p_tests_dump = $$(addsuffix .dump, $$($(1)_p_tests))
+$(1)_bare_tests_dump = $$(addsuffix .dump, $$($(1)_bare_tests))
 
-$(1)-p: $$($(1)_p_tests_dump)
+$(1)-bare: $$($(1)_bare_tests_dump)
 
 $(1)_qemu_tests_dump = $$(addsuffix .dump, $$($(1)_qemu_tests))
 
@@ -64,13 +64,13 @@ $(eval $(call compile_template,dduii, ))
 
 tests_dump = $(addsuffix .dump, $(tests))
 tests_hex = $(addsuffix .hex, $(tests))
-tests_p_out = $(addsuffix .out, $(filter dduii-p%,$(tests)))
+tests_bare_out = $(addsuffix .out, $(filter dduii-bare%,$(tests)))
 tests_qemu_out = $(addsuffix .out, $(filter dduii-qemu%,$(tests)))
 
-run-p: $(tests_p_out)
+run-bare: $(tests_bare_out)
 run-qemu: $(tests_qemu_out)
 
-junk += $(tests) $(tests_dump) $(tests_hex) $(tests_p_out) $(tests_qemu_out)
+junk += $(tests) $(tests_dump) $(tests_hex) $(tests_bare_out) $(tests_qemu_out)
 
 #------------------------------------------------------------
 # Default
