@@ -46,18 +46,23 @@ trait ScalarOpConstants
    val BR_J   = 7.asUInt(4.W)  // Jump
    val BR_JR  = 8.asUInt(4.W)  // Jump Register
 
-   // RS1 Operand Select Signal
-   val OP1_RS1 = 0.asUInt(2.W) // Register Source #1
-   val OP1_IMU = 1.asUInt(2.W) // immediate, U-type
-   val OP1_IMZ = 2.asUInt(2.W) // Zero-extended rs1 field of inst, for CSRI instructions
-   val OP1_X   = 0.asUInt(2.W)
+   // Operand 1 Select Signal
+   val OP1_RDHC = 4.asUInt(3.W) // rd source in hc field
 
-   // RS2 Operand Select Signal
-   val OP2_RS2 = 0.asUInt(2.W) // Register Source #2
-   val OP2_IMI = 1.asUInt(2.W) // immediate, I-type
-   val OP2_IMS = 2.asUInt(2.W) // immediate, S-type
-   val OP2_PC  = 3.asUInt(2.W) // PC
-   val OP2_X   = 0.asUInt(2.W)
+   val OP1_RS1 = 0.asUInt(3.W) // Register Source #1
+   val OP1_IMU = 1.asUInt(3.W) // immediate, U-type
+   val OP1_IMZ = 2.asUInt(3.W) // Zero-extended rs1 field of inst, for CSRI instructions
+   val OP1_X   = 0.asUInt(3.W)
+
+   // Operand 2 Select Signal
+   val OP2_RDHD  = 4.asUInt(3.W)  // rd source in hd field
+   val OP2_IMMU6 = 5.asUInt(3.W)  // immu6 source in hd field
+
+   val OP2_RS2 = 0.asUInt(3.W) // Register Source #2
+   val OP2_IMI = 1.asUInt(3.W) // immediate, I-type
+   val OP2_IMS = 2.asUInt(3.W) // immediate, S-type
+   val OP2_PC  = 3.asUInt(3.W) // PC
+   val OP2_X   = 0.asUInt(3.W)
 
    // Register File Write Enable Signal
    val REN_0   = false.B
