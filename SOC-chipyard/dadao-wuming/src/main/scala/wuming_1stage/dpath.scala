@@ -197,7 +197,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val csr = Module(new CSRFile(perfEventSets=CSREvents.events))
    csr.io := DontCare
    csr.io.decode(0).inst := inst
-   csr.io.rw.addr   := inst(CSR_ADDR_MSB,CSR_ADDR_LSB)
+   csr.io.rw.addr   := inst(CP_RGRC_ADDR_MSB,CP_RGRC_ADDR_LSB)
    csr.io.rw.cmd    := io.ctl.csr_cmd
    csr.io.rw.wdata  := alu_out
 

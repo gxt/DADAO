@@ -10,7 +10,7 @@ import scala.math._
 object Constants extends
    WumingProcConstants with
    ScalarOpConstants with
-   wuming.common.constants.RISCVConstants with
+   wuming.common.constants.DADAOConstants with
    wuming.common.MemoryOpConstants
 {
 }
