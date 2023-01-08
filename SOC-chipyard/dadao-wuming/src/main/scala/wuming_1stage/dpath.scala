@@ -118,7 +118,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
    // Register File
    val regfileD = Mem(64, UInt(conf.xprlen.W))
-   val regfilea = Mem(64, UInt(conf.xprlen.W))
+   val regfileB = Mem(64, UInt(conf.xprlen.W))
    val regfileA = Mem(64, UInt(conf.xprlen.W))
    val regfileF = Mem(64, UInt(conf.xprlen.W))
 
