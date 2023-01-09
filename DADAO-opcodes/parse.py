@@ -225,18 +225,145 @@ def gen_encoding_file(insts: dict, output_file: str):
         print(mask_match_str, file=f)
         print(declare_insn_str, file=f)
 
+def gen_disassemble_file(insts: dict, output_file: str):
+    with open(output_file, 'w') as f:
+        print('#include <stdio.h>', file=f)
+        print('\nenum dadao_disassemble_type {', file=f)
+        dadao_disassemble_type_list = ['none','ha','hb','hc','hd','immu6','immu12','immu18','imms12','imms18','ww','immu16','offset18','offset24']
+        for type in dadao_disassemble_type_list:
+            type_string = '\t' + 'dadao_operand_' + type + ','
+            print(type_string, file=f)
+        print('};', file=f)
+        print('\nstruct dadao_disassemble {', file=f)
+        print('\tunsigned int opcode_mask;', file=f)
+        print('\tunsigned int opcode_match;', file=f)
+        print('\tenum dadao_disassemble_type op1;', file=f)
+        print('\tenum dadao_disassemble_type op2;', file=f)
+        print('\tenum dadao_disassemble_type op3;', file=f)
+        print('\tenum dadao_disassemble_type op4;', file=f)
+        print('\tint operand_num;', file=f)
+        print('\tconst char *disassemble_format;', file=f)
+        print('};\n', file=f)
+        print('struct dadao_disassemble dadao_disassemble_opcodes[] = {',file=f)
+        for inst_name, inst_description in insts.items():
+            if inst_description['fields']['op'] == 8:
+                fields = list(inst_description['fields'].keys())[1:]
+            else:
+                fields = list(inst_description['fields'].keys())
+            regfile_restrictions = inst_description['regfile_restrictions']
+            operands = fields + ['none'] * (4 - len(fields))
+            operands = [regfile_fillin(operands[i], regfile_restrictions) for i in range(len(operands))]
+            cal_offset = 0
+            if operands.count('imms24'):
+                cal_offset = 1
+            for resource in inst_description['resources']:
+                if resource == 'bpd':
+                    cal_offset = 1
+            if operands[0] == 'op':
+                exop = 1
+                operand_format = ['hb','hc','hd','none']
+                operand_format[3] = 'none'
+                inst_opcode_mask = '0xfffc0000'
+                inst_opcode_match = hex(int(inst_description['opcode'][:14] + '00', base=2)) + '0000'
+            else:
+                exop = 0
+                operand_format = ['ha','hb','hc','hd']
+                inst_opcode_mask = '0xff000000'
+                inst_opcode_match = hex(int(inst_description['opcode'][:8], base=2)) + '000000'
+            for i in range(0,4):
+                if cal_offset == 0:
+                    if (operands[i][0:3] == 'imm') | (operands[i] == 'none') | (operands[i] == 'ww'):
+                        operand_format[i-exop] = operands[i]
+                else:
+                    if operands[i][0:3] == 'imm':
+                        operands[i] = 'offset' + operands[i][4:]
+                    if (operands[i][0:6] == 'offset') | (operands[i] == 'none') | (operands[i] == 'ww'):
+                        operand_format[i-exop] = operands[i]
+            if inst_name[0] == '_':
+                inst_name = inst_name[1:]
+            inst_disassemble_format = inst_name + '\t'
+            first_operand = 1
+            for j in range(exop,4):
+                if operands[j] != 'none':
+                    if first_operand == 0:
+                        inst_disassemble_format += ', '
+                    else:
+                        first_operand = 0
+                    if (operands[j] == 'imms24') | (operands[j][0:6] == 'offset'):
+                        inst_disassemble_format += ''
+                    elif operands[j][0:3] == 'imm':
+                        inst_disassemble_format += '0x%x'
+                    elif operands[j] == 'ww':
+                        inst_disassemble_format += 'w%d'
+                    else:
+                        inst_disassemble_format += operands[j] + '%d'
+            line = '   {{ {}, {}, dadao_operand_{}, dadao_operand_{}, dadao_operand_{}, dadao_operand_{}, {}, "{}"}},'\
+                .format(inst_opcode_mask, inst_opcode_match, operand_format[0], operand_format[1], operand_format[2], operand_format[3], len(fields) - exop, inst_disassemble_format)
+            print(line, file=f)
+        print(' };',file=f)
 
+def gen_bitpat_file(insts: dict, output_file: str):
+    with open(output_file, 'w') as f:
+        for inst_name, inst_description in insts.items():
+            if inst_description['fields']['op'] == 8:
+                fields = list(inst_description['fields'].keys())[1:]
+            else:
+                fields = list(inst_description['fields'].keys())
+            regfile_restrictions = inst_description['regfile_restrictions']
+            operands = fields + ['none'] * (4 - len(fields))
+            operands = [regfile_fillin(operands[i], regfile_restrictions) for i in range(len(operands))]
+            bitpat = inst_description['opcode']
+            if operands[0] == 'op':
+                bitpat += '??????????????????'
+            else:
+                bitpat += '????????????????????????'
+            if inst_name[0] == '_':
+                inst_name = inst_name[1:]
+            line = '   def {}\t\t= BitPat("b{}")'.format(inst_name.upper(),bitpat)
+            print(line, file=f)
 
-
-
-
+def main():
+    input_decode = ''
+    output_decode = ''
+    output_opc = ''
+    output_encoding = ''
+    output_disassemble = ''
+    output_bitpat = ''
+    long_opts = ['input=','decode=','opc=','encoding=','disassemble=','bitpat=']
+    try:
+        (opts, args) = getopt.gnu_getopt(sys.argv[1:], 'o:vw:', long_opts)
+    except getopt.GetoptError as err:
+        print('get opts or args error')
+    for o, a in opts:
+        if o == '--input':
+            input_decode = a
+        elif o == '--decode':
+            output_decode = a
+        elif o == '--opc':
+            output_opc = a
+        elif o == '--encoding':
+            output_encoding = a
+        elif o == '--disassemble':
+            output_disassemble = a
+        elif o == '--bitpat':
+            output_bitpat = a
+    insts = read_opcodes(input_decode)
+    if output_decode:
+        gen_decode_file(insts, output_decode)
+    if output_opc:
+        gen_opc_file(insts, output_opc)
+    if output_encoding:
+        gen_encoding_file(insts, output_encoding)
+    if output_disassemble:
+        gen_disassemble_file(insts, output_disassemble)
+    if output_bitpat:
+        gen_bitpat_file(insts, output_bitpat)
 
 
 if __name__ == '__main__':
+    import io
     import os
+    import re
     import sys
-    insts = read_opcodes(sys.argv[1])
-    gen_decode_file(insts, sys.argv[2])
-    gen_opc_file(insts, sys.argv[3])
-    gen_encoding_file(insts, sys.argv[4])
-
+    import getopt
+    main()

@@ -8,11 +8,36 @@ OPCODES_INPUT		:= $(OPCODES_SRC_DIR)/simrisc.opcodes
 OPCODES_OUTPUT_QEMU	:= $(OPCODES_DST_DIR)/output.qemu
 OPCODES_OUTPUT_BIN	:= $(OPCODES_DST_DIR)/output.bin
 OPCODES_OUTPUT_ENV	:= $(OPCODES_DST_DIR)/output.env
+OPCODES_OUTPUT_DIS      := $(OPCODES_DST_DIR)/output.dis
+OPCODES_OUTPUT_BIT      := $(OPCODES_DST_DIR)/output.bit
 
 opcodes-parse:
 	@make -s opcodes-clean
-	@mkdir -p $(OPCODES_DST_DIR)
-	$(PYTHON) $(OPCODES_PARSE) $(OPCODES_INPUT) $(OPCODES_OUTPUT_QEMU) $(OPCODES_OUTPUT_BIN) $(OPCODES_OUTPUT_ENV)
+	@make -s opcodes-qemu
+	@make -s opcodes-binutils
+	@make -s opcodes-disassemble
+	@make -s opcodes-encoding
+	@make -s opcodes-bitpat
+
+opcodes-qemu:
+	@test -d $(OPCODES_DST_DIR) || mkdir -p $(OPCODES_DST_DIR)
+	$(PYTHON) $(OPCODES_PARSE) --input $(OPCODES_INPUT) --decode $(OPCODES_OUTPUT_QEMU)
+
+opcodes-binutils:
+	@test -d $(OPCODES_DST_DIR) || mkdir -p $(OPCODES_DST_DIR)
+	$(PYTHON) $(OPCODES_PARSE) --input $(OPCODES_INPUT) --opc $(OPCODES_OUTPUT_BIN)
+
+opcodes-disassemble:
+	@test -d $(OPCODES_DST_DIR) || mkdir -p $(OPCODES_DST_DIR)
+	$(PYTHON) $(OPCODES_PARSE) --input $(OPCODES_INPUT) --disassemble $(OPCODES_OUTPUT_DIS)
+
+opcodes-encoding:
+	@test -d $(OPCODES_DST_DIR) || mkdir -p $(OPCODES_DST_DIR)
+	$(PYTHON) $(OPCODES_PARSE) --input $(OPCODES_INPUT) --encoding $(OPCODES_OUTPUT_ENV)
+
+opcodes-bitpat:
+	@test -d $(OPCODES_DST_DIR) || mkdir -p $(OPCODES_DST_DIR)
+	$(PYTHON) $(OPCODES_PARSE) --input $(OPCODES_INPUT) --bitpat $(OPCODES_OUTPUT_BIT)
 
 opcodes-clean:
 	@rm -fr $(OPCODES_DST_DIR)
