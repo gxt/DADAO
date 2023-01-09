@@ -116,11 +116,12 @@ divu	00011111
 
 [ riii	op:8	ha:6	imms:18 ]
 & (ha!=000000)
-addi	00011001		&& rd@ha
-addi	01001001		&& rb@ha
 adrp	01001000		&& rb@ha
 
 [ rrii	op:8	ha:6	hb:6	imms:12 ]
+& (ha!=000000)
+addi    00011001                && rd@ha rd@hb
+addi    01001001                && rb@ha rb@hb
 cmps	00010010		&& rd@ha rd@hb
 
 [ rrii	op:8	ha:6	hb:6	immu:12 ]
