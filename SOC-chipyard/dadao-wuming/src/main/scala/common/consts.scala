@@ -8,6 +8,9 @@ import scala.math._
 
 trait DADAOConstants
 {
+   val BITS_INST = 32
+   val BITS_HEXA = 6
+
    // abstract out instruction decode magic numbers
    val HA_MSB = 23
    val HA_LSB = 18

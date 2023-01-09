@@ -19,7 +19,7 @@ import wuming.common._
 
 class DatToCtlIo(implicit val conf: WumingCoreParams) extends Bundle()
 {
-   val inst   = Output(UInt(32.W))
+   val inst   = Output(UInt(BITS_INST.W))
    val imiss  = Output(Bool())
    val br_eq  = Output(Bool())
    val br_lt  = Output(Bool())
@@ -84,7 +84,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    // Instruction memory buffer to store instruction during multicycle data request
    io.dat.imiss := (io.imem.req.valid && !io.imem.resp.valid)
    val reg_dmiss = RegNext(io.ctl.dmiss, false.B)
-   val if_inst_buffer = RegInit(0.U(32.W))
+   val if_inst_buffer = RegInit(0.U(BITS_INST.W))
    when (io.imem.resp.valid) {
       assert(!reg_dmiss, "instruction arrived during data miss")
       if_inst_buffer := io.imem.resp.bits.data
@@ -203,7 +203,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    // ALU
    val alu_out   = Wire(UInt(conf.xprlen.W))
 
-   val alu_shamt = alu_op2(4,0).asUInt()
+   val alu_shamt = alu_op2(BITS_HEXA-1,0).asUInt()
 
    alu_out := MuxCase(0.U, Array(
                   (io.ctl.alu_fun === ALU_ADD)  -> (alu_op1 + alu_op2).asUInt(),
