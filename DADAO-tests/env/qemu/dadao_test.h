@@ -1,4 +1,4 @@
-#define TESTNUM rd3
+#define TESTNUM rd2
 
 #define DDTEST_DDUII							\
 	.text;								\

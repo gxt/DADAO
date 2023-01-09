@@ -9,9 +9,9 @@
 test_ ## testnum:						\
 	move	TESTNUM, testnum;				\
 	code;							\
-	move	rd7, correctval;				\
-	cmps	rd7, testreg, rd7;				\
-	brnz	rd7, fail;
+	move	rd15, correctval;				\
+	cmps	rd15, testreg, rd15;				\
+	brnz	rd15, fail;
 
 #-----------------------------------------------------------------------
 # DADAO MACROS
@@ -22,103 +22,103 @@ test_ ## testnum:						\
 #-----------------------------------------------------------------------
 
 #define TEST_ORRR_OP( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd14, result,					\
-	move	rd1, val1;						\
-	move	rd2, val2;						\
-	inst	rd14, rd1, rd2;						\
+    TEST_CASE( testnum, rd31, result,					\
+	move	rd16, val1;						\
+	move	rd17, val2;						\
+	inst	rd31, rd16, rd17;					\
     )
 
 #define TEST_ORRR_SRC1_EQ_DEST( testnum, inst, result, val1, val2 )	\
-    TEST_CASE( testnum, rd1, result,					\
-	move	rd1, val1;						\
-	move	rd2, val2;						\
-	inst	rd1, rd1, rd2;						\
+    TEST_CASE( testnum, rd31, result,					\
+	move	rd31, val1;						\
+	move	rd16, val2;						\
+	inst	rd31, rd31, rd16;					\
     )
 
 #define TEST_ORRR_SRC2_EQ_DEST( testnum, inst, result, val1, val2 )	\
-    TEST_CASE( testnum, rd2, result,					\
-	move	rd1, val1;						\
-	move	rd2, val2;						\
-	inst	rd2, rd1, rd2;						\
+    TEST_CASE( testnum, rd31, result,					\
+	move	rd16, val1;						\
+	move	rd31, val2;						\
+	inst	rd31, rd16, rd31;					\
     )
 
 #define TEST_ORRR_SRC12_EQ_DEST( testnum, inst, result, val1 )		\
-    TEST_CASE( testnum, rd1, result,					\
-	move	rd1, val1;						\
-	inst	rd1, rd1, rd1;						\
+    TEST_CASE( testnum, rd31, result,					\
+	move	rd31, val1;						\
+	inst	rd31, rd31, rd31;					\
     )
 
 #define TEST_ORRR_DEST_BYPASS( testnum, swym_cycles, inst, result, val1, val2 )	\
-    TEST_CASE( testnum, rd6, result,					\
-	move	rd4, 0;							\
-1:	move	rd1, val1;						\
-	move	rd2, val2;						\
-	inst	rd14, rd1, rd2;						\
+    TEST_CASE( testnum, rd31, result,					\
+	move	rd16, 0;						\
+1:	move	rd17, val1;						\
+	move	rd18, val2;						\
+	inst	rd19, rd17, rd18;					\
 	.rept	swym_cycles						\
 		swym;							\
 	.endr;								\
-	rd2rd	rd6, rd14, 0;						\
-	addi	rd4, 1;							\
-	cmps	rd5, rd4, 2;						\
-	brnz	rd5, 1b							\
+	rd2rd	rd31, rd19, 0;						\
+	addi	rd16, 1;						\
+	cmps	rd20, rd16, 2;						\
+	brnz	rd20, 1b						\
     )
 
 #define TEST_ORRR_SRC12_BYPASS( testnum, src1_swyms, src2_swyms, inst, result, val1, val2 ) \
-    TEST_CASE( testnum, rd14, result,					\
-	move	rd4, 0;							\
-1:	move	rd1, val1;						\
+    TEST_CASE( testnum, rd31, result,					\
+	move	rd16, 0;						\
+1:	move	rd17, val1;						\
 	.rept	src1_swyms						\
 		swym;							\
 	.endr;								\
-	move	rd2, val2;						\
+	move	rd18, val2;						\
 	.rept	src2_swyms						\
 		swym;							\
 	.endr;								\
-	inst	rd14, rd1, rd2;						\
-	addi	rd4, 1;							\
-	cmps	rd5, rd4, 2;						\
-	brnz	rd5, 1b							\
+	inst	rd31, rd17, rd18;					\
+	addi	rd16, 1;						\
+	cmps	rd19, rd16, 2;						\
+	brnz	rd19, 1b						\
     )
 
 #define TEST_ORRR_SRC21_BYPASS( testnum, src1_swyms, src2_swyms, inst, result, val1, val2 ) \
-    TEST_CASE( testnum, rd14, result,					\
-	move	rd4, 0;							\
-1:	move	rd2, val1;						\
+    TEST_CASE( testnum, rd31, result,					\
+	move	rd16, 0;						\
+1:	move	rd18, val1;						\
 	.rept	src1_swyms						\
 		swym;							\
 	.endr;								\
-	move	rd1, val2;						\
+	move	rd17, val2;						\
 	.rept	src2_swyms						\
 		swym;							\
 	.endr;								\
-	inst	rd14, rd1, rd2;						\
-	addi	rd4, 1;							\
-	cmps	rd5, rd4, 2;						\
-	brnz	rd5, 1b							\
+	inst	rd31, rd17, rd18;					\
+	addi	rd16, 1;						\
+	cmps	rd19, rd16, 2;						\
+	brnz	rd19, 1b						\
     )
 
 #define TEST_ORRR_ZEROSRC1( testnum, inst, result, val )		\
-    TEST_CASE( testnum, rd2, result,					\
-	move	rd1, val;						\
-	inst	rd2, rd0, rd1;						\
+    TEST_CASE( testnum, rd31, result,					\
+	move	rd16, val;						\
+	inst	rd31, rd0, rd16;					\
     )
 
 #define TEST_ORRR_ZEROSRC2( testnum, inst, result, val )		\
-    TEST_CASE( testnum, rd2, result,					\
-	move	rd1, val;						\
-	inst	rd2, rd1, rd0;						\
+    TEST_CASE( testnum, rd31, result,					\
+	move	rd16, val;						\
+	inst	rd31, rd16, rd0;					\
     )
 
 #define TEST_ORRR_ZEROSRC12( testnum, inst, result )			\
-    TEST_CASE( testnum, rd1, result,					\
-	inst	rd1, rd0, rd0;						\
+    TEST_CASE( testnum, rd31, result,					\
+	inst	rd31, rd0, rd0;						\
     )
 
 #define TEST_ORRR_ZERODEST( testnum, inst, val1, val2 )			\
     TEST_CASE( testnum, rd0, 0,						\
-	move	rd1, val1;						\
-	move	rd2, val2;						\
-	inst	rd0, rd1, rd2;						\
+	move	rd16, val1;						\
+	move	rd17, val2;						\
+	inst	rd0, rd16, rd17;					\
     )
 
 #-----------------------------------------------------------------------
@@ -126,87 +126,87 @@ test_ ## testnum:						\
 #-----------------------------------------------------------------------
 
 #define TEST_RWII_RD_W0( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd5, result,					\
-        move	rd5, val1;						\
-        inst	rd5, w0, val2;						\
+    TEST_CASE( testnum, rd31, result,					\
+        move	rd31, val1;						\
+        inst	rd31, w0, val2;						\
     )
 
 #define TEST_RWII_RD_W1( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd5, result,					\
-        move	rd5, val1;						\
-        inst	rd5, w1, val2;						\
+    TEST_CASE( testnum, rd31, result,					\
+        move	rd31, val1;						\
+        inst	rd31, w1, val2;						\
     )
 
 #define TEST_RWII_RD_W2( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd5, result,					\
-        move	rd5, val1;						\
-        inst	rd5, w2, val2;						\
+    TEST_CASE( testnum, rd31, result,					\
+        move	rd31, val1;						\
+        inst	rd31, w2, val2;						\
     )
 
 #define TEST_RWII_RD_W3( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd5, result,					\
-        move	rd5, val1;						\
-        inst	rd5, w3, val2;						\
+    TEST_CASE( testnum, rd31, result,					\
+        move	rd31, val1;						\
+        inst	rd31, w3, val2;						\
     )
 
 #define TEST_RWII_RB_W0( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd5, result,					\
-        move	rb5, val1;						\
-        inst	rb5, w0, val2;						\
-        rb2rd	rd5, rb5, 0;						\
+    TEST_CASE( testnum, rd31, result,					\
+        move	rb31, val1;						\
+        inst	rb31, w0, val2;						\
+        rb2rd	rd31, rb31, 0;						\
     )
 
 #define TEST_RWII_RB_W1( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd5, result,					\
-        move	rb5, val1;						\
-        inst	rb5, w1, val2;						\
-        rb2rd	rd5, rb5, 0;						\
+    TEST_CASE( testnum, rd31, result,					\
+        move	rb31, val1;						\
+        inst	rb31, w1, val2;						\
+        rb2rd	rd31, rb31, 0;						\
     )
 
 #define TEST_RWII_RB_W2( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd5, result,					\
-	move	rb5, val1;						\
-        inst	rb5, w2, val2;						\
-        rb2rd	rd5, rb5, 0;						\
+    TEST_CASE( testnum, rd31, result,					\
+	move	rb31, val1;						\
+        inst	rb31, w2, val2;						\
+        rb2rd	rd31, rb31, 0;						\
     )
 
 #define TEST_RWII_RB_W3( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd5, result,					\
-        move	rb5, val1;						\
-        inst	rb5, w3, val2;						\
-        rb2rd	rd5, rb5, 0;						\
+    TEST_CASE( testnum, rd31, result,					\
+        move	rb31, val1;						\
+        inst	rb31, w3, val2;						\
+        rb2rd	rd31, rb31, 0;						\
     )
 
 #define TEST_RWII_RF_W0( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd5, result,					\
-        move	rd5, val1;						\
-        rd2rf	rf5, rd5, 0;						\
-        inst	rf5, w0, val2;						\
-        rf2rd	rd5, rf5, 0;						\
+    TEST_CASE( testnum, rd31, result,					\
+        move	rd31, val1;						\
+        rd2rf	rf31, rd31, 0;						\
+        inst	rf31, w0, val2;						\
+        rf2rd	rd31, rf31, 0;						\
     )
 
 #define TEST_RWII_RF_W1( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd5, result,					\
-        move	rd5, val1;						\
-        rd2rf	rf5, rd5, 0;						\
-        inst	rf5, w1, val2;						\
-        rf2rd	rd5, rf5, 0;						\
+    TEST_CASE( testnum, rd31, result,					\
+        move	rd31, val1;						\
+        rd2rf	rf31, rd31, 0;						\
+        inst	rf31, w1, val2;						\
+        rf2rd	rd31, rf31, 0;						\
     )
 
 #define TEST_RWII_RF_W2( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd5, result,					\
-        move	rd5, val1;						\
-        rd2rf	rf5, rd5, 0;						\
-        inst	rf5, w2, val2;						\
-        rf2rd	rd5, rf5, 0;						\
+    TEST_CASE( testnum, rd31, result,					\
+        move	rd31, val1;						\
+        rd2rf	rf31, rd31, 0;						\
+        inst	rf31, w2, val2;						\
+        rf2rd	rd31, rf31, 0;						\
     )
 
 #define TEST_RWII_RF_W3( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd5, result,					\
-        move	rd5, val1;						\
-        rd2rf	rf5, rd5, 0;						\
-        inst	rf5, w3, val2;						\
-        rf2rd	rd5, rf5, 0;						\
+    TEST_CASE( testnum, rd31, result,					\
+        move	rd31, val1;						\
+        rd2rf	rf31, rd31, 0;						\
+        inst	rf31, w3, val2;						\
+        rf2rd	rd31, rf31, 0;						\
     )
 
 #-----------------------------------------------------------------------
