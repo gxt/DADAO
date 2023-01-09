@@ -616,7 +616,7 @@ static bool trans_addi(DisasContext *ctx, arg_addi *a)
     if (a->ha == 0) {
         return false;
     }
-    tcg_gen_addi_i64(cpu_rd[a->ha], cpu_rd[a->ha], a->imms18);
+    tcg_gen_addi_i64(cpu_rd[a->ha], cpu_rd[a->hb], a->imms12);
     return true;
 }
 
@@ -625,7 +625,7 @@ static bool trans__addi(DisasContext *ctx, arg__addi *a)
     if (a->ha == 0) {
         return false;
     }
-    tcg_gen_addi_i64(cpu_rb[a->ha], cpu_rb[a->ha], a->imms18);
+    tcg_gen_addi_i64(cpu_rb[a->ha], cpu_rb[a->hb], a->imms12);
     return true;
 }
 
