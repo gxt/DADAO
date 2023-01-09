@@ -138,6 +138,12 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       when (io.ctl.wb_sel === WB_RBHB) {
          regfileB(hb_addr) := wb_data
       }
+      when (io.ctl.wb_sel === WB_RDHA) {
+         regfileD(ha_addr) := wb_data
+      }
+      when (io.ctl.wb_sel === WB_RBHA) {
+         regfileB(ha_addr) := wb_data
+      }
    }
 
    //// DebugModule
@@ -150,12 +156,14 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val rs1_data = Mux((rs1_addr =/= 0.U), regfileD(rs1_addr), 0.asUInt(conf.xprlen.W))
    val rs2_data = Mux((rs2_addr =/= 0.U), regfileD(rs2_addr), 0.asUInt(conf.xprlen.W))
 
+   val rdha_data = Mux((ha_addr =/= 0.U), regfileD(ha_addr), 0.asUInt(conf.xprlen.W))
    val rdhc_data = Mux((hc_addr =/= 0.U), regfileD(hc_addr), 0.asUInt(conf.xprlen.W))
    val rdhd_data = Mux((hd_addr =/= 0.U), regfileD(hd_addr), 0.asUInt(conf.xprlen.W))
 
 
    // immediates
    val immu6 = inst(HD_MSB, HD_LSB)
+   val imms18 = Cat(Fill(14, inst(HB_MSB)), inst(HB_MSB, HD_LSB))
 
    val imm_i = inst(31, 20)
    val imm_s = Cat(inst(31, 25), inst(11,7))
@@ -173,6 +181,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
 
    val alu_op1 = MuxCase(0.U, Array(
+               (io.ctl.op1_sel === OP1_RDHA) -> rdha_data,
                (io.ctl.op1_sel === OP1_RDHC) -> rdhc_data,
                (io.ctl.op1_sel === OP1_RS1) -> rs1_data,
                (io.ctl.op1_sel === OP1_IMU) -> imm_u_sext,
@@ -182,6 +191,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val alu_op2 = MuxCase(0.U, Array(
                (io.ctl.op2_sel === OP2_RDHD) -> rdhd_data,
                (io.ctl.op2_sel === OP2_IMMU6) -> immu6,
+               (io.ctl.op2_sel === OP2_IMMS18) -> imms18,
                (io.ctl.op2_sel === OP2_RS2) -> rs2_data,
                (io.ctl.op2_sel === OP2_PC)  -> pc_reg,
                (io.ctl.op2_sel === OP2_IMI) -> imm_i_sext,
@@ -257,6 +267,8 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                   (io.ctl.wb_sel === WB_ALU) -> alu_out,
                   (io.ctl.wb_sel === WB_RDHB) -> alu_out,
                   (io.ctl.wb_sel === WB_RBHB) -> alu_out,
+                  (io.ctl.wb_sel === WB_RDHA) -> alu_out,
+                  (io.ctl.wb_sel === WB_RBHA) -> alu_out,
                   (io.ctl.wb_sel === WB_MEM) -> io.dmem.resp.bits.data,
                   (io.ctl.wb_sel === WB_PC4) -> pc_plus4,
                   (io.ctl.wb_sel === WB_CSR) -> csr.io.rw.rdata
