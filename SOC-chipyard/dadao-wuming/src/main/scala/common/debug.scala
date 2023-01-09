@@ -160,7 +160,7 @@ class DebugModule(implicit val conf: WumingCoreParams) extends Module {
     DMI_RegAddrs.DMI_SBCS -> sbcs.asUInt,
     DMI_RegAddrs.DMI_SBADDRESS0 -> sbaddr,
     DMI_RegAddrs.DMI_SBDATA0 -> sbdata)
-  val decoded_addr = read_map map { case (k, v) => k -> (io.dmi.req.bits.addr === k) }
+  val decoded_addr = read_map map { case (k, v) => k -> (io.dmi.req.bits.addr === k.U) }
   io.dmi.resp.bits.data := Mux1H(for ((k, v) <- read_map) yield decoded_addr(k) -> v)
   val wdata = io.dmi.req.bits.data
   dmstatus.allhalted := dmcontrol.haltreq
