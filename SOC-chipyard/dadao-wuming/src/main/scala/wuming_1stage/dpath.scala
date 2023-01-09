@@ -55,12 +55,12 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val interrupt_edge = Wire(Bool())
 
    // Instruction Fetch
-   val pc_next          = Wire(UInt(32.W))
-   val pc_plus4         = Wire(UInt(32.W))
-   val br_target        = Wire(UInt(32.W))
-   val jmp_target       = Wire(UInt(32.W))
-   val jump_reg_target  = Wire(UInt(32.W))
-   val exception_target = Wire(UInt(32.W))
+   val pc_next          = Wire(UInt(conf.xprlen.W))
+   val pc_plus4         = Wire(UInt(conf.xprlen.W))
+   val br_target        = Wire(UInt(conf.xprlen.W))
+   val jmp_target       = Wire(UInt(conf.xprlen.W))
+   val jump_reg_target  = Wire(UInt(conf.xprlen.W))
+   val exception_target = Wire(UInt(conf.xprlen.W))
 
    // PC Register
    pc_next := MuxCase(pc_plus4, Array(

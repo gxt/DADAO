@@ -119,10 +119,10 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
    //**********************************
    // Instruction Fetch Stage
-   val if_pc_next          = Wire(UInt(32.W))
-   val exe_brjmp_target    = Wire(UInt(32.W))
-   val exe_jump_reg_target = Wire(UInt(32.W))
-   val exception_target    = Wire(UInt(32.W))
+   val if_pc_next          = Wire(UInt(conf.xprlen.W))
+   val exe_brjmp_target    = Wire(UInt(conf.xprlen.W))
+   val exe_jump_reg_target = Wire(UInt(conf.xprlen.W))
+   val exception_target    = Wire(UInt(conf.xprlen.W))
 
    // Instruction fetch buffer
    val if_buffer_in = Wire(new DecoupledIO(new MemResp(conf.xprlen)))

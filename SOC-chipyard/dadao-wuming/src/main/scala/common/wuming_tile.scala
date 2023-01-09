@@ -24,7 +24,7 @@ case class WumingCoreParams(
   bootFreqHz: BigInt = BigInt(1700000000),
   ports: Int = 2,
   instlen: Int = 32,
-  xprlen: Int = 32,
+  xprlen: Int = 64,
   internalTile: WumingInternalTileFactory = Stage5Factory
 ) extends CoreParams {
   val useVM: Boolean = false
