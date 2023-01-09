@@ -56,16 +56,19 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                   CPRD    -> List(Y, BR_N  , OP1_RS1, OP2_X   , ALU_COPY1, WB_CSR, REN_1, MEN_0, M_X ,  MT_X,  CSR.R),
                   CPWR    -> List(Y, BR_N  , OP1_RS1, OP2_X   , ALU_COPY1, WB_CSR, REN_1, MEN_0, M_X ,  MT_X,  CSR.W),
 
-                  AND     -> List(Y, BR_N  , OP1_RDHC, OP2_RDHD, ALU_AND ,  WB_ALU, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
-                  ORR     -> List(Y, BR_N  , OP1_RDHC, OP2_RDHD, ALU_OR  ,  WB_ALU, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
-                  XOR     -> List(Y, BR_N  , OP1_RDHC, OP2_RDHD, ALU_XOR ,  WB_ALU, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  AND     -> List(Y, BR_N  , OP1_RDHC, OP2_RDHD, ALU_AND ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  ORR     -> List(Y, BR_N  , OP1_RDHC, OP2_RDHD, ALU_OR  ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  XOR     -> List(Y, BR_N  , OP1_RDHC, OP2_RDHD, ALU_XOR ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
 
-                  SHLUr   -> List(Y, BR_N  , OP1_RDHC, OP2_RDHD , ALU_SLL ,  WB_ALU, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
-                  SHLUi   -> List(Y, BR_N  , OP1_RDHC, OP2_IMMU6, ALU_SLL ,  WB_ALU, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
-                  SHRSr   -> List(Y, BR_N  , OP1_RDHC, OP2_RDHD , ALU_SRA ,  WB_ALU, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
-                  SHRSi   -> List(Y, BR_N  , OP1_RDHC, OP2_IMMU6, ALU_SRA ,  WB_ALU, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
-                  SHRUr   -> List(Y, BR_N  , OP1_RDHC, OP2_RDHD , ALU_SRL ,  WB_ALU, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
-                  SHRUi   -> List(Y, BR_N  , OP1_RDHC, OP2_IMMU6, ALU_SRL ,  WB_ALU, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  SHLUr   -> List(Y, BR_N  , OP1_RDHC, OP2_RDHD , ALU_SLL ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  SHLUi   -> List(Y, BR_N  , OP1_RDHC, OP2_IMMU6, ALU_SLL ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  SHRSr   -> List(Y, BR_N  , OP1_RDHC, OP2_RDHD , ALU_SRA ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  SHRSi   -> List(Y, BR_N  , OP1_RDHC, OP2_IMMU6, ALU_SRA ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  SHRUr   -> List(Y, BR_N  , OP1_RDHC, OP2_RDHD , ALU_SRL ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  SHRUi   -> List(Y, BR_N  , OP1_RDHC, OP2_IMMU6, ALU_SRL ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+
+                  ADDrb   -> List(Y, BR_N  , OP1_RBHC, OP2_RDHD , ALU_ADD ,  WB_RBHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  SUBrb   -> List(Y, BR_N  , OP1_RBHC, OP2_RDHD , ALU_SUB ,  WB_RBHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
 
                   LW      -> List(Y, BR_N  , OP1_RS1, OP2_IMI , ALU_ADD ,  WB_MEM, REN_1, MEN_1, M_XRD, MT_W,  CSR.N),
                   LB      -> List(Y, BR_N  , OP1_RS1, OP2_IMI , ALU_ADD ,  WB_MEM, REN_1, MEN_1, M_XRD, MT_B,  CSR.N),

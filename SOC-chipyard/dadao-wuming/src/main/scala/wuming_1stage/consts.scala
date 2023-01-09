@@ -48,6 +48,7 @@ trait ScalarOpConstants
 
    // Operand 1 Select Signal
    val OP1_RDHC = 4.asUInt(3.W) // rd source in hc field
+   val OP1_RBHC = 5.asUInt(3.W) // rb source in hc field
 
    val OP1_RS1 = 0.asUInt(3.W) // Register Source #1
    val OP1_IMU = 1.asUInt(3.W) // immediate, U-type
@@ -84,11 +85,14 @@ trait ScalarOpConstants
    val ALU_X   = 0.asUInt(4.W)
 
    // Writeback Select Signal
-   val WB_ALU  = 0.asUInt(2.W)
-   val WB_MEM  = 1.asUInt(2.W)
-   val WB_PC4  = 2.asUInt(2.W)
-   val WB_CSR  = 3.asUInt(2.W)
-   val WB_X    = 0.asUInt(2.W)
+   val WB_RDHB  = 4.asUInt(3.W)
+   val WB_RBHB  = 5.asUInt(3.W)
+
+   val WB_ALU  = 0.asUInt(3.W)
+   val WB_MEM  = 1.asUInt(3.W)
+   val WB_PC4  = 2.asUInt(3.W)
+   val WB_CSR  = 3.asUInt(3.W)
+   val WB_X    = 0.asUInt(3.W)
 
    // Memory Function Type (Read,Write,Fence) Signal
    val MWR_R   = 0.asUInt(2.W)
