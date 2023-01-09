@@ -12,6 +12,7 @@ BINUTILS_GDB_0235_PATCHES		:= $(DIR_DADAO_TOP)/TCH-binutils-gdb/binutils-gdb-023
 
 BINUTILS_GDB_0235_SOURCE		:= $(DIR_DADAO_SOURCE)/binutils-gdb-0235
 BINUTILS_GDB_0235_OPCODES		:= $(BINUTILS_GDB_0235_SOURCE)/opcodes/dadao-insn.opc
+BINUTILS_GDB_0235_DISASSEMBLE		:= $(BINUTILS_GDB_0235_SOURCE)/opcodes/dadao-dis.h
 BINUTILS_GDB_0235_BUILD			:= $(DIR_DADAO_BUILD)/binutils-gdb-0235
 BINUTILS_GDB_0235_INSTALL		?= $(DIR_DADAO_INSTALL)
 #BINUTILS_GDB_0235_INSTALL		?= $(DIR_DADAO_BUILD)/__binutils-gdb-0235
@@ -98,8 +99,10 @@ endif
 	# handle opcodes dir
 	@cp -a $(BINUTILS_GDB_0235_NEWFILES)/opcodes/* $(BINUTILS_GDB_0235_SOURCE)/opcodes/
 	# OPCODES: Generate dadao opcodes file
-	@test -f $(OPCODES_OUTPUT_BIN) || make -s -C $(DIR_DADAO_TOP) opcodes-parse
+	@test -f $(OPCODES_OUTPUT_BIN) || make -s -C $(DIR_DADAO_TOP) opcodes-binutils
+	@test -f $(OPCODES_OUTPUT_DIS) || make -s -C $(DIR_DADAO_TOP) opcodes-disassemble
 	@cp $(OPCODES_OUTPUT_BIN) $(BINUTILS_GDB_0235_OPCODES)
+	@cp $(OPCODES_OUTPUT_DIS) $(BINUTILS_GDB_0235_DISASSEMBLE)
 	@cd $(BINUTILS_GDB_0235_SOURCE);				\
 		git add opcodes;					\
 		git commit -sm"DADAO: add opcodes support";		\

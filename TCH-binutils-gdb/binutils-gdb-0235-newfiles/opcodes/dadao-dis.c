@@ -8,75 +8,68 @@
  */
 #include "sysdep.h"
 #include <stdio.h>
-#include "opcode/dadao.h"
+#include "dadao-dis.h"
 #include "disassemble.h"
 #include "libiberty.h"
 #include "bfd.h"
 #include "opintl.h"
 
-struct dadao_dis_info {
-	const struct dadao_opcode *ddis_majorp[256];
-	const struct dadao_opcode **ddis_minorp[256];
-	enum dadao_operand_type ddis_optype[256];
-};
-
-/* Initialize a target-specific array in INFO.  */
-static struct dadao_dis_info *initialize_dadao_dis_info (void)
+static unsigned int analyze_operand (enum dadao_disassemble_type optype, unsigned int insn, int *cal_offset, int *illegal_insn)
 {
-	struct dadao_dis_info *ddis_infop;
-	const struct dadao_opcode *opcodep;
-	const struct dadao_opcode **minor_opcodep;
-	unsigned int i;
-
-	ddis_infop = xmalloc (sizeof (struct dadao_dis_info));
-
-	for (i=0; i<256; i++) {
-		ddis_infop->ddis_majorp[i] = NULL;
-		ddis_infop->ddis_minorp[i] = NULL;
-		ddis_infop->ddis_optype[i] = dadao_operand_noop;
-	}
-
-	for (opcodep = dadao_opcodes; opcodep->name != NULL; opcodep++) {
-		if (opcodep->type == dadao_type_pseudo)
-			continue;
-
-		i = opcodep->major_opcode;
-
-		if (opcodep->operands_num == 0 && i == 0x6D) {
-			ddis_infop->ddis_majorp[i+1] = opcodep;
-			ddis_infop->ddis_optype[i] = dadao_operand_none;
-			continue;
-		}
-
-		if (opcodep->op_fa == dadao_operand_op) {
-			minor_opcodep = ddis_infop->ddis_minorp[i];
-			if (minor_opcodep == NULL) {
-				minor_opcodep = xcalloc (64, sizeof (struct dadao_opcode *));
-				ddis_infop->ddis_minorp[i] = minor_opcodep;
-				ddis_infop->ddis_optype[i] = dadao_operand_op;
-			}
-			minor_opcodep[opcodep->minor_opcode] = opcodep;
-			continue;
-		}
-
-		ddis_infop->ddis_majorp[i] = opcodep;
-		ddis_infop->ddis_optype[i] = dadao_operand_none;
-	}
-
-	return ddis_infop;
+        unsigned int data = 0;
+        switch (optype){
+                case dadao_operand_none:
+                        break;
+                case dadao_operand_immu6:
+                        data = insn & 0x3f;
+                        break;
+                case dadao_operand_immu12:
+                        data = insn & 0xfff;
+                        break;
+                case dadao_operand_immu18:
+                        data = insn & 0x3ffff;
+                        break;
+                case dadao_operand_ww:
+                        data = (insn >> 16) & 0x3;
+                        break;
+                case dadao_operand_immu16:
+                        data = insn & 0xffff;
+                        break;
+                case dadao_operand_imms12:
+                        if (insn & 0x800)
+                                data = 0xfffff000 | (insn & 0xfff);
+                        else
+                                data = insn & 0xfff;
+                        break;
+                case dadao_operand_imms18:
+                        if (insn & 0x20000)
+                                data = 0xfffc0000 | (insn & 0x3ffff);
+                        else
+                                data = insn & 0x3ffff;
+                        break;
+                case dadao_operand_offset18:
+                        *cal_offset = 18;
+                        break;
+                case dadao_operand_offset24:
+                        *cal_offset = 24;
+                        break;
+                case dadao_operand_ha:
+                        data = (insn >> 18) & 0x3f;
+                        break;
+                case dadao_operand_hb:
+                        data = (insn >> 12) & 0x3f;
+                        break;
+                case dadao_operand_hc:
+                        data = (insn >> 6) & 0x3f;
+                        break;
+                case dadao_operand_hd:
+                        data = insn & 0x3f;
+                        break;
+                default:
+                        *illegal_insn = 1;
+        }
+        return data;
 }
-
-#define	__DDIS_PRINT_REG(prefix, regnum)						\
-	(*info->fprintf_func) (info->stream, "%s%d", prefix, (int)regnum)
-
-#define __DDIS_PRINT_WW(prefix, regnum)                                                \
-        (*info->fprintf_func) (info->stream, "%s%d", prefix, (int)(regnum >> 4))
-
-#define	__DDIS_EXIT_FAIL()								\
-	do {										\
-		(*info->fprintf_func) (info->stream, "*unknown* (0x%08x)", insn);	\
-		return 4;								\
-	} while (0)
 
 /* The main disassembly function.  */
 int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
@@ -84,18 +77,10 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	unsigned char buffer[4];
 	unsigned int insn;
 	unsigned int fa, fb, fc, fd;
-	struct dadao_dis_info *ddis_infop;
-	const struct dadao_opcode *opcodep;
-	const struct dadao_opcode **minor_opcodep;
+	struct dadao_disassemble *disassemble_dict;
+	unsigned int match;
 	int i;
 	bfd_signed_vma offset;
-
-	ddis_infop = (struct dadao_dis_info *) info->private_data;
-
-	if (ddis_infop == NULL) {
-		ddis_infop = initialize_dadao_dis_info ();
-		info->private_data = (void *) ddis_infop;
-	}
 
 	i = (*info->read_memory_func) (memaddr, buffer, 4, info);
 	if (i != 0) {
@@ -105,166 +90,72 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 
 	/* Present bytes in the order they are laid out in memory.  */
 	info->display_endian = BFD_ENDIAN_LITTLE;
-
 	info->insn_info_valid = 1;
 	info->bytes_per_chunk = 4;
 	info->branch_delay_insns = 0;
 	info->target = 0;
 
 	insn = bfd_getb32 (buffer);
-
 	fa = (insn >> 10) & 0x3F;
 	fb = (((insn >> 8) & 0x3) << 4) + ((insn >> 20) & 0xF);
 	fc = (((insn >> 16) & 0xF) << 2) + (insn >> 30);
 	fd = (insn >> 24) & 0x3F;
-
 	insn = ((insn & 0xFF) << 24) + (fa << 18) + (fb << 12) + (fc << 6) + fd;
 
-	switch (ddis_infop->ddis_optype[(insn >> 24)]) {
-	case dadao_operand_none:
-		if ( insn == 0x6D000000 ) {
-			opcodep = ddis_infop->ddis_majorp[(insn>>24)+1];
-			break;
-		}
-		opcodep = ddis_infop->ddis_majorp[(insn >> 24)];
-		break;
-
-	case dadao_operand_op:
-		minor_opcodep = ddis_infop->ddis_minorp[(insn >> 24)];
-		opcodep = minor_opcodep[fa];
-		break;
-
-	default:
-		opcodep = NULL;
-	}
-
-	if (opcodep == NULL)		__DDIS_EXIT_FAIL();
-
-	if (opcodep->operands_num != 0)
-		if (opcodep->name[0] == '_')
-			(*info->fprintf_func) (info->stream, "%s\t", opcodep->name + 1);
-		else
-			(*info->fprintf_func) (info->stream, "%s\t", opcodep->name);
-	else {
-		/* ret / nop has no operands */
-		(*info->fprintf_func) (info->stream, "%s", opcodep->name);
-		return 4;
-	}
-
-	i = 0;
-
-	switch (opcodep->op_fa) {
-	case dadao_operand_rd:	__DDIS_PRINT_REG("rd", fa);	i++;	break;
-	case dadao_operand_rb:	__DDIS_PRINT_REG("rb", fa);	i++;	break;
-	case dadao_operand_rf:	__DDIS_PRINT_REG("rf", fa);	i++;	break;
-	case dadao_operand_ra:	__DDIS_PRINT_REG("ra", fa);	i++;	break;
-	case dadao_operand_cp:	__DDIS_PRINT_REG("cp", fa); i++;	break;
-
-	case dadao_operand_imms24: /* ONLY call or jump be here */
-		offset = (insn & 0xFFFFFF) << 2;
-		if (offset & 0x2000000)		offset -= 0x4000000;	/* backward */
-
-		info->target = memaddr + offset;
-
-		(*info->print_address_func) (memaddr + offset, info);
-		return 4;
-
-	case dadao_operand_op:
-		break;
-
-	default:
-		__DDIS_EXIT_FAIL();
-	}
-
-	if (opcodep->op_fa != dadao_operand_op)
-		(*info->fprintf_func) (info->stream, ", ");
-
-	switch (opcodep->op_fb) {
-	case dadao_operand_rd:	__DDIS_PRINT_REG("rd", fb);	i++;	break;
-	case dadao_operand_rb:	__DDIS_PRINT_REG("rb", fb);	i++;	break;
-	case dadao_operand_rf:	__DDIS_PRINT_REG("rf", fb);	i++;	break;
-	case dadao_operand_ra:	__DDIS_PRINT_REG("ra", fb);	i++;	break;
-	case dadao_operand_cr:	__DDIS_PRINT_REG("cr", fb); i++;	break;
-
-	case dadao_operand_ww:	__DDIS_PRINT_WW("w", fb);	i++;	break;
-
-	case dadao_operand_imms18:
-		if ((insn & 0xFF000000) == 0x19000000 || (insn & 0xFF000000) == 0x49000000) {		/* addi riii */
-			if (insn & 0x20000)
-				(*info->fprintf_func) (info->stream, "%d", (int) (0xFFFC0000 | (insn & 0x3FFFF)));
-			else
-				(*info->fprintf_func) (info->stream, "%d", (int) (insn & 0x3FFFF));
-			return 4;
-		}
-
-		if ((insn & 0xFF000000) == 0x48000000) {		/* adrp riii */
-                        if (insn & 0x20000)
-                                (*info->fprintf_func) (info->stream, "%d", (int) (0xFFFC0000 | (insn & 0x3FFFF)));
-                        else
-                                (*info->fprintf_func) (info->stream, "%d", (int) (insn & 0x3FFFF));
-			return 4;
-		}
-
-		offset = (insn & 0x3FFFF) << 2;
-		if (offset & 0x80000)		offset -= 0x100000;	/* backward */
-
-		info->target = memaddr + offset;
-
-		(*info->print_address_func) (memaddr + offset, info);
-		return 4;
-
-	case dadao_operand_immu18:
-		(*info->fprintf_func) (info->stream, "%d", (int) (insn & 0x3FFFF));
-		return 4;
-
-	default:
-		__DDIS_EXIT_FAIL();
-	}
-
-	(*info->fprintf_func) (info->stream, ", ");
-
-	switch (opcodep->op_fc) {
-	case dadao_operand_rd:	__DDIS_PRINT_REG("rd", fc);	i++;	break;
-	case dadao_operand_rb:	__DDIS_PRINT_REG("rb", fc);	i++;	break;
-	case dadao_operand_rf:	__DDIS_PRINT_REG("rf", fc);	i++;	break;
-	case dadao_operand_ra:	__DDIS_PRINT_REG("ra", fc);	i++;	break;
-	case dadao_operand_cr:	__DDIS_PRINT_REG("cr", fc); i++;	break;
-
-	case dadao_operand_immu16:
-		(*info->fprintf_func) (info->stream, "0x%x", (insn & 0xFFFF));
-		return 4;
-
-	case dadao_operand_imms12:
-		if (insn & 0x800) {
-			(*info->fprintf_func) (info->stream, "%d", (int) (0xFFFFF000 | (insn & 0xFFF)));
-			return 4;
-		}
-		/* FALLTHROUGH */
-	case dadao_operand_immu12:
-		(*info->fprintf_func) (info->stream, "%d", (int) (insn & 0xFFF));
-		return 4;
-
-	default:
-		__DDIS_EXIT_FAIL();
-	}
-
-	switch (opcodep->op_fd) {
-	case dadao_operand_rd:	__DDIS_PRINT_REG(", rd", fd);	break;
-	case dadao_operand_rb:	__DDIS_PRINT_REG(", rb", fd);	break;
-	case dadao_operand_rf:	__DDIS_PRINT_REG(", rf", fd);	break;
-	case dadao_operand_ra:	__DDIS_PRINT_REG(", ra", fd);	break;
-	case dadao_operand_cr:	__DDIS_PRINT_REG(", cr", fd);	break;
-
-	case dadao_operand_immu6:
-		(*info->fprintf_func) (info->stream, ", %d", (int) (insn & 0x3F));
-		break;
-
-	case dadao_operand_none:
-		break;
-
-	default:
-		__DDIS_EXIT_FAIL();
-	}
-
-	return 4;
+        for(disassemble_dict = dadao_disassemble_opcodes; disassemble_dict->disassemble_format != NULL; disassemble_dict++)
+        {
+                match = insn & disassemble_dict->opcode_mask;
+                if (match != disassemble_dict->opcode_match)
+                        continue;
+                else
+                {
+                        int cal_offset = 0;
+                        int illegal_insn = 0;
+                        unsigned int op_1, op_2, op_3, op_4;
+                        op_1 = analyze_operand(disassemble_dict->op1, insn, &cal_offset, &illegal_insn);
+                        op_2 = analyze_operand(disassemble_dict->op2, insn, &cal_offset, &illegal_insn);
+                        op_3 = analyze_operand(disassemble_dict->op3, insn, &cal_offset, &illegal_insn);
+                        op_4 = analyze_operand(disassemble_dict->op4, insn, &cal_offset, &illegal_insn);
+                        if (illegal_insn == 1){
+                                (*info->fprintf_func) (info->stream, "*unknown* (0x%08x)", insn);
+                                return 4;
+                        }
+                        switch(disassemble_dict->operand_num){
+                        case 1:
+                                if (cal_offset != 0)
+                                        (*info->fprintf_func) (info->stream, disassemble_dict->disassemble_format);
+                                else
+                                        (*info->fprintf_func) (info->stream, disassemble_dict->disassemble_format, op_1);
+                                break;
+                        case 2:
+                                if (cal_offset != 0)
+                                        (*info->fprintf_func) (info->stream, disassemble_dict->disassemble_format, op_1);
+                                else
+                                        (*info->fprintf_func) (info->stream, disassemble_dict->disassemble_format, op_1, op_2);
+                                break;
+                        case 3:
+                                (*info->fprintf_func) (info->stream, disassemble_dict->disassemble_format, op_1, op_2, op_3);
+                                break;
+                        case 4:
+                                (*info->fprintf_func) (info->stream, disassemble_dict->disassemble_format, op_1, op_2, op_3, op_4);
+                                break;
+                        }
+                        if (cal_offset == 18){
+                                offset = (insn & 0x3ffff) << 2;
+                                if (offset & 0x80000)
+                                        offset -= 0x100000;
+                                info->target = memaddr + offset;
+                                (*info->print_address_func) (memaddr + offset, info);
+                        }
+                        if (cal_offset == 24){
+                                offset = (insn & 0xffffff) << 2;
+                                if (offset & 0x2000000)
+                                        offset -= 0x4000000;
+                                info->target = memaddr + offset;
+                                (*info->print_address_func) (memaddr + offset, info);
+                        }
+                        break;
+                }
+        }
+        return 4;
 }
