@@ -14,7 +14,7 @@ class CoreIo(implicit val p: Parameters, val conf: WumingCoreParams) extends Bun
 {
    val ddpath = Flipped(new DebugDPath())
    val dcpath = Flipped(new DebugCPath())
-   val imem = new MemPortIo(conf.xprlen)
+   val imem = new MemPortIo(conf.instlen)
    val dmem = new MemPortIo(conf.xprlen)
    val interrupt = Input(new CoreInterrupts())
    val hartid = Input(UInt())

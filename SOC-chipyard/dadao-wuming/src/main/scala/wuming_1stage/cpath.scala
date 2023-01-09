@@ -34,7 +34,7 @@ class CtlToDatIo extends Bundle()
 class CpathIo(implicit val conf: WumingCoreParams) extends Bundle()
 {
    val dcpath = Flipped(new DebugCPath())
-   val imem = new MemPortIo(conf.xprlen)
+   val imem = new MemPortIo(conf.instlen)
    val dmem = new MemPortIo(conf.xprlen)
    val dat  = Flipped(new DatToCtlIo())
    val ctl  = new CtlToDatIo()

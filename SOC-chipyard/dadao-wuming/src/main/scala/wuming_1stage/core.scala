@@ -25,7 +25,7 @@ import freechips.rocketchip.tile.CoreInterrupts
 
 class CoreIo(implicit val p: Parameters, val conf: WumingCoreParams) extends Bundle
 {
-  val imem = new MemPortIo(conf.xprlen)
+  val imem = new MemPortIo(conf.instlen)
   val dmem = new MemPortIo(conf.xprlen)
   val ddpath = Flipped(new DebugDPath())
   val dcpath = Flipped(new DebugCPath())
