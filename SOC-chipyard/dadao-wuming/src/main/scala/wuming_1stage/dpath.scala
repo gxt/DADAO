@@ -119,6 +119,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val wb_addr  = inst(RD_MSB,  RD_LSB)
 
    val wb_data = Wire(UInt(conf.xprlen.W))
+   val wb_data2 = Wire(UInt(conf.xprlen.W))
    val wb_wen = io.ctl.rf_wen && !io.ctl.exception && !interrupt_edge
 
    // Register File
@@ -143,6 +144,10 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       }
       when (io.ctl.wb_sel === WB_RBHA) {
          regfileB(ha_addr) := wb_data
+      }
+      when (io.ctl.wb_sel === WB_HAHB) {
+         regfileD(hb_addr) := wb_data
+         regfileD(ha_addr) := wb_data2
       }
    }
 
@@ -201,13 +206,13 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
 
    // ALU
-   val alu_out   = Wire(UInt(conf.xprlen.W))
+   val alu_out_onemorebit   = Wire(UInt((conf.xprlen + 1).W))
 
    val alu_shamt = alu_op2(BITS_HEXA-1,0).asUInt()
 
-   alu_out := MuxCase(0.U, Array(
-                  (io.ctl.alu_fun === ALU_ADD)  -> (alu_op1 + alu_op2).asUInt(),
-                  (io.ctl.alu_fun === ALU_SUB)  -> (alu_op1 - alu_op2).asUInt(),
+   alu_out_onemorebit := MuxCase(0.U, Array(
+                  (io.ctl.alu_fun === ALU_ADD)  -> (alu_op1 +& alu_op2).asUInt(),
+                  (io.ctl.alu_fun === ALU_SUB)  -> (alu_op1 -& alu_op2).asUInt(),
                   (io.ctl.alu_fun === ALU_AND)  -> (alu_op1 & alu_op2).asUInt(),
                   (io.ctl.alu_fun === ALU_OR)   -> (alu_op1 | alu_op2).asUInt(),
                   (io.ctl.alu_fun === ALU_XOR)  -> (alu_op1 ^ alu_op2).asUInt(),
@@ -218,6 +223,9 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                   (io.ctl.alu_fun === ALU_SRL)  -> (alu_op1 >> alu_shamt).asUInt(),
                   (io.ctl.alu_fun === ALU_COPY1)-> alu_op1
                   ))
+
+   val alu_out = alu_out_onemorebit(63, 0)
+   val alu_out2 = Cat(Fill(63, 0.U), alu_out_onemorebit(64))
 
    // Branch/Jump Target Calculation
    br_target       := pc_reg + imm_b_sext
@@ -269,11 +277,14 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                   (io.ctl.wb_sel === WB_RBHB) -> alu_out,
                   (io.ctl.wb_sel === WB_RDHA) -> alu_out,
                   (io.ctl.wb_sel === WB_RBHA) -> alu_out,
+                  (io.ctl.wb_sel === WB_HAHB) -> alu_out,
                   (io.ctl.wb_sel === WB_MEM) -> io.dmem.resp.bits.data,
                   (io.ctl.wb_sel === WB_PC4) -> pc_plus4,
                   (io.ctl.wb_sel === WB_CSR) -> csr.io.rw.rdata
                   ))
-
+   wb_data2 := MuxCase(alu_out2, Array(
+                  (io.ctl.wb_sel === WB_HAHB) -> alu_out2
+                  ))
 
    // datapath to controlpath outputs
    io.dat.inst   := inst

@@ -88,16 +88,17 @@ trait ScalarOpConstants
    val ALU_X   = 0.asUInt(4.W)
 
    // Writeback Select Signal
-   val WB_RDHB  = 4.asUInt(3.W)
-   val WB_RBHB  = 5.asUInt(3.W)
-   val WB_RDHA  = 6.asUInt(3.W)
-   val WB_RBHA  = 7.asUInt(3.W)
+   val WB_RDHB  = 4.asUInt(4.W)
+   val WB_RBHB  = 5.asUInt(4.W)
+   val WB_RDHA  = 6.asUInt(4.W)
+   val WB_RBHA  = 7.asUInt(4.W)
+   val WB_HAHB  = 8.asUInt(4.W)   // two dest regs: rdha + rdhb
 
-   val WB_ALU  = 0.asUInt(3.W)
-   val WB_MEM  = 1.asUInt(3.W)
-   val WB_PC4  = 2.asUInt(3.W)
-   val WB_CSR  = 3.asUInt(3.W)
-   val WB_X    = 0.asUInt(3.W)
+   val WB_ALU  = 0.asUInt(4.W)
+   val WB_MEM  = 1.asUInt(4.W)
+   val WB_PC4  = 2.asUInt(4.W)
+   val WB_CSR  = 3.asUInt(4.W)
+   val WB_X    = 0.asUInt(4.W)
 
    // Memory Function Type (Read,Write,Fence) Signal
    val MWR_R   = 0.asUInt(2.W)
