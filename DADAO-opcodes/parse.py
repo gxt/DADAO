@@ -248,55 +248,42 @@ def gen_disassemble_file(insts: dict, output_file: str):
         for inst_name, inst_description in insts.items():
             if inst_description['fields']['op'] == 8:
                 fields = list(inst_description['fields'].keys())[1:]
-            else:
-                fields = list(inst_description['fields'].keys())
-            regfile_restrictions = inst_description['regfile_restrictions']
-            operands = fields + ['none'] * (4 - len(fields))
-            operands = [regfile_fillin(operands[i], regfile_restrictions) for i in range(len(operands))]
-            cal_offset = 0
-            if operands.count('imms24'):
-                cal_offset = 1
-            for resource in inst_description['resources']:
-                if resource == 'bpd':
-                    cal_offset = 1
-            if operands[0] == 'op':
-                exop = 1
-                operand_format = ['hb','hc','hd','none']
-                operand_format[3] = 'none'
-                inst_opcode_mask = '0xfffc0000'
-                inst_opcode_match = hex(int(inst_description['opcode'][:14] + '00', base=2)) + '0000'
-            else:
                 exop = 0
                 operand_format = ['ha','hb','hc','hd']
                 inst_opcode_mask = '0xff000000'
                 inst_opcode_match = hex(int(inst_description['opcode'][:8], base=2)) + '000000'
-            for i in range(0,4):
-                if cal_offset == 0:
-                    if (operands[i][0:3] == 'imm') | (operands[i] == 'none') | (operands[i] == 'ww'):
-                        operand_format[i-exop] = operands[i]
-                else:
-                    if operands[i][0:3] == 'imm':
-                        operands[i] = 'offset' + operands[i][4:]
-                    if (operands[i][0:6] == 'offset') | (operands[i] == 'none') | (operands[i] == 'ww'):
-                        operand_format[i-exop] = operands[i]
+            else:
+                fields = list(inst_description['fields'].keys())
+                exop = 1
+                operand_format = ['hb','hc','hd','none']
+                inst_opcode_mask = '0xfffc0000'
+                inst_opcode_match = hex(int(inst_description['opcode'][:14] + '00', base=2)) + '0000'
+            regfile_restrictions = inst_description['regfile_restrictions']
+            operands = fields + ['none'] * (4 - len(fields))
+            operands = [regfile_fillin(operands[i], regfile_restrictions) for i in range(len(operands))]
             if inst_name[0] == '_':
                 inst_name = inst_name[1:]
             inst_disassemble_format = inst_name + '\t'
             first_operand = 1
-            for j in range(exop,4):
-                if operands[j] != 'none':
+            for i in range(exop,4):
+                if operands[i] == 'none':
+                    operand_format[i-exop] = operands[i]
+                else:
                     if first_operand == 0:
                         inst_disassemble_format += ', '
-                    else:
-                        first_operand = 0
-                    if (operands[j] == 'imms24') | (operands[j][0:6] == 'offset'):
+                    first_operand = 0
+                    if (operands[i] == 'imms24') | (inst_description['resources'].count('bpd') & (operands[i][0:3] == 'imm')):
+                        operand_format[i-exop] = 'offset' + operands[i][4:]
+                        operands[i] = 'offset'
                         inst_disassemble_format += ''
-                    elif operands[j][0:3] == 'imm':
+                    elif operands[i][0:3] == 'imm':
+                        operand_format[i-exop] = operands[i]
                         inst_disassemble_format += '0x%x'
-                    elif operands[j] == 'ww':
+                    elif operands[i] == 'ww':
+                        operand_format[i-exop] = operands[i]
                         inst_disassemble_format += 'w%d'
                     else:
-                        inst_disassemble_format += operands[j] + '%d'
+                        inst_disassemble_format += operands[i] + '%d'
             line = '   {{ {}, {}, dadao_operand_{}, dadao_operand_{}, dadao_operand_{}, dadao_operand_{}, {}, "{}"}},'\
                 .format(inst_opcode_mask, inst_opcode_match, operand_format[0], operand_format[1], operand_format[2], operand_format[3], len(fields) - exop, inst_disassemble_format)
             print(line, file=f)
@@ -305,18 +292,16 @@ def gen_disassemble_file(insts: dict, output_file: str):
 def gen_bitpat_file(insts: dict, output_file: str):
     with open(output_file, 'w') as f:
         for inst_name, inst_description in insts.items():
+            bitpat = inst_description['opcode']
             if inst_description['fields']['op'] == 8:
                 fields = list(inst_description['fields'].keys())[1:]
+                bitpat += '????????????????????????'
             else:
                 fields = list(inst_description['fields'].keys())
+                bitpat += '??????????????????'
             regfile_restrictions = inst_description['regfile_restrictions']
             operands = fields + ['none'] * (4 - len(fields))
             operands = [regfile_fillin(operands[i], regfile_restrictions) for i in range(len(operands))]
-            bitpat = inst_description['opcode']
-            if operands[0] == 'op':
-                bitpat += '??????????????????'
-            else:
-                bitpat += '????????????????????????'
             if inst_name[0] == '_':
                 inst_name = inst_name[1:]
             line = '   def {}\t\t= BitPat("b{}")'.format(inst_name.upper(),bitpat)
