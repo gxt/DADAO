@@ -16,7 +16,9 @@
 
 static unsigned int analyze_operand (enum dadao_disassemble_type optype, unsigned int insn, int *cal_offset, int *illegal_insn)
 {
-        unsigned int data = 0;
+        if (*illegal_insn == 1)
+		return 0;
+	unsigned int data = 0;
         switch (optype){
                 case dadao_operand_none:
                         break;
@@ -120,18 +122,30 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
                                 (*info->fprintf_func) (info->stream, "*unknown* (0x%08x)", insn);
                                 return 4;
                         }
+                        if (cal_offset == 18){
+                                offset = (insn & 0x3ffff) << 2;
+                                if (offset & 0x80000)
+                                        offset -= 0x100000;
+                                info->target = memaddr + offset;
+				(*info->fprintf_func) (info->stream, disassemble_dict->disassemble_format, op_1);
+                                (*info->print_address_func) (memaddr + offset, info);
+				return 4;
+                        }
+                        if (cal_offset == 24){
+                                offset = (insn & 0xffffff) << 2;
+                                if (offset & 0x2000000)
+                                        offset -= 0x4000000;
+                                info->target = memaddr + offset;
+				(*info->fprintf_func) (info->stream, disassemble_dict->disassemble_format);
+                                (*info->print_address_func) (memaddr + offset, info);
+				return 4;
+                        }
                         switch(disassemble_dict->operand_num){
                         case 1:
-                                if (cal_offset != 0)
-                                        (*info->fprintf_func) (info->stream, disassemble_dict->disassemble_format);
-                                else
-                                        (*info->fprintf_func) (info->stream, disassemble_dict->disassemble_format, op_1);
+				(*info->fprintf_func) (info->stream, disassemble_dict->disassemble_format, op_1);
                                 break;
                         case 2:
-                                if (cal_offset != 0)
-                                        (*info->fprintf_func) (info->stream, disassemble_dict->disassemble_format, op_1);
-                                else
-                                        (*info->fprintf_func) (info->stream, disassemble_dict->disassemble_format, op_1, op_2);
+				(*info->fprintf_func) (info->stream, disassemble_dict->disassemble_format, op_1, op_2);
                                 break;
                         case 3:
                                 (*info->fprintf_func) (info->stream, disassemble_dict->disassemble_format, op_1, op_2, op_3);
@@ -139,20 +153,6 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
                         case 4:
                                 (*info->fprintf_func) (info->stream, disassemble_dict->disassemble_format, op_1, op_2, op_3, op_4);
                                 break;
-                        }
-                        if (cal_offset == 18){
-                                offset = (insn & 0x3ffff) << 2;
-                                if (offset & 0x80000)
-                                        offset -= 0x100000;
-                                info->target = memaddr + offset;
-                                (*info->print_address_func) (memaddr + offset, info);
-                        }
-                        if (cal_offset == 24){
-                                offset = (insn & 0xffffff) << 2;
-                                if (offset & 0x2000000)
-                                        offset -= 0x4000000;
-                                info->target = memaddr + offset;
-                                (*info->print_address_func) (memaddr + offset, info);
                         }
                         break;
                 }
