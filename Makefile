@@ -80,6 +80,8 @@ dadao-highfive:
 dadao-reboot:
 	@echo "IMPORTANT: MAKE SURE THE SERVER HAS ENOUGH MEMORY!"
 	@make --silent dadao-clean
+	@rm -fr $(DIR_DADAO_TMP)/__source
+	@rm -fr $(DIR_DADAO_TMP)/__build
 	@mkdir -p $(DIR_DADAO_TMP)/__source
 	@mkdir -p $(DIR_DADAO_TMP)/__build
 	@ln -s -t $(DIR_DADAO_TOP) $(DIR_DADAO_TMP)/__source
@@ -89,6 +91,4 @@ dadao-reboot:
 dadao-clean:
 	@echo "CLEAR EVERYTHING!"
 	@rm -fr __*
-	@rm -fr $(DIR_DADAO_TMP)
-	@make --silent bench-clean
 	@echo "CLEAR EVERYTHING DONE!"
