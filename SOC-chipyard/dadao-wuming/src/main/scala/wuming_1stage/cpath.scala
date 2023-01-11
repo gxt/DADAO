@@ -71,8 +71,8 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                   ADDrb   -> List(Y, BR_X  , REG_RB ,  OP1_RBHC, OP2_RDHD , ALU_ADD ,  WB_RBHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
                   SUBrb   -> List(Y, BR_X  , REG_RB ,  OP1_RBHC, OP2_RDHD , ALU_SUB ,  WB_RBHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
 
-                  ADDIrd  -> List(Y, BR_X  , REG_RD ,  OP1_RDHA, OP2_IMMS18, ALU_ADD ,  WB_RDHA, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
-                  ADDIrb  -> List(Y, BR_X  , REG_RB ,  OP1_RBHA, OP2_IMMS18, ALU_ADD ,  WB_RBHA, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  ADDIrd  -> List(Y, BR_X  , REG_RD ,  OP1_RDHB, OP2_IMMS12, ALU_ADD ,  WB_RDHA, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  ADDIrb  -> List(Y, BR_X  , REG_RB ,  OP1_RBHB, OP2_IMMS12, ALU_ADD ,  WB_RBHA, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
 
                   ADDrd   -> List(Y, BR_X  , REG_RD ,  OP1_RDHC, OP2_RDHD , ALU_ADD ,  WB_HAHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
                   SUBrd   -> List(Y, BR_X  , REG_RD ,  OP1_RDHC, OP2_RDHD , ALU_SUB ,  WB_HAHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
