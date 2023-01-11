@@ -96,12 +96,9 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                   AUIPC   -> List(Y, BR_N  , REG_X  ,  OP1_IMU, OP2_PC  , ALU_ADD ,  WB_ALU, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
                   LUI     -> List(Y, BR_N  , REG_X  ,  OP1_IMU, OP2_X   , ALU_COPY1, WB_ALU, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
 
-                  ADDI    -> List(Y, BR_N  , REG_X  ,  OP1_RS1, OP2_IMI , ALU_ADD ,  WB_ALU, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
                   SLTI    -> List(Y, BR_N  , REG_X  ,  OP1_RS1, OP2_IMI , ALU_SLT ,  WB_ALU, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
                   SLTIU   -> List(Y, BR_N  , REG_X  ,  OP1_RS1, OP2_IMI , ALU_SLTU,  WB_ALU, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
 
-                  ADD     -> List(Y, BR_N  , REG_X  ,  OP1_RS1, OP2_RS2 , ALU_ADD ,  WB_ALU, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
-                  SUB     -> List(Y, BR_N  , REG_X  ,  OP1_RS1, OP2_RS2 , ALU_SUB ,  WB_ALU, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
                   SLT     -> List(Y, BR_N  , REG_X  ,  OP1_RS1, OP2_RS2 , ALU_SLT ,  WB_ALU, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
                   SLTU    -> List(Y, BR_N  , REG_X  ,  OP1_RS1, OP2_RS2 , ALU_SLTU,  WB_ALU, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
 
