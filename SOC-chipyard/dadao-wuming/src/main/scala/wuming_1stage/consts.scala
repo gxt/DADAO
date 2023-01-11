@@ -30,21 +30,24 @@ trait ScalarOpConstants
 
    // PC Select Signal
    val PC_4   = 0.asUInt(3.W)  // PC + 4
-   val PC_BR  = 1.asUInt(3.W)  // branch_target
+   val PC_BR12  = 1.asUInt(3.W)  // branch_target for imms12
+   val PC_BR18  = 5.asUInt(3.W)  // branch_target for imms18
    val PC_J   = 2.asUInt(3.W)  // jump_target
    val PC_JR  = 3.asUInt(3.W)  // jump_reg_target
    val PC_EXC = 4.asUInt(3.W)  // exception
 
    // Branch Type
-   val BR_N   = 0.asUInt(4.W)  // Next
+   val BR_X   = 0.asUInt(4.W)  // Next
    val BR_NE  = 1.asUInt(4.W)  // Branch on NotEqual
    val BR_EQ  = 2.asUInt(4.W)  // Branch on Equal
-   val BR_GE  = 3.asUInt(4.W)  // Branch on Greater/Equal
-   val BR_GEU = 4.asUInt(4.W)  // Branch on Greater/Equal Unsigned
-   val BR_LT  = 5.asUInt(4.W)  // Branch on Less Than
-   val BR_LTU = 6.asUInt(4.W)  // Branch on Less Than Unsigned
+   val BR_N   = 3.asUInt(4.W)  // Branch on Negative
+   val BR_NN  = 4.asUInt(4.W)  // Branch on Not Negative
+   val BR_Z   = 5.asUInt(4.W)  // Branch on Zero
+   val BR_NZ  = 6.asUInt(4.W)  // Branch on Not Zero
    val BR_J   = 7.asUInt(4.W)  // Jump
    val BR_JR  = 8.asUInt(4.W)  // Jump Register
+   val BR_P   = 9.asUInt(4.W)  // Branch on Positive
+   val BR_NP  = 10.asUInt(4.W) // Branch on Not Positive
 
    // Register group select
    val REG_RD  = 0.asUInt(2.W)

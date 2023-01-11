@@ -22,8 +22,9 @@ class DatToCtlIo(implicit val conf: WumingCoreParams) extends Bundle()
    val inst   = Output(UInt(BITS_INST.W))
    val imiss  = Output(Bool())
    val br_eq  = Output(Bool())
-   val br_lt  = Output(Bool())
-   val br_ltu = Output(Bool())
+   val br_n   = Output(Bool())
+   val br_z   = Output(Bool())
+   val br_p   = Output(Bool())
    val csr_eret = Output(Bool())
    val csr_interrupt = Output(Bool())
    val inst_misaligned = Output(Bool())
@@ -57,7 +58,8 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    // Instruction Fetch
    val pc_next          = Wire(UInt(conf.xprlen.W))
    val pc_plus4         = Wire(UInt(conf.xprlen.W))
-   val br_target        = Wire(UInt(conf.xprlen.W))
+   val br_target12      = Wire(UInt(conf.xprlen.W))
+   val br_target18      = Wire(UInt(conf.xprlen.W))
    val jmp_target       = Wire(UInt(conf.xprlen.W))
    val jump_reg_target  = Wire(UInt(conf.xprlen.W))
    val exception_target = Wire(UInt(conf.xprlen.W))
@@ -65,7 +67,8 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    // PC Register
    pc_next := MuxCase(pc_plus4, Array(
                   (io.ctl.pc_sel === PC_4)   -> pc_plus4,
-                  (io.ctl.pc_sel === PC_BR)  -> br_target,
+                  (io.ctl.pc_sel === PC_BR12)  -> br_target12,
+                  (io.ctl.pc_sel === PC_BR18)  -> br_target18,
                   (io.ctl.pc_sel === PC_J )  -> jmp_target,
                   (io.ctl.pc_sel === PC_JR)  -> jump_reg_target,
                   (io.ctl.pc_sel === PC_EXC) -> exception_target
@@ -99,11 +102,13 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    // Instruction misalign detection
    // In control path, instruction misalignment exception is always raised in the next cycle once the misaligned instruction reaches
    // execution stage, regardless whether the pipeline stalls or not
-   io.dat.inst_misaligned :=  (br_target(1, 0).orR       && io.ctl.pc_sel_no_xept === PC_BR) ||
+   io.dat.inst_misaligned :=  (br_target12(1, 0).orR       && io.ctl.pc_sel_no_xept === PC_BR12) ||
+                              (br_target18(1, 0).orR       && io.ctl.pc_sel_no_xept === PC_BR18) ||
                               (jmp_target(1, 0).orR      && io.ctl.pc_sel_no_xept === PC_J)  ||
                               (jump_reg_target(1, 0).orR && io.ctl.pc_sel_no_xept === PC_JR)
    tval_inst_ma := MuxCase(0.U, Array(
-                     (io.ctl.pc_sel_no_xept === PC_BR) -> br_target,
+                     (io.ctl.pc_sel_no_xept === PC_BR12) -> br_target12,
+                     (io.ctl.pc_sel_no_xept === PC_BR18) -> br_target18,
                      (io.ctl.pc_sel_no_xept === PC_J)  -> jmp_target,
                      (io.ctl.pc_sel_no_xept === PC_JR) -> jump_reg_target
                      ))
@@ -248,7 +253,8 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val alu_out2 = Cat(Fill(63, 0.U), alu_out_onemorebit(64))
 
    // Branch/Jump Target Calculation
-   br_target       := pc_reg + imm_b_sext
+   br_target12       := pc_reg + imms12
+   br_target18       := pc_reg + imms18
    jmp_target      := pc_reg + imm_j_sext
    jump_reg_target := (rs1_data.asUInt() + imm_i_sext.asUInt()) & ~1.U(conf.xprlen.W)
 
@@ -310,8 +316,9 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    // datapath to controlpath outputs
    io.dat.inst   := inst
    io.dat.br_eq  := (rdha_data === rdhb_data)
-   io.dat.br_lt  := (rs1_data.asSInt() < rs2_data.asSInt())
-   io.dat.br_ltu := (rs1_data.asUInt() < rs2_data.asUInt())
+   io.dat.br_n   := (rdha_data.asSInt() < 0.S)
+   io.dat.br_z   := (rdha_data === 0.U)
+   io.dat.br_p   := (rdha_data.asSInt() > 0.S)
 
    // datapath to data memory outputs
    io.dmem.req.bits.addr := alu_out
@@ -341,7 +348,8 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       inst,
       Mux(io.ctl.stall, Str("S"), Str(" ")),
       MuxLookup(io.ctl.pc_sel, Str("?"), Seq(
-         PC_BR -> Str("B"),
+         PC_BR12 -> Str("B"),
+         PC_BR18 -> Str("B"),
          PC_J -> Str("J"),
          PC_JR -> Str("R"),
          PC_EXC -> Str("E"),
