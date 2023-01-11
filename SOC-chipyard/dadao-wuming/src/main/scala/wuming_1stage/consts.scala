@@ -46,6 +46,13 @@ trait ScalarOpConstants
    val BR_J   = 7.asUInt(4.W)  // Jump
    val BR_JR  = 8.asUInt(4.W)  // Jump Register
 
+   // Register group select
+   val REG_RD  = 0.asUInt(2.W)
+   val REG_RB  = 1.asUInt(2.W)
+   val REG_RA  = 2.asUInt(2.W)
+   val REG_RF  = 3.asUInt(2.W)
+   val REG_X   = 0.asUInt(2.W)
+
    // Operand 1 Select Signal
    val OP1_RDHC = 4.asUInt(4.W)
    val OP1_RBHC = 5.asUInt(4.W)
