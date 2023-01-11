@@ -227,11 +227,14 @@ brz	00101010
 brnz	00101011
 brp	00101100
 brnp	00101101
-brod	00101110
-brev	00101111
 
 & @jmp @mem rd@ha
 ret	01101110
+
+[ rrii	op:8	ha:6	hb:6	imms:12 ]
+& @jmp @bpd rd@ha rd@hb
+breq	00101110
+brne	00101111
 
 [ iiii	op:8	imms:24 ]
 & @jmp
