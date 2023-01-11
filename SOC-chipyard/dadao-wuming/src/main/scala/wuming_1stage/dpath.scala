@@ -179,6 +179,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
    // immediates
    val immu6 = inst(HD_MSB, HD_LSB)
+   val immu12 = inst(HC_MSB, HD_LSB)
    val imms12 = Cat(Fill(52, inst(HC_MSB)), inst(HC_MSB, HD_LSB))
    val imms18 = Cat(Fill(46, inst(HB_MSB)), inst(HB_MSB, HD_LSB))
 
@@ -199,6 +200,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
    val alu_op1 = MuxCase(0.U, Array(
                (io.ctl.op1_sel === OP1_RDHA) -> rdha_data,
+               (io.ctl.op1_sel === OP1_RDHB) -> rdhb_data,
                (io.ctl.op1_sel === OP1_RDHC) -> rdhc_data,
                (io.ctl.op1_sel === OP1_RBHA) -> rbha_data,
                (io.ctl.op1_sel === OP1_RBHB) -> rbhb_data,
@@ -210,7 +212,9 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
    val alu_op2 = MuxCase(0.U, Array(
                (io.ctl.op2_sel === OP2_RDHD) -> rdhd_data,
+               (io.ctl.op2_sel === OP2_RBHD) -> rbhd_data,
                (io.ctl.op2_sel === OP2_IMMU6) -> immu6,
+               (io.ctl.op2_sel === OP2_IMMU12) -> immu12,
                (io.ctl.op2_sel === OP2_IMMS12) -> imms12,
                (io.ctl.op2_sel === OP2_IMMS18) -> imms18,
                (io.ctl.op2_sel === OP2_RS2) -> rs2_data,
@@ -232,8 +236,8 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                   (io.ctl.alu_fun === ALU_AND)  -> (alu_op1 & alu_op2).asUInt(),
                   (io.ctl.alu_fun === ALU_OR)   -> (alu_op1 | alu_op2).asUInt(),
                   (io.ctl.alu_fun === ALU_XOR)  -> (alu_op1 ^ alu_op2).asUInt(),
-                  (io.ctl.alu_fun === ALU_SLT)  -> (alu_op1.asSInt() < alu_op2.asSInt()).asUInt(),
-                  (io.ctl.alu_fun === ALU_SLTU) -> (alu_op1 < alu_op2).asUInt(),
+                  (io.ctl.alu_fun === ALU_CMPS) -> Mux(alu_op1 === alu_op2, 0.U, Mux(alu_op1.asSInt() < alu_op2.asSInt(), ~0.U, 1.U)).asUInt(),
+                  (io.ctl.alu_fun === ALU_CMPU) -> Mux(alu_op1 === alu_op2, 0.U, Mux(alu_op1.asUInt() < alu_op2.asUInt(), ~0.U, 1.U)).asUInt(),
                   (io.ctl.alu_fun === ALU_SLL)  -> ((alu_op1 << alu_shamt)(conf.xprlen-1, 0)).asUInt(),
                   (io.ctl.alu_fun === ALU_SRA)  -> (alu_op1.asSInt() >> alu_shamt).asUInt(),
                   (io.ctl.alu_fun === ALU_SRL)  -> (alu_op1 >> alu_shamt).asUInt(),

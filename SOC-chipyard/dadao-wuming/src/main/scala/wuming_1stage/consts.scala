@@ -59,6 +59,7 @@ trait ScalarOpConstants
    val OP1_RDHA = 6.asUInt(4.W)
    val OP1_RBHA = 7.asUInt(4.W)
    val OP1_RBHB = 8.asUInt(4.W)
+   val OP1_RDHB = 9.asUInt(4.W)
 
    val OP1_RS1 = 0.asUInt(4.W) // Register Source #1
    val OP1_IMU = 1.asUInt(4.W) // immediate, U-type
@@ -66,16 +67,18 @@ trait ScalarOpConstants
    val OP1_X   = 0.asUInt(4.W)
 
    // Operand 2 Select Signal
-   val OP2_RDHD  = 4.asUInt(3.W)  // rd source in hd field
-   val OP2_IMMU6 = 5.asUInt(3.W)  // immu6 source in hd field
-   val OP2_IMMS18 = 6.asUInt(3.W)  // imms18 source in hb/hc/hd field
-   val OP2_IMMS12 = 7.asUInt(3.W)  // imms12 source in hc/hd field
+   val OP2_RDHD  = 4.asUInt(4.W)
+   val OP2_IMMU6 = 5.asUInt(4.W)  // immu6 source in hd field
+   val OP2_IMMS18 = 6.asUInt(4.W)  // imms18 source in hb/hc/hd field
+   val OP2_IMMS12 = 7.asUInt(4.W)  // imms12 source in hc/hd field
+   val OP2_IMMU12 = 8.asUInt(4.W)  // immu12 source in hc/hd field
+   val OP2_RBHD = 9.asUInt(4.W)
 
-   val OP2_RS2 = 0.asUInt(3.W) // Register Source #2
-   val OP2_IMI = 1.asUInt(3.W) // immediate, I-type
-   val OP2_IMS = 2.asUInt(3.W) // immediate, S-type
-   val OP2_PC  = 3.asUInt(3.W) // PC
-   val OP2_X   = 0.asUInt(3.W)
+   val OP2_RS2 = 0.asUInt(4.W) // Register Source #2
+   val OP2_IMI = 1.asUInt(4.W) // immediate, I-type
+   val OP2_IMS = 2.asUInt(4.W) // immediate, S-type
+   val OP2_PC  = 3.asUInt(4.W) // PC
+   val OP2_X   = 0.asUInt(4.W)
 
    // Register File Write Enable Signal
    val REN_0   = false.B
@@ -91,8 +94,8 @@ trait ScalarOpConstants
    val ALU_AND = 6.asUInt(4.W)
    val ALU_OR  = 7.asUInt(4.W)
    val ALU_XOR = 8.asUInt(4.W)
-   val ALU_SLT = 9.asUInt(4.W)
-   val ALU_SLTU= 10.asUInt(4.W)
+   val ALU_CMPS = 9.asUInt(4.W)
+   val ALU_CMPU= 10.asUInt(4.W)
    val ALU_COPY1= 11.asUInt(4.W)
    val ALU_X   = 0.asUInt(4.W)
 

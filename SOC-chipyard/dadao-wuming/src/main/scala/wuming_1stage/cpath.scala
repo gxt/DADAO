@@ -93,17 +93,17 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                   LDRB    -> List(Y, BR_N  , REG_RB ,  OP1_RBHB, OP2_IMMS12, ALU_ADD ,  WB_RBMM, REN_1, MEN_1, M_XRD, MT_O,  CSR.N),
                   STRB    -> List(Y, BR_N  , REG_RB ,  OP1_RBHB, OP2_IMMS12, ALU_ADD ,  WB_X  , REN_0, MEN_1, M_XWR, MT_O,  CSR.N),
 
+                  CMPSi   -> List(Y, BR_N  , REG_RD ,  OP1_RDHB, OP2_IMMS12, ALU_CMPS ,  WB_RDHA, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  CMPSr   -> List(Y, BR_N  , REG_RD ,  OP1_RDHC, OP2_RDHD  , ALU_CMPS ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  CMPUi   -> List(Y, BR_N  , REG_RD ,  OP1_RDHB, OP2_IMMU12, ALU_CMPU ,  WB_RDHA, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  CMPUr   -> List(Y, BR_N  , REG_RD ,  OP1_RDHC, OP2_RDHD  , ALU_CMPU ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  CMP     -> List(Y, BR_N  , REG_RB ,  OP1_RBHC, OP2_RBHD  , ALU_CMPU ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+
                   BREQ    -> List(Y, BR_EQ , REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
                   BRNE    -> List(Y, BR_NE , REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
 
                   AUIPC   -> List(Y, BR_N  , REG_X  ,  OP1_IMU, OP2_PC  , ALU_ADD ,  WB_ALU, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
                   LUI     -> List(Y, BR_N  , REG_X  ,  OP1_IMU, OP2_X   , ALU_COPY1, WB_ALU, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
-
-                  SLTI    -> List(Y, BR_N  , REG_X  ,  OP1_RS1, OP2_IMI , ALU_SLT ,  WB_ALU, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
-                  SLTIU   -> List(Y, BR_N  , REG_X  ,  OP1_RS1, OP2_IMI , ALU_SLTU,  WB_ALU, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
-
-                  SLT     -> List(Y, BR_N  , REG_X  ,  OP1_RS1, OP2_RS2 , ALU_SLT ,  WB_ALU, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
-                  SLTU    -> List(Y, BR_N  , REG_X  ,  OP1_RS1, OP2_RS2 , ALU_SLTU,  WB_ALU, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
 
                   JAL     -> List(Y, BR_J  , REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_PC4, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
                   JALR    -> List(Y, BR_JR , REG_X  ,  OP1_RS1, OP2_IMI , ALU_X   ,  WB_PC4, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
