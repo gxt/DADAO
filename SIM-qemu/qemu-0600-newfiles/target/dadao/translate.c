@@ -1332,17 +1332,11 @@ static bool trans_br_all(DisasContext *ctx, arg_disas_dadao5 *a, TCGCond cond)
     return true;
 }
 
-static bool trans_br_od_ev(DisasContext* ctx, arg_disas_dadao5* a, bool is_od)
+static bool trans_br_eq_ne(DisasContext* ctx, arg_disas_dadao0* a, TCGCond cond)
 {
-    TCGv_i64 bit0 = tcg_const_i64(1);
-    TCGv_i64 zero = tcg_const_i64(0);
     TCGv_i64 next = tcg_const_i64(ctx->base.pc_next + 4);
-    TCGv_i64 dest = tcg_const_i64(ctx->base.pc_next + a->imms18 * 4);
-    tcg_gen_and_i64(bit0, bit0, cpu_rd[a->ha]);
-    tcg_gen_movcond_i64(is_od ? TCG_COND_NE : TCG_COND_EQ, cpu_pc,
-                        bit0, zero, dest, next);
-    tcg_temp_free_i64(bit0);
-    tcg_temp_free_i64(zero);
+    TCGv_i64 dest = tcg_const_i64(ctx->base.pc_next + a->imms12 * 4);
+    tcg_gen_movcond_i64(cond, cpu_pc, cpu_rd[a->ha], cpu_rd[a->hb], dest, next);
     tcg_temp_free_i64(next);
     tcg_temp_free_i64(dest);
     ctx->base.is_jmp = DISAS_JUMP;
@@ -1379,14 +1373,14 @@ static bool trans_brnp(DisasContext *ctx, arg_brnp *a)
     return trans_br_all(ctx, a, TCG_COND_LE);
 }
 
-static bool trans_brod(DisasContext *ctx, arg_brod *a)
+static bool trans_breq(DisasContext *ctx, arg_breq *a)
 {
-    return trans_br_od_ev(ctx, a, true);
+    return trans_br_eq_ne(ctx, a, TCG_COND_EQ);
 }
 
-static bool trans_brev(DisasContext *ctx, arg_brev *a)
+static bool trans_brne(DisasContext *ctx, arg_brne *a)
 {
-    return trans_br_od_ev(ctx, a, false);
+    return trans_br_eq_ne(ctx, a, TCG_COND_NE);
 }
 
 static bool trans_trap(DisasContext *ctx, arg_trap *a)
