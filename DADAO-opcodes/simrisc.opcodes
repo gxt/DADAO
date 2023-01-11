@@ -128,12 +128,12 @@ cmpu	00010011		&& rd@ha rd@hb
 
 [ orrr	op:14	hb:6	hc:6	hd:6 ]
 & (hb!=000000)
-addrb	00010000 101110		&& rb@hb rb@hc rd@hd
-subrb	00010000 101111		&& rb@hb rb@hc rd@hd
+add	00010000 101110		&& rb@hb rb@hc rd@hd
+sub	00010000 101111		&& rb@hb rb@hc rd@hd
 
 cmps	00010000 100100		&& rd@hb rd@hc rd@hd
 cmpu	00010000 100101		&& rd@hb rd@hc rd@hd
-cmprb	00010000 101101		&& rd@hb rb@hc rb@hd
+cmp	00010000 101101		&& rd@hb rb@hc rb@hd
 
 & rd@hb rd@hc rd@hd (hb!=000000)
 and	00010000 001000
