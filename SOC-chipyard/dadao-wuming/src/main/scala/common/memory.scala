@@ -27,12 +27,12 @@ trait MemoryOpConstants
 {
    val MT_X  = 0.asUInt(3.W)
    val MT_B  = 1.asUInt(3.W)
-   val MT_H  = 2.asUInt(3.W)
-   val MT_W  = 3.asUInt(3.W)
-   val MT_D  = 4.asUInt(3.W)
+   val MT_W  = 2.asUInt(3.W)
+   val MT_T  = 3.asUInt(3.W)
+   val MT_O  = 4.asUInt(3.W)
    val MT_BU = 5.asUInt(3.W)
-   val MT_HU = 6.asUInt(3.W)
-   val MT_WU = 7.asUInt(3.W)
+   val MT_WU = 6.asUInt(3.W)
+   val MT_TU = 7.asUInt(3.W)
 
    val M_X   = "b0".asUInt(1.W)
    val M_XRD = "b0".asUInt(1.W) // int load
