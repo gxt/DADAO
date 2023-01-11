@@ -302,9 +302,32 @@ def gen_bitpat_file(insts: dict, output_file: str):
             regfile_restrictions = inst_description['regfile_restrictions']
             operands = fields + ['none'] * (4 - len(fields))
             operands = [regfile_fillin(operands[i], regfile_restrictions) for i in range(len(operands))]
+            insts_temp = insts
+            output_string = inst_name.upper()
             if inst_name[0] == '_':
-                inst_name = inst_name[1:]
-            line = '   def {}\t\t= BitPat("b{}")'.format(inst_name.upper(),bitpat)
+                search_inst = inst_name[1:]
+                output_string = output_string[1:]
+            else:
+                search_inst = '_' + inst_name
+            if search_inst in insts_temp.keys():
+                if insts_temp[inst_name]['optype'] == insts_temp[search_inst]['optype']:
+                    for i in insts_temp[inst_name]['regfile_restrictions'].keys():
+                        if insts_temp[inst_name]['regfile_restrictions'][i] != insts_temp[search_inst]['regfile_restrictions'][i]:
+                            output_string += insts_temp[inst_name]['regfile_restrictions'][i]
+                            break;
+                else:
+                    list1 = list(insts_temp[inst_name]['fields'].keys())
+                    list2 = list(insts_temp[search_inst]['fields'].keys())
+                    for i in range(0,4):
+                        if list1[i] != list2[i]:
+                            if list1[i][0:3] == 'imm':
+                                output_string += 'i'
+                            elif list2[i][0:3] == 'imm':
+                                output_string += 'r'
+                            else:
+                                output_string += insts_temp[inst_name]['regfile_restrictions'][list1[i]]
+                            break;
+            line = '   def {}\t\t= BitPat("b{}")'.format(output_string,bitpat)
             print(line, file=f)
 
 def main():
