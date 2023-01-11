@@ -125,88 +125,25 @@ test_ ## testnum:						\
 # Tests for an instruction with register-ww-immu16 operands
 #-----------------------------------------------------------------------
 
-#define TEST_RWII_RD_W0( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd31, result,					\
-        move	rd31, val1;						\
-        inst	rd31, w0, val2;						\
+#define TEST_RWII_RD( testnum, inst, result, val1, val2, wyde )		\
+    TEST_CASE( testnum, rd31, result, 					\
+	move	rd31, val1;						\
+	inst	rd31, wyde, val2;					\
     )
 
-#define TEST_RWII_RD_W1( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd31, result,					\
-        move	rd31, val1;						\
-        inst	rd31, w1, val2;						\
-    )
-
-#define TEST_RWII_RD_W2( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd31, result,					\
-        move	rd31, val1;						\
-        inst	rd31, w2, val2;						\
-    )
-
-#define TEST_RWII_RD_W3( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd31, result,					\
-        move	rd31, val1;						\
-        inst	rd31, w3, val2;						\
-    )
-
-#define TEST_RWII_RB_W0( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd31, result,					\
-        move	rb31, val1;						\
-        inst	rb31, w0, val2;						\
-        rb2rd	rd31, rb31, 0;						\
-    )
-
-#define TEST_RWII_RB_W1( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd31, result,					\
-        move	rb31, val1;						\
-        inst	rb31, w1, val2;						\
-        rb2rd	rd31, rb31, 0;						\
-    )
-
-#define TEST_RWII_RB_W2( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd31, result,					\
+#define TEST_RWII_RB( testnum, inst, result, val1, val2, wyde )		\
+    TEST_CASE( testnum, rd31, result, 					\
 	move	rb31, val1;						\
-        inst	rb31, w2, val2;						\
-        rb2rd	rd31, rb31, 0;						\
+	inst	rb31, wyde, val2;					\
+	rb2rd	rd31, rb31, 0;						\
     )
 
-#define TEST_RWII_RB_W3( testnum, inst, result, val1, val2 )		\
+#define TEST_RWII_RF( testnum, inst, result, val1, val2 , wyde)		\
     TEST_CASE( testnum, rd31, result,					\
-        move	rb31, val1;						\
-        inst	rb31, w3, val2;						\
-        rb2rd	rd31, rb31, 0;						\
-    )
-
-#define TEST_RWII_RF_W0( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd31, result,					\
-        move	rd31, val1;						\
-        rd2rf	rf31, rd31, 0;						\
-        inst	rf31, w0, val2;						\
-        rf2rd	rd31, rf31, 0;						\
-    )
-
-#define TEST_RWII_RF_W1( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd31, result,					\
-        move	rd31, val1;						\
-        rd2rf	rf31, rd31, 0;						\
-        inst	rf31, w1, val2;						\
-        rf2rd	rd31, rf31, 0;						\
-    )
-
-#define TEST_RWII_RF_W2( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd31, result,					\
-        move	rd31, val1;						\
-        rd2rf	rf31, rd31, 0;						\
-        inst	rf31, w2, val2;						\
-        rf2rd	rd31, rf31, 0;						\
-    )
-
-#define TEST_RWII_RF_W3( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd31, result,					\
-        move	rd31, val1;						\
-        rd2rf	rf31, rd31, 0;						\
-        inst	rf31, w3, val2;						\
-        rf2rd	rd31, rf31, 0;						\
+	move	rd31, val1;						\
+	rd2rf	rf31, rd31, 0;						\
+	inst	rf31, wyde, val2;					\
+	rf2rd	rd31, rf31, 0;						\
     )
 
 #-----------------------------------------------------------------------
