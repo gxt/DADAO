@@ -1393,27 +1393,27 @@ static bool trans_trap(DisasContext *ctx, arg_trap *a)
     return true;
 }
 
-static bool trans_cpcoop(DisasContext *ctx, arg_cpcoop *a)
+static bool trans_cpco(DisasContext *ctx, arg_cpco *a)
 {
     return false;
 }
 
-static bool trans_rd2cr(DisasContext *ctx, arg_rd2cr *a)
+static bool trans_cprd(DisasContext *ctx, arg_cprd *a)
 {
     return false;
 }
 
-static bool trans_cr2rd(DisasContext *ctx, arg_cr2rd *a)
+static bool trans_cpwr(DisasContext *ctx, arg_cpwr *a)
 {
     return false;
 }
 
-static bool trans_cpload(DisasContext *ctx, arg_cpload *a)
+static bool trans_cpld(DisasContext *ctx, arg_cpld *a)
 {
     return false;
 }
 
-static bool trans_cpstor(DisasContext *ctx, arg_cpstor *a)
+static bool trans_cpst(DisasContext *ctx, arg_cpst *a)
 {
     return false;
 }
