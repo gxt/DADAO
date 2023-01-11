@@ -229,7 +229,7 @@ def gen_disassemble_file(insts: dict, output_file: str):
     with open(output_file, 'w') as f:
         print('#include <stdio.h>', file=f)
         print('\nenum dadao_disassemble_type {', file=f)
-        dadao_disassemble_type_list = ['none','ha','hb','hc','hd','immu6','immu12','immu18','imms12','imms18','ww','immu16','offset18','offset24']
+        dadao_disassemble_type_list = ['none','ha','hb','hc','hd','immu6','immu12','immu18','imms12','imms18','ww','immu16','offset12','offset18','offset24']
         for type in dadao_disassemble_type_list:
             type_string = '\t' + 'dadao_operand_' + type + ','
             print(type_string, file=f)
