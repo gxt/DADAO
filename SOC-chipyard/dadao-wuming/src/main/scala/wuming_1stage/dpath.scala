@@ -149,6 +149,9 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
          regfileD(hb_addr) := wb_data
          regfileD(ha_addr) := wb_data2
       }
+      when (io.ctl.wb_sel === WB_RDMM) {
+         regfileD(ha_addr) := wb_data
+      }
    }
 
    //// DebugModule
@@ -165,10 +168,15 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val rdhc_data = Mux((hc_addr =/= 0.U), regfileD(hc_addr), 0.asUInt(conf.xprlen.W))
    val rdhd_data = Mux((hd_addr =/= 0.U), regfileD(hd_addr), 0.asUInt(conf.xprlen.W))
 
+   val rbha_data = Mux((ha_addr =/= 0.U), regfileB(ha_addr), 0.asUInt(conf.xprlen.W))
+   val rbhb_data = Mux((ha_addr =/= 0.U), regfileB(hb_addr), 0.asUInt(conf.xprlen.W))
+   val rbhc_data = Mux((hc_addr =/= 0.U), regfileB(hc_addr), 0.asUInt(conf.xprlen.W))
+   val rbhd_data = Mux((hd_addr =/= 0.U), regfileB(hd_addr), 0.asUInt(conf.xprlen.W))
 
    // immediates
    val immu6 = inst(HD_MSB, HD_LSB)
-   val imms18 = Cat(Fill(14, inst(HB_MSB)), inst(HB_MSB, HD_LSB))
+   val imms12 = Cat(Fill(52, inst(HC_MSB)), inst(HC_MSB, HD_LSB))
+   val imms18 = Cat(Fill(46, inst(HB_MSB)), inst(HB_MSB, HD_LSB))
 
    val imm_i = inst(31, 20)
    val imm_s = Cat(inst(31, 25), inst(11,7))
@@ -188,6 +196,9 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val alu_op1 = MuxCase(0.U, Array(
                (io.ctl.op1_sel === OP1_RDHA) -> rdha_data,
                (io.ctl.op1_sel === OP1_RDHC) -> rdhc_data,
+               (io.ctl.op1_sel === OP1_RBHA) -> rbha_data,
+               (io.ctl.op1_sel === OP1_RBHB) -> rbhb_data,
+               (io.ctl.op1_sel === OP1_RBHC) -> rbhc_data,
                (io.ctl.op1_sel === OP1_RS1) -> rs1_data,
                (io.ctl.op1_sel === OP1_IMU) -> imm_u_sext,
                (io.ctl.op1_sel === OP1_IMZ) -> imm_z
@@ -196,6 +207,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val alu_op2 = MuxCase(0.U, Array(
                (io.ctl.op2_sel === OP2_RDHD) -> rdhd_data,
                (io.ctl.op2_sel === OP2_IMMU6) -> immu6,
+               (io.ctl.op2_sel === OP2_IMMS12) -> imms12,
                (io.ctl.op2_sel === OP2_IMMS18) -> imms18,
                (io.ctl.op2_sel === OP2_RS2) -> rs2_data,
                (io.ctl.op2_sel === OP2_PC)  -> pc_reg,
@@ -278,7 +290,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                   (io.ctl.wb_sel === WB_RDHA) -> alu_out,
                   (io.ctl.wb_sel === WB_RBHA) -> alu_out,
                   (io.ctl.wb_sel === WB_HAHB) -> alu_out,
-                  (io.ctl.wb_sel === WB_MEM) -> io.dmem.resp.bits.data,
+                  (io.ctl.wb_sel === WB_RDMM) -> io.dmem.resp.bits.data,
                   (io.ctl.wb_sel === WB_PC4) -> pc_plus4,
                   (io.ctl.wb_sel === WB_CSR) -> csr.io.rw.rdata
                   ))
