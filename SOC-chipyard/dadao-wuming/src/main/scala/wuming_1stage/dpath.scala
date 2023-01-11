@@ -62,6 +62,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val br_target18      = Wire(UInt(conf.xprlen.W))
    val jmp_iiii_target  = Wire(UInt(conf.xprlen.W))
    val jmp_rrii_target  = Wire(UInt(conf.xprlen.W))
+   val ret_target       = Wire(UInt(conf.xprlen.W))
    val exception_target = Wire(UInt(conf.xprlen.W))
 
    // PC Register
@@ -70,7 +71,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                   (io.ctl.pc_sel === PC_BR12)  -> br_target12,
                   (io.ctl.pc_sel === PC_BR18)  -> br_target18,
                   (io.ctl.pc_sel === PC_JMPI)  -> jmp_iiii_target,
-                  (io.ctl.pc_sel === PC_JMPR)  -> jmp_rrii_target,
+                  (io.ctl.pc_sel === PC_RA)  -> ret_target,
                   (io.ctl.pc_sel === PC_EXC) -> exception_target
                   ))
 
@@ -105,12 +106,14 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    io.dat.inst_misaligned :=  (br_target12(1, 0).orR       && io.ctl.pc_sel_no_xept === PC_BR12) ||
                               (br_target18(1, 0).orR       && io.ctl.pc_sel_no_xept === PC_BR18) ||
                               (jmp_iiii_target(1, 0).orR   && io.ctl.pc_sel_no_xept === PC_JMPI)  ||
-                              (jmp_rrii_target(1, 0).orR   && io.ctl.pc_sel_no_xept === PC_JMPR)
+                              (jmp_rrii_target(1, 0).orR   && io.ctl.pc_sel_no_xept === PC_JMPR)  ||
+                              (ret_target(1, 0).orR        && io.ctl.pc_sel_no_xept === PC_RA)
    tval_inst_ma := MuxCase(0.U, Array(
                      (io.ctl.pc_sel_no_xept === PC_BR12) -> br_target12,
                      (io.ctl.pc_sel_no_xept === PC_BR18) -> br_target18,
                      (io.ctl.pc_sel_no_xept === PC_JMPI) -> jmp_iiii_target,
-                     (io.ctl.pc_sel_no_xept === PC_JMPR) -> jmp_rrii_target
+                     (io.ctl.pc_sel_no_xept === PC_JMPR) -> jmp_rrii_target,
+                     (io.ctl.pc_sel_no_xept === PC_RA)   -> ret_target
                      ))
 
    // Decode
@@ -261,6 +264,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    br_target18       := pc_reg + imms18
    jmp_iiii_target   := pc_reg + (imms24 << 2.U)
    jmp_rrii_target   := (rbha_data + rdhb_data + (imms12 << 2.U)) & ~1.U(conf.xprlen.W)
+   ret_target        := regfileA(0)   // TODO: SHOULD POP FROM RA regfile
 
    // Control Status Registers
    val csr = Module(new CSRFile(perfEventSets=CSREvents.events))
@@ -356,6 +360,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
          PC_BR18 -> Str("B"),
          PC_JMPI -> Str("J"),
          PC_JMPR -> Str("R"),
+         PC_RA -> Str("A"),
          PC_EXC -> Str("E"),
          PC_4 -> Str(" "))),
       Mux(csr.io.exception, Str("X"), Str(" ")),

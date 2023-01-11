@@ -110,8 +110,9 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
 
                   JUMPi   -> List(Y, BR_JMPI, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
                   JUMPr   -> List(Y, BR_JMPR, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
-                  CALLi   -> List(Y, BR_JMPI, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_RA, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
-                  CALLr   -> List(Y, BR_JMPR, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_RA, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  CALLi   -> List(Y, BR_JMPI, REG_RA ,  OP1_X  , OP2_X   , ALU_X   ,  WB_RA, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  CALLr   -> List(Y, BR_JMPR, REG_RA ,  OP1_X  , OP2_X   , ALU_X   ,  WB_RA, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  RET     -> List(Y, BR_RET , REG_RA ,  OP1_ZERO, OP2_IMMS18, ALU_ADD , WB_RDHA, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
 
                   AUIPC   -> List(Y, BR_X  , REG_X  ,  OP1_IMU, OP2_PC  , ALU_ADD ,  WB_ALU, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
                   LUI     -> List(Y, BR_X  , REG_X  ,  OP1_IMU, OP2_X   , ALU_COPY1, WB_ALU, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
@@ -145,7 +146,8 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                               Mux(cs_br_type === BR_NE ,  Mux(!io.dat.br_eq,  PC_BR12, PC_4),
                               Mux(cs_br_type === BR_JMPI ,  PC_JMPI,
                               Mux(cs_br_type === BR_JMPR ,  PC_JMPR,
-                                                          PC_4))))))))))))
+                              Mux(cs_br_type === BR_RET ,  PC_RA,
+                                                          PC_4)))))))))))))
    val ctrl_pc_sel = Mux(io.ctl.exception || io.dat.csr_eret, PC_EXC, ctrl_pc_sel_no_xept)
 
    // mem_en suppression: no new memory request shall be issued after the memory operation of the current instruction is done.

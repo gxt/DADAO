@@ -35,6 +35,7 @@ trait ScalarOpConstants
    val PC_EXC = 4.asUInt(3.W)  // exception
    val PC_JMPI  = 6.asUInt(3.W)  // jump_iiii_target
    val PC_JMPR  = 7.asUInt(3.W)  // jump_rrii_target
+   val PC_RA    = 2.asUInt(3.W)  // pop from RA regfile
 
    // Branch Type
    val BR_X   = 0.asUInt(4.W)  // Next
@@ -48,6 +49,7 @@ trait ScalarOpConstants
    val BR_NP  = 10.asUInt(4.W) // Branch on Not Positive
    val BR_JMPI  = 11.asUInt(4.W)  // Jump iiii
    val BR_JMPR  = 12.asUInt(4.W)  // Jump rrii
+   val BR_RET   = 13.asUInt(4.W)  // Return
 
    // Register group select
    val REG_RD  = 0.asUInt(2.W)
@@ -63,6 +65,7 @@ trait ScalarOpConstants
    val OP1_RBHA = 7.asUInt(4.W)
    val OP1_RBHB = 8.asUInt(4.W)
    val OP1_RDHB = 9.asUInt(4.W)
+   val OP1_ZERO = 10.asUInt(4.W)
 
    val OP1_RS1 = 0.asUInt(4.W) // Register Source #1
    val OP1_IMU = 1.asUInt(4.W) // immediate, U-type
