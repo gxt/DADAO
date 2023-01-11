@@ -28,15 +28,15 @@
              (match_operand:DI 2 "dd_rd_ls_operand" " Rd, i")))]
 	""
 	"@
-	addrb	%0, %1, %2
-	move	rd7, %2	\;addrb	%0, %1, rd7")
+	add	%0, %1, %2
+	move	rd7, %2	\;add	%0, %1, rd7")
 
 (define_insn "subrb_rd"
   [(set      (match_operand:DI 0 "rb_class_operand" "=Rb")
    (minus:DI (match_operand:DI 1 "rb_class_operand" "%Rb")
              (match_operand:DI 2 "rd_class_operand" "Rd")))]
 	""
-	"subrb	%0, %1, %2")
+	"sub	%0, %1, %2")
 
 (define_insn "addrb_imm"
   [(set       (match_operand:DI 0 "rb_class_operand"  "= Rb")
@@ -63,7 +63,7 @@
     (plus:DI (match_operand:DI 1 "rd_class_operand"  "%Rd")
              (match_operand:DI 2 "rb_class_operand"  " Rb")))]
 	""
-	"addrb	%0, %2, %1")
+	"add	%0, %2, %1")
 
 ; XXX
 (define_insn "subrb_ctry"
@@ -71,7 +71,7 @@
    (minus:DI (match_operand:DI 1 "rd_class_operand"  "%Rd")
              (match_operand:DI 2 "rb_class_operand"  " Rb")))]
 	""
-	"subrb	%0, %2, %1")
+	"sub	%0, %2, %1")
 
 (define_insn "dd_ld_rb"
   [(set (match_operand:DI 0 "rb_class_operand" "=Rb,Rb")
