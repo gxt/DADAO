@@ -93,6 +93,9 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                   LDRB    -> List(Y, BR_N  , REG_RB ,  OP1_RBHB, OP2_IMMS12, ALU_ADD ,  WB_RBMM, REN_1, MEN_1, M_XRD, MT_O,  CSR.N),
                   STRB    -> List(Y, BR_N  , REG_RB ,  OP1_RBHB, OP2_IMMS12, ALU_ADD ,  WB_X  , REN_0, MEN_1, M_XWR, MT_O,  CSR.N),
 
+                  BREQ    -> List(Y, BR_EQ , REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
+                  BRNE    -> List(Y, BR_NE , REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
+
                   AUIPC   -> List(Y, BR_N  , REG_X  ,  OP1_IMU, OP2_PC  , ALU_ADD ,  WB_ALU, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
                   LUI     -> List(Y, BR_N  , REG_X  ,  OP1_IMU, OP2_X   , ALU_COPY1, WB_ALU, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
 
@@ -104,8 +107,6 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
 
                   JAL     -> List(Y, BR_J  , REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_PC4, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
                   JALR    -> List(Y, BR_JR , REG_X  ,  OP1_RS1, OP2_IMI , ALU_X   ,  WB_PC4, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
-                  BEQ     -> List(Y, BR_EQ , REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
-                  BNE     -> List(Y, BR_NE , REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
                   BGE     -> List(Y, BR_GE , REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
                   BGEU    -> List(Y, BR_GEU, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
                   BLT     -> List(Y, BR_LT , REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),

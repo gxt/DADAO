@@ -168,6 +168,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val rs2_data = Mux((rs2_addr =/= 0.U), regfileD(rs2_addr), 0.asUInt(conf.xprlen.W))
 
    val rdha_data = Mux((ha_addr =/= 0.U), regfileD(ha_addr), 0.asUInt(conf.xprlen.W))
+   val rdhb_data = Mux((hb_addr =/= 0.U), regfileD(hb_addr), 0.asUInt(conf.xprlen.W))
    val rdhc_data = Mux((hc_addr =/= 0.U), regfileD(hc_addr), 0.asUInt(conf.xprlen.W))
    val rdhd_data = Mux((hd_addr =/= 0.U), regfileD(hd_addr), 0.asUInt(conf.xprlen.W))
 
@@ -304,7 +305,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
    // datapath to controlpath outputs
    io.dat.inst   := inst
-   io.dat.br_eq  := (rs1_data === rs2_data)
+   io.dat.br_eq  := (rdha_data === rdhb_data)
    io.dat.br_lt  := (rs1_data.asSInt() < rs2_data.asSInt())
    io.dat.br_ltu := (rs1_data.asUInt() < rs2_data.asUInt())
 
