@@ -103,6 +103,7 @@ trait ScalarOpConstants
    val WB_RBHA  = 7.asUInt(4.W)
    val WB_HAHB  = 8.asUInt(4.W)   // two dest regs: rdha + rdhb
    val WB_RDMM  = 9.asUInt(4.W)
+   val WB_RBMM  = 10.asUInt(4.W)
 
    val WB_ALU  = 0.asUInt(4.W)
    val WB_PC4  = 2.asUInt(4.W)
