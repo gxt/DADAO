@@ -108,11 +108,14 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                   BRP     -> List(Y, BR_P  , REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
                   BRNP    -> List(Y, BR_NP , REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
 
+                  JUMPi   -> List(Y, BR_JMPI, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
+                  JUMPr   -> List(Y, BR_JMPR, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
+
                   AUIPC   -> List(Y, BR_X  , REG_X  ,  OP1_IMU, OP2_PC  , ALU_ADD ,  WB_ALU, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
                   LUI     -> List(Y, BR_X  , REG_X  ,  OP1_IMU, OP2_X   , ALU_COPY1, WB_ALU, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
 
-                  JAL     -> List(Y, BR_J  , REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_PC4, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
-                  JALR    -> List(Y, BR_JR , REG_X  ,  OP1_RS1, OP2_IMI , ALU_X   ,  WB_PC4, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  //JAL     -> List(Y, BR_J  , REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_PC4, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  //JALR    -> List(Y, BR_JR , REG_X  ,  OP1_RS1, OP2_IMI , ALU_X   ,  WB_PC4, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
 
                   ECALL   -> List(Y, BR_X  , REG_X  ,  OP1_X  , OP2_X  ,  ALU_X    , WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.I),
                   MRET    -> List(Y, BR_X  , REG_X  ,  OP1_X  , OP2_X  ,  ALU_X    , WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.I),
@@ -141,8 +144,8 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                               Mux(cs_br_type === BR_NP ,  Mux(!io.dat.br_p ,  PC_BR18, PC_4),
                               Mux(cs_br_type === BR_EQ ,  Mux( io.dat.br_eq,  PC_BR12, PC_4),
                               Mux(cs_br_type === BR_NE ,  Mux(!io.dat.br_eq,  PC_BR12, PC_4),
-                              Mux(cs_br_type === BR_J  ,  PC_J,
-                              Mux(cs_br_type === BR_JR ,  PC_JR,
+                              Mux(cs_br_type === BR_JMPI ,  PC_JMPI,
+                              Mux(cs_br_type === BR_JMPR ,  PC_JMPR,
                                                           PC_4))))))))))))
    val ctrl_pc_sel = Mux(io.ctl.exception || io.dat.csr_eret, PC_EXC, ctrl_pc_sel_no_xept)
 
