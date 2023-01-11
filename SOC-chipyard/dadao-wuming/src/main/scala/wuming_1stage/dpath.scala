@@ -172,10 +172,10 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val rdhc_data = Mux((hc_addr =/= 0.U), regfileD(hc_addr), 0.asUInt(conf.xprlen.W))
    val rdhd_data = Mux((hd_addr =/= 0.U), regfileD(hd_addr), 0.asUInt(conf.xprlen.W))
 
-   val rbha_data = Mux((ha_addr =/= 0.U), regfileB(ha_addr), 0.asUInt(conf.xprlen.W))
-   val rbhb_data = Mux((ha_addr =/= 0.U), regfileB(hb_addr), 0.asUInt(conf.xprlen.W))
-   val rbhc_data = Mux((hc_addr =/= 0.U), regfileB(hc_addr), 0.asUInt(conf.xprlen.W))
-   val rbhd_data = Mux((hd_addr =/= 0.U), regfileB(hd_addr), 0.asUInt(conf.xprlen.W))
+   val rbha_data = Mux((ha_addr =/= 0.U), regfileB(ha_addr), pc_plus4)
+   val rbhb_data = Mux((hb_addr =/= 0.U), regfileB(hb_addr), pc_plus4)
+   val rbhc_data = Mux((hc_addr =/= 0.U), regfileB(hc_addr), pc_plus4)
+   val rbhd_data = Mux((hd_addr =/= 0.U), regfileB(hd_addr), pc_plus4)
 
    // immediates
    val immu6 = inst(HD_MSB, HD_LSB)
