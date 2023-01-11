@@ -49,6 +49,9 @@ static unsigned int analyze_operand (enum dadao_disassemble_type optype, unsigne
                         else
                                 data = insn & 0x3ffff;
                         break;
+		case dadao_operand_offset12:
+			*cal_offset = 12;
+			break;
                 case dadao_operand_offset18:
                         *cal_offset = 18;
                         break;
@@ -122,6 +125,14 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
                                 (*info->fprintf_func) (info->stream, "*unknown* (0x%08x)", insn);
                                 return 4;
                         }
+			if (cal_offset == 12){
+				offset = (insn & 0xfff) << 2;
+				if (offset & 0x2000)
+					offset -= 0x4000;
+                                info->target = memaddr + offset;
+                                (*info->fprintf_func) (info->stream, disassemble_dict->disassemble_format, op_1, op_2);
+                                (*info->print_address_func) (memaddr + offset, info);
+			}
                         if (cal_offset == 18){
                                 offset = (insn & 0x3ffff) << 2;
                                 if (offset & 0x80000)
