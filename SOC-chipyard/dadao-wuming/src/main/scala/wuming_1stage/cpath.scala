@@ -110,12 +110,11 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
 
                   JUMPi   -> List(Y, BR_JMPI, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
                   JUMPr   -> List(Y, BR_JMPR, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
+                  CALLi   -> List(Y, BR_JMPI, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_RA, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  CALLr   -> List(Y, BR_JMPR, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_RA, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
 
                   AUIPC   -> List(Y, BR_X  , REG_X  ,  OP1_IMU, OP2_PC  , ALU_ADD ,  WB_ALU, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
                   LUI     -> List(Y, BR_X  , REG_X  ,  OP1_IMU, OP2_X   , ALU_COPY1, WB_ALU, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
-
-                  //JAL     -> List(Y, BR_J  , REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_PC4, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
-                  //JALR    -> List(Y, BR_JR , REG_X  ,  OP1_RS1, OP2_IMI , ALU_X   ,  WB_PC4, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
 
                   ECALL   -> List(Y, BR_X  , REG_X  ,  OP1_X  , OP2_X  ,  ALU_X    , WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.I),
                   MRET    -> List(Y, BR_X  , REG_X  ,  OP1_X  , OP2_X  ,  ALU_X    , WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.I),

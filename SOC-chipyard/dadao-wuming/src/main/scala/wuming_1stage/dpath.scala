@@ -160,6 +160,9 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       when (io.ctl.wb_sel === WB_RBMM) {
          regfileB(ha_addr) := wb_data
       }
+      when (io.ctl.wb_sel === WB_RA) { /* TODO: SHOULD BE PUSH */
+         regfileA(0) := wb_data
+      }
    }
 
    //// DebugModule
@@ -307,7 +310,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                   (io.ctl.wb_sel === WB_HAHB) -> alu_out,
                   (io.ctl.wb_sel === WB_RDMM) -> io.dmem.resp.bits.data,
                   (io.ctl.wb_sel === WB_RBMM) -> io.dmem.resp.bits.data,
-                  (io.ctl.wb_sel === WB_PC4) -> pc_plus4,
+                  (io.ctl.wb_sel === WB_RA)   -> pc_plus4,
                   (io.ctl.wb_sel === WB_CSR) -> csr.io.rw.rdata
                   ))
    wb_data2 := MuxCase(alu_out2, Array(

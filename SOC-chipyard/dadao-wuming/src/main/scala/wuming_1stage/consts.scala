@@ -112,7 +112,7 @@ trait ScalarOpConstants
    val WB_RBMM  = 10.asUInt(4.W)
 
    val WB_ALU  = 0.asUInt(4.W)
-   val WB_PC4  = 2.asUInt(4.W)
+   val WB_RA   = 2.asUInt(4.W)
    val WB_CSR  = 3.asUInt(4.W)
    val WB_X    = 0.asUInt(4.W)
 
