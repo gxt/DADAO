@@ -54,8 +54,8 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                             /* inst | type |   set  |   sel  |    sel    |   fcn   |  sel | wen  |  en  |  wr  | type |  cmd  */
                   SWYM    -> List(Y, BR_X  , REG_X  , OP1_X  , OP2_X  ,  ALU_X    , WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
 
-                  CPRD    -> List(Y, BR_X  , REG_RD ,  OP1_RS1, OP2_X   , ALU_COPY1, WB_CSR, REN_1, MEN_0, M_X ,  MT_X,  CSR.R),
-                  CPWR    -> List(Y, BR_X  , REG_RD ,  OP1_RS1, OP2_X   , ALU_COPY1, WB_CSR, REN_1, MEN_0, M_X ,  MT_X,  CSR.W),
+                  CPRD    -> List(Y, BR_X  , REG_RD ,  OP1_X, OP2_X      , ALU_X    , WB_CSR, REN_1, MEN_0, M_X ,  MT_X,  CSR.R),
+                  CPWR    -> List(Y, BR_X  , REG_RD ,  OP1_X, OP2_RDHD   , ALU_COPY2, WB_CSR, REN_1, MEN_0, M_X ,  MT_X,  CSR.W),
 
                   AND     -> List(Y, BR_X  , REG_RD ,  OP1_RDHC, OP2_RDHD, ALU_AND ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
                   ORR     -> List(Y, BR_X  , REG_RD ,  OP1_RDHC, OP2_RDHD, ALU_OR  ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
@@ -112,7 +112,7 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                   JUMPr   -> List(Y, BR_JMPR, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
                   CALLi   -> List(Y, BR_JMPI, REG_RA ,  OP1_X  , OP2_X   , ALU_X   ,  WB_RA, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
                   CALLr   -> List(Y, BR_JMPR, REG_RA ,  OP1_X  , OP2_X   , ALU_X   ,  WB_RA, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
-                  RET     -> List(Y, BR_RET , REG_RA ,  OP1_ZERO, OP2_IMMS18, ALU_ADD , WB_RDHA, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  RET     -> List(Y, BR_RET , REG_RA ,  OP1_X  , OP2_IMMS18, ALU_COPY2 , WB_RDHA, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
 
                   SETZWrd -> List(Y, BR_X  , REG_RD  , OP1_X   , OP2_WYDE, ALU_COPY2, WB_RDHA, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
                   SETOW   -> List(Y, BR_X  , REG_RD  , OP1_X   , OP2_WYDE, ALU_SETOW, WB_RDHA, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
@@ -174,9 +174,7 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
    io.ctl.reg_grp  := cs_reg_group
    io.ctl.rf_wen   := Mux(stall || io.ctl.exception, false.B, cs_rf_wen)
 
-   // convert CSR instructions with raddr1 == 0 to read-only CSR commands
-   val rs1_addr = io.dat.inst(RS1_MSB, RS1_LSB)
-
+   // convert CSR instructions to read-only CSR commands
    io.ctl.csr_cmd  := Mux(stall, CSR.N, cs_csr_cmd)
 
    // Memory Requests

@@ -59,19 +59,14 @@ trait ScalarOpConstants
    val REG_X   = 0.asUInt(2.W)
 
    // Operand 1 Select Signal
-   val OP1_RDHC = 4.asUInt(4.W)
-   val OP1_RBHC = 5.asUInt(4.W)
-   val OP1_RDHA = 6.asUInt(4.W)
-   val OP1_RBHA = 7.asUInt(4.W)
-   val OP1_RBHB = 8.asUInt(4.W)
-   val OP1_RDHB = 9.asUInt(4.W)
-   val OP1_ZERO = 10.asUInt(4.W)
-   val OP1_PC   = 11.asUInt(4.W)
-
-   val OP1_RS1 = 0.asUInt(4.W) // Register Source #1
-   val OP1_IMU = 1.asUInt(4.W) // immediate, U-type
-   val OP1_IMZ = 2.asUInt(4.W) // Zero-extended rs1 field of inst, for CSRI instructions
-   val OP1_X   = 0.asUInt(4.W)
+   val OP1_RDHA = 1.asUInt(4.W)
+   val OP1_RDHB = 2.asUInt(4.W)
+   val OP1_RDHC = 3.asUInt(4.W)
+   val OP1_RBHA = 4.asUInt(4.W)
+   val OP1_RBHB = 5.asUInt(4.W)
+   val OP1_RBHC = 6.asUInt(4.W)
+   val OP1_PC   = 7.asUInt(4.W)
+   val OP1_X    = 0.asUInt(4.W)
 
    // Operand 2 Select Signal
    val OP2_RDHD  = 4.asUInt(4.W)

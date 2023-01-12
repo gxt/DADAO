@@ -122,7 +122,6 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val hc_addr  = inst(HC_MSB, HC_LSB)
    val hd_addr  = inst(HD_MSB, HD_LSB)
 
-   val rs1_addr = inst(RS1_MSB, RS1_LSB)
    val rs2_addr = inst(RS2_MSB, RS2_LSB)
    val wb_addr  = inst(RD_MSB,  RD_LSB)
 
@@ -175,7 +174,6 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    }
    ///
 
-   val rs1_data = Mux((rs1_addr =/= 0.U), regfileD(rs1_addr), 0.asUInt(conf.xprlen.W))
    val rs2_data = Mux((rs2_addr =/= 0.U), regfileD(rs2_addr), 0.asUInt(conf.xprlen.W))
 
    val rdha_data = Mux((ha_addr =/= 0.U), regfileD(ha_addr), 0.asUInt(conf.xprlen.W))
@@ -221,10 +219,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                (io.ctl.op1_sel === OP1_RBHA) -> rbha_data,
                (io.ctl.op1_sel === OP1_RBHB) -> rbhb_data,
                (io.ctl.op1_sel === OP1_RBHC) -> rbhc_data,
-               (io.ctl.op1_sel === OP1_RS1) -> rs1_data,
-               (io.ctl.op1_sel === OP1_IMU) -> imm_u_sext,
                (io.ctl.op1_sel === OP1_PC)  -> pc_reg,
-               (io.ctl.op1_sel === OP1_IMZ) -> imm_z
                )).asUInt()
 
    val alu_op2 = MuxCase(0.U, Array(
@@ -358,7 +353,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       wb_addr,
       wb_data,
       wb_wen,
-      rs1_addr,
+      ha_addr,
       alu_op1,
       rs2_addr,
       alu_op2,
