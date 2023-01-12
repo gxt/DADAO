@@ -251,7 +251,6 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                   (io.ctl.alu_fun === ALU_ANDNW)  -> (alu_op1 & ~alu_op2).asUInt(),
                   (io.ctl.alu_fun === ALU_ADRP)   -> ((((alu_op1 >> 12.U) + alu_op2) << 12.U)).asUInt(),
                   (io.ctl.alu_fun === ALU_COPY2)  -> alu_op2.asUInt(),
-                  (io.ctl.alu_fun === ALU_COPY1)-> alu_op1
                   ))
 
    val alu_out = alu_out_onemorebit(63, 0)
