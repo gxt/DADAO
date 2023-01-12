@@ -66,6 +66,7 @@ trait ScalarOpConstants
    val OP1_RBHB = 8.asUInt(4.W)
    val OP1_RDHB = 9.asUInt(4.W)
    val OP1_ZERO = 10.asUInt(4.W)
+   val OP1_PC   = 11.asUInt(4.W)
 
    val OP1_RS1 = 0.asUInt(4.W) // Register Source #1
    val OP1_IMU = 1.asUInt(4.W) // immediate, U-type
@@ -84,7 +85,6 @@ trait ScalarOpConstants
    val OP2_RS2 = 0.asUInt(4.W) // Register Source #2
    val OP2_IMI = 1.asUInt(4.W) // immediate, I-type
    val OP2_IMS = 2.asUInt(4.W) // immediate, S-type
-   val OP2_PC  = 3.asUInt(4.W) // PC
    val OP2_X   = 0.asUInt(4.W)
 
    // Register File Write Enable Signal
@@ -107,6 +107,7 @@ trait ScalarOpConstants
    val ALU_COPY2= 12.asUInt(4.W)
    val ALU_SETOW= 13.asUInt(4.W)
    val ALU_ANDNW= 15.asUInt(4.W)
+   val ALU_ADRP = 14.asUInt(4.W)
    val ALU_X   = 0.asUInt(4.W)
 
    // Writeback Select Signal

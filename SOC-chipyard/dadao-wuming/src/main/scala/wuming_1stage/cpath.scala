@@ -122,8 +122,7 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                   ORWrb   -> List(Y, BR_X  , REG_RB  , OP1_RBHA, OP2_WYDE, ALU_OR   , WB_RBHA, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
                   ANDNWrb -> List(Y, BR_X  , REG_RB  , OP1_RBHA, OP2_WYDE, ALU_ANDNW, WB_RBHA, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
 
-                  AUIPC   -> List(Y, BR_X  , REG_X  ,  OP1_IMU, OP2_PC  , ALU_ADD ,  WB_ALU, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
-                  LUI     -> List(Y, BR_X  , REG_X  ,  OP1_IMU, OP2_X   , ALU_COPY1, WB_ALU, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
+                  ADRP    -> List(Y, BR_X  , REG_X  ,  OP1_PC, OP2_IMMS18, ALU_ADRP , WB_RBHA, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
 
                   ECALL   -> List(Y, BR_X  , REG_X  ,  OP1_X  , OP2_X  ,  ALU_X    , WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.I),
                   MRET    -> List(Y, BR_X  , REG_X  ,  OP1_X  , OP2_X  ,  ALU_X    , WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.I),
