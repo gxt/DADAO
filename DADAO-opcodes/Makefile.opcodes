@@ -9,7 +9,7 @@ OPCODES_OUTPUT_QEMU	:= $(OPCODES_DST_DIR)/output.qemu
 OPCODES_OUTPUT_BIN	:= $(OPCODES_DST_DIR)/output.bin
 OPCODES_OUTPUT_ENV	:= $(OPCODES_DST_DIR)/output.env
 OPCODES_OUTPUT_DIS      := $(OPCODES_DST_DIR)/output.dis
-OPCODES_OUTPUT_BIT      := $(OPCODES_DST_DIR)/output.bit
+OPCODES_OUTPUT_BITPAT   := $(OPCODES_DST_DIR)/output.bitpat
 
 opcodes-parse:
 	@make -s opcodes-clean
@@ -37,7 +37,7 @@ opcodes-encoding:
 
 opcodes-bitpat:
 	@test -d $(OPCODES_DST_DIR) || mkdir -p $(OPCODES_DST_DIR)
-	$(PYTHON) $(OPCODES_PARSE) --input $(OPCODES_INPUT) --bitpat $(OPCODES_OUTPUT_BIT)
+	$(PYTHON) $(OPCODES_PARSE) --input $(OPCODES_INPUT) --bitpat $(OPCODES_OUTPUT_BITPAT)
 
 opcodes-clean:
 	@rm -fr $(OPCODES_DST_DIR)
