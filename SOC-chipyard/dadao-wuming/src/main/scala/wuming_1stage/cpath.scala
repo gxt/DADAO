@@ -124,15 +124,7 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
 
                   ADRP    -> List(Y, BR_X  , REG_X  ,  OP1_PC, OP2_IMMS18, ALU_ADRP , WB_RBHA, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
 
-                  ECALL   -> List(Y, BR_X  , REG_X  ,  OP1_X  , OP2_X  ,  ALU_X    , WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.I),
-                  MRET    -> List(Y, BR_X  , REG_X  ,  OP1_X  , OP2_X  ,  ALU_X    , WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.I),
-                  DRET    -> List(Y, BR_X  , REG_X  ,  OP1_X  , OP2_X  ,  ALU_X    , WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.I),
-                  EBREAK  -> List(Y, BR_X  , REG_X  ,  OP1_X  , OP2_X  ,  ALU_X    , WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.I),
-                  WFI     -> List(Y, BR_X  , REG_X  ,  OP1_X  , OP2_X  ,  ALU_X    , WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N), // implemented as a NOP
-
-                  FENCE_I -> List(Y, BR_X  , REG_X  ,  OP1_X  , OP2_X  ,  ALU_X    , WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
-                  FENCE   -> List(Y, BR_X  , REG_X  ,  OP1_X  , OP2_X  ,  ALU_X    , WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N)
-                  // we are already sequentially consistent, so no need to honor the fence instruction
+                  TRAP    -> List(Y, BR_X  , REG_X  ,  OP1_X  , OP2_X  ,  ALU_X    , WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.I),
                   ))
 
    // Put these control signals into variables
