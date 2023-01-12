@@ -195,6 +195,10 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val imms18 = Cat(Fill(46, inst(HB_MSB)), inst(HB_MSB, HD_LSB))
    val imms24 = Cat(Fill(40, inst(HA_MSB)), inst(HA_MSB, HD_LSB))
 
+   val wydeposition = inst(WP_MSB, WP_LSB).asUInt() << 4
+   val wyde16 = inst(WYDE_MSB, WYDE_LSB)
+   val wydemask = ~(Fill(BITS_WYDE, 1.U) << wydeposition)
+
    val imm_i = inst(31, 20)
    val imm_s = Cat(inst(31, 25), inst(11,7))
    val imm_b = Cat(inst(31), inst(7), inst(30,25), inst(11,8))
@@ -229,6 +233,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                (io.ctl.op2_sel === OP2_IMMU12) -> immu12,
                (io.ctl.op2_sel === OP2_IMMS12) -> imms12,
                (io.ctl.op2_sel === OP2_IMMS18) -> imms18,
+               (io.ctl.op2_sel === OP2_WYDE) -> (wyde16 << wydeposition),
                (io.ctl.op2_sel === OP2_RS2) -> rs2_data,
                (io.ctl.op2_sel === OP2_PC)  -> pc_reg,
                (io.ctl.op2_sel === OP2_IMI) -> imm_i_sext,
@@ -253,6 +258,9 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                   (io.ctl.alu_fun === ALU_SLL)  -> ((alu_op1 << alu_shamt)(conf.xprlen-1, 0)).asUInt(),
                   (io.ctl.alu_fun === ALU_SRA)  -> (alu_op1.asSInt() >> alu_shamt).asUInt(),
                   (io.ctl.alu_fun === ALU_SRL)  -> (alu_op1 >> alu_shamt).asUInt(),
+                  (io.ctl.alu_fun === ALU_SETOW)  -> (alu_op2 | wydemask).asUInt(),
+                  (io.ctl.alu_fun === ALU_ANDNW)  -> (alu_op1 & ~alu_op2).asUInt(),
+                  (io.ctl.alu_fun === ALU_COPY2)  -> alu_op2.asUInt(),
                   (io.ctl.alu_fun === ALU_COPY1)-> alu_op1
                   ))
 

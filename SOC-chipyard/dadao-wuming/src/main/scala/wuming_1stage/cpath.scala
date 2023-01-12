@@ -114,6 +114,14 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                   CALLr   -> List(Y, BR_JMPR, REG_RA ,  OP1_X  , OP2_X   , ALU_X   ,  WB_RA, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
                   RET     -> List(Y, BR_RET , REG_RA ,  OP1_ZERO, OP2_IMMS18, ALU_ADD , WB_RDHA, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
 
+                  SETZWrd -> List(Y, BR_X  , REG_RD  , OP1_X   , OP2_WYDE, ALU_COPY2, WB_RDHA, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
+                  SETOW   -> List(Y, BR_X  , REG_RD  , OP1_X   , OP2_WYDE, ALU_SETOW, WB_RDHA, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
+                  ORWrd   -> List(Y, BR_X  , REG_RD  , OP1_RDHA, OP2_WYDE, ALU_OR   , WB_RDHA, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
+                  ANDNWrd -> List(Y, BR_X  , REG_RD  , OP1_RDHA, OP2_WYDE, ALU_ANDNW, WB_RDHA, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
+                  SETZWrb -> List(Y, BR_X  , REG_RB  , OP1_X   , OP2_WYDE, ALU_COPY2, WB_RBHA, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
+                  ORWrb   -> List(Y, BR_X  , REG_RB  , OP1_RBHA, OP2_WYDE, ALU_OR   , WB_RBHA, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
+                  ANDNWrb -> List(Y, BR_X  , REG_RB  , OP1_RBHA, OP2_WYDE, ALU_ANDNW, WB_RBHA, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
+
                   AUIPC   -> List(Y, BR_X  , REG_X  ,  OP1_IMU, OP2_PC  , ALU_ADD ,  WB_ALU, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
                   LUI     -> List(Y, BR_X  , REG_X  ,  OP1_IMU, OP2_X   , ALU_COPY1, WB_ALU, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
 

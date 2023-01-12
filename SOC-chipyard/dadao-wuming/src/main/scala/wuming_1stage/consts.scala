@@ -79,6 +79,7 @@ trait ScalarOpConstants
    val OP2_IMMS12 = 7.asUInt(4.W)  // imms12 source in hc/hd field
    val OP2_IMMU12 = 8.asUInt(4.W)  // immu12 source in hc/hd field
    val OP2_RBHD = 9.asUInt(4.W)
+   val OP2_WYDE = 10.asUInt(4.W)
 
    val OP2_RS2 = 0.asUInt(4.W) // Register Source #2
    val OP2_IMI = 1.asUInt(4.W) // immediate, I-type
@@ -103,6 +104,9 @@ trait ScalarOpConstants
    val ALU_CMPS = 9.asUInt(4.W)
    val ALU_CMPU= 10.asUInt(4.W)
    val ALU_COPY1= 11.asUInt(4.W)
+   val ALU_COPY2= 12.asUInt(4.W)
+   val ALU_SETOW= 13.asUInt(4.W)
+   val ALU_ANDNW= 15.asUInt(4.W)
    val ALU_X   = 0.asUInt(4.W)
 
    // Writeback Select Signal
