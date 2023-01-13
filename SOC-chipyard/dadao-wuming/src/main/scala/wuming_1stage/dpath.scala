@@ -134,29 +134,29 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
    when (wb_wen)
    {
-      when ((io.ctl.wb_sel === WB_RDHB) && (hb_addr =/= 0.U)) {
-         regfileD(hb_addr) := wb_data
+      when ((io.ctl.wb_sel === WB_RBHA) && (ha_addr =/= 0.U)) {
+         regfileB(ha_addr) := wb_data
       }
       when ((io.ctl.wb_sel === WB_RBHB) && (hb_addr =/= 0.U)) {
          regfileB(hb_addr) := wb_data
       }
+      when ((io.ctl.wb_sel === WB_RBMM) && (ha_addr =/= 0.U)) {
+         regfileB(ha_addr) := wb_data
+      }
       when ((io.ctl.wb_sel === WB_RDHA) && (ha_addr =/= 0.U)) {
          regfileD(ha_addr) := wb_data
       }
-      when ((io.ctl.wb_sel === WB_RBHA) && (ha_addr =/= 0.U)) {
-         regfileB(ha_addr) := wb_data
-      }
-      when ((io.ctl.wb_sel === WB_HAHB) && (ha_addr =/= 0.U)) {
-         regfileD(ha_addr) := wb_data2
+      when ((io.ctl.wb_sel === WB_RDHB) && (hb_addr =/= 0.U)) {
+         regfileD(hb_addr) := wb_data
       }
       when ((io.ctl.wb_sel === WB_HAHB) && (hb_addr =/= 0.U)) {
          regfileD(hb_addr) := wb_data
       }
+      when ((io.ctl.wb_sel === WB_HAHB) && (ha_addr =/= 0.U)) {
+         regfileD(ha_addr) := wb_data2
+      }
       when ((io.ctl.wb_sel === WB_RDMM) && (ha_addr =/= 0.U)) {
          regfileD(ha_addr) := wb_data
-      }
-      when ((io.ctl.wb_sel === WB_RBMM) && (ha_addr =/= 0.U)) {
-         regfileB(ha_addr) := wb_data
       }
       when (io.ctl.wb_sel === WB_RA) { /* TODO: SHOULD BE PUSH */
          regfileA(0) := wb_data
@@ -300,12 +300,11 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
    // WB Mux
    wb_data := MuxCase(alu_out, Array(
-                  (io.ctl.wb_sel === WB_ALU) -> alu_out,
-                  (io.ctl.wb_sel === WB_RDHB) -> alu_out,
-                  (io.ctl.wb_sel === WB_RBHB) -> alu_out,
                   (io.ctl.wb_sel === WB_RDHA) -> alu_out,
-                  (io.ctl.wb_sel === WB_RBHA) -> alu_out,
+                  (io.ctl.wb_sel === WB_RDHB) -> alu_out,
                   (io.ctl.wb_sel === WB_HAHB) -> alu_out,
+                  (io.ctl.wb_sel === WB_RBHA) -> alu_out,
+                  (io.ctl.wb_sel === WB_RBHB) -> alu_out,
                   (io.ctl.wb_sel === WB_RDMM) -> io.dmem.resp.bits.data,
                   (io.ctl.wb_sel === WB_RBMM) -> io.dmem.resp.bits.data,
                   (io.ctl.wb_sel === WB_RA)   -> pc_plus4,
