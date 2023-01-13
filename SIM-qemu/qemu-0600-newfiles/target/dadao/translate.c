@@ -815,7 +815,7 @@ static bool trans__cmpu(DisasContext *ctx, arg__cmpu *a)
     return true;
 }
 
-static bool trans_cmprb(DisasContext *ctx, arg_cmprb *a)
+static bool trans_cmp(DisasContext *ctx, arg_cmp *a)
 {
     if (a->hb == 0) {
         return false;
@@ -835,7 +835,7 @@ static bool trans_cmprb(DisasContext *ctx, arg_cmprb *a)
     return true;
 }
 
-static bool trans_addrb(DisasContext *ctx, arg_addrb *a)
+static bool trans__add(DisasContext *ctx, arg__add *a)
 {
     if (a->hb == 0) {
         return false;
@@ -844,7 +844,7 @@ static bool trans_addrb(DisasContext *ctx, arg_addrb *a)
     return true;
 }
 
-static bool trans_subrb(DisasContext *ctx, arg_subrb *a)
+static bool trans__sub(DisasContext *ctx, arg__sub *a)
 {
     if (a->hb == 0) {
         return false;
