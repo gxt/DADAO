@@ -15,6 +15,8 @@ trait DADAOConstants
    val BITS_WYDE  = 16
    val BITS_BYTE  = 8
 
+   val NR_REGS = 64
+
    // abstract out instruction decode magic numbers
    val HA_MSB = 23
    val HA_LSB = 18

@@ -127,10 +127,10 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val wb_wen = io.ctl.rf_wen && !io.ctl.exception && !interrupt_edge
 
    // Register File
-   val regfileD = Mem(64, UInt(conf.xprlen.W))
-   val regfileB = Mem(64, UInt(conf.xprlen.W))
-   val regfileA = Mem(64, UInt(conf.xprlen.W))
-   val regfileF = Mem(64, UInt(conf.xprlen.W))
+   val regfileD = Mem(NR_REGS, UInt(conf.xprlen.W))
+   val regfileB = Mem(NR_REGS, UInt(conf.xprlen.W))
+   val regfileA = Mem(NR_REGS, UInt(conf.xprlen.W))
+   val regfileF = Mem(NR_REGS, UInt(conf.xprlen.W))
 
    when (wb_wen)
    {

@@ -32,10 +32,10 @@ class RegisterFile(implicit val conf: WumingCoreParams) extends Module
 {
    val io = IO(new RFileIo())
 
-   val regfileD = Mem(64, UInt(conf.xprlen.W))
-   val regfileB = Mem(64, UInt(conf.xprlen.W))
-   val regfileA = Mem(64, UInt(conf.xprlen.W))
-   val regfileF = Mem(64, UInt(conf.xprlen.W))
+   val regfileD = Mem(NR_REGS, UInt(conf.xprlen.W))
+   val regfileB = Mem(NR_REGS, UInt(conf.xprlen.W))
+   val regfileA = Mem(NR_REGS, UInt(conf.xprlen.W))
+   val regfileF = Mem(NR_REGS, UInt(conf.xprlen.W))
 
    when (io.wen && (io.waddr =/= 0.U))
    {
