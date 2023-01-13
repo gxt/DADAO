@@ -122,8 +122,6 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val hc_addr  = inst(HC_MSB, HC_LSB)
    val hd_addr  = inst(HD_MSB, HD_LSB)
 
-   val wb_addr  = inst(RD_MSB,  RD_LSB)
-
    val wb_data = Wire(UInt(conf.xprlen.W))
    val wb_data2 = Wire(UInt(conf.xprlen.W))
    val wb_wen = io.ctl.rf_wen && !io.ctl.exception && !interrupt_edge
@@ -134,31 +132,30 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val regfileA = Mem(64, UInt(conf.xprlen.W))
    val regfileF = Mem(64, UInt(conf.xprlen.W))
 
-   when (wb_wen && (wb_addr =/= 0.U))
+   when (wb_wen)
    {
-      when (io.ctl.wb_sel === WB_ALU) { /* SHOULD removed later */
-         regfileD(wb_addr) := wb_data
-      }
-      when (io.ctl.wb_sel === WB_RDHB) {
+      when ((io.ctl.wb_sel === WB_RDHB) && (hb_addr =/= 0.U)) {
          regfileD(hb_addr) := wb_data
       }
-      when (io.ctl.wb_sel === WB_RBHB) {
+      when ((io.ctl.wb_sel === WB_RBHB) && (hb_addr =/= 0.U)) {
          regfileB(hb_addr) := wb_data
       }
-      when (io.ctl.wb_sel === WB_RDHA) {
+      when ((io.ctl.wb_sel === WB_RDHA) && (ha_addr =/= 0.U)) {
          regfileD(ha_addr) := wb_data
       }
-      when (io.ctl.wb_sel === WB_RBHA) {
+      when ((io.ctl.wb_sel === WB_RBHA) && (ha_addr =/= 0.U)) {
          regfileB(ha_addr) := wb_data
       }
-      when (io.ctl.wb_sel === WB_HAHB) {
-         regfileD(hb_addr) := wb_data
+      when ((io.ctl.wb_sel === WB_HAHB) && (ha_addr =/= 0.U)) {
          regfileD(ha_addr) := wb_data2
       }
-      when (io.ctl.wb_sel === WB_RDMM) {
+      when ((io.ctl.wb_sel === WB_HAHB) && (hb_addr =/= 0.U)) {
+         regfileD(hb_addr) := wb_data
+      }
+      when ((io.ctl.wb_sel === WB_RDMM) && (ha_addr =/= 0.U)) {
          regfileD(ha_addr) := wb_data
       }
-      when (io.ctl.wb_sel === WB_RBMM) {
+      when ((io.ctl.wb_sel === WB_RBMM) && (ha_addr =/= 0.U)) {
          regfileB(ha_addr) := wb_data
       }
       when (io.ctl.wb_sel === WB_RA) { /* TODO: SHOULD BE PUSH */
@@ -343,7 +340,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       csr.io.time(31,0),
       csr.io.retire,
       pc_reg,
-      wb_addr,
+      ha_addr,
       wb_data,
       wb_wen,
       ha_addr,
@@ -369,10 +366,9 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       when (!io.ctl.stall)
       {
          // use "sed" to parse out "@@@" from the other printf code above.
-         val rd = inst(RD_MSB,RD_LSB)
-         when (io.ctl.rf_wen && rd =/= 0.U)
+         when (io.ctl.rf_wen)
          {
-            printf("@@@ 0x%x (0x%x) x%d 0x%x\n", pc_reg, inst, rd, Cat(Fill(32,wb_data(31)),wb_data))
+            printf("@@@ 0x%x (0x%x) %d %d 0x%x\n", pc_reg, inst, ha_addr, hb_addr, Cat(Fill(32,wb_data(31)),wb_data))
          }
          .otherwise
          {
