@@ -4,20 +4,20 @@
 	.global	_start
 _start:
 	call	_rec1
-	ret
+	ret	rd0, 0
 
 _rec1:
 	call	_rec2
 	call	_rec2
-	ret
+	ret	rd0, 0
 
 _rec2:
 	call	_rec3
 	call	_rec3
 	call	_rec3
 	call	_rec3
-	ret
+	ret	rd0, 0
 
 _rec3:
 	call	_rec1
-	ret
+	ret	rd0, 0

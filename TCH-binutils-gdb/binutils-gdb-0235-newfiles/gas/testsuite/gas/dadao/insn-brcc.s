@@ -12,18 +12,11 @@ _rec2:
 	brp		rd1, _rec2
 	brp		rd2, _rec3
 _rec3:
-	brod	rd1, _rec3
-	brod	rd2, _rec4
+	brnn	rd1, _rec3
+	brnn	rd2, _rec4
 _rec4:
-	brnn	rd1, _rec4
-	brnn	rd2, _rec5
+	brnz	rd1, _rec4
+	brnz	rd2, _rec5
 _rec5:
-	brnz	rd1, _rec5
-	brnz	rd2, _rec6
-_rec6:
-	brnp	rd1, _rec6
-	brnp	rd2, _rec7
-_rec7:
-	brev	rd1, _rec8
-_rec8:
-	brev	rd2, _start
+	brnp	rd1, _rec5
+	brnp	rd2, _start
