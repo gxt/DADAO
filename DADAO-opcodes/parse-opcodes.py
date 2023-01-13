@@ -276,9 +276,12 @@ def gen_disassemble_file(insts: dict, output_file: str):
                         operand_format[i-exop] = 'offset' + operands[i][4:]
                         operands[i] = 'offset'
                         inst_disassemble_format += ''
-                    elif operands[i][0:3] == 'imm':
+                    elif operands[i][0:4] == 'immu':
                         operand_format[i-exop] = operands[i]
                         inst_disassemble_format += '0x%x'
+                    elif operands[i][0:4] == 'imms':
+                        operand_format[i-exop] = operands[i]
+                        inst_disassemble_format += '%d'
                     elif operands[i] == 'ww':
                         operand_format[i-exop] = operands[i]
                         inst_disassemble_format += 'w%d'
