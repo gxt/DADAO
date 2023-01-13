@@ -319,14 +319,18 @@ def gen_bitpat_file(insts: dict, output_file: str):
                     list1 = list(insts_temp[inst_name]['fields'].keys())
                     list2 = list(insts_temp[search_inst]['fields'].keys())
                     for i in range(0,4):
+                        if list[i] == 'op':
+                            continue;
                         if list1[i] != list2[i]:
                             if list1[i][0:3] == 'imm':
                                 output_string += 'i'
+                                break;
                             elif list2[i][0:3] == 'imm':
                                 output_string += 'r'
-                            else:
+                                break;
+                            elif insts_temp[inst_name]['regfile_restrictions'][list1[i]] != insts_temp[search_inst]['regfile_restrictions'][list2[i]]:
                                 output_string += insts_temp[inst_name]['regfile_restrictions'][list1[i]]
-                            break;
+                                break;
             line = '   def {}\t\t= BitPat("b{}")'.format(output_string,bitpat)
             print(line, file=f)
 
