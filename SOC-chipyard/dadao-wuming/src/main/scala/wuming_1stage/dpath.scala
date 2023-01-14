@@ -129,8 +129,19 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    // Register File
    val regfileD = Mem(NR_REGS, UInt(conf.xprlen.W))
    val regfileB = Mem(NR_REGS, UInt(conf.xprlen.W))
-   val regfileA = Mem(NR_REGS, UInt(conf.xprlen.W))
    val regfileF = Mem(NR_REGS, UInt(conf.xprlen.W))
+   val regfileA = Module(new RegFileA())
+
+   regfileA.io.ras_top   := 63.U
+   regfileA.io.ras_push  := (wb_wen && (io.ctl.wb_sel === WB_RA))
+   regfileA.io.ras_pop   := (io.ctl.pc_sel === PC_RA)
+   regfileA.io.push_data := wb_data
+
+   //// DebugModule, TODO: conflict with regfileD setting
+   regfileA.io.dm_addr := io.ddpath.addr
+   regfileA.io.dm_en := io.ddpath.validreq
+   regfileA.io.dm_wdata := io.ddpath.wdata
+   ///
 
    when (wb_wen)
    {
@@ -157,9 +168,6 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       }
       when ((io.ctl.wb_sel === WB_RDMM) && (ha_addr =/= 0.U)) {
          regfileD(ha_addr) := wb_data
-      }
-      when (io.ctl.wb_sel === WB_RA) { /* TODO: SHOULD BE PUSH */
-         regfileA(0) := wb_data
       }
    }
 
@@ -258,7 +266,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    br_target18       := pc_reg + imms18
    jmp_iiii_target   := pc_reg + (imms24 << 2.U)
    jmp_rrii_target   := (rbha_data + rdhb_data + (imms12 << 2.U)) & ~1.U(conf.xprlen.W)
-   ret_target        := regfileA(0)   // TODO: SHOULD POP FROM RA regfile
+   ret_target        := regfileA.io.pop_data
 
    // Control Status Registers
    val csr = Module(new CSRFile(perfEventSets=CSREvents.events))
