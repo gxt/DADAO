@@ -1,11 +1,20 @@
 #define BOOTADDR_REG 0x4000
 
+// TODO: SHOULD redefine following regs, but now reuse risc-v csr module
+#define mstatus		0x300
+#define misa		0x301
+#define mideleg		0x303
+#define mie		0x304
+#define mtvec		0x305
+#define mepc		0x341
+#define mhartid		0xf14
+
 // boot all cores (only hart 0) and jump to main program execution
 .section .text.start, "ax", @progbits
 .globl _start
 _start:
 	move	rb9, 0x2000000		// base address of clint
-	cprd	rd8, mhartid
+	cprd	cp0, cr60, cr20, rd8	// mhartid: f14
 	brnz	rd8, boot_core
 	move	rb10, 0x2000004
 	move	rd11, 1
@@ -22,18 +31,18 @@ interrupt_loop:				// trigger MSIP interrupts for other harts so that they also 
 .globl _hang
 _hang:					// reset vector
 	move	rd8, _start		// on MSIP interrupt, go to _start
-	cpwr	mtvec, rd8
-	cprd	rd32, misa		// get MISA mask
+	cpwr	cp0, cr12, cr5, rd8	// mtvec
+	cprd	cp0, cr12, cr1, rd32	// misa	get MISA mask
 	shrs	rd32, rd32, 'S' - 'A'	// get 'S' supervisor bit
-	andi	rd32, 1
+	andi	rd32, rd32, 1
 	brz	rd32, 1f		// only zero mideleg if supported
-	cpwr	mideleg, rd0		// no delegation
+	cpwr	cp0, cr12, cr3, rd0	// mideleg: no delegation
 1:
 	move	rd8, 8			// MIE or MSIP bit
-	cpwr	mie, rd8		// set only MSIP in MIE CSR
-	cprd	rd9, mstatus
+	cpwr	cp0, cr12, cr4, rd8	// mie: set only MSIP in MIE CSR
+	cprd	cp0, cr12, cr0, rd9	// mstatus
 	orw	rd9, w0, 8
-	cpwr	rd9, mstatus		// set MIE in mstatus CSR
+	cpwr	cp0, cr12, cr0, rd9	// set MIE in mstatus CSR
 
 wfi_loop: // wait for MSIP interrupt to start program execution
 	cpco	cp0, 0
@@ -55,13 +64,13 @@ boot_core_hart0:			// begin executing code at DRAM_BASE
 	stt	rd0, rb9, 0		// clear the interrupt
 	move	rb8, BOOTADDR_REG	// program reset vector
 	ldo	rd8, rb8, 0		// get boot address from bootaddr_reg SCR
-	cpwr	mepc, rd8		// return from interrupt to start of user program
-	cprd	rd8, mhartid		// hartid for next level bootloader
+	cpwr	cp0, cr13, cr1, rd8	// mepc: return from interrupt to start of user program
+	cprd	cp0, cr60, cr20, rd8	// mhartid: f14, hartid for next level bootloader
 	move	rd9, _dtb		// dtb address for next level bootloader
-	cprd	rd10, mstatus
+	cprd	cp0, cr12, cr0, rd10	// mstatus
 	andnw	rd10, w0, 0x80		// set mstatus MPIE to 0
-	cpwr	mstatus, rd10
-	return	rd0, 0
+	cpwr	cp0, cr12, cr0, rd10	// mstatus
+	ret	rd0, 0			// TODO: mret?
 
 .align 3
 _dtb:
