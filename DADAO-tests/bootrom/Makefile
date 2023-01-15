@@ -1,10 +1,7 @@
-bootrom_img = bootrom.img
-bootrom_dump = bootrom.dump
+bootrom_img = bootrom.dadao.img
+bootrom_dump = bootrom.dadao.dump
 
-GCC=dadao-linux-elf-gcc
-CFLAGS_DADAO=
-OBJCOPY=dadao-linux-elf-objcopy
-OBJDUMP=dadao-linux-elf-objdump
+include $(src_dir)/../Makerules
 
 default: img dump
 
@@ -13,13 +10,13 @@ img: $(bootrom_img)
 dump: $(bootrom_dump)
 
 %.img: %.elf
-	$(OBJCOPY) -O binary --change-addresses=-0x10000 $< $@
+	$(DADAO_ELF_OBJCOPY) -O binary --change-addresses=-0x10000 $< $@
 
 %.elf: %.S linker.ld
-	$(GCC) $(CFLAGS_DADAO) -Tlinker.ld $< -nostdlib -static -o $@
+	$(DADAO_ELF_GCC) -Tlinker.ld $< -nostdlib -static -o $@
 
 %.dump: %.elf
-	$(OBJDUMP) -d $< > $@
+	$(DADAO_ELF_OBJDUMP) -d $< > $@
 
 clean:
 	rm -f *.elf *.dump *.img
