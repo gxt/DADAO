@@ -199,21 +199,6 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val wyde16 = inst(WYDE_MSB, WYDE_LSB)
    val wydemask = ~(Fill(BITS_WYDE, 1.U) << wydeposition)
 
-   val imm_i = inst(31, 20)
-   val imm_s = Cat(inst(31, 25), inst(11,7))
-   val imm_b = Cat(inst(31), inst(7), inst(30,25), inst(11,8))
-   val imm_u = inst(31, 12)
-   val imm_j = Cat(inst(31), inst(19,12), inst(20), inst(30,21))
-   val imm_z = Cat(Fill(27,0.U), inst(19,15))
-
-   // sign-extend immediates
-   val imm_i_sext = Cat(Fill(20,imm_i(11)), imm_i)
-   val imm_s_sext = Cat(Fill(20,imm_s(11)), imm_s)
-   val imm_b_sext = Cat(Fill(19,imm_b(11)), imm_b, 0.U)
-   val imm_u_sext = Cat(imm_u, Fill(12,0.U))
-   val imm_j_sext = Cat(Fill(11,imm_j(19)), imm_j, 0.U)
-
-
    val alu_op1 = MuxCase(0.U, Array(
                (io.ctl.op1_sel === OP1_RDHA) -> rdha_data,
                (io.ctl.op1_sel === OP1_RDHB) -> rdhb_data,
