@@ -13,11 +13,12 @@
 .section .text.start, "ax", @progbits
 .globl _start
 _start:
-	move	rb9, 0x2000000		// base address of clint
+	setzw	rb9, w1, 0x200		// base address of clint
 	cprd	cp0, cr60, cr20, rd8	// mhartid: f14
 	brnz	rd8, boot_core
-	move	rb10, 0x2000004
-	move	rd11, 1
+	setzw	rb10, w1, 0x200
+	addi	rb10, 4
+	setzw	rd11, w0, 1
 interrupt_loop:				// trigger MSIP interrupts for other harts so that they also boot
 	stt	rd11, rb10, 0
 	addi	rb10, 4
@@ -38,7 +39,7 @@ _hang:					// reset vector
 	brz	rd32, 1f		// only zero mideleg if supported
 	cpwr	cp0, cr12, cr3, rd0	// mideleg: no delegation
 1:
-	move	rd8, 8			// MIE or MSIP bit
+	setzw	rd8, w0, 8		// MIE or MSIP bit
 	cpwr	cp0, cr12, cr4, rd8	// mie: set only MSIP in MIE CSR
 	cprd	cp0, cr12, cr0, rd9	// mstatus
 	orw	rd9, w0, 8
