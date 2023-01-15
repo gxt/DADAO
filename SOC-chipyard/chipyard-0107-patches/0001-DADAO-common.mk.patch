@@ -1,0 +1,26 @@
+From 34ac56e111ec76739f3025d5eec64dfb48c7ce23 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sun, 15 Jan 2023 16:18:43 +0800
+Subject: [PATCH] DADAO: common.mk
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ common.mk | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/common.mk b/common.mk
+index 1993c475..bef8b161 100644
+--- a/common.mk
++++ b/common.mk
+@@ -95,7 +95,7 @@ endif
+ $(build_dir):
+ 	mkdir -p $@
+ 
+-$(BOOTROM_TARGETS): $(build_dir)/bootrom.%.img: $(TESTCHIP_RSRCS_DIR)/testchipip/bootrom/bootrom.%.img | $(build_dir)
++$(BOOTROM_TARGETS): $(build_dir)/bootrom.%.img: $(BOOTROM_FILES_DIR)/bootrom.%.img | $(build_dir)
+ 	cp -f $< $@
+ 
+ #########################################################################################
+-- 
+2.34.1
+

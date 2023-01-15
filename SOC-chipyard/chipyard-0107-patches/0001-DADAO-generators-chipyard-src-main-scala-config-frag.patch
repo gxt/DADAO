@@ -1,0 +1,27 @@
+From b55f40f05d5d82acd76e100d4cc14874c01ef0e6 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sun, 15 Jan 2023 16:15:25 +0800
+Subject: [PATCH] DADAO:
+ generators/chipyard/src/main/scala/config/fragments/PeripheralFragments.scala
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ .../src/main/scala/config/fragments/PeripheralFragments.scala   | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/generators/chipyard/src/main/scala/config/fragments/PeripheralFragments.scala b/generators/chipyard/src/main/scala/config/fragments/PeripheralFragments.scala
+index 0161edcc..80ad3d8c 100644
+--- a/generators/chipyard/src/main/scala/config/fragments/PeripheralFragments.scala
++++ b/generators/chipyard/src/main/scala/config/fragments/PeripheralFragments.scala
+@@ -22,7 +22,7 @@ import chipyard.{ExtTLMem}
+ // Set the bootrom to the Chipyard bootrom
+ class WithBootROM extends Config((site, here, up) => {
+   case BootROMLocated(x) => up(BootROMLocated(x), site)
+-      .map(_.copy(contentFileName = s"${site(TargetDirKey)}/bootrom.rv${site(XLen)}.img"))
++      .map(_.copy(contentFileName = s"${site(TargetDirKey)}/bootrom.dadao.img"))
+ })
+ 
+ // DOC include start: gpio config fragment
+-- 
+2.34.1
+
