@@ -118,7 +118,7 @@ const relax_typeS dadao_relax_table[] = {
     {(1 << 20), -(1 << 20), 0, ENCODE_RELAX(STATE_BRCC, STATE_MAX)},
 
     /* BRCC (2, 1).  */
-    {0, 0, DD_INSN_BYTES(5), 0},
+    {0, 0, DD_INSN_BYTES(0), 0},
 
     /* CALL (3, 0).  */
     {(1 << 26), -(1 << 26), 0, ENCODE_RELAX(STATE_CALL, STATE_MAX)},
@@ -130,7 +130,7 @@ const relax_typeS dadao_relax_table[] = {
     {(1 << 26), -(1 << 26), 0, ENCODE_RELAX(STATE_JUMP, STATE_MAX)},
 
     /* JUMP (4, 1).  */
-    {0, 0, DD_INSN_BYTES(4), 0},
+    {0, 0, DD_INSN_BYTES(0), 0},
 
     /* HI18 (5, 0).  */
     {(1 << 20), -(1 << 20), 0, ENCODE_RELAX(STATE_HI18, STATE_MAX)},
@@ -1198,7 +1198,7 @@ void md_convert_frag(bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
     case ENCODE_RELAX(state, STATE_MAX):                                              \
         var_part_size = dadao_relax_table[ENCODE_RELAX(state, STATE_MAX)].rlx_length; \
         dd_fill_nops(var_partp, var_part_size / 4);                                   \
-        tmpfixP = fix_new(fragP, var_partp - fragP->fr_literal, 8,                    \
+        tmpfixP = fix_new(fragP, var_partp - fragP->fr_literal, 4,                    \
                           fragP->fr_symbol, fragP->fr_offset, 1, reloc);              \
         tmpfixP->fx_file = fragP->fr_file;                                            \
         tmpfixP->fx_line = fragP->fr_line;                                            \
