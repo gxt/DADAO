@@ -50,9 +50,9 @@ wfi_loop: // wait for MSIP interrupt to start program execution
 	jump	wfi_loop
 
 // jump to reset vector
-.section .text.hang80, "ax", @progbits
-.globl _hang80
-_hang80:
+.section .text.hang90, "ax", @progbits
+.globl _hang90
+_hang90:
 	jump	_hang
 
 // other harts must wait until MSIP of hart 0 is cleared to continue
