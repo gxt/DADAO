@@ -598,6 +598,17 @@ static bool trans_setw(DisasContext *ctx, arg_setw *a)
     return true;
 }
 
+/* logic instructions */
+
+static bool trans_andi(DisasContext *ctx, arg_andi *a)
+{
+    if (a->ha == 0) {
+        return false;
+    }
+    tcg_gen_andi_i64(cpu_rd[a->ha], cpu_rd[a->hb], a->immu12);
+    return true;
+}
+
 /* arithmetic instructions */
 
 static bool trans_addi(DisasContext *ctx, arg_addi *a)
