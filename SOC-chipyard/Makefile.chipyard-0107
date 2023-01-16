@@ -87,7 +87,8 @@ chipyard-0107-run-binary:
 			BOOTROM_FILES=bootrom.dadao.img						\
 			BOOTROM_FILES_DIR=$(DIR_DADAO_TESTS_BOOTROM_BUILD)			\
 			sim_dir=$(CHIPYARD_0107_BUILD)						\
-			 run-binary BINARY=$(CHIPYARD_0107_DADAO_BINARY)
+			BINARY=$(CHIPYARD_0107_DADAO_BINARY)					\
+			run-binary
 
 chipyard-0107-tracer:
 	# analyzes the contents of the omitted trace file and generates basic statistics
