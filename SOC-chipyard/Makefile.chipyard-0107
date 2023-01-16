@@ -113,10 +113,10 @@ chipyard-0107-highfive:
 	@echo "--- BUILD chipyard-0107 DONE! ---"
 
 CHIPYARD_0107_INSN_OLD	:= $(CHIPYARD_0107_SOURCE)/generators/dadao-wuming/src/main/scala/common/instructions.scala
-CHIPYARD_0107_INSN_NEW	:= $(OPCODES_DST_DIR)/instructions.scala
+CHIPYARD_0107_INSN_NEW	:= $(DIR_DADAO_SOURCE)/instructions.scala
 chipyard-0107-check-insn:
 	# Generate instructions.scala
-	@rm -f $(OPCODES_BITPAT)
+	@rm -f $(OPCODES_OUTPUT_BITPAT)
 	@make -s -C $(DIR_DADAO_TOP) opcodes-bitpat
 	@cat $(DIR_DADAO_TOP)/SOC-chipyard/instructions.scala-head		>  $(CHIPYARD_0107_INSN_NEW)
 	@cat $(OPCODES_OUTPUT_BITPAT)						>> $(CHIPYARD_0107_INSN_NEW)
