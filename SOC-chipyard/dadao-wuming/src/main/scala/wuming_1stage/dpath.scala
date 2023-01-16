@@ -328,18 +328,15 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    // Printout
    // pass output through the spike-dasm binary (found in riscv-tools) to turn
    // the DASM(%x) into a disassembly string.
-   printf("Cyc= %d [%d] pc=[%x] W[r%d=%x][%d] Op1=[r%d][%x] Op2=[r%d][%x] inst=[%x] %c%c%c DASM(%x)\n",
+   printf("Cyc= %d [%d] pc=[%x] inst=[%x] W[%x][%d] Op1=[%x] Op2=[%x] %c%c%c DASM(%x)\n",
       csr.io.time(31,0),
       csr.io.retire,
       pc_reg,
-      ha_addr,
+      inst,
       wb_data,
       wb_wen,
-      ha_addr,
       alu_op1,
-      hb_addr,
       alu_op2,
-      inst,
       Mux(io.ctl.stall, Str("S"), Str(" ")),
       MuxLookup(io.ctl.pc_sel, Str("?"), Seq(
          PC_BR12 -> Str("B"),
