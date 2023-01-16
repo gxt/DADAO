@@ -63,10 +63,12 @@
              (match_operand:DI 2 "dd_sign_18_operand" "i")))]
   ""
   {
-    if (REGNO(operands[0])
-      ==REGNO(operands[1])) return "addi\t%0, %2";
-    else return "move\trd7, %2 \;add\trd0, %0, %1, rd7";
+	if(INTVAL(operands[2])>0x7ff || INTVAL(operands[2])<-0x800)
+         return "move\trd7, %2 \;add\trd0, %0, %1, rd7";
+	else
+	 return "addi   %0, %1, %2";
   })
+  
 
 (define_insn "dd_addrd_regls"
   [(set      (match_operand:DI 0 "rd_class_operand" "=Rd,Rd")
@@ -116,12 +118,13 @@
   [(set      (match_operand:DI 0 "rd_class_operand" "=Rd")
    (minus:DI (match_operand:DI 1 "rd_class_operand" "%Rd")
              (match_operand:DI 2 "dd_sign_18_operand" "i")))]
-  ""
-{
-  if (REGNO(operands[0])
-    ==REGNO(operands[1])) return "addi\t%0, %n2";
-  else return "move\trd7, %n2 \;add\trd0, %0, %1, rd7";
-})
+  	""
+	{
+        if(INTVAL(operands[2])>0x7ff || INTVAL(operands[2])<-0x800)
+		return "move\trd7, %n2 \;add\trd0, %0, %1, rd7";
+	else
+		return "addi   %0, %1, %n2";
+	})
 
 (define_insn "dd_subrd_regls"
   [(set      (match_operand:DI 0 "rd_class_operand" "=Rd,Rd")

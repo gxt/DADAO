@@ -42,21 +42,26 @@
   [(set       (match_operand:DI 0 "rb_class_operand"  "= Rb")
      (plus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb")
               (match_operand:DI 2 "dd_sign_18_operand"   "i")))]
-  ""
-  { if (REGNO(operands[1])
-     == REGNO(operands[0])) return  "addi\t%0, %2";
-    else return "rb2rb\t%0, %1, 0\t\;addi\t%0, %2";
-  })
+  	""
+	{
+        if(INTVAL(operands[2]) > 0x7ff || INTVAL(operands[2]) < -0x800)
+                return "move\trd7, %2 \;add\t %0, %1, rd7";
+        else
+                return "addi\t%0, %1, %2";
+	})
 
 (define_insn "subrb_imm"
   [(set       (match_operand:DI 0 "rb_class_operand"  "= Rb")
     (minus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb")
               (match_operand:DI 2 "dd_sign_18_operand"   "i")))]
-  ""
-  { if (REGNO(operands[1])
-     == REGNO(operands[0])) return  "addi\t%0, %n2";
-    else return "rb2rb\t%0, %1, 0\t\;addi\t%0, %n2";
-  })
+  	""
+	{
+        if(INTVAL(operands[2]) > 0x7ff || INTVAL(operands[2]) < -0x800)
+                return "move\trd7, %n2 \;add\t %0, %1, rd7";
+        else
+                return "addi\t%0, %1, %n2";
+        })
+
 
 (define_insn "addrb_ctry"
   [(set      (match_operand:DI 0 "rb_class_operand"  "=Rb")
@@ -101,17 +106,19 @@
 	     (match_operand:DI 2 "dd_rd_s18_operand" "  It, Rd")))]
 	""
 	"@
-	rb2rd	%0, %1, 0	\;addi	%0, %2
-	rb2rd	%0, %1, 0	\;add	rd0, %0, %2, %0")
+	move	rd7, %2		\;rb2rd	%0, %1, 0	\;add	rd0, %0, %0, rd7
+	rb2rd	%0, %1, 0	\;add   rd0, %0, %2, %0")
+
 
 (define_insn "subrb2rd"
   [(set      (match_operand:DI 0 "rd_class_operand"  "= Rd, Rd")
    (minus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb, Rb")
 	     (match_operand:DI 2 "dd_rd_s18_operand" "  It, Rd")))]
 	""
-	"@
-	rb2rd	%0, %1, 0	\;addi	%0, %n2
+        "@
+	move	rd7, %n2	\;rb2rd	%0, %1, 0	\;add	rd0, %0, %0, rd7
 	rb2rd	%0, %1, 0	\;sub	rd0, %0, %0, %2")
+
 
 ;; Shall it stays ?
 (define_insn "addrb2rd_larde_scale"
