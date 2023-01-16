@@ -17,11 +17,11 @@ _start:
 	cprd	cp0, cr60, cr20, rd8	// mhartid: f14
 	brnz	rd8, boot_core
 	setzw	rb10, w1, 0x200
-	addi	rb10, 4
+	addi	rb10, rb10, 4
 	setzw	rd11, w0, 1
 interrupt_loop:				// trigger MSIP interrupts for other harts so that they also boot
 	stt	rd11, rb10, 0
-	addi	rb10, 4
+	addi	rb10, rb10, 4
 	ldtu	rd11, rb10, -4
 	brnz	rd11, interrupt_loop
 	jump	boot_core_hart0
