@@ -95,7 +95,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    }
 
    io.imem.req.bits.fcn := M_XRD
-   io.imem.req.bits.typ := MT_WU
+   io.imem.req.bits.typ := MT_TU
    io.imem.req.bits.addr := pc_reg
    io.imem.req.valid := !reg_dmiss
    val inst = Mux(reg_dmiss, if_inst_buffer, io.imem.resp.bits.data)

@@ -175,7 +175,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    // Instruction Memory
    io.imem.req.valid := if_buffer_in.ready
    io.imem.req.bits.fcn := M_XRD
-   io.imem.req.bits.typ := MT_WU
+   io.imem.req.bits.typ := MT_TU
    io.imem.req.bits.addr := if_reg_pc
 
    when (io.ctl.pipeline_kill)
