@@ -48,12 +48,12 @@ tch-gnu-highfive:
 	@echo "=== BUILD Toolchain dadao-linux-gnu DONE! ==="
 
 tch-elf-highfive:
-	@echo "=== BUILD Toolchain dadao-linux-elf BEGIN ==="
+	@echo "=== BUILD Toolchain dadao-unknown-elf BEGIN ==="
 	@echo "=== building time maybe: real 11m, user 34m, sys 5m ==="
-	@make -s BINUTILS_GDB_$(VER_BINUTILS_GDB)_TARGET=dadao-linux-elf binutils-gdb-$(VER_BINUTILS_GDB)-highfive
-	@make -s GCC_$(VER_GCC)_TARGET=dadao-linux-elf gcc-$(VER_GCC)-highfive
+	@make -s BINUTILS_GDB_$(VER_BINUTILS_GDB)_TARGET=dadao-unknown-elf binutils-gdb-$(VER_BINUTILS_GDB)-highfive
+	@make -s GCC_$(VER_GCC)_TARGET=dadao-unknown-elf gcc-$(VER_GCC)-highfive
 	@make -s newlib-cygwin-$(VER_NEWLIB_CYGWIN)-highfive
-	@echo "=== BUILD Toolchain dadao-linux-elf DONE! ==="
+	@echo "=== BUILD Toolchain dadao-unknown-elf DONE! ==="
 
 env-highfive:
 	@echo "=== BUILD Run-Time Environment BEGIN ==="
