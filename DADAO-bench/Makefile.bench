@@ -4,10 +4,10 @@
 DDB_SRC_DIR		:= $(DIR_DADAO_TOP)/DADAO-bench
 DDB_DST_DIR		:= $(DIR_DADAO_TOP)/__tests
 
-DDB_ELF_GAS		:= $(DIR_DADAO_INSTALL)/bin/dadao-linux-elf-as
-DDB_ELF_READELF		:= $(DIR_DADAO_INSTALL)/bin/dadao-linux-elf-readelf
-DDB_ELF_OBJDUMP		:= $(DIR_DADAO_INSTALL)/bin/dadao-linux-elf-objdump
-DDB_ELF_GCC		:= $(DIR_DADAO_INSTALL)/bin/dadao-linux-elf-gcc
+DDB_ELF_GAS		:= $(DIR_DADAO_INSTALL)/bin/dadao-unknown-elf-as
+DDB_ELF_READELF		:= $(DIR_DADAO_INSTALL)/bin/dadao-unknown-elf-readelf
+DDB_ELF_OBJDUMP		:= $(DIR_DADAO_INSTALL)/bin/dadao-unknown-elf-objdump
+DDB_ELF_GCC		:= $(DIR_DADAO_INSTALL)/bin/dadao-unknown-elf-gcc
 DDB_GNU_GAS		:= $(DIR_DADAO_INSTALL)/bin/dadao-linux-gnu-as
 DDB_GNU_READELF		:= $(DIR_DADAO_INSTALL)/bin/dadao-linux-gnu-readelf
 DDB_GNU_OBJDUMP		:= $(DIR_DADAO_INSTALL)/bin/dadao-linux-gnu-objdump
