@@ -367,6 +367,8 @@ def output_dasm(dasm_dict: dict, instruction: str):
             key = instruction[0:14]
         else:
             key = instruction[0:8]
+        if key not in dasm_dict:
+            return 'unknown insn'
         output += dasm_dict[key]['inst_name'] + '\t'
         operands = dasm_dict[key]['fields']
         regfile = dasm_dict[key]['regfile']
@@ -402,8 +404,8 @@ def output_dasm(dasm_dict: dict, instruction: str):
                 if data[0] == '0':
                     output += str(int(data,2))
                 else:
-                    data = int(data[1:],2) - 0x01
-                    output += str(-(~data & int("0b" + "1" * (len(data) -1),2)))
+                    dec = int(data[1:],2) - 0x01
+                    output += str(-(~dec & int("0b" + "1" * (len(data) -1),2)))
             elif operand == 'none':
                 next_op = 0
                 break;
