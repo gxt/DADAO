@@ -247,8 +247,8 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val alu_out2 = Cat(Fill(63, 0.U), alu_out_onemorebit(64))
 
    // Branch/Jump Target Calculation
-   br_target12       := pc_reg + imms12
-   br_target18       := pc_reg + imms18
+   br_target12       := pc_reg + (imms12 << 2.U)
+   br_target18       := pc_reg + (imms18 << 2.U)
    jmp_iiii_target   := pc_reg + (imms24 << 2.U)
    jmp_rrii_target   := (rbha_data + rdhb_data + (imms12 << 2.U)) & ~1.U(conf.xprlen.W)
    ret_target        := regfileA.io.pop_data
