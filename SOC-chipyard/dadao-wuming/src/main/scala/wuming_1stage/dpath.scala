@@ -72,6 +72,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                   (io.ctl.pc_sel === PC_BR12)  -> br_target12,
                   (io.ctl.pc_sel === PC_BR18)  -> br_target18,
                   (io.ctl.pc_sel === PC_JMPI)  -> jmp_iiii_target,
+                  (io.ctl.pc_sel === PC_JMPR)  -> jmp_rrii_target,
                   (io.ctl.pc_sel === PC_RA)  -> ret_target,
                   (io.ctl.pc_sel === PC_EXC) -> exception_target
                   ))
@@ -254,7 +255,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    br_target12       := pc_reg + (imms12 << 2.U)
    br_target18       := pc_reg + (imms18 << 2.U)
    jmp_iiii_target   := pc_reg + (imms24 << 2.U)
-   jmp_rrii_target   := (rbha_data + rdhb_data + (imms12 << 2.U)) & ~1.U(conf.xprlen.W)
+   jmp_rrii_target   := rbha_data + rdhb_data + (imms12 << 2.U)
    ret_target        := regfileA.io.pop_data
 
    // Control Status Registers
