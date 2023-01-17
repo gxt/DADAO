@@ -28,6 +28,7 @@ class DatToCtlIo(implicit val conf: WumingCoreParams) extends Bundle()
    val csr_eret = Output(Bool())
    val csr_interrupt = Output(Bool())
    val inst_misaligned = Output(Bool())
+   val inst_multi_reg  = Output(Bool())
    val mem_address_low = Output(UInt(3.W))
 }
 
@@ -108,6 +109,8 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                               (jmp_iiii_target(1, 0).orR   && io.ctl.pc_sel_no_xept === PC_JMPI)  ||
                               (jmp_rrii_target(1, 0).orR   && io.ctl.pc_sel_no_xept === PC_JMPR)  ||
                               (ret_target(1, 0).orR        && io.ctl.pc_sel_no_xept === PC_RA)
+   // TODO: for multi reg insns, only single reg is legal at present
+   io.dat.inst_multi_reg := ((io.ctl.alu_fun === ALU_MREG) && inst(5, 0).orR)
    tval_inst_ma := MuxCase(0.U, Array(
                      (io.ctl.pc_sel_no_xept === PC_BR12) -> br_target12,
                      (io.ctl.pc_sel_no_xept === PC_BR18) -> br_target18,
@@ -241,6 +244,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                   (io.ctl.alu_fun === ALU_ANDNW)  -> (alu_op1 & ~alu_op2).asUInt(),
                   (io.ctl.alu_fun === ALU_ADRP)   -> ((((alu_op1 >> 12.U) + alu_op2) << 12.U)).asUInt(),
                   (io.ctl.alu_fun === ALU_COPY2)  -> alu_op2.asUInt(),
+                  (io.ctl.alu_fun === ALU_MREG)   -> alu_op1.asUInt(),
                   ))
 
    val alu_out = alu_out_onemorebit(63, 0)

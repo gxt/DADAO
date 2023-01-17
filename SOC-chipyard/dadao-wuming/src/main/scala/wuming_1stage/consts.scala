@@ -98,6 +98,7 @@ trait ScalarOpConstants
    val ALU_ANDNW = 12.asUInt(4.W)
    val ALU_ADRP  = 13.asUInt(4.W)
    val ALU_COPY2 = 14.asUInt(4.W)
+   val ALU_MREG  = 15.asUInt(4.W)
    val ALU_X     = 0.asUInt(4.W)
 
    // Writeback Select Signal

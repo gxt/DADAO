@@ -58,6 +58,11 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                   CPRD    -> List(Y, BR_X  , REG_RD ,  OP1_X, OP2_X      , ALU_X    , WB_CSR, REN_1, MEN_0, M_X ,  MT_X,  CSR.R),
                   CPWR    -> List(Y, BR_X  , REG_RD ,  OP1_X, OP2_RDHD   , ALU_COPY2, WB_CSR, REN_1, MEN_0, M_X ,  MT_X,  CSR.W),
 
+                  RD2RD   -> List(Y, BR_X  , REG_RD ,  OP1_RDHC, OP2_IMMU6, ALU_MREG ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  RD2RB   -> List(Y, BR_X  , REG_RB ,  OP1_RDHC, OP2_IMMU6, ALU_MREG ,  WB_RBHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  RB2RD   -> List(Y, BR_X  , REG_RB ,  OP1_RBHC, OP2_IMMU6, ALU_MREG ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  RB2RB   -> List(Y, BR_X  , REG_RB ,  OP1_RBHC, OP2_IMMU6, ALU_MREG ,  WB_RBHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+
                   AND     -> List(Y, BR_X  , REG_RD ,  OP1_RDHC, OP2_RDHD, ALU_AND ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
                   ORR     -> List(Y, BR_X  , REG_RD ,  OP1_RDHC, OP2_RDHD, ALU_OR  ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
                   XOR     -> List(Y, BR_X  , REG_RD ,  OP1_RDHC, OP2_RDHD, ALU_XOR ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
@@ -187,7 +192,7 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
 
    // Exception Handling ---------------------
    io.ctl.pc_sel_no_xept := ctrl_pc_sel_no_xept
-   val illegal = (!cs_val_inst && io.imem.resp.valid)
+   val illegal = ((!cs_val_inst && io.imem.resp.valid) || io.dat.inst_multi_reg)
 
    // Data misalignment detection
    // For example, if type is 3 (word), the mask is ~(0b111 << (3 - 1)) = ~0b100 = 0b011.
