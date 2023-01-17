@@ -6,9 +6,6 @@ _start:
 	rd2rb	rb1, rd1, 63
 	rb2rd	rd1, rb1, 63
 	rb2rb	rb1, rb1, 63
-	cmp	rd1, rb1, rb2
-	add	rb1, rb2, rd1
-	sub	rb1, rb2, rd1
 
 	rd2rf	rf1, rd1, 63
 	rf2rd	rd1, rf1, 63
@@ -16,3 +13,12 @@ _start:
 
 	rd2ra	ra1, rd1, 63
 	ra2rd	rd1, ra1, 63
+
+	csn	rd1, rd2, rd3, rd4
+	csnn	rd1, rd2, rd3, rd4
+	csz	rd1, rd2, rd3, rd4
+	csnz	rd1, rd2, rd3, rd4
+	csp	rd1, rd2, rd3, rd4
+	csnp	rd1, rd2, rd3, rd4
+	csod	rd1, rd2, rd3, rd4
+	csev	rd1, rd2, rd3, rd4
