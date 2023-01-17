@@ -1,7 +1,7 @@
 
 DIR_DADAO_INSTALL		?= ~/DADAO/__install/
 
-DADAO_ELF_PREFIX		?= $(DIR_DADAO_INSTALL)/bin/dadao-linux-elf-
+DADAO_ELF_PREFIX		?= $(DIR_DADAO_INSTALL)/bin/dadao-unknown-elf-
 DADAO_ELF_GAS			:= $(DADAO_ELF_PREFIX)as
 DADAO_ELF_READELF		:= $(DADAO_ELF_PREFIX)readelf
 DADAO_ELF_OBJDUMP		:= $(DADAO_ELF_PREFIX)objdump

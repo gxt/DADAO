@@ -9,7 +9,7 @@ tests-dejagnu-init:
 	@mkdir -p $(TESTS_DEJAGNU_INSTALL)/usr/bin
 	@mkdir -p $(TESTS_DEJAGNU_INSTALL)/usr/share/dejagnu/baseboards
 	@ln -s -t $(TESTS_DEJAGNU_INSTALL)/usr/bin/ /usr/bin/runtest
-	@ln -s $(DIR_DADAO_INSTALL)/bin/qemu-dadao $(TESTS_DEJAGNU_INSTALL)/usr/bin/dadao-linux-elf-run
+	@ln -s $(DIR_DADAO_INSTALL)/bin/qemu-dadao $(TESTS_DEJAGNU_INSTALL)/usr/bin/dadao-unknown-elf-run
 	@ln -s -t $(TESTS_DEJAGNU_INSTALL)/usr/share/dejagnu/			\
 		/usr/share/dejagnu/*.c						\
 		/usr/share/dejagnu/*.exp					\
