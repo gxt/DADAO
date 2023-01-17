@@ -66,11 +66,11 @@ boot_core_hart0:			// begin executing code at DRAM_BASE
 	move	rb8, BOOTADDR_REG	// program reset vector
 	ldo	rd8, rb8, 0		// get boot address from bootaddr_reg SCR
 	cpwr	cp0, cr13, cr1, rd8	// mepc: return from interrupt to start of user program
-	cprd	cp0, cr60, cr20, rd8	// mhartid: f14, hartid for next level bootloader
-	move	rd9, _dtb		// dtb address for next level bootloader
-	cprd	cp0, cr12, cr0, rd10	// mstatus
-	andnw	rd10, w0, 0x80		// set mstatus MPIE to 0
-	cpwr	cp0, cr12, cr0, rd10	// mstatus
+	cprd	cp0, cr60, cr20, rd16	// mhartid: f14, hartid for next level bootloader
+	move	rd17, _dtb		// dtb address for next level bootloader
+	cprd	cp0, cr12, cr0, rd18	// mstatus
+	andnw	rd18, w0, 0x80		// set mstatus MPIE to 0
+	cpwr	cp0, cr12, cr0, rd18	// mstatus
 	ret	rd0, 0			// TODO: mret?
 
 .align 3
