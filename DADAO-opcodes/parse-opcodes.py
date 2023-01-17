@@ -337,6 +337,76 @@ def gen_bitpat_file(insts: dict, output_file: str):
             line = '   def {}\t\t= BitPat("b{}")'.format(output_string,bitpat)
             print(line, file=f)
 
+def trans_dict(insts: dict):
+    dasm_dict = {}
+    for inst_name, inst_description in insts.items():
+        if inst_description['fields']['op'] == 8:
+            fields = list(inst_description['fields'].keys())[1:]
+        else:
+            fields = list(inst_description['fields'].keys())
+        regfile_restrictions = inst_description['regfile_restrictions']
+        if inst_name[0] == '_':
+            inst_name = inst_name[1:]
+        dasm_dict[inst_description['opcode']] = {
+            'inst_name': inst_name,
+            'fields': fields,
+            'regfile': regfile_restrictions,
+            'resources': inst_description['resources'],
+        }
+    return dasm_dict
+
+def output_dasm(dasm_dict: dict, instruction: str):
+    if len(instruction) != 8:
+        print("wrong input format")
+    else:
+        output = ''
+        instruction = bin(int(instruction,16))[2:].zfill(32)
+        if instruction[0:8] == '00010000':
+            key = instruction[0:14]
+        else:
+            key = instruction[0:8]
+        output += dasm_dict[key]['inst_name'] + '\t'
+        operands = dasm_dict[key]['fields']
+        regfile = dasm_dict[key]['regfile']
+        next_op = 0
+        for operand in operands:
+            if next_op == 1:
+                output += ', '
+            if operand == 'op':
+                continue;
+            next_op = 1
+            if operand == 'ha':
+                data = instruction[8:14]
+                output += regfile['ha'] + str(int(data,2))
+            elif operand == 'hb':
+                data = instruction[14:20]
+                output += regfile['hb'] + str(int(data,2))
+            elif operand == 'hc':
+                data = instruction[20:26]
+                output += regfile['hc'] + str(int(data,2))
+            elif operand == 'hd':
+                data = instruction[26:32]
+                output += regfile['hd'] + str(int(data,2))
+            elif operand == 'ww':
+                data = instruction[14:16]
+                output += 'w' + str(int(data,2))
+            elif operand[0:4] == 'immu':
+                data = instruction[32-int(operand[4:]):32]
+                output += str(hex(int(data,2)))
+            elif operand[0:4] == 'imms':
+                data = instruction[32-int(operand[4:]):32]
+                if (operand == 'imms24') | (operand[0:4] == 'imms') & (dasm_dict[key]['resources'].count('bpd')):
+                    output += '(offset)'
+                if data[0] == '0':
+                    output += str(int(data,2))
+                else:
+                    data = int(data[1:],2) - 0x01
+                    output += str(-(~data & int("0b" + "1" * (len(data) -1),2)))
+            elif operand == 'none':
+                next_op = 0
+                break;
+        return output
+
 def main():
     input_decode = ''
     output_decode = ''
@@ -344,7 +414,8 @@ def main():
     output_encoding = ''
     output_disassemble = ''
     output_bitpat = ''
-    long_opts = ['input=','decode=','opc=','encoding=','disassemble=','bitpat=']
+    dasm = 0
+    long_opts = ['input=','decode=','opc=','encoding=','disassemble=','bitpat=','dasm=']
     try:
         (opts, args) = getopt.gnu_getopt(sys.argv[1:], 'o:vw:', long_opts)
     except getopt.GetoptError as err:
@@ -362,6 +433,9 @@ def main():
             output_disassemble = a
         elif o == '--bitpat':
             output_bitpat = a
+        elif o == '--dasm':
+            if a == 'dadao':
+                dasm = 1
     insts = read_opcodes(input_decode)
     if output_decode:
         gen_decode_file(insts, output_decode)
@@ -373,7 +447,18 @@ def main():
         gen_disassemble_file(insts, output_disassemble)
     if output_bitpat:
         gen_bitpat_file(insts, output_bitpat)
-
+    while dasm:
+        line = input()
+        if line == '':
+            break;
+        if line.find('DASM') >= 0:
+            instruction = line[line.find('DASM'):]
+            instruction = instruction[5:13]
+            dasm_dict = trans_dict(insts)
+            trans_line = line[0:line.find('DASM')] + output_dasm(dasm_dict,instruction)
+            print(trans_line)
+        else:
+            print(line)
 
 if __name__ == '__main__':
     import io

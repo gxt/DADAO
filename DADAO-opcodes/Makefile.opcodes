@@ -39,5 +39,8 @@ opcodes-bitpat:
 	@test -d $(OPCODES_DST_DIR) || mkdir -p $(OPCODES_DST_DIR)
 	$(PYTHON) $(OPCODES_PARSE) --input $(OPCODES_INPUT) --bitpat $(OPCODES_OUTPUT_BITPAT)
 
+dadao-dasm:
+	$(PYTHON) $(OPCODES_PARSE) --input $(OPCODES_INPUT) --dasm dadao
+
 opcodes-clean:
 	@rm -fr $(OPCODES_DST_DIR)
