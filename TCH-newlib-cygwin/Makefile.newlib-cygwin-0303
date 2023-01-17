@@ -5,7 +5,7 @@ NEWLIB_CYGWIN_0303_LOCAL	:= /pub/GITHUB/mirror/newlib-cygwin.git
 NEWLIB_CYGWIN_0303_GITHUB	:= https://github.com/mirror/newlib-cygwin.git
 NEWLIB_CYGWIN_0303_VERSION	:= newlib-3.3.0
 NEWLIB_CYGWIN_0303_BRANCH	:= dadao-0303
-NEWLIB_CYGWIN_0303_TARGET	?= dadao-linux-elf
+NEWLIB_CYGWIN_0303_TARGET	?= dadao-unknown-elf
 
 NEWLIB_CYGWIN_0303_NEWFILES	:= $(DIR_DADAO_TOP)/TCH-newlib-cygwin/newlib-cygwin-0303-newfiles
 NEWLIB_CYGWIN_0303_PATCHES	:= $(DIR_DADAO_TOP)/TCH-newlib-cygwin/newlib-cygwin-0303-patches
