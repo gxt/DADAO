@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 def is_binary_str(item: str):
     for i in item:
         if i != '0' and i != '1':
