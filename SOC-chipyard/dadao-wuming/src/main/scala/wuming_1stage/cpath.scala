@@ -53,6 +53,7 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                Array(       /* val  |  BR  |  reg   |  op1   |   op2     |  ALU    |  wb  | rf   | mem  | mem  | mask |  csr  */
                             /* inst | type |   set  |   sel  |    sel    |   fcn   |  sel | wen  |  en  |  wr  | type |  cmd  */
                   SWYM    -> List(Y, BR_X  , REG_X  , OP1_X  , OP2_X  ,  ALU_X    , WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
+                  CPCO    -> List(Y, BR_X  , REG_X  , OP1_X  , OP2_X  ,  ALU_X    , WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
 
                   CPRD    -> List(Y, BR_X  , REG_RD ,  OP1_X, OP2_X      , ALU_X    , WB_CSR, REN_1, MEN_0, M_X ,  MT_X,  CSR.R),
                   CPWR    -> List(Y, BR_X  , REG_RD ,  OP1_X, OP2_RDHD   , ALU_COPY2, WB_CSR, REN_1, MEN_0, M_X ,  MT_X,  CSR.W),
