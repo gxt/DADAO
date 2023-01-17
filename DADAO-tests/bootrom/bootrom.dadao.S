@@ -71,7 +71,8 @@ boot_core_hart0:			// begin executing code at DRAM_BASE
 	cprd	cp0, cr12, cr0, rd18	// mstatus
 	andnw	rd18, w0, 0x80		// set mstatus MPIE to 0
 	cpwr	cp0, cr12, cr0, rd18	// mstatus
-	ret	rd0, 0			// TODO: mret?
+	rd2rb	rb8, rd8, 0
+	jump	rb8, rd0, 0		// TODO: mret?
 
 .align 3
 _dtb:
