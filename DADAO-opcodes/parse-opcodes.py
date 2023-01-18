@@ -1,5 +1,18 @@
 #!/usr/bin/python3
 
+def help_information():
+    print("Usage: parse-opcodes.py [options] file...\n")
+    print("Options:")
+    print("--help\t\t\tDisplay this information.\n")
+    print("--input\t\t\tDefine opcodes file's input path.\n")
+    print("--decode\t\tDefine decode file's output path.\n")
+    print("--opc\t\t\tDefine opc file's output path.\n")
+    print("--encoding\t\tDefine encoding file's output path.\n")
+    print("--disassemble\t\tDefine disassemble file's output path.\n")
+    print("--bitpat\t\tDefine bitpat file's output path.\n")
+    print("--dasm dadao\t\tRun dadao-dasm module.")
+    print("\t\t\tdasm format: DASM(inst)\n")
+
 def is_binary_str(item: str):
     for i in item:
         if i != '0' and i != '1':
@@ -399,13 +412,16 @@ def output_dasm(dasm_dict: dict, instruction: str):
                 output += str(hex(int(data,2)))
             elif operand[0:4] == 'imms':
                 data = instruction[32-int(operand[4:]):32]
-                if (operand == 'imms24') | (operand[0:4] == 'imms') & (dasm_dict[key]['resources'].count('bpd')):
-                    output += '(offset)'
                 if data[0] == '0':
-                    output += str(int(data,2))
+                    imm = (int(data,2))
                 else:
                     dec = int(data[1:],2) - 0x01
-                    output += str(-(~dec & int("0b" + "1" * (len(data) -1),2)))
+                    imm = -(~dec & int("0b" + "1" * (len(data) -1),2))
+                if (operand == 'imms24') | (operand[0:4] == 'imms') & (dasm_dict[key]['resources'].count('bpd')):
+                    imm = imm * 4
+                    output += 'pc + ' + str(imm)
+                else:
+                    output += str(imm)
             elif operand == 'none':
                 next_op = 0
                 break;
@@ -419,6 +435,9 @@ def main():
     output_disassemble = ''
     output_bitpat = ''
     dasm = 0
+    if (len(sys.argv) == 1) | (sys.argv.count('--help')):
+        help_information()
+        return
     long_opts = ['input=','decode=','opc=','encoding=','disassemble=','bitpat=','dasm=']
     try:
         (opts, args) = getopt.gnu_getopt(sys.argv[1:], 'o:vw:', long_opts)
@@ -440,7 +459,8 @@ def main():
         elif o == '--dasm':
             if a == 'dadao':
                 dasm = 1
-    insts = read_opcodes(input_decode)
+    if input_decode:
+        insts = read_opcodes(input_decode)
     if output_decode:
         gen_decode_file(insts, output_decode)
     if output_opc:
