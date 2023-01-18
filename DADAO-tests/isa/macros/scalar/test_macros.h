@@ -58,7 +58,7 @@ test_ ## testnum:						\
 		swym;							\
 	.endr;								\
 	rd2rd	rd31, rd19, 0;						\
-	addi	rd16, 1;						\
+	addi	rd16, rd16, 1;						\
 	cmps	rd20, rd16, 2;						\
 	brnz	rd20, 1b						\
     )
@@ -75,7 +75,7 @@ test_ ## testnum:						\
 		swym;							\
 	.endr;								\
 	inst	rd31, rd17, rd18;					\
-	addi	rd16, 1;						\
+	addi	rd16, rd16, 1;						\
 	cmps	rd19, rd16, 2;						\
 	brnz	rd19, 1b						\
     )
@@ -92,7 +92,7 @@ test_ ## testnum:						\
 		swym;							\
 	.endr;								\
 	inst	rd31, rd17, rd18;					\
-	addi	rd16, 1;						\
+	addi	rd16, rd16, 1;						\
 	cmps	rd19, rd16, 2;						\
 	brnz	rd19, 1b						\
     )
@@ -171,7 +171,7 @@ test_ ## testnum:						\
 		swym;							\
 	.endr;								\
 	rd2rd	rd6, rd14, 0;						\
-	addi	rd4, 1;							\
+	addi	rd4, rd4, 1;						\
 	cmps	rd5, rd4, 2;						\
 	brnz	rd5, 1b;						\
     )
@@ -184,7 +184,7 @@ test_ ## testnum:						\
 		swym;							\
 	.endr;								\
 	inst	rd14, rd1, imm;						\
-	addi	rd4, 1;							\
+	addi	rd4, rd4, 1;						\
 	cmps	rd5, rd4, 2;						\
 	brnz	rd5, 1b;						\
     )
