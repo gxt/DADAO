@@ -11,13 +11,13 @@ OPCODES_OUTPUT_ENV	:= $(OPCODES_DST_DIR)/output.env
 OPCODES_OUTPUT_DIS      := $(OPCODES_DST_DIR)/output.dis
 OPCODES_OUTPUT_BITPAT   := $(OPCODES_DST_DIR)/output.bitpat
 
-opcodes-parse:
-	@make -s opcodes-clean
-	@make -s opcodes-qemu
-	@make -s opcodes-binutils
-	@make -s opcodes-disassemble
-	@make -s opcodes-encoding
-	@make -s opcodes-bitpat
+opcodes-clean:
+	@rm -fr $(OPCODES_DST_DIR)
+
+opcodes-source:
+	@test -d $(OPCODES_DST_DIR) || mkdir -p $(OPCODES_DST_DIR)
+	@cp -a $(OPCODES_PARSE) $(OPCODES_DST_DIR)
+	@cp -a $(OPCODES_INPUT) $(OPCODES_DST_DIR)
 
 opcodes-qemu:
 	@test -d $(OPCODES_DST_DIR) || mkdir -p $(OPCODES_DST_DIR)
@@ -39,8 +39,12 @@ opcodes-bitpat:
 	@test -d $(OPCODES_DST_DIR) || mkdir -p $(OPCODES_DST_DIR)
 	$(PYTHON) $(OPCODES_PARSE) --input $(OPCODES_INPUT) --bitpat $(OPCODES_OUTPUT_BITPAT)
 
-dadao-dasm:
-	$(PYTHON) $(OPCODES_PARSE) --input $(OPCODES_INPUT) --dasm dadao
+opcodes-highfive:
+	@make -s opcodes-clean
+	@make -s opcodes-source
+	@make -s opcodes-qemu
+	@make -s opcodes-binutils
+	@make -s opcodes-disassemble
+	@make -s opcodes-encoding
+	@make -s opcodes-bitpat
 
-opcodes-clean:
-	@rm -fr $(OPCODES_DST_DIR)
