@@ -472,7 +472,10 @@ def main():
     if output_bitpat:
         gen_bitpat_file(insts, output_bitpat)
     while dasm:
-        line = input()
+        try:
+            line = input()
+        except EOFError:
+            break;
         if line == '':
             break;
         if line.find('DASM') >= 0:
