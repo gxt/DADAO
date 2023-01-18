@@ -135,7 +135,7 @@ static bool trans_ld_all(DisasContext *ctx, arg_disas_dadao0 *a,
                          TCGv_i64* cpu_ha, MemOp mop)
 {
     if (a->ha == 0) {
-        return false;
+        return true;
     }
     TCGv_i64 addr = tcg_temp_new_i64();
     tcg_gen_addi_i64(addr, cpu_rb[a->hb], a->imms12);
@@ -157,11 +157,19 @@ static bool trans_st_all(DisasContext *ctx, arg_disas_dadao0 *a,
 static bool trans_ldm_all(DisasContext *ctx, arg_disas_dadao1 *a,
                           TCGv_i64* cpu_ha, MemOp mop)
 {
-    if (a->ha == 0 || a->ha + a->immu6 >= 64) {
+    if (a->ha + a->immu6 >= 64) {
         return false;
+    }
+    if (a->ha == 0 && a->immu6 == 0) {
+        return true;
     }
     TCGv_i64 addr = tcg_temp_new_i64();
     tcg_gen_add_i64(addr, cpu_rb[a->hb], cpu_rd[a->hc]);
+    if (a->ha == 0) {
+        a->ha++;
+	a->immu6--;
+	tcg_gen_addi_i64(addr, addr, 1 << (mop & 3));
+    }
     tcg_gen_qemu_ld_i64(cpu_ha[a->ha], addr, ctx->mem_idx, mop);
     while (a->immu6--) {
         tcg_gen_addi_i64(addr, addr, 1 << (mop & 3));
@@ -373,8 +381,16 @@ static bool trans_stmra(DisasContext *ctx, arg_stmra *a)
 static bool trans_hb2ha_all(DisasContext* ctx, arg_disas_dadao2* a,
                             TCGv_i64* cpu_hb, TCGv_i64* cpu_ha) 
 {
-    if (a->hb == 0 || a->hb + a->immu6 >= 64 || a->hc + a->immu6 >= 64) {
+    if (a->hb + a->immu6 >= 64 || a->hc + a->immu6 >= 64) {
         return false;
+    }
+    if (a->hb == 0 && a->immu6 == 0) {
+        return true;
+    }
+    if (a->hb == 0) {
+        a->hb++;
+	a->hc++;
+	a->immu6--;
     }
     if (cpu_hb != cpu_ha) {
         while (a->immu6-- >= 0) {
@@ -400,7 +416,7 @@ static bool trans_hb2ha_all(DisasContext* ctx, arg_disas_dadao2* a,
 static bool trans_cs_all(DisasContext* ctx, arg_disas_dadao3* a, TCGCond cond)
 {
     if (a->ha == 0) {
-        return false;
+        return true;
     }
     TCGv_i64 zero = tcg_const_i64(0);
     tcg_gen_movcond_i64(cond, cpu_rd[a->ha], cpu_rd[a->hb], zero,
@@ -412,7 +428,7 @@ static bool trans_cs_all(DisasContext* ctx, arg_disas_dadao3* a, TCGCond cond)
 static bool trans_cs_od_ev(DisasContext* ctx, arg_disas_dadao3* a, bool is_od)
 {
     if (a->ha == 0) {
-        return false;
+        return true;
     }
     TCGv_i64 bit0 = tcg_const_i64(1);
     TCGv_i64 zero = tcg_const_i64(0);
@@ -512,7 +528,7 @@ static bool trans_csev(DisasContext *ctx, arg_csev *a)
 static bool trans_orw(DisasContext *ctx, arg_orw *a)
 {
     if (a->ha == 0) {
-        return false;
+        return true;
     }
     int64_t arg = (int64_t)a->immu16 << (a->ww * 16);
     tcg_gen_ori_i64(cpu_rd[a->ha], cpu_rd[a->ha], arg);
@@ -522,7 +538,7 @@ static bool trans_orw(DisasContext *ctx, arg_orw *a)
 static bool trans_andnw(DisasContext *ctx, arg_andnw *a)
 {
     if (a->ha == 0) {
-        return false;
+        return true;
     }
     int64_t arg = ((int64_t)a->immu16 << (a->ww * 16)) |
                   ~((int64_t)0xFFFF << (a->ww * 16));
@@ -535,7 +551,7 @@ static bool trans_andnw(DisasContext *ctx, arg_andnw *a)
 static bool trans_setzw(DisasContext *ctx, arg_setzw *a)
 {
     if (a->ha == 0) {
-        return false;
+        return true;
     }
     int64_t arg = (int64_t)a->immu16 << (a->ww * 16);
     tcg_gen_movi_i64(cpu_rd[a->ha], arg);
@@ -545,7 +561,7 @@ static bool trans_setzw(DisasContext *ctx, arg_setzw *a)
 static bool trans_setow(DisasContext *ctx, arg_setow *a)
 {
     if (a->ha == 0) {
-        return false;
+        return true;
     }
     int64_t arg = ((int64_t)a->immu16 << (a->ww * 16)) |
                   ~((int64_t)0xFFFF << (a->ww * 16));
@@ -556,7 +572,7 @@ static bool trans_setow(DisasContext *ctx, arg_setow *a)
 static bool trans__orw(DisasContext *ctx, arg__orw *a)
 {
     if (a->ha == 0) {
-        return false;
+        return true;
     }
     int64_t arg = (int64_t)a->immu16 << (a->ww * 16);
     tcg_gen_ori_i64(cpu_rb[a->ha], cpu_rb[a->ha], arg);
@@ -566,7 +582,7 @@ static bool trans__orw(DisasContext *ctx, arg__orw *a)
 static bool trans__andnw(DisasContext *ctx, arg__andnw *a)
 {
     if (a->ha == 0) {
-        return false;
+        return true;
     }
     int64_t arg = ((int64_t)a->immu16 << (a->ww * 16)) |
                   ~((int64_t)0xFFFF << (a->ww * 16));
@@ -579,7 +595,7 @@ static bool trans__andnw(DisasContext *ctx, arg__andnw *a)
 static bool trans__setzw(DisasContext *ctx, arg__setzw *a)
 {
     if (a->ha == 0) {
-        return false;
+        return true;
     }
     int64_t arg = (int64_t)a->immu16 << (a->ww * 16);
     tcg_gen_movi_i64(cpu_rb[a->ha], arg);
@@ -589,7 +605,7 @@ static bool trans__setzw(DisasContext *ctx, arg__setzw *a)
 static bool trans_setw(DisasContext *ctx, arg_setw *a)
 {
     if (a->ha == 0) {
-        return false;
+        return true;
     }
     int64_t mask = ~((int64_t)0xFFFF << (a->ww * 16));
     int64_t arg = (int64_t)a->immu16 << (a->ww * 16);
@@ -603,7 +619,7 @@ static bool trans_setw(DisasContext *ctx, arg_setw *a)
 static bool trans_andi(DisasContext *ctx, arg_andi *a)
 {
     if (a->ha == 0) {
-        return false;
+        return true;
     }
     tcg_gen_andi_i64(cpu_rd[a->ha], cpu_rd[a->hb], a->immu12);
     return true;
@@ -614,7 +630,7 @@ static bool trans_andi(DisasContext *ctx, arg_andi *a)
 static bool trans_addi(DisasContext *ctx, arg_addi *a)
 {
     if (a->ha == 0) {
-        return false;
+        return true;
     }
     tcg_gen_addi_i64(cpu_rd[a->ha], cpu_rd[a->hb], a->imms12);
     return true;
@@ -623,7 +639,7 @@ static bool trans_addi(DisasContext *ctx, arg_addi *a)
 static bool trans__addi(DisasContext *ctx, arg__addi *a)
 {
     if (a->ha == 0) {
-        return false;
+        return true;
     }
     tcg_gen_addi_i64(cpu_rb[a->ha], cpu_rb[a->hb], a->imms12);
     return true;
@@ -632,7 +648,7 @@ static bool trans__addi(DisasContext *ctx, arg__addi *a)
 static bool trans_adrp(DisasContext *ctx, arg_adrp *a)
 {
     if (a->ha == 0) {
-        return false;
+        return true;
     }
     tcg_gen_movi_i64(cpu_rb[a->ha], ctx->base.pc_next);
     tcg_gen_andi_i64(cpu_rb[a->ha], cpu_rb[a->ha], ~(int64_t)0xFFF);
@@ -745,7 +761,7 @@ static bool trans_divu(DisasContext *ctx, arg_divu *a)
 static bool trans_cmps(DisasContext *ctx, arg_cmps *a)
 {
     if (a->ha == 0) {
-        return false;
+        return true;
     }
     TCGv_i64 imm = tcg_const_i64(a->imms12);
     TCGv_i64 zero = tcg_const_i64(0);
@@ -767,7 +783,7 @@ static bool trans_cmps(DisasContext *ctx, arg_cmps *a)
 static bool trans_cmpu(DisasContext *ctx, arg_cmpu *a)
 {
     if (a->ha == 0) {
-        return false;
+        return true;
     }
     TCGv_i64 imm = tcg_const_i64(a->immu12);
     TCGv_i64 zero = tcg_const_i64(0);
@@ -789,7 +805,7 @@ static bool trans_cmpu(DisasContext *ctx, arg_cmpu *a)
 static bool trans__cmps(DisasContext *ctx, arg__cmps *a)
 {
     if (a->hb == 0) {
-        return false;
+        return true;
     }
     TCGv_i64 zero = tcg_const_i64(0);
     TCGv_i64 pos = tcg_const_i64(1);
@@ -809,7 +825,7 @@ static bool trans__cmps(DisasContext *ctx, arg__cmps *a)
 static bool trans__cmpu(DisasContext *ctx, arg__cmpu *a)
 {
     if (a->hb == 0) {
-        return false;
+        return true;
     }
     TCGv_i64 zero = tcg_const_i64(0);
     TCGv_i64 pos = tcg_const_i64(1);
@@ -829,7 +845,7 @@ static bool trans__cmpu(DisasContext *ctx, arg__cmpu *a)
 static bool trans_cmp(DisasContext *ctx, arg_cmp *a)
 {
     if (a->hb == 0) {
-        return false;
+        return true;
     }
     TCGv_i64 zero = tcg_const_i64(0);
     TCGv_i64 pos = tcg_const_i64(1);
@@ -849,7 +865,7 @@ static bool trans_cmp(DisasContext *ctx, arg_cmp *a)
 static bool trans__add(DisasContext *ctx, arg__add *a)
 {
     if (a->hb == 0) {
-        return false;
+        return true;
     }
     tcg_gen_add_i64(cpu_rb[a->hb], cpu_rb[a->hc], cpu_rd[a->hd]);
     return true;
@@ -858,7 +874,7 @@ static bool trans__add(DisasContext *ctx, arg__add *a)
 static bool trans__sub(DisasContext *ctx, arg__sub *a)
 {
     if (a->hb == 0) {
-        return false;
+        return true;
     }
     tcg_gen_sub_i64(cpu_rb[a->hb], cpu_rb[a->hc], cpu_rd[a->hd]);
     return true;
@@ -867,7 +883,7 @@ static bool trans__sub(DisasContext *ctx, arg__sub *a)
 static bool trans_and(DisasContext *ctx, arg_and *a)
 {
     if (a->hb == 0) {
-        return false;
+        return true;
     }
     tcg_gen_and_i64(cpu_rd[a->hb], cpu_rd[a->hc], cpu_rd[a->hd]);
     return true;
@@ -876,7 +892,7 @@ static bool trans_and(DisasContext *ctx, arg_and *a)
 static bool trans_orr(DisasContext *ctx, arg_orr *a)
 {
     if (a->hb == 0) {
-        return false;
+        return true;
     }
     tcg_gen_or_i64(cpu_rd[a->hb], cpu_rd[a->hc], cpu_rd[a->hd]);
     return true;
@@ -885,7 +901,7 @@ static bool trans_orr(DisasContext *ctx, arg_orr *a)
 static bool trans_xor(DisasContext *ctx, arg_xor *a)
 {
     if (a->hb == 0) {
-        return false;
+        return true;
     }
     tcg_gen_xor_i64(cpu_rd[a->hb], cpu_rd[a->hc], cpu_rd[a->hd]);
     return true;
@@ -894,7 +910,7 @@ static bool trans_xor(DisasContext *ctx, arg_xor *a)
 static bool trans_shlu(DisasContext *ctx, arg_shlu *a)
 {
     if (a->hb == 0) {
-        return false;
+        return true;
     }
     tcg_gen_shl_i64(cpu_rd[a->hb], cpu_rd[a->hc], cpu_rd[a->hd]);
     return true;
@@ -903,7 +919,7 @@ static bool trans_shlu(DisasContext *ctx, arg_shlu *a)
 static bool trans_shrs(DisasContext *ctx, arg_shrs *a)
 {
     if (a->hb == 0) {
-        return false;
+        return true;
     }
     tcg_gen_sar_i64(cpu_rd[a->hb], cpu_rd[a->hc], cpu_rd[a->hd]);
     return true;
@@ -912,7 +928,7 @@ static bool trans_shrs(DisasContext *ctx, arg_shrs *a)
 static bool trans_shru(DisasContext *ctx, arg_shru *a)
 {
     if (a->hb == 0) {
-        return false;
+        return true;
     }
     tcg_gen_shr_i64(cpu_rd[a->hb], cpu_rd[a->hc], cpu_rd[a->hd]);
     return true;
@@ -921,7 +937,7 @@ static bool trans_shru(DisasContext *ctx, arg_shru *a)
 static bool trans_exts(DisasContext *ctx, arg_exts *a)
 {
     if (a->hb == 0) {
-        return false;
+        return true;
     }
     TCGv_i64 imm = tcg_temp_new_i64();
     tcg_gen_subfi_i64(imm, 63, cpu_rd[a->hd]);
@@ -934,7 +950,7 @@ static bool trans_exts(DisasContext *ctx, arg_exts *a)
 static bool trans_extz(DisasContext *ctx, arg_extz *a)
 {
     if (a->hb == 0) {
-        return false;
+        return true;
     }
     TCGv_i64 imm = tcg_temp_new_i64();
     tcg_gen_subfi_i64(imm, 63, cpu_rd[a->hd]);
@@ -947,7 +963,7 @@ static bool trans_extz(DisasContext *ctx, arg_extz *a)
 static bool trans_not(DisasContext *ctx, arg_not *a)
 {
     if (a->hb == 0) {
-        return false;
+        return true;
     }
     TCGv_i64 imm = tcg_const_i64(~(int64_t)0);
     tcg_gen_shl_i64(imm, imm, cpu_rd[a->hd]);
@@ -959,7 +975,7 @@ static bool trans_not(DisasContext *ctx, arg_not *a)
 static bool trans__shlu(DisasContext *ctx, arg__shlu *a)
 {
     if (a->hb == 0) {
-        return false;
+        return true;
     }
     tcg_gen_shli_i64(cpu_rd[a->hb], cpu_rd[a->hc], a->immu6);
     return true;
@@ -968,7 +984,7 @@ static bool trans__shlu(DisasContext *ctx, arg__shlu *a)
 static bool trans__shrs(DisasContext *ctx, arg__shrs *a)
 {
     if (a->hb == 0) {
-        return false;
+        return true;
     }
     tcg_gen_sari_i64(cpu_rd[a->hb], cpu_rd[a->hc], a->immu6);
     return true;
@@ -977,7 +993,7 @@ static bool trans__shrs(DisasContext *ctx, arg__shrs *a)
 static bool trans__shru(DisasContext *ctx, arg__shru *a)
 {
     if (a->hb == 0) {
-        return false;
+        return true;
     }
     tcg_gen_shri_i64(cpu_rd[a->hb], cpu_rd[a->hc], a->immu6);
     return true;
@@ -986,7 +1002,7 @@ static bool trans__shru(DisasContext *ctx, arg__shru *a)
 static bool trans__exts(DisasContext *ctx, arg__exts *a)
 {
     if (a->hb == 0) {
-        return false;
+        return true;
     }
     tcg_gen_shli_i64(cpu_rd[a->hb], cpu_rd[a->hc], 63 - a->immu6);
     tcg_gen_sari_i64(cpu_rd[a->hb], cpu_rd[a->hc], 63 - a->immu6);
@@ -996,7 +1012,7 @@ static bool trans__exts(DisasContext *ctx, arg__exts *a)
 static bool trans__extz(DisasContext *ctx, arg__extz *a)
 {
     if (a->hb == 0) {
-        return false;
+        return true;
     }
     tcg_gen_shli_i64(cpu_rd[a->hb], cpu_rd[a->hc], 63 - a->immu6);
     tcg_gen_shri_i64(cpu_rd[a->hb], cpu_rd[a->hc], 63 - a->immu6);
@@ -1006,7 +1022,7 @@ static bool trans__extz(DisasContext *ctx, arg__extz *a)
 static bool trans__not(DisasContext *ctx, arg__not *a)
 {
     if (a->hb == 0) {
-        return false;
+        return true;
     }
     tcg_gen_xori_i64(cpu_rd[a->hb], cpu_rd[a->hc], ~(int64_t)0 << a->immu6);
     return true;
@@ -1018,8 +1034,16 @@ static bool trans_fcvt_all(DisasContext *ctx, arg_disas_dadao2 *a,
                            TCGv_i64* cpu_hb, TCGv_i64* cpu_hc,
                            void (*fn)(TCGv_i64, TCGv_env, TCGv_i64))
 {
-    if (a->hb == 0 || a->hb + a->immu6 >= 64 || a->hc + a->immu6 >= 64) {
+    if (a->hb + a->immu6 >= 64 || a->hc + a->immu6 >= 64) {
         return false;
+    }
+    if (a->hb == 0 && a->immu6 == 0) {
+        return true;
+    }
+    if (a->hb == 0) {
+        a->hb++;
+	a->hc++;
+	a->immu6--;
     }
     if (a->hb <= a->hc) {
         while (a->immu6-- >= 0) {
@@ -1038,7 +1062,7 @@ static bool trans_fop1_all(DisasContext *ctx, arg_disas_dadao2 *a,
                            void (*fn)(TCGv_i64, TCGv_env, TCGv_i64))
 {
     if (a->hb == 0) {
-        return false;
+        return true;
     }
     fn(cpu_rf[a->hb], cpu_env, cpu_rf[a->hc]);
     return true;
@@ -1048,7 +1072,7 @@ static bool trans_fop2_all(DisasContext *ctx, arg_disas_dadao7 *a,
                            void (*fn)(TCGv_i64, TCGv_env, TCGv_i64, TCGv_i64))
 {
     if (a->hb == 0) {
-        return false;
+        return true;
     }
     fn(cpu_rf[a->hb], cpu_env, cpu_rf[a->hc], cpu_rf[a->hd]);
     return true;
@@ -1058,7 +1082,7 @@ static bool trans_fcmp_all(DisasContext *ctx, arg_disas_dadao7 *a,
                            void (*fn)(TCGv_i64, TCGv_env, TCGv_i64, TCGv_i64))
 {
     if (a->hb == 0) {
-        return false;
+        return true;
     }
     fn(cpu_rd[a->hb], cpu_env, cpu_rf[a->hc], cpu_rf[a->hd]);
     return true;
