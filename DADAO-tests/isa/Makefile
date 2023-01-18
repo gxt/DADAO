@@ -60,7 +60,7 @@ endif
 
 endef
 
-$(eval $(call compile_template,dduii, ))
+$(eval $(call compile_template,dduii, -Xassembler --multiple-to-single ))
 
 tests_dump = $(addsuffix .dump, $(tests))
 tests_hex = $(addsuffix .hex, $(tests))
