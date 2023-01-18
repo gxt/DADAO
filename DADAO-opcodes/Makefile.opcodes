@@ -1,7 +1,7 @@
 PYTHON			:= /usr/bin/python3
 
 OPCODES_SRC_DIR		:= $(DIR_DADAO_TOP)/DADAO-opcodes
-OPCODES_DST_DIR		?= $(DIR_DADAO_SOURCE)/__opcodes/
+OPCODES_DST_DIR		?= $(DIR_DADAO_TARGET)/__opcodes/
 
 OPCODES_PARSE		:= $(OPCODES_SRC_DIR)/parse-opcodes.py
 OPCODES_INPUT		:= $(OPCODES_SRC_DIR)/simrisc.opcodes
