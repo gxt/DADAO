@@ -27,10 +27,22 @@
 	.global _start;							\
 _start:									\
 	/* reset vector */						\
-	jump reset_vector;						\
+	move	rd8, trap_vector;					\
+	cpwr	cp0, cr12, cr5, rd8; /* mtvec */			\
+	jump	reset_vector;						\
 	.align 2;							\
 trap_vector:								\
-	/* TODO */							\
+	/* test whether the test came from pass/fail */			\
+	move	rb32, 0x80001000;					\
+	stt	TESTNUM, rb32, 0;					\
+	stt	rd0, rb32, 4;						\
+__wait_fromhost:							\
+	ldtu	rd33, rb32, 0x40;	/* fromhost */			\
+	brz	rd33, __wait_fromhost;					\
+	stt	rd0, rb32, 0x40;					\
+	cprd	cp0, cr13, cr1, rd33;	/* mepc */			\
+	rd2rb	rb33, rd33, 0;						\
+	jump	rb33, rd0, 0;		/* mret */			\
 reset_vector:								\
 	INIT_DATAREG;							\
 	rd2rd	TESTNUM, rd0, 0;					\
@@ -42,8 +54,11 @@ reset_vector:								\
 //-----------------------------------------------------------------------
 
 #define DDTEST_CODE_END							\
-//	unimp;
-	swym; /* TODO */
+	move	rd32, ((1337 << 1) | 1);				\
+	move	rb32, 0x80001000;					\
+	stt	rd32, rb32, 0;						\
+__tohost_exit:								\
+	jump	__tohost_exit;	/* noreturn */
 
 //-----------------------------------------------------------------------
 // Pass/Fail Macro
@@ -57,7 +72,7 @@ reset_vector:								\
 #define TESTNUM rd2
 #define DDTEST_FAIL							\
 	move rd15, 93;							\
-	trap cp0, 0; /* TODO */
+	trap cp0, 0;
 
 //-----------------------------------------------------------------------
 // Data Section Macro
