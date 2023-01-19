@@ -81,7 +81,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 {
 	unsigned char buffer[4];
 	unsigned int insn;
-	unsigned int fa, fb, fc, fd;
+	unsigned int ha, hb, hc, hd;
 	struct dadao_disassemble *disassemble_dict;
 	unsigned int match;
 	int i;
@@ -101,11 +101,11 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
 	info->target = 0;
 
 	insn = bfd_getb32 (buffer);
-	fa = (insn >> 10) & 0x3F;
-	fb = (((insn >> 8) & 0x3) << 4) + ((insn >> 20) & 0xF);
-	fc = (((insn >> 16) & 0xF) << 2) + (insn >> 30);
-	fd = (insn >> 24) & 0x3F;
-	insn = ((insn & 0xFF) << 24) + (fa << 18) + (fb << 12) + (fc << 6) + fd;
+	ha = (insn >> 10) & 0x3F;
+	hb = (((insn >> 8) & 0x3) << 4) + ((insn >> 20) & 0xF);
+	hc = (((insn >> 16) & 0xF) << 2) + (insn >> 30);
+	hd = (insn >> 24) & 0x3F;
+	insn = ((insn & 0xFF) << 24) + (ha << 18) + (hb << 12) + (hc << 6) + hd;
 
         for(disassemble_dict = dadao_disassemble_opcodes; disassemble_dict->disassemble_format != NULL; disassemble_dict++)
         {
