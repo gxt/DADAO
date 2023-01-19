@@ -926,17 +926,17 @@ void dadao_md_assemble(char *str)
             {
                 exp[1].X_add_number -= 64;
             }
-            if (instruction->op_fb == dadao_operand_rf)
+            if (instruction->op_fc == dadao_operand_rf)
             {
                 exp[1].X_add_number -= 128;
             }
-            if (instruction->op_fb == dadao_operand_ra)
+            if (instruction->op_fc == dadao_operand_ra)
             {
                 exp[1].X_add_number -= 192;
             }
 
             md_number_to_chars(opcodep, instruction->major_opcode << 24 | instruction->minor_opcode << 18 | exp[0].X_add_number << 12 | exp[1].X_add_number << 6 | 0, 4);
-            for (int i = 1; i < exp[2].X_add_number; i++)
+            for (int i = 1; i <= exp[2].X_add_number; i++)
             {
                 opcodep = frag_more(4);
 	        md_number_to_chars(opcodep, instruction->major_opcode << 24 | instruction->minor_opcode << 18 | (exp[0].X_add_number + i) << 12 | (exp[1].X_add_number + i) << 6 | 0, 4);
