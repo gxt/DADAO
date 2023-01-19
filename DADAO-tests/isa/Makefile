@@ -4,7 +4,7 @@
 
 src_dir ?= .
 
-include $(src_dir)/../Makerules
+include $(src_dir)/../common.mk
 include $(src_dir)/dduii/Makefrag
 
 default: all
