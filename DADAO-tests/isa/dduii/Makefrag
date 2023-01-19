@@ -11,6 +11,17 @@ dduii_sc_tests = \
 	andnw \
 	orw \
 	setw \
+	addi \
+	add \
+	adrp \
+	andi \
+	divs \
+	divu \
+	muls \
+	mulu \
+	sub \
+	cmpu \
+	cmps \
 
 dduii_bare_tests = $(addprefix dduii-bare-, $(dduii_sc_tests))
 dduii_qemu_tests = $(addprefix dduii-qemu-, $(dduii_sc_tests))
