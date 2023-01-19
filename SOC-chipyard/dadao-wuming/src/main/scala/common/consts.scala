@@ -35,22 +35,12 @@ trait DADAOConstants
    val CP_RGRC_ADDR_MSB = HB_MSB
    val CP_RGRC_ADDR_LSB = HC_LSB
 
-   // RISCV related
-   val RD_MSB  = 11
-   val RD_LSB  = 7
-   val RS1_MSB = 19
-   val RS1_LSB = 15
-   val RS2_MSB = 24
-   val RS2_LSB = 20
-
-   val X0 = 0.U
-
    // The Bubble Instruction (Machine generated NOP)
-   // Insert (XOR x0,x0,x0) which is different from software compiler
-   // generated NOPs which are (ADDI x0, x0, 0).
+   // Insert (SWYM 5) which is different from software compiler
+   // generated NOPs which are (SWYM 0).
    // Reasoning for this is to let visualizers and stat-trackers differentiate
    // between software NOPs and machine-generated Bubbles in the pipeline.
-   val BUBBLE  = 0x4033.U(32.W)
+   val BUBBLE  = 0x1005.U(32.W)
 }
 
 }

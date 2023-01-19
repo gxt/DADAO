@@ -112,6 +112,13 @@ trait ScalarOpConstants
    val MSK_W   = 4.asUInt(3.W)
    val MSK_X   = 4.asUInt(3.W)
 
+   // RISCV related, SHOULD removed after dev
+   val RD_MSB  = 11
+   val RD_LSB  = 7
+   val RS1_MSB = 19
+   val RS1_LSB = 15
+   val RS2_MSB = 24
+   val RS2_LSB = 20
 }
 
 }
