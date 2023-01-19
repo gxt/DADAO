@@ -18,6 +18,7 @@ DADAO_GNU_GCC			:= $(DADAO_GNU_PREFIX)gcc
 DADAO_QEMU_USER			?= $(DIR_DADAO_INSTALL)/bin/qemu-dadao
 DADAO_QEMU_SYS			?= $(DIR_DADAO_INSTALL)/bin/qemu-system-dadao
 
-DADAO_ELF_GCC_FLAGS		?= -static -fvisibility=hidden -nostdlib -nostartfiles
+DADAO_ELF_LINK_FLAGS		?= -static -nostdlib -nostartfiles $(DADAO_ELF_LINK_EXTRA_FLAGS)
+DADAO_ELF_GCC_FLAGS		?= -static -fvisibility=hidden $(DADAO_ELF_GCC_EXTRA_FLAGS) $(DADAO_ELF_LINK_FLAGS)
 DADAO_ELF_OBJDUMP_FLAGS		?= --disassemble-all --disassemble-zeroes --section=.text --section=.text.startup --section=.text.init --section=.data
 
