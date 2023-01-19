@@ -13,16 +13,47 @@
 /* Register-name-table */
 const struct dadao_reg_alias dadao_reg_aliases[] =
  {
-	/* General registers */
-	{"zero", 0},
-	{"datao1", 1},	/* internal reg for as, SHOULD removed at last */
-	{"datao2", 2},	/* internal reg for as, SHOULD removed at last */
-	{"datao3", 3},	/* internal reg for as, SHOULD removed at last */
-	/* Pointer registers */
-	//{"pc", 0x40 + 0},
-	//{"sp", 0x40 + 1},
-	//{"fp", 0x40 + 2},
-
+	/* Data registers */
+	{"rdzero", 0},
+	{"rderrno", 1},
+	{"rdt0", 8},
+	{"rdt1", 9},
+	{"rdt2", 10},
+	{"rdt3", 11},
+	{"rdt4", 12},
+	{"rdt5", 13},
+	{"rdt6", 14},
+	{"rdt7", 15},
+	{"rda0", 16},
+	{"rda1", 17},
+	{"rda2", 18},
+	{"rda3", 19},
+	{"rda4", 20},
+	{"rda5", 21},
+	{"rda6", 22},
+	{"rda7", 23},
+	{"rda8", 24},
+	{"rda9", 25},
+	{"rda10", 26},
+	{"rda11", 27},
+	{"rda12", 28},
+	{"rda13", 29},
+	{"rda14", 30},
+	{"rda15", 31},
+	/* Base registers */
+	{"rbip", 0x40 + 0},
+	{"rbsp", 0x40 + 1},
+	{"rbfp", 0x40 + 2},
+	{"rbgp", 0x40 + 3},
+	{"rbtp", 0x40 + 4},
+	{"rbt0", 0x40 + 8},
+	{"rbt1", 0x40 + 9},
+	{"rbt2", 0x40 + 10},
+	{"rbt3", 0x40 + 11},
+	{"rbt4", 0x40 + 12},
+	{"rbt5", 0x40 + 13},
+	{"rbt6", 0x40 + 14},
+	{"rbt7", 0x40 + 15},
 	{NULL, 0}
  };
 
