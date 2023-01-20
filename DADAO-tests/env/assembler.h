@@ -13,6 +13,7 @@
 #endif
 
 #define CPRD_mstatus(regd)	cprd	cp0, cr12, cr0, regd
+#define CPRD_misa(regd)		cprd	cp0, cr12, cr1, regd
 #define CPRD_mepc(regd)		cprd	cp0, cr13, cr1, regd
 #define CPRD_mhartid(regd)	cprd	cp0, cr60, cr20, regd
 
