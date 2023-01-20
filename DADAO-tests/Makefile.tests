@@ -1,6 +1,10 @@
 DIR_DADAO_TESTS_BOOTROM_SOURCE	:= $(DIR_DADAO_TOP)/DADAO-tests/bootrom/
 DIR_DADAO_TESTS_BOOTROM_BUILD	:= $(DIR_DADAO_TOP)/__tests/bootrom/
 
+include DADAO-tests/Makefile.tests-isa
+include DADAO-tests/Makefile.tests-simple
+include DADAO-tests/Makefile.tests-dejagnu
+
 bootrom-highfive:
 	@rm -fr $(DIR_DADAO_TESTS_BOOTROM_BUILD)
 	@mkdir $(DIR_DADAO_TESTS_BOOTROM_BUILD)
