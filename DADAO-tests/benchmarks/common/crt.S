@@ -13,7 +13,7 @@ _start:
 	rd2rd	rd32, rd0, 31
 
 	move	rd8, trap_entry
-	cpwr	cp0, cr12, cr5, rd8	/* mtvec */
+	CPWR_mtvec(rd8)
 
 	# give each core 128KB of stack
 #define STKSHIFT 17
@@ -30,11 +30,11 @@ trap_entry:
 	addi	rb1, rb1, -512
 	stmo	rd1, rb1, rd0, 63
 
-	cprd	cp0, cr13, cr2, rd16	/* mcause: 0x342 */
-	cprd	cp0, cr13, cr1, rd17	/* mepc: 0x341 */
+	CPRD_mcause(rd16)
+	CPRD_mepc(rd17)
 	rb2rd	rd18, rb1, 0
 	call	handle_trap
-//	cpwr	cp0, cr13, cr1, rd16	/* mepc: 0x341 */
+	// CPWR_mepc(rd16)
 
 	ldmo	rd1, rb1, rd0, 63
 

@@ -9,12 +9,14 @@
 #define CSR_mie			0x304
 #define CSR_mtvec		0x305
 #define CSR_mepc		0x341
+#define CSR_mcause		0x342
 #define CSR_mhartid		0xf14
 #endif
 
 #define CPRD_mstatus(regd)	cprd	cp0, cr12, cr0, regd
 #define CPRD_misa(regd)		cprd	cp0, cr12, cr1, regd
 #define CPRD_mepc(regd)		cprd	cp0, cr13, cr1, regd
+#define CPRD_mcause(regd)	cprd	cp0, cr13, cr2, regd
 #define CPRD_mhartid(regd)	cprd	cp0, cr60, cr20, regd
 
 #define CPWR_mstatus(regd)	cpwr	cp0, cr12, cr0, regd
