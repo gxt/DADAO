@@ -79,35 +79,8 @@ void printstr(const char* s)
   syscall(SYS_write, 1, (uintptr_t)s, strlen(s));
 }
 
-void __attribute__((weak)) thread_entry(int cid, int nc)
-{
-  // multi-threaded programs override this function.
-  // for the case of single-threaded programs, only let core 0 proceed.
-  while (cid != 0);
-}
-
-int __attribute__((weak)) main(int argc, char** argv)
-{
-  // single-threaded programs override this function.
-  printstr("Implement main(), foo!\n");
-  return -1;
-}
-
-static void init_tls()
-{
-  register void* thread_pointer asm("rb4");
-  extern char _tdata_begin, _tdata_end, _tbss_end;
-  size_t tdata_size = &_tdata_end - &_tdata_begin;
-  memcpy(thread_pointer, &_tdata_begin, tdata_size);
-  size_t tbss_size = &_tbss_end - &_tdata_end;
-  memset(thread_pointer + tdata_size, 0, tbss_size);
-}
-
 void _init(int cid, int nc)
 {
-  init_tls();
-  thread_entry(cid, nc);
-
   // only single-threaded programs should ever get here.
   int ret = main(0, 0);
 
@@ -125,8 +98,8 @@ void _init(int cid, int nc)
 #undef putchar
 int putchar(int ch)
 {
-  static __thread char buf[64] __attribute__((aligned(64)));
-  static __thread int buflen = 0;
+  static char buf[64] __attribute__((aligned(64)));
+  static int buflen = 0;
 
   buf[buflen++] = ch;
 
