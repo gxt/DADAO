@@ -3,6 +3,9 @@
 #
 include $(DIR_DADAO_TOP)/DADAO-tests/common.mk
 
+TESTS_BENCHMARKS_SOURCE		:= $(DIR_DADAO_TOP)/DADAO-tests/benchmarks/
+TESTS_BENCHMARKS_BUILD		:= $(DIR_DADAO_TOP)/__tests/benchmarks/
+
 TESTS_BOOTROM_SOURCE		:= $(DIR_DADAO_TOP)/DADAO-tests/bootrom/
 TESTS_BOOTROM_BUILD		:= $(DIR_DADAO_TOP)/__tests/bootrom/
 
@@ -16,6 +19,12 @@ TESTS_SIMPLE_BUILD		:= $(DIR_DADAO_TOP)/__tests/simple
 TESTS_SIMPLE_INSN		?= insn-simple
 TESTS_SIMPLE_HELLOWORLD		?= helloworld
 #EXTRA_GCC_FLAGS		+= -fdump-tree-all -fdump-ipa-all -fdump-rtl-all
+
+tests-benchmarks-highfive:
+	@rm -fr $(TESTS_BENCHMARKS_BUILD)
+	@mkdir $(TESTS_BENCHMARKS_BUILD)
+	@ln -s $(TESTS_BENCHMARKS_SOURCE)/Makefile $(TESTS_BENCHMARKS_BUILD)/Makefile
+	@make -s src_dir=$(TESTS_BENCHMARKS_SOURCE) -C $(TESTS_BENCHMARKS_BUILD)
 
 tests-bootrom-highfive:
 	@rm -fr $(TESTS_BOOTROM_BUILD)
