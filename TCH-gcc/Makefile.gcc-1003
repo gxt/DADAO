@@ -127,7 +127,7 @@ gcc-1003-check:
 
 gcc-1003-dhryrun-testsuite-check:
 	@echo "DHRYRUN GCC-TESTSUITE FOR SELF-CHECKING WITH QEMU-SIMULATOR"
-	@test -d $(TESTS_DEJAGNU_INSTALL) || make -s tests-dejagnu-init
+	@test -d $(TESTS_DEJAGNU_INSTALL) || make -s -C $(DIR_DADAO_TOP) tests-dejagnu-highfive
 	@PATH=$(TESTS_DEJAGNU_INSTALL)/usr/bin:/bin:/usr/bin				\
 		make -C $(GCC_1003_BUILD) check-gcc-c					\
 		RUNTESTFLAGS="--target_board=qemu-dadao"				\

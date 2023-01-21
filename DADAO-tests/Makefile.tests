@@ -14,7 +14,7 @@ tests-bootrom-highfive:
 
 TESTS_DEJAGNU_INSTALL		:= $(DIR_DADAO_TOP)/__tests/dejagnu
 
-tests-dejagnu-init:
+tests-dejagnu-highfive:
 	@rm -rf $(TESTS_DEJAGNU_INSTALL)
 	@mkdir -p $(TESTS_DEJAGNU_INSTALL)/usr/bin
 	@mkdir -p $(TESTS_DEJAGNU_INSTALL)/usr/share/dejagnu/baseboards
