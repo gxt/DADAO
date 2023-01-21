@@ -30,8 +30,8 @@ chipyard-0107-clean:
 chipyard-0107-prepare:
 	# Check necessary fesvr headers
 	@test -d $(DIR_DADAO_TARGET)/include/fesvr || make -s -C $(DIR_DADAO_TOP) rte-highfive
-	@test -d $(DIR_DADAO_TESTS_BOOTROM_BUILD)  || make -s -C $(DIR_DADAO_TOP) bootrom-highfive
 	@test -d $(DIR_DADAO_TARGET)/__opcodes/    || make -s -C $(DIR_DADAO_TOP) opcodes-highfive
+	@test -d $(DIR_DADAO_TESTS_BOOTROM_BUILD)  || make -s -C $(DIR_DADAO_TOP) tests-bootrom-highfive
 
 chipyard-0107-source:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
