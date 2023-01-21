@@ -31,7 +31,7 @@ chipyard-0107-prepare:
 	# Check necessary fesvr headers
 	@test -d $(DIR_DADAO_TARGET)/include/fesvr || make -s -C $(DIR_DADAO_TOP) rte-highfive
 	@test -d $(DIR_DADAO_TARGET)/__opcodes/    || make -s -C $(DIR_DADAO_TOP) opcodes-highfive
-	@test -d $(DIR_DADAO_TESTS_BOOTROM_BUILD)  || make -s -C $(DIR_DADAO_TOP) tests-bootrom-highfive
+	@test -d $(TESTS_BOOTROM_BUILD)            || make -s -C $(DIR_DADAO_TOP) tests-bootrom-highfive
 
 chipyard-0107-source:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
@@ -68,7 +68,7 @@ chipyard-0107-build:
 		make -j16 VERILATOR_THREADS=8							\
 			CONFIG=$(CHIPYARD_0107_DADAO_CONFIG)					\
 			BOOTROM_FILES=bootrom.dadao.img						\
-			BOOTROM_FILES_DIR=$(DIR_DADAO_TESTS_BOOTROM_BUILD)			\
+			BOOTROM_FILES_DIR=$(TESTS_BOOTROM_BUILD)			\
 			sim_dir=$(CHIPYARD_0107_BUILD)
 
 chipyard-0107-build-stage1:
@@ -77,7 +77,7 @@ chipyard-0107-build-stage1:
 		make -j16 VERILATOR_THREADS=8							\
 			CONFIG=Wuming1StageConfig						\
 			BOOTROM_FILES=bootrom.dadao.img						\
-			BOOTROM_FILES_DIR=$(DIR_DADAO_TESTS_BOOTROM_BUILD)			\
+			BOOTROM_FILES_DIR=$(TESTS_BOOTROM_BUILD)			\
 			sim_dir=$(CHIPYARD_0107_BUILD)
 
 chipyard-0107-run-binary:
@@ -86,7 +86,7 @@ chipyard-0107-run-binary:
 		PATH=$(CHIPYARD_0107_DADAO_PATH)						\
 		make CONFIG=$(CHIPYARD_0107_DADAO_CONFIG)					\
 			BOOTROM_FILES=bootrom.dadao.img						\
-			BOOTROM_FILES_DIR=$(DIR_DADAO_TESTS_BOOTROM_BUILD)			\
+			BOOTROM_FILES_DIR=$(TESTS_BOOTROM_BUILD)			\
 			sim_dir=$(CHIPYARD_0107_BUILD)						\
 			BINARY=$(CHIPYARD_0107_DADAO_BINARY)					\
 			run-binary
