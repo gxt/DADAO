@@ -69,13 +69,14 @@ trait ScalarOpConstants
    val OP1_X    = 0.asUInt(4.W)
 
    // Operand 2 Select Signal
-   val OP2_RDHD   = 1.asUInt(4.W)
-   val OP2_RBHD   = 2.asUInt(4.W)
-   val OP2_IMMU6  = 3.asUInt(4.W)  // immu6 source in hd field
-   val OP2_IMMU12 = 4.asUInt(4.W)  // immu12 source in hc/hd field
-   val OP2_IMMS12 = 5.asUInt(4.W)  // imms12 source in hc/hd field
-   val OP2_IMMS18 = 6.asUInt(4.W)  // imms18 source in hb/hc/hd field
-   val OP2_WYDE   = 7.asUInt(4.W)
+   val OP2_RDHC   = 1.asUInt(4.W)
+   val OP2_RDHD   = 2.asUInt(4.W)
+   val OP2_RBHD   = 3.asUInt(4.W)
+   val OP2_IMMU6  = 8.asUInt(4.W)  // immu6 source in hd field
+   val OP2_IMMU12 = 9.asUInt(4.W)  // immu12 source in hc/hd field
+   val OP2_IMMS12 = 10.asUInt(4.W)  // imms12 source in hc/hd field
+   val OP2_IMMS18 = 11.asUInt(4.W)  // imms18 source in hb/hc/hd field
+   val OP2_WYDE   = 15.asUInt(4.W)
    val OP2_X      = 0.asUInt(4.W)
 
    // Register File Write Enable Signal
