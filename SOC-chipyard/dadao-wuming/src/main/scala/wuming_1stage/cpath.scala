@@ -134,9 +134,9 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
 
                   JUMPi   -> List(Y, BR_JMPI, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
                   JUMPr   -> List(Y, BR_JMPR, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
-                  CALLi   -> List(Y, BR_JMPI, REG_RA ,  OP1_X  , OP2_X   , ALU_X   ,  WB_RA, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
-                  CALLr   -> List(Y, BR_JMPR, REG_RA ,  OP1_X  , OP2_X   , ALU_X   ,  WB_RA, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
-                  RET     -> List(Y, BR_RET , REG_RA ,  OP1_X  , OP2_IMMS18, ALU_COPY2 , WB_RDHA, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  CALLi   -> List(Y, BR_JMPI, RAS_PUSH,  OP1_X  , OP2_X   , ALU_X   ,  WB_RA, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  CALLr   -> List(Y, BR_JMPR, RAS_PUSH,  OP1_X  , OP2_X   , ALU_X   ,  WB_RA, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  RET     -> List(Y, BR_RET , RAS_POP ,  OP1_X  , OP2_IMMS18, ALU_COPY2 , WB_RDHA, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
 
                   SETZWrd -> List(Y, BR_X  , REG_RD  , OP1_X   , OP2_WYDE, ALU_COPY2, WB_RDHA, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
                   SETOW   -> List(Y, BR_X  , REG_RD  , OP1_X   , OP2_WYDE, ALU_SETOW, WB_RDHA, REN_1, MEN_0, M_X ,  MT_X,  CSR.N),
@@ -208,7 +208,7 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
 
    // Exception Handling ---------------------
    io.ctl.pc_sel_no_xept := ctrl_pc_sel_no_xept
-   val illegal = ((!cs_val_inst && io.imem.resp.valid) || io.dat.inst_multi_reg)
+   val illegal = ((!cs_val_inst && io.imem.resp.valid) || io.dat.inst_multi_reg || io.dat.inst_rasp_excp)
 
    // Data misalignment detection
    // For example, if type is 3 (word), the mask is ~(0b111 << (3 - 1)) = ~0b100 = 0b011.

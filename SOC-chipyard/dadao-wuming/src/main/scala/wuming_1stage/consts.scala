@@ -54,10 +54,11 @@ trait ScalarOpConstants
    // Instruction Type
    val REG_RD    = 0.asUInt(3.W)
    val REG_RB    = 1.asUInt(3.W)
-   val REG_RA    = 2.asUInt(3.W)
    val REG_RF    = 3.asUInt(3.W)
    val REG_MRD   = 4.asUInt(3.W)
    val REG_MRB   = 5.asUInt(3.W)
+   val RAS_PUSH  = 6.asUInt(3.W)
+   val RAS_POP   = 7.asUInt(3.W)
    val REG_X     = 0.asUInt(3.W)
 
    // Operand 1 Select Signal
