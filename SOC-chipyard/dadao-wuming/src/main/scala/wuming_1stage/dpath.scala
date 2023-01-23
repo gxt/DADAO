@@ -111,7 +111,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                               (jmp_rrii_target(1, 0).orR   && io.ctl.pc_sel_no_xept === PC_JMPR)  ||
                               (ret_target(1, 0).orR        && io.ctl.pc_sel_no_xept === PC_RA)
    // TODO: for multi reg insns, only single reg is legal at present
-   io.dat.inst_multi_reg := ((io.ctl.alu_fun === ALU_MREG) && inst(5, 0).orR)
+   io.dat.inst_multi_reg := (((io.ctl.reg_grp === REG_MRD) || (io.ctl.reg_grp === REG_MRB)) && inst(5, 0).orR)
    tval_inst_ma := MuxCase(0.U, Array(
                      (io.ctl.pc_sel_no_xept === PC_BR12) -> br_target12,
                      (io.ctl.pc_sel_no_xept === PC_BR18) -> br_target18,
@@ -322,6 +322,8 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    // datapath to data memory outputs
    io.dmem.req.bits.addr := alu_out
    io.dmem.req.bits.data := MuxCase(0.U, Array(
+                  (io.ctl.reg_grp === REG_MRD) -> rdha_data,
+                  (io.ctl.reg_grp === REG_MRB) -> rbha_data,
                   (io.ctl.reg_grp === REG_RD) -> rdha_data,
                   (io.ctl.reg_grp === REG_RB) -> rbha_data
                   ))
