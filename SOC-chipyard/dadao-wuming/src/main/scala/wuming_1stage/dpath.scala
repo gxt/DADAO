@@ -228,13 +228,13 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
 
    // ALU
-   val alu_out_morebits   = Wire(UInt((conf.xprlen + conf.xprlen).W))
+   val alu_out   = Wire(UInt(conf.xprlen.W))
 
    val alu_shamt = alu_op2(BITS_HEXA-1,0).asUInt()
 
-   alu_out_morebits := MuxCase(0.U, Array(
-                  (io.ctl.alu_fun === ALU_ADD)  -> (alu_op1 +& alu_op2).asUInt(),
-                  (io.ctl.alu_fun === ALU_SUB)  -> (alu_op1 -& alu_op2).asUInt(),
+   alu_out := MuxCase(0.U, Array(
+                  (io.ctl.alu_fun === ALU_ADD)  -> (alu_op1 + alu_op2).asUInt(),
+                  (io.ctl.alu_fun === ALU_SUB)  -> (alu_op1 - alu_op2).asUInt(),
                   (io.ctl.alu_fun === ALU_AND)  -> (alu_op1 & alu_op2).asUInt(),
                   (io.ctl.alu_fun === ALU_OR)   -> (alu_op1 | alu_op2).asUInt(),
                   (io.ctl.alu_fun === ALU_XOR)  -> (alu_op1 ^ alu_op2).asUInt(),
@@ -247,17 +247,20 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                   (io.ctl.alu_fun === ALU_ANDNW)  -> (alu_op1 & ~alu_op2).asUInt(),
                   (io.ctl.alu_fun === ALU_ADRP)   -> ((((alu_op1 >> 12.U) + alu_op2) << 12.U)).asUInt(),
                   (io.ctl.alu_fun === ALU_COPY2)  -> alu_op2.asUInt(),
-                  (io.ctl.alu_fun === ALU_MULS)   -> (alu_op1.asSInt() * alu_op2.asSInt()).asUInt(),
-                  (io.ctl.alu_fun === ALU_MULU)   -> (alu_op1.asUInt() * alu_op2.asUInt()).asUInt(),
-                  (io.ctl.alu_fun === ALU_DIVS)   -> (alu_op1.asSInt() / alu_op2.asSInt()).asUInt(),
+                  (io.ctl.alu_fun === ALU_MULS)   -> ((alu_op1.asSInt() * alu_op2.asSInt())(conf.xprlen-1, 0)).asUInt(),
+                  (io.ctl.alu_fun === ALU_MULU)   -> ((alu_op1.asUInt() * alu_op2.asUInt())(conf.xprlen-1, 0)).asUInt(),
+                  (io.ctl.alu_fun === ALU_DIVS)   -> (Cat(Fill(64, alu_op1(63)), alu_op1).asSInt() / alu_op2.asSInt()).asUInt(),
                   (io.ctl.alu_fun === ALU_DIVU)   -> (alu_op1.asUInt() / alu_op2.asUInt()).asUInt(),
                   ))
 
-   val alu_out  = alu_out_morebits(63, 0)
    val alu_out2 = Wire(UInt(conf.xprlen.W))
-   alu_out2    := MuxCase(alu_out_morebits(127, 64), Array(
-                  (io.ctl.alu_fun === ALU_DIVS)   -> (alu_op1.asSInt() % alu_op2.asSInt()).asUInt(),
-                  (io.ctl.alu_fun === ALU_DIVU)   -> (alu_op1.asUInt() % alu_op2.asUInt()).asUInt(),
+   alu_out2    := MuxCase(0.U, Array(
+                  (io.ctl.alu_fun === ALU_ADD)    -> (Cat(Fill(63, 0.U), (alu_op1 +& alu_op2)(64))).asUInt(),
+                  (io.ctl.alu_fun === ALU_SUB)    -> (Cat(Fill(63, 0.U), (alu_op1 -& alu_op2)(64))).asUInt(),
+                  (io.ctl.alu_fun === ALU_MULS)   -> ((alu_op1.asSInt() * alu_op2.asSInt())(127, 64)).asUInt(),
+                  (io.ctl.alu_fun === ALU_MULU)   -> ((alu_op1.asUInt() * alu_op2.asUInt())(127, 64)).asUInt(),
+                  (io.ctl.alu_fun === ALU_DIVS)   -> (Cat(Fill(64, alu_op1(63)), alu_op1).asSInt() % alu_op2.asSInt()).asUInt(),
+                  (io.ctl.alu_fun === ALU_DIVU)   -> (Cat(Fill(64, 0.U), alu_op1).asUInt() % alu_op2.asUInt()).asUInt(),
                   ))
 
    // Branch/Jump Target Calculation
