@@ -141,12 +141,6 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    regfileA.io.ras_pop   := (io.ctl.reg_grp === RAS_POP)
    regfileA.io.push_data := wb_data
 
-   //// DebugModule, TODO: conflict with regfileD setting
-   regfileA.io.dm_addr := io.ddpath.addr
-   regfileA.io.dm_en := io.ddpath.validreq
-   regfileA.io.dm_wdata := io.ddpath.wdata
-   ///
-
    io.dat.inst_rasp_excp := (((regfileA.io.ras_push) && (regfileA.io.ras_top === 0.U)) || ((regfileA.io.ras_pop) && (regfileA.io.ras_top === 0.U)))
 
    when (wb_wen)
