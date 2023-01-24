@@ -58,10 +58,10 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                   CPRD    -> List(Y, BR_X  , REG_RD ,  OP1_X, OP2_X      , ALU_X    , WB_CSR, REN_1, MEN_0, M_X ,  MT_X,  CSR.R),
                   CPWR    -> List(Y, BR_X  , REG_RD ,  OP1_X, OP2_RDHD   , ALU_COPY2, WB_CSR, REN_1, MEN_0, M_X ,  MT_X,  CSR.W),
 
-                  RD2RD   -> List(Y, BR_X  , REG_MRD ,  OP1_RDHC, OP2_IMMU6, ALU_MREG ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
-                  RD2RB   -> List(Y, BR_X  , REG_MRB ,  OP1_RDHC, OP2_IMMU6, ALU_MREG ,  WB_RBHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
-                  RB2RD   -> List(Y, BR_X  , REG_MRD ,  OP1_RBHC, OP2_IMMU6, ALU_MREG ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
-                  RB2RB   -> List(Y, BR_X  , REG_MRB ,  OP1_RBHC, OP2_IMMU6, ALU_MREG ,  WB_RBHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  RD2RD   -> List(Y, BR_X  , REG_MRD ,  OP1_X, OP2_RDHC, ALU_COPY2 ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  RD2RB   -> List(Y, BR_X  , REG_MRB ,  OP1_X, OP2_RDHC, ALU_COPY2 ,  WB_RBHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  RB2RD   -> List(Y, BR_X  , REG_MRD ,  OP1_X, OP2_RBHC, ALU_COPY2 ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  RB2RB   -> List(Y, BR_X  , REG_MRB ,  OP1_X, OP2_RBHC, ALU_COPY2 ,  WB_RBHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
 
                   AND     -> List(Y, BR_X  , REG_RD ,  OP1_RDHC, OP2_RDHD, ALU_AND ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
                   ORR     -> List(Y, BR_X  , REG_RD ,  OP1_RDHC, OP2_RDHD, ALU_OR  ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),

@@ -74,7 +74,8 @@ trait ScalarOpConstants
    // Operand 2 Select Signal
    val OP2_RDHC   = 1.asUInt(4.W)
    val OP2_RDHD   = 2.asUInt(4.W)
-   val OP2_RBHD   = 3.asUInt(4.W)
+   val OP2_RBHC   = 3.asUInt(4.W)
+   val OP2_RBHD   = 4.asUInt(4.W)
    val OP2_IMMU6  = 8.asUInt(4.W)  // immu6 source in hd field
    val OP2_IMMU12 = 9.asUInt(4.W)  // immu12 source in hc/hd field
    val OP2_IMMS12 = 10.asUInt(4.W)  // imms12 source in hc/hd field
@@ -102,7 +103,6 @@ trait ScalarOpConstants
    val ALU_ANDNW = 12.asUInt(5.W)
    val ALU_ADRP  = 13.asUInt(5.W)
    val ALU_COPY2 = 14.asUInt(5.W)
-   val ALU_MREG  = 15.asUInt(5.W)
    val ALU_MULS  = 16.asUInt(5.W)
    val ALU_MULU  = 17.asUInt(5.W)
    val ALU_DIVS  = 18.asUInt(5.W)
