@@ -85,6 +85,11 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                   ADDrd   -> List(Y, BR_X  , REG_RD ,  OP1_RDHC, OP2_RDHD , ALU_ADD ,  WB_HAHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
                   SUBrd   -> List(Y, BR_X  , REG_RD ,  OP1_RDHC, OP2_RDHD , ALU_SUB ,  WB_HAHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
 
+                  MULS    -> List(Y, BR_X  , REG_RD ,  OP1_RDHC, OP2_RDHD , ALU_MULS,  WB_HAHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  MULU    -> List(Y, BR_X  , REG_RD ,  OP1_RDHC, OP2_RDHD , ALU_MULU,  WB_HAHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  DIVS    -> List(Y, BR_X  , REG_RD ,  OP1_RDHC, OP2_RDHD , ALU_DIVS,  WB_HAHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+                  DIVU    -> List(Y, BR_X  , REG_RD ,  OP1_RDHC, OP2_RDHD , ALU_DIVU,  WB_HAHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
+
                   LDBS    -> List(Y, BR_X  , REG_RD ,  OP1_RBHB, OP2_IMMS12, ALU_ADD ,  WB_RDMM, REN_1, MEN_1, M_XRD, MT_B,  CSR.N),
                   LDWS    -> List(Y, BR_X  , REG_RD ,  OP1_RBHB, OP2_IMMS12, ALU_ADD ,  WB_RDMM, REN_1, MEN_1, M_XRD, MT_W,  CSR.N),
                   LDTS    -> List(Y, BR_X  , REG_RD ,  OP1_RBHB, OP2_IMMS12, ALU_ADD ,  WB_RDMM, REN_1, MEN_1, M_XRD, MT_T,  CSR.N),
