@@ -1,0 +1,25 @@
+From 6376e3b85a3874620e5ca874642b06bda7d7a513 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Tue, 24 Jan 2023 18:23:14 +0800
+Subject: [PATCH] DADAO: sims/verilator/Makefile
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ sims/verilator/Makefile | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/sims/verilator/Makefile b/sims/verilator/Makefile
+index a1186acc..03ed3d50 100644
+--- a/sims/verilator/Makefile
++++ b/sims/verilator/Makefile
+@@ -178,7 +178,6 @@ VERILATOR_CXXFLAGS = \
+ 	$(SIM_CXXFLAGS) \
+ 	$(RUNTIME_PROFILING_CFLAGS) \
+ 	$(TRACING_CFLAGS) \
+-	-D__STDC_FORMAT_MACROS \
+ 	-DTEST_HARNESS=V$(VLOG_MODEL) \
+ 	-DVERILATOR \
+ 	-include $(build_dir)/$(long_name).plusArgs \
+-- 
+2.34.1
+
