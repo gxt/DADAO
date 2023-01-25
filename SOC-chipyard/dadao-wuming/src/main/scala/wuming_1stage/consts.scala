@@ -108,6 +108,7 @@ trait ScalarOpConstants
    val ALU_ANDNW = 12.asUInt(5.W)
    val ALU_ADRP  = 13.asUInt(5.W)
    val ALU_COPY2 = 14.asUInt(5.W)
+   val ALU_CSET  = 15.asUInt(5.W)
    val ALU_MULS  = 16.asUInt(5.W)
    val ALU_MULU  = 17.asUInt(5.W)
    val ALU_DIVS  = 18.asUInt(5.W)
@@ -117,6 +118,7 @@ trait ScalarOpConstants
    // Writeback Select Signal
    val WB_RDHA  = 1.asUInt(4.W)
    val WB_RDHB  = 2.asUInt(4.W)
+   val WB_RDHC  = 10.asUInt(4.W)
    val WB_RDMM  = 3.asUInt(4.W)
    val WB_HAHB  = 4.asUInt(4.W)   // two dest regs: rdha + rdhb
    val WB_RBHA  = 5.asUInt(4.W)

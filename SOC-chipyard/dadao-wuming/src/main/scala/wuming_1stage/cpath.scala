@@ -23,6 +23,7 @@ class CtlToDatIo extends Bundle()
    val op1_sel   = Output(UInt(OP1_X.getWidth.W))
    val op2_sel   = Output(UInt(OP2_X.getWidth.W))
    val alu_fun   = Output(UInt(ALU_X.getWidth.W))
+   val cnd_fun   = Output(UInt(COND_X.getWidth.W))
    val wb_sel    = Output(UInt(WB_X.getWidth.W))
    val reg_grp   = Output(UInt(REG_X.getWidth.W))
    val rf_wen    = Output(Bool())
@@ -128,6 +129,12 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                   CMPUr   -> List(Y, BR_X  , COND_X , REG_RD ,  OP1_RDHC, OP2_RDHD  , ALU_CMPU ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
                   CMP     -> List(Y, BR_X  , COND_X , REG_RB ,  OP1_RBHC, OP2_RBHD  , ALU_CMPU ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
 
+                  CSN     -> List(Y, BR_X  , COND_N , REG_RD  ,  OP1_RDHC , OP2_RDHD , ALU_CSET,  WB_RDHB , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
+                  CSZ     -> List(Y, BR_X  , COND_Z , REG_RD  ,  OP1_RDHC , OP2_RDHD , ALU_CSET,  WB_RDHB , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
+                  CSP     -> List(Y, BR_X  , COND_P , REG_RD  ,  OP1_RDHC , OP2_RDHD , ALU_CSET,  WB_RDHB , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
+                  CSEQ    -> List(Y, BR_X  , COND_NE, REG_RD  ,  OP1_RDHC , OP2_RDHD , ALU_CSET,  WB_RDHC , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
+                  CSNE    -> List(Y, BR_X  , COND_EQ, REG_RD  ,  OP1_RDHC , OP2_RDHD , ALU_CSET,  WB_RDHC , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
+
                   BREQ    -> List(Y, BR_OFF12 , COND_EQ, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
                   BRNE    -> List(Y, BR_OFF12 , COND_NE, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
                   BRN     -> List(Y, BR_OFF18 , COND_N , REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
@@ -202,6 +209,7 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
    io.ctl.op1_sel  := cs_op1_sel
    io.ctl.op2_sel  := cs_op2_sel
    io.ctl.alu_fun  := cs_alu_fun
+   io.ctl.cnd_fun  := cs_cond_fun
    io.ctl.wb_sel   := cs_wb_sel
    io.ctl.reg_grp  := cs_reg_group
    io.ctl.rf_wen   := Mux(stall || io.ctl.exception, false.B, cs_rf_wen)

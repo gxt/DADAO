@@ -160,6 +160,9 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       when ((io.ctl.wb_sel === WB_RDHB) && (hb_addr =/= 0.U)) {
          regfileD(hb_addr) := wb_data
       }
+      when ((io.ctl.wb_sel === WB_RDHC) && (hc_addr =/= 0.U)) {
+         regfileD(hc_addr) := wb_data
+      }
       when ((io.ctl.wb_sel === WB_HAHB) && (hb_addr =/= 0.U)) {
          regfileD(hb_addr) := wb_data
       }
@@ -228,6 +231,13 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
    val alu_shamt = alu_op2(BITS_HEXA-1,0).asUInt()
 
+   // Condition Logic
+   val cond_yes   =           Mux(io.ctl.cnd_fun === COND_N ,  Mux( io.dat.cond_n ,  Y, N),
+                              Mux(io.ctl.cnd_fun === COND_Z ,  Mux( io.dat.cond_z ,  Y, N),
+                              Mux(io.ctl.cnd_fun === COND_P ,  Mux( io.dat.cond_p ,  Y, N),
+                              Mux(io.ctl.cnd_fun === COND_EQ,  Mux( io.dat.cond_eq,  Y, N),
+                              Mux(io.ctl.cnd_fun === COND_NE,  Mux(!io.dat.cond_eq,  Y, N), N)))))
+
    alu_out := MuxCase(0.U, Array(
                   (io.ctl.alu_fun === ALU_ADD)  -> (alu_op1 + alu_op2).asUInt(),
                   (io.ctl.alu_fun === ALU_SUB)  -> (alu_op1 - alu_op2).asUInt(),
@@ -243,6 +253,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                   (io.ctl.alu_fun === ALU_ANDNW)  -> (alu_op1 & ~alu_op2).asUInt(),
                   (io.ctl.alu_fun === ALU_ADRP)   -> ((((alu_op1 >> 12.U) + alu_op2) << 12.U)).asUInt(),
                   (io.ctl.alu_fun === ALU_COPY2)  -> alu_op2.asUInt(),
+                  (io.ctl.alu_fun === ALU_CSET)   -> Mux(cond_yes, alu_op1, alu_op2).asUInt(),
                   (io.ctl.alu_fun === ALU_MULS)   -> ((alu_op1.asSInt() * alu_op2.asSInt())(conf.xprlen-1, 0)).asUInt(),
                   (io.ctl.alu_fun === ALU_MULU)   -> ((alu_op1.asUInt() * alu_op2.asUInt())(conf.xprlen-1, 0)).asUInt(),
                   (io.ctl.alu_fun === ALU_DIVS)   -> (Cat(Fill(64, alu_op1(63)), alu_op1).asSInt() / alu_op2.asSInt()).asUInt(),
@@ -308,6 +319,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    wb_data := MuxCase(alu_out, Array(
                   (io.ctl.wb_sel === WB_RDHA) -> alu_out,
                   (io.ctl.wb_sel === WB_RDHB) -> alu_out,
+                  (io.ctl.wb_sel === WB_RDHC) -> alu_out,
                   (io.ctl.wb_sel === WB_HAHB) -> alu_out,
                   (io.ctl.wb_sel === WB_RBHA) -> alu_out,
                   (io.ctl.wb_sel === WB_RBHB) -> alu_out,
