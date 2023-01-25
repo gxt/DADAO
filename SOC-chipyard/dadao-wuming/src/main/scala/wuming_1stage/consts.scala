@@ -51,6 +51,17 @@ trait ScalarOpConstants
    val BR_JMPR  = 12.asUInt(4.W)  // Jump rrii
    val BR_RET   = 13.asUInt(4.W)  // Return
 
+   // Conditional func
+   val COND_X   = 0.asUInt(4.W)   // Always
+   val COND_N   = 8.asUInt(4.W)   // Condition Negative
+   val COND_NN  = 9.asUInt(4.W)   // Condition Not Negative
+   val COND_Z   = 10.asUInt(4.W)  // Condition Zero
+   val COND_NZ  = 11.asUInt(4.W)  // Condition Not Zero
+   val COND_P   = 12.asUInt(4.W)  // Condition Positive
+   val COND_NP  = 13.asUInt(4.W)  // Condition Not Positive
+   val COND_NE  = 14.asUInt(4.W)  // Condition NotEqual
+   val COND_EQ  = 15.asUInt(4.W)  // Condition Equal
+
    // Instruction Type
    val REG_RD    = 0.asUInt(3.W)
    val REG_RB    = 1.asUInt(3.W)
