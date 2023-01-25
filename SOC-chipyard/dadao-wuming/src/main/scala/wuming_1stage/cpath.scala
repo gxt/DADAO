@@ -128,14 +128,14 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                   CMPUr   -> List(Y, BR_X  , COND_X , REG_RD ,  OP1_RDHC, OP2_RDHD  , ALU_CMPU ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
                   CMP     -> List(Y, BR_X  , COND_X , REG_RB ,  OP1_RBHC, OP2_RBHD  , ALU_CMPU ,  WB_RDHB, REN_1, MEN_0, M_X  , MT_X,  CSR.N),
 
-                  BREQ    -> List(Y, BR_EQ , COND_EQ, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
-                  BRNE    -> List(Y, BR_NE , COND_NE, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
-                  BRN     -> List(Y, BR_N  , COND_N , REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
-                  BRNN    -> List(Y, BR_NN , COND_NN, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
-                  BRZ     -> List(Y, BR_Z  , COND_Z , REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
-                  BRNZ    -> List(Y, BR_NZ , COND_NZ, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
-                  BRP     -> List(Y, BR_P  , COND_P , REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
-                  BRNP    -> List(Y, BR_NP , COND_NP, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
+                  BREQ    -> List(Y, BR_OFF12 , COND_EQ, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
+                  BRNE    -> List(Y, BR_OFF12 , COND_NE, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
+                  BRN     -> List(Y, BR_OFF18 , COND_N , REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
+                  BRNN    -> List(Y, BR_OFF18 , COND_NN, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
+                  BRZ     -> List(Y, BR_OFF18 , COND_Z , REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
+                  BRNZ    -> List(Y, BR_OFF18 , COND_NZ, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
+                  BRP     -> List(Y, BR_OFF18 , COND_P , REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
+                  BRNP    -> List(Y, BR_OFF18 , COND_NP, REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X  , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
 
                   JUMPi   -> List(Y, BR_JMPI, COND_X , REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
                   JUMPr   -> List(Y, BR_JMPR, COND_X , REG_X  ,  OP1_X  , OP2_X   , ALU_X   ,  WB_X , REN_0, MEN_0, M_X  , MT_X,  CSR.N),
@@ -162,20 +162,23 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
    val (cs_mem_en: Bool)   :: cs_mem_fcn         :: cs_msk_sel            :: cs_csr_cmd :: Nil = cs1
 
    // Branch Logic
+   val br_taken =             Mux(cs_cond_fun === COND_N ,  Mux( io.dat.cond_n ,  Y, N),
+                              Mux(cs_cond_fun === COND_NN,  Mux(!io.dat.cond_n ,  Y, N),
+                              Mux(cs_cond_fun === COND_Z ,  Mux( io.dat.cond_z ,  Y, N),
+                              Mux(cs_cond_fun === COND_NZ,  Mux(!io.dat.cond_z ,  Y, N),
+                              Mux(cs_cond_fun === COND_P ,  Mux( io.dat.cond_p ,  Y, N),
+                              Mux(cs_cond_fun === COND_NP,  Mux(!io.dat.cond_p ,  Y, N),
+                              Mux(cs_cond_fun === COND_EQ,  Mux( io.dat.cond_eq,  Y, N),
+                              Mux(cs_cond_fun === COND_NE,  Mux(!io.dat.cond_eq,  Y, N), N))))))))
+
    val ctrl_pc_sel_no_xept =  Mux(io.dat.csr_interrupt ,  PC_EXC,
                               Mux(cs_br_type === BR_X  ,  PC_4,
-                              Mux(cs_br_type === BR_N  ,  Mux( io.dat.br_n ,  PC_BR18, PC_4),
-                              Mux(cs_br_type === BR_NN ,  Mux(!io.dat.br_n ,  PC_BR18, PC_4),
-                              Mux(cs_br_type === BR_Z  ,  Mux( io.dat.br_z ,  PC_BR18, PC_4),
-                              Mux(cs_br_type === BR_NZ ,  Mux(!io.dat.br_z ,  PC_BR18, PC_4),
-                              Mux(cs_br_type === BR_P  ,  Mux( io.dat.br_p ,  PC_BR18, PC_4),
-                              Mux(cs_br_type === BR_NP ,  Mux(!io.dat.br_p ,  PC_BR18, PC_4),
-                              Mux(cs_br_type === BR_EQ ,  Mux( io.dat.br_eq,  PC_BR12, PC_4),
-                              Mux(cs_br_type === BR_NE ,  Mux(!io.dat.br_eq,  PC_BR12, PC_4),
+                              Mux(cs_br_type === BR_OFF18,  Mux( br_taken,  PC_BR18, PC_4),
+                              Mux(cs_br_type === BR_OFF12,  Mux( br_taken,  PC_BR12, PC_4),
                               Mux(cs_br_type === BR_JMPI ,  PC_JMPI,
                               Mux(cs_br_type === BR_JMPR ,  PC_JMPR,
                               Mux(cs_br_type === BR_RET ,  PC_RA,
-                                                          PC_4)))))))))))))
+                                                          PC_4)))))))
    val ctrl_pc_sel = Mux(io.ctl.exception || io.dat.csr_eret, PC_EXC, ctrl_pc_sel_no_xept)
 
    // mem_en suppression: no new memory request shall be issued after the memory operation of the current instruction is done.

@@ -39,14 +39,8 @@ trait ScalarOpConstants
 
    // Branch Type
    val BR_X   = 0.asUInt(4.W)  // Next
-   val BR_NE  = 1.asUInt(4.W)  // Branch on NotEqual
-   val BR_EQ  = 2.asUInt(4.W)  // Branch on Equal
-   val BR_N   = 3.asUInt(4.W)  // Branch on Negative
-   val BR_NN  = 4.asUInt(4.W)  // Branch on Not Negative
-   val BR_Z   = 5.asUInt(4.W)  // Branch on Zero
-   val BR_NZ  = 6.asUInt(4.W)  // Branch on Not Zero
-   val BR_P   = 9.asUInt(4.W)  // Branch on Positive
-   val BR_NP  = 10.asUInt(4.W) // Branch on Not Positive
+   val BR_OFF12  = 1.asUInt(4.W)  // Branch with offset 12-bit
+   val BR_OFF18  = 2.asUInt(4.W)  // Branch with offset 18-bit
    val BR_JMPI  = 11.asUInt(4.W)  // Jump iiii
    val BR_JMPR  = 12.asUInt(4.W)  // Jump rrii
    val BR_RET   = 13.asUInt(4.W)  // Return

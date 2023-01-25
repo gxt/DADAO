@@ -21,10 +21,10 @@ class DatToCtlIo(implicit val conf: WumingCoreParams) extends Bundle()
 {
    val inst   = Output(UInt(BITS_INST.W))
    val imiss  = Output(Bool())
-   val br_eq  = Output(Bool())
-   val br_n   = Output(Bool())
-   val br_z   = Output(Bool())
-   val br_p   = Output(Bool())
+   val cond_eq  = Output(Bool())
+   val cond_n   = Output(Bool())
+   val cond_z   = Output(Bool())
+   val cond_p   = Output(Bool())
    val csr_eret = Output(Bool())
    val csr_interrupt = Output(Bool())
    val inst_misaligned = Output(Bool())
@@ -322,10 +322,10 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
    // datapath to controlpath outputs
    io.dat.inst   := inst
-   io.dat.br_eq  := (rdha_data === rdhb_data)
-   io.dat.br_n   := (rdha_data.asSInt() < 0.S)
-   io.dat.br_z   := (rdha_data === 0.U)
-   io.dat.br_p   := (rdha_data.asSInt() > 0.S)
+   io.dat.cond_eq  := (rdha_data === rdhb_data)
+   io.dat.cond_n   := (rdha_data.asSInt() < 0.S)
+   io.dat.cond_z   := (rdha_data === 0.U)
+   io.dat.cond_p   := (rdha_data.asSInt() > 0.S)
 
    // datapath to data memory outputs
    io.dmem.req.bits.addr := alu_out
