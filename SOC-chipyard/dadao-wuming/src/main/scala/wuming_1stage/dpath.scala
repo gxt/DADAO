@@ -210,7 +210,9 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                )).asUInt()
 
    val alu_op2 = MuxCase(0.U, Array(
+               (io.ctl.op2_sel === OP2_RDHC) -> rdhc_data,
                (io.ctl.op2_sel === OP2_RDHD) -> rdhd_data,
+               (io.ctl.op2_sel === OP2_RBHC) -> rbhc_data,
                (io.ctl.op2_sel === OP2_RBHD) -> rbhd_data,
                (io.ctl.op2_sel === OP2_IMMU6) -> immu6,
                (io.ctl.op2_sel === OP2_IMMU12) -> immu12,
