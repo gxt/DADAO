@@ -29,13 +29,13 @@ trait ScalarOpConstants
    val N      = false.B
 
    // PC Select Signal
-   val PC_4   = 0.asUInt(3.W)  // PC + 4
-   val PC_BR12  = 1.asUInt(3.W)  // branch_target for imms12
-   val PC_BR18  = 5.asUInt(3.W)  // branch_target for imms18
-   val PC_EXCP  = 4.asUInt(3.W)  // exception
-   val PC_JMPI  = 6.asUInt(3.W)  // jump_iiii_target
-   val PC_JMPR  = 7.asUInt(3.W)  // jump_rrii_target
-   val PC_RA    = 2.asUInt(3.W)  // pop from RA regfile
+   val PC_4     = 0.asUInt(3.W)  // PC + 4
+   val PC_EXCP  = 1.asUInt(3.W)  // exception
+   val PC_BR12  = 2.asUInt(3.W)  // branch_target for imms12
+   val PC_BR18  = 3.asUInt(3.W)  // branch_target for imms18
+   val PC_JMPI  = 4.asUInt(3.W)  // jump_iiii_target
+   val PC_JMPR  = 5.asUInt(3.W)  // jump_rrii_target
+   val PC_RASP  = 6.asUInt(3.W)  // pop from RA regfile
 
    // Control flow signal
    val CF_X     = 0.asUInt(4.W)   // Next

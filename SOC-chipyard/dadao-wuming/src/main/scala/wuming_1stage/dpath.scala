@@ -69,12 +69,12 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
    // PC Register
    pc_next := MuxCase(pc_plus4, Array(
-                  (io.ctl.pc_sel === PC_4)   -> pc_plus4,
+                  (io.ctl.pc_sel === PC_4)     -> pc_plus4,
                   (io.ctl.pc_sel === PC_BR12)  -> br12_target,
                   (io.ctl.pc_sel === PC_BR18)  -> br18_target,
                   (io.ctl.pc_sel === PC_JMPI)  -> jmp_iiii_target,
                   (io.ctl.pc_sel === PC_JMPR)  -> jmp_rrii_target,
-                  (io.ctl.pc_sel === PC_RA)  -> ret_target,
+                  (io.ctl.pc_sel === PC_RASP)  -> ret_target,
                   (io.ctl.pc_sel === PC_EXCP)  -> exception_target
                   ))
 
@@ -108,9 +108,9 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    // execution stage, regardless whether the pipeline stalls or not
    io.dat.inst_misaligned :=  (br12_target(1, 0).orR       && io.ctl.pc_sel_no_xept === PC_BR12) ||
                               (br18_target(1, 0).orR       && io.ctl.pc_sel_no_xept === PC_BR18) ||
-                              (jmp_iiii_target(1, 0).orR   && io.ctl.pc_sel_no_xept === PC_JMPI)  ||
-                              (jmp_rrii_target(1, 0).orR   && io.ctl.pc_sel_no_xept === PC_JMPR)  ||
-                              (ret_target(1, 0).orR        && io.ctl.pc_sel_no_xept === PC_RA)
+                              (jmp_iiii_target(1, 0).orR   && io.ctl.pc_sel_no_xept === PC_JMPI) ||
+                              (jmp_rrii_target(1, 0).orR   && io.ctl.pc_sel_no_xept === PC_JMPR) ||
+                              (ret_target(1, 0).orR        && io.ctl.pc_sel_no_xept === PC_RASP)
    // TODO: for multi reg insns, only single reg is legal at present
    io.dat.inst_multi_reg := (((io.ctl.reg_grp === REG_MRD) || (io.ctl.reg_grp === REG_MRB)) && inst(5, 0).orR)
    tval_inst_ma := MuxCase(0.U, Array(
@@ -118,7 +118,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                      (io.ctl.pc_sel_no_xept === PC_BR18) -> br18_target,
                      (io.ctl.pc_sel_no_xept === PC_JMPI) -> jmp_iiii_target,
                      (io.ctl.pc_sel_no_xept === PC_JMPR) -> jmp_rrii_target,
-                     (io.ctl.pc_sel_no_xept === PC_RA)   -> ret_target
+                     (io.ctl.pc_sel_no_xept === PC_RASP) -> ret_target
                      ))
 
    // Decode
@@ -369,10 +369,10 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
          PC_BR12 -> Str("B"),
          PC_BR18 -> Str("B"),
          PC_JMPI -> Str("J"),
-         PC_JMPR -> Str("R"),
-         PC_RA -> Str("A"),
+         PC_JMPR -> Str("J"),
+         PC_RASP -> Str("R"),
          PC_EXCP -> Str("E"),
-         PC_4 -> Str(" "))),
+         PC_4    -> Str(" "))),
       Mux(csr.io.exception, Str("X"), Str(" ")),
       inst)
 

@@ -184,7 +184,7 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                               Mux(cs_ctrl_flow === CF_BR12 , Mux( br_taken, PC_BR12, PC_4),
                               Mux(cs_ctrl_flow === CF_JMPI , PC_JMPI,
                               Mux(cs_ctrl_flow === CF_JMPR , PC_JMPR,
-                              Mux(cs_ctrl_flow === CF_RET  , PC_RA,
+                              Mux(cs_ctrl_flow === CF_RET  , PC_RASP,
                                                              PC_4)))))))
    val ctrl_pc_sel = Mux(io.ctl.exception || io.dat.csr_eret, PC_EXCP, ctrl_pc_sel_no_xept)
 
