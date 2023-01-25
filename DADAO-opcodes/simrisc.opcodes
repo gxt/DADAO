@@ -77,15 +77,12 @@ rd2ra	00010000 111001		&& ra@hb rd@hc
 ra2rd	00010000 111010		&& rd@hb ra@hc
 
 [ rrrr	op:8	ha:6	hb:6	hc:6	hd:6 ]
-& rd@ha rd@hb rd@hc rd@hd (hc!=000000) (hd!=000000)
+& rd@ha rd@hb rd@hc rd@hd
 csn	00100000
-csnn	00100001
 csz	00100010
-csnz	00100011
 csp	00100100
-csnp	00100101
-csod	00100110
-csev	00100111
+cseq	00100110
+csne	00100111
 
 [ rwii	op:8	ha:6	ww:2	immu:16 ]
 & rd@ha (ha!=000000)
