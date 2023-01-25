@@ -60,8 +60,8 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    // Instruction Fetch
    val pc_next          = Wire(UInt(conf.xprlen.W))
    val pc_plus4         = Wire(UInt(conf.xprlen.W))
-   val br_target12      = Wire(UInt(conf.xprlen.W))
-   val br_target18      = Wire(UInt(conf.xprlen.W))
+   val br12_target      = Wire(UInt(conf.xprlen.W))
+   val br18_target      = Wire(UInt(conf.xprlen.W))
    val jmp_iiii_target  = Wire(UInt(conf.xprlen.W))
    val jmp_rrii_target  = Wire(UInt(conf.xprlen.W))
    val ret_target       = Wire(UInt(conf.xprlen.W))
@@ -70,8 +70,8 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    // PC Register
    pc_next := MuxCase(pc_plus4, Array(
                   (io.ctl.pc_sel === PC_4)   -> pc_plus4,
-                  (io.ctl.pc_sel === PC_BR12)  -> br_target12,
-                  (io.ctl.pc_sel === PC_BR18)  -> br_target18,
+                  (io.ctl.pc_sel === PC_BR12)  -> br12_target,
+                  (io.ctl.pc_sel === PC_BR18)  -> br18_target,
                   (io.ctl.pc_sel === PC_JMPI)  -> jmp_iiii_target,
                   (io.ctl.pc_sel === PC_JMPR)  -> jmp_rrii_target,
                   (io.ctl.pc_sel === PC_RA)  -> ret_target,
@@ -106,16 +106,16 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    // Instruction misalign detection
    // In control path, instruction misalignment exception is always raised in the next cycle once the misaligned instruction reaches
    // execution stage, regardless whether the pipeline stalls or not
-   io.dat.inst_misaligned :=  (br_target12(1, 0).orR       && io.ctl.pc_sel_no_xept === PC_BR12) ||
-                              (br_target18(1, 0).orR       && io.ctl.pc_sel_no_xept === PC_BR18) ||
+   io.dat.inst_misaligned :=  (br12_target(1, 0).orR       && io.ctl.pc_sel_no_xept === PC_BR12) ||
+                              (br18_target(1, 0).orR       && io.ctl.pc_sel_no_xept === PC_BR18) ||
                               (jmp_iiii_target(1, 0).orR   && io.ctl.pc_sel_no_xept === PC_JMPI)  ||
                               (jmp_rrii_target(1, 0).orR   && io.ctl.pc_sel_no_xept === PC_JMPR)  ||
                               (ret_target(1, 0).orR        && io.ctl.pc_sel_no_xept === PC_RA)
    // TODO: for multi reg insns, only single reg is legal at present
    io.dat.inst_multi_reg := (((io.ctl.reg_grp === REG_MRD) || (io.ctl.reg_grp === REG_MRB)) && inst(5, 0).orR)
    tval_inst_ma := MuxCase(0.U, Array(
-                     (io.ctl.pc_sel_no_xept === PC_BR12) -> br_target12,
-                     (io.ctl.pc_sel_no_xept === PC_BR18) -> br_target18,
+                     (io.ctl.pc_sel_no_xept === PC_BR12) -> br12_target,
+                     (io.ctl.pc_sel_no_xept === PC_BR18) -> br18_target,
                      (io.ctl.pc_sel_no_xept === PC_JMPI) -> jmp_iiii_target,
                      (io.ctl.pc_sel_no_xept === PC_JMPR) -> jmp_rrii_target,
                      (io.ctl.pc_sel_no_xept === PC_RA)   -> ret_target
@@ -271,8 +271,8 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                   ))
 
    // Branch/Jump Target Calculation
-   br_target12       := pc_reg + (imms12 << 2.U)
-   br_target18       := pc_reg + (imms18 << 2.U)
+   br12_target       := pc_reg + (imms12 << 2.U)
+   br18_target       := pc_reg + (imms18 << 2.U)
    jmp_iiii_target   := pc_reg + (imms24 << 2.U)
    jmp_rrii_target   := rbha_data + rdhb_data + (imms12 << 2.U)
    ret_target        := regfileA.io.pop_data
