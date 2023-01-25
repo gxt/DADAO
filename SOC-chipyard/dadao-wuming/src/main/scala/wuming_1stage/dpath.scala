@@ -75,7 +75,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                   (io.ctl.pc_sel === PC_JMPI)  -> jmp_iiii_target,
                   (io.ctl.pc_sel === PC_JMPR)  -> jmp_rrii_target,
                   (io.ctl.pc_sel === PC_RA)  -> ret_target,
-                  (io.ctl.pc_sel === PC_EXC) -> exception_target
+                  (io.ctl.pc_sel === PC_EXCP)  -> exception_target
                   ))
 
    val pc_reg = RegInit(io.reset_vector)
@@ -371,7 +371,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
          PC_JMPI -> Str("J"),
          PC_JMPR -> Str("R"),
          PC_RA -> Str("A"),
-         PC_EXC -> Str("E"),
+         PC_EXCP -> Str("E"),
          PC_4 -> Str(" "))),
       Mux(csr.io.exception, Str("X"), Str(" ")),
       inst)

@@ -178,7 +178,7 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                               Mux(cs_cond_fun === COND_EQ, Mux( io.dat.cond_eq, Y, N),
                               Mux(cs_cond_fun === COND_NE, Mux(!io.dat.cond_eq, Y, N), N))))))))
 
-   val ctrl_pc_sel_no_xept =  Mux(io.dat.csr_interrupt     , PC_EXC,
+   val ctrl_pc_sel_no_xept =  Mux(io.dat.csr_interrupt     , PC_EXCP,
                               Mux(cs_ctrl_flow === CF_X    , PC_4,
                               Mux(cs_ctrl_flow === CF_BR18 , Mux( br_taken, PC_BR18, PC_4),
                               Mux(cs_ctrl_flow === CF_BR12 , Mux( br_taken, PC_BR12, PC_4),
@@ -186,7 +186,7 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                               Mux(cs_ctrl_flow === CF_JMPR , PC_JMPR,
                               Mux(cs_ctrl_flow === CF_RET  , PC_RA,
                                                              PC_4)))))))
-   val ctrl_pc_sel = Mux(io.ctl.exception || io.dat.csr_eret, PC_EXC, ctrl_pc_sel_no_xept)
+   val ctrl_pc_sel = Mux(io.ctl.exception || io.dat.csr_eret, PC_EXCP, ctrl_pc_sel_no_xept)
 
    // mem_en suppression: no new memory request shall be issued after the memory operation of the current instruction is done.
    // Once we get a new instruction, we reset this flag.
