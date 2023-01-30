@@ -425,21 +425,6 @@ static bool trans_cs_all(DisasContext* ctx, arg_disas_dadao3* a, TCGCond cond)
     return true;
 }
 
-static bool trans_cs_od_ev(DisasContext* ctx, arg_disas_dadao3* a, bool is_od)
-{
-    if (a->ha == 0) {
-        return true;
-    }
-    TCGv_i64 bit0 = tcg_const_i64(1);
-    TCGv_i64 zero = tcg_const_i64(0);
-    tcg_gen_and_i64(bit0, bit0, cpu_rd[a->hb]);
-    tcg_gen_movcond_i64(is_od ? TCG_COND_NE : TCG_COND_EQ, cpu_rd[a->ha],
-                        bit0, zero, cpu_rd[a->hc], cpu_rd[a->hd]);
-    tcg_temp_free_i64(bit0);
-    tcg_temp_free_i64(zero);
-    return true;
-}
-
 static bool trans_rd2rd(DisasContext* ctx, arg_rd2rd* a)
 {
     return trans_hb2ha_all(ctx, a, cpu_rd, cpu_rd);
@@ -490,19 +475,9 @@ static bool trans_csn(DisasContext *ctx, arg_csn *a)
     return trans_cs_all(ctx, a, TCG_COND_LT);
 }
 
-static bool trans_csnn(DisasContext *ctx, arg_csnn *a)
-{
-    return trans_cs_all(ctx, a, TCG_COND_GE);
-}
-
 static bool trans_csz(DisasContext *ctx, arg_csz *a)
 {
     return trans_cs_all(ctx, a, TCG_COND_EQ);
-}
-
-static bool trans_csnz(DisasContext *ctx, arg_csnz *a)
-{
-    return trans_cs_all(ctx, a, TCG_COND_NE);
 }
 
 static bool trans_csp(DisasContext *ctx, arg_csp *a)
@@ -510,19 +485,14 @@ static bool trans_csp(DisasContext *ctx, arg_csp *a)
     return trans_cs_all(ctx, a, TCG_COND_GT);
 }
 
-static bool trans_csnp(DisasContext *ctx, arg_csnp *a)
+static bool trans_cseq(DisasContext *ctx, arg_cseq *a)
 {
-    return trans_cs_all(ctx, a, TCG_COND_LE);
+    return trans_cs_all(ctx, a, TCG_COND_EQ);
 }
 
-static bool trans_csod(DisasContext *ctx, arg_csod *a)
+static bool trans_csne(DisasContext *ctx, arg_csne *a)
 {
-    return trans_cs_od_ev(ctx, a, true);
-}
-
-static bool trans_csev(DisasContext *ctx, arg_csev *a)
-{
-    return trans_cs_od_ev(ctx, a, false);
+    return trans_cs_all(ctx, a, TCG_COND_NE);
 }
 
 static bool trans_orw(DisasContext *ctx, arg_orw *a)
