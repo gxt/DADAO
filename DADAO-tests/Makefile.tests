@@ -28,7 +28,7 @@ tests-benchmarks-highfive:
 
 tests-bootrom-highfive:
 	@rm -fr $(TESTS_BOOTROM_BUILD)
-	@mkdir $(TESTS_BOOTROM_BUILD)
+	@mkdir -p $(TESTS_BOOTROM_BUILD)
 	@cp $(TESTS_BOOTROM_SOURCE)/* $(TESTS_BOOTROM_BUILD)
 	@make -s src_dir=$(TESTS_BOOTROM_SOURCE) -C $(TESTS_BOOTROM_BUILD)
 
