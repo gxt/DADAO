@@ -8,29 +8,32 @@ import scala.math._
 
 trait DADAOConstants
 {
-   val BITS_INST = 32
-   val BITS_HEXA = 6
-   val BITS_OCTA  = 64
-   val BITS_TETRA = 32
-   val BITS_WYDE  = 16
-   val BITS_BYTE  = 8
+   val BITS_HEXA  = 6
+   val BITS_INST  = 32
 
-   val NR_REGS = 64
+   val BITS_BYTE  = (8*1)
+   val BITS_WYDE  = (8*2)
+   val BITS_TETRA = (8*4)
+   val BITS_OCTA  = (8*8)
+   val BITS_DOCTA = (8*16)
+
+   val NR_REGS    = 64
 
    // abstract out instruction decode magic numbers
-   val HA_MSB = 23
-   val HA_LSB = 18
-   val HB_MSB = 17
-   val HB_LSB = 12
-   val HC_MSB = 11
-   val HC_LSB = 6
-   val HD_MSB = 5
-   val HD_LSB = 0
+   val HA_MSB     = (4*6) - 1
+   val HA_LSB     = (3*6)
+   val HB_MSB     = (3*6) - 1
+   val HB_LSB     = (2*6)
+   val HC_MSB     = (2*6) - 1
+   val HC_LSB     = (1*6)
+   val HD_MSB     = (1*6) - 1
+   val HD_LSB     = (0*6)
 
-   val WP_MSB = HB_MSB
-   val WP_LSB = HB_MSB - 1
-   val WYDE_MSB = HB_MSB - 2
-   val WYDE_LSB = HD_LSB
+   // Wyde position need 2 bits, and each wyde 16 bits
+   val WP_MSB     = HB_MSB
+   val WP_LSB     = HB_MSB - 1
+   val WYDE_MSB   = HB_MSB - 2
+   val WYDE_LSB   = HD_LSB
 
    val CP_RGRC_ADDR_MSB = HB_MSB
    val CP_RGRC_ADDR_LSB = HC_LSB
