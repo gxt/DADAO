@@ -78,7 +78,7 @@ endif
 	@echo "CONFIG: Apply patches"
 	@cd $(QEMU_0600_SOURCE); git am $(QEMU_0600_PATCHES)/9*.patch
 	# FIXUP
-	@cd $(QEMU_0600_SOURCE); git am $(QEMU_0600_FIXUPS)/*.patch
+	#@cd $(QEMU_0600_SOURCE); git am $(QEMU_0600_FIXUPS)/*.patch
 
 qemu-0600-build-new:
 	@rm -fr $(QEMU_0600_BUILD)
