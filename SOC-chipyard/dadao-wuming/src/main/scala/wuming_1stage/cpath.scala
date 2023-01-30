@@ -144,10 +144,10 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                   BRP     -> List(Y, CF_BR18  , COND_P  , REG_X    , OP1_X    , OP2_X     , ALU_X     , WB_X    , REN_0, MEN_0, M_X  , MT_X   , CSR.N),
                   BRNP    -> List(Y, CF_BR18  , COND_NP , REG_X    , OP1_X    , OP2_X     , ALU_X     , WB_X    , REN_0, MEN_0, M_X  , MT_X   , CSR.N),
 
-                  JUMPi   -> List(Y, CF_JMPI  , COND_X  , REG_X    , OP1_X    , OP2_X     , ALU_X     , WB_X    , REN_0, MEN_0, M_X  , MT_X   , CSR.N),
-                  JUMPr   -> List(Y, CF_JMPR  , COND_X  , REG_X    , OP1_X    , OP2_X     , ALU_X     , WB_X    , REN_0, MEN_0, M_X  , MT_X   , CSR.N),
-                  CALLi   -> List(Y, CF_JMPI  , COND_X  , RAS_PUSH , OP1_X    , OP2_X     , ALU_X     , WB_RA   , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
-                  CALLr   -> List(Y, CF_JMPR  , COND_X  , RAS_PUSH , OP1_X    , OP2_X     , ALU_X     , WB_RA   , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
+                  JUMPi   -> List(Y, CF_JUMPI , COND_X  , REG_X    , OP1_X    , OP2_X     , ALU_X     , WB_X    , REN_0, MEN_0, M_X  , MT_X   , CSR.N),
+                  JUMPr   -> List(Y, CF_JUMPR , COND_X  , REG_X    , OP1_X    , OP2_X     , ALU_X     , WB_X    , REN_0, MEN_0, M_X  , MT_X   , CSR.N),
+                  CALLi   -> List(Y, CF_CALLI , COND_X  , RAS_PUSH , OP1_X    , OP2_X     , ALU_X     , WB_RA   , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
+                  CALLr   -> List(Y, CF_CALLR , COND_X  , RAS_PUSH , OP1_X    , OP2_X     , ALU_X     , WB_RA   , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
                   RET     -> List(Y, CF_RET   , COND_X  , RAS_POP  , OP1_X    , OP2_IMMS18, ALU_COPY2 , WB_RDHA , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
 
                   SETZWrd -> List(Y, CF_X     , COND_X  , REG_RD   , OP1_X    , OP2_WYDE  , ALU_COPY2 , WB_RDHA , REN_1, MEN_0, M_X , MT_X   , CSR.N),
@@ -182,10 +182,12 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                               Mux(cs_ctrl_flow === CF_X    , PC_4,
                               Mux(cs_ctrl_flow === CF_BR18 , Mux( br_taken, PC_BR18, PC_4),
                               Mux(cs_ctrl_flow === CF_BR12 , Mux( br_taken, PC_BR12, PC_4),
-                              Mux(cs_ctrl_flow === CF_JMPI , PC_JMPI,
-                              Mux(cs_ctrl_flow === CF_JMPR , PC_JMPR,
+                              Mux(cs_ctrl_flow === CF_JUMPI, PC_IIII,
+                              Mux(cs_ctrl_flow === CF_JUMPR, PC_RRII,
+                              Mux(cs_ctrl_flow === CF_CALLI, PC_IIII,
+                              Mux(cs_ctrl_flow === CF_CALLR, PC_RRII,
                               Mux(cs_ctrl_flow === CF_RET  , PC_RASP,
-                                                             PC_4)))))))
+                                                             PC_4)))))))))
    val ctrl_pc_sel = Mux(io.ctl.exception || io.dat.csr_eret, PC_EXCP, ctrl_pc_sel_no_xept)
 
    // mem_en suppression: no new memory request shall be issued after the memory operation of the current instruction is done.

@@ -33,17 +33,19 @@ trait ScalarOpConstants
    val PC_EXCP  = 1.asUInt(3.W)  // exception
    val PC_BR12  = 2.asUInt(3.W)  // branch_target for imms12
    val PC_BR18  = 3.asUInt(3.W)  // branch_target for imms18
-   val PC_JMPI  = 4.asUInt(3.W)  // jump_iiii_target
-   val PC_JMPR  = 5.asUInt(3.W)  // jump_rrii_target
+   val PC_IIII  = 4.asUInt(3.W)  // jump/call iiii target
+   val PC_RRII  = 5.asUInt(3.W)  // jump/call rrii target
    val PC_RASP  = 6.asUInt(3.W)  // pop from RA regfile
 
    // Control flow signal
    val CF_X     = 0.asUInt(3.W)  // Next
    val CF_BR12  = 1.asUInt(3.W)  // Branch with offset 12-bit
    val CF_BR18  = 2.asUInt(3.W)  // Branch with offset 18-bit
-   val CF_JMPI  = 3.asUInt(3.W)  // Jump/call iiii
-   val CF_JMPR  = 4.asUInt(3.W)  // Jump/call rrii
-   val CF_RET   = 5.asUInt(3.W)  // Return
+   val CF_JUMPI = 3.asUInt(3.W)  // Jump iiii
+   val CF_JUMPR = 4.asUInt(3.W)  // Jump rrii
+   val CF_CALLI = 5.asUInt(3.W)  // Call iiii
+   val CF_CALLR = 6.asUInt(3.W)  // Call rrii
+   val CF_RET   = 7.asUInt(3.W)  // Return
 
    // Conditional func
    val COND_X   = 0.asUInt(4.W)   // Always
