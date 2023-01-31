@@ -105,9 +105,20 @@
     (plus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb, Rb")
 	     (match_operand:DI 2 "dd_rd_s18_operand" "  It, Rd")))]
 	""
-	"@
-	move	rd7, %2		\;rb2rd	%0, %1, 0	\;add	rd0, %0, %0, rd7
-	rb2rd	%0, %1, 0	\;add   rd0, %0, %2, %0")
+        {
+          if(GET_CODE(operands[2]) == CONST_INT)
+          {
+                if(INTVAL(operands[2])> 0x7ff || INTVAL(operands[2])< -0x800)
+                return "move\trd7, %2 \; rb2rd %0, %1, 0\t\; add\trd0, %0, %0, rd7";
+                else
+                return "rb2rd %0, %1, 0\t\; addi\t%0, %0, %2";
+          }
+          else
+          {
+                return "rb2rd %0, %1, 0\t\; add\trd0,%0, %0, %2";
+          }
+        })
+
 
 
 (define_insn "subrb2rd"
@@ -115,9 +126,20 @@
    (minus:DI (match_operand:DI 1 "rb_class_operand"  "% Rb, Rb")
 	     (match_operand:DI 2 "dd_rd_s18_operand" "  It, Rd")))]
 	""
-        "@
-	move	rd7, %n2	\;rb2rd	%0, %1, 0	\;add	rd0, %0, %0, rd7
-	rb2rd	%0, %1, 0	\;sub	rd0, %0, %0, %2")
+        {
+          if(GET_CODE(operands[2]) == CONST_INT)
+          {
+                if(INTVAL(operands[2]) > 0x7ff || INTVAL(operands[2]) < -0x800)
+                return "move\trd7,%2\; rb2rd\t%0, %1, 0\t\;sub\trd0, %0, %0, %2";
+                else
+                return "rb2rd %0, %1, 0\t\; addi\t%0, %0, %n2";
+          }
+          else
+          {
+                return "rb2rd\t%0, %1, 0\t\;sub\trd0, %0, %0, %2";
+          }
+        })
+
 
 
 ;; Shall it stays ?
