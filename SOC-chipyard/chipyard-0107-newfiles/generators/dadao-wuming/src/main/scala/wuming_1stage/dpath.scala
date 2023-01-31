@@ -202,7 +202,10 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val wyde16 = inst(WYDE_MSB, WYDE_LSB)
    val wydemask = ~(Fill(BITS_WYDE, 1.U) << wydeposition)
 
-   val alu_op1 = MuxCase(0.U, Array(
+   val alu_op1 = Wire(UInt(conf.xprlen.W))
+   val alu_op2 = Wire(UInt(conf.xprlen.W))
+
+   alu_op1 := MuxCase(0.U, Array(
                (io.ctl.op1_sel === OP1_RDHA) -> rdha_data,
                (io.ctl.op1_sel === OP1_RDHB) -> rdhb_data,
                (io.ctl.op1_sel === OP1_RDHC) -> rdhc_data,
@@ -212,7 +215,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                (io.ctl.op1_sel === OP1_PC)  -> pc_reg,
                )).asUInt()
 
-   val alu_op2 = MuxCase(0.U, Array(
+   alu_op2 := MuxCase(0.U, Array(
                (io.ctl.op2_sel === OP2_RDHC) -> rdhc_data,
                (io.ctl.op2_sel === OP2_RDHD) -> rdhd_data,
                (io.ctl.op2_sel === OP2_RBHC) -> rbhc_data,
@@ -244,8 +247,8 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                   (io.ctl.alu_fun === ALU_AND)  -> (alu_op1 & alu_op2).asUInt(),
                   (io.ctl.alu_fun === ALU_OR)   -> (alu_op1 | alu_op2).asUInt(),
                   (io.ctl.alu_fun === ALU_XOR)  -> (alu_op1 ^ alu_op2).asUInt(),
-                  (io.ctl.alu_fun === ALU_CMPS) -> Mux(alu_op1 === alu_op2, 0.U, Mux(alu_op1.asSInt() < alu_op2.asSInt(), ~0.U, 1.U)).asUInt(),
-                  (io.ctl.alu_fun === ALU_CMPU) -> Mux(alu_op1 === alu_op2, 0.U, Mux(alu_op1.asUInt() < alu_op2.asUInt(), ~0.U, 1.U)).asUInt(),
+                  (io.ctl.alu_fun === ALU_CMPS) -> Mux(alu_op1 === alu_op2, 0.U, Mux(alu_op1.asSInt() < alu_op2.asSInt(), ~0.U(64.W), 1.U(64.W))).asUInt(),
+                  (io.ctl.alu_fun === ALU_CMPU) -> Mux(alu_op1 === alu_op2, 0.U, Mux(alu_op1.asUInt() < alu_op2.asUInt(), ~0.U(64.W), 1.U(64.W))).asUInt(),
                   (io.ctl.alu_fun === ALU_SLL)  -> ((alu_op1 << alu_shamt)(conf.xprlen-1, 0)).asUInt(),
                   (io.ctl.alu_fun === ALU_SRA)  -> (alu_op1.asSInt() >> alu_shamt).asUInt(),
                   (io.ctl.alu_fun === ALU_SRL)  -> (alu_op1 >> alu_shamt).asUInt(),
@@ -355,7 +358,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    // Printout
    // pass output through the spike-dasm binary (found in riscv-tools) to turn
    // the DASM(%x) into a disassembly string.
-   printf("Cyc= %d [%d] pc=[%x] inst=[%x] W[%x][%d] Op1=[%x] Op2=[%x] %c%c%c DASM(%x)\n",
+   printf("Cyc= %d [%d] pc=[%x] inst=[%x] W[%x][%d] Op1=[%x] Op2=[%x] %c%c%c \tDASM(%x)\n",
       csr.io.time(31,0),
       csr.io.retire,
       pc_reg,
