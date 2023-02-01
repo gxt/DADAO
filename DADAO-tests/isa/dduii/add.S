@@ -22,7 +22,7 @@ DDTEST_CODE_BEGIN
   TEST_RRRR_OP( 5, add, 0x0, 0xffffffffffff8000, 0x0000000000000000, 0xffffffffffff8000 );
   TEST_RRRR_OP( 6, add, 0x0, 0xffffffff80000000, 0xffffffff80000000, 0x00000000 );
 
-  TEST_RRRR_OP( 7, add, 0x1, 0xffffffff7fff8000, 0xffffffff80000000, 0xffffffffffff8000 );
+  TEST_RRRR_OP( 7, add, 0xffffffffffffffff, 0xffffffff7fff8000, 0xffffffff80000000, 0xffffffffffff8000 );
   TEST_RRRR_OP( 8, add, 0x0000000000000000, 0xe000000000000000, 0x7000000000000000, 0x7000000000000000 );
 
   TEST_RRRR_OP( 9, add, 0x0, 0x0000000000007fff, 0x0000000000000000, 0x0000000000007fff );
@@ -30,8 +30,8 @@ DDTEST_CODE_BEGIN
   TEST_RRRR_OP( 11, add, 0x0, 0x0000000080007ffe, 0x000000007fffffff, 0x0000000000007fff );
 
   TEST_RRRR_OP( 12, add, 0x0, 0xffffffffffffffff, 0x0000000000000000, 0xffffffffffffffff );
-  TEST_RRRR_OP( 13, add, 0x1, 0x0000000000000000, 0xffffffffffffffff, 0x0000000000000001 );
-  TEST_RRRR_OP( 14, add, 0x1, 0xfffffffffffffffe, 0xffffffffffffffff, 0xffffffffffffffff );
+  TEST_RRRR_OP( 13, add, 0xffffffffffffffff, 0x0000000000000000, 0xffffffffffffffff, 0x0000000000000001 );
+  TEST_RRRR_OP( 14, add, 0xffffffffffffffff, 0xfffffffffffffffe, 0xffffffffffffffff, 0xffffffffffffffff );
   
   #-------------------------------------------------------------
   # Source/Destination tests
