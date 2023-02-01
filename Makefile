@@ -1,7 +1,6 @@
 #
 # TOP Makefile
 #
-DIR_DADAO_TMP		:= /tmp/__$(USER)-DADAO/
 DIR_DADAO_TOP		:= $(shell pwd)
 DIR_DADAO_SOURCE	:= $(DIR_DADAO_TOP)/__source
 DIR_DADAO_BUILD		:= $(DIR_DADAO_TOP)/__build
@@ -74,17 +73,6 @@ dadao-highfive:
 	@make --silent tch-highfive
 	@make --silent env-highfive
 	@echo "BUILD EVERYTHING DONE!"
-
-dadao-reboot:
-	@echo "IMPORTANT: MAKE SURE THE SERVER HAS ENOUGH MEMORY!"
-	@make --silent dadao-clean
-	@rm -fr $(DIR_DADAO_TMP)/__source
-	@rm -fr $(DIR_DADAO_TMP)/__build
-	@mkdir -p $(DIR_DADAO_TMP)/__source
-	@mkdir -p $(DIR_DADAO_TMP)/__build
-	@ln -s -t $(DIR_DADAO_TOP) $(DIR_DADAO_TMP)/__source
-	@ln -s -t $(DIR_DADAO_TOP) $(DIR_DADAO_TMP)/__build
-	@echo "Done: check $(DIR_DADAO_TMP) for all things"
 
 dadao-clean:
 	@echo "CLEAR EVERYTHING!"
