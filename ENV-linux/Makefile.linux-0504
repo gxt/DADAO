@@ -6,6 +6,7 @@ LINUX_0504_GITHUB		:= https://github.com/torvalds/linux.git
 LINUX_0504_VERSION		:= v5.4
 # official download site :	https://mirrors.edge.kernel.org/pub/linux/kernel/v5.x/
 LINUX_0504_VERSION_BASEURL	:= https://mirrors.tuna.tsinghua.edu.cn/kernel/v5.x/
+LINUX_0504_VERSION_LOCAL	:= /pub/linux-kernel-patches/
 LINUX_0504_VERSION_PATCH	:= patch-5.4.100.xz
 LINUX_0504_ARCH			:= dadao
 LINUX_0504_BRANCH		:= dadao-0504
@@ -42,11 +43,11 @@ endif
 	@cd $(LINUX_0504_SOURCE);						\
 		git checkout -qb $(LINUX_0504_BRANCH) $(LINUX_0504_VERSION)
 	# Add official patch
-	@test -f $(HOME)/$(LINUX_0504_VERSION_PATCH) ||				\
-		wget --directory-prefix=$(HOME)/				\
+	@test -f $(LINUX_0504_VERSION_LOCAL)/$(LINUX_0504_VERSION_PATCH) ||	\
+		wget --directory-prefix=$(LINUX_0504_VERSION_LOCAL)/		\
 			$(LINUX_0504_VERSION_BASEURL)/$(LINUX_0504_VERSION_PATCH)
 	@cd $(LINUX_0504_SOURCE);						\
-		xzcat $(HOME)/$(LINUX_0504_VERSION_PATCH)			\
+		xzcat $(LINUX_0504_VERSION_LOCAL)/$(LINUX_0504_VERSION_PATCH)	\
 			| patch -p1;						\
 		git add .;							\
 		git commit -sm"LINUX $(LINUX_0504_VERSION_PATCH)"
