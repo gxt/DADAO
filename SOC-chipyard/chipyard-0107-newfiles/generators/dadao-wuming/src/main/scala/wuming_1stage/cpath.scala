@@ -56,8 +56,8 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                   SWYM    -> List(Y, CF_X     , COND_X  , REG_X    , OP1_X    , OP2_X     , ALU_X     , WB_X    , REN_0, MEN_0, M_X  , MT_X  , CSR.N),
                   CPCO    -> List(Y, CF_X     , COND_X  , REG_X    , OP1_X    , OP2_X     , ALU_X     , WB_X    , REN_0, MEN_0, M_X  , MT_X  , CSR.N),
 
-                  CPRD    -> List(Y, CF_X     , COND_X  , REG_RD   , OP1_X    , OP2_X     , ALU_X     , WB_CSR  , REN_1, MEN_0, M_X  , MT_X   , CSR.R),
-                  CPWR    -> List(Y, CF_X     , COND_X  , REG_RD   , OP1_X    , OP2_RDHD  , ALU_COPY2 , WB_CSR  , REN_1, MEN_0, M_X  , MT_X   , CSR.W),
+                  CPRD    -> List(Y, CF_X     , COND_X  , REG_CSR  , OP1_X    , OP2_X     , ALU_X     , WB_CSR  , REN_1, MEN_0, M_X  , MT_X   , CSR.R),
+                  CPWR    -> List(Y, CF_X     , COND_X  , REG_CSR  , OP1_X    , OP2_RDHD  , ALU_COPY2 , WB_X    , REN_0, MEN_0, M_X  , MT_X   , CSR.W),
 
                   RD2RD   -> List(Y, CF_X     , COND_X  , REG_MRD  , OP1_X    , OP2_RDHC  , ALU_COPY2 , WB_RDHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
                   RD2RB   -> List(Y, CF_X     , COND_X  , REG_MRB  , OP1_X    , OP2_RDHC  , ALU_COPY2 , WB_RBHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),

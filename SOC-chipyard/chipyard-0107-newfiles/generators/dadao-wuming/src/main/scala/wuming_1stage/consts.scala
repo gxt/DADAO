@@ -66,6 +66,7 @@ trait ScalarOpConstants
    val REG_MRB   = 5.asUInt(3.W)
    val RAS_PUSH  = 6.asUInt(3.W)
    val RAS_POP   = 7.asUInt(3.W)
+   val REG_CSR   = 2.asUInt(3.W)
    val REG_X     = 0.asUInt(3.W)
 
    // Operand 1 Select Signal
