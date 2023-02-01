@@ -58,14 +58,14 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val interrupt_edge = Wire(Bool())
 
    // Instruction Fetch
-   val pc_next          = Wire(UInt(conf.xprlen.W))
-   val pc_plus4         = Wire(UInt(conf.xprlen.W))
-   val br12_target      = Wire(UInt(conf.xprlen.W))
-   val br18_target      = Wire(UInt(conf.xprlen.W))
-   val iiii_target      = Wire(UInt(conf.xprlen.W))
-   val rrii_target      = Wire(UInt(conf.xprlen.W))
-   val ret_target       = Wire(UInt(conf.xprlen.W))
-   val exception_target = Wire(UInt(conf.xprlen.W))
+   val pc_next          = Wire(UInt(BITS_OCTA.W))
+   val pc_plus4         = Wire(UInt(BITS_OCTA.W))
+   val br12_target      = Wire(UInt(BITS_OCTA.W))
+   val br18_target      = Wire(UInt(BITS_OCTA.W))
+   val iiii_target      = Wire(UInt(BITS_OCTA.W))
+   val rrii_target      = Wire(UInt(BITS_OCTA.W))
+   val ret_target       = Wire(UInt(BITS_OCTA.W))
+   val exception_target = Wire(UInt(BITS_OCTA.W))
 
    // PC Register
    pc_next := MuxCase(pc_plus4, Array(
@@ -85,7 +85,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       pc_reg := pc_next
    }
 
-   pc_plus4 := (pc_reg + 4.asUInt(conf.xprlen.W))
+   pc_plus4 := (pc_reg + 4.asUInt(BITS_OCTA.W))
 
 
    // Instruction memory buffer to store instruction during multicycle data request
@@ -127,14 +127,14 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val hc_addr  = inst(HC_MSB, HC_LSB)
    val hd_addr  = inst(HD_MSB, HD_LSB)
 
-   val wb_data = Wire(UInt(conf.xprlen.W))
-   val wb_data2 = Wire(UInt(conf.xprlen.W))
+   val wb_data = Wire(UInt(BITS_OCTA.W))
+   val wb_data2 = Wire(UInt(BITS_OCTA.W))
    val wb_wen = io.ctl.rf_wen && !io.ctl.exception && !interrupt_edge
 
    // Register File
-   val regfileD = Mem(NR_REGS, UInt(conf.xprlen.W))
-   val regfileB = Mem(NR_REGS, UInt(conf.xprlen.W))
-   val regfileF = Mem(NR_REGS, UInt(conf.xprlen.W))
+   val regfileD = Mem(NR_REGS, UInt(BITS_OCTA.W))
+   val regfileB = Mem(NR_REGS, UInt(BITS_OCTA.W))
+   val regfileF = Mem(NR_REGS, UInt(BITS_OCTA.W))
    val regfileA = Module(new RegFileA())
 
    regfileA.io.ras_push  := (io.ctl.reg_grp === RAS_PUSH)
@@ -181,10 +181,10 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    }
    ///
 
-   val rdha_data = Mux((ha_addr =/= 0.U), regfileD(ha_addr), 0.asUInt(conf.xprlen.W))
-   val rdhb_data = Mux((hb_addr =/= 0.U), regfileD(hb_addr), 0.asUInt(conf.xprlen.W))
-   val rdhc_data = Mux((hc_addr =/= 0.U), regfileD(hc_addr), 0.asUInt(conf.xprlen.W))
-   val rdhd_data = Mux((hd_addr =/= 0.U), regfileD(hd_addr), 0.asUInt(conf.xprlen.W))
+   val rdha_data = Mux((ha_addr =/= 0.U), regfileD(ha_addr), 0.asUInt(BITS_OCTA.W))
+   val rdhb_data = Mux((hb_addr =/= 0.U), regfileD(hb_addr), 0.asUInt(BITS_OCTA.W))
+   val rdhc_data = Mux((hc_addr =/= 0.U), regfileD(hc_addr), 0.asUInt(BITS_OCTA.W))
+   val rdhd_data = Mux((hd_addr =/= 0.U), regfileD(hd_addr), 0.asUInt(BITS_OCTA.W))
 
    val rbha_data = Mux((ha_addr =/= 0.U), regfileB(ha_addr), pc_plus4)
    val rbhb_data = Mux((hb_addr =/= 0.U), regfileB(hb_addr), pc_plus4)
@@ -202,8 +202,8 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val wyde16 = inst(WYDE_MSB, WYDE_LSB)
    val wydemask = ~(Fill(BITS_WYDE, 1.U) << wydeposition)
 
-   val alu_op1 = Wire(UInt(conf.xprlen.W))
-   val alu_op2 = Wire(UInt(conf.xprlen.W))
+   val alu_op1 = Wire(UInt(BITS_OCTA.W))
+   val alu_op2 = Wire(UInt(BITS_OCTA.W))
 
    alu_op1 := MuxCase(0.U, Array(
                (io.ctl.op1_sel === OP1_RDHA) -> rdha_data,
@@ -230,7 +230,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
 
    // ALU
-   val alu_out   = Wire(UInt(conf.xprlen.W))
+   val alu_out   = Wire(UInt(BITS_OCTA.W))
 
    val alu_shamt = alu_op2(BITS_HEXA-1,0).asUInt()
 
@@ -247,9 +247,9 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                   (io.ctl.alu_fun === ALU_AND)  -> (alu_op1 & alu_op2).asUInt(),
                   (io.ctl.alu_fun === ALU_OR)   -> (alu_op1 | alu_op2).asUInt(),
                   (io.ctl.alu_fun === ALU_XOR)  -> (alu_op1 ^ alu_op2).asUInt(),
-                  (io.ctl.alu_fun === ALU_CMPS) -> Mux(alu_op1 === alu_op2, 0.U, Mux(alu_op1.asSInt() < alu_op2.asSInt(), ~0.U(64.W), 1.U(64.W))).asUInt(),
-                  (io.ctl.alu_fun === ALU_CMPU) -> Mux(alu_op1 === alu_op2, 0.U, Mux(alu_op1.asUInt() < alu_op2.asUInt(), ~0.U(64.W), 1.U(64.W))).asUInt(),
-                  (io.ctl.alu_fun === ALU_SLL)  -> ((alu_op1 << alu_shamt)(conf.xprlen-1, 0)).asUInt(),
+                  (io.ctl.alu_fun === ALU_CMPS) -> Mux(alu_op1 === alu_op2, 0.U, Mux(alu_op1.asSInt() < alu_op2.asSInt(), ~0.U(BITS_OCTA.W), 1.U(BITS_OCTA.W))).asUInt(),
+                  (io.ctl.alu_fun === ALU_CMPU) -> Mux(alu_op1 === alu_op2, 0.U, Mux(alu_op1.asUInt() < alu_op2.asUInt(), ~0.U(BITS_OCTA.W), 1.U(BITS_OCTA.W))).asUInt(),
+                  (io.ctl.alu_fun === ALU_SLL)  -> ((alu_op1 << alu_shamt)(BITS_OCTA-1, 0)).asUInt(),
                   (io.ctl.alu_fun === ALU_SRA)  -> (alu_op1.asSInt() >> alu_shamt).asUInt(),
                   (io.ctl.alu_fun === ALU_SRL)  -> (alu_op1 >> alu_shamt).asUInt(),
                   (io.ctl.alu_fun === ALU_SETOW)  -> (alu_op2 | wydemask).asUInt(),
@@ -257,13 +257,13 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                   (io.ctl.alu_fun === ALU_ADRP)   -> ((((alu_op1 >> 12.U) + alu_op2) << 12.U)).asUInt(),
                   (io.ctl.alu_fun === ALU_COPY2)  -> alu_op2.asUInt(),
                   (io.ctl.alu_fun === ALU_CSET)   -> Mux(cond_yes, alu_op1, alu_op2).asUInt(),
-                  (io.ctl.alu_fun === ALU_MULS)   -> ((alu_op1.asSInt() * alu_op2.asSInt())(conf.xprlen-1, 0)).asUInt(),
-                  (io.ctl.alu_fun === ALU_MULU)   -> ((alu_op1.asUInt() * alu_op2.asUInt())(conf.xprlen-1, 0)).asUInt(),
+                  (io.ctl.alu_fun === ALU_MULS)   -> ((alu_op1.asSInt() * alu_op2.asSInt())(BITS_OCTA-1, 0)).asUInt(),
+                  (io.ctl.alu_fun === ALU_MULU)   -> ((alu_op1.asUInt() * alu_op2.asUInt())(BITS_OCTA-1, 0)).asUInt(),
                   (io.ctl.alu_fun === ALU_DIVS)   -> (Cat(Fill(64, alu_op1(63)), alu_op1).asSInt() / alu_op2.asSInt()).asUInt(),
                   (io.ctl.alu_fun === ALU_DIVU)   -> (alu_op1.asUInt() / alu_op2.asUInt()).asUInt(),
                   ))
 
-   val alu_out2 = Wire(UInt(conf.xprlen.W))
+   val alu_out2 = Wire(UInt(BITS_OCTA.W))
    alu_out2    := MuxCase(0.U, Array(
                   (io.ctl.alu_fun === ALU_ADD)    -> (Cat(Fill(63, 0.U), (alu_op1 +& alu_op2)(64))).asUInt(),
                   (io.ctl.alu_fun === ALU_SUB)    -> (Cat(Fill(63, 0.U), (alu_op1 -& alu_op2)(64))).asUInt(),

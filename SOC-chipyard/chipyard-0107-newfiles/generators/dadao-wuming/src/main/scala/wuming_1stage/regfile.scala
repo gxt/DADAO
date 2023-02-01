@@ -14,8 +14,8 @@ import wuming.common._
 
 class RFileIo(implicit val conf: WumingCoreParams) extends Bundle()
 {
-   val push_data = Input(UInt(conf.xprlen.W))
-   val pop_data  = Output(UInt(conf.xprlen.W))
+   val push_data = Input(UInt(BITS_OCTA.W))
+   val pop_data  = Output(UInt(BITS_OCTA.W))
 
    val ras_top  = Output(UInt(BITS_HEXA.W))
    val ras_push = Input(Bool())
@@ -26,7 +26,7 @@ class RegFileA(implicit val conf: WumingCoreParams) extends Module
 {
    val io = IO(new RFileIo())
 
-   val RA_MEM = Mem(NR_REGS, UInt(conf.xprlen.W))
+   val RA_MEM = Mem(NR_REGS, UInt(BITS_OCTA.W))
 
    val RASR_TOP = RegInit(0.U(BITS_HEXA.W))
 
