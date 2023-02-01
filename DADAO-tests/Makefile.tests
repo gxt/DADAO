@@ -22,7 +22,7 @@ TESTS_SIMPLE_HELLOWORLD		?= helloworld
 
 tests-benchmarks-highfive:
 	@rm -fr $(TESTS_BENCHMARKS_BUILD)
-	@mkdir $(TESTS_BENCHMARKS_BUILD)
+	@mkdir -p $(TESTS_BENCHMARKS_BUILD)
 	@ln -s $(TESTS_BENCHMARKS_SOURCE)/Makefile $(TESTS_BENCHMARKS_BUILD)/Makefile
 	@make -s src_dir=$(TESTS_BENCHMARKS_SOURCE) -C $(TESTS_BENCHMARKS_BUILD)
 
