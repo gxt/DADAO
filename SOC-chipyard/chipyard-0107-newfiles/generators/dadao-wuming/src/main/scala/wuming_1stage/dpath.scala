@@ -141,7 +141,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    regfileA.io.ras_pop   := (io.ctl.reg_grp === RAS_POP)
    regfileA.io.push_data := wb_data
 
-   io.dat.inst_rasp_excp := (((regfileA.io.ras_push) && (regfileA.io.ras_top === 0.U)) || ((regfileA.io.ras_pop) && (regfileA.io.ras_top === 0.U)))
+   io.dat.inst_rasp_excp := (((regfileA.io.ras_push) && (regfileA.io.ras_top === 63.U)) || ((regfileA.io.ras_pop) && (regfileA.io.ras_top === 0.U)))
 
    when (wb_wen)
    {

@@ -30,23 +30,24 @@ class RegFileA(implicit val conf: WumingCoreParams) extends Module
 
    val RASR_TOP = RegInit(0.U(BITS_HEXA.W))
 
-   val rasr_sp   = Wire(UInt(BITS_HEXA.W))
+   val push_ptr  = RASR_TOP + 1.U
+   val pop_ptr   = RASR_TOP
 
-   rasr_sp     := MuxCase(RASR_TOP, Array(
-                  (io.ras_push)   -> (RASR_TOP + 1.U),
-                  (io.ras_pop)    -> (RASR_TOP - 1.U),
-                  ))
-
-   when (io.ras_push || io.ras_pop)
+   when (io.ras_push)
    {
-      RASR_TOP    := rasr_sp
+      RASR_TOP   := push_ptr
    }
 
-   when (io.ras_push && (io.ras_top =/= 63.U))
+   when (io.ras_pop)
    {
-      RA_MEM(io.ras_top) := io.push_data
+      RASR_TOP   := pop_ptr - 1.U
    }
 
-   io.ras_top  := rasr_sp
-   io.pop_data := Mux((RASR_TOP =/= 0.U), RA_MEM(RASR_TOP), 0.U)
+   when (io.ras_push && (push_ptr =/= 0.U))
+   {
+      RA_MEM(push_ptr) := io.push_data
+   }
+
+   io.ras_top  := RASR_TOP
+   io.pop_data := Mux((pop_ptr =/= 0.U), RA_MEM(pop_ptr), 0.U)
 }
