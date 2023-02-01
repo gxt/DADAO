@@ -35,7 +35,7 @@ $$($(1)_v_tests): $(1)-v-%: $(1)/%.S
 $(1)_tests += $$($(1)_v_tests)
 
 $$($(1)_qemu_tests): $(1)-qemu-%: $(1)/%.S
-	$$(DADAO_ELF_GCC) $(2) $$(DADAO_ELF_GCC_FLAGS) -I$(src_dir)/../env/qemu -I$(src_dir)/macros/scalar $$< -o $$@
+	$$(DADAO_ELF_GCC) $(2) $$(DADAO_ELF_GCC_FLAGS) -I$(src_dir)/../env/qemu -I$(src_dir)/macros/scalar -T$(src_dir)/../env/qemu/link.ld $$< -o $$@
 $(1)_tests += $$($(1)_qemu_tests)
 
 $(1)_tests_dump = $$(addsuffix .dump, $$($(1)_tests))

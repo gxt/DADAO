@@ -1,0 +1,7 @@
+OUTPUT_ARCH( "DADAO" )
+ENTRY(_start)
+
+SECTIONS
+{
+  . = 0x80000000;
+}
