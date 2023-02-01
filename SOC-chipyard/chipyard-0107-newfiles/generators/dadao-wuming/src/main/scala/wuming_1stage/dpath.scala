@@ -265,8 +265,8 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
    val alu_out2 = Wire(UInt(BITS_OCTA.W))
    alu_out2    := MuxCase(0.U, Array(
-                  (io.ctl.alu_fun === ALU_ADD)    -> (Cat(Fill(63, 0.U), (alu_op1 +& alu_op2)(64))).asUInt(),
-                  (io.ctl.alu_fun === ALU_SUB)    -> (Cat(Fill(63, 0.U), (alu_op1 -& alu_op2)(64))).asUInt(),
+                  (io.ctl.alu_fun === ALU_ADD)    -> (Fill(64, (alu_op1 +& alu_op2)(64))).asUInt(),
+                  (io.ctl.alu_fun === ALU_SUB)    -> (Fill(64, (alu_op1 -& alu_op2)(64))).asUInt(),
                   (io.ctl.alu_fun === ALU_MULS)   -> ((alu_op1.asSInt() * alu_op2.asSInt())(127, 64)).asUInt(),
                   (io.ctl.alu_fun === ALU_MULU)   -> ((alu_op1.asUInt() * alu_op2.asUInt())(127, 64)).asUInt(),
                   (io.ctl.alu_fun === ALU_DIVS)   -> (Cat(Fill(64, alu_op1(63)), alu_op1).asSInt() % alu_op2.asSInt()).asUInt(),
