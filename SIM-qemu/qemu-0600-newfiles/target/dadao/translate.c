@@ -510,11 +510,8 @@ static bool trans_andnw(DisasContext *ctx, arg_andnw *a)
     if (a->ha == 0) {
         return true;
     }
-    int64_t arg = ((int64_t)a->immu16 << (a->ww * 16)) |
-                  ~((int64_t)0xFFFF << (a->ww * 16));
-    int64_t xor = (int64_t)0xFFFF << (a->ww * 16);
+    int64_t arg = ~((int64_t)a->immu16 << (a->ww * 16));
     tcg_gen_andi_i64(cpu_rd[a->ha], cpu_rd[a->ha], arg);
-    tcg_gen_xori_i64(cpu_rd[a->ha], cpu_rd[a->ha], xor);
     return true;
 }
 
@@ -554,11 +551,8 @@ static bool trans__andnw(DisasContext *ctx, arg__andnw *a)
     if (a->ha == 0) {
         return true;
     }
-    int64_t arg = ((int64_t)a->immu16 << (a->ww * 16)) |
-                  ~((int64_t)0xFFFF << (a->ww * 16));
-    int64_t xor = (int64_t)0xFFFF << (a->ww * 16);
+    int64_t arg = ~((int64_t)a->immu16 << (a->ww * 16));
     tcg_gen_andi_i64(cpu_rb[a->ha], cpu_rb[a->ha], arg);
-    tcg_gen_xori_i64(cpu_rb[a->ha], cpu_rb[a->ha], xor);
     return true;
 }
 
