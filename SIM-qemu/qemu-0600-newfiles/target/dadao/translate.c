@@ -623,8 +623,16 @@ static bool trans_adrp(DisasContext *ctx, arg_adrp *a)
 static bool trans_add(DisasContext *ctx, arg_add *a)
 {
     TCGv_i64 zero = tcg_const_i64(0);
+    TCGv_i64 flag = tcg_const_i64(0);
+    TCGv_i64 negative = tcg_const_i64(-1);
+    int64_t is_negative = 0x8000000000000000;
     tcg_gen_add2_i64(cpu_rd[a->hb], cpu_rd[a->ha],
                      cpu_rd[a->hc], zero, cpu_rd[a->hd], zero);
+    tcg_gen_movcond_i64(TCG_COND_EQ, cpu_rd[a->ha], cpu_rd[a->ha], zero,
+                        zero, negative);
+    tcg_gen_andi_i64(flag, cpu_rd[a->hb], is_negative);
+    tcg_gen_movcond_i64(TCG_COND_EQ, cpu_rd[a->ha], flag, zero,
+                        zero, negative);
     if (a->ha == 0) {
         tcg_gen_movi_i64(cpu_rd[a->ha], 0);
     }
@@ -638,8 +646,16 @@ static bool trans_add(DisasContext *ctx, arg_add *a)
 static bool trans_sub(DisasContext *ctx, arg_sub *a)
 {
     TCGv_i64 zero = tcg_const_i64(0);
+    TCGv_i64 flag = tcg_const_i64(0);
+    TCGv_i64 negative = tcg_const_i64(-1);
+    int64_t is_negative = 0x8000000000000000;
     tcg_gen_sub2_i64(cpu_rd[a->hb], cpu_rd[a->ha],
                      cpu_rd[a->hc], zero, cpu_rd[a->hd], zero);
+    tcg_gen_movcond_i64(TCG_COND_EQ, cpu_rd[a->ha], cpu_rd[a->ha], zero,
+                        zero, negative);
+    tcg_gen_andi_i64(flag, cpu_rd[a->hb], is_negative);
+    tcg_gen_movcond_i64(TCG_COND_EQ, cpu_rd[a->ha], flag, zero,
+                        zero, negative);
     if (a->ha == 0) {
         tcg_gen_movi_i64(cpu_rd[a->ha], 0);
     }
