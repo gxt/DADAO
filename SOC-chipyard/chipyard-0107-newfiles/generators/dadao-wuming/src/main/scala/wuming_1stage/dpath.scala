@@ -275,7 +275,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                   (io.ctl.alu_fun === ALU_CSET)   -> Mux(cond_yes, alu_op1, alu_op2).asUInt(),
                   (io.ctl.alu_fun === ALU_MULS)   -> ((alu_op1.asSInt() * alu_op2.asSInt())(BITS_OCTA-1, 0)).asUInt(),
                   (io.ctl.alu_fun === ALU_MULU)   -> ((alu_op1.asUInt() * alu_op2.asUInt())(BITS_OCTA-1, 0)).asUInt(),
-                  (io.ctl.alu_fun === ALU_DIVS)   -> (Cat(Fill(64, alu_op1(63)), alu_op1).asSInt() / alu_op2.asSInt()).asUInt(),
+                  (io.ctl.alu_fun === ALU_DIVS)   -> (alu_op1.asSInt() / alu_op2.asSInt()).asUInt(),
                   (io.ctl.alu_fun === ALU_DIVU)   -> (alu_op1.asUInt() / alu_op2.asUInt()).asUInt(),
                   ))
 
@@ -285,8 +285,8 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                   (io.ctl.alu_fun === ALU_SUB)    -> (Cat(Fill(64, alu_op1(63)), alu_op1) - Cat(Fill(64, alu_op2(63)), alu_op2))(127, 64).asUInt(),
                   (io.ctl.alu_fun === ALU_MULS)   -> ((alu_op1.asSInt() * alu_op2.asSInt())(127, 64)).asUInt(),
                   (io.ctl.alu_fun === ALU_MULU)   -> ((alu_op1.asUInt() * alu_op2.asUInt())(127, 64)).asUInt(),
-                  (io.ctl.alu_fun === ALU_DIVS)   -> (Cat(Fill(64, alu_op1(63)), alu_op1).asSInt() % alu_op2.asSInt()).asUInt(),
-                  (io.ctl.alu_fun === ALU_DIVU)   -> (Cat(Fill(64, 0.U), alu_op1).asUInt() % alu_op2.asUInt()).asUInt(),
+                  (io.ctl.alu_fun === ALU_DIVS)   -> (alu_op1.asSInt() % alu_op2.asSInt()).asUInt(),
+                  (io.ctl.alu_fun === ALU_DIVU)   -> (alu_op1.asUInt() % alu_op2.asUInt()).asUInt(),
                   ))
 
    // Branch/Jump Target Calculation
