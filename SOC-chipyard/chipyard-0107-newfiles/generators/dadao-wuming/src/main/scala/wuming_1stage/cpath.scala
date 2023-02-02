@@ -63,6 +63,9 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                   RD2RB   -> List(Y, CF_X     , COND_X  , REG_MRB  , OP1_X    , OP2_RDHC  , ALU_COPY2 , WB_RBHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
                   RB2RD   -> List(Y, CF_X     , COND_X  , REG_MRD  , OP1_X    , OP2_RBHC  , ALU_COPY2 , WB_RDHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
                   RB2RB   -> List(Y, CF_X     , COND_X  , REG_MRB  , OP1_X    , OP2_RBHC  , ALU_COPY2 , WB_RBHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
+                  RD2RF   -> List(Y, CF_X     , COND_X  , REG_MRF  , OP1_X    , OP2_RDHC  , ALU_COPY2 , WB_RFHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
+                  RF2RD   -> List(Y, CF_X     , COND_X  , REG_MRD  , OP1_X    , OP2_RFHC  , ALU_COPY2 , WB_RDHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
+                  RF2RF   -> List(Y, CF_X     , COND_X  , REG_MRF  , OP1_X    , OP2_RFHC  , ALU_COPY2 , WB_RFHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
 
                   AND     -> List(Y, CF_X     , COND_X  , REG_RD   , OP1_RDHC , OP2_RDHD  , ALU_AND   , WB_RDHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
                   ORR     -> List(Y, CF_X     , COND_X  , REG_RD   , OP1_RDHC , OP2_RDHD  , ALU_OR    , WB_RDHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),

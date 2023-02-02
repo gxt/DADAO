@@ -59,15 +59,18 @@ trait ScalarOpConstants
    val COND_EQ  = 15.asUInt(4.W)  // Condition Equal
 
    // Instruction Type
-   val REG_RD    = 0.asUInt(3.W)
-   val REG_RB    = 1.asUInt(3.W)
-   val REG_RF    = 3.asUInt(3.W)
-   val REG_MRD   = 4.asUInt(3.W)
-   val REG_MRB   = 5.asUInt(3.W)
-   val RAS_PUSH  = 6.asUInt(3.W)
-   val RAS_POP   = 7.asUInt(3.W)
-   val REG_CSR   = 2.asUInt(3.W)
-   val REG_X     = 0.asUInt(3.W)
+   val REG_RD    = 0.asUInt(4.W)
+   val REG_RB    = 1.asUInt(4.W)
+   val REG_RF    = 2.asUInt(4.W)
+   val REG_RA    = 3.asUInt(4.W)
+   val REG_MRD   = 4.asUInt(4.W)
+   val REG_MRB   = 5.asUInt(4.W)
+   val REG_MRF   = 6.asUInt(4.W)
+   val REG_MRA   = 7.asUInt(4.W)
+   val RAS_PUSH  = 8.asUInt(4.W)
+   val RAS_POP   = 9.asUInt(4.W)
+   val REG_CSR   = 15.asUInt(4.W)
+   val REG_X     = 0.asUInt(4.W)
 
    // Operand 1 Select Signal
    val OP1_RDHA = 1.asUInt(4.W)
@@ -84,6 +87,7 @@ trait ScalarOpConstants
    val OP2_RDHD   = 2.asUInt(4.W)
    val OP2_RBHC   = 3.asUInt(4.W)
    val OP2_RBHD   = 4.asUInt(4.W)
+   val OP2_RFHC   = 5.asUInt(4.W)
    val OP2_IMMU6  = 8.asUInt(4.W)  // immu6 source in hd field
    val OP2_IMMU12 = 9.asUInt(4.W)  // immu12 source in hc/hd field
    val OP2_IMMS12 = 10.asUInt(4.W)  // imms12 source in hc/hd field
@@ -121,14 +125,15 @@ trait ScalarOpConstants
    // Writeback Select Signal
    val WB_RDHA  = 1.asUInt(4.W)
    val WB_RDHB  = 2.asUInt(4.W)
-   val WB_RDHC  = 10.asUInt(4.W)
-   val WB_RDMM  = 3.asUInt(4.W)
-   val WB_HAHB  = 4.asUInt(4.W)   // two dest regs: rdha + rdhb
-   val WB_RBHA  = 5.asUInt(4.W)
-   val WB_RBHB  = 6.asUInt(4.W)
-   val WB_RBMM  = 7.asUInt(4.W)
-   val WB_RA    = 8.asUInt(4.W)
-   val WB_CSR   = 9.asUInt(4.W)
+   val WB_RDHC  = 3.asUInt(4.W)
+   val WB_RBHA  = 4.asUInt(4.W)
+   val WB_RBHB  = 5.asUInt(4.W)
+   val WB_RFHB  = 6.asUInt(4.W)
+   val WB_HAHB  = 8.asUInt(4.W)   // two dest regs: rdha + rdhb
+   val WB_RDMM  = 9.asUInt(4.W)
+   val WB_RBMM  = 10.asUInt(4.W)
+   val WB_RA    = 11.asUInt(4.W)
+   val WB_CSR   = 15.asUInt(4.W)
    val WB_X     = 0.asUInt(4.W)
 
    // Memory Function Type (Read,Write,Fence) Signal

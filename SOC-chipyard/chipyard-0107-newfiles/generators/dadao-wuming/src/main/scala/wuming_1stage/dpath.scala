@@ -112,7 +112,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                               (rrii_target(1, 0).orR       && io.ctl.pc_sel_no_xept === PC_RRII) ||
                               (ret_target(1, 0).orR        && io.ctl.pc_sel_no_xept === PC_RASP)
    // TODO: for multi reg insns, only single reg is legal at present
-   io.dat.inst_multi_reg := (((io.ctl.reg_grp === REG_MRD) || (io.ctl.reg_grp === REG_MRB)) && inst(5, 0).orR)
+   io.dat.inst_multi_reg := (((io.ctl.reg_grp === REG_MRD) || (io.ctl.reg_grp === REG_MRB) || (io.ctl.reg_grp === REG_MRF)) && inst(5, 0).orR)
    tval_inst_ma := MuxCase(0.U, Array(
                      (io.ctl.pc_sel_no_xept === PC_BR12) -> br12_target,
                      (io.ctl.pc_sel_no_xept === PC_BR18) -> br18_target,
@@ -172,6 +172,9 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       when ((io.ctl.wb_sel === WB_RDMM) && (ha_addr =/= 0.U)) {
          regfileD(ha_addr) := wb_data
       }
+      when ((io.ctl.wb_sel === WB_RFHB) && (hb_addr =/= 0.U)) {
+         regfileF(hb_addr) := wb_data
+      }
       when ((io.ctl.wb_sel === WB_CSR)  && (hd_addr =/= 0.U)) {
          regfileD(hd_addr) := wb_data
       }
@@ -193,6 +196,10 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val rbhb_data = Mux((hb_addr =/= 0.U), regfileB(hb_addr), pc_plus4)
    val rbhc_data = Mux((hc_addr =/= 0.U), regfileB(hc_addr), pc_plus4)
    val rbhd_data = Mux((hd_addr =/= 0.U), regfileB(hd_addr), pc_plus4)
+
+   val rfha_data = regfileF(ha_addr)
+   val rfhb_data = regfileF(hb_addr)
+   val rfhc_data = regfileF(hc_addr)
 
    // immediates
    val immu6 = inst(HD_MSB, HD_LSB)
@@ -223,6 +230,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                (io.ctl.op2_sel === OP2_RDHD) -> rdhd_data,
                (io.ctl.op2_sel === OP2_RBHC) -> rbhc_data,
                (io.ctl.op2_sel === OP2_RBHD) -> rbhd_data,
+               (io.ctl.op2_sel === OP2_RFHC) -> rfhc_data,
                (io.ctl.op2_sel === OP2_IMMU6) -> immu6,
                (io.ctl.op2_sel === OP2_IMMU12) -> immu12,
                (io.ctl.op2_sel === OP2_IMMS12) -> imms12,
@@ -350,8 +358,10 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    io.dmem.req.bits.data := MuxCase(0.U, Array(
                   (io.ctl.reg_grp === REG_MRD) -> rdha_data,
                   (io.ctl.reg_grp === REG_MRB) -> rbha_data,
+                  (io.ctl.reg_grp === REG_MRF) -> rfha_data,
                   (io.ctl.reg_grp === REG_RD)  -> rdha_data,
-                  (io.ctl.reg_grp === REG_RB)  -> rbha_data
+                  (io.ctl.reg_grp === REG_RB)  -> rbha_data,
+                  (io.ctl.reg_grp === REG_RF)  -> rfha_data,
                   ))
 
 
