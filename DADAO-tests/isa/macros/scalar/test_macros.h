@@ -97,7 +97,7 @@ test_ ## testnum:											\
 	inst	rd31, rd31, rd31;					\
     )
 
-#define TEST_ORRR_SRC12_EQ_DEST_RB( testnum, inst, result, val )	\
+#define TEST_ORRR_SRC1_EQ_SRC2_RB( testnum, inst, result, val )		\
     TEST_CASE( testnum, rd31, result,					\
 	move	rb31, val;						\
 	inst	rd31, rb31, rb31;					\
@@ -181,6 +181,13 @@ test_ ## testnum:											\
 	move	rd16, val1;						\
 	move	rd17, val2;						\
 	inst	rd0, rd16, rd17;					\
+    )
+
+#define TEST_ORRR_ZERODEST_RB( testnum, inst, val1, val2 )		\
+    TEST_CASE( testnum, rd0, 0,						\
+	move	rb16, val1;						\
+	move	rb17, val2;						\
+	inst	rd0, rb16, rb17;					\
     )
 
 #-----------------------------------------------------------------------
