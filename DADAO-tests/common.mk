@@ -1,5 +1,7 @@
 
-DIR_DADAO_INSTALL		?= ~/DADAO/__install/
+DIR_DADAO_BUILD			?= $(DIR_DADAO_TOP)/__build/
+DIR_DADAO_TARGET		?= $(DIR_DADAO_TOP)/__dadao/
+DIR_DADAO_INSTALL		?= $(DIR_DADAO_TOP)/__install/
 
 DADAO_ELF_PREFIX		?= $(DIR_DADAO_INSTALL)/bin/dadao-unknown-elf-
 DADAO_ELF_GAS			:= $(DADAO_ELF_PREFIX)as

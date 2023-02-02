@@ -20,17 +20,19 @@ TESTS_SIMPLE_INSN		?= insn-simple
 TESTS_SIMPLE_HELLOWORLD		?= helloworld
 #EXTRA_GCC_FLAGS		+= -fdump-tree-all -fdump-ipa-all -fdump-rtl-all
 
+TESTS_MAKE			:= make -s DIR_DADAO_TOP=$(DIR_DADAO_TOP)
+
 tests-benchmarks-highfive:
 	@rm -fr $(TESTS_BENCHMARKS_BUILD)
 	@mkdir -p $(TESTS_BENCHMARKS_BUILD)
 	@ln -s $(TESTS_BENCHMARKS_SOURCE)/Makefile $(TESTS_BENCHMARKS_BUILD)/Makefile
-	@make -s src_dir=$(TESTS_BENCHMARKS_SOURCE) -C $(TESTS_BENCHMARKS_BUILD)
+	@$(TESTS_MAKE) src_dir=$(TESTS_BENCHMARKS_SOURCE) -C $(TESTS_BENCHMARKS_BUILD)
 
 tests-bootrom-highfive:
 	@rm -fr $(TESTS_BOOTROM_BUILD)
 	@mkdir -p $(TESTS_BOOTROM_BUILD)
 	@cp $(TESTS_BOOTROM_SOURCE)/* $(TESTS_BOOTROM_BUILD)
-	@make -s src_dir=$(TESTS_BOOTROM_SOURCE) -C $(TESTS_BOOTROM_BUILD)
+	@$(TESTS_MAKE) src_dir=$(TESTS_BOOTROM_SOURCE) -C $(TESTS_BOOTROM_BUILD)
 
 tests-dejagnu-highfive:
 	@rm -rf $(TESTS_DEJAGNU_INSTALL)
@@ -51,15 +53,15 @@ tests-isa-bare-highfive:
 	@rm -fr $(TESTS_ISA_BUILD)
 	@mkdir -p $(TESTS_ISA_BUILD)
 	@ln -s $(TESTS_ISA_SOURCE)/Makefile $(TESTS_ISA_BUILD)/Makefile
-	@make src_dir=$(TESTS_ISA_SOURCE) -C $(TESTS_ISA_BUILD) dduii-bare
-	#@make src_dir=$(TESTS_ISA_SOURCE) -C $(TESTS_ISA_BUILD) run-qemu
+	@$(TESTS_MAKE) src_dir=$(TESTS_ISA_SOURCE) -C $(TESTS_ISA_BUILD) dduii-bare
+	@$(TESTS_MAKE) src_dir=$(TESTS_ISA_SOURCE) -C $(TESTS_ISA_BUILD) run-bare
 
 tests-isa-qemu-highfive:
 	@rm -fr $(TESTS_ISA_BUILD)
 	@mkdir -p $(TESTS_ISA_BUILD)
 	@ln -s $(TESTS_ISA_SOURCE)/Makefile $(TESTS_ISA_BUILD)/Makefile
-	@make src_dir=$(TESTS_ISA_SOURCE) -C $(TESTS_ISA_BUILD) dduii-qemu
-	@make src_dir=$(TESTS_ISA_SOURCE) -C $(TESTS_ISA_BUILD) run-qemu
+	@$(TESTS_MAKE) src_dir=$(TESTS_ISA_SOURCE) -C $(TESTS_ISA_BUILD) dduii-qemu
+	@$(TESTS_MAKE) src_dir=$(TESTS_ISA_SOURCE) -C $(TESTS_ISA_BUILD) run-qemu
 
 tests-simple-elf-highfive:
 	@rm -fr $(TESTS_SIMPLE_BUILD)
