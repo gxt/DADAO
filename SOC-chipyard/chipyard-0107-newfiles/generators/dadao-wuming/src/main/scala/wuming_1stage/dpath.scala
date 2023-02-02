@@ -172,6 +172,9 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       when ((io.ctl.wb_sel === WB_RDMM) && (ha_addr =/= 0.U)) {
          regfileD(ha_addr) := wb_data
       }
+      when ((io.ctl.wb_sel === WB_RFHA) && (hb_addr =/= 0.U)) {
+         regfileF(ha_addr) := wb_data
+      }
       when ((io.ctl.wb_sel === WB_RFHB) && (hb_addr =/= 0.U)) {
          regfileF(hb_addr) := wb_data
       }
@@ -209,8 +212,8 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val imms24 = Cat(Fill(40, inst(HA_MSB)), inst(HA_MSB, HD_LSB))
 
    val wydeposition = inst(WP_MSB, WP_LSB).asUInt() << 4
-   val wyde16 = inst(WYDE_MSB, WYDE_LSB)
-   val wydemask = ~(Fill(BITS_WYDE, 1.U) << wydeposition)
+   val wyde16       = inst(WYDE_MSB, WYDE_LSB)
+   val wydemask     = Fill(64, 1.U) & ~(Fill(16, 1.U) << wydeposition)
 
    val alu_op1 = Wire(UInt(BITS_OCTA.W))
    val alu_op2 = Wire(UInt(BITS_OCTA.W))
@@ -222,6 +225,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                (io.ctl.op1_sel === OP1_RBHA) -> rbha_data,
                (io.ctl.op1_sel === OP1_RBHB) -> rbhb_data,
                (io.ctl.op1_sel === OP1_RBHC) -> rbhc_data,
+               (io.ctl.op1_sel === OP1_RFHA) -> rfha_data,
                (io.ctl.op1_sel === OP1_PC)  -> pc_reg,
                )).asUInt()
 
@@ -264,6 +268,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                   (io.ctl.alu_fun === ALU_SRA)  -> (alu_op1.asSInt() >> alu_shamt).asUInt(),
                   (io.ctl.alu_fun === ALU_SRL)  -> (alu_op1 >> alu_shamt).asUInt(),
                   (io.ctl.alu_fun === ALU_SETOW)  -> (alu_op2 | wydemask).asUInt(),
+                  (io.ctl.alu_fun === ALU_SETW)   -> ((alu_op1 & wydemask) | alu_op2).asUInt(),
                   (io.ctl.alu_fun === ALU_ANDNW)  -> (alu_op1 & ~alu_op2).asUInt(),
                   (io.ctl.alu_fun === ALU_ADRP)   -> ((((alu_op1 >> 12.U) + alu_op2) << 12.U)).asUInt(),
                   (io.ctl.alu_fun === ALU_COPY2)  -> alu_op2.asUInt(),

@@ -79,7 +79,8 @@ trait ScalarOpConstants
    val OP1_RBHA = 4.asUInt(4.W)
    val OP1_RBHB = 5.asUInt(4.W)
    val OP1_RBHC = 6.asUInt(4.W)
-   val OP1_PC   = 7.asUInt(4.W)
+   val OP1_RFHA = 7.asUInt(4.W)
+   val OP1_PC   = 15.asUInt(4.W)
    val OP1_X    = 0.asUInt(4.W)
 
    // Operand 2 Select Signal
@@ -113,6 +114,7 @@ trait ScalarOpConstants
    val ALU_CMPU  = 10.asUInt(5.W)
    val ALU_SETOW = 11.asUInt(5.W)
    val ALU_ANDNW = 12.asUInt(5.W)
+   val ALU_SETW  = 20.asUInt(5.W)
    val ALU_ADRP  = 13.asUInt(5.W)
    val ALU_COPY2 = 14.asUInt(5.W)
    val ALU_CSET  = 15.asUInt(5.W)
@@ -128,7 +130,8 @@ trait ScalarOpConstants
    val WB_RDHC  = 3.asUInt(4.W)
    val WB_RBHA  = 4.asUInt(4.W)
    val WB_RBHB  = 5.asUInt(4.W)
-   val WB_RFHB  = 6.asUInt(4.W)
+   val WB_RFHA  = 6.asUInt(4.W)
+   val WB_RFHB  = 7.asUInt(4.W)
    val WB_HAHB  = 8.asUInt(4.W)   // two dest regs: rdha + rdhb
    val WB_RDMM  = 9.asUInt(4.W)
    val WB_RBMM  = 10.asUInt(4.W)
