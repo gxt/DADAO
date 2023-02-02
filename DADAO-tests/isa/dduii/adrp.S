@@ -15,10 +15,12 @@ DDTEST_CODE_BEGIN
   # Logical tests
   #-------------------------------------------------------------
 
-  TEST_RIII_OP( 2, adrp, 0x400000, 0x0, 0);
-  TEST_RIII_OP( 3, adrp, 0x405000, 0x0, 5);
-  TEST_RIII_OP( 4, adrp, 0x10400000, 0xfffff, 0x10000);
-  TEST_RIII_OP( 5, adrp, 0x3fb000, 0xffffffffffffffffff,-5);
+  TEST_RIII_OP( 2, adrp, 0x80000000, 0x0, 0);
+  TEST_RIII_OP( 3, adrp, 0x80005000, 0x0, 5);
+  TEST_RIII_OP( 4, adrp, 0x90000000, 0xfffff, 0x10000);
+  TEST_RIII_OP( 5, adrp, 0x7fffb000, 0xffffffffffffffffff,-5);
+  TEST_RIII_OP( 6, adrp, 0x9ffff000, 0x00000, 0x1ffff);
+  TEST_RIII_OP( 7, adrp, 0x60000000, 0xffffffffffffffffff,-0x20000);
 
   TEST_PASSFAIL
 
