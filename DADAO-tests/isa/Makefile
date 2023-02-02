@@ -18,7 +18,10 @@ vpath %.S $(src_dir)
 	$(DADAO_ELF_OBJDUMP) $(DADAO_ELF_OBJDUMP_FLAGS) $< > $@
 
 dduii-bare%.out: dduii-bare%
-	$(DADAO_QEMU_USER) $< 2> $@
+	@echo -n "$<	"
+	@make -C $(DIR_DADAO_TOP) CHIPYARD_0107_DADAO_BINARY=$(shell pwd)/$< chipyard-0107-run-binary	> /dev/null
+	@cp $(DIR_DADAO_BUILD)/chipyard-0107/output/chipyard.TestHarness.Wuming1StageConfig/$@ .
+	@tail -n 1 $@
 
 dduii-qemu%.out: dduii-qemu%
 	$(DADAO_QEMU_USER) $< 2> $@
