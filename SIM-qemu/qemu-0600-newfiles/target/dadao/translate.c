@@ -425,6 +425,16 @@ static bool trans_cs_all(DisasContext* ctx, arg_disas_dadao3* a, TCGCond cond)
     return true;
 }
 
+static bool trans_cs_eq_ne(DisasContext* ctx, arg_disas_dadao3* a, TCGCond cond)
+{
+    if (a->hc == 0) {
+        return true;
+    }
+    tcg_gen_movcond_i64(cond, cpu_rd[a->hc], cpu_rd[a->ha], cpu_rd[a->hb],
+                        cpu_rd[a->hd], cpu_rd[a->hc]);
+    return true;
+}
+
 static bool trans_rd2rd(DisasContext* ctx, arg_rd2rd* a)
 {
     return trans_hb2ha_all(ctx, a, cpu_rd, cpu_rd);
@@ -487,12 +497,12 @@ static bool trans_csp(DisasContext *ctx, arg_csp *a)
 
 static bool trans_cseq(DisasContext *ctx, arg_cseq *a)
 {
-    return trans_cs_all(ctx, a, TCG_COND_EQ);
+    return trans_cs_eq_ne(ctx, a, TCG_COND_EQ);
 }
 
 static bool trans_csne(DisasContext *ctx, arg_csne *a)
 {
-    return trans_cs_all(ctx, a, TCG_COND_NE);
+    return trans_cs_eq_ne(ctx, a, TCG_COND_NE);
 }
 
 static bool trans_orw(DisasContext *ctx, arg_orw *a)
