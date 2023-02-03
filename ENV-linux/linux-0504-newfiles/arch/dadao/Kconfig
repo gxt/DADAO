@@ -7,7 +7,7 @@ config 64BIT
 config MMU
 	def_bool y
 
-config CPU_BIG_ENDIAN
+config CPU_LITTLE_ENDIAN
 	def_bool y
 
 menu "Kernel Features"
