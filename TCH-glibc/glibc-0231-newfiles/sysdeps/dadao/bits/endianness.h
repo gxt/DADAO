@@ -9,7 +9,7 @@
 # error "Never use <bits/endianness.h> directly; include <endian.h> instead."
 #endif
 
-/* DADAO only support big endian */
-#define __BYTE_ORDER	__BIG_ENDIAN
+/* DADAO only support little endian */
+#define __BYTE_ORDER	__LITTLE_ENDIAN
 
 #endif /* _SYSDEPS_DADAO_BITS_ENDIANNESS_H_ */
