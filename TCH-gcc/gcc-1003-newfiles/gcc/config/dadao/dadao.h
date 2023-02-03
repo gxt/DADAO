@@ -122,8 +122,8 @@ struct GTY(()) machine_function
 /* XXX gccint 18.5 Node: Storage Layout */
 #define	BITS_BIG_ENDIAN			0
 #define	BYTES_BIG_ENDIAN		0
-#define	WORDS_BIG_ENDIAN		1
-#define	FLOAT_WORDS_BIG_ENDIAN		1
+#define	WORDS_BIG_ENDIAN		0
+#define	FLOAT_WORDS_BIG_ENDIAN		0
 #define	UNITS_PER_WORD			8
 
 #define	PARM_BOUNDARY			64
