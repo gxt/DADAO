@@ -132,6 +132,7 @@ int print_insn_dadao (bfd_vma memaddr, struct disassemble_info *info)
                                 info->target = memaddr + offset;
                                 (*info->fprintf_func) (info->stream, disassemble_dict->disassemble_format, op_1, op_2);
                                 (*info->print_address_func) (memaddr + offset, info);
+				return 4;
 			}
                         if (cal_offset == 18){
                                 offset = (insn & 0x3ffff) << 2;
