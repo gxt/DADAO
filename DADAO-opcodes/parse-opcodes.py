@@ -148,7 +148,10 @@ def read_opcodes(file_name: str):
                         insn_type = 'dref'
                 elif 'jmp' in resources:
                     if 'bpd' in resources:
-                        insn_type = 'condbranch'
+                        if 'hb' not in regfile_restrictions:
+                            insn_type = 'condbranch'
+                        else:
+                            insn_type = 'condbranch12'
                     else:
                         insn_type = 'branch'
                 else:
