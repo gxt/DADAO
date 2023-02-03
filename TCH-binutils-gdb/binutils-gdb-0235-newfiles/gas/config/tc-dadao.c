@@ -69,6 +69,9 @@ static struct hash_control *dadao_opcode_hash;
    5. HI18
 
    6. LO12
+
+   7. BRCC12
+      extra length: zero or five insns.
  */
 
 #define STATE_ABS (1)
@@ -77,6 +80,7 @@ static struct hash_control *dadao_opcode_hash;
 #define STATE_JUMP (4)
 #define STATE_HI18 (5)
 #define STATE_LO12 (6)
+#define STATE_BRCC12 (7)
 
 /* No fine-grainedness here.  */
 #define STATE_LENGTH_MASK (1)
@@ -143,6 +147,12 @@ const relax_typeS dadao_relax_table[] = {
 
     /* LO12 (6, 1). */
     {0, 0, DD_INSN_BYTES(3), 0},
+
+    /* BRCC12 (7, 0).  */
+    {(1 << 14), -(1 << 14), 0, ENCODE_RELAX(STATE_BRCC12, STATE_MAX)},
+
+    /* BRCC12 (7, 1).  */
+    {0, 0, DD_INSN_BYTES(0), 0},
 };
 
 const pseudo_typeS md_pseudo_table[] = {
@@ -238,7 +248,7 @@ get_operands(char *s, expressionS *exp, int *ret_code, int *is_adrp)
 		}
 		if (q[1] == 'l' && q[2] == 'o')
                 {
-                    *ret_code = 8;
+                    *ret_code = dadao_type_lo12;
 		    *is_adrp = 1;
 		    adrp_flag = 1;
                 }
@@ -756,7 +766,7 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
         break;
 
     case dadao_operand_imms12:
-        if (insn->major_opcode == 0x40 && exp_next[0].X_op != O_constant)
+        if (exp_next[0].X_op == O_symbol)
         {
             *insn_code = ((insn->major_opcode << 24) | (ha << 18) | (hb << 12));
             return insn->type;
@@ -1008,6 +1018,15 @@ void dadao_md_assemble(char *str)
                      exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
         break;
 
+    case dadao_type_condbranch12:
+        md_number_to_chars(opcodep, insn_code, 4);
+	if (!expand_op)
+	    fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_BRCC12);
+	else
+	    frag_var(rs_machine_dependent, DD_INSN_BYTES(5), 0, ENCODE_RELAX(STATE_BRCC12, STATE_UNDF),
+		     exp[2].X_add_symbol, exp[2].X_add_number, opcodep);
+	break;
+
     case dadao_type_geta:
         md_number_to_chars(opcodep, insn_code, 4);
         if (!expand_op)
@@ -1084,6 +1103,8 @@ int md_estimate_size_before_relax(fragS *fragP, segT segment)
         break;
         HANDLE_RELAXABLE(STATE_BRCC);
         break;
+	HANDLE_RELAXABLE(STATE_BRCC12);
+	break;
         HANDLE_RELAXABLE(STATE_JUMP);
         break;
         HANDLE_RELAXABLE(STATE_CALL);
@@ -1096,6 +1117,7 @@ int md_estimate_size_before_relax(fragS *fragP, segT segment)
     case ENCODE_RELAX(STATE_CALL, STATE_ZERO):
     case ENCODE_RELAX(STATE_ABS, STATE_ZERO):
     case ENCODE_RELAX(STATE_BRCC, STATE_ZERO):
+    case ENCODE_RELAX(STATE_BRCC12, STATE_ZERO):
     case ENCODE_RELAX(STATE_JUMP, STATE_ZERO):
     case ENCODE_RELAX(STATE_HI18, STATE_ZERO):
     case ENCODE_RELAX(STATE_LO12, STATE_ZERO):
@@ -1185,6 +1207,10 @@ void md_convert_frag(bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
         dd_set_addr_offset(opcodep, target_address - opcode_address, 18, 1);
         var_part_size = 0;
         break;
+    case ENCODE_RELAX(STATE_BRCC12, STATE_ZERO):
+	dd_set_addr_offset(opcodep, target_address - opcode_address, 12, 1);
+	var_part_size = 0;
+	break;
     case ENCODE_RELAX(STATE_HI18, STATE_ZERO):
         dd_set_addr_offset(opcodep, target_address - opcode_address, 30, 1);
         var_part_size = 0;
@@ -1206,6 +1232,7 @@ void md_convert_frag(bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
 
         HANDLE_MAX_RELOC(STATE_ABS, BFD_RELOC_DADAO_ABS);
         HANDLE_MAX_RELOC(STATE_BRCC, BFD_RELOC_DADAO_BRCC);
+	HANDLE_MAX_RELOC(STATE_BRCC12, BFD_RELOC_DADAO_BRCC12);
         HANDLE_MAX_RELOC(STATE_CALL, BFD_RELOC_DADAO_CALL);
         HANDLE_MAX_RELOC(STATE_JUMP, BFD_RELOC_DADAO_JUMP);
         HANDLE_MAX_RELOC(STATE_HI18, BFD_RELOC_DADAO_HI18);
@@ -1274,6 +1301,10 @@ void md_apply_fix(fixS *fixP, valueT *valP, segT segment)
         dd_set_addr_offset(buf, val, 18, 1);
         break;
 
+    case BFD_RELOC_DADAO_BRCC12:
+	dd_set_addr_offset(buf, val, 12, 1);
+	break;
+
     case BFD_RELOC_DADAO_CALL:
     case BFD_RELOC_DADAO_JUMP:
         dd_set_addr_offset(buf, val, 24, 1);
@@ -1341,6 +1372,7 @@ tc_gen_reloc(asection *section ATTRIBUTE_UNUSED, fixS *fixP)
     case BFD_RELOC_VTABLE_ENTRY:
     case BFD_RELOC_DADAO_ABS:
     case BFD_RELOC_DADAO_BRCC:
+    case BFD_RELOC_DADAO_BRCC12:
     case BFD_RELOC_DADAO_CALL:
     case BFD_RELOC_DADAO_JUMP:
     case BFD_RELOC_DADAO_HI18:

@@ -314,6 +314,24 @@ static reloc_howto_type elf_dadao_howto_table[] =
               0x0003ffff,                 /* dst_mask */
               TRUE),                      /* pcrel_offset */
 
+	/* The 12-bit conditional branches are supposed to reach any (code) address.
+                It can silently expand to a 64-bit operand, but will emit an error if
+                any of the two least significant bits are set.  The howto members
+                reflect a simple branch.  */
+	HOWTO(R_DADAO_BRCC12,		  /* type */
+	      2,			  /* rightshift */
+	      2,			  /* size (0 = byte, 1 = short, 2 = long) */
+	      14,			  /* bitsize */
+	      TRUE,			  /* pc_relative */
+	      0,			  /* bitpos */
+	      complain_overflow_bitfield, /* complain_on_overflow */
+	      dadao_elf_reloc,		  /* special_function */
+	      "R_DADAO_BRCC12",		  /* name */
+	      FALSE,			  /* partial_inplace */
+	      ~0x00000fff,		  /* src_mask */
+	      0x00000fff,		  /* dst_mask */
+	      TRUE),			  /* pcrel_offset */
+
         /* A CALL is supposed to reach any (code) address.  By itself, it can
 		reach +-64M; the expansion can reach all 64 bits.  Note that the 64M
 		limit is soon reached if you link the program in wildly different
@@ -406,6 +424,7 @@ static const struct dadao_reloc_map dadao_reloc_map[] =
         {BFD_RELOC_VTABLE_ENTRY, R_DADAO_GNU_VTENTRY},
         {BFD_RELOC_DADAO_ABS, R_DADAO_ABS},
         {BFD_RELOC_DADAO_BRCC, R_DADAO_BRCC},
+	{BFD_RELOC_DADAO_BRCC12, R_DADAO_BRCC12},
         {BFD_RELOC_DADAO_CALL, R_DADAO_CALL},
         {BFD_RELOC_DADAO_JUMP, R_DADAO_JUMP},
 	{BFD_RELOC_DADAO_HI18, R_DADAO_HI18},
@@ -546,6 +565,31 @@ dadao_elf_perform_relocation(asection *isec, reloc_howto_type *howto,
         }
 
         return bfd_reloc_ok;
+
+    case R_DADAO_BRCC12:
+	if ((value & 3) != 0)
+	    return bfd_reloc_notsupported;
+
+	insn_origin = bfd_get_32(abfd, (bfd_byte *)datap);
+
+	r = bfd_check_overflow(complain_overflow_bitfield,
+			       howto->bitsize, 0,
+			       bfd_arch_bits_per_address(abfd),
+			       value);
+	if (r == bfd_reloc_ok)
+	{
+	    bfd_put_32(abfd, (insn_origin & 0xFF000000) | ((value >> 2) & 0xFFF),
+		       (bfd_byte *)datap);
+
+	    return bfd_reloc_ok;
+	}
+	else
+	{
+	    //wait to fix
+	    return bfd_reloc_notsupported;
+	}
+
+	return bfd_reloc_ok;
 
     case R_DADAO_CALL:
         if ((value & 3) != 0)
@@ -870,6 +914,7 @@ dadao_final_link_relocate(reloc_howto_type *howto, asection *input_section,
     /* All these are PC-relative.  */
     case R_DADAO_ABS:
     case R_DADAO_BRCC:
+    case R_DADAO_BRCC12:
     case R_DADAO_CALL:
     case R_DADAO_JUMP:
     case R_DADAO_HI18:
@@ -1207,12 +1252,18 @@ dadao_elf_relax_section (bfd *abfd, asection *sec,
                 delcnt = 16;
                 deloff = 0;
             }
-            if (r_type == R_DADAO_BRCC && ((opcode>>24) >= 0x28 && (opcode>>24) <= 0x2F))
+            if (r_type == R_DADAO_BRCC && ((opcode>>24) >= 0x28 && (opcode>>24) <= 0x2D))
             {
                 /* Delete 20 bytes from irel->r_offset */
                 delcnt = 20;
                 deloff = 0;
             }
+	    if (r_type == R_DADAO_BRCC12 && ((opcode>>24) == 0x2E && (opcode>>24) == 0x2F))
+	    {
+		/* Delete 14 bytes from irel->r_offset */
+		delcnt = 14;
+		deloff = 0;
+	    }
             if (r_type == R_DADAO_JUMP && MATCH (opcode, DADAO_INSN_JUMP_IIII))
             {
                 delcnt = 16;

@@ -20,6 +20,7 @@ extern const struct dadao_reg_alias dadao_reg_aliases[];
 enum dadao_insn_type {
 	dadao_type_normal,
 	dadao_type_condbranch,
+	dadao_type_condbranch12,
 	dadao_type_branch,
 	dadao_type_geta,
 	dadao_type_dref,
