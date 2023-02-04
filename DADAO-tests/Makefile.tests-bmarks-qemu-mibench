@@ -1,0 +1,41 @@
+#
+# Makefile for mibench
+#
+TBQ_MIBENCH_LOCAL       := /pub/GITHUB/ekut-es/mibench.git
+TBQ_MIBENCH_GITHUB      := https://github.com/ekut-es/mibench.git
+TBQ_MIBENCH_BRANCH      := mibench
+TBQ_MIBENCH_SOURCE      := $(TESTS_BMARKS_QEMU_BUILD)/mibench
+TBQ_MIBENCH_BUILD       := $(TESTS_BMARKS_QEMU_BUILD)/mibench
+TBQ_MIBENCH_PATCHES     := $(TESTS_BMARKS_QEMU_SOURCE)/mibench-patches
+
+tests-bmarks-qemu-mibench-clean:
+	# Remove old mibench source dir ...
+	@rm -fr $(TBQ_MIBENCH_SOURCE)
+	# Remove old build dir ...
+	@rm -fr $(TBQ_MIBENCH_BUILD)
+
+tests-bmarks-qemu-mibench-source:
+	# Remove old mibench source dir ...
+	@test -d $(TBQ_MIBENCH_SOURCE) || mkdir -p $(TBQ_MIBENCH_SOURCE)
+	# Clone official repo
+ifeq ($(wildcard $(TBQ_MIBENCH_LOCAL)),)
+	@git clone -q $(TBQ_MIBENCH_GITHUB) -- $(TBQ_MIBENCH_SOURCE)
+else
+	@git clone -q $(TBQ_MIBENCH_LOCAL) -- $(TBQ_MIBENCH_SOURCE)
+endif
+	@cd $(TBQ_MIBENCH_SOURCE); git checkout -qb $(TBQ_MIBENCH_BRANCH)
+	# Apply patches
+	@cd $(TBQ_MIBENCH_SOURCE); git am $(TBQ_MIBENCH_PATCHES)/*.patch
+
+tests-bmarks-qemu-mibench-build:
+	@cd $(TBQ_MIBENCH_SOURCE);      \
+        make CC=$(DADAO_ELF_GCC) PLATFORM=$(PLATFORM)
+
+tests-bmarks-qemu-mibench-build:
+	# TODO
+
+tests-bmarks-qemu-mibench-highfive:
+	@make -s tests-bmarks-qemu-mibench-clean
+	@make -s tests-bmarks-qemu-mibench-source
+	@make -s tests-bmarks-qemu-mibench-build
+	@make -s tests-bmarks-qemu-mibench-qemu

@@ -17,8 +17,6 @@ DDB_QEMU_USER		:= $(DIR_DADAO_INSTALL)/bin/qemu-dadao
 DDB_QEMU_SYS		:= $(DIR_DADAO_INSTALL)/bin/qemu-system-dadao
 
 include DADAO-bench/Makefile.bench-multi-arch
-include DADAO-bench/Makefile.bench-coremark
-include DADAO-bench/Makefile.bench-mibench
 
 bench-clean:
 	@rm -fr $(DDB_DST_DIR)

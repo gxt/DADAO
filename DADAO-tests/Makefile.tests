@@ -49,6 +49,7 @@ tests-bmarks-qemu-dhrystone-highfive:
 
 include DADAO-tests/Makefile.tests-bmarks-qemu-embench
 include DADAO-tests/Makefile.tests-bmarks-qemu-coremark
+include DADAO-tests/Makefile.tests-bmarks-qemu-mibench
 
 tests-bootrom-highfive:
 	@rm -fr $(TESTS_BOOTROM_BUILD)
