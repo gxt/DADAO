@@ -31,9 +31,7 @@ include SOC-chipyard/Makefile.chipyard-$(VER_CHIPYARD)
 
 include DADAO-opcodes/Makefile.opcodes
 include DADAO-rte/Makefile.rte
-
 include DADAO-tests/Makefile.tests
-include DADAO-bench/Makefile.bench
 
 tch-gnu-highfive:
 	@echo "=== BUILD Toolchain dadao-linux-gnu BEGIN ==="
@@ -66,11 +64,10 @@ soc-highfive:
 	@echo "=== BUILD SoC DONE! ==="
 
 dadao-highfive:
-	@make --silent dadao-reboot
 	@echo "BEGIN TO BUILD EVERYTHING!"
+	@make --silent tch-elf-highfive
 	@make --silent sim-highfive
-	@make --silent tch-highfive
-	@make --silent env-highfive
+	@make --silent soc-highfive
 	@echo "BUILD EVERYTHING DONE!"
 
 dadao-clean:
