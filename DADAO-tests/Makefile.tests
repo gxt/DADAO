@@ -47,6 +47,8 @@ tests-bmarks-qemu-dhrystone-highfive:
 		-D $(TESTS_BMARKS_QEMU_BUILD)/dhrystone/dhrystone.qemulog		\
 		$(TESTS_BMARKS_QEMU_BUILD)/dhrystone/dhry
 
+include DADAO-tests/Makefile.tests-bmarks-qemu-embench
+
 tests-bootrom-highfive:
 	@rm -fr $(TESTS_BOOTROM_BUILD)
 	@mkdir -p $(TESTS_BOOTROM_BUILD)

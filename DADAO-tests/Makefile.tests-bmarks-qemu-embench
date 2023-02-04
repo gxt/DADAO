@@ -1,0 +1,62 @@
+#
+# Makefile for embench
+#
+TBQ_EMBENCH_LOCAL	:= /pub/GITHUB/embench/embench-iot.git
+TBQ_EMBENCH_GITHUB	:= https://github.com/embench/embench-iot.git
+TBQ_EMBENCH_SOURCE	:= $(TESTS_BMARKS_QEMU_BUILD)/embench-iot
+TBQ_EMBENCH_NEWFILES	:= $(TESTS_BMARKS_QEMU_SOURCE)/embench-iot
+TBQ_EMBENCH_BUILD	:= $(TESTS_BMARKS_QEMU_BUILD)/embench-build
+TBQ_EMBENCH_LOG		:= $(TESTS_BMARKS_QEMU_BUILD)/embench-log
+
+tests-bmarks-qemu-embench-clean:
+	# Remove old embench source dir ...
+	@rm -fr $(TBQ_EMBENCH_SOURCE)
+	# Remove old build dir ...
+	@rm -fr $(TBQ_EMBENCH_BUILD)
+	# Remove old log dir ...
+	@rm -fr $(TBQ_EMBENCH_LOG)
+
+tests-bmarks-qemu-embench-source:
+	# Clone official repo
+ifeq ($(wildcard $(TBQ_EMBENCH_LOCAL)),)
+	@git clone -q $(TBQ_EMBENCH_GITHUB) -- $(TBQ_EMBENCH_SOURCE)
+else
+	@git clone -q $(TBQ_EMBENCH_LOCAL) -- $(TBQ_EMBENCH_SOURCE)
+endif
+	# Add dadao support
+	@cp -a $(TBQ_EMBENCH_NEWFILES)/config/dadao $(TBQ_EMBENCH_SOURCE)/config
+	@cd $(TBQ_EMBENCH_SOURCE);				\
+		git add .;					\
+		git commit -sm"Add DADAO support"
+	# Add run_qemu.py
+	@cp -a $(TBQ_EMBENCH_NEWFILES)/pylib/* $(TBQ_EMBENCH_SOURCE)/pylib
+	@cd $(TBQ_EMBENCH_SOURCE);				\
+		git add .;					\
+		git commit -sm"Add run_qemu.py"
+
+tests-bmarks-qemu-embench-build-all:
+	$(TBQ_EMBENCH_SOURCE)/build_all.py			\
+		--builddir $(TBQ_EMBENCH_BUILD)			\
+		--logdir $(TBQ_EMBENCH_LOG)			\
+		--arch dadao					\
+		--cc $(DADAO_ELF_GCC)				\
+		--cflags="-c"					\
+		--user-libs="-lm"
+
+tests-bmarks-qemu-embench-benchmark-size:
+	$(TBQ_EMBENCH_SOURCE)/benchmark_size.py			\
+		--builddir $(TBQ_EMBENCH_BUILD)			\
+		--logdir $(TBQ_EMBENCH_LOG)
+
+tests-bmarks-qemu-embench-benchmark-speed:
+	$(TBQ_EMBENCH_SOURCE)/benchmark_speed.py		\
+		--builddir $(TBQ_EMBENCH_BUILD)			\
+		--logdir $(TBQ_EMBENCH_LOG)			\
+		--target-module run_qemu
+
+tests-bmarks-qemu-embench-highfive:
+	@make -s tests-bmarks-qemu-embench-clean
+	@make -s tests-bmarks-qemu-embench-source
+	@make -s tests-bmarks-qemu-embench-build-all
+	@make -s tests-bmarks-qemu-embench-benchmark-size
+	@make -s tests-bmarks-qemu-embench-benchmark-speed
