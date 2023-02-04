@@ -1,0 +1,38 @@
+#
+# Makefile for coremark
+#
+TBQ_COREMARK_LOCAL	:= /pub/GITHUB/eembc/coremark.git
+TBQ_COREMARK_GITHUB	:= https://github.com/eembc/coremark.git
+TBQ_COREMARK_BUILD	:= $(TESTS_BMARKS_QEMU_BUILD)/coremark
+
+tests-bmarks-qemu-coremark-clean:
+	# Remove old coremark source dir ...
+	@rm -fr $(TBQ_COREMARK_BUILD)
+	@rm -fr $(TESTS_BMARKS_QEMU_BUILD)/coremark.qemulog
+
+tests-bmarks-qemu-coremark-source:
+	# Clone official repo
+ifeq ($(wildcard $(TBQ_COREMARK_LOCAL)),)
+	@git clone -q $(TBQ_COREMARK_GITHUB) -- $(TBQ_COREMARK_BUILD)
+else
+	@git clone -q $(TBQ_COREMARK_LOCAL) -- $(TBQ_COREMARK_BUILD)
+endif
+
+tests-bmarks-qemu-coremark-build:
+	@cd $(TBQ_COREMARK_BUILD);					\
+		PORT_DIR=linux						\
+		CC=$(DADAO_ELF_GCC)					\
+		XCFLAGS="-static -O0"					\
+		NO_LIBRT=true						\
+		make compile
+
+tests-bmarks-qemu-coremark-qemu:
+	@$(DADAO_QEMU_USER)						\
+		-D $(TESTS_BMARKS_QEMU_BUILD)/coremark.qemulog		\
+		$(TBQ_COREMARK_BUILD)/coremark.exe
+
+tests-bmarks-qemu-coremark-highfive:
+	@make -s tests-bmarks-qemu-coremark-clean
+	@make -s tests-bmarks-qemu-coremark-source
+	@make -s tests-bmarks-qemu-coremark-build
+	@make -s tests-bmarks-qemu-coremark-qemu
