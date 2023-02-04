@@ -9,8 +9,6 @@ TESTS_BENCHMARKS_BUILD		:= $(DIR_DADAO_TOP)/__tests/benchmarks/
 TESTS_BOOTROM_SOURCE		:= $(DIR_DADAO_TOP)/DADAO-tests/bootrom/
 TESTS_BOOTROM_BUILD		:= $(DIR_DADAO_TOP)/__tests/bootrom/
 
-TESTS_DEJAGNU_INSTALL		:= $(DIR_DADAO_TOP)/__tests/dejagnu
-
 TESTS_ISA_SOURCE		:= $(DIR_DADAO_TOP)/DADAO-tests/isa
 TESTS_ISA_BUILD			:= $(DIR_DADAO_TOP)/__tests/isa
 
@@ -33,21 +31,6 @@ tests-bootrom-highfive:
 	@mkdir -p $(TESTS_BOOTROM_BUILD)
 	@cp $(TESTS_BOOTROM_SOURCE)/* $(TESTS_BOOTROM_BUILD)
 	@$(TESTS_MAKE) src_dir=$(TESTS_BOOTROM_SOURCE) -C $(TESTS_BOOTROM_BUILD)
-
-tests-dejagnu-highfive:
-	@rm -rf $(TESTS_DEJAGNU_INSTALL)
-	@mkdir -p $(TESTS_DEJAGNU_INSTALL)/usr/bin
-	@mkdir -p $(TESTS_DEJAGNU_INSTALL)/usr/share/dejagnu/baseboards
-	@ln -s -t $(TESTS_DEJAGNU_INSTALL)/usr/bin/ /usr/bin/runtest
-	@ln -s $(DIR_DADAO_INSTALL)/bin/qemu-dadao $(TESTS_DEJAGNU_INSTALL)/usr/bin/dadao-unknown-elf-run
-	@ln -s -t $(TESTS_DEJAGNU_INSTALL)/usr/share/dejagnu/			\
-		/usr/share/dejagnu/*.c						\
-		/usr/share/dejagnu/*.exp					\
-		/usr/share/dejagnu/libexec					\
-		/usr/share/dejagnu/config
-	@ln -s -t $(TESTS_DEJAGNU_INSTALL)/usr/share/dejagnu/baseboards/	\
-		/usr/share/dejagnu/baseboards/basic-sim.exp			\
-		$(DIR_DADAO_TOP)/DADAO-tests/dejagnu/qemu-dadao.exp
 
 tests-isa-bare-highfive:
 	@rm -fr $(TESTS_ISA_BUILD)
