@@ -122,8 +122,8 @@ gcc-1003-highfive:
 
 gcc-1003-check:
 	@echo "Run gcc-testsuite with qemu simulator"
-	@test -d $(TESTS_DEJAGNU_INSTALL) || make -s -C $(DIR_DADAO_TOP) tests-dejagnu-highfive
-	@PATH=$(TESTS_DEJAGNU_INSTALL)/usr/bin:/bin:/usr/bin				\
+	@test -f $(DIR_DADAO_INSTALL)/usr/bin/runtest || make -s -C $(DIR_DADAO_TOP) qemu-dejagnu-prepare
+	@PATH=$(DIR_DADAO_INSTALL)/usr/bin:/bin:/usr/bin				\
 		make -C $(GCC_1003_BUILD) check-gcc-c					\
 		RUNTESTFLAGS="--target_board=qemu-dadao"
 
