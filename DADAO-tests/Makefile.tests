@@ -3,8 +3,8 @@
 #
 include $(DIR_DADAO_TOP)/DADAO-tests/common.mk
 
-TESTS_BENCHMARKS_SOURCE		:= $(DIR_DADAO_TOP)/DADAO-tests/benchmarks/
-TESTS_BENCHMARKS_BUILD		:= $(DIR_DADAO_TOP)/__tests/benchmarks/
+TESTS_BMARKS_BARE_SOURCE	:= $(DIR_DADAO_TOP)/DADAO-tests/bmarks-bare/
+TESTS_BMARKS_BARE_BUILD		:= $(DIR_DADAO_TOP)/__tests/bmarks-bare/
 
 TESTS_BOOTROM_SOURCE		:= $(DIR_DADAO_TOP)/DADAO-tests/bootrom/
 TESTS_BOOTROM_BUILD		:= $(DIR_DADAO_TOP)/__tests/bootrom/
@@ -20,11 +20,11 @@ TESTS_SIMPLE_HELLOWORLD		?= helloworld
 
 TESTS_MAKE			:= make -s DIR_DADAO_TOP=$(DIR_DADAO_TOP)
 
-tests-benchmarks-highfive:
-	@rm -fr $(TESTS_BENCHMARKS_BUILD)
-	@mkdir -p $(TESTS_BENCHMARKS_BUILD)
-	@ln -s $(TESTS_BENCHMARKS_SOURCE)/Makefile $(TESTS_BENCHMARKS_BUILD)/Makefile
-	@$(TESTS_MAKE) src_dir=$(TESTS_BENCHMARKS_SOURCE) -C $(TESTS_BENCHMARKS_BUILD)
+tests-bmarks-bare-highfive:
+	@rm -fr $(TESTS_BMARKS_BARE_BUILD)
+	@mkdir -p $(TESTS_BMARKS_BARE_BUILD)
+	@ln -s $(TESTS_BMARKS_BARE_SOURCE)/Makefile $(TESTS_BMARKS_BARE_BUILD)/Makefile
+	@$(TESTS_MAKE) src_dir=$(TESTS_BMARKS_BARE_SOURCE) -C $(TESTS_BMARKS_BARE_BUILD)
 
 tests-bootrom-highfive:
 	@rm -fr $(TESTS_BOOTROM_BUILD)
