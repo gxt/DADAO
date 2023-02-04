@@ -51,6 +51,8 @@ include DADAO-tests/Makefile.tests-bmarks-qemu-embench
 include DADAO-tests/Makefile.tests-bmarks-qemu-coremark
 include DADAO-tests/Makefile.tests-bmarks-qemu-mibench
 
+include DADAO-tests/Makefile.tests-simple-multi-arch
+
 tests-bootrom-highfive:
 	@rm -fr $(TESTS_BOOTROM_BUILD)
 	@mkdir -p $(TESTS_BOOTROM_BUILD)
