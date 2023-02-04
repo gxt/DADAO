@@ -31,7 +31,7 @@ tests-bmarks-qemu-mibench-build:
 	@cd $(TBQ_MIBENCH_SOURCE);      \
         make CC=$(DADAO_ELF_GCC) PLATFORM=$(PLATFORM)
 
-tests-bmarks-qemu-mibench-build:
+tests-bmarks-qemu-mibench-qemu:
 	# TODO
 
 tests-bmarks-qemu-mibench-highfive:
