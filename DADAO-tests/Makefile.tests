@@ -5,6 +5,8 @@ include $(DIR_DADAO_TOP)/DADAO-tests/common.mk
 
 TESTS_BMARKS_BARE_SOURCE	:= $(DIR_DADAO_TOP)/DADAO-tests/bmarks-bare/
 TESTS_BMARKS_BARE_BUILD		:= $(DIR_DADAO_TOP)/__tests/bmarks-bare/
+TESTS_BMARKS_QEMU_SOURCE	:= $(DIR_DADAO_TOP)/DADAO-tests/bmarks-qemu/
+TESTS_BMARKS_QEMU_BUILD		:= $(DIR_DADAO_TOP)/__tests/bmarks-qemu/
 
 TESTS_BOOTROM_SOURCE		:= $(DIR_DADAO_TOP)/DADAO-tests/bootrom/
 TESTS_BOOTROM_BUILD		:= $(DIR_DADAO_TOP)/__tests/bootrom/
@@ -25,6 +27,25 @@ tests-bmarks-bare-highfive:
 	@mkdir -p $(TESTS_BMARKS_BARE_BUILD)
 	@ln -s $(TESTS_BMARKS_BARE_SOURCE)/Makefile $(TESTS_BMARKS_BARE_BUILD)/Makefile
 	@$(TESTS_MAKE) src_dir=$(TESTS_BMARKS_BARE_SOURCE) -C $(TESTS_BMARKS_BARE_BUILD)
+
+tests-bmarks-qemu-dhrystone-highfive:
+	@rm -fr $(TESTS_BMARKS_QEMU_BUILD)/dhrystone
+	@mkdir -p $(TESTS_BMARKS_QEMU_BUILD)/dhrystone
+	@cd $(TESTS_BMARKS_QEMU_BUILD)/dhrystone ;					\
+		$(DADAO_ELF_GCC)							\
+			-static								\
+			-save-temps							\
+			-DHZ=250							\
+			-DTIME								\
+			-o $(TESTS_BMARKS_QEMU_BUILD)/dhrystone/dhry			\
+			$(TESTS_BMARKS_QEMU_SOURCE)/dhry-c/dhry_1.c			\
+			$(TESTS_BMARKS_QEMU_SOURCE)/dhry-c/dhry_2.c
+	@$(DADAO_ELF_READELF) -a $(TESTS_BMARKS_QEMU_BUILD)/dhrystone/dhry	> $(TESTS_BMARKS_QEMU_BUILD)/dhrystone/dhry.elf
+	@$(DADAO_ELF_OBJDUMP) -lDS $(TESTS_BMARKS_QEMU_BUILD)/dhrystone/dhry	> $(TESTS_BMARKS_QEMU_BUILD)/dhrystone/dhry.dump
+	@echo 10 | $(DADAO_QEMU_USER)							\
+		-singlestep -strace							\
+		-D $(TESTS_BMARKS_QEMU_BUILD)/dhrystone/dhrystone.qemulog		\
+		$(TESTS_BMARKS_QEMU_BUILD)/dhrystone/dhry
 
 tests-bootrom-highfive:
 	@rm -fr $(TESTS_BOOTROM_BUILD)
