@@ -1,0 +1,31 @@
+From 16234d6d04acd6274fd10ea10a5539c07e5b49ec Mon Sep 17 00:00:00 2001
+From: zengxiaofeng <zengxiaofeng@pkunity.com>
+Date: Mon, 6 Feb 2023 13:49:10 +0800
+Subject: [PATCH] DADAO-binutils: testsuite/binutils-all/dw2-decodedline.S
+
+Signed-off-by: zengxiaofeng <zengxiaofeng@pkunity.com>
+---
+ binutils/testsuite/binutils-all/dw2-decodedline.S | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/binutils/testsuite/binutils-all/dw2-decodedline.S b/binutils/testsuite/binutils-all/dw2-decodedline.S
+index a54bdcfba17..0a3bc9f0a50 100644
+--- a/binutils/testsuite/binutils-all/dw2-decodedline.S
++++ b/binutils/testsuite/binutils-all/dw2-decodedline.S
+@@ -6,11 +6,11 @@
+ 	.type	f1, %function
+ f1:
+ 	.loc 2 1 0
+-	nop
++	swym
+ 	.size	f1, .-f1
+ 	.globl main
+ 	.type	main, %function
+ main:
+ 	.loc 1 2 0
+-	nop
++	swym
+ 	.size	main, .-main
+-- 
+2.34.1
+
