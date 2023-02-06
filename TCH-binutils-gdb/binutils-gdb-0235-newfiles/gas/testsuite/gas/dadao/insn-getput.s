@@ -15,10 +15,7 @@ _start:
 	ra2rd	rd1, ra1, 63
 
 	csn	rd1, rd2, rd3, rd4
-	csnn	rd1, rd2, rd3, rd4
 	csz	rd1, rd2, rd3, rd4
-	csnz	rd1, rd2, rd3, rd4
 	csp	rd1, rd2, rd3, rd4
-	csnp	rd1, rd2, rd3, rd4
-	csod	rd1, rd2, rd3, rd4
-	csev	rd1, rd2, rd3, rd4
+	cseq	rd1, rd2, rd3, rd4
+	csne	rd1, rd2, rd3, rd4

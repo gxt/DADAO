@@ -15,10 +15,7 @@ Disassembly of section .text:
   1c:	10e4107f 	rd2ra	ra1, rd1, 0x3f
   20:	10e8107f 	ra2rd	rd1, ra1, 0x3f
   24:	200420c4 	csn	rd1, rd2, rd3, rd4
-  28:	210420c4 	csnn	rd1, rd2, rd3, rd4
-  2c:	220420c4 	csz	rd1, rd2, rd3, rd4
-  30:	230420c4 	csnz	rd1, rd2, rd3, rd4
-  34:	240420c4 	csp	rd1, rd2, rd3, rd4
-  38:	250420c4 	csnp	rd1, rd2, rd3, rd4
-  3c:	260420c4 	csod	rd1, rd2, rd3, rd4
-  40:	270420c4 	csev	rd1, rd2, rd3, rd4
+  28:	220420c4 	csz	rd1, rd2, rd3, rd4
+  2c:	240420c4 	csp	rd1, rd2, rd3, rd4
+  30:	260420c4 	cseq	rd1, rd2, rd3, rd4
+  34:	270420c4 	csne	rd1, rd2, rd3, rd4
