@@ -1,0 +1,32 @@
+From b703d2dbd381cacbf6763d3dad1ed841636d2956 Mon Sep 17 00:00:00 2001
+From: zengxiaofeng <zengxiaofeng@pkunity.com>
+Date: Mon, 6 Feb 2023 17:50:23 +0800
+Subject: [PATCH 2/3] DADAO-binutils: gas/testsuite/gas/elf/warn-2.s
+
+Signed-off-by: zengxiaofeng <zengxiaofeng@pkunity.com>
+---
+ gas/testsuite/gas/elf/warn-2.s | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/gas/testsuite/gas/elf/warn-2.s b/gas/testsuite/gas/elf/warn-2.s
+index 79d6205c807..226218ab681 100644
+--- a/gas/testsuite/gas/elf/warn-2.s
++++ b/gas/testsuite/gas/elf/warn-2.s
+@@ -6,12 +6,12 @@
+ 	.offset 40
+ 	
+  .ifeq nop_type - 1
+-	nop 0
++	swym 0
+  .else
+  .ifeq nop_type - 2
+ 	l.nop 0
+  .else
+-	nop
++	swym
+  .endif
+  .endif
+ 
+-- 
+2.34.1
+
