@@ -137,4 +137,4 @@ qemu-dejagnu-prepare:
 		/usr/share/dejagnu/config
 	@ln -s -t $(DIR_DADAO_INSTALL)/usr/share/dejagnu/baseboards/		\
 		/usr/share/dejagnu/baseboards/basic-sim.exp			\
-		$(DIR_DADAO_TOP)/DADAO-tests/dejagnu/qemu-dadao.exp
+		$(DIR_DADAO_TOP)/SIM-qemu/qemu-dadao.exp
