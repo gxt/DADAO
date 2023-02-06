@@ -19,7 +19,7 @@
 #include "dwarf2dbg.h"
 
 static int get_operands(char *, expressionS *, int *, int *);
-static void dd_set_addr_offset(char *, offsetT, int, int);
+static void dd_set_addr_offset(char *, offsetT, int, int, int);
 static void dd_fill_nops(char *, int);
 
 /* The fragS of the instruction being assembled.  Only valid from within
@@ -172,20 +172,20 @@ const char EXP_CHARS[] = "eE";
 const char FLT_CHARS[] = "rf";
 
 /* Fill in the offset-related part.  */
-static void dd_set_addr_offset(char *opcodep, offsetT value, int bitcount, int is_insn)
+static void dd_set_addr_offset(char *opcodep, offsetT value, int bitcount, int is_insn, int line)
 {
     if (is_insn)
     {
         if ((value & 0x3) != 0)
-            as_fatal("instruction address not align correctly");
+            as_fatal("instruction address not align correctly in line %d", line);
 
         value /= 4;
     }
 
     if ((value > 0) && (value >= (1 << bitcount)))
-        as_fatal("offset too large: 0x%llx", (unsigned long long)value);
+        as_fatal("offset too large in line %d: 0x%llx", line, (unsigned long long)value);
     if ((value < 0) && ((-value) > (1 << bitcount)))
-        as_fatal("offset too large: 0x%llx", (unsigned long long)value);
+        as_fatal("offset too large in line %d: 0x%llx", line, (unsigned long long)value);
 
     switch (bitcount)
     {
@@ -200,7 +200,7 @@ static void dd_set_addr_offset(char *opcodep, offsetT value, int bitcount, int i
         DDOP_SET_FD(opcodep, (value & 0x3F));
         break;
     default:
-        as_fatal("offset bitcount(%d) not support", bitcount);
+        as_fatal("offset bitcount(%d) not support in line %d", bitcount, line);
     }
 }
 
@@ -1200,23 +1200,23 @@ void md_convert_frag(bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
     {
     case ENCODE_RELAX(STATE_CALL, STATE_ZERO):
     case ENCODE_RELAX(STATE_JUMP, STATE_ZERO):
-        dd_set_addr_offset(opcodep, target_address - opcode_address, 24, 1);
+        dd_set_addr_offset(opcodep, target_address - opcode_address, 24, 1, fragP->fr_line);
         var_part_size = 0;
         break;
     case ENCODE_RELAX(STATE_BRCC, STATE_ZERO):
-        dd_set_addr_offset(opcodep, target_address - opcode_address, 18, 1);
+        dd_set_addr_offset(opcodep, target_address - opcode_address, 18, 1, fragP->fr_line);
         var_part_size = 0;
         break;
     case ENCODE_RELAX(STATE_BRCC12, STATE_ZERO):
-	dd_set_addr_offset(opcodep, target_address - opcode_address, 12, 1);
+	dd_set_addr_offset(opcodep, target_address - opcode_address, 12, 1, fragP->fr_line);
 	var_part_size = 0;
 	break;
     case ENCODE_RELAX(STATE_HI18, STATE_ZERO):
-        dd_set_addr_offset(opcodep, target_address - opcode_address, 30, 1);
+        dd_set_addr_offset(opcodep, target_address - opcode_address, 30, 1, fragP->fr_line);
         var_part_size = 0;
         break;
     case ENCODE_RELAX(STATE_LO12, STATE_ZERO):
-        dd_set_addr_offset(opcodep, target_address - opcode_address, 30, 1);
+        dd_set_addr_offset(opcodep, target_address - opcode_address, 30, 1, fragP->fr_line);
         var_part_size = 0;
         break;
 
@@ -1294,20 +1294,20 @@ void md_apply_fix(fixS *fixP, valueT *valP, segT segment)
         break;
 
     case BFD_RELOC_DADAO_ABS:
-        dd_set_addr_offset(buf, val, 18, 0);
+        dd_set_addr_offset(buf, val, 18, 0, fixP->fx_line);
         break;
 
     case BFD_RELOC_DADAO_BRCC:
-        dd_set_addr_offset(buf, val, 18, 1);
+        dd_set_addr_offset(buf, val, 18, 1, fixP->fx_line);
         break;
 
     case BFD_RELOC_DADAO_BRCC12:
-	dd_set_addr_offset(buf, val, 12, 1);
+	dd_set_addr_offset(buf, val, 12, 1, fixP->fx_line);
 	break;
 
     case BFD_RELOC_DADAO_CALL:
     case BFD_RELOC_DADAO_JUMP:
-        dd_set_addr_offset(buf, val, 24, 1);
+        dd_set_addr_offset(buf, val, 24, 1, fixP->fx_line);
         break;
 
     default:
