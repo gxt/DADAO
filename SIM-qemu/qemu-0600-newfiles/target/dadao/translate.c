@@ -415,11 +415,11 @@ static bool trans_hb2ha_all(DisasContext* ctx, arg_disas_dadao2* a,
 
 static bool trans_cs_all(DisasContext* ctx, arg_disas_dadao3* a, TCGCond cond)
 {
-    if (a->ha == 0) {
+    if (a->hb == 0) {
         return true;
     }
     TCGv_i64 zero = tcg_const_i64(0);
-    tcg_gen_movcond_i64(cond, cpu_rd[a->ha], cpu_rd[a->hb], zero,
+    tcg_gen_movcond_i64(cond, cpu_rd[a->hb], cpu_rd[a->ha], zero,
                         cpu_rd[a->hc], cpu_rd[a->hd]);
     tcg_temp_free_i64(zero);
     return true;
