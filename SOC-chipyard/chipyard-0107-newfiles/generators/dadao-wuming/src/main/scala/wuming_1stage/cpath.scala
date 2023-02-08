@@ -132,11 +132,11 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                   CMPUr   -> List(Y, CF_X     , COND_X  , REG_RD   , OP1_RDHC , OP2_RDHD  , ALU_CMPU  , WB_RDHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
                   CMP     -> List(Y, CF_X     , COND_X  , REG_RB   , OP1_RBHC , OP2_RBHD  , ALU_CMPU  , WB_RDHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
 
-                  CSN     -> List(Y, CF_X     , COND_N  , REG_RD   , OP1_RDHC , OP2_RDHD  , ALU_CSET  , WB_RDHB , REN_0, MEN_0, M_X  , MT_X   , CSR.N),
-                  CSZ     -> List(Y, CF_X     , COND_Z  , REG_RD   , OP1_RDHC , OP2_RDHD  , ALU_CSET  , WB_RDHB , REN_0, MEN_0, M_X  , MT_X   , CSR.N),
-                  CSP     -> List(Y, CF_X     , COND_P  , REG_RD   , OP1_RDHC , OP2_RDHD  , ALU_CSET  , WB_RDHB , REN_0, MEN_0, M_X  , MT_X   , CSR.N),
-                  CSEQ    -> List(Y, CF_X     , COND_NE , REG_RD   , OP1_RDHC , OP2_RDHD  , ALU_CSET  , WB_RDHC , REN_0, MEN_0, M_X  , MT_X   , CSR.N),
-                  CSNE    -> List(Y, CF_X     , COND_EQ , REG_RD   , OP1_RDHC , OP2_RDHD  , ALU_CSET  , WB_RDHC , REN_0, MEN_0, M_X  , MT_X   , CSR.N),
+                  CSN     -> List(Y, CF_X     , COND_N  , REG_RD   , OP1_RDHC , OP2_RDHD  , ALU_CSET  , WB_RDHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
+                  CSZ     -> List(Y, CF_X     , COND_Z  , REG_RD   , OP1_RDHC , OP2_RDHD  , ALU_CSET  , WB_RDHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
+                  CSP     -> List(Y, CF_X     , COND_P  , REG_RD   , OP1_RDHC , OP2_RDHD  , ALU_CSET  , WB_RDHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
+                  CSEQ    -> List(Y, CF_X     , COND_NE , REG_RD   , OP1_RDHC , OP2_RDHD  , ALU_CSET  , WB_RDHC , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
+                  CSNE    -> List(Y, CF_X     , COND_EQ , REG_RD   , OP1_RDHC , OP2_RDHD  , ALU_CSET  , WB_RDHC , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
 
                   BREQ    -> List(Y, CF_BR12  , COND_EQ , REG_X    , OP1_X    , OP2_X     , ALU_X     , WB_X    , REN_0, MEN_0, M_X  , MT_X   , CSR.N),
                   BRNE    -> List(Y, CF_BR12  , COND_NE , REG_X    , OP1_X    , OP2_X     , ALU_X     , WB_X    , REN_0, MEN_0, M_X  , MT_X   , CSR.N),
