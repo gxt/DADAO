@@ -32,6 +32,85 @@ test_ ## testnum:											\
 # Tests for an instruction with register-register operands
 #-----------------------------------------------------------------------
 
+#define TEST_RRRR_RET3_OP( testnum, inst, result, val1, val2, val3)     \
+    TEST_CASE( testnum, rd31, result,                                   \
+        move    rd16, val1;                                             \
+        move    rd17, val2;                                             \
+        move    rd18, val3;                                             \
+        inst    rd16, rd17, rd31, rd18;                                 \
+    )
+
+#define TEST_RRRR_RET3_ZEROSRC1( testnum, inst, result, val2, val3 )    \
+    TEST_CASE( testnum, rd31, result,                                   \
+        move    rd16, val2;                                             \
+        move    rd17, val3;                                             \
+        inst    rd0, rd16, rd31, rd17                                   \
+    )
+
+#define TEST_RRRR_RET3_ZEROSRC2( testnum, inst, result, val2, val3 )    \
+    TEST_CASE( testnum, rd31, result,                                   \
+        move    rd16, val2;                                             \
+        move    rd17, val3;                                             \
+        inst    rd16, rd0, rd31, rd17                                   \
+    )
+
+#define TEST_RRRR_RET3_ZEROSRC3( testnum, inst, result, val2, val3 )    \
+    TEST_CASE( testnum, rd31, result,                                   \
+        move    rd16, val2;                                             \
+        move    rd17, val3;                                             \
+        inst    rd16, rd17, rd31, rd0                                   \
+    )
+
+#define TEST_RRRR_RET1_OP( testnum, inst, result, val1, val2, val3)     \
+    TEST_CASE( testnum, rd31, result,                                   \
+        move    rd16, val1;                                             \
+        move    rd17, val2;                                             \
+        move    rd18, val3;                                             \
+        inst    rd16, rd31, rd17, rd18;                                 \
+    )
+
+#define TEST_RRRR_RET1_SRC1_EQ_DEST( testnum, inst, result, val1, val2, val3)   \
+    TEST_CASE( testnum, rd31, result,                                   \
+        move    rd31, val1;                                             \
+        move    rd16, val2;                                             \
+        move    rd17, val3;                                             \
+        inst    rd31, rd31, rd16, rd17;                                 \
+    )
+
+#define TEST_RRRR_RET1_SRC2_EQ_DEST( testnum, inst, result, val1, val2, val3)   \
+    TEST_CASE( testnum, rd31, result,                                   \
+        move    rd16, val1;                                             \
+        move    rd31, val2;                                             \
+        move    rd17, val3;                                             \
+        inst    rd16, rd31, rd31, rd17;                                 \
+    )
+
+#define TEST_RRRR_RET1_SRC3_EQ_DEST( testnum, inst, result, val1, val2, val3)   \
+    TEST_CASE( testnum, rd31, result,                                   \
+        move    rd16, val1;                                             \
+        move    rd17, val2;                                             \
+        move    rd31, val3;                                             \
+        inst    rd16, rd31, rd17, rd31;                                 \
+    )
+#define TEST_RRRR_RET1_ZEROSRC1( testnum, inst, result, val2, val3 )	\
+    TEST_CASE( testnum, rd31, result,					\
+        move    rd16, val2;                                             \
+        move    rd17, val3;                                             \
+        inst    rd0, rd31, rd16, rd17                                   \
+    )
+#define TEST_RRRR_RET1_ZEROSRC2( testnum, inst, result, val1, val3 )	\
+    TEST_CASE( testnum, rd31, result,					\
+        move    rd16, val1;                                             \
+        move    rd17, val3;                                             \
+        inst    rd16, rd31, rd0, rd17                                   \
+    )
+#define TEST_RRRR_RET1_ZEROSRC3( testnum, inst, result, val1, val2 )	\
+    TEST_CASE( testnum, rd31, result,					\
+        move    rd16, val1;                                             \
+        move    rd17, val2;                                             \
+        inst    rd16, rd31, rd17, rd0                                   \
+    )
+
 #define TEST_ORRR_OP( testnum, inst, result, val1, val2 )		\
     TEST_CASE( testnum, rd31, result,					\
 	move	rd16, val1;						\

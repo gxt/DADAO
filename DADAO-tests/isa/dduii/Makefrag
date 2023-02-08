@@ -23,6 +23,11 @@ dduii_sc_tests = \
 	cmpu \
 	cmps \
 	cmp \
+	csn \
+	csz \
+	cseq \
+	csne \
+	csp \
 
 dduii_bare_tests = $(addprefix dduii-bare-, $(dduii_sc_tests))
 dduii_qemu_tests = $(addprefix dduii-qemu-, $(dduii_sc_tests))
