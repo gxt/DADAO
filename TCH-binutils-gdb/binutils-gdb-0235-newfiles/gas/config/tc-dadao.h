@@ -20,10 +20,12 @@ extern void dadao_md_begin (void);
 #define md_assemble			dadao_md_assemble
 #define md_begin			dadao_md_begin
 
-#define md_undefined_symbol(x) NULL
+#define md_undefined_symbol(x)		NULL
 #define	md_operand(x)
 
-#define md_number_to_chars number_to_chars_littleendian
+#define md_number_to_chars		number_to_chars_littleendian
+
+#define md_single_noop_insn		"swym"
 
 #define WORKING_DOT_WORD
 
@@ -85,4 +87,3 @@ extern int tc_dadao_regname_to_dw2regnum (char *);
 
 #endif /* TC_DADAO */
 
-#define md_single_noop_insn "swym"
