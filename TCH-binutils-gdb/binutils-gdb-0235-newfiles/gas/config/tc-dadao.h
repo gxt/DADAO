@@ -84,3 +84,5 @@ extern int tc_dadao_regname_to_dw2regnum (char *);
 #define TC_GLOBAL_REGISTER_SYMBOL_OK
 
 #endif /* TC_DADAO */
+
+#define md_single_noop_insn "swym"
