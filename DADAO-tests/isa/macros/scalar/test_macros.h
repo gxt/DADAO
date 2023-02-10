@@ -24,6 +24,26 @@ test_ ## testnum:											\
 	cmps	rd15, testreg_2, rd15;									\
 	brnz    rd15, fail;
 
+#define TEST_CASE_MULTI_REG_RD( testnum, testreg, correctval )	\
+test_ ## testnum:						\
+        move    rd63, correctval;				\
+        cmps	rd63, testreg, rd63;				\
+	move    TESTNUM, testnum;				\
+        brnz    rd63, fail;
+
+#define TEST_CASE_MULTI_REG_RB( testnum, testreg, correctval )  \
+test_ ## testnum:                                               \
+        move    rb63, correctval;                               \
+        cmp     rd63, testreg, rb63;                            \
+        move    TESTNUM, testnum;                               \
+        brnz    rd63, fail;
+
+#define TEST_CASE_MULTI_REG_63( testnum, testreg, correctval, inst  ) 					\
+test_ ## testnum:                                               					\
+        inst    rd63, testreg, correctval;                   					        \
+        move    TESTNUM, testnum;                               					\
+        brnz    rd63, fail;
+
 #-----------------------------------------------------------------------
 # DADAO MACROS
 #-----------------------------------------------------------------------
@@ -31,6 +51,73 @@ test_ ## testnum:											\
 #-----------------------------------------------------------------------
 # Tests for an instruction with register-register operands
 #-----------------------------------------------------------------------
+
+#define TEST_ORRI_INIT_REG( REG_GROUP )				\
+    move REG_GROUP##0, 0x0;					\
+    move REG_GROUP##1, 0x1;                                     \
+    move REG_GROUP##2, 0x2;                                     \
+    move REG_GROUP##3, 0x3;                                     \
+    move REG_GROUP##4, 0x4;                                     \
+    move REG_GROUP##5, 0x5;                                     \
+    move REG_GROUP##6, 0x6;                                     \
+    move REG_GROUP##7, 0x7;                                     \
+    move REG_GROUP##8, 0x8;                                     \
+    move REG_GROUP##9, 0x9;                                     \
+    move REG_GROUP##10, 0xa;                                    \
+    move REG_GROUP##11, 0xb;                                    \
+    move REG_GROUP##12, 0xc;                                    \
+    move REG_GROUP##13, 0xd;                                    \
+    move REG_GROUP##14, 0xe;                                    \
+    move REG_GROUP##15, 0xf;                                    \
+    move REG_GROUP##16, 0x10;                                   \
+    move REG_GROUP##17, 0x11;                                   \
+    move REG_GROUP##18, 0x12;                                   \
+    move REG_GROUP##19, 0x13;                                   \
+    move REG_GROUP##20, 0x14;                                   \
+    move REG_GROUP##21, 0x15;                                   \
+    move REG_GROUP##22, 0x16;                                   \
+    move REG_GROUP##23, 0x17;                                   \
+    move REG_GROUP##24, 0x18;                                   \
+    move REG_GROUP##25, 0x19;                                   \
+    move REG_GROUP##26, 0x1a;                                   \
+    move REG_GROUP##27, 0x1b;                                   \
+    move REG_GROUP##28, 0x1c;                                   \
+    move REG_GROUP##29, 0x1d;                                   \
+    move REG_GROUP##30, 0x1e;                                   \
+    move REG_GROUP##31, 0x1f;                                   \
+    move REG_GROUP##32, 0x20;                                   \
+    move REG_GROUP##33, 0x21;                                   \
+    move REG_GROUP##34, 0x22;                                   \
+    move REG_GROUP##35, 0x23;                                   \
+    move REG_GROUP##36, 0x24;                                   \
+    move REG_GROUP##37, 0x25;                                   \
+    move REG_GROUP##38, 0x26;                                   \
+    move REG_GROUP##39, 0x27;                                   \
+    move REG_GROUP##40, 0x28;                                   \
+    move REG_GROUP##41, 0x29;                                   \
+    move REG_GROUP##42, 0x2a;                                   \
+    move REG_GROUP##43, 0x2b;                                   \
+    move REG_GROUP##44, 0x2c;                                   \
+    move REG_GROUP##45, 0x2d;                                   \
+    move REG_GROUP##46, 0x2e;                                   \
+    move REG_GROUP##47, 0x2f;                                   \
+    move REG_GROUP##48, 0x30;                                   \
+    move REG_GROUP##49, 0x31;                                   \
+    move REG_GROUP##50, 0x32;                                   \
+    move REG_GROUP##51, 0x33;                                   \
+    move REG_GROUP##52, 0x34;                                   \
+    move REG_GROUP##53, 0x35;                                   \
+    move REG_GROUP##54, 0x36;                                   \
+    move REG_GROUP##55, 0x37;                                   \
+    move REG_GROUP##56, 0x38;                                   \
+    move REG_GROUP##57, 0x39;                                   \
+    move REG_GROUP##58, 0x3a;                                   \
+    move REG_GROUP##59, 0x3b;                                   \
+    move REG_GROUP##60, 0x3c;                                   \
+    move REG_GROUP##61, 0x3d;                                   \
+    move REG_GROUP##62, 0x3e;                                   \
+    move REG_GROUP##63, 0x3f;                                    
+
 
 #define TEST_RRRR_RET3_OP( testnum, inst, result, val1, val2, val3)     \
     TEST_CASE( testnum, rd31, result,                                   \

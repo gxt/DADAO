@@ -28,6 +28,10 @@ dduii_sc_tests = \
 	cseq \
 	csne \
 	csp \
+	rd2rd \
+	rb2rd \
+	rb2rb \
+	rd2rb \
 
 dduii_bare_tests = $(addprefix dduii-bare-, $(dduii_sc_tests))
 dduii_qemu_tests = $(addprefix dduii-qemu-, $(dduii_sc_tests))
