@@ -1,0 +1,35 @@
+From 2749572765cffdddf1754d9b887a884f7f8c2020 Mon Sep 17 00:00:00 2001
+From: zhangzebo <zhangzebo@pkunity.com>
+Date: Fri, 10 Feb 2023 17:33:33 +0800
+Subject: [PATCH] DADAO-FIXUP: gcc/testsuite/lib/gcc-dg.exp
+
+Signed-off-by: zhangzebo <zhangzebo@pkunity.com>
+---
+ gcc/testsuite/lib/gcc-dg.exp | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/gcc/testsuite/lib/gcc-dg.exp b/gcc/testsuite/lib/gcc-dg.exp
+index 58519b0421b..71f6fd38a09 100644
+--- a/gcc/testsuite/lib/gcc-dg.exp
++++ b/gcc/testsuite/lib/gcc-dg.exp
+@@ -96,13 +96,13 @@ if [info exists TORTURE_OPTIONS] {
+         # path.
+ 	if [check_linker_plugin_available] {
+            set LTO_TORTURE_OPTIONS [list \
+-	      { -O2 -flto -fno-use-linker-plugin -flto-partition=none } \
+-	      { -O2 -flto -fuse-linker-plugin -fno-fat-lto-objects }
++	      { -O2 -fno-lto -fno-use-linker-plugin -flto-partition=none } \
++	      { -O2 -fno-lto -fuse-linker-plugin -fno-fat-lto-objects }
+            ]
+         } else {
+            set LTO_TORTURE_OPTIONS [list \
+-	      { -O2 -flto -flto-partition=none } \
+-	      { -O2 -flto }
++	      { -O2 -fno-lto -flto-partition=none } \
++	      { -O2 -fno-lto }
+            ]
+         }
+         set gcc_force_conventional_output "-ffat-lto-objects"
+-- 
+2.34.1
+

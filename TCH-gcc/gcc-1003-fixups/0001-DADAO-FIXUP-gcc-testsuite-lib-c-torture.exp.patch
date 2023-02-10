@@ -1,0 +1,35 @@
+From caf95d92ad793acc3920e1f1b21df4b092f870ae Mon Sep 17 00:00:00 2001
+From: zhangzebo <zhangzebo@pkunity.com>
+Date: Fri, 10 Feb 2023 17:29:04 +0800
+Subject: [PATCH] DADAO-FIXUP: gcc/testsuite/lib/c-torture.exp
+
+Signed-off-by: zhangzebo <zhangzebo@pkunity.com>
+---
+ gcc/testsuite/lib/c-torture.exp | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/gcc/testsuite/lib/c-torture.exp b/gcc/testsuite/lib/c-torture.exp
+index c6aafa63b41..3de86d59991 100644
+--- a/gcc/testsuite/lib/c-torture.exp
++++ b/gcc/testsuite/lib/c-torture.exp
+@@ -63,13 +63,13 @@ if [info exists TORTURE_OPTIONS] {
+         # path.
+         if [check_linker_plugin_available] {
+           set LTO_TORTURE_OPTIONS [list \
+-    	      { -O2 -flto -fno-use-linker-plugin -flto-partition=none } \
+-	      { -O2 -flto -fuse-linker-plugin -fno-fat-lto-objects }
++    	      { -O2 -fno-lto -fno-use-linker-plugin -flto-partition=none } \
++	      { -O2 -fno-lto -fuse-linker-plugin -fno-fat-lto-objects }
+           ]
+         } else {
+           set LTO_TORTURE_OPTIONS [list \
+-	      { -O2 -flto -flto-partition=none } \
+-	      { -O2 -flto }
++	      { -O2 -fno-lto -flto-partition=none } \
++	      { -O2 -fno-lto }
+           ]
+         }
+     }
+-- 
+2.34.1
+

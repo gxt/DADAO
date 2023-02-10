@@ -1,0 +1,51 @@
+From 7107a7e2f6354f597586e37739ca1c45f2ae0240 Mon Sep 17 00:00:00 2001
+From: zhangzebo <zhangzebo@pkunity.com>
+Date: Fri, 10 Feb 2023 17:37:20 +0800
+Subject: [PATCH] DADAO-FIXUP: gcc/testsuite/lib/lto.exp
+
+Signed-off-by: zhangzebo <zhangzebo@pkunity.com>
+---
+ gcc/testsuite/lib/lto.exp | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/gcc/testsuite/lib/lto.exp b/gcc/testsuite/lib/lto.exp
+index b2fa7ec8cec..df999a7d2a6 100644
+--- a/gcc/testsuite/lib/lto.exp
++++ b/gcc/testsuite/lib/lto.exp
+@@ -191,21 +191,21 @@ proc lto_init { args } {
+     if ![info exists LTO_OPTIONS] {
+         if [check_linker_plugin_available] {
+ 	  set LTO_OPTIONS [list	\
+-	      {-O0 -flto -flto-partition=none -fuse-linker-plugin} \
+-	      {-O2 -flto -flto-partition=none -fuse-linker-plugin -fno-fat-lto-objects } \
+-	      {-O0 -flto -flto-partition=1to1 -fno-use-linker-plugin } \
+-	      {-O2 -flto -flto-partition=1to1 -fno-use-linker-plugin } \
+-	      {-O0 -flto -fuse-linker-plugin -fno-fat-lto-objects }	\
+-	      {-O2 -flto -fuse-linker-plugin}	\
++	      {-O0 -fno-lto -flto-partition=none -fuse-linker-plugin} \
++	      {-O2 -fno-lto -flto-partition=none -fuse-linker-plugin -fno-fat-lto-objects } \
++	      {-O0 -fno-lto -flto-partition=1to1 -fno-use-linker-plugin } \
++	      {-O2 -fno-lto -flto-partition=1to1 -fno-use-linker-plugin } \
++	      {-O0 -fno-lto -fuse-linker-plugin -fno-fat-lto-objects }	\
++	      {-O2 -fno-lto -fuse-linker-plugin}	\
+ 	  ]
+  	} else {
+ 	  set LTO_OPTIONS [list	\
+-	      {-O0 -flto -flto-partition=none } \
+-	      {-O2 -flto -flto-partition=none } \
+-	      {-O0 -flto -flto-partition=1to1 } \
+-	      {-O2 -flto -flto-partition=1to1 } \
+-	      {-O0 -flto }	\
+-	      {-O2 -flto}		\
++	      {-O0 -fno-lto -flto-partition=none } \
++	      {-O2 -fno-lto -flto-partition=none } \
++	      {-O0 -fno-lto -flto-partition=1to1 } \
++	      {-O2 -fno-lto -flto-partition=1to1 } \
++	      {-O0 -fno-lto }	\
++	      {-O2 -fno-lto}		\
+ 	  ]
+ 	}
+     }
+-- 
+2.34.1
+

@@ -1,0 +1,44 @@
+From fee88430b8f1eebb0fa396f19d86c1286441cfff Mon Sep 17 00:00:00 2001
+From: zhangzebo <zhangzebo@pkunity.com>
+Date: Fri, 10 Feb 2023 17:40:59 +0800
+Subject: [PATCH] DADAO-FIXUP: gcc/testsuite/lib/target-supports.exp
+
+Signed-off-by: zhangzebo <zhangzebo@pkunity.com>
+---
+ gcc/testsuite/lib/target-supports.exp | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/gcc/testsuite/lib/target-supports.exp b/gcc/testsuite/lib/target-supports.exp
+index bd62a0d9e79..27da8b0b09b 100644
+--- a/gcc/testsuite/lib/target-supports.exp
++++ b/gcc/testsuite/lib/target-supports.exp
+@@ -1634,7 +1634,7 @@ proc check_effective_target_rdynamic { } {
+ proc check_linker_plugin_available { } {
+   return [check_no_compiler_messages_nocache linker_plugin executable {
+      int main() { return 0; }
+-  } "-flto -fuse-linker-plugin"]
++  } "-fno-lto -fuse-linker-plugin"]
+ }
+ 
+ # Return 1 if the target OS supports running SSE executables, 0
+@@ -9044,7 +9044,7 @@ proc check_effective_target_lto { } {
+     }
+     return [check_no_compiler_messages lto object {
+ 	void foo (void) { }
+-    } "-flto"]
++    } "-fno-lto"]
+ }
+ 
+ # Return 1 if the compiler and linker support incremental link-time
+@@ -9056,7 +9056,7 @@ proc check_effective_target_lto_incremental { } {
+     }
+     return [check_no_compiler_messages lto_incremental executable {
+ 	int main () { return 0; }
+-    } "-flto -r -nostdlib"]
++    } "-fno-lto -r -nostdlib"]
+ }
+ 
+ # Return 1 if the compiler has been configured with analyzer support.
+-- 
+2.34.1
+
