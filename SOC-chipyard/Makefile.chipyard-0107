@@ -25,6 +25,8 @@ chipyard-0107-clean:
 	@rm -fr $(CHIPYARD_0107_SOURCE)
 	@echo "Remove old chipyard build dir ..."
 	@rm -fr $(CHIPYARD_0107_BUILD)
+	@echo "Remove old dadao-wuming build dir ..."
+	@rm -fr $(CHIPYARD_0107_NEWFILES)/generators/dadao-wuming/target
 
 chipyard-0107-prepare:
 	# Check necessary fesvr headers
@@ -45,13 +47,14 @@ endif
 	@cd $(CHIPYARD_0107_SOURCE); git checkout -qb $(CHIPYARD_0107_BRANCH) $(CHIPYARD_0107_VERSION)
 	# Setup submodules by terribly downloading git repos from github.com
 	@cd $(CHIPYARD_0107_SOURCE); ./scripts/init-submodules-no-riscv-tools.sh
-	# Copy dadao generators into chipyard
-	@cp -a $(CHIPYARD_0107_NEWFILES)/generators/dadao-wuming $(CHIPYARD_0107_SOURCE)/generators/
+	# Add dadao generators into chipyard
+	@ln --symbolic --target-directory=$(CHIPYARD_0107_SOURCE)/generators/ $(CHIPYARD_0107_NEWFILES)/generators/dadao-wuming
 	@cd $(CHIPYARD_0107_SOURCE);								\
 		git add generators/dadao-wuming;						\
 		git commit -asm"DADAO: add dadao-wuming"
 	# Add dadao configs and patches
-	@cp -a $(CHIPYARD_0107_NEWFILES)/generators/chipyard/* $(CHIPYARD_0107_SOURCE)/generators/chipyard/
+	@ln --symbolic --target-directory=$(CHIPYARD_0107_SOURCE)/generators/chipyard/src/main/scala/config/	\
+			$(CHIPYARD_0107_NEWFILES)/generators/chipyard/src/main/scala/config/*
 	@cd $(CHIPYARD_0107_SOURCE);								\
 		git add generators/chipyard/src/main/scala/config/;				\
 		git commit -asm"DADAO: add chipyard-config";					\
