@@ -51,8 +51,8 @@ endif
 			| patch -p1;						\
 		git add .;							\
 		git commit -sm"LINUX $(LINUX_0504_VERSION_PATCH)"
-	# Copy arch/dadao dir
-	@cp -a $(LINUX_0504_NEWFILES)/arch/* $(LINUX_0504_SOURCE)/arch/
+	# Add arch/dadao dir
+	@ln --symbolic --target-directory=$(LINUX_0504_SOURCE)/arch/ $(LINUX_0504_NEWFILES)/arch/*
 	@cd $(LINUX_0504_SOURCE);						\
 		git add arch/dadao;						\
 		git commit -sm"DADAO: add arch/dadao dir"
