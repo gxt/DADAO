@@ -14,6 +14,7 @@ LINUX_0504_DEFCONFIG		:= dadao_defconfig
 
 LINUX_0504_NEWFILES		:= $(DIR_DADAO_TOP)/ENV-linux/linux-0504-newfiles
 LINUX_0504_PATCHES		:= $(DIR_DADAO_TOP)/ENV-linux/linux-0504-patches
+LINUX_0504_FIXUPS		:= $(DIR_DADAO_TOP)/ENV-linux/linux-0504-fixups
 
 LINUX_0504_SOURCE		:= $(DIR_DADAO_SOURCE)/linux-0504
 LINUX_0504_BUILD		:= $(DIR_DADAO_BUILD)/linux-0504
@@ -58,6 +59,8 @@ endif
 		git commit -sm"DADAO: add arch/dadao dir"
 	# Apply linux-0504-patches ...
 	@cd $(LINUX_0504_SOURCE); git am $(LINUX_0504_PATCHES)/*.patch
+	# Apply linux-0504-fixups ...
+	@cd $(LINUX_0504_SOURCE); git am $(LINUX_0504_FIXUPS)/*.patch
 
 linux-0504-build-new:
 	# Remove old linux build dir ...
