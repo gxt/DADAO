@@ -5,7 +5,7 @@
 #
 ifneq ($(SUBARCH),$(ARCH))
 	ifeq ($(CROSS_COMPILE),)
-		CROSS_COMPILE := $(call cc-cross-prefix, dadao-linux-gnu)
+		CROSS_COMPILE := $(call cc-cross-prefix, dadao-unknown-elf-)
 	endif
 endif
 
