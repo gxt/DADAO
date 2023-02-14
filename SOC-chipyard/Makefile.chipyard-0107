@@ -27,10 +27,10 @@ chipyard-0107-clean:
 	@rm -fr $(CHIPYARD_0107_NEWFILES)/generators/dadao-wuming/target
 
 chipyard-0107-prepare:
+	@make -s -C $(DIR_DADAO_TOP) opcodes-highfive
+	@make -s -C $(DIR_DADAO_TOP) tests-bootrom-highfive
 	# Check necessary fesvr headers
 	@test -d $(DIR_DADAO_TARGET)/include/fesvr || make -s -C $(DIR_DADAO_TOP) rte-highfive
-	@test -d $(DIR_DADAO_TARGET)/__opcodes/    || make -s -C $(DIR_DADAO_TOP) opcodes-highfive
-	@test -d $(TESTS_BOOTROM_BUILD)            || make -s -C $(DIR_DADAO_TOP) tests-bootrom-highfive
 
 chipyard-0107-source:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
