@@ -17,9 +17,6 @@ GLIBC_0231_INSTALL	?= $(DIR_DADAO_INSTALL)
 GLIBC_0231_LOG_STDOUT	:= $(DIR_DADAO_LOG)/glibc-0231.out
 GLIBC_0231_LOG_STDERR	:= $(DIR_DADAO_LOG)/glibc-0231.err
 
-# glibc need PATH to find target binaries, like as/gcc
-GLIBC_0231_PATH		:= $(DIR_DADAO_INSTALL)/bin/:/bin:/usr/bin
-
 glibc-0231-clean:
 	# Remove old glibc source dir ...
 	@rm -fr $(GLIBC_0231_SOURCE)
@@ -65,7 +62,7 @@ glibc-0231-build-new:
 	# Check necessary linux headers
 	@test -d $(DIR_DADAO_TARGET)/usr/include/linux || make -s -C $(DIR_DADAO_TOP) linux-$(VER_LINUX)-headers-highfive
 	# Configure
-	@cd $(GLIBC_0231_BUILD) && PATH=$(GLIBC_0231_PATH)			\
+	@cd $(GLIBC_0231_BUILD) && PATH=$(DADAO_PATH)				\
 		CFLAGS=$(ANTIQUE_CFLAGS)					\
 		CPPFLAGS=$(ANTIQUE_CFLAGS)					\
 		CXXFLAGS=$(ANTIQUE_CFLAGS)					\
@@ -82,10 +79,10 @@ glibc-0231-build-new:
 			libc_cv_forced_unwind=yes				\
 			libc_cv_c_cleanup=yes
 glibc-0231-build:
-	@PATH=$(GLIBC_0231_PATH) make -C $(GLIBC_0231_BUILD) -j8
+	@PATH=$(DADAO_PATH) make -C $(GLIBC_0231_BUILD) -j8
 
 glibc-0231-install:
-	@PATH=$(GLIBC_0231_PATH) make -C $(GLIBC_0231_BUILD) install
+	@PATH=$(DADAO_PATH) make -C $(GLIBC_0231_BUILD) install
 
 glibc-0231-highfive:
 	@echo "--- BUILD glibc-0231 $(GLIBC_0231_TARGET) BEGIN ---"
@@ -107,13 +104,13 @@ glibc-0231-highfive:
 glibc-0231-update-syscall-lists:
 	# @touch $(GLIBC_0231_SOURCE)/sysdeps/unix/sysv/linux/dadao/arch-syscall.h
 	@test -f $(GLIBC_0231_BUILD)/Makefile || make -s -C $(DIR_DADAO_TOP) glibc-$(VER_GLIBC)-build-new
-	@PATH=$(GLIBC_0231_PATH) make -C $(GLIBC_0231_BUILD) update-syscall-lists
+	@PATH=$(DADAO_PATH) make -C $(GLIBC_0231_BUILD) update-syscall-lists
 	@cd $(GLIBC_0231_SOURCE);						\
 		git diff
 	@echo "If DIFF, update arch-syscall.h file!"
 
 glibc-0231-update-all-abi:
-	@PATH=$(GLIBC_0231_PATH) make -C $(GLIBC_0231_BUILD) update-all-abi
+	@PATH=$(DADAO_PATH) make -C $(GLIBC_0231_BUILD) update-all-abi
 	@cd $(GLIBC_0231_SOURCE);						\
 		git diff
 	@echo "If DIFF, update abilist files!"
