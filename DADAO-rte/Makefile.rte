@@ -53,11 +53,8 @@ rte-build-new:
 
 rte-build:
 	@make -C $(RTE_BUILD) -j8 libfesvr.a libfesvr.so
-	@make -C $(RTE_BUILD) -j8 spike-dasm
 
 rte-install:
-	@mkdir -p $(RTE_INSTALL)/bin
-	@cp -a $(RTE_BUILD)/spike-dasm $(RTE_INSTALL)/bin
 	@mkdir -p $(RTE_INSTALL)/lib
 	@cp -a $(RTE_BUILD)/libfesvr.* $(RTE_INSTALL)/lib
 	@mkdir -p $(RTE_INSTALL)/include/fesvr
