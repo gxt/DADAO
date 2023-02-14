@@ -69,17 +69,20 @@ linux-0504-build-new:
 	@mkdir -p $(LINUX_0504_BUILD)
 	@make -C $(LINUX_0504_SOURCE)						\
 		O=$(LINUX_0504_BUILD)						\
+		PATH=$(DADAO_PATH)						\
 		ARCH=$(LINUX_0504_ARCH)						\
 		$(LINUX_0504_DEFCONFIG)
 
 linux-0504-build:
 	# Making (in several minutes) ...
 	@make -C $(LINUX_0504_BUILD)						\
+		PATH=$(DADAO_PATH)						\
 		ARCH=$(LINUX_0504_ARCH) -j8
 
 linux-0504-install:
 	# Make install ...
 	@make -C $(LINUX_0504_BUILD)						\
+		PATH=$(DADAO_PATH)						\
 		ARCH=$(LINUX_0504_ARCH)						\
 		INSTALL_PATH=$(LINUX_0504_TARGET)				\
 		install
@@ -109,12 +112,14 @@ linux-0504-highfive:
 linux-0504-headers-check:
 	# Headers check ...
 	@make -C $(LINUX_0504_BUILD)						\
+		PATH=$(DADAO_PATH)						\
 		ARCH=$(LINUX_0504_ARCH)						\
 		headers_check
 
 linux-0504-headers-install:
 	# Headers install ...
 	@make -C $(LINUX_0504_BUILD)						\
+		PATH=$(DADAO_PATH)						\
 		ARCH=$(LINUX_0504_ARCH)						\
 		INSTALL_HDR_PATH=$(LINUX_0504_TARGET)/usr			\
 		headers_install
