@@ -6,6 +6,7 @@ config 64BIT
 
 config MMU
 	def_bool y
+	select	UACCESS_MEMCPY
 
 config CPU_LITTLE_ENDIAN
 	def_bool y
