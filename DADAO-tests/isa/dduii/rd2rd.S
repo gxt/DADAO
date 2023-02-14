@@ -12,7 +12,7 @@ DDTEST_DDUII
 DDTEST_CODE_BEGIN
 
   TEST_ORRI_INIT_REG ( rd )
-  rd2rd rd0, rd1, 63;
+  rd2rd rd0, rd1, 62;
   TEST_CASE_MULTI_REG_RD( 2, rd2, 0x3 )
   TEST_CASE_MULTI_REG_RD( 3, rd1, 0x2 )
   TEST_CASE_MULTI_REG_RD( 4, rd3, 0x4 )
