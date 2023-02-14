@@ -7,6 +7,8 @@
 
 #define __ARCH_WANT_NEW_STAT
 
+#define __IGNORE_clone3
+
 #include <asm-generic/unistd.h>
 
 #endif /* __DADAO_UAPI_UNISTD_H__ */
