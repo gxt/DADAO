@@ -18,8 +18,6 @@ CHIPYARD_0107_DADAO_CONFIG	?= Wuming1StageConfig
 #CHIPYARD_0107_DADAO_BINARY	?= $(CHIPYARD_0107_SOURCE)/generators/riscv-sodor/riscv-bmarks/dhrystone.riscv
 CHIPYARD_0107_DADAO_BINARY	?= $(DIR_DADAO_TOP)/__tests/bmarks-bare/dhrystone.dadao
 
-CHIPYARD_0107_DADAO_PATH	:= $(DIR_DADAO_TARGET)/bin:/bin:/usr/bin
-
 chipyard-0107-clean:
 	@echo "Remove old chipyard source dir ..."
 	@rm -fr $(CHIPYARD_0107_SOURCE)
@@ -85,7 +83,6 @@ chipyard-0107-build-stage1:
 chipyard-0107-run-binary:
 	@cd $(CHIPYARD_0107_SOURCE)/sims/verilator;						\
 		RISCV=$(DIR_DADAO_TARGET)							\
-		PATH=$(CHIPYARD_0107_DADAO_PATH)						\
 		make CONFIG=$(CHIPYARD_0107_DADAO_CONFIG)					\
 			BOOTROM_FILES=bootrom.dadao.img						\
 			BOOTROM_FILES_DIR=$(TESTS_BOOTROM_BUILD)			\
