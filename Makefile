@@ -17,6 +17,7 @@ VER_QEMU		:= 0600
 VER_CHIPYARD		:= 0107
 
 DADAO_PATH		:= $(DIR_DADAO_INSTALL)/bin/:/bin:/usr/bin
+DADAO_MAKE		:= make --silent DIR_DADAO_TOP=$(DIR_DADAO_TOP) PATH=$(DADAO_PATH)
 
 all:
 	@echo ""
