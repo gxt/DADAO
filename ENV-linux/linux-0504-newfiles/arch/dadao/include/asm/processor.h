@@ -6,6 +6,7 @@
 #define __DADAO_ASM_PROCESSOR_H__
 
 #include <asm/arch_memory.h>
+#include <asm/ptrace.h>
 
 /* the whole 48-bit address space, 47-bit for user address space */
 #define TASK_SIZE		__DD_MEMORY_TASK_SIZE

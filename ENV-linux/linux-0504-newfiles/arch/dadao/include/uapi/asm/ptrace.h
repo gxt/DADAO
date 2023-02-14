@@ -4,7 +4,7 @@
 #ifndef __DADAO_UAPI_PTRACE_H__
 #define __DADAO_UAPI_PTRACE_H__
 
-struct pt_regs {
+struct user_regs_struct {
 	unsigned long long rd_regs[64];
 	unsigned long long rb_regs[64];
 	unsigned long long rf_regs[64];
