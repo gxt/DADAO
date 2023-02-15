@@ -13,8 +13,10 @@
 #define	VMALLOC_START			__DD_MEMORY_VMALLOC_START
 #define	VMALLOC_END			__DD_MEMORY_VMALLOC_END
 
-#define PTRS_PER_PTE			1024
-#define PTRS_PER_PGD			1024
+#define PTRS_PER_PTE			(1 << 9)
+#define PTRS_PER_PMD			(1 << 9)
+#define PTRS_PER_PUD			(1 << 9)
+#define PTRS_PER_PGD			(1 << 9)
 
 #ifndef __ASSEMBLY__
 
@@ -27,10 +29,8 @@ extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
 		set_pte(pteptr, pteval);				\
 	} while (0)
 
-#define pte_none(pte)			(!pte_val(pte))
 #define pte_clear(mm, addr, pteptr)	set_pte(pteptr, __pte(0))
 #define pte_young(pte)			(pte_val(pte) & __PAGE_YOUNG)
-#define pte_present(pte)		(pte_val(pte) & __PAGE_PRESENT)
 #define pte_unmap(pte)			do { } while (0)
 
 #define pte_pfn(pte)			(pte_val(pte) >> PAGE_SHIFT)
@@ -40,9 +40,25 @@ static inline pte_t pte_mkold(pte_t pte)	{ pte_val(pte) &= ~__PAGE_YOUNG; return
 static inline pte_t pte_mkwrite(pte_t pte)	{ pte_val(pte) |=  __PAGE_WRITE; return pte; }
 static inline pte_t pte_mkdirty(pte_t pte)	{ pte_val(pte) |=  __PAGE_DIRTY; return pte; }
 
+#define pte_none(pte)			(!pte_val(pte))
 #define pmd_none(pmd)			(!pmd_val(pmd))
+#define pud_none(pud)			(!pud_val(pud))
+#define pgd_none(pgd)			(!pgd_val(pgd))
+
+#define pmd_bad(pmd)			(!(pmd_val(pmd) & PMD_TABLE_BIT))
+#define pud_bad(pud)			(!(pud_val(pud) & PUD_TABLE_BIT))
+#define pgd_bad(pgd)			(!(pgd_val(pgd) & 2))
+
+#define pte_present(pte)		(pte_val(pte) & __PAGE_PRESENT)
 #define pmd_present(pmd)		(pmd_val(pmd) & __PAGE_PRESENT)
-#define pmd_bad(pmd)			(1)	/* FIXME */
+#define pud_present(pud)		(pud_val(pud) & __PAGE_PRESENT)
+#define pgd_present(pgd)		(pgd_val(pgd) & __PAGE_PRESENT)
+
+#define pte_index(addr)			(((addr) >> PAGE_SHIFT)  & (PTRS_PER_PTE - 1))
+#define pmd_index(addr)			(((addr) >> PMD_SHIFT)   & (PTRS_PER_PMD - 1))
+#define pud_index(addr)			(((addr) >> PUD_SHIFT)   & (PTRS_PER_PUD - 1))
+#define pgd_index(addr)			(((addr) >> PGDIR_SHIFT) & (PTRS_PER_PGD - 1))
+
 /*
  * ZERO_PAGE is a global shared page that is always zero: used
  * for zero-mapped memory areas etc..
