@@ -5,6 +5,10 @@
 #ifndef __DADAO_ASM_ARCH_PGTABLE_H__
 #define __DADAO_ASM_ARCH_PGTABLE_H__
 
+#define PGDIR_SHIFT		39
+#define PGDIR_SIZE		(_AC(1, UL) << PGDIR_SHIFT)
+#define PGDIR_MASK		(~(PGDIR_SIZE - 1))
+
 #define __PAGE_PRESENT		(1 << 0)
 #define __PAGE_SUPERPAGE	(1 << 1)
 #define __PAGE_YOUNG		(1 << 3)
