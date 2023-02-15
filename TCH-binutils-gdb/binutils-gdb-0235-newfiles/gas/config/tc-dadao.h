@@ -29,8 +29,9 @@ extern void dadao_md_begin (void);
 
 #define WORKING_DOT_WORD
 
-extern const struct relax_type dadao_relax_table[];
-#define TC_GENERIC_RELAX_TABLE dadao_relax_table
+#define md_relax_frag(segment, fragp, stretch) \
+  dadao_relax_frag (segment, fragp, stretch)
+extern int dadao_relax_frag (asection *, struct frag *, long);
 
 #define tc_fix_adjustable(FIX)					\
  (((FIX)->fx_addsy == NULL					\

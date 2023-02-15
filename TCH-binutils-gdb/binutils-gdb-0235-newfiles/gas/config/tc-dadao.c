@@ -117,42 +117,6 @@ const relax_typeS dadao_relax_table[] = {
 
     /* ABS (1, 1).  */
     {0, 0, DD_INSN_BYTES(3), 0},
-
-    /* BRCC (2, 0).  */
-    {(1 << 20), -(1 << 20), 0, ENCODE_RELAX(STATE_BRCC, STATE_MAX)},
-
-    /* BRCC (2, 1).  */
-    {0, 0, DD_INSN_BYTES(0), 0},
-
-    /* CALL (3, 0).  */
-    {(1 << 26), -(1 << 26), 0, ENCODE_RELAX(STATE_CALL, STATE_MAX)},
-
-    /* CALL (3, 1).  */
-    {0, 0, DD_INSN_BYTES(4), 0},
-
-    /* JUMP (4, 0).  */
-    {(1 << 26), -(1 << 26), 0, ENCODE_RELAX(STATE_JUMP, STATE_MAX)},
-
-    /* JUMP (4, 1).  */
-    {0, 0, DD_INSN_BYTES(0), 0},
-
-    /* HI18 (5, 0).  */
-    {(1 << 20), -(1 << 20), 0, ENCODE_RELAX(STATE_HI18, STATE_MAX)},
-
-    /* HI18 (5, 1).  */
-    {0, 0, DD_INSN_BYTES(4), 0},
-
-    /* LO12 (6, 0). */
-    {(1 << 14), -(1 << 14), 0, ENCODE_RELAX(STATE_LO12, STATE_MAX)},
-
-    /* LO12 (6, 1). */
-    {0, 0, DD_INSN_BYTES(3), 0},
-
-    /* BRCC12 (7, 0).  */
-    {(1 << 14), -(1 << 14), 0, ENCODE_RELAX(STATE_BRCC12, STATE_MAX)},
-
-    /* BRCC12 (7, 1).  */
-    {0, 0, DD_INSN_BYTES(0), 0},
 };
 
 const pseudo_typeS md_pseudo_table[] = {
@@ -1081,23 +1045,58 @@ void dadao_md_assemble(char *str)
     }
 }
 
+/* Compute the length of a branch sequence, and adjust the stored length
+   accordingly. IF FRAGP is NULL, the worst-case length if returned. */
+static unsigned
+relaxed_branch_length (fragS *fragp, asection *sec)
+{
+  int length = 0;
+  bfd_vma range = 0;
+  int brcc = 1;
+
+  if (!fragp)
+    return length;
+
+  if ((fragp->fr_opcode[3] >= 0x28) && (fragp->fr_opcode[3] <= 0x2D))
+    range = 0x40000;
+  else if ((fragp->fr_opcode[3] == 0x2E) || (fragp->fr_opcode[3] == 0x2F))
+    range = 0x1000;
+  else
+    brcc = 0;
+  if (brcc == 1
+      && fragp->fr_symbol != NULL
+      && S_IS_DEFINED (fragp->fr_symbol)
+      && !S_IS_WEAK (fragp->fr_symbol)
+      && sec == S_GET_SEGMENT (fragp->fr_symbol))
+    {
+      offsetT val = S_GET_VALUE (fragp->fr_symbol) + fragp->fr_offset;
+      val -= fragp->fr_address;
+
+      if (((val/4 + range/2) >= range) && (val > 0))
+        length = 4;
+
+      if (((-(val/4) + range/2) > range) && (val < 0))
+	length = 4;
+    }
+
+  return length;
+}
+
 /* Set fragP->fr_var to the initial guess of the size of a relaxable insn
    and return it.  Sizes of other instructions are not known.  This
    function may be called multiple times.  */
 
-int md_estimate_size_before_relax(fragS *fragP, segT segment)
+int md_estimate_size_before_relax(fragS *fragp, asection *segtype)
 {
-    int length;
-
 #define HANDLE_RELAXABLE(state)                                                                                     \
     case ENCODE_RELAX(state, STATE_UNDF):                                                                           \
-        if (fragP->fr_symbol != NULL && S_GET_SEGMENT(fragP->fr_symbol) == segment && !S_IS_WEAK(fragP->fr_symbol)) \
+        if (fragp->fr_symbol != NULL && S_GET_SEGMENT(fragp->fr_symbol) == (segT)segtype && !S_IS_WEAK(fragp->fr_symbol)) \
         {                                                                                                           \
             /* The symbol lies in the same segment - a relaxable case.  */                                          \
-            fragP->fr_subtype = ENCODE_RELAX(state, STATE_ZERO);                                                    \
+            fragp->fr_subtype = ENCODE_RELAX(state, STATE_ZERO);                                                    \
         }
 
-    switch (fragP->fr_subtype)
+    switch (fragp->fr_subtype)
     {
         case ENCODE_RELAX(STATE_ABS, STATE_UNDF):
         break;
@@ -1126,13 +1125,30 @@ int md_estimate_size_before_relax(fragS *fragP, segT segment)
         break;
 
     default:
-        BAD_CASE(fragP->fr_subtype);
+        BAD_CASE(fragp->fr_subtype);
     }
 
-    length = dadao_relax_table[fragP->fr_subtype].rlx_length;
-    fragP->fr_var = length;
+  return (fragp->fr_var = relaxed_branch_length (fragp, segtype));
+}
 
-    return length;
+int dadao_relax_frag (asection *sec, fragS *fragp, long stretch ATTRIBUTE_UNUSED)
+{
+  /* BRCC or BRCC12 */
+  if ((fragp->fr_subtype == 14) || (fragp->fr_subtype == 15))
+    {
+      offsetT old_var = fragp->fr_var;
+      fragp->fr_var = relaxed_branch_length (fragp, sec);
+      return fragp->fr_var - old_var;
+    }
+
+  /* ABS relocation */
+  if (fragp->fr_subtype == 3)
+    {
+      offsetT old_var = fragp->fr_var;
+      fragp->fr_var = 12;
+      return fragp->fr_var - old_var;
+    }
+  return 0;
 }
 
 /* Turn a string in input_line_pointer into a floating point constant of type
@@ -1151,6 +1167,36 @@ md_atof(int type, char *litP, int *sizeP)
      We'll deal with the real problems when they come; we share the
      problem with most other ports.  */
     return ieee_md_atof(type, litP, sizeP, TRUE);
+}
+
+/* Expand far branches to multi-instruction sequences. */
+
+static void md_convert_frag_branch (fragS *fragp)
+{
+  bfd_byte *buf;
+  expressionS exp;
+  fixS * fixp;
+  uint64_t insn;
+
+  buf = (bfd_byte *)fragp->fr_opcode;
+
+  exp.X_op = O_symbol;
+  exp.X_add_symbol = fragp->fr_symbol;
+  exp.X_add_number = fragp->fr_offset;
+
+  insn = bfd_getl32 (buf);
+
+  /* Invert the branch condition insn. */
+  if (((insn >> 24) % 2) == 0)
+    insn += 0x1000000;
+  else
+    insn -= 0x1000000;
+
+  md_number_to_chars ((char *) buf, insn, 4);
+  buf += 4;
+
+  /* add Jump */
+  md_number_to_chars ((char *) buf, 0x64000000, 4); 
 }
 
 /* Convert variable-sized frags into one or more fixups.  */
@@ -1204,12 +1250,32 @@ void md_convert_frag(bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
         var_part_size = 0;
         break;
     case ENCODE_RELAX(STATE_BRCC, STATE_ZERO):
-        dd_set_addr_offset(opcodep, target_address - opcode_address, 18, 1, fragP->fr_line);
-        var_part_size = 0;
+	if (fragP->fr_var == 4 && fragP->fr_fix == 4)
+	  {
+	    md_convert_frag_branch(fragP);
+	    dd_set_addr_offset(opcodep, 8, 18, 1, fragP->fr_line);
+	    dd_set_addr_offset(opcodep + 4, target_address - opcode_address - 4, 24, 1, fragP->fr_line);
+	    var_part_size = 4;
+	  }
+	else
+	  {
+            dd_set_addr_offset(opcodep, target_address - opcode_address, 18, 1, fragP->fr_line);
+            var_part_size = 0;
+	  }
         break;
     case ENCODE_RELAX(STATE_BRCC12, STATE_ZERO):
-	dd_set_addr_offset(opcodep, target_address - opcode_address, 12, 1, fragP->fr_line);
-	var_part_size = 0;
+	if (fragP->fr_var == 4 && fragP->fr_fix == 4)
+	  {
+	    md_convert_frag_branch(fragP);
+	    dd_set_addr_offset(opcodep, 8, 12, 1, fragP->fr_line);
+	    dd_set_addr_offset(opcodep + 4, target_address - opcode_address - 4, 24, 1, fragP->fr_line);
+	    var_part_size = 4;
+	  }
+	else
+	  {
+	    dd_set_addr_offset(opcodep, target_address - opcode_address, 12, 1, fragP->fr_line);
+	    var_part_size = 0;
+	  }
 	break;
     case ENCODE_RELAX(STATE_HI18, STATE_ZERO):
         dd_set_addr_offset(opcodep, target_address - opcode_address, 30, 1, fragP->fr_line);
@@ -1220,17 +1286,23 @@ void md_convert_frag(bfd *abfd ATTRIBUTE_UNUSED, segT sec ATTRIBUTE_UNUSED,
         var_part_size = 0;
         break;
 
+    case ENCODE_RELAX(STATE_ABS, STATE_MAX):
+	var_part_size = dadao_relax_table[ENCODE_RELAX(STATE_ABS, STATE_MAX)].rlx_length;
+	dd_fill_nops(var_partp, var_part_size / 4);
+	tmpfixP = fix_new(fragP, var_partp - fragP->fr_literal, 4,
+			  fragP->fr_symbol, fragP->fr_offset, 1, BFD_RELOC_DADAO_ABS);
+	tmpfixP->fx_file = fragP->fr_file;
+	tmpfixP->fx_line = fragP->fr_line;
+	break;
+
 #define HANDLE_MAX_RELOC(state, reloc)                                                \
     case ENCODE_RELAX(state, STATE_MAX):                                              \
-        var_part_size = dadao_relax_table[ENCODE_RELAX(state, STATE_MAX)].rlx_length; \
-        dd_fill_nops(var_partp, var_part_size / 4);                                   \
         tmpfixP = fix_new(fragP, var_partp - fragP->fr_literal, 4,                    \
                           fragP->fr_symbol, fragP->fr_offset, 1, reloc);              \
         tmpfixP->fx_file = fragP->fr_file;                                            \
         tmpfixP->fx_line = fragP->fr_line;                                            \
         break
 
-        HANDLE_MAX_RELOC(STATE_ABS, BFD_RELOC_DADAO_ABS);
         HANDLE_MAX_RELOC(STATE_BRCC, BFD_RELOC_DADAO_BRCC);
 	HANDLE_MAX_RELOC(STATE_BRCC12, BFD_RELOC_DADAO_BRCC12);
         HANDLE_MAX_RELOC(STATE_CALL, BFD_RELOC_DADAO_CALL);
