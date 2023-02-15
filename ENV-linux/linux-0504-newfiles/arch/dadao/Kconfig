@@ -8,6 +8,10 @@ config MMU
 	def_bool y
 	select	UACCESS_MEMCPY
 
+config PGTABLE_LEVELS
+	int
+	default 4
+
 config CPU_LITTLE_ENDIAN
 	def_bool y
 
