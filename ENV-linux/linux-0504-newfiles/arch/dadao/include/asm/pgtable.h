@@ -13,11 +13,6 @@
 #define	VMALLOC_START			__DD_MEMORY_VMALLOC_START
 #define	VMALLOC_END			__DD_MEMORY_VMALLOC_END
 
-#define PTRS_PER_PTE			(1 << 9)
-#define PTRS_PER_PMD			(1 << 9)
-#define PTRS_PER_PUD			(1 << 9)
-#define PTRS_PER_PGD			(1 << 9)
-
 #ifndef __ASSEMBLY__
 
 extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
@@ -58,6 +53,10 @@ static inline pte_t pte_mkdirty(pte_t pte)	{ pte_val(pte) |=  __PAGE_DIRTY; retu
 #define pmd_index(addr)			(((addr) >> PMD_SHIFT)   & (PTRS_PER_PMD - 1))
 #define pud_index(addr)			(((addr) >> PUD_SHIFT)   & (PTRS_PER_PUD - 1))
 #define pgd_index(addr)			(((addr) >> PGDIR_SHIFT) & (PTRS_PER_PGD - 1))
+
+#define pmd_offset(dir, addr)		((pmd_t *)__va((pud_val(READ_ONCE(*(dir))) & PTE_ADDR_MASK) + pmd_index(addr) * sizeof(pmd_t)))
+#define pud_offset(dir, addr)		((pud_t *)__va((pgd_val(READ_ONCE(*(dir))) & PTE_ADDR_MASK) + pud_index(addr) * sizeof(pud_t)))
+#define pgd_offset(mm, addr)		((pgd_t *)((mm)->pgd + pgd_index(addr)))
 
 /*
  * ZERO_PAGE is a global shared page that is always zero: used
