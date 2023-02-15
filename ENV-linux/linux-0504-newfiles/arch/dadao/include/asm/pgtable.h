@@ -7,7 +7,7 @@
 
 #include <asm-generic/5level-fixup.h>
 
-#include <asm/arch_pgtable.h>
+#include <asm/pgtable-hwdef.h>
 #include <asm/arch_memory.h>
 
 #define	VMALLOC_START			__DD_MEMORY_VMALLOC_START

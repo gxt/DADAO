@@ -2,8 +2,8 @@
  * Copyright (C) 2020-2033 Guan Xuetao (AT) Peking Univ.
  * Contributed by Guan Xuetao <gxt@pku.edu.cn>
  */
-#ifndef __DADAO_ASM_ARCH_PGTABLE_H__
-#define __DADAO_ASM_ARCH_PGTABLE_H__
+#ifndef __DADAO_ASM_PGTABLE_HWDEF_H__
+#define __DADAO_ASM_PGTABLE_HWDEF_H__
 
 #define PTRS_PER_PTE		(1 << 9)
 #define PTRS_PER_PMD		(1 << 9)
@@ -37,4 +37,4 @@
 #define __PAGE_WRITE		(1 << 6)
 #define __PAGE_READ		(1 << 7)
 
-#endif /* __DADAO_ASM_ARCH_PGTABLE_H__ */
+#endif /* __DADAO_ASM_PGTABLE_HWDEF_H__ */
