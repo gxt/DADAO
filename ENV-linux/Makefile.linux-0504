@@ -74,8 +74,8 @@ linux-0504-build-new:
 
 linux-0504-build:
 	# Making (in several minutes) ...
-	@$(DADAO_MAKE) -C $(LINUX_0504_BUILD)					\
-		ARCH=$(LINUX_0504_ARCH) -j8
+	@$(DADAO_MAKEP) -C $(LINUX_0504_BUILD)					\
+		ARCH=$(LINUX_0504_ARCH)
 
 linux-0504-install:
 	# Make install ...
