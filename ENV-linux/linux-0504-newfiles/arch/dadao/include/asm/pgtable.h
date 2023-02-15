@@ -5,8 +5,7 @@
 #ifndef __DADAO_ASM_PGTABLE_H__
 #define __DADAO_ASM_PGTABLE_H__
 
-#define __ARCH_USE_5LEVEL_HACK
-#include <asm-generic/pgtable-nopmd.h>
+#include <asm-generic/5level-fixup.h>
 
 #include <asm/arch_pgtable.h>
 #include <asm/arch_memory.h>
@@ -28,12 +27,18 @@ extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
 		set_pte(pteptr, pteval);				\
 	} while (0)
 
+#define pte_none(pte)			(!pte_val(pte))
 #define pte_clear(mm, addr, pteptr)	set_pte(pteptr, __pte(0))
 #define pte_young(pte)			(pte_val(pte) & __PAGE_YOUNG)
+#define pte_present(pte)		(pte_val(pte) & __PAGE_PRESENT)
+#define pte_unmap(pte)			do { } while (0)
+
+#define pte_pfn(pte)			(pte_val(pte) >> PAGE_SHIFT)
 
 static inline pte_t pte_wrprotect(pte_t pte)	{ pte_val(pte) &= ~__PAGE_WRITE; return pte; }
 static inline pte_t pte_mkold(pte_t pte)	{ pte_val(pte) &= ~__PAGE_YOUNG; return pte; }
 static inline pte_t pte_mkwrite(pte_t pte)	{ pte_val(pte) |=  __PAGE_WRITE; return pte; }
+static inline pte_t pte_mkdirty(pte_t pte)	{ pte_val(pte) |=  __PAGE_DIRTY; return pte; }
 
 #define pmd_none(pmd)			(!pmd_val(pmd))
 #define pmd_present(pmd)		(pmd_val(pmd) & __PAGE_PRESENT)
