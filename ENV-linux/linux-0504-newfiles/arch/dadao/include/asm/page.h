@@ -11,6 +11,7 @@
 #define PAGE_MASK		(~(PAGE_SIZE-1))
 
 #include <asm/arch_memory.h>
+#include <asm/pgtable-types.h>
 
 /* PAGE_OFFSET - the virtual address of the start of the kernel image */
 #define PAGE_OFFSET		__DD_MEMORY_PAGE_OFFSET
@@ -23,41 +24,6 @@
 #define clear_user_page(page, vaddr, pg)	clear_page(page)
 #define copy_user_page(to, from, vaddr, pg)	copy_page(to, from)
 
-#define STRICT_MM_TYPECHECKS
-
-#ifdef STRICT_MM_TYPECHECKS
-/*
- * These are used to make use of C type-checking..
- */
-typedef struct { unsigned long pte; } pte_t;
-typedef struct { unsigned long pgd; } pgd_t;
-typedef struct { unsigned long pgprot; } pgprot_t;
-
-#define pte_val(x)		((x).pte)
-#define pgd_val(x)		((x).pgd)
-#define pgprot_val(x)		((x).pgprot)
-
-#define __pte(x)		((pte_t) { (x) })
-#define __pgd(x)		((pgd_t) { (x) })
-#define __pgprot(x)		((pgprot_t) { (x) })
-
-#else /* STRICT_MM_TYPECHECKS */
-/*
- * .. while these make it easier on the compiler
- */
-typedef unsigned long pte_t;
-typedef unsigned long pgd_t;
-typedef unsigned long pgprot_t;
-
-#define pte_val(x)		(x)
-#define pgd_val(x)		(x)
-#define pgprot_val(x)		(x)
-
-#define __pte(x)		(x)
-#define __pgd(x)		(x)
-#define __pgprot(x)		(x)
-
-#endif /* STRICT_MM_TYPECHECKS */
 
 typedef struct page *pgtable_t;
 
