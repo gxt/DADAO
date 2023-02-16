@@ -21,6 +21,25 @@ extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
 #define pud_ERROR(pud)			printk("%s:%d: bad pud %016lx.\n", __FILE__, __LINE__, pud_val(pud))
 #define pmd_ERROR(pmd)			printk("%s:%d: bad pmd %016lx.\n", __FILE__, __LINE__, pmd_val(pmd))
 
+#define pgd_none(pgd)			(!pgd_val(pgd))
+#define pud_none(pud)			(!pud_val(pud))
+#define pmd_none(pmd)			(!pmd_val(pmd))
+#define pte_none(pte)			(!pte_val(pte))
+
+#define pgd_bad(pgd)			(!(pgd_val(pgd) & 2))
+#define pud_bad(pud)			(!(pud_val(pud) & PUD_TABLE_BIT))
+#define pmd_bad(pmd)			(!(pmd_val(pmd) & PMD_TABLE_BIT))
+
+#define pgd_present(pgd)		(pgd_val(pgd) & __PAGE_PRESENT)
+#define pud_present(pud)		(pud_val(pud) & __PAGE_PRESENT)
+#define pmd_present(pmd)		(pmd_val(pmd) & __PAGE_PRESENT)
+#define pte_present(pte)		(pte_val(pte) & __PAGE_PRESENT)
+
+#define pgd_index(addr)			(((addr) >> PGDIR_SHIFT) & (PTRS_PER_PGD - 1))
+#define pud_index(addr)			(((addr) >> PUD_SHIFT)   & (PTRS_PER_PUD - 1))
+#define pmd_index(addr)			(((addr) >> PMD_SHIFT)   & (PTRS_PER_PMD - 1))
+#define pte_index(addr)			(((addr) >> PAGE_SHIFT)  & (PTRS_PER_PTE - 1))
+
 #define set_pte(pteptr, pteval)		((*(pteptr)) = (pteval))
 
 #define set_pte_at(mm, addr, pteptr, pteval)				\
@@ -42,31 +61,11 @@ static inline pte_t pte_mkold(pte_t pte)	{ pte_val(pte) &= ~__PAGE_YOUNG; return
 static inline pte_t pte_mkwrite(pte_t pte)	{ pte_val(pte) |=  __PAGE_WRITE; return pte; }
 static inline pte_t pte_mkdirty(pte_t pte)	{ pte_val(pte) |=  __PAGE_DIRTY; return pte; }
 
-#define pte_none(pte)			(!pte_val(pte))
-#define pmd_none(pmd)			(!pmd_val(pmd))
-#define pud_none(pud)			(!pud_val(pud))
-#define pgd_none(pgd)			(!pgd_val(pgd))
-
-#define pmd_bad(pmd)			(!(pmd_val(pmd) & PMD_TABLE_BIT))
-#define pud_bad(pud)			(!(pud_val(pud) & PUD_TABLE_BIT))
-#define pgd_bad(pgd)			(!(pgd_val(pgd) & 2))
-
-#define pte_present(pte)		(pte_val(pte) & __PAGE_PRESENT)
-#define pmd_present(pmd)		(pmd_val(pmd) & __PAGE_PRESENT)
-#define pud_present(pud)		(pud_val(pud) & __PAGE_PRESENT)
-#define pgd_present(pgd)		(pgd_val(pgd) & __PAGE_PRESENT)
-
-#define pte_index(addr)			(((addr) >> PAGE_SHIFT)  & (PTRS_PER_PTE - 1))
-#define pmd_index(addr)			(((addr) >> PMD_SHIFT)   & (PTRS_PER_PMD - 1))
-#define pud_index(addr)			(((addr) >> PUD_SHIFT)   & (PTRS_PER_PUD - 1))
-#define pgd_index(addr)			(((addr) >> PGDIR_SHIFT) & (PTRS_PER_PGD - 1))
-
+#define pgd_offset(mm, addr)		((pgd_t *)((mm)->pgd + pgd_index(addr)))
+#define pud_offset(dir, addr)		((pud_t *)__va((pgd_val(READ_ONCE(*(dir))) & PTE_ADDR_MASK) + pud_index(addr) * sizeof(pud_t)))
+#define pmd_offset(dir, addr)		((pmd_t *)__va((pud_val(READ_ONCE(*(dir))) & PTE_ADDR_MASK) + pmd_index(addr) * sizeof(pmd_t)))
 #define pte_offset_kernel(dir, addr)	((pte_t *)__va((pmd_val(READ_ONCE(*(dir))) & PTE_ADDR_MASK) + pte_index(addr) * sizeof(pte_t)))
 #define pte_offset_map(dir, addr)	pte_offset_kernel((dir), (addr))
-
-#define pmd_offset(dir, addr)		((pmd_t *)__va((pud_val(READ_ONCE(*(dir))) & PTE_ADDR_MASK) + pmd_index(addr) * sizeof(pmd_t)))
-#define pud_offset(dir, addr)		((pud_t *)__va((pgd_val(READ_ONCE(*(dir))) & PTE_ADDR_MASK) + pud_index(addr) * sizeof(pud_t)))
-#define pgd_offset(mm, addr)		((pgd_t *)((mm)->pgd + pgd_index(addr)))
 
 /*
  * ZERO_PAGE is a global shared page that is always zero: used
