@@ -2,12 +2,12 @@
 	.text
 	.global _start
 _start:
-	ft2fo	rf1, rf1, 63
-	fo2ft	rf1, rf1, 63
-	ft2rd	rd1, rf1, 63
-	fo2rd	rd1, rf1, 63
-	rd2ft	rf1, rd1, 63
-	rd2fo	rf1, rd1, 63
+	ft2fo	rf0, rf0, 63
+	fo2ft	rf0, rf0, 63
+	ft2rd	rd0, rf0, 63
+	fo2rd	rd0, rf0, 63
+	rd2ft	rf0, rd0, 63
+	rd2fo	rf0, rd0, 63
 
 	ftadd	rf1, rf2, rf3
 	ftsub	rf1, rf2, rf3
@@ -18,12 +18,12 @@ _start:
 	fomul	rf1, rf2, rf3
 	fodiv	rf1, rf2, rf3
 
-	ftabs	rf1, rf1, 63
-	ftneg	rf1, rf1, 63
-	ftsqrt	rf1, rf1, 63
-	foabs	rf1, rf1, 63
-	foneg	rf1, rf1, 63
-	fosqrt	rf1, rf1, 63
+	ftabs	rf0, rf0, 63
+	ftneg	rf0, rf0, 63
+	ftsqrt	rf0, rf0, 63
+	foabs	rf0, rf0, 63
+	foneg	rf0, rf0, 63
+	fosqrt	rf0, rf0, 63
 
 	ftcun	rd1, rf1, rf2
 	ftcor	rd1, rf1, rf2

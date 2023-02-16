@@ -5,12 +5,12 @@ tmpdir/insn-float.o:     file format elf64-dadao
 Disassembly of section .text:
 
 0000000000000000 <_start>:
-   0:	5004107f 	ft2fo	rf1, rf1, 0x3f
-   4:	5010107f 	fo2ft	rf1, rf1, 0x3f
-   8:	500c107f 	ft2rd	rd1, rf1, 0x3f
-   c:	501c107f 	fo2rd	rd1, rf1, 0x3f
-  10:	5030107f 	rd2ft	rf1, rd1, 0x3f
-  14:	5034107f 	rd2fo	rf1, rd1, 0x3f
+   0:	5004003f 	ft2fo	rf0, rf0, 0x3f
+   4:	5010003f 	fo2ft	rf0, rf0, 0x3f
+   8:	500c003f 	ft2rd	rd0, rf0, 0x3f
+   c:	501c003f 	fo2rd	rd0, rf0, 0x3f
+  10:	5030003f 	rd2ft	rf0, rd0, 0x3f
+  14:	5034003f 	rd2fo	rf0, rd0, 0x3f
   18:	50401083 	ftadd	rf1, rf2, rf3
   1c:	50441083 	ftsub	rf1, rf2, rf3
   20:	50481083 	ftmul	rf1, rf2, rf3
@@ -19,12 +19,12 @@ Disassembly of section .text:
   2c:	50841083 	fosub	rf1, rf2, rf3
   30:	50881083 	fomul	rf1, rf2, rf3
   34:	508c1083 	fodiv	rf1, rf2, rf3
-  38:	5050107f 	ftabs	rf1, rf1, 0x3f
-  3c:	5054107f 	ftneg	rf1, rf1, 0x3f
-  40:	5058107f 	ftsqrt	rf1, rf1, 0x3f
-  44:	5090107f 	foabs	rf1, rf1, 0x3f
-  48:	5094107f 	foneg	rf1, rf1, 0x3f
-  4c:	5098107f 	fosqrt	rf1, rf1, 0x3f
+  38:	5050003f 	ftabs	rf0, rf0, 0x3f
+  3c:	5054003f 	ftneg	rf0, rf0, 0x3f
+  40:	5058003f 	ftsqrt	rf0, rf0, 0x3f
+  44:	5090003f 	foabs	rf0, rf0, 0x3f
+  48:	5094003f 	foneg	rf0, rf0, 0x3f
+  4c:	5098003f 	fosqrt	rf0, rf0, 0x3f
   50:	50601042 	ftcun	rd1, rf1, rf2
   54:	50641042 	ftcor	rd1, rf1, rf2
   58:	50681042 	ftcne	rd1, rf1, rf2

@@ -27,23 +27,23 @@ Disassembly of section .text:
   4c:	3a041800 	stt	rd1, rb1, -2048
   50:	3b0417ff 	sto	rd1, rb1, 2047
   54:	3b041800 	sto	rd1, rb1, -2048
-  58:	3404107f 	ldmbs	rd1, rb1, rd1, 0x3f
-  5c:	3504107f 	ldmws	rd1, rb1, rd1, 0x3f
-  60:	3604107f 	ldmts	rd1, rb1, rd1, 0x3f
-  64:	3704107f 	ldmo	rd1, rb1, rd1, 0x3f
-  68:	4404107f 	ldmbu	rd1, rb1, rd1, 0x3f
-  6c:	4504107f 	ldmwu	rd1, rb1, rd1, 0x3f
-  70:	4604107f 	ldmtu	rd1, rb1, rd1, 0x3f
-  74:	3c04107f 	stmb	rd1, rb1, rd1, 0x3f
-  78:	3d04107f 	stmw	rd1, rb1, rd1, 0x3f
-  7c:	3e04107f 	stmt	rd1, rb1, rd1, 0x3f
-  80:	3f04107f 	stmo	rd1, rb1, rd1, 0x3f
+  58:	3400107f 	ldmbs	rd0, rb1, rd1, 0x3f
+  5c:	3500107f 	ldmws	rd0, rb1, rd1, 0x3f
+  60:	3600107f 	ldmts	rd0, rb1, rd1, 0x3f
+  64:	3700107f 	ldmo	rd0, rb1, rd1, 0x3f
+  68:	4400107f 	ldmbu	rd0, rb1, rd1, 0x3f
+  6c:	4500107f 	ldmwu	rd0, rb1, rd1, 0x3f
+  70:	4600107f 	ldmtu	rd0, rb1, rd1, 0x3f
+  74:	3c00107f 	stmb	rd0, rb1, rd1, 0x3f
+  78:	3d00107f 	stmw	rd0, rb1, rd1, 0x3f
+  7c:	3e00107f 	stmt	rd0, rb1, rd1, 0x3f
+  80:	3f00107f 	stmo	rd0, rb1, rd1, 0x3f
   84:	430427ff 	ldrb	rb1, rb2, 2047
   88:	43042800 	ldrb	rb1, rb2, -2048
   8c:	4b0427ff 	strb	rb1, rb2, 2047
   90:	4b042800 	strb	rb1, rb2, -2048
-  94:	4704107f 	ldmrb	rb1, rb1, rd1, 0x3f
-  98:	4f04107f 	stmrb	rb1, rb1, rd1, 0x3f
+  94:	4700107f 	ldmrb	rb0, rb1, rd1, 0x3f
+  98:	4f00107f 	stmrb	rb0, rb1, rd1, 0x3f
   9c:	520417ff 	ldft	rf1, rb1, 2047
   a0:	52041800 	ldft	rf1, rb1, -2048
   a4:	530417ff 	ldfo	rf1, rb1, 2047
@@ -52,9 +52,9 @@ Disassembly of section .text:
   b0:	5a041800 	stft	rf1, rb1, -2048
   b4:	5b0417ff 	stfo	rf1, rb1, 2047
   b8:	5b041800 	stfo	rf1, rb1, -2048
-  bc:	5604107f 	ldmft	rf1, rb1, rd1, 0x3f
-  c0:	5704107f 	ldmfo	rf1, rb1, rd1, 0x3f
-  c4:	5e04107f 	stmft	rf1, rb1, rd1, 0x3f
-  c8:	5f04107f 	stmfo	rf1, rb1, rd1, 0x3f
-  cc:	6704107f 	ldmra	ra1, rb1, rd1, 0x3f
-  d0:	6f04107f 	stmra	ra1, rb1, rd1, 0x3f
+  bc:	5600107f 	ldmft	rf0, rb1, rd1, 0x3f
+  c0:	5700107f 	ldmfo	rf0, rb1, rd1, 0x3f
+  c4:	5e00107f 	stmft	rf0, rb1, rd1, 0x3f
+  c8:	5f00107f 	stmfo	rf0, rb1, rd1, 0x3f
+  cc:	6700107f 	ldmra	ra0, rb1, rd1, 0x3f
+  d0:	6f00107f 	stmra	ra0, rb1, rd1, 0x3f

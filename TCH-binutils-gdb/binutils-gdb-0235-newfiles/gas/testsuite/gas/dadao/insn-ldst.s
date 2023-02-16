@@ -26,26 +26,26 @@ _start:
 	sto	rd1, rb1, 2047
 	sto	rd1, rb1, -2048
 
-	ldmbs	rd1, rb1, rd1, 63
-	ldmws	rd1, rb1, rd1, 63
-	ldmts	rd1, rb1, rd1, 63
-	ldmo	rd1, rb1, rd1, 63
-	ldmbu	rd1, rb1, rd1, 63
-	ldmwu	rd1, rb1, rd1, 63
-	ldmtu	rd1, rb1, rd1, 63
+	ldmbs	rd0, rb1, rd1, 63
+	ldmws	rd0, rb1, rd1, 63
+	ldmts	rd0, rb1, rd1, 63
+	ldmo	rd0, rb1, rd1, 63
+	ldmbu	rd0, rb1, rd1, 63
+	ldmwu	rd0, rb1, rd1, 63
+	ldmtu	rd0, rb1, rd1, 63
 
-	stmb	rd1, rb1, rd1, 63
-	stmw	rd1, rb1, rd1, 63
-	stmt	rd1, rb1, rd1, 63
-	stmo	rd1, rb1, rd1, 63
+	stmb	rd0, rb1, rd1, 63
+	stmw	rd0, rb1, rd1, 63
+	stmt	rd0, rb1, rd1, 63
+	stmo	rd0, rb1, rd1, 63
 
 	ldrb	rb1, rb2, 2047
 	ldrb	rb1, rb2, -2048
 	strb	rb1, rb2, 2047
 	strb	rb1, rb2, -2048
 
-	ldmrb	rb1, rb1, rd1, 63
-	stmrb	rb1, rb1, rd1, 63
+	ldmrb	rb0, rb1, rd1, 63
+	stmrb	rb0, rb1, rd1, 63
 
 	ldft	rf1, rb1, 2047
 	ldft	rf1, rb1, -2048
@@ -56,10 +56,10 @@ _start:
 	stfo	rf1, rb1, 2047
 	stfo	rf1, rb1, -2048
 
-	ldmft	rf1, rb1, rd1, 63
-	ldmfo	rf1, rb1, rd1, 63
-	stmft	rf1, rb1, rd1, 63
-	stmfo	rf1, rb1, rd1, 63
+	ldmft	rf0, rb1, rd1, 63
+	ldmfo	rf0, rb1, rd1, 63
+	stmft	rf0, rb1, rd1, 63
+	stmfo	rf0, rb1, rd1, 63
 
-	ldmra	ra1, rb1, rd1, 63
-	stmra	ra1, rb1, rd1, 63
+	ldmra	ra0, rb1, rd1, 63
+	stmra	ra0, rb1, rd1, 63
