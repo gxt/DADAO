@@ -118,6 +118,22 @@ test_ ## testnum:                                               					\
     move REG_GROUP##62, 0x3e;                                   \
     move REG_GROUP##63, 0x3f;                                    
 
+#define TEST_ORRI_OP( testnum, inst, result, val1, imm6 )		\
+    TEST_CASE( testnum, rd31, result,					\
+	move	rd16, val1;						\
+	inst	rd31, rd16, imm6;					\
+    )
+
+#define TEST_ORRI_SRC_OP( testnum, inst, result, val1, imm6 )		\
+    TEST_CASE( testnum, rd31, result,					\
+        move    rd31, val1;						\
+	inst	rd31, rd31, imm6;					\
+    )
+
+#define TEST_ORRI_ZERO_SRC( testnum, inst, result, imm6 )		\
+    TEST_CASE( testnum, rd31, result,					\
+        inst    rd31, rd0, imm6;					\
+    )
 
 #define TEST_RRRR_RET3_OP( testnum, inst, result, val1, val2, val3)     \
     TEST_CASE( testnum, rd31, result,                                   \
