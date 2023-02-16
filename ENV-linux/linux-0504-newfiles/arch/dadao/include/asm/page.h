@@ -40,8 +40,7 @@ typedef struct page *pgtable_t;
 
 #define pfn_valid(pfn)		((pfn) >= ARCH_PFN_OFFSET && ((pfn) - ARCH_PFN_OFFSET) < max_mapnr)
 
-#define virt_addr_valid(kaddr)	(((void *)(kaddr) >= (void *)PAGE_OFFSET) && \
-				((void *)(kaddr) < (void *)memory_end))
+#define virt_addr_valid(kaddr)	((void *)(kaddr) >= (void *)PAGE_OFFSET)
 
 #endif /* __ASSEMBLY__ */
 
