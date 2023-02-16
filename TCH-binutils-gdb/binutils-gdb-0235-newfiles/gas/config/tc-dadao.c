@@ -857,6 +857,19 @@ void dadao_md_assemble(char *str)
         return;
     }
 
+    /* if the number of registers exceeds the limit in insn */
+    if ((instruction->name[0] == 'l' && instruction->name[1] == 'd' && instruction->name[2] == 'm') || (instruction->name[0] == 's' && instruction->name[1] == 't' && instruction->name[2] == 'm'))
+    {
+	if (((exp[0].X_add_number % 64) + exp[3].X_add_number) > 63)
+	    as_bad("(%s%s) the number of registers exceeds the limit", &insn_alt[1], operands);
+    }
+
+    if (instruction->name[2] == '2')
+    {
+	if (((exp[0].X_add_number % 64) + exp[2].X_add_number) > 63 || ((exp[1].X_add_number % 64) + exp[2].X_add_number) > 63)
+	    as_bad("(%s%s) the number of registers exceeds the limit", &insn_alt[1], operands);
+    }
+
     if (multiple_to_single == 1)
     { 
 
@@ -881,7 +894,7 @@ void dadao_md_assemble(char *str)
         }
 
         /* rd2rd and similar instruction */
-        if (instruction->name[2] == '2' && instruction->name[0] != 'c' && instruction->name[3] != 'c')
+        if (instruction->name[2] == '2')
         {
             if (instruction->op_fb == dadao_operand_rb)
             {
