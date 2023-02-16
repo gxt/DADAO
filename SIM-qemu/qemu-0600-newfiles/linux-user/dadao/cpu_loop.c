@@ -88,4 +88,5 @@ void target_cpu_copy_regs(CPUArchState *env, struct target_pt_regs *regs)
 {
     env->REG_PC = regs->REG_PC;
     env->REG_SP = regs->REG_SP;
+    env->REG_EP = regs->REG_EP;
 }

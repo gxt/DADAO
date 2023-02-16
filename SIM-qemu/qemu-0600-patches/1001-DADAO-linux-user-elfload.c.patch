@@ -6,14 +6,14 @@ Subject: [PATCH 1001/1002] DADAO-linux-user: elfload.c
 Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
 Signed-off-by: Hao Chenqi <hchenqi@pku.edu.cn>
 ---
- linux-user/elfload.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ linux-user/elfload.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
 diff --git a/linux-user/elfload.c b/linux-user/elfload.c
 index fc9c4f12be..3cfb93acf9 100644
 --- a/linux-user/elfload.c
 +++ b/linux-user/elfload.c
-@@ -1504,6 +1504,24 @@ static void elf_core_copy_regs(target_elf_gregset_t *regs,
+@@ -1504,6 +1504,25 @@ static void elf_core_copy_regs(target_elf_gregset_t *regs,
  
  #endif /* TARGET_XTENSA */
  
@@ -29,6 +29,7 @@ index fc9c4f12be..3cfb93acf9 100644
 +{
 +    regs->REG_PC = infop->entry;
 +    regs->REG_SP = infop->start_stack;
++    regs->REG_EP = 0x47efffffe0000000;
 +}
 +
 +#define ELF_EXEC_PAGESIZE 4096

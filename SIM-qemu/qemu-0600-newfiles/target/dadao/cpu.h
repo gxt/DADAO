@@ -18,6 +18,7 @@
 
 #define REG_PC  rb[0]
 #define REG_SP  rb[1]
+#define REG_EP	rf[0]
 
 typedef struct CPUDADAOState {
     uint64_t rd[64];        /* general registers */
