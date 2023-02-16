@@ -29,6 +29,9 @@ extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
 #define pte_unmap(pte)			do { } while (0)
 
 #define pte_pfn(pte)			(pte_val(pte) >> PAGE_SHIFT)
+#define pfn_pte(pfn,prot)		__pte(((phys_addr_t)(pfn) << PAGE_SHIFT) | pgprot_val(prot))
+
+#define mk_pte(page,prot)		pfn_pte(page_to_pfn(page),prot)
 
 static inline pte_t pte_wrprotect(pte_t pte)	{ pte_val(pte) &= ~__PAGE_WRITE; return pte; }
 static inline pte_t pte_mkold(pte_t pte)	{ pte_val(pte) &= ~__PAGE_YOUNG; return pte; }
@@ -53,6 +56,9 @@ static inline pte_t pte_mkdirty(pte_t pte)	{ pte_val(pte) |=  __PAGE_DIRTY; retu
 #define pmd_index(addr)			(((addr) >> PMD_SHIFT)   & (PTRS_PER_PMD - 1))
 #define pud_index(addr)			(((addr) >> PUD_SHIFT)   & (PTRS_PER_PUD - 1))
 #define pgd_index(addr)			(((addr) >> PGDIR_SHIFT) & (PTRS_PER_PGD - 1))
+
+#define pte_offset_kernel(dir, addr)	((pte_t *)__va((pmd_val(READ_ONCE(*(dir))) & PTE_ADDR_MASK) + pte_index(addr) * sizeof(pte_t)))
+#define pte_offset_map(dir, addr)	pte_offset_kernel((dir), (addr))
 
 #define pmd_offset(dir, addr)		((pmd_t *)__va((pud_val(READ_ONCE(*(dir))) & PTE_ADDR_MASK) + pmd_index(addr) * sizeof(pmd_t)))
 #define pud_offset(dir, addr)		((pud_t *)__va((pgd_val(READ_ONCE(*(dir))) & PTE_ADDR_MASK) + pud_index(addr) * sizeof(pud_t)))
