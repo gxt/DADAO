@@ -17,9 +17,9 @@
 
 extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
 
-#define pgd_ERROR(pgd)			printk("%s:%d: bad pgd %016lx.\n", __FILE__, __LINE__, pgd_val(pgd))
-#define pud_ERROR(pud)			printk("%s:%d: bad pud %016lx.\n", __FILE__, __LINE__, pud_val(pud))
-#define pmd_ERROR(pmd)			printk("%s:%d: bad pmd %016lx.\n", __FILE__, __LINE__, pmd_val(pmd))
+#define pgd_ERROR(pgd)			printk("%s:%d: bad pgd %016llx.\n", __FILE__, __LINE__, pgd_val(pgd))
+#define pud_ERROR(pud)			printk("%s:%d: bad pud %016llx.\n", __FILE__, __LINE__, pud_val(pud))
+#define pmd_ERROR(pmd)			printk("%s:%d: bad pmd %016llx.\n", __FILE__, __LINE__, pmd_val(pmd))
 
 #define pgd_none(pgd)			(!pgd_val(pgd))
 #define pud_none(pud)			(!pud_val(pud))
@@ -40,6 +40,11 @@ extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
 #define pmd_index(addr)			(((addr) >> PMD_SHIFT)   & (PTRS_PER_PMD - 1))
 #define pte_index(addr)			(((addr) >> PAGE_SHIFT)  & (PTRS_PER_PTE - 1))
 
+#define pgd_clear(pgdp)			set_pgd(pgdp, __pgd(0))
+#define pud_clear(pudp)			set_pud(pudp, __pud(0))
+#define pmd_clear(pmdp)			set_pmd(pmdp, __pmd(0))
+#define pte_clear(mm, addr, ptep)	set_pte(ptep, __pte(0))
+
 #define set_pte(pteptr, pteval)		((*(pteptr)) = (pteval))
 
 #define set_pte_at(mm, addr, pteptr, pteval)				\
@@ -47,8 +52,9 @@ extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
 		set_pte(pteptr, pteval);				\
 	} while (0)
 
-#define pte_clear(mm, addr, pteptr)	set_pte(pteptr, __pte(0))
-#define pte_young(pte)			(pte_val(pte) & __PAGE_YOUNG)
+#define pte_young(pte)			(!!(pte_val(pte) & __PAGE_YOUNG))
+#define pte_write(pte)			(!!(pte_val(pte) & __PAGE_WRITE))
+#define pte_dirty(pte)			(!!(pte_val(pte) & __PAGE_DIRTY))
 #define pte_unmap(pte)			do { } while (0)
 
 #define pte_pfn(pte)			(pte_val(pte) >> PAGE_SHIFT)
@@ -56,10 +62,12 @@ extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
 
 #define mk_pte(page,prot)		pfn_pte(page_to_pfn(page),prot)
 
-static inline pte_t pte_wrprotect(pte_t pte)	{ pte_val(pte) &= ~__PAGE_WRITE; return pte; }
-static inline pte_t pte_mkold(pte_t pte)	{ pte_val(pte) &= ~__PAGE_YOUNG; return pte; }
-static inline pte_t pte_mkwrite(pte_t pte)	{ pte_val(pte) |=  __PAGE_WRITE; return pte; }
-static inline pte_t pte_mkdirty(pte_t pte)	{ pte_val(pte) |=  __PAGE_DIRTY; return pte; }
+#define pte_mkold(pte)			(__pte(pte_val(pte) & ~__PAGE_YOUNG))
+#define pte_mkyoung(pte)		(__pte(pte_val(pte) |  __PAGE_YOUNG))
+#define pte_wrprotect(pte)		(__pte(pte_val(pte) & ~__PAGE_WRITE))
+#define pte_mkwrite(pte)		(__pte(pte_val(pte) |  __PAGE_WRITE))
+#define pte_mkclean(pte)		(__pte(pte_val(pte) & ~__PAGE_DIRTY))
+#define pte_mkdirty(pte)		(__pte(pte_val(pte) |  __PAGE_DIRTY))
 
 #define pgd_offset(mm, addr)		((pgd_t *)((mm)->pgd + pgd_index(addr)))
 #define pud_offset(dir, addr)		((pud_t *)__va((pgd_val(READ_ONCE(*(dir))) & PTE_ADDR_MASK) + pud_index(addr) * sizeof(pud_t)))
@@ -85,6 +93,8 @@ extern struct page *empty_zero_page;
 #define __pte_to_swp_entry(pte)		((swp_entry_t) { pte_val(pte) })
 
 #define kern_addr_valid(addr)		(1)
+
+#define update_mmu_cache(vma, addr, ptep)	do { } while (0)
 
 #endif /* __ASSEMBLY__ */
 
