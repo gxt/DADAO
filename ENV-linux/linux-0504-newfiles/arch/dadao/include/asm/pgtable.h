@@ -17,6 +17,10 @@
 
 extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
 
+#define pgd_ERROR(pgd)			printk("%s:%d: bad pgd %016lx.\n", __FILE__, __LINE__, pgd_val(pgd))
+#define pud_ERROR(pud)			printk("%s:%d: bad pud %016lx.\n", __FILE__, __LINE__, pud_val(pud))
+#define pmd_ERROR(pmd)			printk("%s:%d: bad pmd %016lx.\n", __FILE__, __LINE__, pmd_val(pmd))
+
 #define set_pte(pteptr, pteval)		((*(pteptr)) = (pteval))
 
 #define set_pte_at(mm, addr, pteptr, pteval)				\
