@@ -19,6 +19,12 @@
 	rd2rd	rd16, rd0, 15;						\
 	rd2rd	rd32, rd0, 31;
 
+#define INIT_FLOATREG							\
+	setw	rf0, w3, 0x47ef;					\
+	setw	rf0, w2, 0xffff;					\
+	setw	rf0, w1, 0xe000;					\
+	setw	rf0, w0, 0x0000;
+
 #define DDTEST_CODE_BEGIN						\
 	.section .text.init;						\
 	.align 6;							\
@@ -45,6 +51,7 @@ __wait_fromhost:							\
 	jump	rb33, rd0, 0;		/* mret */			\
 reset_vector:								\
 	INIT_DATAREG;							\
+	INIT_FLOATREG;							\
 	rd2rd	TESTNUM, rd0, 0;					\
 	init;								\
 	swym; /* TODO */
