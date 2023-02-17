@@ -45,7 +45,10 @@ extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
 #define pmd_clear(pmdp)			set_pmd(pmdp, __pmd(0))
 #define pte_clear(mm, addr, ptep)	set_pte(ptep, __pte(0))
 
-#define set_pte(pteptr, pteval)		((*(pteptr)) = (pteval))
+#define set_pgd(pgdp, pgdv)		((*(pgdp)) = (pgdv))
+#define set_pud(pudp, pudv)		((*(pudp)) = (pudv))
+#define set_pmd(pmdp, pmdv)		((*(pmdp)) = (pmdv))
+#define set_pte(ptep, ptev)		((*(ptep)) = (ptev))
 
 #define set_pte_at(mm, addr, pteptr, pteval)				\
 	do {								\
