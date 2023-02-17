@@ -5,6 +5,10 @@
 
 #include <asm-generic/pgalloc.h>
 
+#define pgd_populate(mm, pgdp, pudp)		set_pgd(pgdp, __pgd(__pa(pudp) | __PAGE_PRESENT))
+#define pud_populate(mm, pudp, pmdp)		set_pud(pudp, __pud(__pa(pmdp) | __PAGE_PRESENT))
+#define pmd_populate(mm, pmdp, ptep)		set_pmd(pmdp, __pmd(__pa(ptep) | __PAGE_PRESENT))
+
 #define pmd_pgtable(pmd)	pmd_page(pmd)
 
 static inline pmd_t *pmd_alloc_one(struct mm_struct *mm, unsigned long addr)
