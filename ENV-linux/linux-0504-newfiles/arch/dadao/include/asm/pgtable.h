@@ -8,10 +8,13 @@
 #include <asm-generic/5level-fixup.h>
 
 #include <asm/pgtable-hwdef.h>
+#include <asm/pgtable-prot.h>
 #include <asm/arch_memory.h>
 
 #define	VMALLOC_START			__DD_MEMORY_VMALLOC_START
 #define	VMALLOC_END			__DD_MEMORY_VMALLOC_END
+
+#define FIRST_USER_ADDRESS		0UL
 
 #ifndef __ASSEMBLY__
 
@@ -30,10 +33,14 @@ extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
 #define pud_bad(pud)			(!(pud_val(pud) & PUD_TABLE_BIT))
 #define pmd_bad(pmd)			(!(pmd_val(pmd) & PMD_TABLE_BIT))
 
-#define pgd_present(pgd)		(pgd_val(pgd) & __PAGE_PRESENT)
-#define pud_present(pud)		(pud_val(pud) & __PAGE_PRESENT)
-#define pmd_present(pmd)		(pmd_val(pmd) & __PAGE_PRESENT)
-#define pte_present(pte)		(pte_val(pte) & __PAGE_PRESENT)
+#define pgd_pte(pgd)			__pte(pgd_val(pgd))
+#define pud_pte(pud)			__pte(pud_val(pud))
+#define pmd_pte(pmd)			__pte(pmd_val(pmd))
+
+#define pgd_present(pgd)		(pgd_val(pgd))
+#define pud_present(pud)		pte_present(pud_pte(pud))
+#define pmd_present(pmd)		pte_present(pmd_pte(pmd))
+#define pte_present(pte)		(!!(pte_val(pte) & (PTE_VALID | PTE_PROT_NONE)))
 
 #define pgd_index(addr)			(((addr) >> PGDIR_SHIFT) & (PTRS_PER_PGD - 1))
 #define pud_index(addr)			(((addr) >> PUD_SHIFT)   & (PTRS_PER_PUD - 1))
@@ -45,6 +52,21 @@ extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
 #define pmd_clear(pmdp)			set_pmd(pmdp, __pmd(0))
 #define pte_clear(mm, addr, ptep)	set_pte(ptep, __pte(0))
 
+#define __pgd_to_phys(pgd)		__pte_to_phys(pgd_pte(pgd))
+#define __pud_to_phys(pud)		__pte_to_phys(pud_pte(pud))
+#define __pmd_to_phys(pmd)		__pte_to_phys(pmd_pte(pmd))
+#define __pte_to_phys(pte)		(pte_val(pte) & PTE_ADDR_MASK)
+
+#define __phys_to_pgd_val(phys)		__phys_to_pte_val(phys)
+#define __phys_to_pud_val(phys)		__phys_to_pte_val(phys)
+#define __phys_to_pmd_val(phys)		__phys_to_pte_val(phys)
+#define __phys_to_pte_val(phys)		(phys)
+
+#define pgd_page(pgd)			pfn_to_page(__phys_to_pfn(__pgd_to_phys(pgd)))
+#define pud_page(pud)			pfn_to_page(__phys_to_pfn(__pud_to_phys(pud)))
+#define pmd_page(pmd)			pfn_to_page(__phys_to_pfn(__pmd_to_phys(pmd)))
+#define pte_page(pte)			(pfn_to_page(pte_pfn(pte)))
+
 #define set_pgd(pgdp, pgdv)		((*(pgdp)) = (pgdv))
 #define set_pud(pudp, pudv)		((*(pudp)) = (pudv))
 #define set_pmd(pmdp, pmdv)		((*(pmdp)) = (pmdv))
@@ -55,9 +77,10 @@ extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
 		set_pte(pteptr, pteval);				\
 	} while (0)
 
-#define pte_young(pte)			(!!(pte_val(pte) & __PAGE_YOUNG))
-#define pte_write(pte)			(!!(pte_val(pte) & __PAGE_WRITE))
-#define pte_dirty(pte)			(!!(pte_val(pte) & __PAGE_DIRTY))
+#define pte_young(pte)			(!!(pte_val(pte) & PTE_AF))
+#define pte_special(pte)		(!!(pte_val(pte) & PTE_SPECIAL))
+#define pte_write(pte)			(!!(pte_val(pte) & PTE_WRITE))
+#define pte_dirty(pte)			(!!(pte_val(pte) & PTE_DIRTY))
 #define pte_unmap(pte)			do { } while (0)
 
 #define pte_pfn(pte)			(pte_val(pte) >> PAGE_SHIFT)
@@ -65,12 +88,13 @@ extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
 
 #define mk_pte(page,prot)		pfn_pte(page_to_pfn(page),prot)
 
-#define pte_mkold(pte)			(__pte(pte_val(pte) & ~__PAGE_YOUNG))
-#define pte_mkyoung(pte)		(__pte(pte_val(pte) |  __PAGE_YOUNG))
-#define pte_wrprotect(pte)		(__pte(pte_val(pte) & ~__PAGE_WRITE))
-#define pte_mkwrite(pte)		(__pte(pte_val(pte) |  __PAGE_WRITE))
-#define pte_mkclean(pte)		(__pte(pte_val(pte) & ~__PAGE_DIRTY))
-#define pte_mkdirty(pte)		(__pte(pte_val(pte) |  __PAGE_DIRTY))
+#define pte_mkold(pte)			(__pte(pte_val(pte) & ~PTE_AF))
+#define pte_mkyoung(pte)		(__pte(pte_val(pte) |  PTE_AF))
+#define pte_wrprotect(pte)		(__pte(pte_val(pte) & ~PTE_WRITE))
+#define pte_mkwrite(pte)		(__pte(pte_val(pte) |  PTE_WRITE))
+#define pte_mkclean(pte)		(__pte(pte_val(pte) & ~PTE_DIRTY))
+#define pte_mkdirty(pte)		(__pte(pte_val(pte) |  PTE_DIRTY))
+#define pte_mkspecial(pte)		(__pte(pte_val(pte) |  PTE_SPECIAL))
 
 #define pgd_offset(mm, addr)		((pgd_t *)((mm)->pgd + pgd_index(addr)))
 #define pud_offset(dir, addr)		((pud_t *)__va((pgd_val(READ_ONCE(*(dir))) & PTE_ADDR_MASK) + pud_index(addr) * sizeof(pud_t)))
@@ -78,16 +102,22 @@ extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
 #define pte_offset_kernel(dir, addr)	((pte_t *)__va((pmd_val(READ_ONCE(*(dir))) & PTE_ADDR_MASK) + pte_index(addr) * sizeof(pte_t)))
 #define pte_offset_map(dir, addr)	pte_offset_kernel((dir), (addr))
 
+#define pgd_offset_k(addr)		pgd_offset(&init_mm, addr)
+
+static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
+{
+	const pteval_t mask = PTE_USER | PTE_PXN | PTE_UXN | PTE_RDONLY |
+			      PTE_PROT_NONE | PTE_VALID | PTE_WRITE;
+	pte_val(pte) = (pte_val(pte) & ~mask) | (pgprot_val(newprot) & mask);
+	return pte;
+}
+
 /*
  * ZERO_PAGE is a global shared page that is always zero: used
  * for zero-mapped memory areas etc..
  */
 extern struct page *empty_zero_page;
 #define ZERO_PAGE(vaddr)		(empty_zero_page)
-
-#define PAGE_NONE			__pgprot(0)
-#define PAGE_SHARED			__pgprot(0)
-#define PAGE_KERNEL			__pgprot(0)
 
 #define __swp_type(x)			(0)
 #define __swp_offset(x)			(0)
