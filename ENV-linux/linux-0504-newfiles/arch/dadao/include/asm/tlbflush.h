@@ -10,7 +10,8 @@
 
 static inline void local_flush_tlb_all(void)
 {
-	__asm__ __volatile__ ("sfence.vma" : : : "memory");
+	/* FIXME */
+	__asm__ __volatile__ ("cpco cp0, 0" : : : "memory");
 }
 
 static inline void flush_tlb_range(struct vm_area_struct *vma,
