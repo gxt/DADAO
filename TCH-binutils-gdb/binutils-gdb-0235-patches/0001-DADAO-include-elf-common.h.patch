@@ -17,7 +17,7 @@ index 75c4fb7e9d7..3201eda1b09 100644
  #define EM_CYGNUS_MN10200	0xdead
  
 +/* DADAO */
-+#define EM_DADAO		0xDADA
++#define EM_DADAO		0x0DA0
 +
  /* Renesas M32C and M16C.  */
  #define EM_M32C_OLD		0xFEB0
