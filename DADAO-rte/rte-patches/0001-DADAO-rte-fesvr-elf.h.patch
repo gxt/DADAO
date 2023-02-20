@@ -16,7 +16,7 @@ index 7b38bf11..b2f09f75 100644
  
  #define ET_EXEC 2
  #define EM_RISCV 243
-+#define EM_DADAO 0xDADA
++#define EM_DADAO 0x0DA0
  #define EM_NONE 0
  #define EV_CURRENT 1
  
