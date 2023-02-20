@@ -16,7 +16,7 @@ index 2549a177d6..a0b32388b8 100644
  
  #define EM_ALPHA	0x9026
  
-+#define	EM_DADAO	0xDADA
++#define	EM_DADAO	0x0DA0
 +
  /* Legal values for e_version (version).  */
  
