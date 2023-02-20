@@ -1,0 +1,25 @@
+From 622a97988381c6a95eee7f041806844b9e2960d6 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Mon, 20 Feb 2023 09:56:55 +0800
+Subject: [PATCH] DADAO: include/uapi/linux/audit.h
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ include/uapi/linux/audit.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+index c89c6495983d..2785cae3cccb 100644
+--- a/include/uapi/linux/audit.h
++++ b/include/uapi/linux/audit.h
+@@ -388,6 +388,7 @@ enum {
+ #define AUDIT_ARCH_C6XBE	(EM_TI_C6000)
+ #define AUDIT_ARCH_CRIS		(EM_CRIS|__AUDIT_ARCH_LE)
+ #define AUDIT_ARCH_CSKY		(EM_CSKY|__AUDIT_ARCH_LE)
++#define AUDIT_ARCH_DADAO	(EM_DADAO|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)
+ #define AUDIT_ARCH_FRV		(EM_FRV)
+ #define AUDIT_ARCH_H8300	(EM_H8_300)
+ #define AUDIT_ARCH_HEXAGON	(EM_HEXAGON)
+-- 
+2.34.1
+
