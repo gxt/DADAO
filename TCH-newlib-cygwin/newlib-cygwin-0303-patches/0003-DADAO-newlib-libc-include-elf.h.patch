@@ -16,7 +16,7 @@ index 206b131ea..c6c7e8bb3 100644
  #define EM_NUM		248
  
  #define EM_ALPHA	0x9026
-+#define EM_DADAO	0xDADA
++#define EM_DADAO	0x0DA0
  
  #define EV_NONE		0
  #define EV_CURRENT	1
