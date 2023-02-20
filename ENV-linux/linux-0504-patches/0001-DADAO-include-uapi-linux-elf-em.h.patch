@@ -16,7 +16,7 @@ index f47e853546fa..db9ab6788c67 100644
  /* Also Panasonic/MEI MN10300, AM33 */
  #define EM_CYGNUS_MN10300 0xbeef
  
-+#define EM_DADAO	0xDADA
++#define EM_DADAO	0x0DA0
  
  #endif /* _LINUX_ELF_EM_H */
 -- 
