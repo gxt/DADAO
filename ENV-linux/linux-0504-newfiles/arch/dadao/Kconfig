@@ -1,5 +1,6 @@
 config DADAO
 	def_bool y
+	select GENERIC_IOMAP
 	select HAVE_RCU_TABLE_FREE
 
 config 64BIT
