@@ -24,25 +24,16 @@ test_ ## testnum:											\
 	cmps	rd15, testreg_2, rd15;									\
 	brnz    rd15, fail;
 
-#define TEST_CASE_MULTI_REG_RD( testnum, testreg, correctval )	\
-test_ ## testnum:						\
-        move    rd63, correctval;				\
-        cmps	rd63, testreg, rd63;				\
-	move    TESTNUM, testnum;				\
-        brnz    rd63, fail;
-
-#define TEST_CASE_MULTI_REG_RB( testnum, testreg, correctval )  \
-test_ ## testnum:                                               \
-        move    rb63, correctval;                               \
-        cmp     rd63, testreg, rb63;                            \
-        move    TESTNUM, testnum;                               \
-        brnz    rd63, fail;
-
-#define TEST_CASE_MULTI_REG_63( testnum, testreg, correctval, inst  ) 					\
-test_ ## testnum:                                               					\
-        inst    rd63, testreg, correctval;                   					        \
-        move    TESTNUM, testnum;                               					\
-        brnz    rd63, fail;
+#define TEST_CASE_MULTI_REG( testnum, inst, reg1, reg2, imm6, reggroup, correctval, cmp, registernum... )       \
+test_ ## testnum:                                                                                               \
+        inst    reg1, reg2, imm6;                                                                               \
+        move    TESTNUM, testnum;                                                                               \
+        move    reggroup##62, correctval;                                                                       \
+        .irp    param,registernum;                                                                              \
+        cmp     rd63, reggroup\param, reggroup##62;                                                             \
+        brnz    rd63, fail;                                                                                     \
+        addi    reggroup##62, reggroup##62, 1;                                                                  \
+        .endr;
 
 #-----------------------------------------------------------------------
 # DADAO MACROS
