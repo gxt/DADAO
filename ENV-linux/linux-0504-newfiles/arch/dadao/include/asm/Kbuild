@@ -1,6 +1,7 @@
 #
 # Copyright (C) 2020-2033 Guan Xuetao (AT) Peking Univ.
 #
+generic-y += asm-offsets.h
 generic-y += bitops.h
 generic-y += bug.h
 generic-y += bugs.h
