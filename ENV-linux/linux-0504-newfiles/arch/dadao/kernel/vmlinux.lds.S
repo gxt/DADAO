@@ -10,7 +10,7 @@ jiffies = jiffies_64;
 
 SECTIONS
 {
-	. = PAGE_OFFSET + KERNEL_IMAGE_START;
+	. = PAGE_OFFSET;
 
 	_start = .;
 
