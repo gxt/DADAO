@@ -28,7 +28,7 @@ _start:
 	.align	2
 trap_entry:
 	addi	rb1, rb1, -512
-	stmo	rd1, rb1, rd0, 63
+	stmo	rd1, rb1, rd0, 62
 
 	CPRD_mcause(rd16)
 	CPRD_mepc(rd17)
@@ -36,7 +36,7 @@ trap_entry:
 	call	handle_trap
 	// CPWR_mepc(rd16)
 
-	ldmo	rd1, rb1, rd0, 63
+	ldmo	rd1, rb1, rd0, 62
 
 	addi	rb1, rb1, 512
 	rd2rb	rb7, rd16, 0
