@@ -18,13 +18,14 @@ vpath %.S $(src_dir)
 	$(DADAO_ELF_OBJDUMP) $(DADAO_ELF_OBJDUMP_FLAGS) $< > $@
 
 dduii-bare%.out: dduii-bare%
+	@echo -n "	$<  	"
 	@make -C $(DIR_DADAO_TOP) CHIPYARD_0107_DADAO_BINARY=$(shell pwd)/$< chipyard-0107-run-binary	> /dev/null
-	@tail -n 1 $(DIR_DADAO_BUILD)/chipyard-0107/output/chipyard.TestHarness.Wuming1StageConfig/$@ | tr '\n' ' '
-	@echo "		$<"
+	@tail -n 1 $(DIR_DADAO_BUILD)/chipyard-0107/output/chipyard.TestHarness.Wuming1StageConfig/$@
 
 dduii-qemu%.out: dduii-qemu%
+	@echo -n "	$<  	"
 	$(DADAO_QEMU_USER) $< 2> $@
-	@echo "		$<"
+	@echo
 
 define compile_template
 
