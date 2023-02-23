@@ -44,7 +44,7 @@ static int multiple_to_single = 0;
 
 size_t md_longopts_size = sizeof(md_longopts);
 
-static struct hash_control *dadao_opcode_hash;
+static struct hash_control *dadao_opcode_hash_1, *dadao_opcode_hash_2, *dadao_opcode_hash_3;
 
 /* For DADAO, we encode the relax_substateT:s (in e.g. fr_substate) as one
    bit length, and the relax-type shifted on top of that.  There seems to
@@ -352,13 +352,25 @@ int tc_dadao_regname_to_dw2regnum(char *regname)
 void dadao_md_begin(void)
 {
     int i;
-    const struct dadao_opcode *opcode;
+    const struct dadao_opcode *opcode, *opcode_1, *opcode_2;
     char buf[5];
 
-    dadao_opcode_hash = hash_new();
+    dadao_opcode_hash_1 = hash_new();
+    dadao_opcode_hash_2 = hash_new();
+    dadao_opcode_hash_3 = hash_new();
 
+    /* Use three hash tables to avoid having the same name for different entries */
     for (opcode = dadao_opcodes; opcode->name; opcode++)
-        hash_insert(dadao_opcode_hash, opcode->name, (char *)opcode);
+    {
+        opcode_1 = (struct dadao_opcode *)hash_find(dadao_opcode_hash_1, opcode->name);
+        opcode_2 = (struct dadao_opcode *)hash_find(dadao_opcode_hash_2, opcode->name);
+        if (opcode_2 != NULL)
+            hash_insert(dadao_opcode_hash_3, opcode->name, (char *)opcode);
+        else if (opcode_1 != NULL)
+            hash_insert(dadao_opcode_hash_2, opcode->name, (char *)opcode);
+        else
+            hash_insert(dadao_opcode_hash_1, opcode->name, (char *)opcode);
+    }
 
     for (i = 0; i < 64; i++)
     {
@@ -834,7 +846,7 @@ void dadao_md_assemble(char *str)
     /* Move to end of opcode.  */
     for (operands = str; is_part_of_name(*operands); ++operands)
     {
-        insn_alt[++insn_alt_i] = *operands;
+        insn_alt[insn_alt_i++] = *operands;
     }
 
     input_line_pointer = operands;
@@ -849,11 +861,11 @@ void dadao_md_assemble(char *str)
     if (OUTPUT_FLAVOR == bfd_target_elf_flavour)
         dwarf2_emit_insn(4);
 
-    insn_alt[++insn_alt_i] = '\0';
-    instruction = (struct dadao_opcode *)hash_find(dadao_opcode_hash, &insn_alt[1]);
-    if ((insn_alt[1] == '_') || (instruction == NULL))
+    insn_alt[insn_alt_i] = '\0';
+    instruction = (struct dadao_opcode *)hash_find(dadao_opcode_hash_1, insn_alt);
+    if (instruction == NULL)
     {
-        as_bad("(%s%s) unknown insn", &insn_alt[1], operands);
+        as_bad("(%s%s) unknown insn", insn_alt, operands);
         return;
     }
 
@@ -861,13 +873,13 @@ void dadao_md_assemble(char *str)
     if ((instruction->name[0] == 'l' && instruction->name[1] == 'd' && instruction->name[2] == 'm') || (instruction->name[0] == 's' && instruction->name[1] == 't' && instruction->name[2] == 'm'))
     {
 	if (((exp[0].X_add_number % 64) + exp[3].X_add_number) > 63)
-	    as_bad("(%s%s) the number of registers exceeds the limit", &insn_alt[1], operands);
+	    as_bad("(%s%s) the number of registers exceeds the limit", insn_alt, operands);
     }
 
     if (instruction->name[2] == '2')
     {
 	if (((exp[0].X_add_number % 64) + exp[2].X_add_number) > 63 || ((exp[1].X_add_number % 64) + exp[2].X_add_number) > 63)
-	    as_bad("(%s%s) the number of registers exceeds the limit", &insn_alt[1], operands);
+	    as_bad("(%s%s) the number of registers exceeds the limit", insn_alt, operands);
     }
 
     if (multiple_to_single == 1)
@@ -947,8 +959,7 @@ void dadao_md_assemble(char *str)
             }   
         }
 
-        insn_alt[0] = '_';
-        instruction = (struct dadao_opcode *)hash_find(dadao_opcode_hash, insn_alt);
+        instruction = (struct dadao_opcode *)hash_find(dadao_opcode_hash_2, insn_alt);
         
         /* move rb, imm/symbol */
         if (instruction != NULL && n_operands == 2 && exp[0].X_op == O_register) {
@@ -961,7 +972,7 @@ void dadao_md_assemble(char *str)
             }   
         }
         
-        as_bad_where(__FILE__, __LINE__, "(%s %s) unknown insn", &insn_alt[1], operands);
+        as_bad_where(__FILE__, __LINE__, "(%s %s) unknown insn", insn_alt, operands);
         return;
     }
 
@@ -977,9 +988,17 @@ void dadao_md_assemble(char *str)
         /* five possibles */
         /* iiii_rrii / orrr_orri / orrr_rrii */
         /* orrr_riii / riii_rrrr */
-        insn_alt[0] = '_';
 
-        instruction = (struct dadao_opcode *)hash_find(dadao_opcode_hash, insn_alt);
+        instruction = (struct dadao_opcode *)hash_find(dadao_opcode_hash_2, insn_alt);
+        if (instruction != NULL)
+            ret_code = dd_get_insn_code(instruction, exp, n_operands, &insn_code);
+    }
+
+    if (ret_code == -1)
+    {
+        /* as far, no insn in this hash table except pseudo */
+
+        instruction = (struct dadao_opcode *)hash_find(dadao_opcode_hash_3, insn_alt);
         if (instruction != NULL)
             ret_code = dd_get_insn_code(instruction, exp, n_operands, &insn_code);
     }
@@ -1054,7 +1073,7 @@ void dadao_md_assemble(char *str)
         break;
 
     default: /* -1 */
-        as_bad_where(__FILE__, __LINE__, "(%s %s) unknown insn", &insn_alt[1], operands);
+        as_bad_where(__FILE__, __LINE__, "(%s %s) unknown insn", insn_alt, operands);
     }
 }
 
