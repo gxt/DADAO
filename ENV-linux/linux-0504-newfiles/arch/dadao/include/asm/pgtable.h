@@ -6,7 +6,6 @@
 #define __DADAO_ASM_PGTABLE_H__
 
 #include <asm/page.h>
-#include <asm/pgtable-types.h>
 #include <asm/pgtable-hwdef.h>
 #include <asm/pgtable-prot.h>
 #include <asm/arch_memory.h>

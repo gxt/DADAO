@@ -11,12 +11,13 @@
 #define PAGE_MASK		(~(PAGE_SIZE-1))
 
 #include <asm/arch_memory.h>
-#include <asm/pgtable-types.h>
 
 /* PAGE_OFFSET - the virtual address of the start of the kernel image */
 #define PAGE_OFFSET		__DD_MEMORY_PAGE_OFFSET
 
 #ifndef __ASSEMBLY__
+
+#include <asm/pgtable-types.h>
 
 #define clear_page(page)			memset((page), 0, PAGE_SIZE)
 #define copy_page(to,from)			memcpy((to), (from), PAGE_SIZE)
