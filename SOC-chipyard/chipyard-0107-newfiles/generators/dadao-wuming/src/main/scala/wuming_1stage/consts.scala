@@ -110,6 +110,7 @@ trait ScalarOpConstants
    val ALU_AND = 6.asUInt(5.W)
    val ALU_OR  = 7.asUInt(5.W)
    val ALU_XOR = 8.asUInt(5.W)
+   val ALU_XNOR  = 21.asUInt(5.W)
    val ALU_CMPS  = 9.asUInt(5.W)
    val ALU_CMPU  = 10.asUInt(5.W)
    val ALU_SETOW = 11.asUInt(5.W)

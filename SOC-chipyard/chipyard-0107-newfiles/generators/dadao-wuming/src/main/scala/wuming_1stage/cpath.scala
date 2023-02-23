@@ -70,6 +70,7 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                   AND     -> List(Y, CF_X     , COND_X  , REG_RD   , OP1_RDHC , OP2_RDHD  , ALU_AND   , WB_RDHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
                   ORR     -> List(Y, CF_X     , COND_X  , REG_RD   , OP1_RDHC , OP2_RDHD  , ALU_OR    , WB_RDHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
                   XOR     -> List(Y, CF_X     , COND_X  , REG_RD   , OP1_RDHC , OP2_RDHD  , ALU_XOR   , WB_RDHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
+                  XNOR    -> List(Y, CF_X     , COND_X  , REG_RD   , OP1_RDHC , OP2_RDHD  , ALU_XNOR  , WB_RDHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
 
                   ANDI    -> List(Y, CF_X     , COND_X  , REG_RD   , OP1_RDHB , OP2_IMMU12, ALU_AND   , WB_RDHA , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
 

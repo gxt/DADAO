@@ -262,6 +262,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                   (io.ctl.alu_fun === ALU_AND)  -> (alu_op1 & alu_op2).asUInt(),
                   (io.ctl.alu_fun === ALU_OR)   -> (alu_op1 | alu_op2).asUInt(),
                   (io.ctl.alu_fun === ALU_XOR)  -> (alu_op1 ^ alu_op2).asUInt(),
+                  (io.ctl.alu_fun === ALU_XNOR) -> (alu_op1 ^ ~alu_op2).asUInt(),
                   (io.ctl.alu_fun === ALU_CMPS) -> Mux(alu_op1 === alu_op2, 0.U, Mux(alu_op1.asSInt() < alu_op2.asSInt(), ~0.U(BITS_OCTA.W), 1.U(BITS_OCTA.W))).asUInt(),
                   (io.ctl.alu_fun === ALU_CMPU) -> Mux(alu_op1 === alu_op2, 0.U, Mux(alu_op1.asUInt() < alu_op2.asUInt(), ~0.U(BITS_OCTA.W), 1.U(BITS_OCTA.W))).asUInt(),
                   (io.ctl.alu_fun === ALU_SLL)  -> ((alu_op1 << alu_shamt)(BITS_OCTA-1, 0)).asUInt(),
