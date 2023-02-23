@@ -225,6 +225,8 @@ def gen_opc_file(insts: dict, output_file: str):
                 exop = 1
             else:
                 exop = 0
+            if inst_name[0] == '_':
+                inst_name = inst_name[1:]
             line = '   {{ "{}", {}, {}, {}, dadao_operand_{}, dadao_operand_{}, dadao_operand_{}, dadao_operand_{}, dadao_type_{}}},'\
                 .format(inst_name, len(fields) - exop, majop, minop,
                 operands[0], operands[1], operands[2], operands[3], inst_description['insn_type'])
