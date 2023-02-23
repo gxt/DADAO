@@ -930,9 +930,9 @@ static bool trans_exts(DisasContext *ctx, arg_exts *a)
         return true;
     }
     TCGv_i64 imm = tcg_temp_new_i64();
-    tcg_gen_subfi_i64(imm, 63, cpu_rd[a->hd]);
+    tcg_gen_add_i64(imm, cpu_rd[0], cpu_rd[a->hd]);
     tcg_gen_shl_i64(cpu_rd[a->hb], cpu_rd[a->hc], imm);
-    tcg_gen_sar_i64(cpu_rd[a->hb], cpu_rd[a->hc], imm);
+    tcg_gen_sar_i64(cpu_rd[a->hb], cpu_rd[a->hb], imm);
     tcg_temp_free_i64(imm);
     return true;
 }
@@ -943,9 +943,9 @@ static bool trans_extz(DisasContext *ctx, arg_extz *a)
         return true;
     }
     TCGv_i64 imm = tcg_temp_new_i64();
-    tcg_gen_subfi_i64(imm, 63, cpu_rd[a->hd]);
+    tcg_gen_add_i64(imm, cpu_rd[0], cpu_rd[a->hd]);
     tcg_gen_shl_i64(cpu_rd[a->hb], cpu_rd[a->hc], imm);
-    tcg_gen_shr_i64(cpu_rd[a->hb], cpu_rd[a->hc], imm);
+    tcg_gen_shr_i64(cpu_rd[a->hb], cpu_rd[a->hb], imm);
     tcg_temp_free_i64(imm);
     return true;
 }
@@ -994,8 +994,8 @@ static bool trans__exts(DisasContext *ctx, arg__exts *a)
     if (a->hb == 0) {
         return true;
     }
-    tcg_gen_shli_i64(cpu_rd[a->hb], cpu_rd[a->hc], 63 - a->immu6);
-    tcg_gen_sari_i64(cpu_rd[a->hb], cpu_rd[a->hc], 63 - a->immu6);
+    tcg_gen_shli_i64(cpu_rd[a->hb], cpu_rd[a->hc], a->immu6);
+    tcg_gen_sari_i64(cpu_rd[a->hb], cpu_rd[a->hb], a->immu6);
     return true;
 }
 
@@ -1004,8 +1004,8 @@ static bool trans__extz(DisasContext *ctx, arg__extz *a)
     if (a->hb == 0) {
         return true;
     }
-    tcg_gen_shli_i64(cpu_rd[a->hb], cpu_rd[a->hc], 63 - a->immu6);
-    tcg_gen_shri_i64(cpu_rd[a->hb], cpu_rd[a->hc], 63 - a->immu6);
+    tcg_gen_shli_i64(cpu_rd[a->hb], cpu_rd[a->hc], a->immu6);
+    tcg_gen_shri_i64(cpu_rd[a->hb], cpu_rd[a->hb], a->immu6);
     return true;
 }
 
