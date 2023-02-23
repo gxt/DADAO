@@ -181,12 +181,12 @@
   [(set     (match_operand:DI 0 "rd_class_operand" "= Rd")
     (not:DI (match_operand:DI 1 "rd_class_operand" "  Rd")))]
 	""
-	"not	%0, %1, rd0")
+	"xnor	%0, %1, rd0")
 
 (define_insn "*nor"
   [(set             (match_operand:DI 0 "rd_class_operand" "=   Rd")
     (and:DI (not:DI (match_operand:DI 1 "rd_class_operand" "%   Rd"))
             (not:DI (match_operand:DI 2 "rd_class_operand" "    Rd"))))]
 	""
-	"orr	%0, %1, %2	\;	not	%0, %0, rd0")
+	"orr	%0, %1, %2	\;	xnor	%0, %0, rd0")
 
