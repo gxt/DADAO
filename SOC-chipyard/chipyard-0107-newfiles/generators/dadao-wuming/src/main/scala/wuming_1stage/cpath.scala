@@ -80,6 +80,10 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                   SHRSi   -> List(Y, CF_X     , COND_X  , REG_RD   , OP1_RDHC , OP2_IMMU6 , ALU_SRA   , WB_RDHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
                   SHRUr   -> List(Y, CF_X     , COND_X  , REG_RD   , OP1_RDHC , OP2_RDHD  , ALU_SRL   , WB_RDHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
                   SHRUi   -> List(Y, CF_X     , COND_X  , REG_RD   , OP1_RDHC , OP2_IMMU6 , ALU_SRL   , WB_RDHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
+                  EXTSr   -> List(Y, CF_X     , COND_X  , REG_RD   , OP1_RDHC , OP2_RDHD  , ALU_EXTS  , WB_RDHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
+                  EXTSi   -> List(Y, CF_X     , COND_X  , REG_RD   , OP1_RDHC , OP2_IMMU6 , ALU_EXTS  , WB_RDHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
+                  EXTZr   -> List(Y, CF_X     , COND_X  , REG_RD   , OP1_RDHC , OP2_RDHD  , ALU_EXTZ  , WB_RDHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
+                  EXTZi   -> List(Y, CF_X     , COND_X  , REG_RD   , OP1_RDHC , OP2_IMMU6 , ALU_EXTZ  , WB_RDHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
 
                   ADDrb   -> List(Y, CF_X     , COND_X  , REG_RB   , OP1_RBHC , OP2_RDHD  , ALU_ADD   , WB_RBHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
                   SUBrb   -> List(Y, CF_X     , COND_X  , REG_RB   , OP1_RBHC , OP2_RDHD  , ALU_SUB   , WB_RBHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
