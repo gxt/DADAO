@@ -473,7 +473,7 @@ static void dd_pseudo_move_imm(char *opcodep, int reg_dst, unsigned long long sr
             }
         }
     }
-    else { // move rb, imm64
+    else if (reg_dst >= 0x40 && reg_dst  < 0x80) { // move rb, imm64
         reg_dst -= 0x40;
         md_number_to_chars(opcodep, DADAO_INSN_SETZW_RB | (reg_dst << 18) | DADAO_WYDE_WL | imm_w16_1, 4);
 
@@ -493,6 +493,26 @@ static void dd_pseudo_move_imm(char *opcodep, int reg_dst, unsigned long long sr
             md_number_to_chars(opcodep, DADAO_INSN_ORW_RB | (reg_dst << 18) | DADAO_WYDE_WH | imm_w16_4, 4);
         }
     }
+    else { // move rf, imm64
+        reg_dst -= 0x80;
+        md_number_to_chars(opcodep, DADAO_INSN_SETW | (reg_dst << 18) | DADAO_WYDE_WL | imm_w16_1, 4);
+
+	if (imm_w16_2 != 0)
+	{
+            opcodep = frag_more(4);
+            md_number_to_chars(opcodep, DADAO_INSN_SETW | (reg_dst << 18) | DADAO_WYDE_WK | imm_w16_2, 4);
+        }
+        if (imm_w16_3 != 0)
+        {
+            opcodep = frag_more(4);
+            md_number_to_chars(opcodep, DADAO_INSN_SETW | (reg_dst << 18) | DADAO_WYDE_WJ | imm_w16_3, 4);
+        }
+        if (imm_w16_4 != 0)
+        {
+            opcodep = frag_more(4);
+            md_number_to_chars(opcodep, DADAO_INSN_SETW | (reg_dst << 18) | DADAO_WYDE_WH | imm_w16_4, 4);
+        }
+    }
 }
 
 static void dd_pseudo_move_symbol(char *opcodep, expressionS exp[4], fragS *opc_fragP)
@@ -506,13 +526,23 @@ static void dd_pseudo_move_symbol(char *opcodep, expressionS exp[4], fragS *opc_
             frag_var(rs_machine_dependent, DD_INSN_BYTES(3), 0, ENCODE_RELAX(STATE_ABS, STATE_UNDF),
                     exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
     }
-    else { // move rb, symbol
+    else if (exp[0].X_add_number >= 0x40 && exp[0].X_add_number < 0x80) { // move rb, symbol
         exp[0].X_add_number -= 0x40;
         md_number_to_chars(opcodep, DADAO_INSN_SETZW_RB | DADAO_WYDE_WL | exp[0].X_add_number << 18, 4);
         if (!expand_op) {
             fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ABS);
         }
         else
+            frag_var(rs_machine_dependent, DD_INSN_BYTES(3), 0, ENCODE_RELAX(STATE_ABS, STATE_UNDF),
+                    exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
+    }
+    else { // move rf, symbol
+        exp[0].X_add_number -= 0x80;
+        md_number_to_chars(opcodep, DADAO_INSN_SETW | DADAO_WYDE_WL | exp[0].X_add_number << 18, 4);
+        if (!expand_op) {
+            fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ABS);
+        }
+	else
             frag_var(rs_machine_dependent, DD_INSN_BYTES(3), 0, ENCODE_RELAX(STATE_ABS, STATE_UNDF),
                     exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
     }
@@ -970,6 +1000,19 @@ void dadao_md_assemble(char *str)
                     dd_pseudo_move_symbol(opcodep, exp, opc_fragP);
                 return;
             }   
+        }
+
+        instruction = (struct dadao_opcode *)hash_find(dadao_opcode_hash_3, insn_alt);
+
+        /* move rf, imm/symbol */
+        if (instruction != NULL && n_operands == 2 && exp[0].X_op == O_register) {
+            if(exp[0].X_add_number >= 0x80 && exp[0].X_add_number <= 0xbf){
+                if (exp[1].X_op == O_constant)
+                    dd_pseudo_move_imm(opcodep, exp[0].X_add_number, exp[1].X_add_number);
+                else
+                    dd_pseudo_move_symbol(opcodep, exp, opc_fragP);
+                return;
+            }
         }
         
         as_bad_where(__FILE__, __LINE__, "(%s %s) unknown insn", insn_alt, operands);

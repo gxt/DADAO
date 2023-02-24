@@ -90,6 +90,7 @@ extern const struct dadao_opcode dadao_opcodes[];
 #define	DADAO_INSN_ORW_RB			((unsigned int)(0x4C << 24))
 #define	DADAO_INSN_ANDNW_RB			((unsigned int)(0x4D << 24))
 #define	DADAO_INSN_SETZW_RB			((unsigned int)(0x4E << 24))
+#define	DADAO_INSN_SETW				((unsigned int)(0x54 << 24))
 
 #define	DADAO_INSN_GETA			((unsigned int)(0x18 << 24))
 #define	DADAO_INSN_CALL_IIII		((unsigned int)(0x6C << 24))

@@ -69,6 +69,8 @@ const struct dadao_opcode dadao_opcodes[] = {
 
 	{"move",	2,	1,	0,	_OP(rb),	_OP(noop),	_OP(none),	_OP(none),	_T(pseudo)},
 
+	{"move",	2,	2,	0,	_OP(rf),	_OP(noop),	_OP(none),	_OP(none),	_T(pseudo)},
+
 	{NULL,		0,	0,	0,	_OP(noop),	_OP(noop),	_OP(noop),	_OP(noop),	_T(pseudo)},
 
 #undef	_OP
