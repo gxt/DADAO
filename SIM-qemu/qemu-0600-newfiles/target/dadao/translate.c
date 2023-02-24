@@ -196,182 +196,182 @@ static bool trans_stm_all(DisasContext *ctx, arg_disas_dadao1 *a,
     return true;
 }
 
-static bool trans_ldbs(DisasContext *ctx, arg_ldbs *a)
+static bool trans_LDBS(DisasContext *ctx, arg_LDBS *a)
 {
     return trans_ld_all(ctx, a, cpu_rd, MO_SB);
 }
 
-static bool trans_ldws(DisasContext *ctx, arg_ldws *a)
+static bool trans_LDWS(DisasContext *ctx, arg_LDWS *a)
 {
     return trans_ld_all(ctx, a, cpu_rd, MO_TESW);
 }
 
-static bool trans_ldts(DisasContext *ctx, arg_ldts *a)
+static bool trans_LDTS(DisasContext *ctx, arg_LDTS *a)
 {
     return trans_ld_all(ctx, a, cpu_rd, MO_TESL);
 }
 
-static bool trans_ldo(DisasContext *ctx, arg_ldo *a)
+static bool trans_LDO(DisasContext *ctx, arg_LDO *a)
 {
     return trans_ld_all(ctx, a, cpu_rd, MO_TEQ);
 }
 
-static bool trans_ldbu(DisasContext *ctx, arg_ldbu *a)
+static bool trans_LDBU(DisasContext *ctx, arg_LDBU *a)
 {
     return trans_ld_all(ctx, a, cpu_rd, MO_UB);
 }
 
-static bool trans_ldwu(DisasContext *ctx, arg_ldwu *a)
+static bool trans_LDWU(DisasContext *ctx, arg_LDWU *a)
 {
     return trans_ld_all(ctx, a, cpu_rd, MO_TEUW);
 }
 
-static bool trans_ldtu(DisasContext *ctx, arg_ldtu *a)
+static bool trans_LDTU(DisasContext *ctx, arg_LDTU *a)
 {
     return trans_ld_all(ctx, a, cpu_rd, MO_TEUL);
 }
 
-static bool trans_ldrb(DisasContext *ctx, arg_ldrb *a)
+static bool trans_LDRB(DisasContext *ctx, arg_LDRB *a)
 {
     return trans_ld_all(ctx, a, cpu_rb, MO_TEQ);
 }
 
-static bool trans_ldft(DisasContext *ctx, arg_ldft *a)
+static bool trans_LDFT(DisasContext *ctx, arg_LDFT *a)
 {
     return trans_ld_all(ctx, a, cpu_rf, MO_TEUL);
 }
 
-static bool trans_ldfo(DisasContext *ctx, arg_ldfo *a)
+static bool trans_LDFO(DisasContext *ctx, arg_LDFO *a)
 {
     return trans_ld_all(ctx, a, cpu_rf, MO_TEQ);
 }
 
-static bool trans_stb(DisasContext *ctx, arg_stb *a)
+static bool trans_STB(DisasContext *ctx, arg_STB *a)
 {
     return trans_st_all(ctx, a, cpu_rd, MO_UB);
 }
 
-static bool trans_stw(DisasContext *ctx, arg_stw *a)
+static bool trans_STW(DisasContext *ctx, arg_STW *a)
 {
     return trans_st_all(ctx, a, cpu_rd, MO_TEUW);
 }
 
-static bool trans_stt(DisasContext *ctx, arg_stt *a)
+static bool trans_STT(DisasContext *ctx, arg_STT *a)
 {
     return trans_st_all(ctx, a, cpu_rd, MO_TEUL);
 }
 
-static bool trans_sto(DisasContext *ctx, arg_sto *a)
+static bool trans_STO(DisasContext *ctx, arg_STO *a)
 {
     return trans_st_all(ctx, a, cpu_rd, MO_TEQ);
 }
 
-static bool trans_strb(DisasContext *ctx, arg_strb *a)
+static bool trans_STRB(DisasContext *ctx, arg_STRB *a)
 {
     return trans_st_all(ctx, a, cpu_rb, MO_TEQ);
 }
 
-static bool trans_stft(DisasContext *ctx, arg_stft *a)
+static bool trans_STFT(DisasContext *ctx, arg_STFT *a)
 {
     return trans_st_all(ctx, a, cpu_rf, MO_TEUL);
 }
 
-static bool trans_stfo(DisasContext *ctx, arg_stfo *a)
+static bool trans_STFO(DisasContext *ctx, arg_STFO *a)
 {
     return trans_st_all(ctx, a, cpu_rf, MO_TEQ);
 }
 
-static bool trans_ldmbs(DisasContext *ctx, arg_ldmbs *a)
+static bool trans_LDMBS(DisasContext *ctx, arg_LDMBS *a)
 {
     return trans_ldm_all(ctx, a, cpu_rd, MO_SB);
 }
 
-static bool trans_ldmws(DisasContext *ctx, arg_ldmws *a)
+static bool trans_LDMWS(DisasContext *ctx, arg_LDMWS *a)
 {
     return trans_ldm_all(ctx, a, cpu_rd, MO_TESW);
 }
 
-static bool trans_ldmts(DisasContext *ctx, arg_ldmts *a)
+static bool trans_LDMTS(DisasContext *ctx, arg_LDMTS *a)
 {
     return trans_ldm_all(ctx, a, cpu_rd, MO_TESL);
 }
 
-static bool trans_ldmo(DisasContext *ctx, arg_ldmo *a)
+static bool trans_LDMO(DisasContext *ctx, arg_LDMO *a)
 {
     return trans_ldm_all(ctx, a, cpu_rd, MO_TEQ);
 }
 
-static bool trans_ldmbu(DisasContext *ctx, arg_ldmbu *a)
+static bool trans_LDMBU(DisasContext *ctx, arg_LDMBU *a)
 {
     return trans_ldm_all(ctx, a, cpu_rd, MO_UB);
 }
 
-static bool trans_ldmwu(DisasContext *ctx, arg_ldmwu *a)
+static bool trans_LDMWU(DisasContext *ctx, arg_LDMWU *a)
 {
     return trans_ldm_all(ctx, a, cpu_rd, MO_TEUW);
 }
 
-static bool trans_ldmtu(DisasContext *ctx, arg_ldmtu *a)
+static bool trans_LDMTU(DisasContext *ctx, arg_LDMTU *a)
 {
     return trans_ldm_all(ctx, a, cpu_rd, MO_TEUL);
 }
 
-static bool trans_ldmrb(DisasContext *ctx, arg_ldmrb *a)
+static bool trans_LDMRB(DisasContext *ctx, arg_LDMRB *a)
 {
     return trans_ldm_all(ctx, a, cpu_rd, MO_TEQ);
 }
 
-static bool trans_ldmft(DisasContext *ctx, arg_ldmft *a)
+static bool trans_LDMFT(DisasContext *ctx, arg_LDMFT *a)
 {
     return trans_ldm_all(ctx, a, cpu_rd, MO_TEUL);
 }
 
-static bool trans_ldmfo(DisasContext *ctx, arg_ldmfo *a)
+static bool trans_LDMFO(DisasContext *ctx, arg_LDMFO *a)
 {
     return trans_ldm_all(ctx, a, cpu_rd, MO_TEQ);
 }
 
-static bool trans_ldmra(DisasContext *ctx, arg_ldmra *a)
+static bool trans_LDMRA(DisasContext *ctx, arg_LDMRA *a)
 {
     return trans_ldm_all(ctx, a, cpu_ra, MO_TEQ);
 }
 
-static bool trans_stmb(DisasContext *ctx, arg_stmb *a)
+static bool trans_STMB(DisasContext *ctx, arg_STMB *a)
 {
     return trans_stm_all(ctx, a, cpu_rd, MO_UB);
 }
 
-static bool trans_stmw(DisasContext *ctx, arg_stmw *a)
+static bool trans_STMW(DisasContext *ctx, arg_STMW *a)
 {
     return trans_stm_all(ctx, a, cpu_rd, MO_TEUW);
 }
 
-static bool trans_stmt(DisasContext *ctx, arg_stmt *a)
+static bool trans_STMT(DisasContext *ctx, arg_STMT *a)
 {
     return trans_stm_all(ctx, a, cpu_rd, MO_TEUL);
 }
 
-static bool trans_stmo(DisasContext *ctx, arg_stmo *a)
+static bool trans_STMO(DisasContext *ctx, arg_STMO *a)
 {
     return trans_stm_all(ctx, a, cpu_rd, MO_TEQ);
 }
 
-static bool trans_stmrb(DisasContext *ctx, arg_stmrb *a)
+static bool trans_STMRB(DisasContext *ctx, arg_STMRB *a)
 {
     return trans_stm_all(ctx, a, cpu_rd, MO_TEQ);
 }
 
-static bool trans_stmft(DisasContext *ctx, arg_stmft *a)
+static bool trans_STMFT(DisasContext *ctx, arg_STMFT *a)
 {
     return trans_stm_all(ctx, a, cpu_rd, MO_TEUL);
 }
 
-static bool trans_stmfo(DisasContext *ctx, arg_stmfo *a)
+static bool trans_STMFO(DisasContext *ctx, arg_STMFO *a)
 {
     return trans_stm_all(ctx, a, cpu_rd, MO_TEQ);
 }
 
-static bool trans_stmra(DisasContext *ctx, arg_stmra *a)
+static bool trans_STMRA(DisasContext *ctx, arg_STMRA *a)
 {
     return trans_stm_all(ctx, a, cpu_ra, MO_TEQ);
 }
@@ -435,77 +435,77 @@ static bool trans_cs_eq_ne(DisasContext* ctx, arg_disas_dadao3* a, TCGCond cond)
     return true;
 }
 
-static bool trans_rd2rd(DisasContext* ctx, arg_rd2rd* a)
+static bool trans_RD2RD(DisasContext* ctx, arg_RD2RD* a)
 {
     return trans_hb2ha_all(ctx, a, cpu_rd, cpu_rd);
 }
 
-static bool trans_rd2rb(DisasContext* ctx, arg_rd2rb* a)
+static bool trans_RD2RB(DisasContext* ctx, arg_RD2RB* a)
 {
     return trans_hb2ha_all(ctx, a, cpu_rd, cpu_rb);
 }
 
-static bool trans_rb2rd(DisasContext* ctx, arg_rb2rd* a)
+static bool trans_RB2RD(DisasContext* ctx, arg_RB2RD* a)
 {
     return trans_hb2ha_all(ctx, a, cpu_rb, cpu_rd);
 }
 
-static bool trans_rb2rb(DisasContext* ctx, arg_rb2rb* a)
+static bool trans_RB2RB(DisasContext* ctx, arg_RB2RB* a)
 {
     return trans_hb2ha_all(ctx, a, cpu_rb, cpu_rb);
 }
 
-static bool trans_rd2rf(DisasContext* ctx, arg_rd2rf* a)
+static bool trans_RD2RF(DisasContext* ctx, arg_RD2RF* a)
 {
     return trans_hb2ha_all(ctx, a, cpu_rd, cpu_rf);
 }
 
-static bool trans_rf2rd(DisasContext* ctx, arg_rf2rd* a)
+static bool trans_RF2RD(DisasContext* ctx, arg_RF2RD* a)
 {
     return trans_hb2ha_all(ctx, a, cpu_rf, cpu_rd);
 }
 
-static bool trans_rf2rf(DisasContext* ctx, arg_rf2rf* a)
+static bool trans_RF2RF(DisasContext* ctx, arg_RF2RF* a)
 {
     return trans_hb2ha_all(ctx, a, cpu_rf, cpu_rf);
 }
 
-static bool trans_rd2ra(DisasContext* ctx, arg_rd2ra* a)
+static bool trans_RD2RA(DisasContext* ctx, arg_RD2RA* a)
 {
     return trans_hb2ha_all(ctx, a, cpu_rd, cpu_ra);
 }
 
-static bool trans_ra2rd(DisasContext* ctx, arg_ra2rd* a)
+static bool trans_RA2RD(DisasContext* ctx, arg_RA2RD* a)
 {
     return trans_hb2ha_all(ctx, a, cpu_ra, cpu_rd);
 }
 
-static bool trans_csn(DisasContext *ctx, arg_csn *a)
+static bool trans_CSN(DisasContext *ctx, arg_CSN *a)
 {
     return trans_cs_all(ctx, a, TCG_COND_LT);
 }
 
-static bool trans_csz(DisasContext *ctx, arg_csz *a)
+static bool trans_CSZ(DisasContext *ctx, arg_CSZ *a)
 {
     return trans_cs_all(ctx, a, TCG_COND_EQ);
 }
 
-static bool trans_csp(DisasContext *ctx, arg_csp *a)
+static bool trans_CSP(DisasContext *ctx, arg_CSP *a)
 {
     return trans_cs_all(ctx, a, TCG_COND_GT);
 }
 
-static bool trans_cseq(DisasContext *ctx, arg_cseq *a)
+static bool trans_CSEQ(DisasContext *ctx, arg_CSEQ *a)
 {
     return trans_cs_eq_ne(ctx, a, TCG_COND_EQ);
 }
 
-static bool trans_csne(DisasContext *ctx, arg_csne *a)
+static bool trans_CSNE(DisasContext *ctx, arg_CSNE *a)
 {
     return trans_cs_eq_ne(ctx, a, TCG_COND_NE);
 }
 
-static bool trans_orw(DisasContext *ctx, arg_orw *a)
+static bool trans_ORWrd(DisasContext *ctx, arg_ORWrd *a)
 {
     if (a->ha == 0) {
         return true;
@@ -515,7 +515,7 @@ static bool trans_orw(DisasContext *ctx, arg_orw *a)
     return true;
 }
 
-static bool trans_andnw(DisasContext *ctx, arg_andnw *a)
+static bool trans_ANDNWrd(DisasContext *ctx, arg_ANDNWrd *a)
 {
     if (a->ha == 0) {
         return true;
@@ -525,7 +525,7 @@ static bool trans_andnw(DisasContext *ctx, arg_andnw *a)
     return true;
 }
 
-static bool trans_setzw(DisasContext *ctx, arg_setzw *a)
+static bool trans_SETZWrd(DisasContext *ctx, arg_SETZWrd *a)
 {
     if (a->ha == 0) {
         return true;
@@ -535,7 +535,7 @@ static bool trans_setzw(DisasContext *ctx, arg_setzw *a)
     return true;
 }
 
-static bool trans_setow(DisasContext *ctx, arg_setow *a)
+static bool trans_SETOW(DisasContext *ctx, arg_SETOW *a)
 {
     if (a->ha == 0) {
         return true;
@@ -546,7 +546,7 @@ static bool trans_setow(DisasContext *ctx, arg_setow *a)
     return true;
 }
 
-static bool trans__orw(DisasContext *ctx, arg__orw *a)
+static bool trans_ORWrb(DisasContext *ctx, arg_ORWrb *a)
 {
     if (a->ha == 0) {
         return true;
@@ -556,7 +556,7 @@ static bool trans__orw(DisasContext *ctx, arg__orw *a)
     return true;
 }
 
-static bool trans__andnw(DisasContext *ctx, arg__andnw *a)
+static bool trans_ANDNWrb(DisasContext *ctx, arg_ANDNWrb *a)
 {
     if (a->ha == 0) {
         return true;
@@ -566,7 +566,7 @@ static bool trans__andnw(DisasContext *ctx, arg__andnw *a)
     return true;
 }
 
-static bool trans__setzw(DisasContext *ctx, arg__setzw *a)
+static bool trans_SETZWrb(DisasContext *ctx, arg_SETZWrb *a)
 {
     if (a->ha == 0) {
         return true;
@@ -576,7 +576,7 @@ static bool trans__setzw(DisasContext *ctx, arg__setzw *a)
     return true;
 }
 
-static bool trans_setw(DisasContext *ctx, arg_setw *a)
+static bool trans_SETW(DisasContext *ctx, arg_SETW *a)
 {
     if (a->ha == 0) {
         return true;
@@ -590,7 +590,7 @@ static bool trans_setw(DisasContext *ctx, arg_setw *a)
 
 /* logic instructions */
 
-static bool trans_andi(DisasContext *ctx, arg_andi *a)
+static bool trans_ANDI(DisasContext *ctx, arg_ANDI *a)
 {
     if (a->ha == 0) {
         return true;
@@ -601,7 +601,7 @@ static bool trans_andi(DisasContext *ctx, arg_andi *a)
 
 /* arithmetic instructions */
 
-static bool trans_addi(DisasContext *ctx, arg_addi *a)
+static bool trans_ADDIrd(DisasContext *ctx, arg_ADDIrd *a)
 {
     if (a->ha == 0) {
         return true;
@@ -610,7 +610,7 @@ static bool trans_addi(DisasContext *ctx, arg_addi *a)
     return true;
 }
 
-static bool trans__addi(DisasContext *ctx, arg__addi *a)
+static bool trans_ADDIrb(DisasContext *ctx, arg_ADDIrb *a)
 {
     if (a->ha == 0) {
         return true;
@@ -619,7 +619,7 @@ static bool trans__addi(DisasContext *ctx, arg__addi *a)
     return true;
 }
 
-static bool trans_adrp(DisasContext *ctx, arg_adrp *a)
+static bool trans_ADRP(DisasContext *ctx, arg_ADRP *a)
 {
     if (a->ha == 0) {
         return true;
@@ -630,7 +630,7 @@ static bool trans_adrp(DisasContext *ctx, arg_adrp *a)
     return true;
 }
 
-static bool trans_add(DisasContext *ctx, arg_add *a)
+static bool trans_ADDrd(DisasContext *ctx, arg_ADDrd *a)
 {
     TCGv_i64 zero = tcg_const_i64(0);
     TCGv_i64 flag = tcg_const_i64(0);
@@ -653,7 +653,7 @@ static bool trans_add(DisasContext *ctx, arg_add *a)
     return true;
 }
 
-static bool trans_sub(DisasContext *ctx, arg_sub *a)
+static bool trans_SUBrd(DisasContext *ctx, arg_SUBrd *a)
 {
     TCGv_i64 zero = tcg_const_i64(0);
     TCGv_i64 flag = tcg_const_i64(0);
@@ -676,7 +676,7 @@ static bool trans_sub(DisasContext *ctx, arg_sub *a)
     return true;
 }
 
-static bool trans_muls(DisasContext *ctx, arg_muls *a)
+static bool trans_MULS(DisasContext *ctx, arg_MULS *a)
 {
     tcg_gen_muls2_i64(cpu_rd[a->hb], cpu_rd[a->ha],
                       cpu_rd[a->hc], cpu_rd[a->hd]);
@@ -689,7 +689,7 @@ static bool trans_muls(DisasContext *ctx, arg_muls *a)
     return true;
 }
 
-static bool trans_mulu(DisasContext *ctx, arg_mulu *a)
+static bool trans_MULU(DisasContext *ctx, arg_MULU *a)
 {
     tcg_gen_mulu2_i64(cpu_rd[a->hb], cpu_rd[a->ha],
                       cpu_rd[a->hc], cpu_rd[a->hd]);
@@ -702,7 +702,7 @@ static bool trans_mulu(DisasContext *ctx, arg_mulu *a)
     return true;
 }
 
-static bool trans_divs(DisasContext *ctx, arg_divs *a)
+static bool trans_DIVS(DisasContext *ctx, arg_DIVS *a)
 {
     TCGLabel* label_not_zero = gen_new_label();
     TCGv_i64 zero = tcg_const_i64(0);
@@ -725,7 +725,7 @@ static bool trans_divs(DisasContext *ctx, arg_divs *a)
     return true;
 }
 
-static bool trans_divu(DisasContext *ctx, arg_divu *a)
+static bool trans_DIVU(DisasContext *ctx, arg_DIVU *a)
 {
     TCGLabel* label_not_zero = gen_new_label();
     TCGv_i64 zero = tcg_const_i64(0);
@@ -748,7 +748,7 @@ static bool trans_divu(DisasContext *ctx, arg_divu *a)
     return true;
 }
 
-static bool trans_cmps(DisasContext *ctx, arg_cmps *a)
+static bool trans_CMPSi(DisasContext *ctx, arg_CMPSi *a)
 {
     if (a->ha == 0) {
         return true;
@@ -770,7 +770,7 @@ static bool trans_cmps(DisasContext *ctx, arg_cmps *a)
     return true;
 }
 
-static bool trans_cmpu(DisasContext *ctx, arg_cmpu *a)
+static bool trans_CMPUi(DisasContext *ctx, arg_CMPUi *a)
 {
     if (a->ha == 0) {
         return true;
@@ -792,7 +792,7 @@ static bool trans_cmpu(DisasContext *ctx, arg_cmpu *a)
     return true;
 }
 
-static bool trans__cmps(DisasContext *ctx, arg__cmps *a)
+static bool trans_CMPSr(DisasContext *ctx, arg_CMPSr *a)
 {
     if (a->hb == 0) {
         return true;
@@ -812,7 +812,7 @@ static bool trans__cmps(DisasContext *ctx, arg__cmps *a)
     return true;
 }
 
-static bool trans__cmpu(DisasContext *ctx, arg__cmpu *a)
+static bool trans_CMPUr(DisasContext *ctx, arg_CMPUr *a)
 {
     if (a->hb == 0) {
         return true;
@@ -832,7 +832,7 @@ static bool trans__cmpu(DisasContext *ctx, arg__cmpu *a)
     return true;
 }
 
-static bool trans_cmp(DisasContext *ctx, arg_cmp *a)
+static bool trans_CMP(DisasContext *ctx, arg_CMP *a)
 {
     if (a->hb == 0) {
         return true;
@@ -852,7 +852,7 @@ static bool trans_cmp(DisasContext *ctx, arg_cmp *a)
     return true;
 }
 
-static bool trans__add(DisasContext *ctx, arg__add *a)
+static bool trans_ADDrb(DisasContext *ctx, arg_ADDrb *a)
 {
     if (a->hb == 0) {
         return true;
@@ -861,7 +861,7 @@ static bool trans__add(DisasContext *ctx, arg__add *a)
     return true;
 }
 
-static bool trans__sub(DisasContext *ctx, arg__sub *a)
+static bool trans_SUBrb(DisasContext *ctx, arg_SUBrb *a)
 {
     if (a->hb == 0) {
         return true;
@@ -870,7 +870,7 @@ static bool trans__sub(DisasContext *ctx, arg__sub *a)
     return true;
 }
 
-static bool trans_and(DisasContext *ctx, arg_and *a)
+static bool trans_AND(DisasContext *ctx, arg_AND *a)
 {
     if (a->hb == 0) {
         return true;
@@ -879,7 +879,7 @@ static bool trans_and(DisasContext *ctx, arg_and *a)
     return true;
 }
 
-static bool trans_orr(DisasContext *ctx, arg_orr *a)
+static bool trans_ORR(DisasContext *ctx, arg_ORR *a)
 {
     if (a->hb == 0) {
         return true;
@@ -888,7 +888,7 @@ static bool trans_orr(DisasContext *ctx, arg_orr *a)
     return true;
 }
 
-static bool trans_xor(DisasContext *ctx, arg_xor *a)
+static bool trans_XOR(DisasContext *ctx, arg_XOR *a)
 {
     if (a->hb == 0) {
         return true;
@@ -897,7 +897,7 @@ static bool trans_xor(DisasContext *ctx, arg_xor *a)
     return true;
 }
 
-static bool trans_shlu(DisasContext *ctx, arg_shlu *a)
+static bool trans_SHLUr(DisasContext *ctx, arg_SHLUr *a)
 {
     if (a->hb == 0) {
         return true;
@@ -906,7 +906,7 @@ static bool trans_shlu(DisasContext *ctx, arg_shlu *a)
     return true;
 }
 
-static bool trans_shrs(DisasContext *ctx, arg_shrs *a)
+static bool trans_SHRSr(DisasContext *ctx, arg_SHRSr *a)
 {
     if (a->hb == 0) {
         return true;
@@ -915,7 +915,7 @@ static bool trans_shrs(DisasContext *ctx, arg_shrs *a)
     return true;
 }
 
-static bool trans_shru(DisasContext *ctx, arg_shru *a)
+static bool trans_SHRUr(DisasContext *ctx, arg_SHRUr *a)
 {
     if (a->hb == 0) {
         return true;
@@ -924,7 +924,7 @@ static bool trans_shru(DisasContext *ctx, arg_shru *a)
     return true;
 }
 
-static bool trans_exts(DisasContext *ctx, arg_exts *a)
+static bool trans_EXTSr(DisasContext *ctx, arg_EXTSr *a)
 {
     if (a->hb == 0) {
         return true;
@@ -937,7 +937,7 @@ static bool trans_exts(DisasContext *ctx, arg_exts *a)
     return true;
 }
 
-static bool trans_extz(DisasContext *ctx, arg_extz *a)
+static bool trans_EXTZr(DisasContext *ctx, arg_EXTZr *a)
 {
     if (a->hb == 0) {
         return true;
@@ -950,7 +950,7 @@ static bool trans_extz(DisasContext *ctx, arg_extz *a)
     return true;
 }
 
-static bool trans_not(DisasContext *ctx, arg_not *a)
+static bool trans_NOTr(DisasContext *ctx, arg_NOTr *a)
 {
     if (a->hb == 0) {
         return true;
@@ -962,7 +962,7 @@ static bool trans_not(DisasContext *ctx, arg_not *a)
     return true;
 }
 
-static bool trans__shlu(DisasContext *ctx, arg__shlu *a)
+static bool trans_SHLUi(DisasContext *ctx, arg_SHLUi *a)
 {
     if (a->hb == 0) {
         return true;
@@ -971,7 +971,7 @@ static bool trans__shlu(DisasContext *ctx, arg__shlu *a)
     return true;
 }
 
-static bool trans__shrs(DisasContext *ctx, arg__shrs *a)
+static bool trans_SHRSi(DisasContext *ctx, arg_SHRSi *a)
 {
     if (a->hb == 0) {
         return true;
@@ -980,7 +980,7 @@ static bool trans__shrs(DisasContext *ctx, arg__shrs *a)
     return true;
 }
 
-static bool trans__shru(DisasContext *ctx, arg__shru *a)
+static bool trans_SHRUi(DisasContext *ctx, arg_SHRUi *a)
 {
     if (a->hb == 0) {
         return true;
@@ -989,7 +989,7 @@ static bool trans__shru(DisasContext *ctx, arg__shru *a)
     return true;
 }
 
-static bool trans__exts(DisasContext *ctx, arg__exts *a)
+static bool trans_EXTSi(DisasContext *ctx, arg_EXTSi *a)
 {
     if (a->hb == 0) {
         return true;
@@ -999,7 +999,7 @@ static bool trans__exts(DisasContext *ctx, arg__exts *a)
     return true;
 }
 
-static bool trans__extz(DisasContext *ctx, arg__extz *a)
+static bool trans_EXTZi(DisasContext *ctx, arg_EXTZi *a)
 {
     if (a->hb == 0) {
         return true;
@@ -1009,7 +1009,7 @@ static bool trans__extz(DisasContext *ctx, arg__extz *a)
     return true;
 }
 
-static bool trans__not(DisasContext *ctx, arg__not *a)
+static bool trans_NOTi(DisasContext *ctx, arg_NOTi *a)
 {
     if (a->hb == 0) {
         return true;
@@ -1078,201 +1078,201 @@ static bool trans_fcmp_all(DisasContext *ctx, arg_disas_dadao7 *a,
     return true;
 }
 
-static bool trans_ft2fo(DisasContext *ctx, arg_ft2fo *a)
+static bool trans_FT2FO(DisasContext *ctx, arg_FT2FO *a)
 {
     return trans_fcvt_all(ctx, a, cpu_rf, cpu_rf, gen_helper_ft2fo);
 }
 
-static bool trans_fo2ft(DisasContext *ctx, arg_fo2ft *a)
+static bool trans_FO2FT(DisasContext *ctx, arg_FO2FT *a)
 {
     return trans_fcvt_all(ctx, a, cpu_rf, cpu_rf, gen_helper_fo2ft);
 }
 
-static bool trans_ft2rd(DisasContext *ctx, arg_ft2rd *a)
+static bool trans_FT2RD(DisasContext *ctx, arg_FT2RD *a)
 {
     return trans_fcvt_all(ctx, a, cpu_rd, cpu_rf, gen_helper_ft2rd);
 }
 
-static bool trans_fo2rd(DisasContext *ctx, arg_fo2rd *a)
+static bool trans_FO2RD(DisasContext *ctx, arg_FO2RD *a)
 {
     return trans_fcvt_all(ctx, a, cpu_rd, cpu_rf, gen_helper_fo2rd);
 }
 
-static bool trans_rd2ft(DisasContext *ctx, arg_rd2ft *a)
+static bool trans_RD2FT(DisasContext *ctx, arg_RD2FT *a)
 {
     return trans_fcvt_all(ctx, a, cpu_rf, cpu_rd, gen_helper_rd2ft);
 }
 
-static bool trans_rd2fo(DisasContext *ctx, arg_rd2fo *a)
+static bool trans_RD2FO(DisasContext *ctx, arg_RD2FO *a)
 {
     return trans_fcvt_all(ctx, a, cpu_rf, cpu_rd, gen_helper_rd2fo);
 }
 
-static bool trans_ftadd(DisasContext *ctx, arg_ftadd *a)
+static bool trans_FTADD(DisasContext *ctx, arg_FTADD *a)
 {
     return trans_fop2_all(ctx, a, gen_helper_ftadd);
 }
 
-static bool trans_ftsub(DisasContext *ctx, arg_ftsub *a)
+static bool trans_FTSUB(DisasContext *ctx, arg_FTSUB *a)
 {
     return trans_fop2_all(ctx, a, gen_helper_ftsub);
 }
 
-static bool trans_ftmul(DisasContext *ctx, arg_ftmul *a)
+static bool trans_FTMUL(DisasContext *ctx, arg_FTMUL *a)
 {
     return trans_fop2_all(ctx, a, gen_helper_ftmul);
 }
 
-static bool trans_ftdiv(DisasContext *ctx, arg_ftdiv *a)
+static bool trans_FTDIV (DisasContext *ctx, arg_FTDIV *a)
 {
     return trans_fop2_all(ctx, a, gen_helper_ftdiv);
 }
 
-static bool trans_ftabs(DisasContext *ctx, arg_ftabs *a)
+static bool trans_FTABS(DisasContext *ctx, arg_FTABS *a)
 {
     return trans_fop1_all(ctx, a, gen_helper_ftabs);
 }
 
-static bool trans_ftneg(DisasContext *ctx, arg_ftneg *a)
+static bool trans_FTNEG(DisasContext *ctx, arg_FTNEG *a)
 {
     return trans_fop1_all(ctx, a, gen_helper_ftneg);
 }
 
-static bool trans_ftsqrt(DisasContext *ctx, arg_ftsqrt *a)
+static bool trans_FTSQRT(DisasContext *ctx, arg_FTSQRT *a)
 {
     return trans_fop1_all(ctx, a, gen_helper_ftsqrt);
 }
 
-static bool trans_foadd(DisasContext *ctx, arg_foadd *a)
+static bool trans_FOADD(DisasContext *ctx, arg_FOADD *a)
 {
     return trans_fop2_all(ctx, a, gen_helper_foadd);
 }
 
-static bool trans_fosub(DisasContext *ctx, arg_fosub *a)
+static bool trans_FOSUB(DisasContext *ctx, arg_FOSUB *a)
 {
     return trans_fop2_all(ctx, a, gen_helper_fosub);
 }
 
-static bool trans_fomul(DisasContext *ctx, arg_fomul *a)
+static bool trans_FOMUL(DisasContext *ctx, arg_FOMUL *a)
 {
     return trans_fop2_all(ctx, a, gen_helper_fomul);
 }
 
-static bool trans_fodiv(DisasContext *ctx, arg_fodiv *a)
+static bool trans_FODIV(DisasContext *ctx, arg_FODIV *a)
 {
     return trans_fop2_all(ctx, a, gen_helper_fodiv);
 }
 
-static bool trans_foabs(DisasContext *ctx, arg_foabs *a)
+static bool trans_FOABS(DisasContext *ctx, arg_FOABS *a)
 {
     return trans_fop1_all(ctx, a, gen_helper_foabs);
 }
 
-static bool trans_foneg(DisasContext *ctx, arg_foneg *a)
+static bool trans_FONEG (DisasContext *ctx, arg_FONEG  *a)
 {
     return trans_fop1_all(ctx, a, gen_helper_foneg);
 }
 
-static bool trans_fosqrt(DisasContext *ctx, arg_fosqrt *a)
+static bool trans_FOSQRT(DisasContext *ctx, arg_FOSQRT *a)
 {
     return trans_fop1_all(ctx, a, gen_helper_fosqrt);
 }
 
-static bool trans_ftcun(DisasContext *ctx, arg_ftcun *a)
+static bool trans_FTCUN(DisasContext *ctx, arg_FTCUN *a)
 {
     return trans_fcmp_all(ctx, a, gen_helper_ftcun);
 }
 
-static bool trans_ftcor(DisasContext *ctx, arg_ftcor *a)
+static bool trans_FTCOR(DisasContext *ctx, arg_FTCOR *a)
 {
     return trans_fcmp_all(ctx, a, gen_helper_ftcor);
 }
 
-static bool trans_ftcne(DisasContext *ctx, arg_ftcne *a)
+static bool trans_FTCNE(DisasContext *ctx, arg_FTCNE *a)
 {
     return trans_fcmp_all(ctx, a, gen_helper_ftcne);
 }
 
-static bool trans_ftceq(DisasContext *ctx, arg_ftceq *a)
+static bool trans_FTCEQ(DisasContext *ctx, arg_FTCEQ *a)
 {
     return trans_fcmp_all(ctx, a, gen_helper_ftceq);
 }
 
-static bool trans_ftclt(DisasContext *ctx, arg_ftclt *a)
+static bool trans_FTCLT(DisasContext *ctx, arg_FTCLT *a)
 {
     return trans_fcmp_all(ctx, a, gen_helper_ftclt);
 }
 
-static bool trans_ftcge(DisasContext *ctx, arg_ftcge *a)
+static bool trans_FTCGE(DisasContext *ctx, arg_FTCGE *a)
 {
     return trans_fcmp_all(ctx, a, gen_helper_ftcge);
 }
 
-static bool trans_ftcgt(DisasContext *ctx, arg_ftcgt *a)
+static bool trans_FTCGT(DisasContext *ctx, arg_FTCGT *a)
 {
     return trans_fcmp_all(ctx, a, gen_helper_ftcgt);
 }
 
-static bool trans_ftcle(DisasContext *ctx, arg_ftcle *a)
+static bool trans_FTCLE(DisasContext *ctx, arg_FTCLE *a)
 {
     return trans_fcmp_all(ctx, a, gen_helper_ftcle);
 }
 
-static bool trans_focun(DisasContext *ctx, arg_focun *a)
+static bool trans_FOCUN(DisasContext *ctx, arg_FOCUN *a)
 {
     return trans_fcmp_all(ctx, a, gen_helper_focun);
 }
 
-static bool trans_focor(DisasContext *ctx, arg_focor *a)
+static bool trans_FOCOR(DisasContext *ctx, arg_FOCOR *a)
 {
     return trans_fcmp_all(ctx, a, gen_helper_focor);
 }
 
-static bool trans_focne(DisasContext *ctx, arg_focne *a)
+static bool trans_FOCNE(DisasContext *ctx, arg_FOCNE *a)
 {
     return trans_fcmp_all(ctx, a, gen_helper_focne);
 }
 
-static bool trans_foceq(DisasContext *ctx, arg_foceq *a)
+static bool trans_FOCEQ(DisasContext *ctx, arg_FOCEQ *a)
 {
     return trans_fcmp_all(ctx, a, gen_helper_foceq);
 }
 
-static bool trans_foclt(DisasContext *ctx, arg_foclt *a)
+static bool trans_FOCLT(DisasContext *ctx, arg_FOCLT *a)
 {
     return trans_fcmp_all(ctx, a, gen_helper_foclt);
 }
 
-static bool trans_focge(DisasContext *ctx, arg_focge *a)
+static bool trans_FOCGE(DisasContext *ctx, arg_FOCGE *a)
 {
     return trans_fcmp_all(ctx, a, gen_helper_focge);
 }
 
-static bool trans_focgt(DisasContext *ctx, arg_focgt *a)
+static bool trans_FOCGT(DisasContext *ctx, arg_FOCGT *a)
 {
     return trans_fcmp_all(ctx, a, gen_helper_focgt);
 }
 
-static bool trans_focle(DisasContext *ctx, arg_focle *a)
+static bool trans_FOCLE(DisasContext *ctx, arg_FOCLE *a)
 {
     return trans_fcmp_all(ctx, a, gen_helper_focle);
 }
 
 /* control flow instructions */
 
-static bool trans_swym(DisasContext *ctx, arg_swym *a)
+static bool trans_SWYM(DisasContext *ctx, arg_SWYM *a)
 {
     return true;
 }
 
-static bool trans_jump(DisasContext *ctx, arg_jump *a)
+static bool trans_JUMPi(DisasContext *ctx, arg_JUMPi *a)
 {
     tcg_gen_movi_i64(cpu_pc, ctx->base.pc_next + a->imms24 * 4);
     ctx->base.is_jmp = DISAS_JUMP;
     return true;
 }
 
-static bool trans__jump(DisasContext *ctx, arg__jump *a)
+static bool trans_JUMPr(DisasContext *ctx, arg_JUMPr *a)
 {
     tcg_gen_mov_i64(cpu_pc, cpu_rb[a->ha]);
     tcg_gen_add_i64(cpu_pc, cpu_pc, cpu_rd[a->hb]);
@@ -1323,19 +1323,19 @@ static void pop_return_address(DisasContext *ctx)
     tcg_temp_free_i64(zero);
 }
 
-static bool trans_call(DisasContext *ctx, arg_call *a)
+static bool trans_CALLi(DisasContext *ctx, arg_CALLi *a)
 {
     push_return_address(ctx);
-    return trans_jump(ctx, a);
+    return trans_JUMPi(ctx, a);
 }
 
-static bool trans__call(DisasContext *ctx, arg__call *a)
+static bool trans_CALLr(DisasContext *ctx, arg_CALLr *a)
 {
     push_return_address(ctx);
-    return trans__jump(ctx, a);
+    return trans_JUMPr(ctx, a);
 }
 
-static bool trans_ret(DisasContext *ctx, arg_ret *a)
+static bool trans_RET(DisasContext *ctx, arg_RET *a)
 {
     if (a->ha != 0)
         tcg_gen_movi_i64(cpu_rd[a->ha], a->imms18);
@@ -1368,47 +1368,47 @@ static bool trans_br_eq_ne(DisasContext* ctx, arg_disas_dadao0* a, TCGCond cond)
     return true;
 }
 
-static bool trans_brn(DisasContext *ctx, arg_brn *a)
+static bool trans_BRN(DisasContext *ctx, arg_BRN *a)
 {
     return trans_br_all(ctx, a, TCG_COND_LT);
 }
 
-static bool trans_brnn(DisasContext *ctx, arg_brnn *a)
+static bool trans_BRNN(DisasContext *ctx, arg_BRNN *a)
 {
     return trans_br_all(ctx, a, TCG_COND_GE);
 }
 
-static bool trans_brz(DisasContext *ctx, arg_brz *a)
+static bool trans_BRZ(DisasContext *ctx, arg_BRZ *a)
 {
     return trans_br_all(ctx, a, TCG_COND_EQ);
 }
 
-static bool trans_brnz(DisasContext *ctx, arg_brnz *a)
+static bool trans_BRNZ(DisasContext *ctx, arg_BRNZ *a)
 {
     return trans_br_all(ctx, a, TCG_COND_NE);
 }
 
-static bool trans_brp(DisasContext *ctx, arg_brp *a)
+static bool trans_BRP(DisasContext *ctx, arg_BRP *a)
 {
     return trans_br_all(ctx, a, TCG_COND_GT);
 }
 
-static bool trans_brnp(DisasContext *ctx, arg_brnp *a)
+static bool trans_BRNP(DisasContext *ctx, arg_BRNP *a)
 {
     return trans_br_all(ctx, a, TCG_COND_LE);
 }
 
-static bool trans_breq(DisasContext *ctx, arg_breq *a)
+static bool trans_BREQ(DisasContext *ctx, arg_BREQ *a)
 {
     return trans_br_eq_ne(ctx, a, TCG_COND_EQ);
 }
 
-static bool trans_brne(DisasContext *ctx, arg_brne *a)
+static bool trans_BRNE(DisasContext *ctx, arg_BRNE *a)
 {
     return trans_br_eq_ne(ctx, a, TCG_COND_NE);
 }
 
-static bool trans_trap(DisasContext *ctx, arg_trap *a)
+static bool trans_TRAP(DisasContext *ctx, arg_TRAP *a)
 {
     if (a->ha != 0 || a->immu18 != 0) {
         return false;
@@ -1418,27 +1418,27 @@ static bool trans_trap(DisasContext *ctx, arg_trap *a)
     return true;
 }
 
-static bool trans_cpco(DisasContext *ctx, arg_cpco *a)
+static bool trans_CPCO(DisasContext *ctx, arg_CPCO *a)
 {
     return false;
 }
 
-static bool trans_cprd(DisasContext *ctx, arg_cprd *a)
+static bool trans_CPRD(DisasContext *ctx, arg_CPRD *a)
 {
     return false;
 }
 
-static bool trans_cpwr(DisasContext *ctx, arg_cpwr *a)
+static bool trans_CPWR(DisasContext *ctx, arg_CPWR *a)
 {
     return false;
 }
 
-static bool trans_cpld(DisasContext *ctx, arg_cpld *a)
+static bool trans_CPLD(DisasContext *ctx, arg_CPLD *a)
 {
     return false;
 }
 
-static bool trans_cpst(DisasContext *ctx, arg_cpst *a)
+static bool trans_CPST(DisasContext *ctx, arg_CPST *a)
 {
     return false;
 }
