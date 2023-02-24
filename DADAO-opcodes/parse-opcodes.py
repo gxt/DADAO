@@ -325,37 +325,49 @@ def gen_bitpat_file(insts: dict, output_file: str):
             regfile_restrictions = inst_description['regfile_restrictions']
             operands = fields + ['none'] * (4 - len(fields))
             operands = [regfile_fillin(operands[i], regfile_restrictions) for i in range(len(operands))]
-            insts_temp = insts
-            output_string = inst_name.upper()
-            if inst_name[0] == '_':
-                search_inst = inst_name[1:]
-                output_string = output_string[1:]
-            else:
-                search_inst = '_' + inst_name
-            if search_inst in insts_temp.keys():
-                if insts_temp[inst_name]['optype'] == insts_temp[search_inst]['optype']:
-                    for i in insts_temp[inst_name]['regfile_restrictions'].keys():
-                        if insts_temp[inst_name]['regfile_restrictions'][i] != insts_temp[search_inst]['regfile_restrictions'][i]:
-                            output_string += insts_temp[inst_name]['regfile_restrictions'][i]
+            line = '   def {}\t\t= BitPat("b{}")'.format(inst_name,bitpat)
+            print(line, file=f)
+
+def get_upper_insts_dict( insts: dict):
+    upper_dict = {}
+    for inst_name, inst_description in insts.items():
+        if inst_name[0] == '_':
+            search_inst = inst_name[1:]
+            instruction = search_inst.upper()
+            if search_inst in insts.keys():
+                if insts[inst_name]['optype'] == insts[search_inst]['optype']:
+                    for i in insts[inst_name]['regfile_restrictions'].keys():
+                        if insts[inst_name]['regfile_restrictions'][i] != insts[search_inst]['regfile_restrictions'][i]:
+                            add_description1 = insts[inst_name]['regfile_restrictions'][i]
+                            add_description2 = insts[search_inst]['regfile_restrictions'][i]
                             break;
                 else:
-                    list1 = list(insts_temp[inst_name]['fields'].keys())
-                    list2 = list(insts_temp[search_inst]['fields'].keys())
+                    list1 = list(insts[inst_name]['fields'].keys())
+                    list2 = list(insts[search_inst]['fields'].keys())
                     for i in range(0,4):
                         if list[i] == 'op':
                             continue;
                         if list1[i] != list2[i]:
                             if list1[i][0:3] == 'imm':
-                                output_string += 'i'
+                                add_description1 = 'i'
+                                add_description2 = 'r'
                                 break;
                             elif list2[i][0:3] == 'imm':
-                                output_string += 'r'
+                                add_description1 = 'r'
+                                add_description2 = 'i'
                                 break;
-                            elif insts_temp[inst_name]['regfile_restrictions'][list1[i]] != insts_temp[search_inst]['regfile_restrictions'][list2[i]]:
-                                output_string += insts_temp[inst_name]['regfile_restrictions'][list1[i]]
+                            elif insts[inst_name]['regfile_restrictions'][list1[i]] != insts[search_inst]['regfile_restrictions'][list2[i]]:
+                                add_description1 = insts[inst_name]['regfile_restrictions'][list1[i]]
+                                add_description2 = insts[search_inst]['regfile_restrictions'][list2[i]]
                                 break;
-            line = '   def {}\t\t= BitPat("b{}")'.format(output_string,bitpat)
-            print(line, file=f)
+            key1 = instruction + add_description1
+            key2 = instruction + add_description2
+            upper_dict[key1] = inst_description
+            upper_dict[key2] = insts[search_inst]
+            del upper_dict[instruction]
+        else:
+            upper_dict[inst_name.upper()] = inst_description
+    return upper_dict
 
 def trans_dict(insts: dict):
     dasm_dict = {}
@@ -466,16 +478,17 @@ def main():
                 dasm = 1
     if input_decode:
         insts = read_opcodes(input_decode)
+        upper_insts = get_upper_insts_dict(insts)
     if output_decode:
-        gen_decode_file(insts, output_decode)
+        gen_decode_file(upper_insts, output_decode)
     if output_opc:
         gen_opc_file(insts, output_opc)
     if output_encoding:
-        gen_encoding_file(insts, output_encoding)
+        gen_encoding_file(upper_insts, output_encoding)
     if output_disassemble:
         gen_disassemble_file(insts, output_disassemble)
     if output_bitpat:
-        gen_bitpat_file(insts, output_bitpat)
+        gen_bitpat_file(upper_insts, output_bitpat)
     while dasm:
         try:
             line = input()
