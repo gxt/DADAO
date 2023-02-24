@@ -3,6 +3,8 @@
 
 #include <linux/const.h>
 
+#define PRIV_MODE	_AC(0xDADA0000, UL)
+
 /* Status register flags */
 #define SR_SIE		_AC(0x00000002, UL) /* Supervisor Interrupt Enable */
 #define SR_SPIE		_AC(0x00000020, UL) /* Previous Supervisor IE */
@@ -25,5 +27,28 @@
 #define CSR_CYCLEH		0xc80
 #define CSR_TIMEH		0xc81
 #define CSR_INSTRETH		0xc82
+
+#ifndef __ASSEMBLY__
+
+#define cp0_read(csr)						\
+({								\
+	register unsigned long __v;				\
+	__asm__ __volatile__ ("cprd cp0, cr%1, cr%2, %0 "	\
+			: "=r" (__v)				\
+			: "i" (csr >> 6), "i" (csr & 0x3f)	\
+			: "memory");				\
+	__v;							\
+})
+
+#define cp0_write(csr, val)					\
+({								\
+	unsigned long __v = (unsigned long)(val);		\
+	__asm__ __volatile__ ("cpwr cp0, cr%1, cr%2, %0"	\
+			: : "r" (__v)				\
+			, "i" (csr >> 6), "i" (csr & 0x3f)	\
+			: "memory");				\
+})
+
+#endif /* __ASSEMBLY__ */
 
 #endif /* __ASM_DADAO_CSR_H */

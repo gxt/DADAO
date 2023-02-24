@@ -26,7 +26,6 @@ generic-y += hw_irq.h
 generic-y += irq.h
 generic-y += irq_regs.h
 generic-y += irq_work.h
-generic-y += irqflags.h
 generic-y += kdebug.h
 generic-y += kmap_types.h
 generic-y += kprobes.h
