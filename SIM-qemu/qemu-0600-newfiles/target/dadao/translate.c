@@ -1443,6 +1443,69 @@ static bool trans_CPST(DisasContext *ctx, arg_CPST *a)
     return false;
 }
 
+/* AMO instructions */
+
+static bool trans_FENCE(DisasContext *ctx, arg_FENCE *a)
+{
+    return true;
+}
+
+static bool trans_LRO_NN(DisasContext *ctx, arg_LRO_NN *a)
+{
+    if ((a->hd == 0) || (a->hb != 0))	return false;
+    tcg_gen_qemu_ld_i64(cpu_rd[a->hc], cpu_rb[a->hd], ctx->mem_idx, MO_TEQ);
+    return true;
+}
+
+static bool trans_LRO_NR(DisasContext *ctx, arg_LRO_NR *a)
+{
+    if ((a->hd == 0) || (a->hb != 0))	return false;
+    tcg_gen_qemu_ld_i64(cpu_rd[a->hc], cpu_rb[a->hd], ctx->mem_idx, MO_TEQ);
+    return true;
+}
+
+static bool trans_LRO_AN(DisasContext *ctx, arg_LRO_AN *a)
+{
+    if ((a->hd == 0) || (a->hb != 0))	return false;
+    tcg_gen_qemu_ld_i64(cpu_rd[a->hc], cpu_rb[a->hd], ctx->mem_idx, MO_TEQ);
+    return true;
+}
+
+static bool trans_LRO_AR(DisasContext *ctx, arg_LRO_AR *a)
+{
+    if ((a->hd == 0) || (a->hb != 0))	return false;
+    tcg_gen_qemu_ld_i64(cpu_rd[a->hc], cpu_rb[a->hd], ctx->mem_idx, MO_TEQ);
+    return true;
+}
+
+static bool trans_SCO_NN(DisasContext *ctx, arg_SCO_NN *a)
+{
+    if ((a->hd == 0) || (a->hb == 0))	return false;
+    tcg_gen_qemu_st_i64(cpu_rd[a->hc], cpu_rb[a->hd], ctx->mem_idx, MO_TEQ);
+    return true;
+}
+
+static bool trans_SCO_NR(DisasContext *ctx, arg_SCO_NR *a)
+{
+    if ((a->hd == 0) || (a->hb == 0))	return false;
+    tcg_gen_qemu_st_i64(cpu_rd[a->hc], cpu_rb[a->hd], ctx->mem_idx, MO_TEQ);
+    return true;
+}
+
+static bool trans_SCO_AN(DisasContext *ctx, arg_SCO_AN *a)
+{
+    if ((a->hd == 0) || (a->hb == 0))	return false;
+    tcg_gen_qemu_st_i64(cpu_rd[a->hc], cpu_rb[a->hd], ctx->mem_idx, MO_TEQ);
+    return true;
+}
+
+static bool trans_SCO_AR(DisasContext *ctx, arg_SCO_AR *a)
+{
+    if ((a->hd == 0) || (a->hb == 0))	return false;
+    tcg_gen_qemu_st_i64(cpu_rd[a->hc], cpu_rb[a->hd], ctx->mem_idx, MO_TEQ);
+    return true;
+}
+
 static void dadao_tr_init_disas_context(DisasContextBase *dcbase, CPUState *cs)
 {
     DisasContext *ctx = container_of(dcbase, DisasContext, base);
