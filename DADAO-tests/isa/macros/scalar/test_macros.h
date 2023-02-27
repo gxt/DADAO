@@ -24,15 +24,15 @@ test_ ## testnum:											\
 	cmps	rd15, testreg_2, rd15;									\
 	brnz    rd15, fail;
 
-#define TEST_CASE_MULTI_REG( testnum, inst, reg1, reg2, imm6, reggroup, correctval, cmp, registernum... )       \
-test_ ## testnum:                                                                                               \
-        inst    reg1, reg2, imm6;                                                                               \
-        move    TESTNUM, testnum;                                                                               \
-        move    reggroup##62, correctval;                                                                       \
-        .irp    param,registernum;                                                                              \
-        cmp     rd63, reggroup\param, reggroup##62;                                                             \
-        brnz    rd63, fail;                                                                                     \
-        addi    reggroup##62, reggroup##62, 1;                                                                  \
+#define TEST_CASE_MULTI_REG( testnum, inst, reg1, reg2, imm6, reggroup, correctval, cmpinst, registernum... )	\
+test_ ## testnum:												\
+        inst    reg1, reg2, imm6;										\
+        move    TESTNUM, testnum;										\
+        move    reggroup##62, correctval;									\
+        .irp    param,registernum;										\
+        cmpinst	rd63, reggroup\param, reggroup##62;								\
+        brnz    rd63, fail;											\
+        addi    reggroup##62, reggroup##62, 1;									\
         .endr;
 
 #-----------------------------------------------------------------------
