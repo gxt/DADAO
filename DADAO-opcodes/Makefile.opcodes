@@ -6,9 +6,9 @@ OPCODES_DST_DIR		?= $(DIR_DADAO_TARGET)/__opcodes/
 OPCODES_PARSE		:= $(OPCODES_DST_DIR)/parse-opcodes.py
 OPCODES_INPUT		:= $(OPCODES_DST_DIR)/simrisc.opcodes
 OPCODES_OUTPUT_QEMU	:= $(OPCODES_DST_DIR)/output.qemu
-OPCODES_OUTPUT_BIN	:= $(OPCODES_DST_DIR)/output.bin
-OPCODES_OUTPUT_ENV	:= $(OPCODES_DST_DIR)/output.env
-OPCODES_OUTPUT_DIS      := $(OPCODES_DST_DIR)/output.dis
+OPCODES_OUTPUT_BIN	:= $(OPCODES_DST_DIR)/output.binutils
+OPCODES_OUTPUT_ENV	:= $(OPCODES_DST_DIR)/output.encoding
+OPCODES_OUTPUT_DIS      := $(OPCODES_DST_DIR)/output.disassemble
 OPCODES_OUTPUT_BITPAT   := $(OPCODES_DST_DIR)/output.bitpat
 
 opcodes-clean:
