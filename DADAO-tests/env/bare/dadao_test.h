@@ -46,9 +46,7 @@ __wait_fromhost:							\
 	ldtu	rd33, rb32, 0x40;	/* fromhost */			\
 	brz	rd33, __wait_fromhost;					\
 	stt	rd0, rb32, 0x40;					\
-	cprd	cp0, cr13, cr1, rd33;	/* mepc */			\
-	rd2rb	rb33, rd33, 0;						\
-	jump	rb33, rd0, 0;		/* mret */			\
+	escape	cp0, 0;							\
 reset_vector:								\
 	INIT_DATAREG;							\
 	INIT_FLOATREG;							\

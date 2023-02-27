@@ -34,13 +34,12 @@ trap_entry:
 	CPRD_mepc(rd17)
 	rb2rd	rd18, rb1, 0
 	call	handle_trap
-	// CPWR_mepc(rd16)
+	CPWR_mepc(rd16)
 
 	ldmo	rd1, rb1, rd0, 62
 
 	addi	rb1, rb1, 512
-	rd2rb	rb7, rd16, 0
-	jump	rb7, rd0, 0		/* mret */
+	escape	cp0, 0
 
 .section ".tohost","aw",@progbits
 	.align	6
