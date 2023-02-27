@@ -36,6 +36,7 @@ opcodes-encoding:
 
 opcodes-bitpat:
 	@test -d $(OPCODES_DST_DIR) || make -s opcodes-source
+	@rm -f $(OPCODES_OUTPUT_BITPAT)
 	@$(PYTHON) $(OPCODES_PARSE) --input $(OPCODES_INPUT) --bitpat $(OPCODES_OUTPUT_BITPAT)
 
 opcodes-highfive:
