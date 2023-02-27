@@ -950,15 +950,13 @@ static bool trans_EXTZr(DisasContext *ctx, arg_EXTZr *a)
     return true;
 }
 
-static bool trans_NOTr(DisasContext *ctx, arg_NOTr *a)
+static bool trans_XNOR(DisasContext *ctx, arg_XNOR *a)
 {
     if (a->hb == 0) {
         return true;
     }
-    TCGv_i64 imm = tcg_const_i64(~(int64_t)0);
-    tcg_gen_shl_i64(imm, imm, cpu_rd[a->hd]);
-    tcg_gen_xor_i64(cpu_rd[a->hb], cpu_rd[a->hc], imm);
-    tcg_temp_free_i64(imm);
+    tcg_gen_xor_i64(cpu_rd[a->hb], cpu_rd[a->hc], cpu_rd[a->hd]);
+    tcg_gen_xori_i64(cpu_rd[a->hb], cpu_rd[a->hb], 0xffffffffffffffff);
     return true;
 }
 
@@ -1006,15 +1004,6 @@ static bool trans_EXTZi(DisasContext *ctx, arg_EXTZi *a)
     }
     tcg_gen_shli_i64(cpu_rd[a->hb], cpu_rd[a->hc], a->immu6);
     tcg_gen_shri_i64(cpu_rd[a->hb], cpu_rd[a->hb], a->immu6);
-    return true;
-}
-
-static bool trans_NOTi(DisasContext *ctx, arg_NOTi *a)
-{
-    if (a->hb == 0) {
-        return true;
-    }
-    tcg_gen_xori_i64(cpu_rd[a->hb], cpu_rd[a->hc], ~(int64_t)0 << a->immu6);
     return true;
 }
 
