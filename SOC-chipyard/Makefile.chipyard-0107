@@ -13,6 +13,7 @@ CHIPYARD_0107_LOG_STDERR	:= $(DIR_DADAO_LOG)/chipyard-0107.err
 
 CHIPYARD_0107_NEWFILES		:= $(DIR_DADAO_TOP)/SOC-chipyard/chipyard-0107-newfiles
 CHIPYARD_0107_PATCHES		:= $(DIR_DADAO_TOP)/SOC-chipyard/chipyard-0107-patches
+CHIPYARD_0107_INSTRUCTIONS	:= $(CHIPYARD_0107_NEWFILES)/generators/dadao-wuming/src/main/scala/common/instructions.scala
 
 CHIPYARD_0107_DADAO_CONFIG	?= Wuming1StageConfig
 #CHIPYARD_0107_DADAO_BINARY	?= $(CHIPYARD_0107_SOURCE)/generators/riscv-sodor/riscv-bmarks/dhrystone.riscv
@@ -31,6 +32,11 @@ chipyard-0107-prepare:
 	@make -s -C $(DIR_DADAO_TOP) tests-bootrom-highfive
 	# Check necessary fesvr headers
 	@test -d $(DIR_DADAO_TARGET)/include/fesvr || make -s -C $(DIR_DADAO_TOP) rte-highfive
+	# Generate instructions.scala
+	@make -s -C $(DIR_DADAO_TOP) opcodes-bitpat
+	@cat $(DIR_DADAO_TOP)/SOC-chipyard/instructions.scala-head		>  $(CHIPYARD_0107_INSTRUCTIONS)
+	@cat $(OPCODES_OUTPUT_BITPAT)						>> $(CHIPYARD_0107_INSTRUCTIONS)
+	@cat $(DIR_DADAO_TOP)/SOC-chipyard/instructions.scala-tail		>> $(CHIPYARD_0107_INSTRUCTIONS)
 
 chipyard-0107-source:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
@@ -111,15 +117,4 @@ chipyard-0107-highfive:
 	# 5. Build chipyard ...
 	@make -s chipyard-0107-build			1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
 	@echo "--- BUILD chipyard-0107 DONE! ---"
-
-CHIPYARD_0107_INSN_OLD	:= $(CHIPYARD_0107_SOURCE)/generators/dadao-wuming/src/main/scala/common/instructions.scala
-CHIPYARD_0107_INSN_NEW	:= $(DIR_DADAO_SOURCE)/instructions.scala
-chipyard-0107-check-insn:
-	# Generate instructions.scala
-	@rm -f $(OPCODES_OUTPUT_BITPAT)
-	@make -s -C $(DIR_DADAO_TOP) opcodes-bitpat
-	@cat $(DIR_DADAO_TOP)/SOC-chipyard/instructions.scala-head		>  $(CHIPYARD_0107_INSN_NEW)
-	@cat $(OPCODES_OUTPUT_BITPAT)						>> $(CHIPYARD_0107_INSN_NEW)
-	@cat $(DIR_DADAO_TOP)/SOC-chipyard/instructions.scala-tail		>> $(CHIPYARD_0107_INSN_NEW)
-	@diff -u $(CHIPYARD_0107_INSN_OLD) $(CHIPYARD_0107_INSN_NEW)
 
