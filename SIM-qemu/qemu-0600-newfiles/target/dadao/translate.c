@@ -1418,6 +1418,11 @@ static bool trans_TRAP(DisasContext *ctx, arg_TRAP *a)
     return true;
 }
 
+static bool trans_ESCAPE(DisasContext *ctx, arg_ESCAPE *a)
+{
+    return false;
+}
+
 static bool trans_CPCO(DisasContext *ctx, arg_CPCO *a)
 {
     return false;
