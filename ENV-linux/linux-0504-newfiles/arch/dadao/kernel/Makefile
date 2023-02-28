@@ -3,6 +3,7 @@
 #
 obj-y				+= irq.o
 obj-y				+= process.o
+obj-y				+= reset.o
 obj-y				+= setup.o
 obj-y				+= time.o traps.o
 
