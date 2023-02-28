@@ -302,8 +302,15 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    // Control Status Registers
    val csr = Module(new CSRFile(perfEventSets=CSREvents.events))
    csr.io := DontCare
-   csr.io.decode(0).inst := inst
-   csr.io.rw.addr   := inst(CP_RGRC_ADDR_MSB,CP_RGRC_ADDR_LSB)
+   /* FIXME: modify insn code for RISC-V CSR.I handler */
+   csr.io.decode(0).inst := MuxCase(inst, Array(
+                          (inst(31, 24) === "b01110110".U)  -> "h00000073".U, /* TRAP   -> SCALL */
+                          (inst(31, 24) === "b01110111".U)  -> "h30200073".U, /* EXCAPE -> MRET  */
+                          ))
+   csr.io.rw.addr   := MuxCase(inst(CP_RGRC_ADDR_MSB,CP_RGRC_ADDR_LSB), Array(
+                          (inst(31, 24) === "b01110110".U)  -> "h000".U,      /* TRAP   -> SCALL */
+                          (inst(31, 24) === "b01110111".U)  -> "h302".U,      /* EXCAPE -> MRET  */
+                          ))
    csr.io.rw.cmd    := io.ctl.csr_cmd
    csr.io.rw.wdata  := alu_out
 
