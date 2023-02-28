@@ -178,7 +178,56 @@ static __always_inline s64 atomic64_fetch_add_unless(atomic64_t *v, s64 a, s64 u
 }
 #define atomic64_fetch_add_unless atomic64_fetch_add_unless
 
-extern s64 atomic64_cmpxchg(atomic64_t *v, s64 o, s64 n);
-extern s64 atomic64_xchg(atomic64_t *v, s64 new);
+#define ATOMIC64_XCHG_OP(name, acq, rel, cl)				\
+static __always_inline s64						\
+atomic64_xchg##name(atomic64_t *v, s64 new)				\
+{									\
+	s64 result;							\
+	unsigned long tmp;						\
+									\
+	__asm__ __volatile__ (						\
+		"218:	lro_" #acq "	rd0, %0, %2\n"			\
+		"	sco_" #rel "	%1, %3, %2\n"			\
+		"	brnz	%1, 218b\n"				\
+		: "=&r" (result), "=&r" (tmp), "+Rb" (v->counter)	\
+		: "r" (new)						\
+		: cl);							\
+									\
+	return result;							\
+}
+
+ATOMIC64_XCHG_OP(_relaxed, nn, nn,         )
+ATOMIC64_XCHG_OP(_acquire, an, nn, "memory")
+ATOMIC64_XCHG_OP(_release, nn, nr, "memory")
+ATOMIC64_XCHG_OP(        , nn, nr, "memory")
+
+#undef ATOMIC64_XCHG_OP
+
+#define ATOMIC64_CMPXCHG_OP(name, acq, rel, cl)				\
+static __always_inline s64						\
+atomic64_cmpxchg##name(atomic64_t *v, s64 old, s64 new)			\
+{									\
+	s64 result;							\
+	unsigned long tmp;						\
+									\
+	__asm__ __volatile__ (						\
+		"218:	lro_" #acq "	rd0, %0, %2\n"			\
+		"	brne	%0, %3, 219f\n"				\
+		"	sco_" #rel "	%1, %4, %2\n"			\
+		"	brnz	%1, 218b\n"				\
+		"219:\n"						\
+		: "=&r" (result), "=&r" (tmp), "+Rb" (v->counter)	\
+		: "r" (old), "r" (new)					\
+		: cl);							\
+									\
+	return result;							\
+}
+
+ATOMIC64_CMPXCHG_OP(_relaxed, nn, nn,         )
+ATOMIC64_CMPXCHG_OP(_acquire, an, nn, "memory")
+ATOMIC64_CMPXCHG_OP(_release, nn, nr, "memory")
+ATOMIC64_CMPXCHG_OP(        , nn, nr, "memory")
+
+#undef ATOMIC64_CMPXCHG_OP
 
 #endif /* __ASM_DADAO_ATOMIC_H */
