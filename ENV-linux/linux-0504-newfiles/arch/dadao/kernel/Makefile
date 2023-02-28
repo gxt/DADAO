@@ -2,6 +2,7 @@
 # Makefile for the dadao linux kernel.
 #
 obj-y				+= irq.o
+obj-y				+= process.o
 obj-y				+= setup.o
 obj-y				+= time.o traps.o
 
