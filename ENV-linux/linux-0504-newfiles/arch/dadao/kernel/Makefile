@@ -1,6 +1,7 @@
 #
 # Makefile for the dadao linux kernel.
 #
+obj-y				+= entry.o
 obj-y				+= irq.o
 obj-y				+= process.o
 obj-y				+= reset.o
