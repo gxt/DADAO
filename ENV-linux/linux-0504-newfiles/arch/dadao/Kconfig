@@ -2,6 +2,7 @@ config DADAO
 	def_bool y
 	select GENERIC_IOMAP
 	select HAVE_RCU_TABLE_FREE
+	select HAVE_COPY_THREAD_TLS
 
 config 64BIT
 	def_bool y
