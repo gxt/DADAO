@@ -17,6 +17,9 @@ config PGTABLE_LEVELS
 config CPU_LITTLE_ENDIAN
 	def_bool y
 
+config GENERIC_CALIBRATE_DELAY
+	def_bool y
+
 menu "Kernel Features"
 
 source "kernel/Kconfig.hz"
