@@ -17,6 +17,7 @@ CHECKFLAGS		+= -D__dadao__
 head-y			:= arch/dadao/kernel/head.o
 
 core-y			+= arch/dadao/kernel/
+core-y			+= arch/dadao/mm/
 
 libs-y			+= arch/dadao/lib/
 

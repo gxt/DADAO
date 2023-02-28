@@ -1,1 +1,1 @@
-obj-y				:= ioremap.o
+obj-y				:= init.o ioremap.o
