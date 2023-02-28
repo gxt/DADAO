@@ -489,6 +489,8 @@ def main():
         gen_disassemble_file(insts, output_disassemble)
     if output_bitpat:
         gen_bitpat_file(upper_insts, output_bitpat)
+    if dasm:
+        dasm_dict = trans_dict(insts)
     while dasm:
         try:
             line = input()
@@ -499,7 +501,6 @@ def main():
         if line.find('DASM') >= 0:
             instruction = line[line.find('DASM'):]
             instruction = instruction[5:13]
-            dasm_dict = trans_dict(insts)
             trans_line = line[0:line.find('DASM')] + output_dasm(dasm_dict,instruction)
             print(trans_line)
         else:
