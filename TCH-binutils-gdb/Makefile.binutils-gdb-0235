@@ -99,8 +99,8 @@ endif
 	# handle opcodes dir
 	@cp -a $(BINUTILS_GDB_0235_NEWFILES)/opcodes/* $(BINUTILS_GDB_0235_SOURCE)/opcodes/
 	# OPCODES: Generate dadao opcodes file
-	@test -f $(OPCODES_OUTPUT_BIN) || make -s -C $(DIR_DADAO_TOP) opcodes-binutils
-	@test -f $(OPCODES_OUTPUT_DIS) || make -s -C $(DIR_DADAO_TOP) opcodes-disassemble
+	@make -s -C $(DIR_DADAO_TOP) opcodes-binutils
+	@make -s -C $(DIR_DADAO_TOP) opcodes-disassemble
 	@cp $(OPCODES_OUTPUT_BIN) $(BINUTILS_GDB_0235_OPCODES)
 	@cp $(OPCODES_OUTPUT_DIS) $(BINUTILS_GDB_0235_DISASSEMBLE)
 	@cd $(BINUTILS_GDB_0235_SOURCE);				\
