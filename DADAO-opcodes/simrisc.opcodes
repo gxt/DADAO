@@ -214,8 +214,8 @@ focle	01010000 101111
 # Control Flow Instructions
 #
 [ oiii	op:14	immu:18 ]
-& (immu==000000000000000000)
 swym	00010000 000000
+unimp	00010000 111111
 
 [ riii	op:8	ha:6	imms:18 ]
 & @jmp @bpd rd@ha
