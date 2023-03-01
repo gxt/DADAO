@@ -1254,6 +1254,11 @@ static bool trans_SWYM(DisasContext *ctx, arg_SWYM *a)
     return true;
 }
 
+static bool trans_UNIMP(DisasContext *ctx, arg_UNIMP *a)
+{
+    return false;
+}
+
 static bool trans_JUMPi(DisasContext *ctx, arg_JUMPi *a)
 {
     tcg_gen_movi_i64(cpu_pc, ctx->base.pc_next + a->imms24 * 4);
