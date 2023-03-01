@@ -242,8 +242,12 @@ def gen_encoding_file(insts: dict, output_file: str):
         declare_insn_str += f'DECLARE_INSN({i.replace(".","_")}, MATCH_{i.upper().replace(".","_")}, MASK_{i.upper().replace(".","_")})\n'
 
     with open(output_file, 'w') as f:
+        print('#ifndef __DADAO_SIMRISC_ENCODING_H__\n', file=f)
         print(mask_match_str, file=f)
+        print('#ifdef DECLARE_INSN\n', file=f)
         print(declare_insn_str, file=f)
+        print('#endif\n', file=f)
+        print('#endif\n', file=f)
 
 def gen_disassemble_file(insts: dict, output_file: str):
     with open(output_file, 'w') as f:
