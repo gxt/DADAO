@@ -172,7 +172,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       when ((io.ctl.wb_sel === WB_RDMM) && (ha_addr =/= 0.U)) {
          regfileD(ha_addr) := wb_data
       }
-      when ((io.ctl.wb_sel === WB_RFHA) && (hb_addr =/= 0.U)) {
+      when ((io.ctl.wb_sel === WB_RFHA) && (ha_addr =/= 0.U)) {
          regfileF(ha_addr) := wb_data
       }
       when ((io.ctl.wb_sel === WB_RFHB) && (hb_addr =/= 0.U)) {
