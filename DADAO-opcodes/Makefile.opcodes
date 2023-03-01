@@ -15,23 +15,28 @@ opcodes-clean:
 	@rm -fr $(OPCODES_DST_DIR)
 
 opcodes-source:
-	@test -d $(OPCODES_DST_DIR) || mkdir -p $(OPCODES_DST_DIR)
-	@cp -a $(OPCODES_SRC_DIR)/* $(OPCODES_DST_DIR)
+	@make -s opcodes-clean
+	@mkdir -p $(OPCODES_DST_DIR)
+	@ln --symbolic --target-directory=$(OPCODES_DST_DIR) $(OPCODES_SRC_DIR)/*
 
 opcodes-qemu:
 	@test -d $(OPCODES_DST_DIR) || make -s opcodes-source
+	@rm -f $(OPCODES_OUTPUT_QEMU)
 	@$(PYTHON) $(OPCODES_PARSE) --input $(OPCODES_INPUT) --decode $(OPCODES_OUTPUT_QEMU)
 
 opcodes-binutils:
 	@test -d $(OPCODES_DST_DIR) || make -s opcodes-source
+	@rm -f $(OPCODES_OUTPUT_BIN)
 	@$(PYTHON) $(OPCODES_PARSE) --input $(OPCODES_INPUT) --opc $(OPCODES_OUTPUT_BIN)
 
 opcodes-disassemble:
 	@test -d $(OPCODES_DST_DIR) || make -s opcodes-source
+	@rm -f $(OPCODES_OUTPUT_DIS)
 	@$(PYTHON) $(OPCODES_PARSE) --input $(OPCODES_INPUT) --disassemble $(OPCODES_OUTPUT_DIS)
 
 opcodes-encoding:
 	@test -d $(OPCODES_DST_DIR) || make -s opcodes-source
+	@rm -f $(OPCODES_OUTPUT_ENV)
 	@$(PYTHON) $(OPCODES_PARSE) --input $(OPCODES_INPUT) --encoding $(OPCODES_OUTPUT_ENV)
 
 opcodes-bitpat:
