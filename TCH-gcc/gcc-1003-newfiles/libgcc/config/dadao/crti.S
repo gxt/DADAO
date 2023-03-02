@@ -27,9 +27,9 @@ _start:
 	.section .init,"ax",@progbits
 	.global	_init
 _init:
-	swym
+	swym	0
 
 	.section .fini,"ax",@progbits
 	.global	_fini
 _fini:
-	swym
+	swym	0

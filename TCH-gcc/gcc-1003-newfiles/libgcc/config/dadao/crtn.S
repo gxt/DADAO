@@ -11,9 +11,9 @@
 # like in gcc/crtstuff.c.
 
 	.section .init,"ax",@progbits
-	swym
+	swym	0
 	ret rd0, 0
 
 	.section .fini,"ax",@progbits
-	swym
+	swym	0
 	ret rd0, 0

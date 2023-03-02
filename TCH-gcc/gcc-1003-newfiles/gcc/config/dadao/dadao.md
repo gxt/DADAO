@@ -26,7 +26,7 @@
 (define_insn "nop"
   [(const_int 0)]
 	""
-	"swym")
+	"swym	0")
 
 (define_expand "mov<mode>"
   [(set (match_operand:QHSD 0 "")
