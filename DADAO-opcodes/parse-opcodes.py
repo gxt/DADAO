@@ -393,12 +393,11 @@ def output_dasm(dasm_dict: dict, instruction: str):
     else:
         output = ''
         instruction = bin(int(instruction,16))[2:].zfill(32)
-        if instruction[0:8] == '00010000':
-            key = instruction[0:14]
-        else:
-            key = instruction[0:8]
+        key = instruction[0:8]
         if key not in dasm_dict:
-            return 'unknown insn'
+            key += instruction[8:14]
+            if key not in dasm_dict:
+                return 'unknown insn'
         output += dasm_dict[key]['inst_name'] + '\t'
         operands = dasm_dict[key]['fields']
         regfile = dasm_dict[key]['regfile']
