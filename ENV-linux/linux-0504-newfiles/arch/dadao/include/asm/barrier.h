@@ -7,7 +7,7 @@
 
 #ifndef __ASSEMBLY__
 
-#define nop()		asm volatile ("swym")
+#define nop()		asm volatile ("swym	0")
 
 #include <asm-generic/barrier.h>
 
