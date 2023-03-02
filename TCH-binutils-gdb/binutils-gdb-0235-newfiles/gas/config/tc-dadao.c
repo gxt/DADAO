@@ -17,6 +17,7 @@
 #include "safe-ctype.h"
 #include "dw2gencfi.h"
 #include "dwarf2dbg.h"
+#include "../../include/opcode/encoding.h"
 
 static int get_operands(char *, expressionS *, int *, int *);
 static void dd_set_addr_offset(char *, offsetT, int, int, int);
@@ -174,7 +175,7 @@ static void dd_fill_nops(char *opcodep, int n)
     int i;
 
     for (i = 0; i < n; i++)
-        md_number_to_chars(opcodep + i * 4, 0x10000000 /* nop opcode is swym */, 4);
+        md_number_to_chars(opcodep + i * 4, ((unsigned int)MATCH_SWYM) /* nop opcode is swym */, 4);
 }
 
 /* Get up to four operands, filling them into the exp array.
@@ -1132,9 +1133,9 @@ relaxed_branch_length (fragS *fragp, asection *sec)
   if (!fragp)
     return length;
 
-  if ((fragp->fr_opcode[3] >= 0x28) && (fragp->fr_opcode[3] <= 0x2D))
+  if ((fragp->fr_opcode[3] >= ((unsigned int)(MATCH_BRN >> 24))) && (fragp->fr_opcode[3] <= ((unsigned int)(MATCH_BRNP >> 24))))
     range = 0x40000;
-  else if ((fragp->fr_opcode[3] == 0x2E) || (fragp->fr_opcode[3] == 0x2F))
+  else if ((fragp->fr_opcode[3] == ((unsigned int)(MATCH_BREQ >> 24))) || (fragp->fr_opcode[3] == ((unsigned int)(MATCH_BRNE >> 24))))
     range = 0x1000;
   else
     brcc = 0;
@@ -1271,7 +1272,7 @@ static void md_convert_frag_branch (fragS *fragp)
   buf += 4;
 
   /* add Jump */
-  md_number_to_chars ((char *) buf, 0x64000000, 4); 
+  md_number_to_chars ((char *) buf, ((unsigned int)MATCH_JUMPI), 4); 
 }
 
 /* Convert variable-sized frags into one or more fixups.  */

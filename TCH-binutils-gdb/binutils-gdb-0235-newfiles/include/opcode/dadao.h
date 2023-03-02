@@ -74,6 +74,8 @@ extern const struct dadao_opcode dadao_opcodes[];
 
 #define	DADAO_REGP_PC			0		/* No. 0 reg is pc, read only */
 
+#include "encoding.h"
+
 /* One octa, four wydes, named wh/wj/wk/wl */
 #define	DADAO_WYDE_WH			(3 << 16)
 #define	DADAO_WYDE_WJ			(2 << 16)
@@ -83,22 +85,22 @@ extern const struct dadao_opcode dadao_opcodes[];
 #define	DADAO_INSN_FT			((unsigned int)(0x2A << 24))
 #define	DADAO_INSN_FO			((unsigned int)(0x2B << 24))
 
-#define	DADAO_INSN_ORW_RD			((unsigned int)(0x14 << 24))
-#define	DADAO_INSN_ANDNW_RD			((unsigned int)(0x15 << 24))
-#define	DADAO_INSN_SETZW_RD			((unsigned int)(0x16 << 24))
-#define	DADAO_INSN_SETOW_RD			((unsigned int)(0x17 << 24))
-#define	DADAO_INSN_ORW_RB			((unsigned int)(0x4C << 24))
-#define	DADAO_INSN_ANDNW_RB			((unsigned int)(0x4D << 24))
-#define	DADAO_INSN_SETZW_RB			((unsigned int)(0x4E << 24))
-#define	DADAO_INSN_SETW				((unsigned int)(0x54 << 24))
+#define	DADAO_INSN_ORW_RD			((unsigned int)MATCH_ORWRD)
+#define	DADAO_INSN_ANDNW_RD			((unsigned int)MATCH_ANDNWRD)
+#define	DADAO_INSN_SETZW_RD			((unsigned int)MATCH_SETZWRD)
+#define	DADAO_INSN_SETOW_RD			((unsigned int)MATCH_SETOW)
+#define	DADAO_INSN_ORW_RB			((unsigned int)MATCH_ORWRB)
+#define	DADAO_INSN_ANDNW_RB			((unsigned int)MATCH_ANDNWRB)
+#define	DADAO_INSN_SETZW_RB			((unsigned int)MATCH_SETZWRB)
+#define	DADAO_INSN_SETW				((unsigned int)MATCH_SETW)
 
-#define	DADAO_INSN_GETA			((unsigned int)(0x18 << 24))
-#define	DADAO_INSN_CALL_IIII		((unsigned int)(0x6C << 24))
-#define	DADAO_INSN_CALL_RRII		((unsigned int)(0x6D << 24))
-#define	DADAO_INSN_JUMP_IIII		((unsigned int)(0x64 << 24))
-#define	DADAO_INSN_JUMP_RRII		((unsigned int)(0x65 << 24))
-#define	DADAO_INSN_HI18_RIII		((unsigned int)(0x48 << 24))
-#define	DADAO_INSN_LO12_RRII		((unsigned int)(0x40 << 24))
+#define	DADAO_INSN_GETA			((unsigned int)MATCH_ANDI)
+#define	DADAO_INSN_CALL_IIII		((unsigned int)MATCH_CALLI)
+#define	DADAO_INSN_CALL_RRII		((unsigned int)MATCH_CALLR)
+#define	DADAO_INSN_JUMP_IIII		((unsigned int)MATCH_JUMPI)
+#define	DADAO_INSN_JUMP_RRII		((unsigned int)MATCH_JUMPR)
+#define	DADAO_INSN_HI18_RIII		((unsigned int)MATCH_ADRP)
+#define	DADAO_INSN_LO12_RRII		((unsigned int)MATCH_LDBU)
 
 /* Dadao bit-field definition:
  *   OP: 8-bit, [31..24]
