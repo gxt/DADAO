@@ -190,7 +190,7 @@
 (define_insn "expanded_return"
   [(return)]
   ""
-	"ret rd0, 0")
+	"ret\trd0, 0")
 
 (define_expand "prologue"
   [(const_int 0)]
@@ -207,7 +207,7 @@
 (define_insn "jump"
   [(set (pc) (label_ref (match_operand 0 "" "")))]
   ""
-	"jump	%0")
+	"jump\t%0")
 
 (define_insn "indirect_jump"
   [(set (pc) (match_operand 0 "address_operand" "p"))]

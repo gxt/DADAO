@@ -109,13 +109,13 @@
           if(GET_CODE(operands[2]) == CONST_INT)
           {
                 if(INTVAL(operands[2])> 0x7ff || INTVAL(operands[2])< -0x800)
-                return "move\trd7, %2 \; rb2rd %0, %1, 0\t\; add\trd0, %0, %0, rd7";
+                return "move\trd7, %2 \; rb2rd\t%0, %1, 0\;add\trd0, %0, %0, rd7";
                 else
-                return "rb2rd %0, %1, 0\t\; addi\t%0, %0, %2";
+                return "rb2rd\t%0, %1, 0\;addi\t%0, %0, %2";
           }
           else
           {
-                return "rb2rd %0, %1, 0\t\; add\trd0,%0, %0, %2";
+                return "rb2rd\t%0, %1, 0\;add\trd0,%0, %0, %2";
           }
         })
 
@@ -130,9 +130,9 @@
           if(GET_CODE(operands[2]) == CONST_INT)
           {
                 if(INTVAL(operands[2]) > 0x7ff || INTVAL(operands[2]) < -0x800)
-                return "move\trd7,%2\; rb2rd\t%0, %1, 0\t\;sub\trd0, %0, %0, %2";
+                return "move\trd7,%2\;rb2rd\t%0, %1, 0\;sub\trd0, %0, %0, %2";
                 else
-                return "rb2rd %0, %1, 0\t\; addi\t%0, %0, %n2";
+                return "rb2rd\t%0, %1, 0\;addi\t%0, %0, %n2";
           }
           else
           {
@@ -148,4 +148,4 @@
     (plus:DI (match_operand:DI 1 "rb_class_operand" "=Rb")
              (match_operand:DI 2 "const_int_operand"  "i")))]
 	""
-	"rb2rd\t%0, %1, 0\t\;move\trd7, %2\t\;add\trd0, %0, rd7, %0")
+	"rb2rd\t%0, %1, 0\t\;move\trd7, %2\;add\trd0, %0, rd7, %0")
