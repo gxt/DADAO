@@ -2,7 +2,7 @@
 	.text
 	.global _start
 _start:
-	swym
+	swym	0
 	# 0001-0000: MISC-Norm
 	and	rd1, rd2, rd3
 	orr	rd1, rd2, rd3

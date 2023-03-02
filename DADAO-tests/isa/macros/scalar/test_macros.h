@@ -283,7 +283,7 @@ test_ ## testnum:												\
 	move	rd18, val2;						\
 	inst	rd19, rd17, rd18;					\
 	.rept	swym_cycles						\
-		swym;							\
+		swym	0;						\
 	.endr;								\
 	rd2rd	rd31, rd19, 0;						\
 	addi	rd16, rd16, 1;						\
@@ -296,11 +296,11 @@ test_ ## testnum:												\
 	move	rd16, 0;						\
 1:	move	rd17, val1;						\
 	.rept	src1_swyms						\
-		swym;							\
+		swym	0;						\
 	.endr;								\
 	move	rd18, val2;						\
 	.rept	src2_swyms						\
-		swym;							\
+		swym	0;						\
 	.endr;								\
 	inst	rd31, rd17, rd18;					\
 	addi	rd16, rd16, 1;						\
@@ -313,11 +313,11 @@ test_ ## testnum:												\
 	move	rd16, 0;						\
 1:	move	rd18, val1;						\
 	.rept	src1_swyms						\
-		swym;							\
+		swym	0;						\
 	.endr;								\
 	move	rd17, val2;						\
 	.rept	src2_swyms						\
-		swym;							\
+		swym	0;						\
 	.endr;								\
 	inst	rd31, rd17, rd18;					\
 	addi	rd16, rd16, 1;						\
@@ -424,7 +424,7 @@ test_ ## testnum:												\
 1:	move	rd16, val1;						\
 	inst	rd19, rd16, imm;					\
 	.rept	swym_cycles						\
-		swym;							\
+		swym	0;						\
 	.endr;								\
 	rd2rd	rd31, rd19, 0;						\
 	addi	rd18, rd18, 1;						\
@@ -437,7 +437,7 @@ test_ ## testnum:												\
 	move	rd18, 0;						\
 1:	move	rd16, val1;						\
 	.rept	swym_cycles						\
-		swym;							\
+		swym	0;						\
 	.endr;								\
 	inst	rd31, rd16, imm;					\
 	addi	rd18, rd18, 1;						\
@@ -472,7 +472,7 @@ test_ ## testnum:												\
 1:	move	rd16, val1;						\
 	inst	rd16, imm;						\
 	.rept	swym_cycles						\
-		swym;							\
+		swym	0;						\
 	.endr;								\
 	rd2rd	rd31, rd16, 0;						\
 	addi	rd18, rd18, 1;						\
@@ -485,7 +485,7 @@ test_ ## testnum:												\
 	move	rd18, 0;						\
 1:	move	rd31, val1;						\
 	.rept	swym_cycles						\
-		swym;							\
+		swym	0;						\
 	.endr;								\
 	inst	rd31, imm;						\
 	addi	rd18, rd18, 1;						\
@@ -556,7 +556,7 @@ test_ ## testnum:												\
 	move	rd17, val2;									\
 	inst	rd20, rd21, rd16, rd17;								\
 	.rept	swym_cycles									\
-		swym;										\
+		swym	0;									\
 	.endr;											\
         rd2rd   rd30, rd20, 0;									\
 	rd2rd	rd31, rd21, 0;									\

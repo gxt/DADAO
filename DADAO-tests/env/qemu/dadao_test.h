@@ -22,7 +22,7 @@ PASS:									\
 	.globl _start;							\
 	.align 4;							\
 _start:									\
-	swym;
+	swym	0;
 
 #define DDTEST_CODE_END
 #define DDTEST_DATA_BEGIN
