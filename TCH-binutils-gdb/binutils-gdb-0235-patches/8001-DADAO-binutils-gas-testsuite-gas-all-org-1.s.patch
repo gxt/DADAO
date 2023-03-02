@@ -25,7 +25,7 @@ index 7dccbe3d6f5..61c634c617f 100644
          mov	%r1,%r1
  	.else
 -	nop
-+	swym
++	swym	0
  	.endif
  	.endm
  

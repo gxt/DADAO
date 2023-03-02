@@ -5,7 +5,7 @@
 _start:
 	call	_rec1
 	jump	_rec1
-	swym
+	swym	0
 	ret	rd0, 0
 
 _rec1:

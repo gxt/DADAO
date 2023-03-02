@@ -25,7 +25,7 @@ extern void dadao_md_begin (void);
 
 #define md_number_to_chars		number_to_chars_littleendian
 
-#define md_single_noop_insn		"swym"
+#define md_single_noop_insn		"swym	0"
 
 #define WORKING_DOT_WORD
 

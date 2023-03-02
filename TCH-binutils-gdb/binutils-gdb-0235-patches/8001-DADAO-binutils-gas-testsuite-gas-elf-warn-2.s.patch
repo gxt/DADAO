@@ -23,7 +23,7 @@ index 79d6205c807..226218ab681 100644
  	l.nop 0
   .else
 -	nop
-+	swym
++	swym 0
   .endif
   .endif
  

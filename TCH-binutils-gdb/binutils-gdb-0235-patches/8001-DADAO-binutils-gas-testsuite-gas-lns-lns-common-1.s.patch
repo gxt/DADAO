@@ -17,43 +17,43 @@ index 6c84fbdb539..b5169d004f9 100644
  	.loc 1 1
 -	nop
 -	nop
-+	swym
-+	swym
++	swym 0
++	swym 0
  	.loc 1 2 3
 -	nop
 -	nop
-+	swym
-+	swym
++	swym 0
++	swym 0
  	.loc 1 3 prologue_end
 -	nop
 -	nop
-+	swym
-+	swym
++	swym 0
++	swym 0
  	.loc 1 4 0 epilogue_begin
 -	nop
 -	nop
-+	swym
-+	swym
++	swym 0
++	swym 0
  	.loc 1 5 isa 1 basic_block
 -	nop
 -	nop
-+	swym
-+	swym
++	swym 0
++	swym 0
  	.loc 1 6 is_stmt 0
 -	nop
 -	nop
-+	swym
-+	swym
++	swym 0
++	swym 0
  	.loc 1 7 is_stmt 1
 -	nop
 -	nop
-+	swym
-+	swym
++	swym 0
++	swym 0
  	.loc 1 7 discriminator 1
 -	nop
 -	nop
-+	swym
-+	swym
++	swym 0
++	swym 0
 -- 
 2.34.1
 

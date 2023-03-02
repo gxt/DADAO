@@ -17,14 +17,14 @@ index a54bdcfba17..0a3bc9f0a50 100644
  f1:
  	.loc 2 1 0
 -	nop
-+	swym
++	swym	0
  	.size	f1, .-f1
  	.globl main
  	.type	main, %function
  main:
  	.loc 1 2 0
 -	nop
-+	swym
++	swym	0
  	.size	main, .-main
 -- 
 2.34.1
