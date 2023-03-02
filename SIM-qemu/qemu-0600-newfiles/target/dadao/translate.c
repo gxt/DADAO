@@ -51,6 +51,8 @@ static TCGv_i64 cpu_rd[64];
 static TCGv_i64 cpu_rb[64];
 static TCGv_i64 cpu_rf[64];
 static TCGv_i64 cpu_ra[64];
+static TCGv_i64 load_res;
+static TCGv_i64 load_val;
 
 #define cpu_pc   cpu_rb[0]
 #define cpu_rasp cpu_ra[0]
@@ -116,6 +118,13 @@ void dadao_translate_init(void)
                                            offsetof(CPUDADAOState, ra[i]), 
                                            regnames[i + 64 * 3]);
     }
+
+    load_res = tcg_global_mem_new_i64(cpu_env,
+                                     offsetof(CPUDADAOState, load_res),
+                                     "load_res");
+    load_val = tcg_global_mem_new_i64(cpu_env,
+                                     offsetof(CPUDADAOState, load_val),
+                                     "load_val");
 }
 
 bool disas_dadao(DisasContext *ctx, uint32_t insn);
@@ -1452,56 +1461,200 @@ static bool trans_FENCE(DisasContext *ctx, arg_FENCE *a)
 static bool trans_LRO_NN(DisasContext *ctx, arg_LRO_NN *a)
 {
     if ((a->hd == 0) || (a->hb != 0))	return false;
-    tcg_gen_qemu_ld_i64(cpu_rd[a->hc], cpu_rb[a->hd], ctx->mem_idx, MO_TEQ);
+    if (a->hc == 0)	return true;
+    TCGv_i64 src = tcg_temp_new_i64();
+
+    /* Put addr in load_res, data in load_val. */
+    tcg_gen_mov_i64(src, cpu_rb[a->hd]);
+    tcg_gen_qemu_ld_i64(load_val, src, ctx->mem_idx, MO_TEQ);
+    tcg_gen_mov_i64(load_res, src);
+    tcg_gen_mov_i64(cpu_rd[a->hc], load_val);
+
+    tcg_temp_free_i64(src);
     return true;
 }
 
 static bool trans_LRO_NR(DisasContext *ctx, arg_LRO_NR *a)
 {
     if ((a->hd == 0) || (a->hb != 0))	return false;
-    tcg_gen_qemu_ld_i64(cpu_rd[a->hc], cpu_rb[a->hd], ctx->mem_idx, MO_TEQ);
+    if (a->hc == 0)     return true;
+    TCGv_i64 src = tcg_temp_new_i64();
+
+    /* Put addr in load_res, data in load_val. */
+    tcg_gen_mov_i64(src, cpu_rb[a->hd]);
+    tcg_gen_mb(TCG_MO_ALL | TCG_BAR_STRL);
+    tcg_gen_qemu_ld_i64(load_val, src, ctx->mem_idx, MO_TEQ);
+    tcg_gen_mov_i64(load_res, src);
+    tcg_gen_mov_i64(cpu_rd[a->hc], load_val);
+
+    tcg_temp_free_i64(src);
     return true;
 }
 
 static bool trans_LRO_AN(DisasContext *ctx, arg_LRO_AN *a)
 {
     if ((a->hd == 0) || (a->hb != 0))	return false;
-    tcg_gen_qemu_ld_i64(cpu_rd[a->hc], cpu_rb[a->hd], ctx->mem_idx, MO_TEQ);
+    if (a->hc == 0)     return true;
+    TCGv_i64 src = tcg_temp_new_i64();
+
+    /* Put addr in load_res, data in load_val. */
+    tcg_gen_mov_i64(src, cpu_rb[a->hd]);
+    tcg_gen_qemu_ld_i64(load_val, src, ctx->mem_idx, MO_TEQ);
+    tcg_gen_mb(TCG_MO_ALL | TCG_BAR_LDAQ);
+    tcg_gen_mov_i64(load_res, src);
+    tcg_gen_mov_i64(cpu_rd[a->hc], load_val);
+
+    tcg_temp_free_i64(src);
     return true;
 }
 
 static bool trans_LRO_AR(DisasContext *ctx, arg_LRO_AR *a)
 {
     if ((a->hd == 0) || (a->hb != 0))	return false;
-    tcg_gen_qemu_ld_i64(cpu_rd[a->hc], cpu_rb[a->hd], ctx->mem_idx, MO_TEQ);
+    if (a->hc == 0)     return true;
+    TCGv_i64 src = tcg_temp_new_i64();
+
+    /* Put addr in load_res, data in load_val. */
+    tcg_gen_mov_i64(src, cpu_rb[a->hd]);
+    tcg_gen_mb(TCG_MO_ALL | TCG_BAR_STRL);
+    tcg_gen_qemu_ld_i64(load_val, src, ctx->mem_idx, MO_TEQ);
+    tcg_gen_mb(TCG_MO_ALL | TCG_BAR_LDAQ);
+    tcg_gen_mov_i64(load_res, src);
+    tcg_gen_mov_i64(cpu_rd[a->hc], load_val);
+
+    tcg_temp_free_i64(src);
     return true;
 }
 
 static bool trans_SCO_NN(DisasContext *ctx, arg_SCO_NN *a)
 {
     if ((a->hd == 0) || (a->hb == 0))	return false;
-    tcg_gen_qemu_st_i64(cpu_rd[a->hc], cpu_rb[a->hd], ctx->mem_idx, MO_TEQ);
+    TCGv_i64 src = tcg_temp_new_i64();
+    TCGv_i64 dat = tcg_temp_new_i64();
+    TCGLabel *l1 = gen_new_label();
+    TCGLabel *l2 = gen_new_label();
+
+    tcg_gen_mov_i64(src, cpu_rb[a->hd]);
+    tcg_gen_brcond_i64(TCG_COND_NE, load_res, src, l1);
+
+    tcg_gen_atomic_cmpxchg_i64(src, load_res, load_val, cpu_rd[a->hc],
+                               ctx->mem_idx, MO_TEQ);
+
+    tcg_gen_setcond_i64(TCG_COND_NE, dat, src, load_val);
+    tcg_gen_mov_i64(cpu_rd[a->hb], dat);
+    tcg_gen_br(l2);
+
+    gen_set_label(l1);
+
+    tcg_gen_mb(TCG_MO_ALL);
+    tcg_gen_movi_i64(dat, 1);
+    tcg_gen_mov_i64(cpu_rd[a->hb], dat);
+
+    gen_set_label(l2);
+    tcg_gen_movi_i64(load_res, -1);
+
+    tcg_temp_free(dat);
+    tcg_temp_free(src);
+
     return true;
 }
 
 static bool trans_SCO_NR(DisasContext *ctx, arg_SCO_NR *a)
 {
     if ((a->hd == 0) || (a->hb == 0))	return false;
-    tcg_gen_qemu_st_i64(cpu_rd[a->hc], cpu_rb[a->hd], ctx->mem_idx, MO_TEQ);
+    TCGv_i64 src = tcg_temp_new_i64();
+    TCGv_i64 dat = tcg_temp_new_i64();
+    TCGLabel *l1 = gen_new_label();
+    TCGLabel *l2 = gen_new_label();
+
+    tcg_gen_mov_i64(src, cpu_rb[a->hd]);
+    tcg_gen_brcond_i64(TCG_COND_NE, load_res, src, l1);
+
+    tcg_gen_atomic_cmpxchg_i64(src, load_res, load_val, cpu_rd[a->hc],
+                               ctx->mem_idx, MO_TEQ);
+
+    tcg_gen_setcond_i64(TCG_COND_NE, dat, src, load_val);
+    tcg_gen_mov_i64(cpu_rd[a->hb], dat);
+    tcg_gen_br(l2);
+
+    gen_set_label(l1);
+
+    tcg_gen_mb(TCG_MO_ALL + TCG_BAR_STRL);
+    tcg_gen_movi_i64(dat, 1);
+    tcg_gen_mov_i64(cpu_rd[a->hb], dat);
+
+    gen_set_label(l2);
+    tcg_gen_movi_i64(load_res, -1);
+
+    tcg_temp_free(dat);
+    tcg_temp_free(src);
+
     return true;
 }
 
 static bool trans_SCO_AN(DisasContext *ctx, arg_SCO_AN *a)
 {
     if ((a->hd == 0) || (a->hb == 0))	return false;
-    tcg_gen_qemu_st_i64(cpu_rd[a->hc], cpu_rb[a->hd], ctx->mem_idx, MO_TEQ);
+    TCGv_i64 src = tcg_temp_new_i64();
+    TCGv_i64 dat = tcg_temp_new_i64();
+    TCGLabel *l1 = gen_new_label();
+    TCGLabel *l2 = gen_new_label();
+
+    tcg_gen_mov_i64(src, cpu_rb[a->hd]);
+    tcg_gen_brcond_i64(TCG_COND_NE, load_res, src, l1);
+
+    tcg_gen_atomic_cmpxchg_i64(src, load_res, load_val, cpu_rd[a->hc],
+                               ctx->mem_idx, MO_TEQ);
+
+    tcg_gen_setcond_i64(TCG_COND_NE, dat, src, load_val);
+    tcg_gen_mov_i64(cpu_rd[a->hb], dat);
+    tcg_gen_br(l2);
+
+    gen_set_label(l1);
+
+    tcg_gen_mb(TCG_MO_ALL + TCG_BAR_LDAQ);
+    tcg_gen_movi_i64(dat, 1);
+    tcg_gen_mov_i64(cpu_rd[a->hb], dat);
+
+    gen_set_label(l2);
+    tcg_gen_movi_i64(load_res, -1);
+
+    tcg_temp_free(dat);
+    tcg_temp_free(src);
+
     return true;
 }
 
 static bool trans_SCO_AR(DisasContext *ctx, arg_SCO_AR *a)
 {
     if ((a->hd == 0) || (a->hb == 0))	return false;
-    tcg_gen_qemu_st_i64(cpu_rd[a->hc], cpu_rb[a->hd], ctx->mem_idx, MO_TEQ);
+    TCGv_i64 src = tcg_temp_new_i64();
+    TCGv_i64 dat = tcg_temp_new_i64();
+    TCGLabel *l1 = gen_new_label();
+    TCGLabel *l2 = gen_new_label();
+
+    tcg_gen_mov_i64(src, cpu_rb[a->hd]);
+    tcg_gen_brcond_i64(TCG_COND_NE, load_res, src, l1);
+
+    tcg_gen_atomic_cmpxchg_i64(src, load_res, load_val, cpu_rd[a->hc],
+                               ctx->mem_idx, MO_TEQ);
+
+    tcg_gen_setcond_i64(TCG_COND_NE, dat, src, load_val);
+    tcg_gen_mov_i64(cpu_rd[a->hb], dat);
+    tcg_gen_br(l2);
+
+    gen_set_label(l1);
+
+    tcg_gen_mb(TCG_MO_ALL + TCG_BAR_LDAQ + TCG_BAR_STRL);
+    tcg_gen_movi_i64(dat, 1);
+    tcg_gen_mov_i64(cpu_rd[a->hb], dat);
+
+    gen_set_label(l2);
+    tcg_gen_movi_i64(load_res, -1);
+
+    tcg_temp_free(dat);
+    tcg_temp_free(src);
+
     return true;
 }
 
