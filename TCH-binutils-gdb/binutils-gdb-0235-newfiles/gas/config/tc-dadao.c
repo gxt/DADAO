@@ -625,12 +625,6 @@ static int dd_get_insn_code(struct dadao_opcode *insn, expressionS exp[4], int n
     expressionS *exp_next;
     expressionS *exp_last;
 
-    if (insn->major_opcode == 0b00010000 && insn->minor_opcode == 0b000000) // swym
-    {
-        *insn_code = (insn->major_opcode << 24) | (insn->minor_opcode << 18);
-        return 0;
-    }
-    
     if (n_operands != insn->operands_num)
         return -1;
 
