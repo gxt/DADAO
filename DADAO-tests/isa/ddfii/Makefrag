@@ -1,0 +1,13 @@
+#=======================================================================
+# Makefrag for ddfii tests
+#-----------------------------------------------------------------------
+
+ddfii_sc_tests = \
+	setw \
+	rf2rf \
+	rf2rd \
+	rd2rf \
+
+ddfii_bare_tests = $(addprefix ddfii-bare-, $(ddfii_sc_tests))
+ddfii_qemu_tests = $(addprefix ddfii-qemu-, $(ddfii_sc_tests))
+#ddfii_v_tests = $(addprefix ddfii-v-, $(ddfii_sc_tests))

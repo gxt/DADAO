@@ -10,7 +10,6 @@ dduii_sc_tests = \
 	setow \
 	andnw \
 	orw \
-	setw \
 	addi \
 	add \
 	adrp \
@@ -35,9 +34,6 @@ dduii_sc_tests = \
 	rb2rb \
 	rd2rb \
 	rb2rd \
-	rf2rd \
-	rf2rf \
-	rd2rf \
 	exts \
 	extz \
 

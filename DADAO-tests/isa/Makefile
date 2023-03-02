@@ -6,6 +6,7 @@ src_dir ?= .
 
 include $(src_dir)/../common.mk
 include $(src_dir)/dduii/Makefrag
+include $(src_dir)/ddfii/Makefrag
 
 default: all
 
@@ -26,6 +27,17 @@ dduii-qemu%.out: dduii-qemu%
 	@echo -n "	$<  	"
 	$(DADAO_QEMU_USER) $< 2> $@
 	@echo
+
+ddfii-bare%.out: ddfii-bare%
+	@echo -n "	$<	"
+	@make -C $(DIR_DADAO_TOP) CHIPYARD_0107_DADAO_BINARY=$(shell pwd)/$< chipyard-0107-run-binary   > /dev/null
+	@tail -n 1 $(DIR_DADAO_BUILD)/chipyard-0107/output/chipyard.TestHarness.Wuming1StageConfig/$@
+
+ddfii-qemu%.out: ddfii-qemu%
+	@echo -n "	$<	"
+	$(DADAO_QEMU_USER) $< 2> $@
+	@echo
+
 
 define compile_template
 
@@ -64,16 +76,20 @@ endif
 endef
 
 $(eval $(call compile_template,dduii, -Xassembler --multiple-to-single ))
+$(eval $(call compile_template,ddfii, -Xassembler --multiple-to-single ))
 
 tests_dump = $(addsuffix .dump, $(tests))
 tests_hex = $(addsuffix .hex, $(tests))
 tests_bare_out = $(addsuffix .out, $(filter dduii-bare%,$(tests)))
 tests_qemu_out = $(addsuffix .out, $(filter dduii-qemu%,$(tests)))
+ddfii_bare_out = $(addsuffix .out, $(filter ddfii-bare%,$(tests)))
+ddfii_qemu_out = $(addsuffix .out, $(filter ddfii-qemu%,$(tests)))
 
-run-bare: $(tests_bare_out)
-run-qemu: $(tests_qemu_out)
+run-bare: $(tests_bare_out) $(ddfii_bare_out)
+run-qemu: $(tests_qemu_out) $(ddfii_qemu_out)
 
-junk += $(tests) $(tests_dump) $(tests_hex) $(tests_bare_out) $(tests_qemu_out)
+
+junk += $(tests) $(tests_dump) $(tests_hex) $(tests_bare_out) $(tests_qemu_out) $(ddfii_bare_out) $(ddfii_qemu_out)
 
 #------------------------------------------------------------
 # Default
