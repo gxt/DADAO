@@ -911,20 +911,20 @@ void dadao_md_assemble(char *str)
     { 
 
         /* ldm/stm instruction */
-        if ((instruction->name[0] == 'l' && instruction->name[1] == 'd' && instruction->name[2] == 'm') || (instruction->name[0] == 's' && instruction->name[1] == 't' && instruction->name[2] == 'm'))
+	if ((strncmp(instruction->name, "ldm", 3) == 0) || (strncmp(instruction->name, "stm", 3) == 0))
         {
             md_number_to_chars(opcodep, instruction->major_opcode << 24 | exp[0].X_add_number << 18 | (exp[1].X_add_number-64) << 12 | exp[2].X_add_number << 6 | 0, 4);
             for (int i = 1; i <= exp[3].X_add_number; i++)
             {
                 opcodep = frag_more(4);
-	        md_number_to_chars(opcodep, 0x19 << 24 | exp[2].X_add_number << 18 | 4, 4);
+	        md_number_to_chars(opcodep, ((unsigned int)MATCH_ADDIRD) | exp[2].X_add_number << 18 | exp[2].X_add_number << 12 | 4, 4);
                 opcodep = frag_more(4);
 	        md_number_to_chars(opcodep, instruction->major_opcode << 24 | (exp[0].X_add_number + i) << 18 | (exp[1].X_add_number-64) << 12 | exp[2].X_add_number << 6 | 0, 4);
             }
             if (exp[3].X_add_number > 0)
             {
                 opcodep = frag_more(4);
-                md_number_to_chars(opcodep, 0x19 << 24 | exp[2].X_add_number << 18 | (0x40000 - 4 * exp[3].X_add_number), 4);
+                md_number_to_chars(opcodep, ((unsigned int)MATCH_ADDIRD) | exp[2].X_add_number << 18 | exp[2].X_add_number << 12 | (0x1000 - 4 * exp[3].X_add_number), 4);
             }
 
             return;
