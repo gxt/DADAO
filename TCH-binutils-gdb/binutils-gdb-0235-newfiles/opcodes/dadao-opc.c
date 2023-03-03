@@ -54,6 +54,8 @@ const struct dadao_reg_alias dadao_reg_aliases[] =
 	{"rbt5", 0x40 + 13},
 	{"rbt6", 0x40 + 14},
 	{"rbt7", 0x40 + 15},
+	/* Floating-point registers */
+	{"rfstat", 0x80 + 0},
 	{NULL, 0}
  };
 
