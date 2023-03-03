@@ -1,0 +1,23 @@
+From d7c231fe8e68c3f343ab71481aa506a7c497a808 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sat, 4 Mar 2023 06:50:55 +0800
+Subject: [PATCH] DADAO-fixup: kernel/time/Makefile
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ kernel/time/Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/kernel/time/Makefile b/kernel/time/Makefile
+index 1867044800bb..6125319f5ed2 100644
+--- a/kernel/time/Makefile
++++ b/kernel/time/Makefile
+@@ -19,3 +19,5 @@ obj-$(CONFIG_TICK_ONESHOT)			+= tick-oneshot.o tick-sched.o
+ obj-$(CONFIG_HAVE_GENERIC_VDSO)			+= vsyscall.o
+ obj-$(CONFIG_DEBUG_FS)				+= timekeeping_debug.o
+ obj-$(CONFIG_TEST_UDELAY)			+= test_udelay.o
++
++CFLAGS_alarmtimer.o	= -O0
+-- 
+2.34.1
+
