@@ -15,3 +15,8 @@ int copy_thread_tls(unsigned long clone_flags, unsigned long usp,
 {
 	return 0;
 }
+
+void flush_thread(void)
+{
+	/* FIXME */
+}
