@@ -19,6 +19,9 @@ config PGTABLE_LEVELS
 config CPU_LITTLE_ENDIAN
 	def_bool y
 
+config GENERIC_CSUM
+	def_bool y
+
 config GENERIC_HWEIGHT
 	def_bool y
 
