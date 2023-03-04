@@ -26,7 +26,7 @@ boot			:= arch/dadao/boot/
 # Default target when executing plain make
 KBUILD_IMAGE		:= $(boot)/zImage
 
-all:	zImage
+all:	vmlinux
 
 zImage Image: vmlinux
 	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
