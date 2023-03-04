@@ -6,11 +6,11 @@
 #include <asm/tlbflush.h>
 #include <asm/pgalloc.h>
 
-void __iomem *__ioremap(phys_addr_t phys_addr, size_t size, pgprot_t prot)
+void __iomem *ioremap(phys_addr_t phys_addr, size_t size)
 {
 	return ((void __iomem *)phys_addr);
 }
-EXPORT_SYMBOL(__ioremap);
+EXPORT_SYMBOL(ioremap);
 
 void iounmap(volatile void __iomem *io_addr)
 {
