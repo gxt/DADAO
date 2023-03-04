@@ -1,0 +1,23 @@
+From 92678d3c362cdc73336e1a904551e018de788664 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sat, 4 Mar 2023 10:31:10 +0800
+Subject: [PATCH] DADAO-fixup: lib/Makefile
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ lib/Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/lib/Makefile b/lib/Makefile
+index c5892807e06f..c3ee3f4995b6 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -290,3 +290,5 @@ obj-$(CONFIG_GENERIC_LIB_MULDI3) += muldi3.o
+ obj-$(CONFIG_GENERIC_LIB_CMPDI2) += cmpdi2.o
+ obj-$(CONFIG_GENERIC_LIB_UCMPDI2) += ucmpdi2.o
+ obj-$(CONFIG_OBJAGG) += objagg.o
++
++CFLAGS_iov_iter.o	:= -O1
+-- 
+2.34.1
+
