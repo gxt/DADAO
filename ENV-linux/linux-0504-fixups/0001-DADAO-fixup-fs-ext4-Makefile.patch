@@ -1,0 +1,23 @@
+From f2a9394b52abc9449d6605749b897059ccc02d40 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sat, 4 Mar 2023 10:24:44 +0800
+Subject: [PATCH] DADAO-fixup: fs/ext4/Makefile
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ fs/ext4/Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/ext4/Makefile b/fs/ext4/Makefile
+index b17ddc229ac5..37f5a62e2ad6 100644
+--- a/fs/ext4/Makefile
++++ b/fs/ext4/Makefile
+@@ -14,3 +14,5 @@ ext4-y	:= balloc.o bitmap.o block_validity.o dir.o ext4_jbd2.o extents.o \
+ ext4-$(CONFIG_EXT4_FS_POSIX_ACL)	+= acl.o
+ ext4-$(CONFIG_EXT4_FS_SECURITY)		+= xattr_security.o
+ ext4-$(CONFIG_FS_VERITY)		+= verity.o
++
++CFLAGS_xattr.o				:= -O1
+-- 
+2.34.1
+
