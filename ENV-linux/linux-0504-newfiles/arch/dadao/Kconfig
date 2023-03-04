@@ -1,6 +1,7 @@
 config DADAO
 	def_bool y
 	select GENERIC_IOMAP
+	select GENERIC_IRQ_SHOW
 	select HAVE_RCU_TABLE_FREE
 	select HAVE_COPY_THREAD_TLS
 
@@ -16,6 +17,9 @@ config PGTABLE_LEVELS
 	default 4
 
 config CPU_LITTLE_ENDIAN
+	def_bool y
+
+config GENERIC_HWEIGHT
 	def_bool y
 
 config GENERIC_CALIBRATE_DELAY
