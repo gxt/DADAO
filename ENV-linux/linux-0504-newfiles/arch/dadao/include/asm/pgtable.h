@@ -115,7 +115,7 @@ static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
  * ZERO_PAGE is a global shared page that is always zero: used
  * for zero-mapped memory areas etc..
  */
-unsigned long empty_zero_page[PAGE_SIZE / sizeof(unsigned long)] __page_aligned_bss;
+extern unsigned long empty_zero_page[PAGE_SIZE / sizeof(unsigned long)] __page_aligned_bss;
 #define ZERO_PAGE(vaddr)		(virt_to_page(empty_zero_page))
 
 #define __swp_type(x)			(0)
