@@ -1,0 +1,23 @@
+From e1cc9ea4bcbbeee9618b5ec16b81bc7268f750e1 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Sat, 4 Mar 2023 09:56:37 +0800
+Subject: [PATCH] DADAO-fixup: drivers/base/Makefile
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ drivers/base/Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/base/Makefile b/drivers/base/Makefile
+index 157452080f3d..c62f3c2c7cd3 100644
+--- a/drivers/base/Makefile
++++ b/drivers/base/Makefile
+@@ -28,3 +28,5 @@ obj-y			+= test/
+ 
+ ccflags-$(CONFIG_DEBUG_DRIVER) := -DDEBUG
+ 
++CFLAGS_cacheinfo.o	:= -O0
++
+-- 
+2.34.1
+
