@@ -74,16 +74,16 @@ chipyard-0107-build:
 		make -j16 VERILATOR_THREADS=8							\
 			CONFIG=$(CHIPYARD_0107_DADAO_CONFIG)					\
 			BOOTROM_FILES=bootrom.dadao.img						\
-			BOOTROM_FILES_DIR=$(TESTS_BOOTROM_BUILD)			\
+			BOOTROM_FILES_DIR=$(TESTS_BOOTROM_BUILD)				\
 			sim_dir=$(CHIPYARD_0107_BUILD)
 
-chipyard-0107-build-stage1:
+chipyard-0107-build-stage5:
 	@cd $(CHIPYARD_0107_SOURCE)/sims/verilator;						\
 		RISCV=$(DIR_DADAO_TARGET)							\
 		make -j16 VERILATOR_THREADS=8							\
-			CONFIG=Wuming1StageConfig						\
+			CONFIG=Wuming5StageConfig						\
 			BOOTROM_FILES=bootrom.dadao.img						\
-			BOOTROM_FILES_DIR=$(TESTS_BOOTROM_BUILD)			\
+			BOOTROM_FILES_DIR=$(TESTS_BOOTROM_BUILD)				\
 			sim_dir=$(CHIPYARD_0107_BUILD)
 
 chipyard-0107-run-binary:
@@ -91,7 +91,7 @@ chipyard-0107-run-binary:
 		RISCV=$(DIR_DADAO_TARGET)							\
 		make CONFIG=$(CHIPYARD_0107_DADAO_CONFIG)					\
 			BOOTROM_FILES=bootrom.dadao.img						\
-			BOOTROM_FILES_DIR=$(TESTS_BOOTROM_BUILD)			\
+			BOOTROM_FILES_DIR=$(TESTS_BOOTROM_BUILD)				\
 			sim_dir=$(CHIPYARD_0107_BUILD)						\
 			BINARY=$(CHIPYARD_0107_DADAO_BINARY)					\
 			run-binary
