@@ -143,7 +143,7 @@ static void gen_exception(int excp)
 static bool trans_ld_all(DisasContext *ctx, arg_disas_dadao0 *a, 
                          TCGv_i64* cpu_ha, MemOp mop)
 {
-    if (a->ha == 0) {
+    if (a->ha == 0 && cpu_ha != cpu_rf) {
         return true;
     }
     TCGv_i64 addr = tcg_temp_new_i64();
@@ -169,12 +169,12 @@ static bool trans_ldm_all(DisasContext *ctx, arg_disas_dadao1 *a,
     if (a->ha + a->immu6 >= 64) {
         return false;
     }
-    if (a->ha == 0 && a->immu6 == 0) {
+    if (a->ha == 0 && a->immu6 == 0 && cpu_ha != cpu_rf) {
         return true;
     }
     TCGv_i64 addr = tcg_temp_new_i64();
     tcg_gen_add_i64(addr, cpu_rb[a->hb], cpu_rd[a->hc]);
-    if (a->ha == 0) {
+    if (a->ha == 0 && cpu_ha != cpu_rf) {
         a->ha++;
 	a->immu6--;
 	tcg_gen_addi_i64(addr, addr, 1 << (mop & 3));
@@ -393,10 +393,10 @@ static bool trans_hb2ha_all(DisasContext* ctx, arg_disas_dadao2* a,
     if (a->hb + a->immu6 >= 64 || a->hc + a->immu6 >= 64) {
         return false;
     }
-    if (a->hb == 0 && a->immu6 == 0) {
+    if (a->hb == 0 && a->immu6 == 0 && cpu_ha != cpu_rf) {
         return true;
     }
-    if (a->hb == 0) {
+    if (a->hb == 0 && cpu_ha != cpu_rf) {
         a->hb++;
 	a->hc++;
 	a->immu6--;
@@ -587,9 +587,6 @@ static bool trans_SETZWrb(DisasContext *ctx, arg_SETZWrb *a)
 
 static bool trans_SETW(DisasContext *ctx, arg_SETW *a)
 {
-    if (a->ha == 0) {
-        return true;
-    }
     int64_t mask = ~((int64_t)0xFFFF << (a->ww * 16));
     int64_t arg = (int64_t)a->immu16 << (a->ww * 16);
     tcg_gen_andi_i64(cpu_rf[a->ha], cpu_rf[a->ha], mask);
@@ -1025,10 +1022,10 @@ static bool trans_fcvt_all(DisasContext *ctx, arg_disas_dadao2 *a,
     if (a->hb + a->immu6 >= 64 || a->hc + a->immu6 >= 64) {
         return false;
     }
-    if (a->hb == 0 && a->immu6 == 0) {
+    if (a->hb == 0 && a->immu6 == 0 && cpu_hb != cpu_rf) {
         return true;
     }
-    if (a->hb == 0) {
+    if (a->hb == 0 && cpu_hb != cpu_rf) {
         a->hb++;
 	a->hc++;
 	a->immu6--;
@@ -1049,9 +1046,6 @@ static bool trans_fcvt_all(DisasContext *ctx, arg_disas_dadao2 *a,
 static bool trans_fop1_all(DisasContext *ctx, arg_disas_dadao2 *a,
                            void (*fn)(TCGv_i64, TCGv_env, TCGv_i64))
 {
-    if (a->hb == 0) {
-        return true;
-    }
     fn(cpu_rf[a->hb], cpu_env, cpu_rf[a->hc]);
     return true;
 }
@@ -1059,9 +1053,6 @@ static bool trans_fop1_all(DisasContext *ctx, arg_disas_dadao2 *a,
 static bool trans_fop2_all(DisasContext *ctx, arg_disas_dadao7 *a,
                            void (*fn)(TCGv_i64, TCGv_env, TCGv_i64, TCGv_i64))
 {
-    if (a->hb == 0) {
-        return true;
-    }
     fn(cpu_rf[a->hb], cpu_env, cpu_rf[a->hc], cpu_rf[a->hd]);
     return true;
 }
@@ -1069,9 +1060,6 @@ static bool trans_fop2_all(DisasContext *ctx, arg_disas_dadao7 *a,
 static bool trans_fcmp_all(DisasContext *ctx, arg_disas_dadao7 *a,
                            void (*fn)(TCGv_i64, TCGv_env, TCGv_i64, TCGv_i64))
 {
-    if (a->hb == 0) {
-        return true;
-    }
     fn(cpu_rd[a->hb], cpu_env, cpu_rf[a->hc], cpu_rf[a->hd]);
     return true;
 }
