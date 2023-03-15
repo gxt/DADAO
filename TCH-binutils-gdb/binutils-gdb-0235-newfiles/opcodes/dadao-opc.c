@@ -67,6 +67,28 @@ const struct dadao_opcode dadao_opcodes[] = {
 
 	/* pseudo instructions */
 	/* name		op-num	maj-op	min-op	fa		fb		fc		fd		insn-type */
+	{"setrd",	2,	0,	0,	_OP(rd),	_OP(noop),	_OP(none),	_OP(none),	_T(pseudo)},
+
+	{"setrd",	2,	0,	0,	_OP(rd),	_OP(rd),	_OP(none),	_OP(none),	_T(pseudo)},
+
+	{"setrd",	2,	0,	0,	_OP(rd),	_OP(rb),	_OP(none),	_OP(none),	_T(pseudo)},
+
+	{"setrd",	2,	0,	0,	_OP(rd),	_OP(rf),	_OP(none),	_OP(none),	_T(pseudo)},
+
+	{"setrd",	2,	0,	0,	_OP(rd),	_OP(ra),	_OP(none),	_OP(none),	_T(pseudo)},
+
+	{"setrb",	2,	0,	0,	_OP(rb),	_OP(noop),	_OP(none),	_OP(none),	_T(pseudo)},
+
+	{"setrb",	2,	0,	0,	_OP(rb),	_OP(rd),	_OP(none),	_OP(none),	_T(pseudo)},
+
+	{"setrb",	2,	0,	0,	_OP(rb),	_OP(rb),	_OP(none),	_OP(none),	_T(pseudo)},
+
+	{"setrf",	2,	0,	0,	_OP(rf),	_OP(noop),	_OP(none),	_OP(none),	_T(pseudo)},
+
+	{"setrf",	2,	0,	0,	_OP(rf),	_OP(rd),	_OP(none),	_OP(none),	_T(pseudo)},
+
+	{"setrf",	2,	0,	0,	_OP(rf),	_OP(rf),	_OP(none),	_OP(none),	_T(pseudo)},
+
 	{"move",	2,	0,	0,	_OP(rd),	_OP(noop),	_OP(none),	_OP(none),	_T(pseudo)},
 
 	{"move",	2,	1,	0,	_OP(rb),	_OP(noop),	_OP(none),	_OP(none),	_T(pseudo)},

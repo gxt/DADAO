@@ -45,7 +45,7 @@ static int multiple_to_single = 0;
 
 size_t md_longopts_size = sizeof(md_longopts);
 
-static struct hash_control *dadao_opcode_hash_1, *dadao_opcode_hash_2, *dadao_opcode_hash_3;
+static struct hash_control *dadao_opcode_hash_1, *dadao_opcode_hash_2, *dadao_opcode_hash_3, *dadao_opcode_hash_4, *dadao_opcode_hash_5;
 
 /* For DADAO, we encode the relax_substateT:s (in e.g. fr_substate) as one
    bit length, and the relax-type shifted on top of that.  There seems to
@@ -353,19 +353,27 @@ int tc_dadao_regname_to_dw2regnum(char *regname)
 void dadao_md_begin(void)
 {
     int i;
-    const struct dadao_opcode *opcode, *opcode_1, *opcode_2;
+    const struct dadao_opcode *opcode, *opcode_1, *opcode_2, *opcode_3, *opcode_4;
     char buf[5];
 
     dadao_opcode_hash_1 = hash_new();
     dadao_opcode_hash_2 = hash_new();
     dadao_opcode_hash_3 = hash_new();
+    dadao_opcode_hash_4 = hash_new();
+    dadao_opcode_hash_5 = hash_new();
 
     /* Use three hash tables to avoid having the same name for different entries */
     for (opcode = dadao_opcodes; opcode->name; opcode++)
     {
         opcode_1 = (struct dadao_opcode *)hash_find(dadao_opcode_hash_1, opcode->name);
         opcode_2 = (struct dadao_opcode *)hash_find(dadao_opcode_hash_2, opcode->name);
-        if (opcode_2 != NULL)
+	opcode_3 = (struct dadao_opcode *)hash_find(dadao_opcode_hash_3, opcode->name);
+	opcode_4 = (struct dadao_opcode *)hash_find(dadao_opcode_hash_4, opcode->name);
+        if (opcode_4 != NULL)
+            hash_insert(dadao_opcode_hash_5, opcode->name, (char *)opcode);
+        else if (opcode_3 != NULL)
+            hash_insert(dadao_opcode_hash_4, opcode->name, (char *)opcode);
+        else if (opcode_2 != NULL)
             hash_insert(dadao_opcode_hash_3, opcode->name, (char *)opcode);
         else if (opcode_1 != NULL)
             hash_insert(dadao_opcode_hash_2, opcode->name, (char *)opcode);
@@ -397,6 +405,116 @@ void dadao_md_begin(void)
     for (i = 0; dadao_reg_aliases[i].name != NULL; i++)
         symbol_table_insert(symbol_new(dadao_reg_aliases[i].name, reg_section,
                                        dadao_reg_aliases[i].number, &zero_address_frag));
+}
+
+static void dd_pseudo_set_imm(char *opcodep, int reg_dst, unsigned long long src_imm)
+{
+    unsigned int imm_w16_1, imm_w16_2, imm_w16_3, imm_w16_4;
+
+    imm_w16_1 = (src_imm) & 0xFFFF;
+    imm_w16_2 = (src_imm >> 16) & 0xFFFF;
+    imm_w16_3 = (src_imm >> 32) & 0xFFFF;
+    imm_w16_4 = (src_imm >> 48) & 0xFFFF;
+    
+    if (reg_dst < 0x40){ // setrd rd, imm64
+        int flag;
+
+        flag = 0; // use setow or setzw
+
+        if (((imm_w16_4 == 0) + (imm_w16_3 == 0) + (imm_w16_2 == 0)) < ((imm_w16_4 == 0xFFFF) + (imm_w16_3 == 0xFFFF) + (imm_w16_2 == 0xFFFF)))
+        {
+            flag = 1;
+        }
+
+        if (flag)
+            md_number_to_chars(opcodep, DADAO_INSN_SETOW_RD | (reg_dst << 18) | DADAO_WYDE_WL | imm_w16_1, 4);
+        else
+            md_number_to_chars(opcodep, DADAO_INSN_SETZW_RD | (reg_dst << 18) | DADAO_WYDE_WL | imm_w16_1, 4);
+
+        if (flag)
+        {
+            if (imm_w16_2 != 0xFFFF)
+            {
+                opcodep = frag_more(4);
+                md_number_to_chars(opcodep, DADAO_INSN_ANDNW_RD | (reg_dst << 18) | DADAO_WYDE_WK | (~imm_w16_2) & 0xFFFF, 4);
+            }
+        }
+        else
+        {
+            if (imm_w16_2 != 0)
+            {
+                opcodep = frag_more(4);
+                md_number_to_chars(opcodep, DADAO_INSN_ORW_RD | (reg_dst << 18) | DADAO_WYDE_WK | imm_w16_2, 4);
+            }
+        }
+
+        if (flag)
+        {
+            if (imm_w16_3 != 0xFFFF)
+            {
+                opcodep = frag_more(4);
+                md_number_to_chars(opcodep, DADAO_INSN_ANDNW_RD | (reg_dst << 18) | DADAO_WYDE_WJ | (~imm_w16_3) & 0xFFFF, 4);
+            }
+        }
+        else
+        {
+            if (imm_w16_3 != 0)
+            {
+                opcodep = frag_more(4);
+                md_number_to_chars(opcodep, DADAO_INSN_ORW_RD | (reg_dst << 18) | DADAO_WYDE_WJ | imm_w16_3, 4);
+            }
+        }
+
+        if (flag)
+        {
+            if (imm_w16_4 != 0xFFFF)
+            {
+                opcodep = frag_more(4);
+                md_number_to_chars(opcodep, DADAO_INSN_ANDNW_RD | (reg_dst << 18) | DADAO_WYDE_WH | (~imm_w16_4) & 0xFFFF, 4);
+            }
+        }
+        else
+        {
+            if (imm_w16_4 != 0)
+            {
+                opcodep = frag_more(4);
+                md_number_to_chars(opcodep, DADAO_INSN_ORW_RD | (reg_dst << 18) | DADAO_WYDE_WH | imm_w16_4, 4);
+            }
+        }
+    }
+    else if (reg_dst >= 0x40 && reg_dst  < 0x80) { // setrb rb, imm64
+        reg_dst -= 0x40;
+        md_number_to_chars(opcodep, DADAO_INSN_SETZW_RB | (reg_dst << 18) | DADAO_WYDE_WL | imm_w16_1, 4);
+
+        if (imm_w16_2 != 0)
+        {
+            opcodep = frag_more(4);
+            md_number_to_chars(opcodep, DADAO_INSN_ORW_RB | (reg_dst << 18) | DADAO_WYDE_WK | imm_w16_2, 4);
+        }
+        if (imm_w16_3 != 0)
+        {
+            opcodep = frag_more(4);
+            md_number_to_chars(opcodep, DADAO_INSN_ORW_RB | (reg_dst << 18) | DADAO_WYDE_WJ | imm_w16_3, 4);
+        }
+        if (imm_w16_4 != 0)
+        {
+            opcodep = frag_more(4);
+            md_number_to_chars(opcodep, DADAO_INSN_ORW_RB | (reg_dst << 18) | DADAO_WYDE_WH | imm_w16_4, 4);
+        }
+    }
+    else { // setrf rf, imm64
+        reg_dst -= 0x80;
+        md_number_to_chars(opcodep, DADAO_INSN_SETW | (reg_dst << 18) | DADAO_WYDE_WL | imm_w16_1, 4);
+
+        opcodep = frag_more(4);
+        md_number_to_chars(opcodep, DADAO_INSN_SETW | (reg_dst << 18) | DADAO_WYDE_WK | imm_w16_2, 4);
+
+        opcodep = frag_more(4);
+        md_number_to_chars(opcodep, DADAO_INSN_SETW | (reg_dst << 18) | DADAO_WYDE_WJ | imm_w16_3, 4);
+
+        opcodep = frag_more(4);
+        md_number_to_chars(opcodep, DADAO_INSN_SETW | (reg_dst << 18) | DADAO_WYDE_WH | imm_w16_4, 4);
+    }
 }
 
 static void dd_pseudo_move_imm(char *opcodep, int reg_dst, unsigned long long src_imm)
@@ -516,6 +634,40 @@ static void dd_pseudo_move_imm(char *opcodep, int reg_dst, unsigned long long sr
     }
 }
 
+static void dd_pseudo_set_symbol(char *opcodep, expressionS exp[4], fragS *opc_fragP)
+{
+    if(exp[0].X_add_number < 0x40){ // setrd rd, symbol
+        md_number_to_chars(opcodep, DADAO_INSN_SETZW_RD | DADAO_WYDE_WL | exp[0].X_add_number << 18, 4);
+        if (!expand_op) {
+            fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ABS);
+        }
+        else
+            frag_var(rs_machine_dependent, DD_INSN_BYTES(3), 0, ENCODE_RELAX(STATE_ABS, STATE_UNDF),
+                    exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
+    }
+    else if (exp[0].X_add_number >= 0x40 && exp[0].X_add_number < 0x80) { // setrb rb, symbol
+        exp[0].X_add_number -= 0x40;
+        md_number_to_chars(opcodep, DADAO_INSN_SETZW_RB | DADAO_WYDE_WL | exp[0].X_add_number << 18, 4);
+        if (!expand_op) {
+            fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ABS);
+        }
+        else
+            frag_var(rs_machine_dependent, DD_INSN_BYTES(3), 0, ENCODE_RELAX(STATE_ABS, STATE_UNDF),
+                    exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
+    }
+    else { // setrf rf, symbol
+        exp[0].X_add_number -= 0x80;
+        md_number_to_chars(opcodep, DADAO_INSN_SETW | DADAO_WYDE_WL | exp[0].X_add_number << 18, 4);
+        if (!expand_op) {
+            fix_new_exp(opc_fragP, opcodep - opc_fragP->fr_literal, 4, exp + 1, 1, BFD_RELOC_DADAO_ABS);
+        }
+	else
+            frag_var(rs_machine_dependent, DD_INSN_BYTES(3), 0, ENCODE_RELAX(STATE_ABS, STATE_UNDF),
+                    exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
+    }
+    return;
+}
+
 static void dd_pseudo_move_symbol(char *opcodep, expressionS exp[4], fragS *opc_fragP)
 {
     if(exp[0].X_add_number < 0x40){ // move rd, symbol
@@ -548,6 +700,40 @@ static void dd_pseudo_move_symbol(char *opcodep, expressionS exp[4], fragS *opc_
                     exp[1].X_add_symbol, exp[1].X_add_number, opcodep);
     }
     return;
+}
+
+static void dd_pseudo_set_register(char *opcodep, int reg_dst_1, int reg_dst_2)
+{
+    if (reg_dst_1 < 0x40) { // setrd
+	if (reg_dst_2 < 0x40) { // setrd rd, rd
+	    md_number_to_chars(opcodep, (unsigned int)MATCH_RD2RD | (reg_dst_1 << 12) | (reg_dst_2 << 6) | 0, 4);
+	}
+	else if (reg_dst_2 >= 0x40 && reg_dst_2 < 0x80) { // setrd rd, rb
+	    md_number_to_chars(opcodep, (unsigned int)MATCH_RB2RD | (reg_dst_1 << 12) | ((reg_dst_2 - 0x40) << 6) | 0, 4);
+	}
+	else if (reg_dst_2 >= 0x80 && reg_dst_2 < 0xc0) { // setrd rd, rf
+	    md_number_to_chars(opcodep, (unsigned int)MATCH_RF2RD | (reg_dst_1 << 12) | ((reg_dst_2 - 0x80) << 6) | 0, 4);
+	}
+	else { // setrd rd, ra
+	    md_number_to_chars(opcodep, (unsigned int)MATCH_RA2RD | (reg_dst_1 << 12) | ((reg_dst_2 - 0xc0) << 6) | 0, 4);
+	}
+    }
+    else if (reg_dst_1 >= 0x40 && reg_dst_1 < 0x80) { // setrb
+	if (reg_dst_2 < 0x40) { // setrb rb, rd
+	    md_number_to_chars(opcodep, (unsigned int)MATCH_RD2RB | ((reg_dst_1 - 0x40) << 12) | (reg_dst_2 << 6) | 0, 4);
+	}
+	else { // setrb rb, rb
+	    md_number_to_chars(opcodep, (unsigned int)MATCH_RB2RB | ((reg_dst_1 - 0x40) << 12) | ((reg_dst_2 - 0x40) << 6) | 0, 4);
+	}
+    }
+    else { // setrf
+	if (reg_dst_2 < 0x40) { // setrf rf, rd
+	    md_number_to_chars(opcodep, (unsigned int)MATCH_RD2RF | ((reg_dst_1 - 0x80) << 12) | (reg_dst_2 << 6) | 0, 4);
+	}
+	else { //setrf rf, rf
+	    md_number_to_chars(opcodep, (unsigned int)MATCH_RF2RF | ((reg_dst_1 - 0x80) << 12) | ((reg_dst_2 - 0x80) << 6) | 0, 4);
+	}
+    }
 }
 
 #define __DD_EXP_SHOULD_BE_RD(e, f) \
@@ -969,6 +1155,140 @@ void dadao_md_assemble(char *str)
             return;
         }
 
+    }
+
+    if (strcmp(instruction->name, "setrd") == 0)
+    {
+	/* setrd rd, imm/symbol */
+	if (n_operands == 2 && exp[0].X_op == O_register) {
+	    if (exp[1].X_op == O_constant) {
+		dd_pseudo_set_imm(opcodep, exp[0].X_add_number, exp[1].X_add_number);
+		return;
+	    }
+	    else if (exp[1].X_op == O_symbol) {
+		dd_pseudo_set_symbol(opcodep, exp, opc_fragP);
+		return;
+	    }
+	}
+
+	instruction = (struct dadao_opcode *)hash_find(dadao_opcode_hash_2, insn_alt);
+
+	/* setrd rd, rd */
+	if (instruction != NULL && n_operands == 2 && exp[0].X_op == O_register) {
+	    if (exp[1].X_op == O_register && exp[1].X_add_number < 0x40) {
+		dd_pseudo_set_register(opcodep, exp[0].X_add_number, exp[1].X_add_number);
+		return;
+	    }
+	}
+
+	instruction = (struct dadao_opcode *)hash_find(dadao_opcode_hash_3, insn_alt);
+
+	/* setrd rd, rb */
+	if (instruction != NULL && n_operands == 2 && exp[0].X_op == O_register) {
+	    if (exp[1].X_op == O_register && exp[1].X_add_number >= 0x40 && exp[1].X_add_number < 0x80) {
+		dd_pseudo_set_register(opcodep, exp[0].X_add_number, exp[1].X_add_number);
+		return;
+	    }
+	}
+
+	instruction = (struct dadao_opcode *)hash_find(dadao_opcode_hash_4, insn_alt);
+
+	/* setrd rd, rf */
+	if (instruction != NULL && n_operands == 2 && exp[0].X_op == O_register) {
+	    if (exp[1].X_op == O_register && exp[1].X_add_number >= 0x80 && exp[1].X_add_number < 0xC0) {
+		dd_pseudo_set_register(opcodep, exp[0].X_add_number, exp[1].X_add_number);
+		return;
+	    }
+	}
+
+	instruction = (struct dadao_opcode *)hash_find(dadao_opcode_hash_5, insn_alt);
+
+	/* setrd rd, ra */
+	if (instruction != NULL && n_operands == 2 && exp[0].X_op == O_register) {
+	    if (exp[1].X_op == O_register && exp[1].X_add_number >= 0xC0 && exp[1].X_add_number < 0xF0) {
+		dd_pseudo_set_register(opcodep, exp[0].X_add_number, exp[1].X_add_number);
+		return;
+	    }
+	}
+
+        as_bad_where(__FILE__, __LINE__, "(%s %s) unknown insn", insn_alt, operands);
+        return;
+    }
+
+    if (strcmp(instruction->name, "setrb") == 0)
+    {
+	/* setrb rb, imm/symbol */
+	if (n_operands == 2 && exp[0].X_op == O_register) {
+	    if (exp[1].X_op == O_constant) {
+		dd_pseudo_set_imm(opcodep, exp[0].X_add_number, exp[1].X_add_number);
+		return;
+	    }
+	    else if (exp[1].X_op == O_symbol) {
+		dd_pseudo_set_symbol(opcodep, exp, opc_fragP);
+		return;
+	    }
+	}
+
+	instruction = (struct dadao_opcode *)hash_find(dadao_opcode_hash_2, insn_alt);
+
+	/* setrb rb, rd */
+	if (instruction != NULL && n_operands == 2 && exp[0].X_op == O_register) {
+	    if (exp[1].X_op == O_register && exp[1].X_add_number < 0x40) {
+		dd_pseudo_set_register(opcodep, exp[0].X_add_number, exp[1].X_add_number);
+		return;
+	    }
+	}
+
+	instruction = (struct dadao_opcode *)hash_find(dadao_opcode_hash_3, insn_alt);
+
+	/* setrb rb, rb */
+	if (instruction != NULL && n_operands == 2 && exp[1].X_op == O_register) {
+	    if (exp[1].X_op == O_register && exp[1].X_add_number >= 0x40 && exp[1].X_add_number < 0x80) {
+		dd_pseudo_set_register(opcodep, exp[0].X_add_number, exp[1].X_add_number);
+		return;
+	    }
+	}
+
+        as_bad_where(__FILE__, __LINE__, "(%s %s) unknown insn", insn_alt, operands);
+        return;
+    }
+
+    if (strcmp(instruction->name, "setrf") == 0)
+    {
+	/* setrf rf, imm/symbol */
+	if (n_operands == 2 && exp[0].X_op == O_register) {
+	    if (exp[1].X_op == O_constant) {
+		dd_pseudo_set_imm(opcodep, exp[0].X_add_number, exp[1].X_add_number);
+		return;
+	    }
+	    else if (exp[1].X_op == O_symbol) {
+		dd_pseudo_set_symbol(opcodep, exp, opc_fragP);
+		return;
+	    }
+	}
+
+	instruction = (struct dadao_opcode *)hash_find(dadao_opcode_hash_2, insn_alt);
+
+	/* setrf rf, rd */
+	if (instruction != NULL && n_operands == 2 && exp[0].X_op == O_register) {
+	    if (exp[1].X_op == O_register && exp[1].X_add_number < 0x40) {
+		dd_pseudo_set_register(opcodep, exp[0].X_add_number, exp[1].X_add_number);
+		return;
+	    }
+	}
+
+	instruction = (struct dadao_opcode *)hash_find(dadao_opcode_hash_3, insn_alt);
+
+	/* setrf rf, rf */
+	if (instruction != NULL && n_operands == 2 && exp[0].X_op == O_register) {
+	    if (exp[1].X_op == O_register && exp[1].X_add_number >= 0x80 && exp[1].X_add_number < 0xc0) {
+		dd_pseudo_set_register(opcodep, exp[0].X_add_number, exp[1].X_add_number);
+		return;
+	    }
+	}
+
+        as_bad_where(__FILE__, __LINE__, "(%s %s) unknown insn", insn_alt, operands);
+        return;
     }
 
     if (instruction->type == dadao_type_pseudo)
