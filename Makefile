@@ -31,7 +31,7 @@ include TCH-glibc/Makefile.glibc-$(VER_GLIBC)
 include TCH-newlib-cygwin/Makefile.newlib-cygwin-$(VER_NEWLIB_CYGWIN)
 include ENV-linux/Makefrag
 include SIM-qemu/Makefrag
-include SOC-chipyard/Makefile.chipyard-$(VER_CHIPYARD)
+include SOC-chipyard/Makefrag
 
 include DADAO-opcodes/Makefile.opcodes
 include DADAO-rte/Makefrag
