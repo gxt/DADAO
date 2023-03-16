@@ -22,8 +22,8 @@
 	(match_operand:SFDF 1 "const_double_operand" ""))]
   ""
   "@
-  move	rd7, %1\t\;rd2rf\t%0, rd7, 0
-  move	%0, %1")
+  setrd	rd7, %1\t\;rd2rf\t%0, rd7, 0
+  setrf	%0, %1")
 
 (define_insn "add<mode>3"
   [(set        (match_operand:SFDF 0 "rf_class_operand" "= Rf")

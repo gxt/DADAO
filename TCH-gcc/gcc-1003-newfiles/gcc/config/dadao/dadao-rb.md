@@ -29,7 +29,7 @@
 	""
 	"@
 	add	%0, %1, %2
-	move	rd7, %2	\;add	%0, %1, rd7")
+	setrd	rd7, %2	\;add	%0, %1, rd7")
 
 (define_insn "subrb_rd"
   [(set      (match_operand:DI 0 "rb_class_operand" "=Rb")
@@ -45,7 +45,7 @@
   	""
 	{
         if(INTVAL(operands[2]) > 0x7ff || INTVAL(operands[2]) < -0x800)
-                return "move\trd7, %2 \;add\t %0, %1, rd7";
+                return "setrd\trd7, %2 \;add\t %0, %1, rd7";
         else
                 return "addi\t%0, %1, %2";
 	})
@@ -57,7 +57,7 @@
   	""
 	{
         if(INTVAL(operands[2]) > 0x7ff || INTVAL(operands[2]) < -0x800)
-                return "move\trd7, %n2 \;add\t %0, %1, rd7";
+                return "setrd\trd7, %n2 \;add\t %0, %1, rd7";
         else
                 return "addi\t%0, %1, %n2";
         })
@@ -98,7 +98,7 @@
   [(set (match_operand:DI 0 "rb_class_operand" "=Rb")
         (match_operand:DI 1 "immediate_operand" ""))]
 	""
-	"move	%0, %1");
+	"setrb	%0, %1");
 
 (define_insn "addrb2rd"
   [(set      (match_operand:DI 0 "rd_class_operand"  "= Rd, Rd")
@@ -109,7 +109,7 @@
           if(GET_CODE(operands[2]) == CONST_INT)
           {
                 if(INTVAL(operands[2])> 0x7ff || INTVAL(operands[2])< -0x800)
-                return "move\trd7, %2 \; rb2rd\t%0, %1, 0\;add\trd0, %0, %0, rd7";
+                return "setrd\trd7, %2 \; rb2rd\t%0, %1, 0\;add\trd0, %0, %0, rd7";
                 else
                 return "rb2rd\t%0, %1, 0\;addi\t%0, %0, %2";
           }
@@ -130,7 +130,7 @@
           if(GET_CODE(operands[2]) == CONST_INT)
           {
                 if(INTVAL(operands[2]) > 0x7ff || INTVAL(operands[2]) < -0x800)
-                return "move\trd7,%2\;rb2rd\t%0, %1, 0\;sub\trd0, %0, %0, %2";
+                return "setrd\trd7,%2\;rb2rd\t%0, %1, 0\;sub\trd0, %0, %0, %2";
                 else
                 return "rb2rd\t%0, %1, 0\;addi\t%0, %0, %n2";
           }
@@ -148,4 +148,4 @@
     (plus:DI (match_operand:DI 1 "rb_class_operand" "=Rb")
              (match_operand:DI 2 "const_int_operand"  "i")))]
 	""
-	"rb2rd\t%0, %1, 0\t\;move\trd7, %2\;add\trd0, %0, rd7, %0")
+	"rb2rd\t%0, %1, 0\t\;setrd\trd7, %2\;add\trd0, %0, rd7, %0")

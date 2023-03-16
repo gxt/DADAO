@@ -21,13 +21,13 @@
   [(set (match_operand:DI 0 "register_operand" "=g,Rb<,Rd")
         (match_operand:DI 1 "symbolic_operand" ""))]
 	""
-	"move	%0, %1")
+	"setrd	%0, %1")
 
 (define_insn "dd_ldimm_const<mode>"
   [(set (match_operand:QHSD 0 "rd_class_operand"  "=Rd")
         (match_operand:QHSD 1 "const_int_operand" "  i"))]
 	""
-	"move	%0, %1")
+	"setrd	%0, %1")
 
 (define_expand "adddi3"
   [(set      (match_operand:DI 0 "register_operand")
@@ -64,7 +64,7 @@
   ""
   {
 	if(INTVAL(operands[2])>0x7ff || INTVAL(operands[2])<-0x800)
-         return "move\trd7, %2 \;add\trd0, %0, %1, rd7";
+         return "setrd\trd7, %2 \;add\trd0, %0, %1, rd7";
 	else
 	 return "addi   %0, %1, %2";
   })
@@ -77,7 +77,7 @@
   ""
   "@
   add	rd0, %0, %1, %2
-  move	rd7, %2	\;add	rd0, %0, %1, rd7")
+  setrd	rd7, %2	\;add	rd0, %0, %1, rd7")
 
 (define_insn "dd_addrd"
   [(set      (match_operand:DI 0 "rd_class_operand" "=Rd")
@@ -121,7 +121,7 @@
   	""
 	{
         if(INTVAL(operands[2])>0x7ff || INTVAL(operands[2])<-0x800)
-		return "move\trd7, %n2 \;add\trd0, %0, %1, rd7";
+		return "setrd\trd7, %n2 \;add\trd0, %0, %1, rd7";
 	else
 		return "addi   %0, %1, %n2";
 	})
@@ -133,7 +133,7 @@
 	""
 	"@
 	sub	rd0, %0, %1, %2
-	move	rd7, %n2	\;add	rd0, %0, %1, rd7")
+	setrd	rd7, %n2	\;add	rd0, %0, %1, rd7")
 
 (define_insn "muldi3"
   [(set      (match_operand:DI 0 "rd_class_operand" "= Rd")
