@@ -27,7 +27,7 @@ all:
 
 include TCH-binutils-gdb/Makefrag
 include TCH-gcc/Makefrag
-include TCH-glibc/Makefile.glibc-$(VER_GLIBC)
+include TCH-glibc/Makefrag
 include TCH-newlib-cygwin/Makefrag
 include ENV-linux/Makefrag
 include SIM-qemu/Makefrag
