@@ -69,11 +69,20 @@ soc-highfive:
 	@echo "=== BUILD SoC DONE! ==="
 
 dadao-highfive:
-	@echo "BEGIN TO BUILD EVERYTHING!"
+	@echo "=== BUILD BEGIN ==="
 	@make --silent tch-elf-highfive
 	@make --silent sim-highfive
 	@make --silent soc-highfive
-	@echo "BUILD EVERYTHING DONE!"
+	@echo "=== BUILD DONE! ==="
+	@echo "=== TEST@qemu  BEGIN ==="
+	@make --silent tests-isa-qemu-highfive
+	@make --silent tests-bmarks-qemu-dhrystone-highfive
+#	@make --silent tests-bmarks-qemu-embench-highfive
+	@echo "=== TEST@qemu DONE! ==="
+	@echo "=== TEST@bare BEGIN ==="
+	@make --silent tests-isa-bare-highfive
+	@make --silent tests-bmarks-bare-highfive
+	@echo "=== TEST@bare DONE! ==="
 
 dadao-clean:
 	@echo "CLEAR EVERYTHING!"
