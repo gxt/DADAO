@@ -26,7 +26,7 @@ all:
 	@echo ""
 
 include TCH-binutils-gdb/Makefrag
-include TCH-gcc/Makefile.gcc-$(VER_GCC)
+include TCH-gcc/Makefrag
 include TCH-glibc/Makefile.glibc-$(VER_GLIBC)
 include TCH-newlib-cygwin/Makefile.newlib-cygwin-$(VER_NEWLIB_CYGWIN)
 include ENV-linux/Makefrag
