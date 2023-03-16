@@ -25,7 +25,7 @@ all:
 	@echo "DA DAO ZHI JIAN!"
 	@echo ""
 
-include TCH-binutils-gdb/Makefile.binutils-gdb-$(VER_BINUTILS_GDB)
+include TCH-binutils-gdb/Makefrag
 include TCH-gcc/Makefile.gcc-$(VER_GCC)
 include TCH-glibc/Makefile.glibc-$(VER_GLIBC)
 include TCH-newlib-cygwin/Makefile.newlib-cygwin-$(VER_NEWLIB_CYGWIN)
