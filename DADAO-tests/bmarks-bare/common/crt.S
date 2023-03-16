@@ -12,14 +12,14 @@ _start:
 	rd2rd	rd16, rd0, 15
 	rd2rd	rd32, rd0, 31
 
-	move	rd8, trap_entry
+	setrd	rd8, trap_entry
 	CPWR_mtvec(rd8)
 
 	# give each core 128KB of stack
 #define STKSHIFT 17
-	move	rd8, 1
+	setrd	rd8, 1
 	shlu	rd8, rd8, STKSHIFT
-	move	rb1, _end + 63
+	setrb	rb1, _end + 63
 	andnw	rb1, w0, 63
 	add	rb1, rb1, rd8
 

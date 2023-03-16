@@ -29,21 +29,21 @@ _start:									\
 #define DDTEST_DATA_END
 
 #define DDTEST_FAIL							\
-	move    rd16, 1;						\
-	move    rd17, FAIL;						\
-	move    rd18, FLEN;						\
-	move    rd15, 64; /* write */					\
+	setrd    rd16, 1;						\
+	setrd    rd17, FAIL;						\
+	setrd    rd18, FLEN;						\
+	setrd    rd15, 64; /* write */					\
 	trap    cp0, 0;							\
 	rd2rd   rd16, TESTNUM, 0;					\
-	move    rd15, 93; /* exit */					\
+	setrd    rd15, 93; /* exit */					\
 	trap    cp0, 0;
 
 #define DDTEST_PASS							\
-	move	rd16, 1;						\
-	move	rd17, PASS;						\
-	move	rd18, PLEN;						\
-	move	rd15, 64; /* write */					\
+	setrd	rd16, 1;						\
+	setrd	rd17, PASS;						\
+	setrd	rd18, PLEN;						\
+	setrd	rd15, 64; /* write */					\
 	trap	cp0, 0;							\
-	move    rd16, 0;						\
-	move    rd15, 93; /* exit */					\
+	setrd    rd16, 0;						\
+	setrd    rd15, 93; /* exit */					\
 	trap    cp0, 0;

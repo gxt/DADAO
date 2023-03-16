@@ -188,9 +188,9 @@ _start:
 	cpload	cp1, rb2, 3
 	cpstor	cp1, rb2, 3
 	# pseudo insn
-	move	rd1, 0xabcdabcdabcdabcd
-	move	rd2, -1
-	move	rd3, _start
-	move	rb1, 0xabcdabcdabcdabcd
-	move	rb2, -1
-	move	rb3, _start
+	setrd	rd1, 0xabcdabcdabcdabcd
+	setrd	rd2, -1
+	setrd	rd3, _start
+	setrb	rb1, 0xabcdabcdabcdabcd
+	setrb	rb2, -1
+	setrb	rb3, _start

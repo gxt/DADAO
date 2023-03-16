@@ -24,7 +24,7 @@ interrupt_loop:				// trigger MSIP interrupts for other harts so that they also 
 .section .text.hang, "ax", @progbits
 .globl _hang
 _hang:					// reset vector
-	move	rd8, _start		// on MSIP interrupt, go to _start
+	setrd	rd8, _start		// on MSIP interrupt, go to _start
 	CPWR_mtvec(rd8)
 	CPRD_misa(rd32)
 	shrs	rd32, rd32, 'S' - 'A'	// get 'S' supervisor bit
@@ -56,11 +56,11 @@ boot_core:
 	add	rd0, rd9, rd8, rd9
 boot_core_hart0:			// begin executing code at DRAM_BASE
 	stt	rd0, rb9, 0		// clear the interrupt
-	move	rb8, BOOTADDR_REG	// program reset vector
+	setrb	rb8, BOOTADDR_REG	// program reset vector
 	ldo	rd8, rb8, 0		// get boot address from bootaddr_reg SCR
 	CPWR_mepc(rd8)			// mepc: return from interrupt to start of user program
 	CPRD_mhartid(rd16)		// hartid for next level bootloader
-	move	rd17, _dtb		// dtb address for next level bootloader
+	setrd	rd17, _dtb		// dtb address for next level bootloader
 	CPRD_mstatus(rd18)
 	andnw	rd18, w0, 0x80		// set mstatus MPIE to 0
 	CPWR_mstatus(rd18)
