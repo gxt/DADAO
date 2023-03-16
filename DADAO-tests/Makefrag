@@ -49,11 +49,11 @@ tests-bmarks-qemu-dhrystone-highfive:
 		-D $(TESTS_BMARKS_QEMU_BUILD)/dhrystone/dhrystone.qemulog		\
 		$(TESTS_BMARKS_QEMU_BUILD)/dhrystone/dhry
 
-include DADAO-tests/Makefile.tests-bmarks-qemu-embench
-include DADAO-tests/Makefile.tests-bmarks-qemu-coremark
-include DADAO-tests/Makefile.tests-bmarks-qemu-mibench
+include DADAO-tests/Makefrag-bmarks-qemu-embench
+include DADAO-tests/Makefrag-bmarks-qemu-coremark
+include DADAO-tests/Makefrag-bmarks-qemu-mibench
 
-include DADAO-tests/Makefile.tests-simple-multi-arch
+include DADAO-tests/Makefrag-simple-multi-arch
 
 tests-bootrom-highfive:
 	@rm -fr $(TESTS_BOOTROM_BUILD)

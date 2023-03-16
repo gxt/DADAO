@@ -35,7 +35,7 @@ include SOC-chipyard/Makefrag
 
 include DADAO-opcodes/Makefrag
 include DADAO-rte/Makefrag
-include DADAO-tests/Makefile.tests
+include DADAO-tests/Makefrag
 include ENV-proxylinux/Makefrag
 
 tch-gnu-highfive:
