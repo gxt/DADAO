@@ -29,7 +29,7 @@ include TCH-binutils-gdb/Makefile.binutils-gdb-$(VER_BINUTILS_GDB)
 include TCH-gcc/Makefile.gcc-$(VER_GCC)
 include TCH-glibc/Makefile.glibc-$(VER_GLIBC)
 include TCH-newlib-cygwin/Makefile.newlib-cygwin-$(VER_NEWLIB_CYGWIN)
-include ENV-linux/Makefile.linux-$(VER_LINUX)
+include ENV-linux/Makefrag
 include SIM-qemu/Makefile.qemu-$(VER_QEMU)
 include SOC-chipyard/Makefile.chipyard-$(VER_CHIPYARD)
 
