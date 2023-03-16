@@ -34,7 +34,7 @@ include SIM-qemu/Makefrag
 include SOC-chipyard/Makefile.chipyard-$(VER_CHIPYARD)
 
 include DADAO-opcodes/Makefile.opcodes
-include DADAO-rte/Makefile.rte
+include DADAO-rte/Makefrag
 include DADAO-tests/Makefile.tests
 include ENV-proxylinux/Makefrag
 
