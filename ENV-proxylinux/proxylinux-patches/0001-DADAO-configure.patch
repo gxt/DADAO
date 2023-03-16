@@ -1,0 +1,26 @@
+From bce6e717db12da9af73c87746f9caca6911b129f Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Wed, 8 Mar 2023 20:38:36 +0800
+Subject: [PATCH] DADAO: configure
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ configure | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure b/configure
+index b81acb5..2735c1e 100755
+--- a/configure
++++ b/configure
+@@ -4086,7 +4086,7 @@ $as_echo "#define PK_PRINT_DEVICE_TREE /**/" >>confdefs.h
+ 
+ fi
+ 
+-CFLAGS="-Wall -Werror -D__NO_INLINE__ -mcmodel=medany -O2 -std=gnu99 -Wno-unused -Wno-attributes -fno-delete-null-pointer-checks -fno-PIE"
++CFLAGS="-Wall -Werror -D__NO_INLINE__ -O2 -std=gnu99 -Wno-unused -Wno-attributes -fno-delete-null-pointer-checks -fno-PIE"
+ LDFLAGS="$LDFLAGS -Wl,--build-id=none"
+ 
+ 
+-- 
+2.34.1
+

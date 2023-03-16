@@ -36,6 +36,7 @@ include SOC-chipyard/Makefile.chipyard-$(VER_CHIPYARD)
 include DADAO-opcodes/Makefile.opcodes
 include DADAO-rte/Makefile.rte
 include DADAO-tests/Makefile.tests
+include ENV-proxylinux/Makefrag
 
 tch-gnu-highfive:
 	@echo "=== BUILD Toolchain dadao-linux-gnu BEGIN ==="
