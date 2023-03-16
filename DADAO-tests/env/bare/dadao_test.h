@@ -19,11 +19,7 @@
 	rd2rd	rd16, rd0, 15;						\
 	rd2rd	rd32, rd0, 31;						\
 	rd2rb	rb1, rd1, 62;						\
-	rd2rf	rf1, rd1, 62;						\
-	setw	rf0, w3, 0x47ef;					\
-	setw	rf0, w2, 0xffff;					\
-	setw	rf0, w1, 0xe000;					\
-	setw	rf0, w0, 0x0000;
+	rd2rf	rf0, rd0, 63;
 
 #define DDTEST_CODE_BEGIN						\
 	.section .text.init;						\
