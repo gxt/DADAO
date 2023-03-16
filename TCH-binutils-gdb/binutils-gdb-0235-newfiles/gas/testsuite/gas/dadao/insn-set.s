@@ -2,11 +2,11 @@
 	.text
 	.global _start
 _start:
-	move	rd1, 0xabcdabcd
-	move	rd2, 0x1357924680
-	move	rd4, 0x1234567812345678
-	move	rd5, 0
-	move	rd6, -1
-	move	rd7, 0xFFFFFFFE
-	move	rd8, 0xFFFF0000FFFF
-	move	rd9, 0xFFFF0000FFFF0000
+	setrd	rd1, 0xabcdabcd
+	setrd	rd2, 0x1357924680
+	setrd	rd4, 0x1234567812345678
+	setrd	rd5, 0
+	setrd	rd6, -1
+	setrd	rd7, 0xfffffffe
+	setrd	rd8, 0xffff0000ffff
+	setrd	rd9, 0xffff0000ffff0000
