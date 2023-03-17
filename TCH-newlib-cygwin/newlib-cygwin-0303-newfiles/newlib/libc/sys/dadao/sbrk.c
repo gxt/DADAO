@@ -4,9 +4,9 @@ static caddr_t brk(caddr_t addr) {
   int ret;
   __asm__ (
     "setzw   rd15, w0, 214 \n"
-    "rd2rd   rd16, %1, 0  \n"
+    "rd2rd   rd16, %1, 1  \n"
     "trap    cp0, 0       \n"
-    "rd2rd   %0, rd31, 0  \n"
+    "rd2rd   %0, rd31, 1  \n"
     : "=r" (ret)
     : "r" (addr)
     : "memory"
