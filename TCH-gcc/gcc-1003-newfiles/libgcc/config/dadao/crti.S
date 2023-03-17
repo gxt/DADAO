@@ -6,14 +6,14 @@
 _start:
 	addi	rb1, rb1, -8
 	strb	rb2, rb1, 0
-	rb2rb	rb2, rb1, 0
+	rb2rb	rb2, rb1, 1
 	addi	rb2, rb2, 8
 
 	call	_init
 	call	main
 
 	# rd5 as caller saved
-	rd2rd	rd32, rd31, 0
+	rd2rd	rd32, rd31, 1
 
 	call	_fini
 
@@ -21,7 +21,7 @@ _start:
 	addi	rb1, rb1, 8
 
 	# across the procedure call of _fini
-	rd2rd	rd16, rd32, 0
+	rd2rd	rd16, rd32, 1
 	jump	_exit
 
 	.section .init,"ax",@progbits

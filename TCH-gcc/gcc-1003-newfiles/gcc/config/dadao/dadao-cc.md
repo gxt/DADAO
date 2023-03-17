@@ -18,8 +18,8 @@
 		&& GET_MODE_CLASS (GET_MODE (operands[1])) == MODE_CC"
 	"@
 	orr	%0, %1, rd0
-	rd2rb	%0, %1, 0
-	rb2rd	%0, %1, 0
+	rd2rb	%0, %1, 1
+	rb2rd	%0, %1, 1
 	ldtu	%0, %1
 	stt	%1, %0")
 

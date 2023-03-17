@@ -8,7 +8,7 @@
   [(set (match_operand:QHSD 0 "rd_class_operand" "=Rd")
         (match_operand:QHSD 1 "rd_class_operand" " Rd"))]
 	""
-	"rd2rd	%0, %1, 0")
+	"rd2rd	%0, %1, 1")
 
 (define_insn "<code>di3"
   [(set          (match_operand:DI 0 "rd_class_operand" "=   Rd")
@@ -54,7 +54,7 @@
              (match_operand:DI 2 "memory_operand"    "Wg,m")))]
         ""
 	"@
-	ldmo	%0, %2, 0	\;add	rd0, %0, %1, %0
+	ldmo	%0, %2, 1	\;add	rd0, %0, %1, %0
 	ldo	%0, %2	\;add	rd0, %0, %1, %0")
 
 (define_insn "dd_addrd_const"
@@ -111,7 +111,7 @@
              (match_operand:DI 2 "memory_operand"    "Wg,m")))]
         ""
 	"@
-	ldmo	%0, %2, 0	\;sub	rd0, %0, %1, %0
+	ldmo	%0, %2, 1	\;sub	rd0, %0, %1, %0
 	ldo	%0, %2	\;sub	rd0, %0, %1, %0")
 
 (define_insn "dd_subrd_const"

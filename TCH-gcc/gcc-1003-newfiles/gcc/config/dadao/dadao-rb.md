@@ -8,19 +8,19 @@
   [(set (match_operand:DI 0 "rb_class_operand" "= Rb")
         (match_operand:DI 1 "rb_class_operand" "  Rb"))]
 	""
-	"rb2rb	%0, %1, 0")
+	"rb2rb	%0, %1, 1")
 
 (define_insn "mov_rd2rb"
   [(set (match_operand:DI 0 "rb_class_operand" "= Rb")
         (match_operand:DI 1 "rd_class_operand" "  Rd"))]
 	""
-	"rd2rb	%0, %1, 0")
+	"rd2rb	%0, %1, 1")
 
 (define_insn "mov_rb2rd"
   [(set (match_operand:DI 0 "rd_class_operand" "= Rd")
         (match_operand:DI 1 "rb_class_operand" "  Rb"))]
 	""
-	"rb2rd	%0, %1, 0")
+	"rb2rd	%0, %1, 1")
 
 (define_insn "addrb_rd"
   [(set      (match_operand:DI 0 "rb_class_operand" "=Rb,Rb")
@@ -83,7 +83,7 @@
         (match_operand:DI 1 "memory_operand"    "Wg, m"))]
 	""
 	"@
-	ldmrb	%0, %1, 0
+	ldmrb	%0, %1, 1
 	ldrb	%0, %1")
 
 (define_insn "dd_st_rb"
@@ -91,7 +91,7 @@
         (match_operand:DI 1 "rb_class_operand" "Rb,Rb"))]
 	""
 	"@
-	stmrb	%1, %0, 0
+	stmrb	%1, %0, 1
 	strb	%1, %0")
 
 (define_insn "dd_ldrbimm"
@@ -109,13 +109,13 @@
           if(GET_CODE(operands[2]) == CONST_INT)
           {
                 if(INTVAL(operands[2])> 0x7ff || INTVAL(operands[2])< -0x800)
-                return "setrd\trd7, %2 \; rb2rd\t%0, %1, 0\;add\trd0, %0, %0, rd7";
+                return "setrd\trd7, %2 \; rb2rd\t%0, %1, 1\;add\trd0, %0, %0, rd7";
                 else
-                return "rb2rd\t%0, %1, 0\;addi\t%0, %0, %2";
+                return "rb2rd\t%0, %1, 1\;addi\t%0, %0, %2";
           }
           else
           {
-                return "rb2rd\t%0, %1, 0\;add\trd0,%0, %0, %2";
+                return "rb2rd\t%0, %1, 1\;add\trd0,%0, %0, %2";
           }
         })
 
@@ -130,13 +130,13 @@
           if(GET_CODE(operands[2]) == CONST_INT)
           {
                 if(INTVAL(operands[2]) > 0x7ff || INTVAL(operands[2]) < -0x800)
-                return "setrd\trd7,%2\;rb2rd\t%0, %1, 0\;sub\trd0, %0, %0, %2";
+                return "setrd\trd7,%2\;rb2rd\t%0, %1, 1\;sub\trd0, %0, %0, %2";
                 else
-                return "rb2rd\t%0, %1, 0\;addi\t%0, %0, %n2";
+                return "rb2rd\t%0, %1, 1\;addi\t%0, %0, %n2";
           }
           else
           {
-                return "rb2rd\t%0, %1, 0\t\;sub\trd0, %0, %0, %2";
+                return "rb2rd\t%0, %1, 1\t\;sub\trd0, %0, %0, %2";
           }
         })
 
@@ -148,4 +148,4 @@
     (plus:DI (match_operand:DI 1 "rb_class_operand" "=Rb")
              (match_operand:DI 2 "const_int_operand"  "i")))]
 	""
-	"rb2rd\t%0, %1, 0\t\;setrd\trd7, %2\;add\trd0, %0, rd7, %0")
+	"rb2rd\t%0, %1, 1\t\;setrd\trd7, %2\;add\trd0, %0, rd7, %0")
