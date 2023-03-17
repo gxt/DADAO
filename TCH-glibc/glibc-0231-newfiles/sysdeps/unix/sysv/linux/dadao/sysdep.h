@@ -17,7 +17,7 @@
 #ifdef	__ASSEMBLER__
 
 #define __DO_SYSCALL(syscall_name, args)			\
-	move	rd15, SYS_ify(syscall_name);			\
+	setrd	rd15, SYS_ify(syscall_name);			\
 	trap	cp0, 0;
 
 #define PSEUDO(name, syscall_name, args)			\
@@ -48,7 +48,7 @@
 #   define SYSCALL_ERROR	.Lsyscall_error
 #   define SYSCALL_ERROR_HANDLER				\
 .Lsyscall_error:						\
-	move	rd0, -1;					\
+	setrd	rd0, -1;					\
 	RET;
 
 #else	/* IS_IN (libc) */
