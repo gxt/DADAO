@@ -5,12 +5,12 @@
 	.section ".text.init"
 	.globl	_start
 _start:
-	rd2rd	rd1, rd0, 0
-	rd2rd	rd2, rd0, 1
-	rd2rd	rd4, rd0, 3
-	rd2rd	rd8, rd0, 7
-	rd2rd	rd16, rd0, 15
-	rd2rd	rd32, rd0, 31
+	rd2rd	rd1, rd0, 1
+	rd2rd	rd2, rd0, 2
+	rd2rd	rd4, rd0, 4
+	rd2rd	rd8, rd0, 8
+	rd2rd	rd16, rd0, 16
+	rd2rd	rd32, rd0, 32
 
 	setrd	rd8, trap_entry
 	CPWR_mtvec(rd8)
@@ -32,7 +32,7 @@ trap_entry:
 
 	CPRD_mcause(rd16)
 	CPRD_mepc(rd17)
-	rb2rd	rd18, rb1, 0
+	rb2rd	rd18, rb1, 1
 	call	handle_trap
 	CPWR_mepc(rd16)
 

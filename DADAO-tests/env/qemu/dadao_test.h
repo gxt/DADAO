@@ -34,7 +34,7 @@ _start:									\
 	setrd    rd18, FLEN;						\
 	setrd    rd15, 64; /* write */					\
 	trap    cp0, 0;							\
-	rd2rd   rd16, TESTNUM, 0;					\
+	rd2rd   rd16, TESTNUM, 1;					\
 	setrd    rd15, 93; /* exit */					\
 	trap    cp0, 0;
 

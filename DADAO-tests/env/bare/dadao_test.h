@@ -12,14 +12,14 @@
 	.endm
 
 #define INIT_RD_RB_RF							\
-	rd2rd	rd1, rd0, 0;						\
-	rd2rd	rd2, rd0, 1;						\
-	rd2rd	rd4, rd0, 3;						\
-	rd2rd	rd8, rd0, 7;						\
-	rd2rd	rd16, rd0, 15;						\
-	rd2rd	rd32, rd0, 31;						\
-	rd2rb	rb1, rd1, 62;						\
-	rd2rf	rf0, rd0, 63;
+	rd2rd	rd1, rd0, 1;						\
+	rd2rd	rd2, rd0, 2;						\
+	rd2rd	rd4, rd0, 4;						\
+	rd2rd	rd8, rd0, 8;						\
+	rd2rd	rd16, rd0, 16;						\
+	rd2rd	rd32, rd0, 32;						\
+	rd2rb	rb1, rd1, 63;						\
+	rd2rf	rf1, rd1, 63;
 
 #define DDTEST_CODE_BEGIN						\
 	.section .text.init;						\
@@ -84,7 +84,7 @@ _test_start:
 	shlu	TESTNUM, TESTNUM, 1;					\
 	orw	TESTNUM, w0, 1;						\
 	setrd	rd15, 93;						\
-	rd2rd	rd16, TESTNUM, 0;					\
+	rd2rd	rd16, TESTNUM, 1;					\
 	trap	cp0, 0;
 
 //-----------------------------------------------------------------------

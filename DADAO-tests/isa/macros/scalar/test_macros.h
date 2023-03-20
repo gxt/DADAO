@@ -224,7 +224,7 @@ test_ ## testnum:												\
 	setrb	rb16, val1;						\
 	setrd	rd31, val2;						\
 	inst	rb31, rb16, rd31;					\
-	rb2rd	rd31, rb31, 0;						\
+	rb2rd	rd31, rb31, 1;						\
     )
 
 #define TEST_ORRR_SRC1_EQ_DEST( testnum, inst, result, val1, val2 )	\
@@ -239,7 +239,7 @@ test_ ## testnum:												\
 	setrb	rb31, val1;						\
 	setrb	rb17, val2;						\
 	inst	rb31, rb31, rb17;					\
-	rb2rd	rd31, rb31, 0;						\
+	rb2rd	rd31, rb31, 1;						\
     )
 
 #define TEST_ORRR_SRC1_EQ_DEST_BBD( testnum, inst, result, val1, val2 )	\
@@ -247,7 +247,7 @@ test_ ## testnum:												\
 	setrb	rb31, val1;						\
 	setrd	rd17, val2;						\
 	inst	rb31, rb31, rd17;					\
-	rb2rd	rd31, rb31, 0;						\
+	rb2rd	rd31, rb31, 1;						\
     )
 
 #define TEST_ORRR_SRC2_EQ_DEST( testnum, inst, result, val1, val2 )	\
@@ -285,7 +285,7 @@ test_ ## testnum:												\
 	.rept	swym_cycles						\
 		swym	0;						\
 	.endr;								\
-	rd2rd	rd31, rd19, 0;						\
+	rd2rd	rd31, rd19, 1;						\
 	addi	rd16, rd16, 1;						\
 	cmps	rd20, rd16, 2;						\
 	brnz	rd20, 1b						\
@@ -341,7 +341,7 @@ test_ ## testnum:												\
     TEST_CASE( testnum, rd31, result,					\
 	setrb	rb16, val;						\
 	inst	rb31, rb16, rd0;					\
-	rb2rd	rd31, rb31, 0;						\
+	rb2rd	rd31, rb31, 1;						\
     )
 
 #define TEST_ORRR_ZEROSRC12( testnum, inst, result )			\
@@ -377,15 +377,15 @@ test_ ## testnum:												\
     TEST_CASE( testnum, rd31, result, 					\
 	setrb	rb31, val1;						\
 	inst	rb31, wyde, val2;					\
-	rb2rd	rd31, rb31, 0;						\
+	rb2rd	rd31, rb31, 1;						\
     )
 
 #define TEST_RWII_RF( testnum, inst, result, val1, val2 , wyde)		\
     TEST_CASE( testnum, rd31, result,					\
 	setrd	rd31, val1;						\
-	rd2rf	rf31, rd31, 0;						\
+	rd2rf	rf31, rd31, 1;						\
 	inst	rf31, wyde, val2;					\
-	rf2rd	rd31, rf31, 0;						\
+	rf2rd	rd31, rf31, 1;						\
     )
 
 #-----------------------------------------------------------------------
@@ -402,7 +402,7 @@ test_ ## testnum:												\
     TEST_CASE( testnum, rd31, result,					\
 	setrb	rb16, val1;						\
 	inst	rb31, rb16, imm;					\
-	rb2rd	rd31, rb31, 0;						\
+	rb2rd	rd31, rb31, 1;						\
     )
 
 #define TEST_RRII_SRC1_EQ_DEST( testnum, inst, result, val1, imm )	\
@@ -426,7 +426,7 @@ test_ ## testnum:												\
 	.rept	swym_cycles						\
 		swym	0;						\
 	.endr;								\
-	rd2rd	rd31, rd19, 0;						\
+	rd2rd	rd31, rd19, 1;						\
 	addi	rd18, rd18, 1;						\
 	cmps	rd20, rd18, 2;						\
 	brnz	rd20, 1b;						\
@@ -463,7 +463,7 @@ test_ ## testnum:												\
     TEST_CASE( testnum, rd31, result,					\
 	setrb	rb31, val1;						\
 	inst	rb31, imm;						\
-	rb2rd	rd31, rb31, 0;						\
+	rb2rd	rd31, rb31, 1;						\
     )
 
 #define TEST_RIII_DEST_BYPASS( testnum, swym_cycles, inst, result, val1, imm )	\
@@ -474,7 +474,7 @@ test_ ## testnum:												\
 	.rept	swym_cycles						\
 		swym	0;						\
 	.endr;								\
-	rd2rd	rd31, rd16, 0;						\
+	rd2rd	rd31, rd16, 1;						\
 	addi	rd18, rd18, 1;						\
 	cmps	rd19, rd18, 2;						\
 	brnz	rd19, 1b;						\
@@ -558,8 +558,8 @@ test_ ## testnum:												\
 	.rept	swym_cycles									\
 		swym	0;									\
 	.endr;											\
-        rd2rd   rd30, rd20, 0;									\
-	rd2rd	rd31, rd21, 0;									\
+        rd2rd   rd30, rd20, 1;									\
+	rd2rd	rd31, rd21, 1;									\
 	addi	rd18, rd18, 1;									\
 	cmps	rd19, rd18, 2;									\
 	brnz	rd19, 1b;									\
