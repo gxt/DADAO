@@ -166,10 +166,10 @@ static bool trans_st_all(DisasContext *ctx, arg_disas_dadao0 *a,
 static bool trans_ldm_all(DisasContext *ctx, arg_disas_dadao1 *a,
                           TCGv_i64* cpu_ha, MemOp mop)
 {
-    if (a->ha + a->immu6 >= 64) {
+    if (a->ha + a->immu6 > 64 || a->immu6 == 0) {
         return false;
     }
-    if (a->ha == 0 && a->immu6 == 0 && cpu_ha != cpu_rf) {
+    if (a->ha == 0 && a->immu6 == 1 && cpu_ha != cpu_rf) {
         return true;
     }
     TCGv_i64 addr = tcg_temp_new_i64();
@@ -180,6 +180,7 @@ static bool trans_ldm_all(DisasContext *ctx, arg_disas_dadao1 *a,
 	tcg_gen_addi_i64(addr, addr, 1 << (mop & 3));
     }
     tcg_gen_qemu_ld_i64(cpu_ha[a->ha], addr, ctx->mem_idx, mop);
+    a->immu6--;
     while (a->immu6--) {
         tcg_gen_addi_i64(addr, addr, 1 << (mop & 3));
         tcg_gen_qemu_ld_i64(cpu_ha[++a->ha], addr, ctx->mem_idx, mop);
@@ -191,12 +192,13 @@ static bool trans_ldm_all(DisasContext *ctx, arg_disas_dadao1 *a,
 static bool trans_stm_all(DisasContext *ctx, arg_disas_dadao1 *a,
                           TCGv_i64* cpu_ha, MemOp mop)
 {
-    if (a->ha + a->immu6 >= 64) {
+    if (a->ha + a->immu6 > 64 || a->immu6 == 0) {
         return false;
     }
     TCGv_i64 addr = tcg_temp_new_i64();
     tcg_gen_add_i64(addr, cpu_rb[a->hb], cpu_rd[a->hc]);
     tcg_gen_qemu_st_i64(cpu_ha[a->ha], addr, ctx->mem_idx, mop);
+    a->immu6--;
     while (a->immu6--) {
         tcg_gen_addi_i64(addr, addr, 1 << (mop & 3));
         tcg_gen_qemu_st_i64(cpu_ha[++a->ha], addr, ctx->mem_idx, mop);
@@ -390,10 +392,10 @@ static bool trans_STMRA(DisasContext *ctx, arg_STMRA *a)
 static bool trans_hb2ha_all(DisasContext* ctx, arg_disas_dadao2* a,
                             TCGv_i64* cpu_hb, TCGv_i64* cpu_ha) 
 {
-    if (a->hb + a->immu6 >= 64 || a->hc + a->immu6 >= 64) {
+    if (a->hb + a->immu6 > 64 || a->hc + a->immu6 > 64 || a->immu6 == 0) {
         return false;
     }
-    if (a->hb == 0 && a->immu6 == 0 && cpu_ha != cpu_rf) {
+    if (a->hb == 0 && a->immu6 == 1 && cpu_ha != cpu_rf) {
         return true;
     }
     if (a->hb == 0 && cpu_ha != cpu_rf) {
@@ -402,17 +404,18 @@ static bool trans_hb2ha_all(DisasContext* ctx, arg_disas_dadao2* a,
 	a->immu6--;
     }
     if (cpu_hb != cpu_ha) {
-        while (a->immu6-- >= 0) {
+        while (a->immu6--) {
             tcg_gen_mov_i64(cpu_ha[a->hb++], cpu_hb[a->hc++]);
         }
     } else {
         if (a->hb < a->hc) {
-            while (a->immu6-- >= 0) {
+            while (a->immu6--) {
                 tcg_gen_mov_i64(cpu_ha[a->hb++], cpu_hb[a->hc++]);
             }
         } else if (a->hb > a->hc) {
             a->hb += a->immu6; a->hc += a->immu6;
-            while (a->immu6-- >= 0) {
+	    a->hb--; a->hc--;
+            while (a->immu6--) {
                 tcg_gen_mov_i64(cpu_ha[a->hb--], cpu_hb[a->hc--]);
             }
         } else {
@@ -1019,10 +1022,10 @@ static bool trans_fcvt_all(DisasContext *ctx, arg_disas_dadao2 *a,
                            TCGv_i64* cpu_hb, TCGv_i64* cpu_hc,
                            void (*fn)(TCGv_i64, TCGv_env, TCGv_i64))
 {
-    if (a->hb + a->immu6 >= 64 || a->hc + a->immu6 >= 64) {
+    if (a->hb + a->immu6 > 64 || a->hc + a->immu6 > 64 || a->immu6 == 0) {
         return false;
     }
-    if (a->hb == 0 && a->immu6 == 0 && cpu_hb != cpu_rf) {
+    if (a->hb == 0 && a->immu6 == 1 && cpu_hb != cpu_rf) {
         return true;
     }
     if (a->hb == 0 && cpu_hb != cpu_rf) {
@@ -1031,12 +1034,13 @@ static bool trans_fcvt_all(DisasContext *ctx, arg_disas_dadao2 *a,
 	a->immu6--;
     }
     if (a->hb <= a->hc) {
-        while (a->immu6-- >= 0) {
+        while (a->immu6--) {
             fn(cpu_hb[a->hb++], cpu_env, cpu_hc[a->hc++]);
         }
     } else {
         a->hb += a->immu6; a->hc += a->immu6;
-        while (a->immu6-- >= 0) {
+	a->hb--; a->hc--;
+        while (a->immu6--) {
             fn(cpu_hb[a->hb--], cpu_env, cpu_hc[a->hc--]);
         }
     }
