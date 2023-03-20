@@ -83,28 +83,28 @@ _start:
 	ldws	rd1, rb2, 3
 	ldts	rd1, rb2, 3
 	ldo	rd1, rb2, 3
-	ldmbs	rd1, rb2, rd3, 4
-	ldmws	rd1, rb2, rd3, 4
-	ldmts	rd1, rb2, rd3, 4
-	ldmo	rd1, rb2, rd3, 4
+	ldmbs	rd1, rb2, rd3, 5
+	ldmws	rd1, rb2, rd3, 5
+	ldmts	rd1, rb2, rd3, 5
+	ldmo	rd1, rb2, rd3, 5
 	# 0011-1xxx
 	stb	rd1, rb2, 3
 	stw	rd1, rb2, 3
 	stt	rd1, rb2, 3
 	sto	rd1, rb2, 3
-	stmb	rd1, rb2, rd3, 4
-	stmw	rd1, rb2, rd3, 4
-	stmt	rd1, rb2, rd3, 4
-	stmo	rd1, rb2, rd3, 4
+	stmb	rd1, rb2, rd3, 5
+	stmw	rd1, rb2, rd3, 5
+	stmt	rd1, rb2, rd3, 5
+	stmo	rd1, rb2, rd3, 5
 	# 0100-0xxx
 	ldbu	rd1, rb2, 3
 	ldwu	rd1, rb2, 3
 	ldtu	rd1, rb2, 3
 	ldrb	rb1, rb2, 3
-	ldmbu	rd1, rb2, rd3, 4
-	ldmwu	rd1, rb2, rd3, 4
-	ldmtu	rd1, rb2, rd3, 4
-	ldmrb	rb1, rb2, rd3, 4
+	ldmbu	rd1, rb2, rd3, 5
+	ldmwu	rd1, rb2, rd3, 5
+	ldmtu	rd1, rb2, rd3, 5
+	ldmrb	rb1, rb2, rd3, 5
 	# 0100-1xxx
 	addi	rb1, 1
 	strb	rb1, rb2, 2
@@ -120,7 +120,7 @@ _start:
 	setzw	rb1, w2, 3
 	setzw	rb1, w1, 3
 	setzw	rb1, w0, 3
-	stmrb	rb1, rb2, rd3, 4
+	stmrb	rb1, rb2, rd3, 5
 	# 0101-0000L MISC-RF
 	ft2fo	rf1, rf2, 3
 	fo2ft	rf1, rf2, 3
@@ -165,21 +165,21 @@ _start:
 	setw	rf1, w2, 2
 	setw	rf1, w1, 3
 	setw	rf1, w0, 4
-	ldmft	rf1, rb2, rd3, 4
-	ldmfo	rf1, rb2, rd3, 4
+	ldmft	rf1, rb2, rd3, 5
+	ldmfo	rf1, rb2, rd3, 5
 	stft	rf1, rb2, 3
 	stfo	rf1, rb2, 3
-	stmft	rf1, rb2, rd3, 4
-	stmfo	rf1, rb2, rd3, 4
+	stmft	rf1, rb2, rd3, 5
+	stmfo	rf1, rb2, rd3, 5
 	# 0110-0xxx
 	jump	_start
 	call	rb1, rd2, 3
-	ldmra	ra1, rb2, rd3, 4
+	ldmra	ra1, rb2, rd3, 5
 	# 0110-1xxx
 	call	_start
 	call	rb1, rd2, 3
 	ret	rd0, 0
-	stmra	ra1, rb2, rd3, 4
+	stmra	ra1, rb2, rd3, 5
 	# 0111-0xxx
 	trap	cp0, 1
 	cpcoop	cp1, 2
