@@ -1197,7 +1197,7 @@ dadao_print_indirect_operand (rtx dest, rtx src)
     if (REG_P (op1))
     {
       asm_fprintf (stream,
-	    "\tldmo\t%s, %s, %s, 0\n",
+	    "\tldmo\t%s, %s, %s, 1\n",
 	      reg_names[REGNO(dest)],
 	      reg_names[REGNO(op0)], reg_names[REGNO(op1)]);
     }
@@ -1305,11 +1305,11 @@ dadao_print_ldst_operand (machine_mode mode,
 
 		  if (!strict)      /* indirect memory access loading */
 		  {		    /* dest: rd (strict = 1 -> load)  */
-		    asm_fprintf (stream, "\t%s, %s, rd7, 0\n",
+		    asm_fprintf (stream, "\t%s, %s, rd7, 1\n",
 				    reg_names[REGNO(dest)], reg_names[REGNO(op0)]);
-		    return "";	    /* ldm<bwto>(u) rdx, rby, rd7, 0  */
+		    return "";	    /* ldm<bwto>(u) rdx, rby, rd7, 1  */
 		  }
-		  return "%0, %1, 0";
+		  return "%0, %1, 1";
 		default:
 		  gcc_unreachable ();
 	    }
@@ -1365,11 +1365,11 @@ dadao_print_ldst_operand (machine_mode mode,
 			     ldst_mmodes [mode % 4]);
 		  if (strict)       /* indirect memory access storing */
 		  {		    /* dest: rd (strict = 1 -> store) */
-		    asm_fprintf (stream, "\t%s, %s, rd7, 0\n",
+		    asm_fprintf (stream, "\t%s, %s, rd7, 1\n",
 				    reg_names[REGNO(src)], reg_names[REGNO(op0)]);
-		    return "";	    /* stm<bwto> rdx, rby, rd7, 0     */
+		    return "";	    /* stm<bwto> rdx, rby, rd7, 1     */
 		  }
-                return "%1, %0, 0";
+                return "%1, %0, 1";
               default:
 		gcc_unreachable ();
             }
@@ -1434,11 +1434,11 @@ dadao_print_fldst_operand (machine_mode mode,
 	      asm_fprintf (stream, "\tldm%s", suffix);
 	      if (!strict)
 		{
-		  asm_fprintf (stream, "\t%s, %s, rd7, 0",
+		  asm_fprintf (stream, "\t%s, %s, rd7, 1",
 				  reg_names[REGNO(dest)], reg_names[REGNO(op0)]);
 		  return "";
 		}
-	      return "%0, %1, 0";
+	      return "%0, %1, 1";
 	    default:
 	      gcc_unreachable ();
 	  }
@@ -1489,11 +1489,11 @@ dadao_print_fldst_operand (machine_mode mode,
 	      asm_fprintf (stream, "\tstm%s", suffix);
 	      if (strict)       /* indirect memory access storing */
 		{		/* dest: rd (strict = 1 -> store) */
-		  asm_fprintf (stream, "\t%s, %s, rd7, 0\n",
+		  asm_fprintf (stream, "\t%s, %s, rd7, 1\n",
 			       reg_names[REGNO(src)], reg_names[REGNO(op0)]);
-		    return "";	    /* stm<ftfo> rfx, rby, rd7, 0     */
+		    return "";	    /* stm<ftfo> rfx, rby, rd7, 1     */
 		  }
-              return "%1, %0, 0";
+              return "%1, %0, 1";
             default:
 	      gcc_unreachable ();
           }
