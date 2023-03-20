@@ -29,12 +29,12 @@ dduii-qemu%.out: dduii-qemu%
 	@echo
 
 ddfii-bare%.out: ddfii-bare%
-	@echo -n "	$<	"
+	@echo -n "	$<  	"
 	@make -C $(DIR_DADAO_TOP) CHIPYARD_0107_DADAO_BINARY=$(shell pwd)/$< chipyard-0107-run-binary   > /dev/null
 	@tail -n 1 $(DIR_DADAO_BUILD)/chipyard-0107/output/chipyard.TestHarness.Wuming1StageConfig/$@
 
 ddfii-qemu%.out: ddfii-qemu%
-	@echo -n "	$<	"
+	@echo -n "	$<  	"
 	$(DADAO_QEMU_USER) $< 2> $@
 	@echo
 
