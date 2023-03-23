@@ -98,7 +98,7 @@ chipyard-0107-run-binary:
 
 chipyard-0107-tracer:
 	# analyzes the contents of the omitted trace file and generates basic statistics
-	@$(CHIPYARD_0107_SOURCE)/generators/riscv-sodor/scripts/tracer.py			\
+	@$(OPCODES_DST_DIR)/tracer.py								\
 		$(CHIPYARD_0107_BUILD)/output/chipyard.TestHarness.$(CHIPYARD_0107_DADAO_CONFIG)/dhrystone.out
 
 chipyard-0107-highfive:
