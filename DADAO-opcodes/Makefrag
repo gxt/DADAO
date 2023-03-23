@@ -10,6 +10,7 @@ OPCODES_OUTPUT_BIN	:= $(OPCODES_DST_DIR)/output.binutils
 OPCODES_OUTPUT_ENV	:= $(OPCODES_DST_DIR)/output.encoding
 OPCODES_OUTPUT_DIS      := $(OPCODES_DST_DIR)/output.disassemble
 OPCODES_OUTPUT_BITPAT   := $(OPCODES_DST_DIR)/output.bitpat
+OPCODES_OUTPUT_TRACER	:= $(OPCODES_DST_DIR)/instructions.py
 
 opcodes-clean:
 	@rm -fr $(OPCODES_DST_DIR)
@@ -44,6 +45,10 @@ opcodes-bitpat:
 	@rm -f $(OPCODES_OUTPUT_BITPAT)
 	@$(PYTHON) $(OPCODES_PARSE) --input $(OPCODES_INPUT) --bitpat $(OPCODES_OUTPUT_BITPAT)
 
+opcodes-tracer:
+	@test -d $(OPCODES_DST_DIR) || make -s opcodes-source
+	@$(PYTHON) $(OPCODES_PARSE) --input $(OPCODES_INPUT) --tracer $(OPCODES_OUTPUT_TRACER)
+
 opcodes-highfive:
 	@make -s opcodes-clean
 	@make -s opcodes-source
@@ -52,4 +57,5 @@ opcodes-highfive:
 	@make -s opcodes-disassemble
 	@make -s opcodes-encoding
 	@make -s opcodes-bitpat
+	@make -s opcodes-tracer
 

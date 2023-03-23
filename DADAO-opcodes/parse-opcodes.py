@@ -10,6 +10,7 @@ def help_information():
     print("--encoding\t\tDefine encoding file's output path.\n")
     print("--disassemble\t\tDefine disassemble file's output path.\n")
     print("--bitpat\t\tDefine bitpat file's output path.\n")
+    print("--tracer\t\tDefine bitpat file's output path for tracer.py.\n")
     print("--dasm dadao\t\tRun dadao-dasm module.")
     print("\t\t\tdasm format: DASM(inst)\n")
 
@@ -316,8 +317,27 @@ def gen_disassemble_file(insts: dict, output_file: str):
             print(line, file=f)
         print(' };',file=f)
 
-def gen_bitpat_file(insts: dict, output_file: str):
+def gen_bitpat_file(insts: dict, output_file: str, mode: str):
+    code = ''
+    insn_type = ''
+    part = 0
+    if mode == 'tracer':
+        with open(output_file) as f:
+            while True:
+                originline = f.readline()
+                if not originline:
+                    break
+                if re.match('#instructions',originline):
+                    code += originline
+                    part = 1
+                if re.match('#insn-type',originline):
+                    part = 2
+                if part == 0:
+                    code += originline
+                elif part == 2:
+                    insn_type += originline
     with open(output_file, 'w') as f:
+        f.write(code)
         for inst_name, inst_description in insts.items():
             bitpat = inst_description['opcode']
             if inst_description['fields']['op'] == 8:
@@ -329,8 +349,12 @@ def gen_bitpat_file(insts: dict, output_file: str):
             regfile_restrictions = inst_description['regfile_restrictions']
             operands = fields + ['none'] * (4 - len(fields))
             operands = [regfile_fillin(operands[i], regfile_restrictions) for i in range(len(operands))]
-            line = '   def {}\t\t= BitPat("b{}")'.format(inst_name,bitpat)
+            if mode == 'tracer':
+                line = '{} \t\t= BitPat("b{}")'.format(inst_name,bitpat)
+            else:
+                line = '   def {}\t\t= BitPat("b{}")'.format(inst_name,bitpat)
             print(line, file=f)
+        f.write(insn_type)
 
 def get_upper_insts_dict( insts: dict):
     upper_dict = {}
@@ -454,11 +478,12 @@ def main():
     output_encoding = ''
     output_disassemble = ''
     output_bitpat = ''
+    output_tracer = ''
     dasm = 0
     if (len(sys.argv) == 1) | (sys.argv.count('--help')):
         help_information()
         return
-    long_opts = ['input=','decode=','opc=','encoding=','disassemble=','bitpat=','dasm=']
+    long_opts = ['input=','decode=','opc=','encoding=','disassemble=','bitpat=','dasm=','tracer=']
     try:
         (opts, args) = getopt.gnu_getopt(sys.argv[1:], 'o:vw:', long_opts)
     except getopt.GetoptError as err:
@@ -476,6 +501,8 @@ def main():
             output_disassemble = a
         elif o == '--bitpat':
             output_bitpat = a
+        elif o == '--tracer':
+            output_tracer = a
         elif o == '--dasm':
             if a == 'dadao':
                 dasm = 1
@@ -491,7 +518,9 @@ def main():
     if output_disassemble:
         gen_disassemble_file(insts, output_disassemble)
     if output_bitpat:
-        gen_bitpat_file(upper_insts, output_bitpat)
+        gen_bitpat_file(upper_insts, output_bitpat, 'bitpat')
+    if output_tracer:
+        gen_bitpat_file(upper_insts, output_tracer, 'tracer')
     if dasm:
         dasm_dict = trans_dict(insts)
     while dasm:
