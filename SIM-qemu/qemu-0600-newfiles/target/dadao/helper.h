@@ -16,6 +16,8 @@ DEF_HELPER_3(cp0_get, i32, env, i32, i32)
 DEF_HELPER_1(cp1_putc, void, i64)
 #endif
 
+DEF_HELPER_1(set_rounding_mode, void, env)
+
 DEF_HELPER_2(exception, void, env, i32)
 
 DEF_HELPER_2(ft2fo, i64, env, i64)

@@ -28,6 +28,8 @@ typedef struct CPUDADAOState {
     uint64_t load_res;
     uint64_t load_val;
 
+    uint64_t frm;
+
     float_status fp_status;
 
     /* System control coprocessor (cp0) */

@@ -1016,12 +1016,11 @@ static bool trans_EXTZi(DisasContext *ctx, arg_EXTZi *a)
     return true;
 }
 
-/* floating point instructions */
-
 static bool trans_fcvt_all(DisasContext *ctx, arg_disas_dadao2 *a,
                            TCGv_i64* cpu_hb, TCGv_i64* cpu_hc,
                            void (*fn)(TCGv_i64, TCGv_env, TCGv_i64))
 {
+    gen_helper_set_rounding_mode(cpu_env);
     if (a->hb + a->immu6 > 64 || a->hc + a->immu6 > 64 || a->immu6 == 0) {
         return false;
     }
@@ -1050,6 +1049,7 @@ static bool trans_fcvt_all(DisasContext *ctx, arg_disas_dadao2 *a,
 static bool trans_fop1_all(DisasContext *ctx, arg_disas_dadao2 *a,
                            void (*fn)(TCGv_i64, TCGv_env, TCGv_i64))
 {
+    gen_helper_set_rounding_mode(cpu_env);
     fn(cpu_rf[a->hb], cpu_env, cpu_rf[a->hc]);
     return true;
 }
@@ -1057,6 +1057,7 @@ static bool trans_fop1_all(DisasContext *ctx, arg_disas_dadao2 *a,
 static bool trans_fop2_all(DisasContext *ctx, arg_disas_dadao7 *a,
                            void (*fn)(TCGv_i64, TCGv_env, TCGv_i64, TCGv_i64))
 {
+    gen_helper_set_rounding_mode(cpu_env);
     fn(cpu_rf[a->hb], cpu_env, cpu_rf[a->hc], cpu_rf[a->hd]);
     return true;
 }

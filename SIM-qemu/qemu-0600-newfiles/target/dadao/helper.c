@@ -233,6 +233,30 @@ bool dadao_cpu_exec_interrupt(CPUState *cs, int interrupt_request)
     return false;
 }
 
+void HELPER(set_rounding_mode)(CPUDADAOState *env)
+{
+    int softrm;
+
+    env->frm = env->rf[0] >> 16;
+
+    switch (env->frm) {
+    case 0:
+	softrm = float_round_nearest_even;
+	break;
+    case 1:
+	softrm = float_round_to_zero;
+	break;
+    case 2:
+	softrm = float_round_down;
+	break;
+    case 3:
+	softrm = float_round_up;
+	break;
+    }
+
+    set_float_rounding_mode(softrm, &env->fp_status);
+}
+
 void HELPER(exception)(CPUDADAOState *env, uint32_t excp)
 {
     DADAOCPU *cpu = env_archcpu(env);
