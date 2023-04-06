@@ -120,9 +120,17 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    //**********************************
    // Instruction Fetch Stage
    val if_pc_next          = Wire(UInt(conf.xprlen.W))
+   val exception_target    = Wire(UInt(conf.xprlen.W))
+   // RISCV only
    val exe_brjmp_target    = Wire(UInt(conf.xprlen.W))
    val exe_jump_reg_target = Wire(UInt(conf.xprlen.W))
-   val exception_target    = Wire(UInt(conf.xprlen.W))
+   // SimRISC only
+   val if_pc_plus4         = Wire(UInt(conf.xprlen.W))
+   val exe_br12_target     = Wire(UInt(conf.xprlen.W))
+   val exe_br18_target     = Wire(UInt(conf.xprlen.W))
+   val exe_iiii_target     = Wire(UInt(conf.xprlen.W))
+   val exe_rrii_target     = Wire(UInt(conf.xprlen.W))
+   val exe_ret_target      = Wire(UInt(conf.xprlen.W))
 
    // Instruction fetch buffer
    val if_buffer_in = Wire(new DecoupledIO(new MemResp(conf.xprlen)))
@@ -163,7 +171,14 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    if_pc_next := Mux(io.ctl.exe_pc_sel === PC_4,      if_pc_plus4,
                  Mux(io.ctl.exe_pc_sel === PC_BRJMP,  exe_brjmp_target,
                  Mux(io.ctl.exe_pc_sel === PC_JALR,   exe_jump_reg_target,
-                 /*Mux(io.ctl.exe_pc_sel === PC_EXC*/ exception_target)))
+                 // SimRISC targets
+                 Mux(io.ctl.exe_pc_sel === S_PC_4,      if_pc_plus4,
+                 Mux(io.ctl.exe_pc_sel === S_PC_BR12,   exe_br12_target,
+                 Mux(io.ctl.exe_pc_sel === S_PC_BR18,   exe_br18_target,
+                 Mux(io.ctl.exe_pc_sel === S_PC_IIII,   exe_iiii_target,
+                 Mux(io.ctl.exe_pc_sel === S_PC_RRII,   exe_rrii_target,
+                 Mux(io.ctl.exe_pc_sel === S_PC_RASP,   exe_ret_target,
+                 /*Mux(io.ctl.exe_pc_sel === PC_EXC*/ exception_target)))))))))
 
    // for a fencei, refetch the if_pc (assuming no stall, no branch, and no exception)
    when (io.ctl.fencei && io.ctl.exe_pc_sel === PC_4 &&
