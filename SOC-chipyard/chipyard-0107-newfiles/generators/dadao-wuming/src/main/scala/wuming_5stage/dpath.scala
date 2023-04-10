@@ -125,12 +125,18 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val exe_brjmp_target    = Wire(UInt(conf.xprlen.W))
    val exe_jump_reg_target = Wire(UInt(conf.xprlen.W))
    // SimRISC only
-   val if_pc_plus4         = Wire(UInt(conf.xprlen.W))
+   // val if_pc_plus4         = Wire(UInt(conf.xprlen.W))
    val exe_br12_target     = Wire(UInt(conf.xprlen.W))
    val exe_br18_target     = Wire(UInt(conf.xprlen.W))
    val exe_iiii_target     = Wire(UInt(conf.xprlen.W))
    val exe_rrii_target     = Wire(UInt(conf.xprlen.W))
    val exe_ret_target      = Wire(UInt(conf.xprlen.W))
+
+   exe_br12_target     :=   0.U
+   exe_br18_target     :=   0.U
+   exe_iiii_target     :=   0.U
+   exe_rrii_target     :=   0.U
+   exe_ret_target      :=   0.U
 
    // Instruction fetch buffer
    val if_buffer_in = Wire(new DecoupledIO(new MemResp(conf.xprlen)))
