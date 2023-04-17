@@ -260,6 +260,19 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    s_regfile.io.hb_addr := dec_hb_addr
    s_regfile.io.hc_addr := dec_hc_addr
    s_regfile.io.hd_addr := dec_hd_addr
+   val rf_rdha_data = s_regfile.io.rdha_data
+   val rf_rdhb_data = s_regfile.io.rdhb_data
+   val rf_rdhc_data = s_regfile.io.rdhc_data
+   val rf_rdhd_data = s_regfile.io.rdhd_data
+
+   val rf_rbha_data = s_regfile.io.rbha_data
+   val rf_rbhb_data = s_regfile.io.rbhb_data
+   val rf_rbhc_data = s_regfile.io.rbhc_data
+   val rf_rbhd_data = s_regfile.io.rbhd_data
+
+   val rf_rfha_data = s_regfile.io.rfha_data
+   val rf_rfhb_data = s_regfile.io.rfhb_data
+   val rf_rfhc_data = s_regfile.io.rfhc_data
 
    // immediates
    val imm_itype  = dec_reg_inst(31,20)
