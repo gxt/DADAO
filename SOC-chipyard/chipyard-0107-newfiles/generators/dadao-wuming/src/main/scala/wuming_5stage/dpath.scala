@@ -232,6 +232,10 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val dec_rs2_addr = dec_reg_inst(24, 20)
    val dec_wbaddr   = dec_reg_inst(11, 7)
 
+   val dec_ha_addr  = dec_reg_inst(HA_MSB, HA_LSB)
+   val dec_hb_addr  = dec_reg_inst(HB_MSB, HB_LSB)
+   val dec_hc_addr  = dec_reg_inst(HC_MSB, HC_LSB)
+   val dec_hd_addr  = dec_reg_inst(HD_MSB, HD_LSB)
 
    // Register File
    val regfile = Module(new RegisterFile())
