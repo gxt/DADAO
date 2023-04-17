@@ -35,6 +35,11 @@ class DatToCtlIo(implicit val conf: WumingCoreParams) extends Bundle()
 
    val csr_eret = Output(Bool())
    val csr_interrupt = Output(Bool())
+   
+   val cond_eq  = Output(Bool())
+   val cond_n   = Output(Bool())
+   val cond_z   = Output(Bool())
+   val cond_p   = Output(Bool())
 }
 
 class DpathIo(implicit val p: Parameters, val conf: WumingCoreParams) extends Bundle
@@ -91,6 +96,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val exe_reg_ctrl_mem_fcn  = RegInit(M_X)
    val exe_reg_ctrl_mem_typ  = RegInit(MT_X)
    val exe_reg_ctrl_csr_cmd  = RegInit(CSR.N)
+   val exe_wydemask          = Reg(UInt(conf.xprlen.W))
 
    // Memory State
    val mem_reg_valid         = RegInit(false.B)
@@ -296,9 +302,9 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val imms18 = Cat(Fill(46, dec_reg_inst(HB_MSB)), dec_reg_inst(HB_MSB, HD_LSB))
    val imms24 = Cat(Fill(40, dec_reg_inst(HA_MSB)), dec_reg_inst(HA_MSB, HD_LSB))
 
-   val wydeposition = dec_reg_inst(WP_MSB, WP_LSB).asUInt() << 4
-   val wyde16       = dec_reg_inst(WYDE_MSB, WYDE_LSB)
-   val wydemask     = Fill(64, 1.U) & ~(Fill(16, 1.U) << wydeposition)
+   val dec_wydeposition = dec_reg_inst(WP_MSB, WP_LSB).asUInt() << 4
+   val dec_wyde16       = dec_reg_inst(WYDE_MSB, WYDE_LSB)
+   val dec_wydemask     = Fill(64, 1.U) & ~(Fill(16, 1.U) << dec_wydeposition)
 
    // Operand 2 Mux
    /* RISCV alu_op2
@@ -321,11 +327,12 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                (io.ctl.op2_sel === S_OP2_IMMS12) -> immu12,
                (io.ctl.op2_sel === S_OP2_IMMS12) -> imms12,
                (io.ctl.op2_sel === S_OP2_IMMS18) -> imms18,
-               (io.ctl.op2_sel === S_OP2_WYDE)   -> (wyde16 << wydeposition)
+               (io.ctl.op2_sel === S_OP2_WYDE)   -> (dec_wyde16 << dec_wydeposition)
                )).asUInt()
 
    // Bypass Muxes
    val exe_alu_out  = Wire(UInt(conf.xprlen.W))
+   val s_exe_alu_out  = Wire(UInt(conf.xprlen.W))
    val mem_wbdata   = Wire(UInt(conf.xprlen.W))
 
    val dec_op1_data = Wire(UInt(conf.xprlen.W))
@@ -407,6 +414,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       exe_reg_ctrl_op2_sel  := io.ctl.op2_sel
       exe_reg_ctrl_alu_fun  := io.ctl.alu_fun
       exe_reg_ctrl_wb_sel   := io.ctl.wb_sel
+      exe_wydemask          := dec_wydemask
 
       when (io.ctl.dec_kill)
       {
@@ -457,6 +465,38 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                   (exe_reg_ctrl_alu_fun === ALU_SRL)  -> (exe_alu_op1 >> alu_shamt).asUInt(),
                   (exe_reg_ctrl_alu_fun === ALU_COPY_1)-> exe_alu_op1,
                   (exe_reg_ctrl_alu_fun === ALU_COPY_2)-> exe_alu_op2
+                  ))
+
+   val cond_yes   =           Mux(io.ctl.cnd_fun === COND_N ,  Mux( io.dat.cond_n ,  Y, N),
+                              Mux(io.ctl.cnd_fun === COND_Z ,  Mux( io.dat.cond_z ,  Y, N),
+                              Mux(io.ctl.cnd_fun === COND_P ,  Mux( io.dat.cond_p ,  Y, N),
+                              Mux(io.ctl.cnd_fun === COND_EQ,  Mux( io.dat.cond_eq,  Y, N),
+                              Mux(io.ctl.cnd_fun === COND_NE,  Mux(!io.dat.cond_eq,  Y, N), N)))))
+
+   s_exe_alu_out := MuxCase(exe_reg_inst.asUInt(), Array(
+                  (exe_reg_ctrl_alu_fun === S_ALU_ADD) -> exe_adder_out,
+                  (exe_reg_ctrl_alu_fun === S_ALU_SUB) -> (exe_alu_op1 - exe_alu_op2).asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_CMPS) -> Mux(exe_alu_op1 === exe_alu_op2, 0.U, Mux(exe_alu_op1.asSInt() < exe_alu_op2.asSInt(), ~0.U(BITS_OCTA.W), 1.U(BITS_OCTA.W))).asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_CMPU) -> Mux(exe_alu_op1 === exe_alu_op2, 0.U, Mux(exe_alu_op1.asUInt() < exe_alu_op2.asUInt(), ~0.U(BITS_OCTA.W), 1.U(BITS_OCTA.W))).asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_MULS) -> ((exe_alu_op1.asSInt() * exe_alu_op2.asSInt())(BITS_OCTA-1, 0)).asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_MULU) -> ((exe_alu_op1.asUInt() * exe_alu_op2.asUInt())(BITS_OCTA-1, 0)).asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_DIVS) -> (exe_alu_op1.asSInt() / exe_alu_op2.asSInt()).asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_DIVU) -> (exe_alu_op1.asUInt() / exe_alu_op2.asUInt()).asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_SLL) -> ((exe_alu_op1 << alu_shamt)(conf.xprlen-1, 0)).asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_SRL) -> (exe_alu_op1 >> alu_shamt).asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_SRA) -> (exe_alu_op1.asSInt() >> alu_shamt).asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_AND) -> (exe_alu_op1 & exe_alu_op2).asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_OR) -> (exe_alu_op1 | exe_alu_op2).asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_XOR) -> (exe_alu_op1 ^ exe_alu_op2).asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_XNOR) -> (exe_alu_op1 ^ ~exe_alu_op2).asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_EXTS) -> ((exe_alu_op1 << alu_shamt)(BITS_OCTA-1, 0).asSInt() >> alu_shamt).asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_EXTZ) -> ((exe_alu_op1 << alu_shamt)(BITS_OCTA-1, 0).asUInt() >> alu_shamt).asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_SETOW) -> (exe_alu_op2 | exe_wydemask).asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_ANDNW) -> (exe_alu_op1 & ~exe_alu_op2).asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_SETW) -> ((exe_alu_op1 & exe_wydemask) | exe_alu_op2).asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_CSET) -> Mux(cond_yes, exe_alu_op1, exe_alu_op2).asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_COPY2) -> exe_alu_op2.asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_ADRP) -> ((((exe_alu_op1 >> 12.U) + exe_alu_op2) << 12.U)).asUInt(),
                   ))
 
    // Branch/Jump Target Calculation

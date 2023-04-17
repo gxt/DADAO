@@ -43,6 +43,8 @@ class CtlToDatIo extends Bundle()
                                     // and kill if,dec,exe stages.
    val mem_exception = Output(Bool()) // tell the CSR that the core detected an exception
    val mem_exception_cause = Output(UInt(32.W))
+   
+   val cnd_fun   = Output(UInt(COND_X.getWidth.W))
 }
 
 class CpathIo(implicit val conf: WumingCoreParams) extends Bundle()
