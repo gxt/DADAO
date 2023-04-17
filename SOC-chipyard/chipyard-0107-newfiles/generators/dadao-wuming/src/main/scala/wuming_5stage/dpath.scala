@@ -301,6 +301,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val wydemask     = Fill(64, 1.U) & ~(Fill(16, 1.U) << wydeposition)
 
    // Operand 2 Mux
+   /* RISCV alu_op2
    val dec_alu_op2 = MuxCase(0.U, Array(
                (io.ctl.op2_sel === OP2_RS2)    -> rf_rs2_data,
                (io.ctl.op2_sel === OP2_ITYPE)  -> imm_itype_sext,
@@ -309,8 +310,19 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                (io.ctl.op2_sel === OP2_UTYPE)  -> imm_utype_sext,
                (io.ctl.op2_sel === OP2_UJTYPE) -> imm_ujtype_sext
                )).asUInt()
-
-
+   */
+   val dec_alu_op2 = MuxCase(0.U, Array(
+               (io.ctl.op2_sel === S_OP2_RDHC)   -> rf_rdhc_data,
+               (io.ctl.op2_sel === S_OP2_RDHD)   -> rf_rdhd_data,
+               (io.ctl.op2_sel === S_OP2_RBHC)   -> rf_rbhc_data,
+               (io.ctl.op2_sel === S_OP2_RBHD)   -> rf_rbhd_data,
+               (io.ctl.op2_sel === S_OP2_RFHC)   -> rf_rfhc_data,
+               (io.ctl.op2_sel === S_OP2_IMMU6)  -> immu6,
+               (io.ctl.op2_sel === S_OP2_IMMS12) -> immu12,
+               (io.ctl.op2_sel === S_OP2_IMMS12) -> imms12,
+               (io.ctl.op2_sel === S_OP2_IMMS18) -> imms18,
+               (io.ctl.op2_sel === S_OP2_WYDE)   -> (wyde16 << wydeposition)
+               )).asUInt()
 
    // Bypass Muxes
    val exe_alu_out  = Wire(UInt(conf.xprlen.W))
@@ -322,6 +334,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
    if (USE_FULL_BYPASSING)
    {
+      // TODO: add bypassing into SimRISC
       // roll the OP1 mux into the bypass mux logic
       dec_op1_data := MuxCase(rf_rs1_data, Array(
                            ((io.ctl.op1_sel === OP1_IMZ)) -> imm_z,
@@ -346,10 +359,24 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    else
    {
       // Rely only on control interlocking to resolve hazards
+      /* RISCV op1
       dec_op1_data := MuxCase(rf_rs1_data, Array(
                           ((io.ctl.op1_sel === OP1_IMZ)) -> imm_z,
                           ((io.ctl.op1_sel === OP1_PC))  -> dec_reg_pc
                           ))
+      */
+      dec_op1_data := MuxCase(0.U, Array(
+                     ((io.ctl.op1_sel === S_OP1_RDHA)) -> rf_rdha_data,
+                     ((io.ctl.op1_sel === S_OP1_RDHB)) -> rf_rdhb_data,
+                     ((io.ctl.op1_sel === S_OP1_RDHC)) -> rf_rdhc_data,
+                     
+                     ((io.ctl.op1_sel === S_OP1_RBHA)) -> rf_rbha_data,
+                     ((io.ctl.op1_sel === S_OP1_RBHB)) -> rf_rbhb_data,
+                     ((io.ctl.op1_sel === S_OP1_RBHC)) -> rf_rbhc_data,
+
+                     ((io.ctl.op1_sel === S_OP1_RFHA)) -> rf_rfha_data,
+                     ((io.ctl.op1_sel === S_OP1_PC))  -> dec_reg_pc
+                     ))
       dec_rs2_data := rf_rs2_data
       dec_op2_data := dec_alu_op2
    }
