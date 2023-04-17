@@ -254,6 +254,13 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    regfile.io.dm_wdata := io.ddpath.wdata
    ///
 
+   // SimRISC RegFile
+   val s_regfile = Module(new S_RegisterFile())
+   s_regfile.io.ha_addr := dec_ha_addr
+   s_regfile.io.hb_addr := dec_hb_addr
+   s_regfile.io.hc_addr := dec_hc_addr
+   s_regfile.io.hd_addr := dec_hd_addr
+
    // immediates
    val imm_itype  = dec_reg_inst(31,20)
    val imm_stype  = Cat(dec_reg_inst(31,25), dec_reg_inst(11,7))
