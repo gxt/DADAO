@@ -290,6 +290,16 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val imm_utype_sext  = Cat(imm_utype, Fill(12,0.U))
    val imm_ujtype_sext = Cat(Fill(11,imm_ujtype(19)), imm_ujtype, 0.U)
 
+   val immu6 = dec_reg_inst(HD_MSB, HD_LSB)
+   val immu12 = dec_reg_inst(HC_MSB, HD_LSB)
+   val imms12 = Cat(Fill(52, dec_reg_inst(HC_MSB)), dec_reg_inst(HC_MSB, HD_LSB))
+   val imms18 = Cat(Fill(46, dec_reg_inst(HB_MSB)), dec_reg_inst(HB_MSB, HD_LSB))
+   val imms24 = Cat(Fill(40, dec_reg_inst(HA_MSB)), dec_reg_inst(HA_MSB, HD_LSB))
+
+   val wydeposition = dec_reg_inst(WP_MSB, WP_LSB).asUInt() << 4
+   val wyde16       = dec_reg_inst(WYDE_MSB, WYDE_LSB)
+   val wydemask     = Fill(64, 1.U) & ~(Fill(16, 1.U) << wydeposition)
+
    // Operand 2 Mux
    val dec_alu_op2 = MuxCase(0.U, Array(
                (io.ctl.op2_sel === OP2_RS2)    -> rf_rs2_data,
