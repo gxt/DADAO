@@ -331,9 +331,10 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                )).asUInt()
 
    // Bypass Muxes
-   val exe_alu_out  = Wire(UInt(conf.xprlen.W))
+   val exe_alu_out    = Wire(UInt(conf.xprlen.W))
    val s_exe_alu_out  = Wire(UInt(conf.xprlen.W))
-   val mem_wbdata   = Wire(UInt(conf.xprlen.W))
+   val alu_out2       = Wire(UInt(conf.xprlen.W))
+   val mem_wbdata     = Wire(UInt(conf.xprlen.W))
 
    val dec_op1_data = Wire(UInt(conf.xprlen.W))
    val dec_op2_data = Wire(UInt(conf.xprlen.W))
@@ -497,6 +498,16 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                   (exe_reg_ctrl_alu_fun === S_ALU_CSET) -> Mux(cond_yes, exe_alu_op1, exe_alu_op2).asUInt(),
                   (exe_reg_ctrl_alu_fun === S_ALU_COPY2) -> exe_alu_op2.asUInt(),
                   (exe_reg_ctrl_alu_fun === S_ALU_ADRP) -> ((((exe_alu_op1 >> 12.U) + exe_alu_op2) << 12.U)).asUInt(),
+                  ))
+
+      
+   alu_out2    := MuxCase(0.U, Array(
+                  (exe_reg_ctrl_alu_fun === S_ALU_ADD)    -> (Cat(Fill(64, exe_alu_op1(63)), exe_alu_op1) + Cat(Fill(64, exe_alu_op2(63)), exe_alu_op2))(127, 64).asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_SUB)    -> (Cat(Fill(64, exe_alu_op1(63)), exe_alu_op1) - Cat(Fill(64, exe_alu_op2(63)), exe_alu_op2))(127, 64).asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_MULS)   -> ((exe_alu_op1.asSInt() * exe_alu_op2.asSInt())(127, 64)).asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_MULU)   -> ((exe_alu_op1.asUInt() * exe_alu_op2.asUInt())(127, 64)).asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_DIVS)   -> (exe_alu_op1.asSInt() % exe_alu_op2.asSInt()).asUInt(),
+                  (exe_reg_ctrl_alu_fun === S_ALU_DIVU)   -> (exe_alu_op1.asUInt() % exe_alu_op2.asUInt()).asUInt(),
                   ))
 
    // Branch/Jump Target Calculation
