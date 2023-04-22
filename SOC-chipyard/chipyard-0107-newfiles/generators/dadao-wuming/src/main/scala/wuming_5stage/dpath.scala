@@ -40,6 +40,8 @@ class DatToCtlIo(implicit val conf: WumingCoreParams) extends Bundle()
    val cond_n   = Output(Bool())
    val cond_z   = Output(Bool())
    val cond_p   = Output(Bool())
+   
+   val inst_rasp_excp  = Output(Bool())
 }
 
 class DpathIo(implicit val p: Parameters, val conf: WumingCoreParams) extends Bundle
@@ -299,6 +301,14 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val rf_rfhc_data = s_regfile.io.rfhc_data
 
    exe_ret_target := s_regfile.io.rapop_data
+   val dec_pc_plus4    = (dec_reg_pc + 4.U)(conf.xprlen-1,0)
+                     
+   s_regfile.io.ras_pop   := (io.ctl.dec_reg_grp === RAS_POP)
+   io.dat.inst_rasp_excp := (((s_regfile.io.ras_push) && (s_regfile.io.ras_top === 63.U)) || ((s_regfile.io.ras_pop) && (s_regfile.io.ras_top === 0.U)))
+
+   s_regfile.io.ras_push := (io.ctl.dec_reg_grp === RAS_PUSH)
+   s_regfile.io.rapush_data := dec_pc_plus4
+   io.dat.inst_rasp_excp := (((s_regfile.io.ras_push) && (s_regfile.io.ras_top === 63.U)) || ((s_regfile.io.ras_pop) && (s_regfile.io.ras_top === 0.U)))
 
    s_regfile.io.waddr := MuxCase(wb_reg_ha_addr, Array(
                            (wb_reg_ctrl_wb_sel === S_WB_RDHB) -> wb_reg_hb_addr,
