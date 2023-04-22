@@ -109,6 +109,9 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val mem_reg_op1_data      = Reg(UInt(conf.xprlen.W))
    val mem_reg_op2_data      = Reg(UInt(conf.xprlen.W))
    val mem_reg_rs2_data      = Reg(UInt(conf.xprlen.W))
+   val exe_reg_imms12_data   = Reg(UInt(conf.xprlen.W))
+   val exe_reg_imms18_data   = Reg(UInt(conf.xprlen.W))
+   val exe_reg_imms24_data   = Reg(UInt(conf.xprlen.W))
    val mem_reg_ctrl_rf_wen   = RegInit(false.B)
    val mem_reg_ctrl_mem_val  = RegInit(false.B)
    val mem_reg_ctrl_mem_fcn  = RegInit(M_X)
@@ -137,12 +140,6 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val exe_iiii_target     = Wire(UInt(conf.xprlen.W))
    val exe_rrii_target     = Wire(UInt(conf.xprlen.W))
    val exe_ret_target      = Wire(UInt(conf.xprlen.W))
-
-   exe_br12_target     :=   0.U
-   exe_br18_target     :=   0.U
-   exe_iiii_target     :=   0.U
-   exe_rrii_target     :=   0.U
-   exe_ret_target      :=   0.U
 
    // Instruction fetch buffer
    val if_buffer_in = Wire(new DecoupledIO(new MemResp(conf.xprlen)))
@@ -280,6 +277,8 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val rf_rfhb_data = s_regfile.io.rfhb_data
    val rf_rfhc_data = s_regfile.io.rfhc_data
 
+   exe_ret_target := s_regfile.io.rapop_data
+
    // immediates
    val imm_itype  = dec_reg_inst(31,20)
    val imm_stype  = Cat(dec_reg_inst(31,25), dec_reg_inst(11,7))
@@ -412,6 +411,9 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       exe_reg_op1_data      := dec_op1_data
       exe_reg_op2_data      := dec_op2_data
       exe_reg_rs2_data      := dec_rs2_data
+      exe_reg_imms12_data   := imms12
+      exe_reg_imms18_data   := imms18
+      exe_reg_imms24_data   := imms24
       exe_reg_ctrl_op2_sel  := io.ctl.op2_sel
       exe_reg_ctrl_alu_fun  := io.ctl.alu_fun
       exe_reg_ctrl_wb_sel   := io.ctl.wb_sel
@@ -514,6 +516,14 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val brjmp_offset    = exe_reg_op2_data
    exe_brjmp_target    := exe_reg_pc + brjmp_offset
    exe_jump_reg_target := exe_adder_out & ~1.U(conf.xprlen.W)
+
+   val br12_offset     = exe_reg_imms12_data << 2.U
+   val br18_offset     = exe_reg_imms18_data << 2.U
+   val br24_offset     = exe_reg_imms24_data << 2.U
+   exe_br12_target    := exe_reg_pc + br12_offset
+   exe_br18_target    := exe_reg_pc + br18_offset
+   exe_iiii_target    := exe_reg_pc + br24_offset
+   exe_rrii_target    := s_exe_alu_out + br12_offset
 
    // Instruction misalign detection
    // In control path, instruction misalignment exception is always raised in the next cycle once the misaligned instruction reaches

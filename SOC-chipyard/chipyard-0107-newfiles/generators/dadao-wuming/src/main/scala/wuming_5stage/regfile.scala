@@ -74,6 +74,8 @@ class S_RFileIo(implicit val conf: WumingCoreParams) extends Bundle()
    val rfhb_data = Output(UInt(conf.xprlen.W))
    val rfhc_data = Output(UInt(conf.xprlen.W))
 
+   val rapop_data = Output(UInt(conf.xprlen.W))
+
    // val dm_addr = Input(UInt(5.W))
    // val dm_rdata = Output(UInt(conf.xprlen.W))
    // val dm_wdata = Input(UInt(conf.xprlen.W))
@@ -92,6 +94,12 @@ class S_RegisterFile(implicit val conf: WumingCoreParams) extends Module
    val regfileB = Mem(NR_REGS, UInt(conf.xprlen.W))
    val regfileA = Mem(NR_REGS, UInt(conf.xprlen.W))
    val regfileF = Mem(NR_REGS, UInt(conf.xprlen.W))
+   
+   val RASR_TOP = RegInit(0.U(BITS_HEXA.W))
+
+   val pop_ptr   = RASR_TOP
+
+   io.rapop_data := Mux((pop_ptr =/= 0.U), regfileA(pop_ptr), 0.U)
 
    // when (io.wen && (io.waddr =/= 0.U))
    // {
