@@ -84,6 +84,14 @@ class S_RFileIo(implicit val conf: WumingCoreParams) extends Bundle()
    // val waddr    = Input(UInt(5.W))
    // val wdata    = Input(UInt(conf.xprlen.W))
    // val wen      = Input(Bool())
+   val waddr       = Input(UInt(6.W))
+   val wdata       = Input(UInt(conf.xprlen.W))
+   val wrben       = Input(Bool())
+   val wrden       = Input(Bool())
+   val wrfen       = Input(Bool())
+   val w2addr      = Input(UInt(6.W))
+   val w2data      = Input(UInt(conf.xprlen.W))
+   val w2en        = Input(Bool())
 }
 
 class S_RegisterFile(implicit val conf: WumingCoreParams) extends Module
@@ -101,10 +109,23 @@ class S_RegisterFile(implicit val conf: WumingCoreParams) extends Module
 
    io.rapop_data := Mux((pop_ptr =/= 0.U), regfileA(pop_ptr), 0.U)
 
-   // when (io.wen && (io.waddr =/= 0.U))
-   // {
-   //    regfileD(io.waddr) := io.wdata
-   // }
+   when (io.wrden && (io.waddr =/= 0.U))
+   {
+      regfileD(io.waddr) := io.wdata
+   }
+   when (io.wrben && (io.waddr =/= 0.U))
+   {
+      regfileB(io.waddr) := io.wdata
+   }
+   when (io.wrfen && (io.waddr =/= 0.U))
+   {
+      regfileF(io.waddr) := io.wdata
+   }
+   when (io.w2en && (io.w2addr =/= 0.U))
+   {
+      regfileD(io.w2addr) := io.w2data
+   }
+
 
    // when (io.dm_en && (io.dm_addr =/= 0.U))
    // {
