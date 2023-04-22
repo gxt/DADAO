@@ -43,6 +43,7 @@ class CtlToDatIo extends Bundle()
                                     // and kill if,dec,exe stages.
    val mem_exception = Output(Bool()) // tell the CSR that the core detected an exception
    val mem_exception_cause = Output(UInt(32.W))
+   val dec_reg_grp   = Output(UInt(REG_X.getWidth.W))
    
    val cnd_fun   = Output(UInt(COND_X.getWidth.W))
 }
