@@ -25,6 +25,8 @@ class CtlToDatIo extends Bundle()
    val full_stall = Output(Bool())    // stall entire pipeline (due to D$ misses)
    val exe_pc_sel = Output(UInt(2.W))
    val br_type    = Output(UInt(4.W))
+   val cf_type    = Output(UInt(3.W))
+   val cd_type    = Output(UInt(4.W))
    val if_kill    = Output(Bool())
    val dec_kill   = Output(Bool())
    val op1_sel    = Output(UInt(2.W))
@@ -83,28 +85,59 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
    // val (cs_val_inst: Bool) :: cs_br_type :: cs_op1_sel :: cs_op2_sel :: (cs_rs1_oen: Bool) :: (cs_rs2_oen: Bool) :: cs0 = csignals
    // val cs_alu_fun :: cs_wb_sel :: (cs_rf_wen: Bool) :: (cs_mem_en: Bool) :: cs_mem_fcn :: cs_msk_sel :: cs_csr_cmd :: (cs_fencei: Bool) :: Nil = cs0
 
-   val cs_br_type = BR_N
    val cs_rs1_oen = N
    val cs_rs2_oen = N
    
    val (cs_val_inst: Bool) :: cs_ctrl_flow  :: cs_cond_fun       :: cs_reg_group  :: cs_op1_sel :: cs_op2_sel :: cs0 = csignals
    val cs_alu_fun          :: cs_wb_sel     :: (cs_rf_wen: Bool) ::               cs1 = cs0
    val (cs_mem_en: Bool)   :: cs_mem_fcn    :: cs_msk_sel        :: cs_csr_cmd    :: (cs_fencei: Bool) :: Nil = cs1
+//  S_PC_4     
+//  S_PC_EXCP  
+//  S_PC_BR12  
+//  S_PC_BR18  
+//  S_PC_IIII  
+//  S_PC_RRII  
+//  S_PC_RASP  
 
-
-   // Branch Logic
-   val ctrl_exe_pc_sel = Mux(io.ctl.pipeline_kill         , PC_EXC,
-                         Mux(io.dat.exe_br_type === BR_N  , PC_4,
-                         Mux(io.dat.exe_br_type === BR_NE , Mux(!io.dat.exe_br_eq,  PC_BRJMP, PC_4),
-                         Mux(io.dat.exe_br_type === BR_EQ , Mux( io.dat.exe_br_eq,  PC_BRJMP, PC_4),
-                         Mux(io.dat.exe_br_type === BR_GE , Mux(!io.dat.exe_br_lt,  PC_BRJMP, PC_4),
-                         Mux(io.dat.exe_br_type === BR_GEU, Mux(!io.dat.exe_br_ltu, PC_BRJMP, PC_4),
-                         Mux(io.dat.exe_br_type === BR_LT , Mux( io.dat.exe_br_lt,  PC_BRJMP, PC_4),
-                         Mux(io.dat.exe_br_type === BR_LTU, Mux( io.dat.exe_br_ltu, PC_BRJMP, PC_4),
-                         Mux(io.dat.exe_br_type === BR_J  , PC_BRJMP,
-                         Mux(io.dat.exe_br_type === BR_JR , PC_JALR,
-                                                            PC_4
-                     ))))))))))
+// CF_X    
+// CF_BR12 
+// CF_BR18 
+// CF_JUMPI
+// CF_JUMPR
+// CF_CALLI
+// CF_CALLR
+// CF_RET  
+//    // Branch Logic
+   val ctrl_exe_pc_sel = MuxCase ( S_PC_4, Array(
+      io.ctl.pipeline_kill              -> S_PC_EXCP,
+      (io.dat.exe_cf_type === CF_X)     -> S_PC_4,
+      (io.dat.exe_cf_type === CF_BR12)  -> Mux(io.dat.exe_cd_type === COND_EQ , Mux( io.dat.exe_cond_eq, S_PC_BR12, S_PC_4),
+                                           Mux(io.dat.exe_cd_type === COND_NE , Mux(!io.dat.exe_cond_eq, S_PC_BR12, S_PC_4), S_PC_4)),
+      (io.dat.exe_cf_type === CF_BR18)  -> Mux(io.dat.exe_cd_type === COND_Z  , Mux( io.dat.exe_cond_z, S_PC_BR18, S_PC_4),
+                                           Mux(io.dat.exe_cd_type === COND_NZ , Mux(!io.dat.exe_cond_z, S_PC_BR18, S_PC_4),
+                                           Mux(io.dat.exe_cd_type === COND_P  , Mux( io.dat.exe_cond_p, S_PC_BR18, S_PC_4),
+                                           Mux(io.dat.exe_cd_type === COND_NP , Mux(!io.dat.exe_cond_p, S_PC_BR18, S_PC_4),
+                                           Mux(io.dat.exe_cd_type === COND_N  , Mux( io.dat.exe_cond_n, S_PC_BR18, S_PC_4),
+                                           Mux(io.dat.exe_cd_type === COND_NN , Mux(!io.dat.exe_cond_n, S_PC_BR18, S_PC_4), S_PC_4)))))),
+      (io.dat.exe_cf_type === CF_JUMPI) -> S_PC_IIII,
+      (io.dat.exe_cf_type === CF_JUMPR) -> S_PC_RRII,
+      (io.dat.exe_cf_type === CF_CALLI) -> S_PC_IIII,
+      (io.dat.exe_cf_type === CF_CALLR) -> S_PC_RRII,
+      (io.dat.exe_cf_type === CF_RET)   -> S_PC_RASP,
+      
+   ))
+   // Mux(io.ctl.pipeline_kill         , PC_EXC,
+   //                       Mux(io.dat.exe_br_type === BR_N  , PC_4,
+   //                       Mux(io.dat.exe_br_type === BR_NE , Mux(!io.dat.exe_br_eq,  PC_BRJMP, PC_4),
+   //                       Mux(io.dat.exe_br_type === BR_EQ , Mux( io.dat.exe_br_eq,  PC_BRJMP, PC_4),
+   //                       Mux(io.dat.exe_br_type === BR_GE , Mux(!io.dat.exe_br_lt,  PC_BRJMP, PC_4),
+   //                       Mux(io.dat.exe_br_type === BR_GEU, Mux(!io.dat.exe_br_ltu, PC_BRJMP, PC_4),
+   //                       Mux(io.dat.exe_br_type === BR_LT , Mux( io.dat.exe_br_lt,  PC_BRJMP, PC_4),
+   //                       Mux(io.dat.exe_br_type === BR_LTU, Mux( io.dat.exe_br_ltu, PC_BRJMP, PC_4),
+   //                       Mux(io.dat.exe_br_type === BR_J  , PC_BRJMP,
+   //                       Mux(io.dat.exe_br_type === BR_JR , PC_JALR,
+   //                                                          PC_4
+   //                   ))))))))))
 
    val ifkill  = (ctrl_exe_pc_sel =/= PC_4) || cs_fencei || RegNext(cs_fencei)
    val deckill = (ctrl_exe_pc_sel =/= PC_4)
@@ -214,7 +247,8 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
    io.ctl.dec_stall  := stall // stall if, dec stage (pipeline hazard)
    io.ctl.full_stall := full_stall // stall entire pipeline (cache miss)
    io.ctl.exe_pc_sel := ctrl_exe_pc_sel
-   io.ctl.br_type    := cs_br_type
+   io.ctl.cf_type    := cs_ctrl_flow
+   io.ctl.cd_type    := cs_cond_fun
    io.ctl.if_kill    := ifkill
    io.ctl.dec_kill   := deckill
    io.ctl.op1_sel    := cs_op1_sel
