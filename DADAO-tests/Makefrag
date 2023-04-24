@@ -75,6 +75,12 @@ tests-isa-qemu-highfive:
 	@$(DADAO_MAKE) src_dir=$(TESTS_ISA_SOURCE) -C $(TESTS_ISA_QEMU_BUILD) dduii-qemu
 	@$(DADAO_MAKE) src_dir=$(TESTS_ISA_SOURCE) -C $(TESTS_ISA_QEMU_BUILD) run-qemu
 
+tests-simple-llvm-highfive:
+	@rm -fr $(TESTS_SIMPLE_BUILD)
+	@mkdir -p $(TESTS_SIMPLE_BUILD)
+	@ln -s -t $(TESTS_SIMPLE_BUILD) $(TESTS_SIMPLE_SOURCE)/*
+	@$(DADAO_MAKE) src_dir=$(TESTS_SIMPLE_SOURCE) -C $(TESTS_SIMPLE_BUILD)
+
 tests-simple-elf-highfive:
 	@rm -fr $(TESTS_SIMPLE_BUILD)
 	@test -d $(TESTS_SIMPLE_BUILD) || mkdir -p $(TESTS_SIMPLE_BUILD)
