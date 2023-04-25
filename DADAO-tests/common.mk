@@ -26,3 +26,6 @@ DADAO_ELF_OBJDUMP_FLAGS		?= --disassemble-all --disassemble-zeroes --section=.te
 
 DADAO_LLVM_CLANG		:= $(DIR_DADAO_INSTALL)/bin/clang
 DADAO_LLVM_LLC			:= $(DIR_DADAO_INSTALL)/bin/llc
+DADAO_LLVM_AS			:= $(DIR_DADAO_INSTALL)/bin/llvm-as
+DADAO_LLVM_MC			:= $(DIR_DADAO_INSTALL)/bin/llvm-mc
+DADAO_LLVM_READOBJ		:= $(DIR_DADAO_INSTALL)/bin/llvm-readobj
