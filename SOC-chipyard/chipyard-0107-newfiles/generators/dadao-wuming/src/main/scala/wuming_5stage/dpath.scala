@@ -69,7 +69,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    //**********************************
    // Exception handling values (all read during mem_stage)
    val mem_tval_data_ma = Wire(UInt(conf.xprlen.W))
-   val mem_tval_inst_ma = Wire(UInt(conf.xprlen.W))
+   // val mem_tval_inst_ma = Wire(UInt(conf.xprlen.W))
 
    //**********************************
 
@@ -620,9 +620,10 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    // Instruction misalign detection
    // In control path, instruction misalignment exception is always raised in the next cycle once the misaligned instruction reaches
    // execution stage, regardless whether the pipeline stalls or not
-   io.dat.exe_inst_misaligned := (exe_brjmp_target(1, 0).orR    && io.ctl.exe_pc_sel === PC_BRJMP) ||
-                                 (exe_jump_reg_target(1, 0).orR && io.ctl.exe_pc_sel === PC_JALR)
-   mem_tval_inst_ma := RegNext(Mux(io.ctl.exe_pc_sel === PC_BRJMP, exe_brjmp_target, exe_jump_reg_target))
+   // ( May be unnessisary in SimRISC )
+   // io.dat.exe_inst_misaligned := (exe_brjmp_target(1, 0).orR    && io.ctl.exe_pc_sel === PC_BRJMP) ||
+   //                               (exe_jump_reg_target(1, 0).orR && io.ctl.exe_pc_sel === PC_JALR)
+   // mem_tval_inst_ma := RegNext(Mux(io.ctl.exe_pc_sel === PC_BRJMP, exe_brjmp_target, exe_jump_reg_target))
 
    val exe_pc_plus4    = (exe_reg_pc + 4.U)(conf.xprlen-1,0)
 
@@ -680,7 +681,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
    csr.io.tval := MuxCase(0.U, Array(
                   (io.ctl.mem_exception_cause === Causes.illegal_instruction.U) -> RegNext(exe_reg_inst),
-                  (io.ctl.mem_exception_cause === Causes.misaligned_fetch.U)    -> mem_tval_inst_ma,
+                  // (io.ctl.mem_exception_cause === Causes.misaligned_fetch.U)    -> mem_tval_inst_ma,
                   (io.ctl.mem_exception_cause === Causes.misaligned_store.U)    -> mem_tval_data_ma,
                   (io.ctl.mem_exception_cause === Causes.misaligned_load.U)     -> mem_tval_data_ma,
                   ))
