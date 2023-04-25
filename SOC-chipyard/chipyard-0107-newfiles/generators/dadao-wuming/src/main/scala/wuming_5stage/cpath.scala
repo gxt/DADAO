@@ -85,8 +85,8 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
    // val (cs_val_inst: Bool) :: cs_br_type :: cs_op1_sel :: cs_op2_sel :: (cs_rs1_oen: Bool) :: (cs_rs2_oen: Bool) :: cs0 = csignals
    // val cs_alu_fun :: cs_wb_sel :: (cs_rf_wen: Bool) :: (cs_mem_en: Bool) :: cs_mem_fcn :: cs_msk_sel :: cs_csr_cmd :: (cs_fencei: Bool) :: Nil = cs0
 
-   val cs_rs1_oen = N
-   val cs_rs2_oen = N
+   // val cs_rs1_oen = N
+   // val cs_rs2_oen = N
    
    val (cs_val_inst: Bool) :: cs_ctrl_flow  :: cs_cond_fun       :: cs_reg_group  :: cs_op1_sel :: cs_op2_sel :: cs0 = csignals
    val cs_alu_fun          :: cs_wb_sel     :: (cs_rf_wen: Bool) ::               cs1 = cs0
@@ -151,15 +151,90 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
    // Stall Signal Logic --------------------
    val stall   = Wire(Bool())
 
-   val dec_rs1_addr = io.dat.dec_inst(19, 15)
-   val dec_rs2_addr = io.dat.dec_inst(24, 20)
-   val dec_wbaddr   = io.dat.dec_inst(11, 7)
-   val dec_rs1_oen  = Mux(deckill, false.B, cs_rs1_oen)
-   val dec_rs2_oen  = Mux(deckill, false.B, cs_rs2_oen)
+   val dec_ha_addr  = io.dat.dec_inst(HA_MSB, HA_LSB)
+   val dec_hb_addr  = io.dat.dec_inst(HB_MSB, HB_LSB)
+   val dec_hc_addr  = io.dat.dec_inst(HC_MSB, HC_LSB)
+   val dec_hd_addr  = io.dat.dec_inst(HD_MSB, HD_LSB)
+   
+   val dec_wb_addr  = MuxCase(dec_ha_addr, Array(
+                        (cs_wb_sel === S_WB_RDHB) -> dec_hb_addr,
+                        (cs_wb_sel === S_WB_RDHC) -> dec_hc_addr,
+                        (cs_wb_sel === S_WB_RBHB) -> dec_hb_addr,
+                        (cs_wb_sel === S_WB_RFHB) -> dec_hb_addr,
+                        (cs_wb_sel === S_WB_HAHB) -> dec_hb_addr,
+                        (cs_wb_sel === S_WB_CSR)  -> dec_hd_addr,
+                     ))
+   val dec_wb2_addr = dec_ha_addr
+   
+   val dec_wb_rf    = Reg(UInt(3.W))
+   val dec_wb2_rf   = Reg(UInt(3.W))
+
+   dec_wb_rf       := MuxCase(RFX2, Array(
+                        (cs_wb_sel === S_WB_RDHA) -> RFD,
+                        (cs_wb_sel === S_WB_RDHB) -> RFD,
+                        (cs_wb_sel === S_WB_RDHC) -> RFD,
+                        (cs_wb_sel === S_WB_RBHA) -> RFB,
+                        (cs_wb_sel === S_WB_RBHB) -> RFB,
+                        (cs_wb_sel === S_WB_RFHA) -> RFF,
+                        (cs_wb_sel === S_WB_RFHB) -> RFF,
+                        (cs_wb_sel === S_WB_HAHB) -> RFD,
+                        (cs_wb_sel === S_WB_CSR)  -> RFD,
+                        (cs_wb_sel === S_WB_RA)   -> RFA
+                     ))
+   dec_wb2_rf      := Mux((cs_wb_sel === S_WB_HAHB), RFD, RFX2)
+
+   val dec_op1_addr = MuxCase(dec_ha_addr, Array(
+                        (cs_op1_sel === S_OP1_RDHA) -> dec_ha_addr,
+                        (cs_op1_sel === S_OP1_RDHB) -> dec_hb_addr,
+                        (cs_op1_sel === S_OP1_RDHC) -> dec_hc_addr,
+                        (cs_op1_sel === S_OP1_RBHA) -> dec_ha_addr,
+                        (cs_op1_sel === S_OP1_RBHB) -> dec_hb_addr,
+                        (cs_op1_sel === S_OP1_RBHC) -> dec_hc_addr,
+                        (cs_op1_sel === S_OP1_RFHA) -> dec_ha_addr,
+                     ))
+   val dec_op1_rf   = MuxCase(RFX, Array(
+                        (cs_op1_sel === S_OP1_RDHA) -> RFD,
+                        (cs_op1_sel === S_OP1_RDHB) -> RFD,
+                        (cs_op1_sel === S_OP1_RDHC) -> RFD,
+                        (cs_op1_sel === S_OP1_RBHA) -> RFB,
+                        (cs_op1_sel === S_OP1_RBHB) -> RFB,
+                        (cs_op1_sel === S_OP1_RBHC) -> RFB,
+                        (cs_op1_sel === S_OP1_RFHA) -> RFF,
+                     ))
+
+   val dec_op2_addr = MuxCase(dec_ha_addr, Array(
+                        (cs_op2_sel === S_OP2_RDHC) -> dec_hc_addr,
+                        (cs_op2_sel === S_OP2_RDHD) -> dec_hd_addr,
+                        (cs_op2_sel === S_OP2_RBHC) -> dec_hc_addr,
+                        (cs_op2_sel === S_OP2_RBHD) -> dec_hd_addr,
+                        (cs_op2_sel === S_OP2_RFHC) -> dec_hc_addr,
+                     ))
+   val dec_op2_rf   = MuxCase(RFX, Array(
+                        (cs_op2_sel === S_OP2_RDHC) -> RFD,
+                        (cs_op2_sel === S_OP2_RDHD) -> RFD,
+                        (cs_op2_sel === S_OP2_RBHC) -> RFB,
+                        (cs_op2_sel === S_OP2_RBHD) -> RFB,
+                        (cs_op2_sel === S_OP2_RFHC) -> RFF,
+                     ))
+
+   // val dec_rs1_addr = io.dat.dec_inst(19, 15)
+   // val dec_rs2_addr = io.dat.dec_inst(24, 20)
+   // val dec_wbaddr   = io.dat.dec_inst(11, 7)
+   // val dec_rs1_oen  = Mux(deckill, false.B, cs_rs1_oen)
+   // val dec_rs2_oen  = Mux(deckill, false.B, cs_rs2_oen)
 
    val exe_reg_wbaddr      = Reg(UInt())
    val mem_reg_wbaddr      = Reg(UInt())
    val wb_reg_wbaddr       = Reg(UInt())
+   val exe_reg_wbrf        = Reg(UInt())
+   val mem_reg_wbrf        = Reg(UInt())
+   val wb_reg_wbrf         = Reg(UInt())
+   val exe_reg_wb2addr     = Reg(UInt())
+   val mem_reg_wb2addr     = Reg(UInt())
+   val wb_reg_wb2addr      = Reg(UInt())
+   val exe_reg_wb2rf       = Reg(UInt())
+   val mem_reg_wb2rf       = Reg(UInt())
+   val wb_reg_wb2rf        = Reg(UInt())
    val exe_reg_ctrl_rf_wen = RegInit(false.B)
    val mem_reg_ctrl_rf_wen = RegInit(false.B)
    val wb_reg_ctrl_rf_wen  = RegInit(false.B)
@@ -180,7 +255,10 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
       }
       .otherwise
       {
-         exe_reg_wbaddr      := dec_wbaddr
+         exe_reg_wbaddr      := dec_wb_addr
+         exe_reg_wbrf        := dec_wb_rf
+         exe_reg_wb2addr      := dec_wb2_addr
+         exe_reg_wb2rf        := dec_wb2_rf
          exe_reg_ctrl_rf_wen := cs_rf_wen
          exe_reg_is_csr      := cs_csr_cmd =/= CSR.N && cs_csr_cmd =/= CSR.I
          exe_reg_illegal     := dec_illegal
@@ -196,7 +274,13 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
    }
    when (!full_stall) {
      mem_reg_wbaddr      := exe_reg_wbaddr
+     mem_reg_wbrf        := exe_reg_wbrf
+     mem_reg_wb2addr     := exe_reg_wb2addr
+     mem_reg_wb2rf       := exe_reg_wb2rf
      wb_reg_wbaddr       := mem_reg_wbaddr
+     wb_reg_wbrf         := mem_reg_wbrf
+     wb_reg_wb2addr      := mem_reg_wb2addr
+     wb_reg_wb2rf        := mem_reg_wb2rf
      mem_reg_ctrl_rf_wen := exe_reg_ctrl_rf_wen
      wb_reg_ctrl_rf_wen  := mem_reg_ctrl_rf_wen
    }
@@ -220,21 +304,26 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
    if (USE_FULL_BYPASSING)
    {
       // stall for load-use hazard
-      stall := ((exe_inst_is_load) && (exe_reg_wbaddr === dec_rs1_addr) && (exe_reg_wbaddr =/= 0.U) && dec_rs1_oen) ||
-               ((exe_inst_is_load) && (exe_reg_wbaddr === dec_rs2_addr) && (exe_reg_wbaddr =/= 0.U) && dec_rs2_oen) ||
-               (exe_reg_is_csr)
+      stall := ((exe_inst_is_load) && (exe_reg_wbaddr === dec_op1_addr) && (exe_reg_wbrf === dec_op1_rf)) ||
+               ((exe_inst_is_load) && (exe_reg_wbaddr === dec_op2_addr) && (exe_reg_wbrf === dec_op2_rf)) ||(exe_reg_is_csr)
    }
    else
    {
       // stall for all hazards
-      stall := ((exe_reg_wbaddr === dec_rs1_addr) && (dec_rs1_addr =/= 0.U) && exe_reg_ctrl_rf_wen && dec_rs1_oen) ||
-               ((mem_reg_wbaddr === dec_rs1_addr) && (dec_rs1_addr =/= 0.U) && mem_reg_ctrl_rf_wen && dec_rs1_oen) ||
-               ((wb_reg_wbaddr  === dec_rs1_addr) && (dec_rs1_addr =/= 0.U) &&  wb_reg_ctrl_rf_wen && dec_rs1_oen) ||
-               ((exe_reg_wbaddr === dec_rs2_addr) && (dec_rs2_addr =/= 0.U) && exe_reg_ctrl_rf_wen && dec_rs2_oen) ||
-               ((mem_reg_wbaddr === dec_rs2_addr) && (dec_rs2_addr =/= 0.U) && mem_reg_ctrl_rf_wen && dec_rs2_oen) ||
-               ((wb_reg_wbaddr  === dec_rs2_addr) && (dec_rs2_addr =/= 0.U) &&  wb_reg_ctrl_rf_wen && dec_rs2_oen) ||
-               ((exe_inst_is_load) && (exe_reg_wbaddr === dec_rs1_addr) && (exe_reg_wbaddr =/= 0.U) && dec_rs1_oen) ||
-               ((exe_inst_is_load) && (exe_reg_wbaddr === dec_rs2_addr) && (exe_reg_wbaddr =/= 0.U) && dec_rs2_oen) ||
+      stall := ((exe_reg_wbaddr === dec_op1_addr) && (exe_reg_wbrf === dec_op1_rf)) ||
+               ((mem_reg_wbaddr === dec_op1_addr) && (mem_reg_wbrf === dec_op1_rf)) ||
+               ((wb_reg_wbaddr  === dec_op1_addr) && (wb_reg_wbrf  === dec_op1_rf)) ||
+               ((exe_reg_wbaddr === dec_op2_addr) && (exe_reg_wbrf === dec_op2_rf)) ||
+               ((mem_reg_wbaddr === dec_op2_addr) && (mem_reg_wbrf === dec_op2_rf)) ||
+               ((wb_reg_wbaddr  === dec_op2_addr) && (wb_reg_wbrf  === dec_op2_rf)) ||
+               ((exe_reg_wb2addr === dec_op1_addr) && (exe_reg_wb2rf === dec_op1_rf)) ||
+               ((mem_reg_wb2addr === dec_op1_addr) && (mem_reg_wb2rf === dec_op1_rf)) ||
+               ((wb_reg_wb2addr  === dec_op1_addr) && (wb_reg_wb2rf  === dec_op1_rf)) ||
+               ((exe_reg_wb2addr === dec_op2_addr) && (exe_reg_wb2rf === dec_op2_rf)) ||
+               ((mem_reg_wb2addr === dec_op2_addr) && (mem_reg_wb2rf === dec_op2_rf)) ||
+               ((wb_reg_wb2addr  === dec_op2_addr) && (wb_reg_wb2rf  === dec_op2_rf)) ||
+               ((exe_inst_is_load) && (exe_reg_wbaddr === dec_op1_addr) && (exe_reg_wbrf === dec_op1_rf)) ||
+               ((exe_inst_is_load) && (exe_reg_wbaddr === dec_op2_addr) && (exe_reg_wbrf === dec_op2_rf)) ||
                ((exe_reg_is_csr))
    }
 

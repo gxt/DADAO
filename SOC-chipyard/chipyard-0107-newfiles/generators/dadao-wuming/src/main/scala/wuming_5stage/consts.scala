@@ -207,6 +207,14 @@ trait ScalarOpConstants
    val S_WB_CSR   = 15.asUInt(4.W)
    val S_WB_X     = 0.asUInt(4.W)
 
+   val RFX     = 0.asUInt(3.W)
+   val RFA     = 1.asUInt(3.W)
+   val RFD     = 2.asUInt(3.W)
+   val RFB     = 3.asUInt(3.W)
+   val RFF     = 4.asUInt(3.W)
+   val RFM     = 5.asUInt(3.W)
+   val RFX2    = 6.asUInt(3.W)
+
    // Memory Write Signal
    val MWR_0   = false.B
    val MWR_1   = true.B
