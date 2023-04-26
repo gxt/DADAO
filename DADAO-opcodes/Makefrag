@@ -57,5 +57,5 @@ opcodes-highfive:
 	@make -s opcodes-disassemble
 	@make -s opcodes-encoding
 	@make -s opcodes-bitpat
-	@make -s opcodes-tracer
+#	@make -s opcodes-tracer
 
