@@ -67,18 +67,18 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
 
    val csignals =
       ListLookup(io.dat.dec_inst,
-                       List(N, CF_X, COND_X, REG_X  , S_OP1_X, S_OP2_X   , S_ALU_X    , S_WB_X   , REN_0, MEN_0, M_X, MT_X, CSR.N, N),
-         Array(      /* val  | Control | cond  | reg  | op1  |    op2    |    ALU     | wb       | rf   | mem  | mem | mask | csr | fence*/
-                     /* inst |   flow  |  fcn  |  set |  sel |    sel    |    fcn     | sel      | wen  |  en  |  wr | type | cmd | */
-            SWYM    -> List(Y, CF_X, COND_X, REG_X  , S_OP1_X, S_OP2_X   , S_ALU_X    , S_WB_X   , REN_0, MEN_0, M_X, MT_X, CSR.N, N),
-            FENCE   -> List(Y, CF_X, COND_X, REG_X  , S_OP1_X, S_OP2_X   , S_ALU_X    , S_WB_X   , REN_0, MEN_0, M_X, MT_X, CSR.N, Y),
-            RD2RD   -> List(Y, CF_X, COND_X, REG_MRD, S_OP1_X, S_OP2_RDHC, S_ALU_COPY2, S_WB_RDHB, REN_0, MEN_0, M_X, MT_X, CSR.N, N),
-            RD2RB   -> List(Y, CF_X, COND_X, REG_MRB, S_OP1_X, S_OP2_RDHC, S_ALU_COPY2, S_WB_RBHB, REN_0, MEN_0, M_X, MT_X, CSR.N, N),
-            RB2RD   -> List(Y, CF_X, COND_X, REG_MRD, S_OP1_X, S_OP2_RBHC, S_ALU_COPY2, S_WB_RDHB, REN_0, MEN_0, M_X, MT_X, CSR.N, N),
-            RB2RB   -> List(Y, CF_X, COND_X, REG_MRB, S_OP1_X, S_OP2_RBHC, S_ALU_COPY2, S_WB_RBHB, REN_0, MEN_0, M_X, MT_X, CSR.N, N),
-            RD2RF   -> List(Y, CF_X, COND_X, REG_MRF, S_OP1_X, S_OP2_RDHC, S_ALU_COPY2, S_WB_RFHB, REN_0, MEN_0, M_X, MT_X, CSR.N, N),
-            RF2RD   -> List(Y, CF_X, COND_X, REG_MRD, S_OP1_X, S_OP2_RFHC, S_ALU_COPY2, S_WB_RDHB, REN_0, MEN_0, M_X, MT_X, CSR.N, N),
-            RF2RF   -> List(Y, CF_X, COND_X, REG_MRF, S_OP1_X, S_OP2_RFHC, S_ALU_COPY2, S_WB_RFHB, REN_0, MEN_0, M_X, MT_X, CSR.N, N),
+                       List(N, CF_X, COND_X, REG_X  , S_OP1_X, S_OP2_X   , S_ALU_X    , S_WB_X   , MEN_0, M_X, MT_X, CSR.N, N),
+         Array(      /* val  | Control | cond  | reg  | op1  |    op2    |    ALU     | wb       | mem  | mem | mask | csr | fence*/
+                     /* inst |   flow  |  fcn  |  set |  sel |    sel    |    fcn     | sel      |  en  |  wr | type | cmd | */
+            SWYM    -> List(Y, CF_X, COND_X, REG_X  , S_OP1_X, S_OP2_X   , S_ALU_X    , S_WB_X   , MEN_0, M_X, MT_X, CSR.N, N),
+            FENCE   -> List(Y, CF_X, COND_X, REG_X  , S_OP1_X, S_OP2_X   , S_ALU_X    , S_WB_X   , MEN_0, M_X, MT_X, CSR.N, Y),
+            RD2RD   -> List(Y, CF_X, COND_X, REG_MRD, S_OP1_X, S_OP2_RDHC, S_ALU_COPY2, S_WB_RDHB, MEN_0, M_X, MT_X, CSR.N, N),
+            RD2RB   -> List(Y, CF_X, COND_X, REG_MRB, S_OP1_X, S_OP2_RDHC, S_ALU_COPY2, S_WB_RBHB, MEN_0, M_X, MT_X, CSR.N, N),
+            RB2RD   -> List(Y, CF_X, COND_X, REG_MRD, S_OP1_X, S_OP2_RBHC, S_ALU_COPY2, S_WB_RDHB, MEN_0, M_X, MT_X, CSR.N, N),
+            RB2RB   -> List(Y, CF_X, COND_X, REG_MRB, S_OP1_X, S_OP2_RBHC, S_ALU_COPY2, S_WB_RBHB, MEN_0, M_X, MT_X, CSR.N, N),
+            RD2RF   -> List(Y, CF_X, COND_X, REG_MRF, S_OP1_X, S_OP2_RDHC, S_ALU_COPY2, S_WB_RFHB, MEN_0, M_X, MT_X, CSR.N, N),
+            RF2RD   -> List(Y, CF_X, COND_X, REG_MRD, S_OP1_X, S_OP2_RFHC, S_ALU_COPY2, S_WB_RDHB, MEN_0, M_X, MT_X, CSR.N, N),
+            RF2RF   -> List(Y, CF_X, COND_X, REG_MRF, S_OP1_X, S_OP2_RFHC, S_ALU_COPY2, S_WB_RFHB, MEN_0, M_X, MT_X, CSR.N, N),
                ))
 
    // Put these control signals in variables
@@ -89,7 +89,7 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
    // val cs_rs2_oen = N
    
    val (cs_val_inst: Bool) :: cs_ctrl_flow  :: cs_cond_fun       :: cs_reg_group  :: cs_op1_sel :: cs_op2_sel :: cs0 = csignals
-   val cs_alu_fun          :: cs_wb_sel     :: (cs_rf_wen: Bool) ::               cs1 = cs0
+   val cs_alu_fun          :: cs_wb_sel     :: /*(cs_rf_wen: Bool) ::   */            cs1 = cs0
    val (cs_mem_en: Bool)   :: cs_mem_fcn    :: cs_msk_sel        :: cs_csr_cmd    :: (cs_fencei: Bool) :: Nil = cs1
 //  S_PC_4     
 //  S_PC_EXCP  
@@ -251,9 +251,9 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
    val exe_reg_wb2rf       = Reg(UInt())
    val mem_reg_wb2rf       = Reg(UInt())
    val wb_reg_wb2rf        = Reg(UInt())
-   val exe_reg_ctrl_rf_wen = RegInit(false.B)
-   val mem_reg_ctrl_rf_wen = RegInit(false.B)
-   val wb_reg_ctrl_rf_wen  = RegInit(false.B)
+   // val exe_reg_ctrl_rf_wen = RegInit(false.B)
+   // val mem_reg_ctrl_rf_wen = RegInit(false.B)
+   // val wb_reg_ctrl_rf_wen  = RegInit(false.B)
    val exe_reg_illegal     = RegInit(false.B)
 
    val exe_reg_is_csr = RegInit(false.B)
@@ -268,7 +268,7 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
          exe_reg_wb2addr     := 0.U
          exe_reg_wbrf        := RFX2
          exe_reg_wb2rf       := RFX2
-         exe_reg_ctrl_rf_wen := false.B
+         // exe_reg_ctrl_rf_wen := false.B
          exe_reg_is_csr      := false.B
          exe_reg_illegal     := false.B
       }
@@ -278,7 +278,7 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
          exe_reg_wbrf        := dec_wb_rf
          exe_reg_wb2addr      := dec_wb2_addr
          exe_reg_wb2rf        := dec_wb2_rf
-         exe_reg_ctrl_rf_wen := cs_rf_wen
+         // exe_reg_ctrl_rf_wen := cs_rf_wen
          exe_reg_is_csr      := cs_csr_cmd =/= CSR.N && cs_csr_cmd =/= CSR.I
          exe_reg_illegal     := dec_illegal
       }
@@ -290,7 +290,7 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
       exe_reg_wb2addr     := 0.U
       exe_reg_wbrf        := RFX2
       exe_reg_wb2rf       := RFX2
-      exe_reg_ctrl_rf_wen := false.B
+      // exe_reg_ctrl_rf_wen := false.B
       exe_reg_is_csr      := false.B
       exe_reg_illegal     := false.B
    }
@@ -303,8 +303,8 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
      wb_reg_wbrf         := mem_reg_wbrf
      wb_reg_wb2addr      := mem_reg_wb2addr
      wb_reg_wb2rf        := mem_reg_wb2rf
-     mem_reg_ctrl_rf_wen := exe_reg_ctrl_rf_wen
-     wb_reg_ctrl_rf_wen  := mem_reg_ctrl_rf_wen
+   //   mem_reg_ctrl_rf_wen := exe_reg_ctrl_rf_wen
+   //   wb_reg_ctrl_rf_wen  := mem_reg_ctrl_rf_wen
    }
 
    val exe_inst_is_load = RegInit(false.B)
@@ -375,7 +375,7 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
    io.ctl.op2_sel    := cs_op2_sel
    io.ctl.alu_fun    := cs_alu_fun
    io.ctl.wb_sel     := cs_wb_sel
-   io.ctl.rf_wen     := cs_rf_wen
+   // io.ctl.rf_wen     := cs_rf_wen
 
    // we need to stall IF while fencei goes through DEC and EXE, as there may
    // be a store we need to wait to clear in MEM.
