@@ -164,6 +164,23 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
             CALLi   -> List(Y, CF_CALLI, COND_X , RAS_PUSH, S_OP1_X   , S_OP2_X     , S_ALU_X    , S_WB_RA  , MEN_0, M_X  , MT_X , CSR.N, N),
             CALLr   -> List(Y, CF_CALLR, COND_X , RAS_PUSH, S_OP1_X   , S_OP2_X     , S_ALU_X    , S_WB_RA  , MEN_0, M_X  , MT_X , CSR.N, N),
             RET     -> List(Y, CF_RET  , COND_X , RAS_POP , S_OP1_X   , S_OP2_IMMS18, S_ALU_COPY2, S_WB_RDHA, MEN_0, M_X  , MT_X , CSR.N, N),
+
+            SETZWrd -> List(Y, CF_X    , COND_X , REG_RD  , S_OP1_X   , S_OP2_WYDE  , S_ALU_COPY2, S_WB_RDHA, MEN_0, M_X  , MT_X , CSR.N, N),
+            SETZWrb -> List(Y, CF_X    , COND_X , REG_RB  , S_OP1_X   , S_OP2_WYDE  , S_ALU_COPY2, S_WB_RBHA, MEN_0, M_X  , MT_X , CSR.N, N),
+            SETOW   -> List(Y, CF_X    , COND_X , REG_RD  , S_OP1_X   , S_OP2_WYDE  , S_ALU_SETOW, S_WB_RDHA, MEN_0, M_X  , MT_X , CSR.N, N),
+            ORWrd   -> List(Y, CF_X    , COND_X , REG_RD  , S_OP1_RDHA, S_OP2_WYDE  , S_ALU_OR   , S_WB_RDHA, MEN_0, M_X  , MT_X , CSR.N, N),
+            ORWrb   -> List(Y, CF_X    , COND_X , REG_RB  , S_OP1_RBHA, S_OP2_WYDE  , S_ALU_OR   , S_WB_RBHA, MEN_0, M_X  , MT_X , CSR.N, N),
+            ANDNWrd -> List(Y, CF_X    , COND_X , REG_RD  , S_OP1_RDHA, S_OP2_WYDE  , S_ALU_ANDNW, S_WB_RDHA, MEN_0, M_X  , MT_X , CSR.N, N),
+            ANDNWrb -> List(Y, CF_X    , COND_X , REG_RB  , S_OP1_RBHA, S_OP2_WYDE  , S_ALU_ANDNW, S_WB_RBHA, MEN_0, M_X  , MT_X , CSR.N, N),
+            SETW    -> List(Y, CF_X    , COND_X , REG_RF  , S_OP1_RFHA, S_OP2_WYDE  , S_ALU_SETW , S_WB_RFHA, MEN_0, M_X  , MT_X , CSR.N, N),
+
+            ADRP    -> List(Y, CF_X    , COND_X , REG_X   , S_OP1_PC  , S_OP2_IMMS18, S_ALU_ADRP , S_WB_RBHA, MEN_0, M_X  , MT_X , CSR.N, N),
+
+            CPCO    -> List(Y, CF_X    , COND_X , REG_X   , S_OP1_X   , S_OP2_X     , S_ALU_X    , S_WB_X   , MEN_0, M_X  , MT_X , CSR.N, N),
+            CPRD    -> List(Y, CF_X    , COND_X , REG_CSR , S_OP1_X   , S_OP2_X     , S_ALU_X    , S_WB_CSR , MEN_0, M_X  , MT_X , CSR.R, N),
+            CPWR    -> List(Y, CF_X    , COND_X , REG_CSR , S_OP1_X   , S_OP2_RDHD  , S_ALU_COPY2, S_WB_X   , MEN_0, M_X  , MT_X , CSR.W, N),
+            TRAP    -> List(Y, CF_X    , COND_X , REG_X   , S_OP1_X   , S_OP2_X     , S_ALU_X    , S_WB_X   , MEN_0, M_X  , MT_X , CSR.I, N),
+            ESCAPE  -> List(Y, CF_X    , COND_X , REG_X   , S_OP1_X   , S_OP2_X     , S_ALU_X    , S_WB_X   , MEN_0, M_X  , MT_X , CSR.I, N),
                ))
 
    // Put these control signals in variables
