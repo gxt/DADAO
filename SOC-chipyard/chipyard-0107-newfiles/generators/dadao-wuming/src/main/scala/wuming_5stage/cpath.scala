@@ -217,6 +217,22 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                         (cs_op2_sel === S_OP2_RFHC) -> RFF,
                      ))
 
+   val dec_cond1_rf = MuxCase(RFX, Array(
+                        (cs_cond_fun === COND_EQ) -> RFD,
+                        (cs_cond_fun === COND_NE) -> RFD,
+                        (cs_cond_fun === COND_Z)  -> RFD,
+                        (cs_cond_fun === COND_NZ) -> RFD,
+                        (cs_cond_fun === COND_P)  -> RFD,
+                        (cs_cond_fun === COND_NP) -> RFD,
+                        (cs_cond_fun === COND_N)  -> RFD,
+                        (cs_cond_fun === COND_NN) -> RFD,
+                     ))
+                     
+   val dec_cond2_rf = MuxCase(RFX, Array(
+                        (cs_cond_fun === COND_EQ) -> RFD,
+                        (cs_cond_fun === COND_NE) -> RFD,
+                     ))
+
    // val dec_rs1_addr = io.dat.dec_inst(19, 15)
    // val dec_rs2_addr = io.dat.dec_inst(24, 20)
    // val dec_wbaddr   = io.dat.dec_inst(11, 7)
@@ -249,6 +265,9 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
       when (deckill)
       {
          exe_reg_wbaddr      := 0.U
+         exe_reg_wb2addr     := 0.U
+         exe_reg_wbrf        := RFX2
+         exe_reg_wb2rf       := RFX2
          exe_reg_ctrl_rf_wen := false.B
          exe_reg_is_csr      := false.B
          exe_reg_illegal     := false.B
@@ -268,6 +287,9 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
    {
       // kill exe stage
       exe_reg_wbaddr      := 0.U
+      exe_reg_wb2addr     := 0.U
+      exe_reg_wbrf        := RFX2
+      exe_reg_wb2rf       := RFX2
       exe_reg_ctrl_rf_wen := false.B
       exe_reg_is_csr      := false.B
       exe_reg_illegal     := false.B
@@ -305,7 +327,10 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
    {
       // stall for load-use hazard
       stall := ((exe_inst_is_load) && (exe_reg_wbaddr === dec_op1_addr) && (exe_reg_wbrf === dec_op1_rf)) ||
-               ((exe_inst_is_load) && (exe_reg_wbaddr === dec_op2_addr) && (exe_reg_wbrf === dec_op2_rf)) ||(exe_reg_is_csr)
+               ((exe_inst_is_load) && (exe_reg_wbaddr === dec_op2_addr) && (exe_reg_wbrf === dec_op2_rf)) ||
+               ((exe_inst_is_load) && (exe_reg_wbaddr === dec_ha_addr) && (exe_reg_wbrf === dec_cond1_rf)) ||
+               ((exe_inst_is_load) && (exe_reg_wbaddr === dec_hb_addr) && (exe_reg_wbrf === dec_cond2_rf)) ||
+               (exe_reg_is_csr)
    }
    else
    {
@@ -322,8 +347,14 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                ((exe_reg_wb2addr === dec_op2_addr) && (exe_reg_wb2rf === dec_op2_rf)) ||
                ((mem_reg_wb2addr === dec_op2_addr) && (mem_reg_wb2rf === dec_op2_rf)) ||
                ((wb_reg_wb2addr  === dec_op2_addr) && (wb_reg_wb2rf  === dec_op2_rf)) ||
-               ((exe_inst_is_load) && (exe_reg_wbaddr === dec_op1_addr) && (exe_reg_wbrf === dec_op1_rf)) ||
-               ((exe_inst_is_load) && (exe_reg_wbaddr === dec_op2_addr) && (exe_reg_wbrf === dec_op2_rf)) ||
+               ((exe_reg_wbaddr === dec_ha_addr) && (exe_reg_wbrf === dec_cond1_rf)) ||
+               ((mem_reg_wbaddr === dec_ha_addr) && (mem_reg_wbrf === dec_cond1_rf)) ||
+               ((wb_reg_wbaddr  === dec_ha_addr) && (wb_reg_wbrf  === dec_cond1_rf)) ||
+               ((exe_reg_wbaddr === dec_hb_addr) && (exe_reg_wbrf === dec_cond2_rf)) ||
+               ((mem_reg_wbaddr === dec_hb_addr) && (mem_reg_wbrf === dec_cond2_rf)) ||
+               ((wb_reg_wbaddr  === dec_hb_addr) && (wb_reg_wbrf  === dec_cond2_rf)) ||
+               // ((exe_inst_is_load) && (exe_reg_wbaddr === dec_op1_addr) && (exe_reg_wbrf === dec_op1_rf)) ||
+               // ((exe_inst_is_load) && (exe_reg_wbaddr === dec_op2_addr) && (exe_reg_wbrf === dec_op2_rf)) ||
                ((exe_reg_is_csr))
    }
 
