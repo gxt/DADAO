@@ -241,8 +241,8 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
    //                                                          PC_4
    //                   ))))))))))
 
-   val ifkill  = (ctrl_exe_pc_sel =/= PC_4) || cs_fencei || RegNext(cs_fencei)
-   val deckill = (ctrl_exe_pc_sel =/= PC_4)
+   val ifkill  = (ctrl_exe_pc_sel =/= S_PC_4) || cs_fencei || RegNext(cs_fencei)
+   val deckill = (ctrl_exe_pc_sel =/= S_PC_4)
 
    // Exception Handling ---------------------
 

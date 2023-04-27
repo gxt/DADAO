@@ -21,7 +21,7 @@ trait WumingProcConstants
 
    //************************************
    // Machine Parameters
-   val USE_FULL_BYPASSING = true  // turn on full bypassing (only stalls
+   val USE_FULL_BYPASSING = false  // turn on full bypassing (only stalls
                                   // on load-use). Otherwise rely
                                   // entirely on interlocking to handle
                                   // pipeline hazards.
@@ -36,10 +36,10 @@ trait ScalarOpConstants
    val N        = false.B
 
    // PC Select Signal
-   val PC_4     = 0.asUInt(2.W)  // PC + 4
-   val PC_BRJMP = 1.asUInt(2.W)  // brjmp_target
-   val PC_JALR  = 2.asUInt(2.W)  // jump_reg_target
-   val PC_EXC   = 3.asUInt(2.W)  // exception
+   // val PC_4     = 0.asUInt(2.W)  // PC + 4
+   // val PC_BRJMP = 1.asUInt(2.W)  // brjmp_target
+   // val PC_JALR  = 2.asUInt(2.W)  // jump_reg_target
+   // val PC_EXC   = 3.asUInt(2.W)  // exception
 
    // SimRISC PC Select Signal
    val S_PC_4     = 0.asUInt(3.W)  // PC + 4
