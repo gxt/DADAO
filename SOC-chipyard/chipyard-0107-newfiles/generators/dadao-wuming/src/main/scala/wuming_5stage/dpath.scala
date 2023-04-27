@@ -21,7 +21,7 @@ import wuming.common._
 
 class DatToCtlIo(implicit val conf: WumingCoreParams) extends Bundle()
 {
-   val dec_inst    = Output(UInt(conf.xprlen.W))
+   val dec_inst    = Output(UInt(conf.instlen.W))
    val dec_valid   = Output(Bool())
    // val exe_br_eq   = Output(Bool())
    // val exe_br_lt   = Output(Bool())
@@ -88,7 +88,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val exe_reg_valid         = RegInit(false.B)
    val exe_reg_inst          = RegInit(BUBBLE)
    val exe_reg_pc            = RegInit(0.asUInt(conf.xprlen.W))
-   val exe_reg_wbaddr        = Reg(UInt(5.W))
+   // val exe_reg_wbaddr        = Reg(UInt(5.W))
    // val exe_reg_rs1_addr      = Reg(UInt(5.W))
    // val exe_reg_rs2_addr      = Reg(UInt(5.W))
    val exe_reg_op1_data      = Reg(UInt(conf.xprlen.W))
@@ -104,8 +104,8 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val exe_reg_hb_addr       = Reg(UInt(6.W))
    val exe_reg_hc_addr       = Reg(UInt(6.W))
    val exe_reg_hd_addr       = Reg(UInt(6.W))
-   val exe_reg_ctrl_cf_type  = RegInit(BR_N)
-   val exe_reg_ctrl_cd_type  = RegInit(BR_N)
+   val exe_reg_ctrl_cf_type  = RegInit(CF_X)
+   val exe_reg_ctrl_cd_type  = RegInit(COND_N)
    val exe_reg_ctrl_op2_sel  = Reg(UInt())
    val exe_reg_ctrl_alu_fun  = Reg(UInt())
    val exe_reg_ctrl_wb_sel   = Reg(UInt())
@@ -121,7 +121,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val mem_reg_pc            = Reg(UInt(conf.xprlen.W))
    val mem_reg_inst          = RegInit(BUBBLE)
    // val mem_reg_alu_out       = Reg(Bits())
-   val mem_reg_wbaddr        = Reg(UInt())
+   // val mem_reg_wbaddr        = Reg(UInt())
    // val mem_reg_rs1_addr      = Reg(UInt())
    // val mem_reg_rs2_addr      = Reg(UInt())
    val mem_reg_op1_data      = Reg(UInt(conf.xprlen.W))
@@ -263,9 +263,9 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
    //**********************************
    // Decode Stage
-   val dec_rs1_addr = dec_reg_inst(19, 15)
-   val dec_rs2_addr = dec_reg_inst(24, 20)
-   val dec_wbaddr   = dec_reg_inst(11, 7)
+   // val dec_rs1_addr = dec_reg_inst(19, 15)
+   // val dec_rs2_addr = dec_reg_inst(24, 20)
+   // val dec_wbaddr   = dec_reg_inst(11, 7)
 
    val dec_ha_addr  = dec_reg_inst(HA_MSB, HA_LSB)
    val dec_hb_addr  = dec_reg_inst(HB_MSB, HB_LSB)
@@ -390,6 +390,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                )).asUInt()
    */
    val dec_alu_op2 = MuxCase(0.U, Array(
+               (io.ctl.op2_sel === S_OP2_RDHB)   -> rf_rdhc_data,
                (io.ctl.op2_sel === S_OP2_RDHC)   -> rf_rdhc_data,
                (io.ctl.op2_sel === S_OP2_RDHD)   -> rf_rdhd_data,
                (io.ctl.op2_sel === S_OP2_RBHC)   -> rf_rbhc_data,
@@ -480,7 +481,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       // insert NOP (bubble) into Execute stage on front-end stall (e.g., hazard clearing)
       exe_reg_valid         := false.B
       exe_reg_inst          := BUBBLE
-      exe_reg_wbaddr        := 0.U
+      // exe_reg_wbaddr        := 0.U
       // exe_reg_ctrl_rf_wen   := false.B
       exe_reg_ctrl_mem_val  := false.B
       exe_reg_ctrl_mem_fcn  := M_X
@@ -516,7 +517,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       {
          exe_reg_valid         := false.B
          exe_reg_inst          := BUBBLE
-         exe_reg_wbaddr        := 0.U
+         // exe_reg_wbaddr        := 0.U
          // exe_reg_ctrl_rf_wen   := false.B
          exe_reg_ctrl_mem_val  := false.B
          exe_reg_ctrl_mem_fcn  := M_X
@@ -528,7 +529,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       {
          exe_reg_valid         := dec_reg_valid
          exe_reg_inst          := dec_reg_inst
-         exe_reg_wbaddr        := dec_wbaddr
+         // exe_reg_wbaddr        := dec_wbaddr
          // exe_reg_ctrl_rf_wen   := io.ctl.rf_wen
          exe_reg_ctrl_mem_val  := io.ctl.mem_val
          exe_reg_ctrl_mem_fcn  := io.ctl.mem_fcn
@@ -647,7 +648,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       mem_reg_s_alu_out     := Mux((exe_reg_ctrl_wb_sel === S_WB_RA), exe_pc_plus4, s_exe_alu_out)
       mem_reg_alu_out2      := alu_out2
       mem_reg_mw_data       := exe_reg_mw_data
-      mem_reg_wbaddr        := exe_reg_wbaddr
+      // mem_reg_wbaddr        := exe_reg_wbaddr
       // mem_reg_rs1_addr      := exe_reg_rs1_addr
       // mem_reg_rs2_addr      := exe_reg_rs2_addr
       mem_reg_op1_data      := exe_reg_op1_data
@@ -785,7 +786,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
    val wb_reg_inst = RegNext(mem_reg_inst)
 
-   printf("Cyc= %d [%d] pc=[%x] W[r%d=%x] Op1=[r%d][%x] Op2=[r%d][%x] inst=[%x] %c%c%c DASM(%x)\n",
+   printf("Cyc= %d [%d] pc=[%x] W[r%d=%x] ha=%d, hb=%d, hc=%d, hd=%d, Op1=[%x] Op2=[%x] inst=[%x] %c%c%c DASM(%x)\n",
       csr.io.time(31,0),
       csr.io.retire,
       RegNext(mem_reg_pc),
@@ -793,8 +794,10 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       wb_reg_wb_data,
       // wb_reg_ctrl_rf_wen,
       RegNext(mem_reg_ha_addr),
-      RegNext(mem_reg_op1_data),
       RegNext(mem_reg_hb_addr),
+      RegNext(mem_reg_hc_addr),
+      RegNext(mem_reg_hd_addr),
+      RegNext(mem_reg_op1_data),
       RegNext(mem_reg_op2_data),
       wb_reg_inst,
       MuxCase(Str(" "), Seq(
@@ -811,4 +814,11 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
          S_PC_4 -> Str(" "))),
       Mux(csr.io.exception, Str("X"), Str(" ")),
       wb_reg_inst)
+
+   printf("\t%x %x %x %x:\n",
+         if_pc_next,
+         exe_iiii_target,
+         io.ctl.exe_pc_sel,
+         exe_reg_ctrl_cf_type
+      )
 }

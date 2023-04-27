@@ -23,16 +23,16 @@ class CtlToDatIo extends Bundle()
 {
    val dec_stall  = Output(Bool())    // stall IF/DEC stages (due to hazards)
    val full_stall = Output(Bool())    // stall entire pipeline (due to D$ misses)
-   val exe_pc_sel = Output(UInt(2.W))
-   val br_type    = Output(UInt(4.W))
+   val exe_pc_sel = Output(UInt(3.W))
+   // val br_type    = Output(UInt(4.W))
    val cf_type    = Output(UInt(3.W))
    val cd_type    = Output(UInt(4.W))
    val if_kill    = Output(Bool())
    val dec_kill   = Output(Bool())
-   val op1_sel    = Output(UInt(2.W))
-   val op2_sel    = Output(UInt(3.W))
-   val alu_fun    = Output(UInt(4.W))
-   val wb_sel     = Output(UInt(2.W))
+   val op1_sel    = Output(UInt(4.W))
+   val op2_sel    = Output(UInt(4.W))
+   val alu_fun    = Output(UInt(5.W))
+   val wb_sel     = Output(UInt(4.W))
    val rf_wen     = Output(Bool())
    val mem_val    = Output(Bool())
    val mem_fcn    = Output(UInt(2.W))
@@ -160,9 +160,9 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
             BRNP    -> List(Y, CF_BR18 , COND_NP, REG_X   , S_OP1_X   , S_OP2_X     , S_ALU_X    , S_WB_X   , MEN_0, M_X  , MT_X , CSR.N, N),
 
             JUMPi   -> List(Y, CF_JUMPI, COND_X , REG_X   , S_OP1_X   , S_OP2_X     , S_ALU_X    , S_WB_X   , MEN_0, M_X  , MT_X , CSR.N, N),
-            JUMPr   -> List(Y, CF_JUMPR, COND_X , REG_X   , S_OP1_X   , S_OP2_X     , S_ALU_X    , S_WB_X   , MEN_0, M_X  , MT_X , CSR.N, N),
+            JUMPr   -> List(Y, CF_JUMPR, COND_X , REG_X   , S_OP1_RBHA, S_OP2_RDHB  , S_ALU_ADD  , S_WB_X   , MEN_0, M_X  , MT_X , CSR.N, N),
             CALLi   -> List(Y, CF_CALLI, COND_X , RAS_PUSH, S_OP1_X   , S_OP2_X     , S_ALU_X    , S_WB_RA  , MEN_0, M_X  , MT_X , CSR.N, N),
-            CALLr   -> List(Y, CF_CALLR, COND_X , RAS_PUSH, S_OP1_X   , S_OP2_X     , S_ALU_X    , S_WB_RA  , MEN_0, M_X  , MT_X , CSR.N, N),
+            CALLr   -> List(Y, CF_CALLR, COND_X , RAS_PUSH, S_OP1_RBHA, S_OP2_RDHB  , S_ALU_ADD  , S_WB_RA  , MEN_0, M_X  , MT_X , CSR.N, N),
             RET     -> List(Y, CF_RET  , COND_X , RAS_POP , S_OP1_X   , S_OP2_IMMS18, S_ALU_COPY2, S_WB_RDHA, MEN_0, M_X  , MT_X , CSR.N, N),
 
             SETZWrd -> List(Y, CF_X    , COND_X , REG_RD  , S_OP1_X   , S_OP2_WYDE  , S_ALU_COPY2, S_WB_RDHA, MEN_0, M_X  , MT_X , CSR.N, N),
@@ -305,6 +305,7 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                      ))
 
    val dec_op2_addr = MuxCase(dec_ha_addr, Array(
+                        (cs_op2_sel === S_OP2_RDHB) -> dec_hb_addr,
                         (cs_op2_sel === S_OP2_RDHC) -> dec_hc_addr,
                         (cs_op2_sel === S_OP2_RDHD) -> dec_hd_addr,
                         (cs_op2_sel === S_OP2_RBHC) -> dec_hc_addr,
@@ -499,4 +500,9 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
    io.ctl.mem_fcn    := cs_mem_fcn
    io.ctl.mem_typ    := cs_msk_sel
 
+
+printf("\tcpath:%x %x:\n",
+         ctrl_exe_pc_sel,
+         io.dat.exe_cf_type
+      )
 }

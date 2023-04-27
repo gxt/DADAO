@@ -123,6 +123,7 @@ trait ScalarOpConstants
    val OP2_X      = 0.asUInt(3.W)
 
    // SimRISC Operand 2 Select Signal
+   val S_OP2_RDHB   = 6.asUInt(4.W)
    val S_OP2_RDHC   = 1.asUInt(4.W)
    val S_OP2_RDHD   = 2.asUInt(4.W)
    val S_OP2_RBHC   = 3.asUInt(4.W)
