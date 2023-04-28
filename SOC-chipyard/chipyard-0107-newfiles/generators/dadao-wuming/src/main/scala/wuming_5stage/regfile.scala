@@ -167,4 +167,11 @@ class S_RegisterFile(implicit val conf: WumingCoreParams) extends Module
 
    // io.dm_rdata := Mux((io.dm_addr =/= 0.U), regfileD(io.dm_addr), 0.U)
 
+   printf("\tregfile:%x %x d:%d b:%d f:%d\n",
+         io.wdata,
+         io.waddr,
+         io.wrden,
+         io.wrben,
+         io.wrfen
+      )
 }

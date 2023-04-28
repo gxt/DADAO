@@ -724,7 +724,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    //                ))
 
       /* SimRISC */           
-   mem_wb_data := MuxCase(mem_reg_s_alu_out, Array(
+   mem_wb_data := MuxCase(s_exe_alu_out, Array(
                   (io.ctl.wb_sel === S_WB_RDMM) -> io.dmem.resp.bits.data,
                   (io.ctl.wb_sel === S_WB_RBMM) -> io.dmem.resp.bits.data,
                   (io.ctl.wb_sel === S_WB_CSR)  -> csr.io.rw.rdata
@@ -786,17 +786,13 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
    val wb_reg_inst = RegNext(mem_reg_inst)
 
-   printf("Cyc= %d [%d] pc=[%x] W[r%d=%x] ha=%d, hb=%d, hc=%d, hd=%d, Op1=[%x] Op2=[%x] inst=[%x] %c%c%c DASM(%x)\n",
+   printf("Cyc= %d [%d] pc=[%x] W[r%d=%x] Op1=[%x] Op2=[%x] inst=[%x] %c%c%c DASM(%x)\n",
       csr.io.time(31,0),
       csr.io.retire,
       RegNext(mem_reg_pc),
       wb_reg_ha_addr,
       wb_reg_wb_data,
       // wb_reg_ctrl_rf_wen,
-      RegNext(mem_reg_ha_addr),
-      RegNext(mem_reg_hb_addr),
-      RegNext(mem_reg_hc_addr),
-      RegNext(mem_reg_hd_addr),
       RegNext(mem_reg_op1_data),
       RegNext(mem_reg_op2_data),
       wb_reg_inst,
@@ -815,10 +811,14 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       Mux(csr.io.exception, Str("X"), Str(" ")),
       wb_reg_inst)
 
-   printf("\t%x %x %x %x:\n",
-         if_pc_next,
-         exe_iiii_target,
-         io.ctl.exe_pc_sel,
-         exe_reg_ctrl_cf_type
+   printf("\tdec_alu_op2:%x dec_op2_data:%x dec_op1_data:%x s_exe_alu_out:%x mem_reg_s_alu_out:%x mem_wb_data:%x\n",
+         dec_alu_op2,
+         dec_op2_data,
+         dec_op1_data,
+         s_exe_alu_out,
+         mem_reg_s_alu_out,
+         mem_wb_data
       )
+
+   printf("---------------------------------------------------\n")
 }
