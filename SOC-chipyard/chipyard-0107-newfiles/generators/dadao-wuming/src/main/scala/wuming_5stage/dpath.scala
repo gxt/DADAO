@@ -130,8 +130,8 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val mem_reg_mw_data       = Reg(UInt(conf.xprlen.W))
    val mem_reg_s_alu_out     = Reg(UInt(conf.xprlen.W))
    val mem_reg_alu_out2      = Reg(UInt(conf.xprlen.W))
-   val mem_wb_data           = Reg(UInt(conf.xprlen.W))
-   val mem_wb_data2          = Reg(UInt(conf.xprlen.W))
+   // val mem_wb_data           = Reg(UInt(conf.xprlen.W))
+   // val mem_wb_data2          = Reg(UInt(conf.xprlen.W))
    val mem_reg_ha_addr       = Reg(UInt(6.W))
    val mem_reg_hb_addr       = Reg(UInt(6.W))
    val mem_reg_hc_addr       = Reg(UInt(6.W))
@@ -730,12 +730,12 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    //                ))
 
       /* SimRISC */           
-   mem_wb_data := MuxCase(s_exe_alu_out, Array(
+   wb_reg_wb_data := MuxCase(mem_reg_s_alu_out, Array(
                   (mem_reg_ctrl_wb_sel === S_WB_RDMM) -> io.dmem.resp.bits.data,
                   (mem_reg_ctrl_wb_sel === S_WB_RBMM) -> io.dmem.resp.bits.data,
                   (mem_reg_ctrl_wb_sel === S_WB_CSR)  -> csr.io.rw.rdata
                   ))
-   mem_wb_data2 := MuxCase(0.U, Array(
+   wb_reg_wb_data2 := MuxCase(0.U, Array(
                   (mem_reg_ctrl_wb_sel === S_WB_HAHB) -> mem_reg_alu_out2
                   ))
 
@@ -748,8 +748,8 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       wb_reg_valid         := mem_reg_valid && !io.ctl.mem_exception && !interrupt_edge
       // wb_reg_wbaddr        := mem_reg_wbaddr
       // wb_reg_wbdata        := mem_wbdata
-      wb_reg_wb_data       := mem_wb_data
-      wb_reg_wb_data2      := mem_wb_data2
+      // wb_reg_wb_data       := mem_wb_data
+      // wb_reg_wb_data2      := mem_wb_data2
       wb_reg_ha_addr       := mem_reg_ha_addr
       wb_reg_hb_addr       := mem_reg_hb_addr
       wb_reg_hc_addr       := mem_reg_hc_addr
@@ -817,11 +817,11 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       Mux(csr.io.exception, Str("X"), Str(" ")),
       wb_reg_inst)
 
-   printf("\t mem_reg_s_alu_out:%x mem_reg_ctrl_csr_cmd:%x io.ctl.wb_sel:%d csr.io.rw.rdata:%x\n",
-         mem_reg_s_alu_out,
-         mem_reg_ctrl_csr_cmd,
-         io.ctl.wb_sel,
-         csr.io.rw.rdata
+   printf("\t io.dmem.resp.bits.data:%x mem_reg_ctrl_wb_sel:%x wb_reg_wb_data:%d\n",
+         io.dmem.resp.bits.data,
+         mem_reg_ctrl_wb_sel,
+         // mem_wb_data,
+         wb_reg_wb_data
       )
 
    printf("---------------------------------------------------\n")
