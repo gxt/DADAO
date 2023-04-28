@@ -673,8 +673,14 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    // The CSRFile can redirect the PC so it's easiest to put this in Execute for now.
    val csr = Module(new CSRFile(perfEventSets=CSREvents.events))
    csr.io := DontCare
-   csr.io.decode(0).inst := mem_reg_inst
-   csr.io.rw.addr   := mem_reg_inst(CP_RGRC_ADDR_MSB,CP_RGRC_ADDR_LSB)
+   csr.io.decode(0).inst := MuxCase(mem_reg_inst, Array(
+                          (mem_reg_inst(31, 24) === "b01110110".U)  -> "h00000073".U, /* TRAP   -> SCALL */
+                          (mem_reg_inst(31, 24) === "b01110111".U)  -> "h30200073".U, /* EXCAPE -> MRET  */
+                          ))
+   csr.io.rw.addr   := MuxCase(mem_reg_inst(CP_RGRC_ADDR_MSB,CP_RGRC_ADDR_LSB), Array(
+                          (mem_reg_inst(31, 24) === "b01110110".U)  -> "h000".U,      /* TRAP   -> SCALL */
+                          (mem_reg_inst(31, 24) === "b01110111".U)  -> "h302".U,      /* EXCAPE -> MRET  */
+                          ))
    csr.io.rw.wdata  := mem_reg_s_alu_out
    csr.io.rw.cmd    := mem_reg_ctrl_csr_cmd
 
@@ -725,12 +731,12 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
       /* SimRISC */           
    mem_wb_data := MuxCase(s_exe_alu_out, Array(
-                  (io.ctl.wb_sel === S_WB_RDMM) -> io.dmem.resp.bits.data,
-                  (io.ctl.wb_sel === S_WB_RBMM) -> io.dmem.resp.bits.data,
-                  (io.ctl.wb_sel === S_WB_CSR)  -> csr.io.rw.rdata
+                  (mem_reg_ctrl_wb_sel === S_WB_RDMM) -> io.dmem.resp.bits.data,
+                  (mem_reg_ctrl_wb_sel === S_WB_RBMM) -> io.dmem.resp.bits.data,
+                  (mem_reg_ctrl_wb_sel === S_WB_CSR)  -> csr.io.rw.rdata
                   ))
    mem_wb_data2 := MuxCase(0.U, Array(
-                  (io.ctl.wb_sel === S_WB_HAHB) -> mem_reg_alu_out2
+                  (mem_reg_ctrl_wb_sel === S_WB_HAHB) -> mem_reg_alu_out2
                   ))
 
 
@@ -811,13 +817,11 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       Mux(csr.io.exception, Str("X"), Str(" ")),
       wb_reg_inst)
 
-   printf("\tdec_alu_op2:%x dec_op2_data:%x dec_op1_data:%x s_exe_alu_out:%x mem_reg_s_alu_out:%x mem_wb_data:%x\n",
-         dec_alu_op2,
-         dec_op2_data,
-         dec_op1_data,
-         s_exe_alu_out,
+   printf("\t mem_reg_s_alu_out:%x mem_reg_ctrl_csr_cmd:%x io.ctl.wb_sel:%d csr.io.rw.rdata:%x\n",
          mem_reg_s_alu_out,
-         mem_wb_data
+         mem_reg_ctrl_csr_cmd,
+         io.ctl.wb_sel,
+         csr.io.rw.rdata
       )
 
    printf("---------------------------------------------------\n")
