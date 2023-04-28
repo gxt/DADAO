@@ -397,7 +397,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                (io.ctl.op2_sel === S_OP2_RBHD)   -> rf_rbhd_data,
                (io.ctl.op2_sel === S_OP2_RFHC)   -> rf_rfhc_data,
                (io.ctl.op2_sel === S_OP2_IMMU6)  -> immu6,
-               (io.ctl.op2_sel === S_OP2_IMMS12) -> immu12,
+               (io.ctl.op2_sel === S_OP2_IMMU12) -> immu12,
                (io.ctl.op2_sel === S_OP2_IMMS12) -> imms12,
                (io.ctl.op2_sel === S_OP2_IMMS18) -> imms18,
                (io.ctl.op2_sel === S_OP2_WYDE)   -> (dec_wyde16 << dec_wydeposition)
