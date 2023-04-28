@@ -268,10 +268,10 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                      ))
    val dec_wb2_addr = dec_ha_addr
    
-   val dec_wb_rf    = Reg(UInt(3.W))
-   val dec_wb2_rf   = Reg(UInt(3.W))
+   // dec_wb_rf    = Reg(UInt(3.W))
+   // dec_wb2_rf   = Reg(UInt(3.W))
 
-   dec_wb_rf       := MuxCase(RFX2, Array(
+   val dec_wb_rf       = MuxCase(RFX2, Array(
                         (cs_wb_sel === S_WB_RDHA) -> RFD,
                         (cs_wb_sel === S_WB_RDHB) -> RFD,
                         (cs_wb_sel === S_WB_RDHC) -> RFD,
@@ -279,11 +279,13 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                         (cs_wb_sel === S_WB_RBHB) -> RFB,
                         (cs_wb_sel === S_WB_RFHA) -> RFF,
                         (cs_wb_sel === S_WB_RFHB) -> RFF,
+                        (cs_wb_sel === S_WB_RDMM) -> RFD,
+                        (cs_wb_sel === S_WB_RBMM) -> RFB,
                         (cs_wb_sel === S_WB_HAHB) -> RFD,
                         (cs_wb_sel === S_WB_CSR)  -> RFD,
                         (cs_wb_sel === S_WB_RA)   -> RFA
                      ))
-   dec_wb2_rf      := Mux((cs_wb_sel === S_WB_HAHB), RFD, RFX2)
+   val dec_wb2_rf      = Mux((cs_wb_sel === S_WB_HAHB), RFD, RFX2)
 
    val dec_op1_addr = MuxCase(dec_ha_addr, Array(
                         (cs_op1_sel === S_OP1_RDHA) -> dec_ha_addr,
@@ -501,8 +503,9 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
    io.ctl.mem_typ    := cs_msk_sel
 
 
-printf("\tcpath:%x %x:\n",
-         ctrl_exe_pc_sel,
-         io.dat.exe_cf_type
+printf("\tcpath::  dec_wb_rf:%x dec_wb_addr:%x dec_op2_addr:%x\n",
+         dec_wb_rf,
+         dec_wb_addr,
+         dec_op2_addr
       )
 }

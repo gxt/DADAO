@@ -792,7 +792,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
    val wb_reg_inst = RegNext(mem_reg_inst)
 
-   printf("Cyc= %d [%d] pc=[%x] W[r%d=%x] Op1=[%x] Op2=[%x] inst=[%x] %c%c%c DASM(%x)\n",
+   printf("Cyc= %d [%d] pc[%x] W[%d=%x] O1[%x] O2[%x] inst[%x] %c%c%c DASM(%x)\n",
       csr.io.time(31,0),
       csr.io.retire,
       RegNext(mem_reg_pc),
@@ -817,11 +817,12 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       Mux(csr.io.exception, Str("X"), Str(" ")),
       wb_reg_inst)
 
-   printf("\t io.dmem.resp.bits.data:%x mem_reg_ctrl_wb_sel:%x wb_reg_wb_data:%d\n",
-         io.dmem.resp.bits.data,
-         mem_reg_ctrl_wb_sel,
-         // mem_wb_data,
-         wb_reg_wb_data
+   printf("\t rf_rdhd_data:%x dec_reg_inst:%x dec_hd_addr:%d exe_reg_inst:%x io.ctl.dec_stall:%d\n",
+         rf_rdhd_data,
+         dec_reg_inst,
+         dec_hd_addr,
+         exe_reg_inst,
+         io.ctl.dec_stall
       )
 
    printf("---------------------------------------------------\n")
