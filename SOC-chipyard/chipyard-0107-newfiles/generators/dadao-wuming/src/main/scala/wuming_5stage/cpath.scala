@@ -47,7 +47,6 @@ class CtlToDatIo extends Bundle()
    val mem_exception_cause = Output(UInt(32.W))
    val dec_reg_grp   = Output(UInt(REG_X.getWidth.W))
    
-   val cnd_fun   = Output(UInt(COND_X.getWidth.W))
 }
 
 class CpathIo(implicit val conf: WumingCoreParams) extends Bundle()
@@ -149,6 +148,12 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
             CMPUi   -> List(Y, CF_X    , COND_X , REG_RD  , OP1_RDHB, OP2_IMMU12, ALU_CMPU , WB_RDHA, MEN_0, M_X  , MT_X , CSR.N, N),
             CMPUr   -> List(Y, CF_X    , COND_X , REG_RD  , OP1_RDHC, OP2_RDHD  , ALU_CMPU , WB_RDHB, MEN_0, M_X  , MT_X , CSR.N, N),
             CMP     -> List(Y, CF_X    , COND_X , REG_RB  , OP1_RBHC, OP2_RBHD  , ALU_CMPU , WB_RDHB, MEN_0, M_X  , MT_X , CSR.N, N),
+
+            CSN     -> List(Y, CF_X    , COND_N , REG_RD  , OP1_RDHC, OP2_RDHD  , ALU_CSET , WB_RDHB, MEN_0, M_X  , MT_X , CSR.N, N),
+            CSZ     -> List(Y, CF_X    , COND_Z , REG_RD  , OP1_RDHC, OP2_RDHD  , ALU_CSET , WB_RDHB, MEN_0, M_X  , MT_X , CSR.N, N),
+            CSP     -> List(Y, CF_X    , COND_P , REG_RD  , OP1_RDHC, OP2_RDHD  , ALU_CSET , WB_RDHB, MEN_0, M_X  , MT_X , CSR.N, N),
+            CSEQ    -> List(Y, CF_X    , COND_NE, REG_RD  , OP1_RDHC, OP2_RDHD  , ALU_CSET , WB_RDHC, MEN_0, M_X  , MT_X , CSR.N, N),
+            CSNE    -> List(Y, CF_X    , COND_EQ, REG_RD  , OP1_RDHC, OP2_RDHD  , ALU_CSET , WB_RDHC, MEN_0, M_X  , MT_X , CSR.N, N),
 
             BREQ    -> List(Y, CF_BR12 , COND_EQ, REG_X   , OP1_X   , OP2_X     , ALU_X    , WB_X   , MEN_0, M_X  , MT_X , CSR.N, N),
             BRNE    -> List(Y, CF_BR12 , COND_NE, REG_X   , OP1_X   , OP2_X     , ALU_X    , WB_X   , MEN_0, M_X  , MT_X , CSR.N, N),

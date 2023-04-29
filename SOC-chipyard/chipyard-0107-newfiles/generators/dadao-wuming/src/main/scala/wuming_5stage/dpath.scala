@@ -38,11 +38,6 @@ class DatToCtlIo(implicit val conf: WumingCoreParams) extends Bundle()
    val csr_eret = Output(Bool())
    val csr_interrupt = Output(Bool())
    
-   val cond_eq  = Output(Bool())
-   val cond_n   = Output(Bool())
-   val cond_z   = Output(Bool())
-   val cond_p   = Output(Bool())
-   
    val inst_rasp_excp  = Output(Bool())
 }
 
@@ -438,11 +433,11 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val alu_shamt     = exe_alu_op2(4,0).asUInt()
    val exe_adder_out = (exe_alu_op1 + exe_alu_op2)(conf.xprlen-1,0)
 
-   val cond_yes   =           Mux(io.ctl.cnd_fun === COND_N ,  Mux( io.dat.cond_n ,  Y, N),
-                              Mux(io.ctl.cnd_fun === COND_Z ,  Mux( io.dat.cond_z ,  Y, N),
-                              Mux(io.ctl.cnd_fun === COND_P ,  Mux( io.dat.cond_p ,  Y, N),
-                              Mux(io.ctl.cnd_fun === COND_EQ,  Mux( io.dat.cond_eq,  Y, N),
-                              Mux(io.ctl.cnd_fun === COND_NE,  Mux(!io.dat.cond_eq,  Y, N), N)))))
+   val cond_yes   =           Mux(exe_reg_ctrl_cd_type === COND_N ,  Mux( io.dat.exe_cond_n ,  Y, N),
+                              Mux(exe_reg_ctrl_cd_type === COND_Z ,  Mux( io.dat.exe_cond_z ,  Y, N),
+                              Mux(exe_reg_ctrl_cd_type === COND_P ,  Mux( io.dat.exe_cond_p ,  Y, N),
+                              Mux(exe_reg_ctrl_cd_type === COND_EQ,  Mux( io.dat.exe_cond_eq,  Y, N),
+                              Mux(exe_reg_ctrl_cd_type === COND_NE,  Mux(!io.dat.exe_cond_eq,  Y, N), N)))))
 
    exe_alu_out := MuxCase(0.U, Array(
                   (exe_reg_ctrl_alu_fun === ALU_ADD) -> exe_adder_out,
@@ -662,8 +657,13 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       Mux(csr.io.exception, Str("X"), Str(" ")),
       wb_reg_inst)
 
-   printf("\t wb_reg_ctrl_wb_sel:%d\n",
-         wb_reg_ctrl_wb_sel
+   printf("\t cond_n:%d cnd_fun:%d %x o1:%x o2:%x out:%x\n",
+         io.dat.exe_cond_n,
+         io.ctl.cnd_fun,
+         exe_reg_inst,
+         exe_alu_op1,
+         exe_alu_op2,
+         exe_alu_out,
       )
 
    printf("---------------------------------------------------\n")
