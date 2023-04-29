@@ -430,7 +430,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val exe_alu_op2 = exe_reg_op2_data.asUInt()
 
    // ALU
-   val alu_shamt     = exe_alu_op2(4,0).asUInt()
+   val alu_shamt     = exe_alu_op2(5,0).asUInt()
    val exe_adder_out = (exe_alu_op1 + exe_alu_op2)(conf.xprlen-1,0)
 
    val cond_yes   =           Mux(exe_reg_ctrl_cd_type === COND_N ,  Mux( io.dat.exe_cond_n ,  Y, N),
@@ -657,9 +657,8 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       Mux(csr.io.exception, Str("X"), Str(" ")),
       wb_reg_inst)
 
-   printf("\t cond_n:%d cnd_fun:%d %x o1:%x o2:%x out:%x\n",
+   printf("\t cond_n:%d %x o1:%x o2:%x out:%x\n",
          io.dat.exe_cond_n,
-         io.ctl.cnd_fun,
          exe_reg_inst,
          exe_alu_op1,
          exe_alu_op2,
