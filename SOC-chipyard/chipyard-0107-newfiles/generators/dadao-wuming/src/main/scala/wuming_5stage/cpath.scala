@@ -288,6 +288,7 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                         (cs_op2_sel === OP2_RFHC) -> dec_hc_addr,
                      ))
    val dec_op2_rf   = MuxCase(RFX, Array(
+                        (cs_op2_sel === OP2_RDHB) -> RFD,
                         (cs_op2_sel === OP2_RDHC) -> RFD,
                         (cs_op2_sel === OP2_RDHD) -> RFD,
                         (cs_op2_sel === OP2_RBHC) -> RFB,
@@ -310,6 +311,14 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                         (cs_cond_fun === COND_EQ) -> RFD,
                         (cs_cond_fun === COND_NE) -> RFD,
                      ))
+
+   val dec_st_rf    = MuxCase(RFX, Array(
+                        ((cs_reg_group === REG_RD || cs_reg_group === REG_MRD) && cs_mem_fcn === M_XWR) -> RFD,
+                        ((cs_reg_group === REG_RB || cs_reg_group === REG_MRB) && cs_mem_fcn === M_XWR) -> RFB,
+                        ((cs_reg_group === REG_RF || cs_reg_group === REG_MRF) && cs_mem_fcn === M_XWR) -> RFF,
+                     ))
+
+   val dec_st_addr  = dec_ha_addr
 
 
    val exe_reg_wbaddr      = Reg(UInt())
@@ -395,6 +404,9 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                ((exe_inst_is_load) && (exe_reg_wbaddr === dec_op2_addr) && (exe_reg_wbrf === dec_op2_rf)) ||
                ((exe_inst_is_load) && (exe_reg_wbaddr === dec_ha_addr) && (exe_reg_wbrf === dec_cond1_rf)) ||
                ((exe_inst_is_load) && (exe_reg_wbaddr === dec_hb_addr) && (exe_reg_wbrf === dec_cond2_rf)) ||
+               ((exe_inst_is_load) && (exe_reg_wbaddr === dec_st_addr) && (exe_reg_wbrf === dec_st_rf)) ||
+               ((exe_inst_is_load) && (mem_reg_wbaddr === dec_st_addr) && (mem_reg_wbrf === dec_st_rf)) ||
+               ((exe_inst_is_load) && (wb_reg_wbaddr  === dec_st_addr) && (wb_reg_wbrf  === dec_st_rf)) ||
                (exe_reg_is_csr)
    }
    else
@@ -418,6 +430,9 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                ((exe_reg_wbaddr === dec_hb_addr) && (exe_reg_wbrf === dec_cond2_rf)) ||
                ((mem_reg_wbaddr === dec_hb_addr) && (mem_reg_wbrf === dec_cond2_rf)) ||
                ((wb_reg_wbaddr  === dec_hb_addr) && (wb_reg_wbrf  === dec_cond2_rf)) ||
+               ((exe_reg_wbaddr === dec_st_addr) && (exe_reg_wbrf === dec_st_rf)) ||
+               ((mem_reg_wbaddr === dec_st_addr) && (mem_reg_wbrf === dec_st_rf)) ||
+               ((wb_reg_wbaddr  === dec_st_addr) && (wb_reg_wbrf  === dec_st_rf)) ||
                ((exe_reg_is_csr))
    }
 
