@@ -12,7 +12,7 @@ import chisel3.util._
 import Constants._
 import wuming.common._
 
-class S_RFileIo(implicit val conf: WumingCoreParams) extends Bundle()
+class RFileIo(implicit val conf: WumingCoreParams) extends Bundle()
 {
    val ha_addr = Input(UInt(6.W))
    val hb_addr = Input(UInt(6.W))
@@ -49,9 +49,9 @@ class S_RFileIo(implicit val conf: WumingCoreParams) extends Bundle()
    val w2en        = Input(Bool())
 }
 
-class S_RegisterFile(implicit val conf: WumingCoreParams) extends Module
+class RegisterFile(implicit val conf: WumingCoreParams) extends Module
 {
-   val io = IO(new S_RFileIo())
+   val io = IO(new RFileIo())
 
    val regfileD = Mem(NR_REGS, UInt(conf.xprlen.W))
    val regfileB = Mem(NR_REGS, UInt(conf.xprlen.W))
@@ -96,12 +96,6 @@ class S_RegisterFile(implicit val conf: WumingCoreParams) extends Module
       regfileD(io.w2addr) := io.w2data
    }
 
-
-   // when (io.dm_en && (io.dm_addr =/= 0.U))
-   // {
-   //    regfileD(io.dm_addr) := io.dm_wdata
-   // }
-
    io.rdha_data := Mux((io.ha_addr =/= 0.U), regfileD(io.ha_addr), 0.U)
    io.rdhb_data := Mux((io.hb_addr =/= 0.U), regfileD(io.hb_addr), 0.U)
    io.rdhc_data := Mux((io.hc_addr =/= 0.U), regfileD(io.hc_addr), 0.U)
@@ -115,8 +109,6 @@ class S_RegisterFile(implicit val conf: WumingCoreParams) extends Module
    io.rfha_data := Mux((io.ha_addr =/= 0.U), regfileF(io.ha_addr), 0.U)
    io.rfhb_data := Mux((io.hb_addr =/= 0.U), regfileF(io.hb_addr), 0.U)
    io.rfhc_data := Mux((io.hc_addr =/= 0.U), regfileF(io.hc_addr), 0.U)
-
-   // io.dm_rdata := Mux((io.dm_addr =/= 0.U), regfileD(io.dm_addr), 0.U)
 
    printf("\tregfile:%x %x d:%d b:%d f:%d rb8:%x\n",
          io.wdata,

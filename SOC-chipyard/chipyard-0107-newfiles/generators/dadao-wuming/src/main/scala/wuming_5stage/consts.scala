@@ -36,19 +36,13 @@ trait ScalarOpConstants
    val N        = false.B
 
    // PC Select Signal
-   // val PC_4     = 0.asUInt(2.W)  // PC + 4
-   // val PC_BRJMP = 1.asUInt(2.W)  // brjmp_target
-   // val PC_JALR  = 2.asUInt(2.W)  // jump_reg_target
-   // val PC_EXC   = 3.asUInt(2.W)  // exception
-
-   // SimRISC PC Select Signal
-   val S_PC_4     = 0.asUInt(3.W)  // PC + 4
-   val S_PC_EXCP  = 1.asUInt(3.W)  // exception
-   val S_PC_BR12  = 2.asUInt(3.W)  // branch_target for imms12
-   val S_PC_BR18  = 3.asUInt(3.W)  // branch_target for imms18
-   val S_PC_IIII  = 4.asUInt(3.W)  // jump/call iiii target
-   val S_PC_RRII  = 5.asUInt(3.W)  // jump/call rrii target
-   val S_PC_RASP  = 6.asUInt(3.W)  // pop from RA regfile
+   val PC_4     = 0.asUInt(3.W)  // PC + 4
+   val PC_EXCP  = 1.asUInt(3.W)  // exception
+   val PC_BR12  = 2.asUInt(3.W)  // branch_target for imms12
+   val PC_BR18  = 3.asUInt(3.W)  // branch_target for imms18
+   val PC_IIII  = 4.asUInt(3.W)  // jump/call iiii target
+   val PC_RRII  = 5.asUInt(3.W)  // jump/call rrii target
+   val PC_RASP  = 6.asUInt(3.W)  // pop from RA regfile
 
    // Control flow signal
    val CF_X     = 0.asUInt(3.W)  // Next
@@ -97,44 +91,29 @@ trait ScalarOpConstants
    val BR_JR    = 8.asUInt(4.W)  // Jump Register
 
    // RS1 Operand Select Signal
-   val OP1_RS1   = 0.asUInt(2.W) // Register Source #1
-   val OP1_PC    = 1.asUInt(2.W) // PC
-   val OP1_IMZ   = 2.asUInt(2.W) // Zero-extended Immediate from RS1 field, for use by CSRI instructions
-   val OP1_X     = 0.asUInt(2.W)
-   
-   // SimRISC Operand 1 Select Signal
-   val S_OP1_RDHA = 1.asUInt(4.W)
-   val S_OP1_RDHB = 2.asUInt(4.W)
-   val S_OP1_RDHC = 3.asUInt(4.W)
-   val S_OP1_RBHA = 4.asUInt(4.W)
-   val S_OP1_RBHB = 5.asUInt(4.W)
-   val S_OP1_RBHC = 6.asUInt(4.W)
-   val S_OP1_RFHA = 7.asUInt(4.W)
-   val S_OP1_PC   = 15.asUInt(4.W)
-   val S_OP1_X    = 0.asUInt(4.W)
+   val OP1_RDHA = 1.asUInt(4.W)
+   val OP1_RDHB = 2.asUInt(4.W)
+   val OP1_RDHC = 3.asUInt(4.W)
+   val OP1_RBHA = 4.asUInt(4.W)
+   val OP1_RBHB = 5.asUInt(4.W)
+   val OP1_RBHC = 6.asUInt(4.W)
+   val OP1_RFHA = 7.asUInt(4.W)
+   val OP1_PC   = 15.asUInt(4.W)
+   val OP1_X    = 0.asUInt(4.W)
 
    // RS2 Operand Select Signal
-   val OP2_RS2    = 0.asUInt(3.W) // Register Source #2
-   val OP2_ITYPE  = 1.asUInt(3.W) // immediate, I-type
-   val OP2_STYPE  = 2.asUInt(3.W) // immediate, S-type
-   val OP2_SBTYPE = 3.asUInt(3.W) // immediate, B
-   val OP2_UTYPE  = 4.asUInt(3.W) // immediate, U-type
-   val OP2_UJTYPE = 5.asUInt(3.W) // immediate, J-type
-   val OP2_X      = 0.asUInt(3.W)
-
-   // SimRISC Operand 2 Select Signal
-   val S_OP2_RDHB   = 6.asUInt(4.W)
-   val S_OP2_RDHC   = 1.asUInt(4.W)
-   val S_OP2_RDHD   = 2.asUInt(4.W)
-   val S_OP2_RBHC   = 3.asUInt(4.W)
-   val S_OP2_RBHD   = 4.asUInt(4.W)
-   val S_OP2_RFHC   = 5.asUInt(4.W)
-   val S_OP2_IMMU6  = 8.asUInt(4.W)  // immu6 source in hd field
-   val S_OP2_IMMU12 = 9.asUInt(4.W)  // immu12 source in hc/hd field
-   val S_OP2_IMMS12 = 10.asUInt(4.W)  // imms12 source in hc/hd field
-   val S_OP2_IMMS18 = 11.asUInt(4.W)  // imms18 source in hb/hc/hd field
-   val S_OP2_WYDE   = 15.asUInt(4.W)
-   val S_OP2_X      = 0.asUInt(4.W)
+   val OP2_RDHB   = 6.asUInt(4.W)
+   val OP2_RDHC   = 1.asUInt(4.W)
+   val OP2_RDHD   = 2.asUInt(4.W)
+   val OP2_RBHC   = 3.asUInt(4.W)
+   val OP2_RBHD   = 4.asUInt(4.W)
+   val OP2_RFHC   = 5.asUInt(4.W)
+   val OP2_IMMU6  = 8.asUInt(4.W)  // immu6 source in hd field
+   val OP2_IMMU12 = 9.asUInt(4.W)  // immu12 source in hc/hd field
+   val OP2_IMMS12 = 10.asUInt(4.W)  // imms12 source in hc/hd field
+   val OP2_IMMS18 = 11.asUInt(4.W)  // imms18 source in hb/hc/hd field
+   val OP2_WYDE   = 15.asUInt(4.W)
+   val OP2_X      = 0.asUInt(4.W)
 
    // Register Operand Output Enable Signal
    val OEN_0   = false.B
@@ -146,67 +125,45 @@ trait ScalarOpConstants
    val REN_X   = false.B
 
    // ALU Operation Signal
-   val ALU_ADD    = 0.asUInt(4.W)
-   val ALU_SUB    = 1.asUInt(4.W)
-   val ALU_SLL    = 2.asUInt(4.W)
-   val ALU_SRL    = 3.asUInt(4.W)
-   val ALU_SRA    = 4.asUInt(4.W)
-   val ALU_AND    = 5.asUInt(4.W)
-   val ALU_OR     = 6.asUInt(4.W)
-   val ALU_XOR    = 7.asUInt(4.W)
-   val ALU_SLT    = 8.asUInt(4.W)
-   val ALU_SLTU   = 9.asUInt(4.W)
-   val ALU_COPY_1 = 10.asUInt(4.W)
-   val ALU_COPY_2 = 11.asUInt(4.W)
-   val ALU_X      = 0.asUInt(4.W)
-
-   // SimRISC ALU Operation Signal
-   val S_ALU_ADD   = 1.asUInt(5.W)
-   val S_ALU_SUB   = 2.asUInt(5.W)
-   val S_ALU_CMPS  = 3.asUInt(5.W)
-   val S_ALU_CMPU  = 4.asUInt(5.W)
-   val S_ALU_MULS  = 5.asUInt(5.W)
-   val S_ALU_MULU  = 6.asUInt(5.W)
-   val S_ALU_DIVS  = 7.asUInt(5.W)
-   val S_ALU_DIVU  = 8.asUInt(5.W)
-   val S_ALU_SLL   = 10.asUInt(5.W)
-   val S_ALU_SRL   = 11.asUInt(5.W)
-   val S_ALU_SRA   = 12.asUInt(5.W)
-   val S_ALU_AND   = 13.asUInt(5.W)
-   val S_ALU_OR    = 14.asUInt(5.W)
-   val S_ALU_XOR   = 15.asUInt(5.W)
-   val S_ALU_XNOR  = 16.asUInt(5.W)
-   val S_ALU_EXTS  = 17.asUInt(5.W)
-   val S_ALU_EXTZ  = 18.asUInt(5.W)
-   val S_ALU_SETOW = 20.asUInt(5.W)
-   val S_ALU_ANDNW = 21.asUInt(5.W)
-   val S_ALU_SETW  = 22.asUInt(5.W)
-   val S_ALU_CSET  = 23.asUInt(5.W)
-   val S_ALU_COPY2 = 24.asUInt(5.W)
-   val S_ALU_ADRP  = 31.asUInt(5.W)
-   val S_ALU_X     = 0.asUInt(5.W)
+   val ALU_ADD   = 1.asUInt(5.W)
+   val ALU_SUB   = 2.asUInt(5.W)
+   val ALU_CMPS  = 3.asUInt(5.W)
+   val ALU_CMPU  = 4.asUInt(5.W)
+   val ALU_MULS  = 5.asUInt(5.W)
+   val ALU_MULU  = 6.asUInt(5.W)
+   val ALU_DIVS  = 7.asUInt(5.W)
+   val ALU_DIVU  = 8.asUInt(5.W)
+   val ALU_SLL   = 10.asUInt(5.W)
+   val ALU_SRL   = 11.asUInt(5.W)
+   val ALU_SRA   = 12.asUInt(5.W)
+   val ALU_AND   = 13.asUInt(5.W)
+   val ALU_OR    = 14.asUInt(5.W)
+   val ALU_XOR   = 15.asUInt(5.W)
+   val ALU_XNOR  = 16.asUInt(5.W)
+   val ALU_EXTS  = 17.asUInt(5.W)
+   val ALU_EXTZ  = 18.asUInt(5.W)
+   val ALU_SETOW = 20.asUInt(5.W)
+   val ALU_ANDNW = 21.asUInt(5.W)
+   val ALU_SETW  = 22.asUInt(5.W)
+   val ALU_CSET  = 23.asUInt(5.W)
+   val ALU_COPY2 = 24.asUInt(5.W)
+   val ALU_ADRP  = 31.asUInt(5.W)
+   val ALU_X     = 0.asUInt(5.W)
 
    // Writeback Select Signal
-   val WB_ALU  = 0.asUInt(2.W)
-   val WB_MEM  = 1.asUInt(2.W)
-   val WB_PC4  = 2.asUInt(2.W)
-   val WB_CSR  = 3.asUInt(2.W)
-   val WB_X    = 0.asUInt(2.W)
-   
-   // SimRISC Writeback Select Signal
-   val S_WB_RDHA  = 1.asUInt(4.W)
-   val S_WB_RDHB  = 2.asUInt(4.W)
-   val S_WB_RDHC  = 3.asUInt(4.W)
-   val S_WB_RBHA  = 4.asUInt(4.W)
-   val S_WB_RBHB  = 5.asUInt(4.W)
-   val S_WB_RFHA  = 6.asUInt(4.W)
-   val S_WB_RFHB  = 7.asUInt(4.W)
-   val S_WB_HAHB  = 8.asUInt(4.W)   // two dest regs: rdha + rdhb
-   val S_WB_RDMM  = 9.asUInt(4.W)
-   val S_WB_RBMM  = 10.asUInt(4.W)
-   val S_WB_RA    = 11.asUInt(4.W)
-   val S_WB_CSR   = 15.asUInt(4.W)
-   val S_WB_X     = 0.asUInt(4.W)
+   val WB_RDHA  = 1.asUInt(4.W)
+   val WB_RDHB  = 2.asUInt(4.W)
+   val WB_RDHC  = 3.asUInt(4.W)
+   val WB_RBHA  = 4.asUInt(4.W)
+   val WB_RBHB  = 5.asUInt(4.W)
+   val WB_RFHA  = 6.asUInt(4.W)
+   val WB_RFHB  = 7.asUInt(4.W)
+   val WB_HAHB  = 8.asUInt(4.W)   // two dest regs: rdha + rdhb
+   val WB_RDMM  = 9.asUInt(4.W)
+   val WB_RBMM  = 10.asUInt(4.W)
+   val WB_RA    = 11.asUInt(4.W)
+   val WB_CSR   = 15.asUInt(4.W)
+   val WB_X     = 0.asUInt(4.W)
 
    val RFX     = 0.asUInt(3.W)
    val RFA     = 1.asUInt(3.W)
@@ -217,15 +174,10 @@ trait ScalarOpConstants
    val RFX2    = 6.asUInt(3.W)
 
    // Memory Write Signal
-   val MWR_0   = false.B
-   val MWR_1   = true.B
-   val MWR_X   = false.B
-
-   // SimRISC Memory Function Type (Read,Write,Fence) Signal
-   val S_MWR_R   = 0.asUInt(2.W)
-   val S_MWR_W   = 1.asUInt(2.W)
-   val S_MWR_F   = 2.asUInt(2.W)
-   val S_MWR_X   = 0.asUInt(2.W)
+   val MWR_R   = 0.asUInt(2.W)
+   val MWR_W   = 1.asUInt(2.W)
+   val MWR_F   = 2.asUInt(2.W)
+   val MWR_X   = 0.asUInt(2.W)
 
    // Memory Enable Signal
    val MEN_0   = false.B
@@ -239,14 +191,6 @@ trait ScalarOpConstants
    val MSK_HU  = 3.asUInt(3.W)
    val MSK_W   = 4.asUInt(3.W)
    val MSK_X   = 4.asUInt(3.W)
-
-   // RISCV related, SHOULD removed after dev
-   val RD_MSB  = 11
-   val RD_LSB  = 7
-   val RS1_MSB = 19
-   val RS1_LSB = 15
-   val RS2_MSB = 24
-   val RS2_LSB = 20
 
    // Cache Flushes & Sync Primitives
    val M_N      = 0.asUInt(3.W)
