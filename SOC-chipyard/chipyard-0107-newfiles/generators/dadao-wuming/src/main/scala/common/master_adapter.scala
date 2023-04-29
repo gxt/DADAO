@@ -98,7 +98,7 @@ class WumingMasterAdapterImp(outer: WumingMasterAdapter) extends LazyModuleImp(o
   val legal_op = Mux(io.dport.req.bits.fcn === M_XRD, legal_get, legal_put)
   val resp_xp = tl_out.d.bits.corrupt | tl_out.d.bits.denied
   // Since the core doesn't have an external exception port, we have to kill it
-  assert(legal_op | !tl_out.a.valid, "Illegal operation")
+  assert(legal_op | !tl_out.a.valid, "Illegal operation legal_op: %d, tl_out.a.valid: %d\n", legal_op, tl_out.a.valid)
   assert(!resp_xp | !tl_out.d.valid, "Responds exception")
 
   // Tie off unused channels

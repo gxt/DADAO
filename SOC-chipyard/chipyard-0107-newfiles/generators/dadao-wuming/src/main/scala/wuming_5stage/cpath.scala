@@ -457,9 +457,9 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
    io.ctl.mem_typ    := cs_msk_sel
 
 
-printf("\tcpath::  dec_wb_rf:%x dec_wb_addr:%x dec_op2_addr:%x\n",
-         dec_wb_rf,
-         dec_wb_addr,
-         dec_op2_addr
+printf("\tcpath::  ctrl_exe_pc_sel:%x if:%d dec:%d\n",
+         ctrl_exe_pc_sel,
+         io.ctl.if_kill,
+         io.ctl.dec_kill
       )
 }

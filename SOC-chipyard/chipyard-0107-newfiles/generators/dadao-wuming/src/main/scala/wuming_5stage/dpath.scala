@@ -101,6 +101,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val exe_reg_ctrl_mem_fcn  = RegInit(M_X)
    val exe_reg_ctrl_mem_typ  = RegInit(MT_X)
    val exe_reg_ctrl_csr_cmd  = RegInit(CSR.N)
+   val exe_reg_ret_target    = Reg(UInt(conf.xprlen.W))
    val exe_wydemask          = Reg(UInt(conf.xprlen.W))
 
    // Memory State
@@ -144,7 +145,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val exe_ret_target      = Wire(UInt(conf.xprlen.W))
 
    // Instruction fetch buffer
-   val if_buffer_in = Wire(new DecoupledIO(new MemResp(conf.xprlen)))
+   val if_buffer_in = Wire(new DecoupledIO(new MemResp(conf.instlen)))
    if_buffer_in.bits := io.imem.resp.bits
    if_buffer_in.valid := io.imem.resp.valid
    assert(!(if_buffer_in.valid && !if_buffer_in.ready), "Instruction backlog")
@@ -225,6 +226,14 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
       dec_reg_pc := if_pc_buffer_out.bits
    }
+   .otherwise 
+   {
+      when (io.ctl.if_kill || if_reg_killed)
+      {
+         dec_reg_valid := false.B
+         dec_reg_inst := BUBBLE
+      }
+   }
 
 
    //**********************************
@@ -255,7 +264,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val rf_rfhb_data = regfile.io.rfhb_data
    val rf_rfhc_data = regfile.io.rfhc_data
 
-   exe_ret_target := regfile.io.rapop_data
+   exe_reg_ret_target := regfile.io.rapop_data
    val dec_pc_plus4    = (dec_reg_pc + 4.U)(conf.xprlen-1,0)
                      
    regfile.io.ras_pop   := (io.ctl.dec_reg_grp === RAS_POP)
@@ -484,6 +493,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    exe_br18_target    := exe_reg_pc + br18_offset
    exe_iiii_target    := exe_reg_pc + br24_offset
    exe_rrii_target    := exe_alu_out + br12_offset
+   exe_ret_target     := exe_reg_ret_target
 
    // Instruction misalign detection
    // In control path, instruction misalignment exception is always raised in the next cycle once the misaligned instruction reaches
@@ -657,12 +667,12 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       Mux(csr.io.exception, Str("X"), Str(" ")),
       wb_reg_inst)
 
-   printf("\t cond_n:%d %x o1:%x o2:%x out:%x\n",
-         io.dat.exe_cond_n,
+   printf("\t %x | %x | %x | %x | %x\n",
+         if_buffer_out.bits.data,
+         dec_reg_inst,
          exe_reg_inst,
-         exe_alu_op1,
-         exe_alu_op2,
-         exe_alu_out,
+         mem_reg_inst,
+         wb_reg_inst,
       )
 
    printf("---------------------------------------------------\n")
