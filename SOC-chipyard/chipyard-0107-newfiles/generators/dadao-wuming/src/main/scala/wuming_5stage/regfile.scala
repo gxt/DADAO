@@ -110,12 +110,12 @@ class RegisterFile(implicit val conf: WumingCoreParams) extends Module
    io.rfhb_data := Mux((io.hb_addr =/= 0.U), regfileF(io.hb_addr), 0.U)
    io.rfhc_data := Mux((io.hc_addr =/= 0.U), regfileF(io.hc_addr), 0.U)
 
-   printf("\tregfile:%x %x d:%d b:%d f:%d rb8:%x\n",
+   printf("\tregfile:%x %x d:%d b:%d f:%d rd9:%x\n",
          io.wdata,
          io.waddr,
          io.wrden,
          io.wrben,
          io.wrfen,
-         regfileB(8.U)
+         regfileD(9.U)
       )
 }

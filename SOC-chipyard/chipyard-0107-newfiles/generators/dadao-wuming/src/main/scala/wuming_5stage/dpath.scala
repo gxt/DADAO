@@ -381,6 +381,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       exe_reg_ctrl_csr_cmd  := CSR.N
       exe_reg_ctrl_cf_type  := CF_X
       exe_reg_ctrl_cd_type  := COND_X
+      exe_reg_ctrl_wb_sel   := WB_X
    }
    .elsewhen(!io.ctl.dec_stall && !io.ctl.full_stall)
    {
@@ -400,7 +401,6 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       exe_reg_mw_data       := dec_mw_data
       exe_reg_ctrl_op2_sel  := io.ctl.op2_sel
       exe_reg_ctrl_alu_fun  := io.ctl.alu_fun
-      exe_reg_ctrl_wb_sel   := io.ctl.wb_sel
       exe_wydemask          := dec_wydemask
 
       when (io.ctl.dec_kill)
@@ -412,6 +412,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
          exe_reg_ctrl_csr_cmd  := CSR.N
          exe_reg_ctrl_cf_type  := CF_X
          exe_reg_ctrl_cd_type  := COND_X
+         exe_reg_ctrl_wb_sel   := WB_X
       }
       .otherwise
       {
@@ -423,6 +424,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
          exe_reg_ctrl_csr_cmd  := io.ctl.csr_cmd
          exe_reg_ctrl_cf_type  := io.ctl.cf_type
          exe_reg_ctrl_cd_type  := io.ctl.cd_type
+         exe_reg_ctrl_wb_sel   := io.ctl.wb_sel
       }
    }
 
@@ -501,6 +503,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       mem_reg_inst          := BUBBLE
       mem_reg_ctrl_mem_val  := false.B
       mem_reg_ctrl_csr_cmd  := false.B
+      mem_reg_ctrl_wb_sel   := WB_X
    }
    .elsewhen (!io.ctl.full_stall)
    {
@@ -605,6 +608,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    .otherwise
    {
       wb_reg_valid         := false.B
+      wb_reg_ctrl_wb_sel   := WB_X
    }
 
 
@@ -658,14 +662,8 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       Mux(csr.io.exception, Str("X"), Str(" ")),
       wb_reg_inst)
 
-   printf("\t addr:%x rdha_data:%x %d pc:%x rf_rdha_data:%x dec_op1_data:%x exe_alu_out:%x\n",
-         csr.io.rw.addr,
-         csr.io.rw.wdata,
-         csr.io.rw.cmd,
-         csr.io.pc,
-         rf_rdha_data,
-         dec_op1_data,
-         exe_alu_out
+   printf("\t wb_reg_ctrl_wb_sel:%d\n",
+         wb_reg_ctrl_wb_sel
       )
 
    printf("---------------------------------------------------\n")
