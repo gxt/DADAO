@@ -317,7 +317,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
    // Operand 2 Mux
    val dec_alu_op2 = MuxCase(0.U, Array(
-               (io.ctl.op2_sel === OP2_RDHB)   -> rf_rdhc_data,
+               (io.ctl.op2_sel === OP2_RDHB)   -> rf_rdhb_data,
                (io.ctl.op2_sel === OP2_RDHC)   -> rf_rdhc_data,
                (io.ctl.op2_sel === OP2_RDHD)   -> rf_rdhd_data,
                (io.ctl.op2_sel === OP2_RBHC)   -> rf_rbhc_data,
@@ -658,15 +658,14 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       Mux(csr.io.exception, Str("X"), Str(" ")),
       wb_reg_inst)
 
-   printf("\t mem_reg_alu_out:%x rdha_data:%x %d add:%x %d %d data:%x resp:%x\n",
-         mem_reg_alu_out,
+   printf("\t addr:%x rdha_data:%x %d pc:%x rf_rdha_data:%x dec_op1_data:%x exe_alu_out:%x\n",
+         csr.io.rw.addr,
+         csr.io.rw.wdata,
+         csr.io.rw.cmd,
+         csr.io.pc,
          rf_rdha_data,
-         io.dmem.req.valid,
-         io.dmem.req.bits.addr,
-         io.dmem.req.bits.fcn,
-         io.dmem.req.bits.typ,
-         io.dmem.req.bits.data,
-         io.dmem.resp.bits.data
+         dec_op1_data,
+         exe_alu_out
       )
 
    printf("---------------------------------------------------\n")
