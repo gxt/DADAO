@@ -194,6 +194,8 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
    val cs_alu_fun          :: cs_wb_sel     :: /*(cs_rf_wen: Bool) ::   */            cs1 = cs0
    val (cs_mem_en: Bool)   :: cs_mem_fcn    :: cs_msk_sel        :: cs_csr_cmd    :: (cs_fencei: Bool) :: Nil = cs1
 
+   io.ctl.dec_reg_grp := cs_reg_group
+
 //    // Branch Logic
    val ctrl_exe_pc_sel = MuxCase ( PC_4, Array(
       io.ctl.pipeline_kill              -> PC_EXCP,
