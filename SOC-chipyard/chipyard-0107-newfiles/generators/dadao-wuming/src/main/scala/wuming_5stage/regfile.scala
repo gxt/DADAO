@@ -109,7 +109,7 @@ class RegisterFile(implicit val conf: WumingCoreParams) extends Module
    io.rfha_data := regfileF(io.ha_addr)
    io.rfhb_data := regfileF(io.hb_addr)
    io.rfhc_data := regfileF(io.hc_addr)
-
+/*
    printf("\tregfile:%x %x d:%d b:%d f:%d RASR_TOP:%x %d %d %x\n",
          io.wdata,
          io.waddr,
@@ -121,4 +121,5 @@ class RegisterFile(implicit val conf: WumingCoreParams) extends Module
          io.ras_pop,
          io.rapush_data
       )
+*/
 }

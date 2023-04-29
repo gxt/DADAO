@@ -267,12 +267,11 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    exe_reg_ret_target := regfile.io.rapop_data
    val dec_pc_plus4    = (dec_reg_pc + 4.U)(conf.xprlen-1,0)
                      
-   regfile.io.ras_pop   := (io.ctl.dec_reg_grp === RAS_POP)
+   regfile.io.ras_pop   := (io.ctl.dec_reg_grp === RAS_POP && !(io.ctl.dec_stall || io.ctl.full_stall || io.ctl.pipeline_kill || io.ctl.dec_kill))
    io.dat.inst_rasp_excp := (((regfile.io.ras_push) && (regfile.io.ras_top === 63.U)) || ((regfile.io.ras_pop) && (regfile.io.ras_top === 0.U)))
 
-   regfile.io.ras_push := (io.ctl.dec_reg_grp === RAS_PUSH)
+   regfile.io.ras_push := (io.ctl.dec_reg_grp === RAS_PUSH && !(io.ctl.dec_stall || io.ctl.full_stall || io.ctl.pipeline_kill || io.ctl.dec_kill))
    regfile.io.rapush_data := dec_pc_plus4
-   io.dat.inst_rasp_excp := (((regfile.io.ras_push) && (regfile.io.ras_top === 63.U)) || ((regfile.io.ras_pop) && (regfile.io.ras_top === 0.U)))
 
    regfile.io.waddr := MuxCase(wb_reg_ha_addr, Array(
                          (wb_reg_ctrl_wb_sel === WB_RDHB) -> wb_reg_hb_addr,
@@ -642,6 +641,9 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
 
    val wb_reg_inst = RegNext(mem_reg_inst)
 
+   printf("-\n")
+   /*
+
    printf("Cyc= %d [%d] pc[%x] W[%d=%x] O1[%x] O2[%x] inst[%x] %c%c%c DASM(%x)\n",
       csr.io.time(31,0),
       csr.io.retire,
@@ -676,4 +678,6 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
       )
 
    printf("---------------------------------------------------\n")
+
+   */
 }
