@@ -184,31 +184,11 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                ))
 
    // Put these control signals in variables
-   // val (cs_val_inst: Bool) :: cs_br_type :: cs_op1_sel :: cs_op2_sel :: (cs_rs1_oen: Bool) :: (cs_rs2_oen: Bool) :: cs0 = csignals
-   // val cs_alu_fun :: cs_wb_sel :: (cs_rf_wen: Bool) :: (cs_mem_en: Bool) :: cs_mem_fcn :: cs_msk_sel :: cs_csr_cmd :: (cs_fencei: Bool) :: Nil = cs0
-
-   // val cs_rs1_oen = N
-   // val cs_rs2_oen = N
    
    val (cs_val_inst: Bool) :: cs_ctrl_flow  :: cs_cond_fun       :: cs_reg_group  :: cs_op1_sel :: cs_op2_sel :: cs0 = csignals
    val cs_alu_fun          :: cs_wb_sel     :: /*(cs_rf_wen: Bool) ::   */            cs1 = cs0
    val (cs_mem_en: Bool)   :: cs_mem_fcn    :: cs_msk_sel        :: cs_csr_cmd    :: (cs_fencei: Bool) :: Nil = cs1
-//  S_PC_4     
-//  S_PC_EXCP  
-//  S_PC_BR12  
-//  S_PC_BR18  
-//  S_PC_IIII  
-//  S_PC_RRII  
-//  S_PC_RASP  
 
-// CF_X    
-// CF_BR12 
-// CF_BR18 
-// CF_JUMPI
-// CF_JUMPR
-// CF_CALLI
-// CF_CALLR
-// CF_RET  
 //    // Branch Logic
    val ctrl_exe_pc_sel = MuxCase ( S_PC_4, Array(
       io.ctl.pipeline_kill              -> S_PC_EXCP,
@@ -228,18 +208,6 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
       (io.dat.exe_cf_type === CF_RET)   -> S_PC_RASP,
       
    ))
-   // Mux(io.ctl.pipeline_kill         , PC_EXC,
-   //                       Mux(io.dat.exe_br_type === BR_N  , PC_4,
-   //                       Mux(io.dat.exe_br_type === BR_NE , Mux(!io.dat.exe_br_eq,  PC_BRJMP, PC_4),
-   //                       Mux(io.dat.exe_br_type === BR_EQ , Mux( io.dat.exe_br_eq,  PC_BRJMP, PC_4),
-   //                       Mux(io.dat.exe_br_type === BR_GE , Mux(!io.dat.exe_br_lt,  PC_BRJMP, PC_4),
-   //                       Mux(io.dat.exe_br_type === BR_GEU, Mux(!io.dat.exe_br_ltu, PC_BRJMP, PC_4),
-   //                       Mux(io.dat.exe_br_type === BR_LT , Mux( io.dat.exe_br_lt,  PC_BRJMP, PC_4),
-   //                       Mux(io.dat.exe_br_type === BR_LTU, Mux( io.dat.exe_br_ltu, PC_BRJMP, PC_4),
-   //                       Mux(io.dat.exe_br_type === BR_J  , PC_BRJMP,
-   //                       Mux(io.dat.exe_br_type === BR_JR , PC_JALR,
-   //                                                          PC_4
-   //                   ))))))))))
 
    val ifkill  = (ctrl_exe_pc_sel =/= S_PC_4) || cs_fencei || RegNext(cs_fencei)
    val deckill = (ctrl_exe_pc_sel =/= S_PC_4)
@@ -267,9 +235,7 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                         (cs_wb_sel === S_WB_CSR)  -> dec_hd_addr,
                      ))
    val dec_wb2_addr = dec_ha_addr
-   
-   // dec_wb_rf    = Reg(UInt(3.W))
-   // dec_wb2_rf   = Reg(UInt(3.W))
+
 
    val dec_wb_rf       = MuxCase(RFX2, Array(
                         (cs_wb_sel === S_WB_RDHA) -> RFD,
@@ -338,11 +304,6 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                         (cs_cond_fun === COND_NE) -> RFD,
                      ))
 
-   // val dec_rs1_addr = io.dat.dec_inst(19, 15)
-   // val dec_rs2_addr = io.dat.dec_inst(24, 20)
-   // val dec_wbaddr   = io.dat.dec_inst(11, 7)
-   // val dec_rs1_oen  = Mux(deckill, false.B, cs_rs1_oen)
-   // val dec_rs2_oen  = Mux(deckill, false.B, cs_rs2_oen)
 
    val exe_reg_wbaddr      = Reg(UInt())
    val mem_reg_wbaddr      = Reg(UInt())
@@ -356,9 +317,6 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
    val exe_reg_wb2rf       = Reg(UInt())
    val mem_reg_wb2rf       = Reg(UInt())
    val wb_reg_wb2rf        = Reg(UInt())
-   // val exe_reg_ctrl_rf_wen = RegInit(false.B)
-   // val mem_reg_ctrl_rf_wen = RegInit(false.B)
-   // val wb_reg_ctrl_rf_wen  = RegInit(false.B)
    val exe_reg_illegal     = RegInit(false.B)
 
    val exe_reg_is_csr = RegInit(false.B)
@@ -373,7 +331,6 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
          exe_reg_wb2addr     := 0.U
          exe_reg_wbrf        := RFX2
          exe_reg_wb2rf       := RFX2
-         // exe_reg_ctrl_rf_wen := false.B
          exe_reg_is_csr      := false.B
          exe_reg_illegal     := false.B
       }
@@ -383,7 +340,6 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
          exe_reg_wbrf        := dec_wb_rf
          exe_reg_wb2addr      := dec_wb2_addr
          exe_reg_wb2rf        := dec_wb2_rf
-         // exe_reg_ctrl_rf_wen := cs_rf_wen
          exe_reg_is_csr      := cs_csr_cmd =/= CSR.N && cs_csr_cmd =/= CSR.I
          exe_reg_illegal     := dec_illegal
       }
@@ -395,7 +351,6 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
       exe_reg_wb2addr     := 0.U
       exe_reg_wbrf        := RFX2
       exe_reg_wb2rf       := RFX2
-      // exe_reg_ctrl_rf_wen := false.B
       exe_reg_is_csr      := false.B
       exe_reg_illegal     := false.B
    }
@@ -408,8 +363,6 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
      wb_reg_wbrf         := mem_reg_wbrf
      wb_reg_wb2addr      := mem_reg_wb2addr
      wb_reg_wb2rf        := mem_reg_wb2rf
-   //   mem_reg_ctrl_rf_wen := exe_reg_ctrl_rf_wen
-   //   wb_reg_ctrl_rf_wen  := mem_reg_ctrl_rf_wen
    }
 
    val exe_inst_is_load = RegInit(false.B)
@@ -458,8 +411,6 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                ((exe_reg_wbaddr === dec_hb_addr) && (exe_reg_wbrf === dec_cond2_rf)) ||
                ((mem_reg_wbaddr === dec_hb_addr) && (mem_reg_wbrf === dec_cond2_rf)) ||
                ((wb_reg_wbaddr  === dec_hb_addr) && (wb_reg_wbrf  === dec_cond2_rf)) ||
-               // ((exe_inst_is_load) && (exe_reg_wbaddr === dec_op1_addr) && (exe_reg_wbrf === dec_op1_rf)) ||
-               // ((exe_inst_is_load) && (exe_reg_wbaddr === dec_op2_addr) && (exe_reg_wbrf === dec_op2_rf)) ||
                ((exe_reg_is_csr))
    }
 
@@ -480,7 +431,6 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
    io.ctl.op2_sel    := cs_op2_sel
    io.ctl.alu_fun    := cs_alu_fun
    io.ctl.wb_sel     := cs_wb_sel
-   // io.ctl.rf_wen     := cs_rf_wen
 
    // we need to stall IF while fencei goes through DEC and EXE, as there may
    // be a store we need to wait to clear in MEM.
@@ -495,7 +445,6 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                                  )))
 
    // convert CSR instructions with raddr1 == 0 to read-only CSR commands
-   val rs1_addr = io.dat.dec_inst(RS1_MSB, RS1_LSB)
    io.ctl.csr_cmd := cs_csr_cmd
 
    io.ctl.mem_val    := cs_mem_en
