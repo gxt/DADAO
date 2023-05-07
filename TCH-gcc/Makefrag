@@ -5,7 +5,7 @@ GCC_1003_LOCAL		:= /pub/GITHUB/gcc-mirror/gcc.git
 GCC_1003_GITHUB		:= https://github.com/gcc-mirror/gcc.git
 GCC_1003_VERSION	:= releases/gcc-10.3.0
 GCC_1003_BRANCH		:= dadao-1003
-GCC_1003_TARGET		?= dadao-linux-gnu
+GCC_1003_TARGET		?= dadao-unknown-elf
 
 GCC_1003_NEWFILES	:= $(DIR_DADAO_TOP)/TCH-gcc/gcc-1003-newfiles
 GCC_1003_PATCHES	:= $(DIR_DADAO_TOP)/TCH-gcc/gcc-1003-patches
