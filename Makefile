@@ -41,16 +41,16 @@ include ENV-proxylinux/Makefrag
 
 tch-gnu-highfive:
 	@echo "=== BUILD Toolchain dadao-linux-gnu BEGIN ==="
-	@make -s binutils-gdb-$(VER_BINUTILS_GDB)-highfive
-	@make -s gcc-$(VER_GCC)-highfive
+	@make -s BINUTILS_GDB_$(VER_BINUTILS_GDB)_TARGET=dadao-linux-gnu binutils-gdb-$(VER_BINUTILS_GDB)-highfive
+	@make -s GCC_$(VER_GCC)_TARGET=dadao-linux-gnu gcc-$(VER_GCC)-highfive
 	@make -s glibc-$(VER_GLIBC)-highfive
 	@echo "=== BUILD Toolchain dadao-linux-gnu DONE! ==="
 
 tch-elf-highfive:
 	@echo "=== BUILD Toolchain dadao-unknown-elf BEGIN ==="
 	@echo "=== building time maybe: real 11m, user 34m, sys 5m ==="
-	@make -s BINUTILS_GDB_$(VER_BINUTILS_GDB)_TARGET=dadao-unknown-elf binutils-gdb-$(VER_BINUTILS_GDB)-highfive
-	@make -s GCC_$(VER_GCC)_TARGET=dadao-unknown-elf gcc-$(VER_GCC)-highfive
+	@make -s binutils-gdb-$(VER_BINUTILS_GDB)-highfive
+	@make -s gcc-$(VER_GCC)-highfive
 	@make -s newlib-cygwin-$(VER_NEWLIB_CYGWIN)-highfive
 	@echo "=== BUILD Toolchain dadao-unknown-elf DONE! ==="
 
