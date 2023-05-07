@@ -12,6 +12,7 @@ VER_BINUTILS_GDB	:= 0235
 VER_GCC			:= 1003
 VER_GLIBC		:= 0231
 VER_NEWLIB_CYGWIN	:= 0303
+VER_LLVM		:= 1600
 VER_LINUX		:= 0504
 VER_QEMU		:= 0600
 VER_CHIPYARD		:= 0107
@@ -30,6 +31,7 @@ include TCH-binutils-gdb/Makefrag
 include TCH-gcc/Makefrag
 include TCH-glibc/Makefrag
 include TCH-newlib-cygwin/Makefrag
+include TCH-llvm/Makefrag
 include ENV-linux/Makefrag
 include SIM-qemu/Makefrag
 include SOC-chipyard/Makefrag
