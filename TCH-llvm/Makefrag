@@ -93,3 +93,6 @@ llvm-1600-highfive:
 	@make -s llvm-1600-install				1>> $(LLVM_1600_LOG_STDOUT) 2>> $(LLVM_1600_LOG_STDERR)
 	@echo "5. Install llvm complete."
 	@echo "BUILD llvm-1600 DONE!"
+
+llvm-1600-check-llvm:
+	@ninja -C $(LLVM_1600_BUILD) check-llvm
