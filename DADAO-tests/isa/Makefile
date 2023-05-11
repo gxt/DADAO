@@ -20,8 +20,8 @@ vpath %.S $(src_dir)
 
 dduii-bare%.out: dduii-bare%
 	@echo -n "	$<  	"
-	@make -C $(DIR_DADAO_TOP) CHIPYARD_0107_DADAO_BINARY=$(shell pwd)/$< chipyard-0107-run-binary	> /dev/null
-	@tail -n 1 $(DIR_DADAO_BUILD)/chipyard-0107/output/chipyard.TestHarness.Wuming1StageConfig/$@
+	@make -C $(DIR_DADAO_TOP) CHIPYARD_0107_DADAO_BINARY=$(shell pwd)/$< chipyard-0107-run-binary-stage5	> /dev/null
+	@tail -n 1 $(DIR_DADAO_BUILD)/chipyard-0107/output/chipyard.TestHarness.Wuming5StageConfig/$@
 
 dduii-qemu%.out: dduii-qemu%
 	@echo -n "	$<  	"
@@ -30,8 +30,8 @@ dduii-qemu%.out: dduii-qemu%
 
 ddfii-bare%.out: ddfii-bare%
 	@echo -n "	$<  	"
-	@make -C $(DIR_DADAO_TOP) CHIPYARD_0107_DADAO_BINARY=$(shell pwd)/$< chipyard-0107-run-binary   > /dev/null
-	@tail -n 1 $(DIR_DADAO_BUILD)/chipyard-0107/output/chipyard.TestHarness.Wuming1StageConfig/$@
+	@make -C $(DIR_DADAO_TOP) CHIPYARD_0107_DADAO_BINARY=$(shell pwd)/$< chipyard-0107-run-binary-stage5   > /dev/null
+	@tail -n 1 $(DIR_DADAO_BUILD)/chipyard-0107/output/chipyard.TestHarness.Wuming5StageConfig/$@
 
 ddfii-qemu%.out: ddfii-qemu%
 	@echo -n "	$<  	"
