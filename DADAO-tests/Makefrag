@@ -28,7 +28,7 @@ tests-bmarks-bare-highfive:
 	@$(DADAO_MAKE) src_dir=$(TESTS_BMARKS_BARE_SOURCE) -C $(TESTS_BMARKS_BARE_BUILD)
 	@make -C $(DIR_DADAO_TOP)									\
 		CHIPYARD_$(VER_CHIPYARD)_DADAO_BINARY=$(TESTS_BMARKS_BARE_BUILD)/dhrystone.dadao	\
-		chipyard-$(VER_CHIPYARD)-run-binary
+		chipyard-$(VER_CHIPYARD)-run-binary-stage5
 
 tests-bmarks-qemu-dhrystone-highfive:
 	@rm -fr $(TESTS_BMARKS_QEMU_BUILD)/dhrystone
