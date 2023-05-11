@@ -1,0 +1,95 @@
+#
+# Makefile for llvm-project
+#
+LLVM_1600_LOCAL		:= /pub/GITHUB/llvm/llvm-project.git
+LLVM_1600_GITHUB	:= https://github.com/llvm/llvm-project.git
+LLVM_1600_VERSION	:= llvmorg-16.0.0
+LLVM_1600_BRANCH	:= dadao-1600
+
+LLVM_1600_NEWFILES	:= $(DIR_DADAO_TOP)/TCH-llvm/llvm-1600-newfiles
+LLVM_1600_PATCHES	:= $(DIR_DADAO_TOP)/TCH-llvm/llvm-1600-patches
+LLVM_1600_FIXUPS	:= $(DIR_DADAO_TOP)/TCH-llvm/llvm-1600-fixups
+
+LLVM_1600_SOURCE	:= $(DIR_DADAO_SOURCE)/llvm-1600
+LLVM_1600_BUILD		:= $(DIR_DADAO_BUILD)/llvm-1600
+LLVM_1600_INSTALL	?= $(DIR_DADAO_INSTALL)
+LLVM_1600_LOG_STDOUT	:= $(DIR_DADAO_LOG)/llvm-1600.out
+LLVM_1600_LOG_STDERR	:= $(DIR_DADAO_LOG)/llvm-1600.err
+
+llvm-1600-clean:
+	@echo "Remove old llvm source dir ..."
+	@rm -fr $(LLVM_1600_SOURCE)
+	@echo "Remove old llvm build dir ..."
+	@rm -fr $(LLVM_1600_BUILD)
+
+llvm-1600-source:
+	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
+	@rm -fr $(LLVM_1600_SOURCE)
+ifeq ($(wildcard $(LLVM_1600_LOCAL)),)
+	# Clone remote repo
+	@git clone -q $(LLVM_1600_GITHUB) -- $(LLVM_1600_SOURCE)
+else
+	# Clone local repo
+	@git clone -q $(LLVM_1600_LOCAL) -- $(LLVM_1600_SOURCE)
+endif
+	# Specify version
+	@cd $(LLVM_1600_SOURCE); git checkout -qb $(LLVM_1600_BRANCH) $(LLVM_1600_VERSION)
+	# clang newfiles
+	@cp -a $(LLVM_1600_NEWFILES)/clang/* $(LLVM_1600_SOURCE)/clang/
+	@cd $(LLVM_1600_SOURCE);					\
+		git add clang;						\
+		git commit -sm"DADAO: add clang support"
+	# llvm newfiles
+	@cp -a $(LLVM_1600_NEWFILES)/llvm/* $(LLVM_1600_SOURCE)/llvm/
+	@cd $(LLVM_1600_SOURCE);					\
+		git add llvm;						\
+		git commit -sm"DADAO: add llvm support"
+	# Patches
+	@cd $(LLVM_1600_SOURCE); test ! -d $(LLVM_1600_PATCHES) || git am $(LLVM_1600_PATCHES)/*.patch
+	# Fixups
+	@cd $(LLVM_1600_SOURCE); test ! -d $(LLVM_1600_FIXUPS) || git am $(LLVM_1600_FIXUPS)/*.patch
+
+llvm-1600-build-new:
+	@rm -fr $(LLVM_1600_BUILD)
+	@mkdir -p $(LLVM_1600_BUILD)
+	@cmake -S $(LLVM_1600_SOURCE)/llvm -B $(LLVM_1600_BUILD) -G Ninja	\
+		-DCMAKE_BUILD_TYPE=Release					\
+		-DCMAKE_INSTALL_PREFIX=$(LLVM_1600_INSTALL)			\
+		-DLLVM_TARGETS_TO_BUILD="Dadao"					\
+		-DLLVM_ENABLE_PROJECTS="clang"					\
+		-DLLVM_BUILD_RUNTIMES=OFF					\
+		-DLLVM_INCLUDE_TESTS=ON						\
+		-DLLVM_INCLUDE_EXAMPLES=OFF					\
+		-DLLVM_ENABLE_BACKTRACES=OFF					\
+		-DLLVM_ENABLE_ASSERTIONS=ON					\
+		-DLLVM_OPTIMIZED_TABLEGEN=ON					\
+		-DLLVM_USE_SPLIT_DWARF=ON					\
+		-DLLVM_PARALLEL_COMPILE_JOBS=16					\
+		-DLLVM_USE_LINKER=mold
+
+llvm-1600-build:
+	@cd $(LLVM_1600_BUILD); cmake --build .
+
+llvm-1600-install:
+	@cd $(LLVM_1600_BUILD); cmake --install .
+
+llvm-1600-highfive:
+	@echo "BEGIN TO BUILD llvm-1600!"
+	@echo "0. Remove old logfiles"
+	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
+	@rm -fr $(LLVM_1600_LOG_STDOUT) $(LLVM_1600_LOG_STDERR)
+	@echo "1. Clean old llvm ..."
+	@make -s llvm-1600-clean				1>> $(LLVM_1600_LOG_STDOUT) 2>> $(LLVM_1600_LOG_STDERR)
+	@echo "2. Clone and patch new llvm ..."
+	@make -s llvm-1600-source				1>> $(LLVM_1600_LOG_STDOUT) 2>> $(LLVM_1600_LOG_STDERR)
+	@echo "2. Clone and patch new llvm complete."
+	@echo "3. Configure llvm ..."
+	@make -s llvm-1600-build-new				1>> $(LLVM_1600_LOG_STDOUT) 2>> $(LLVM_1600_LOG_STDERR)
+	@echo "3. Configure llvm complete."
+	@echo "4. Make all-llvm ..."
+	@make -s llvm-1600-build				1>> $(LLVM_1600_LOG_STDOUT) 2>> $(LLVM_1600_LOG_STDERR)
+	@echo "4. Make all-llvm complete."
+	@echo "5. Install llvm ..."
+	@make -s llvm-1600-install				1>> $(LLVM_1600_LOG_STDOUT) 2>> $(LLVM_1600_LOG_STDERR)
+	@echo "5. Install llvm complete."
+	@echo "BUILD llvm-1600 DONE!"
