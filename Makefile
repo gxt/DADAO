@@ -23,7 +23,7 @@ DADAO_MAKEP		:= make --silent DIR_DADAO_TOP=$(DIR_DADAO_TOP) PATH=$(DADAO_PATH) 
 all:
 	@echo ""
 	@echo "DA DAO ZHI JIAN!"
-	@echo "- VERSION 0.3 -"
+	@echo "- VERSION 0.4 -"
 	@echo ""
 
 include TCH-binutils-gdb/Makefrag
