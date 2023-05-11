@@ -1,0 +1,19 @@
+
+#ifndef ELF_RELOC
+#error "ELF_RELOC must be defined"
+#endif
+
+// No relocation
+ELF_RELOC(R_DADAO_NONE,        0)
+// 21-bit symbol relocation
+ELF_RELOC(R_DADAO_21,          1)
+// 21-bit symbol relocation with last two bits masked to 0
+ELF_RELOC(R_DADAO_21_F,        2)
+// 25-bit branch targets
+ELF_RELOC(R_DADAO_25,          3)
+// General 32-bit relocation
+ELF_RELOC(R_DADAO_32,          4)
+// Upper 16-bits of a symbolic relocation
+ELF_RELOC(R_DADAO_HI16,        5)
+// Lower 16-bits of a symbolic relocation
+ELF_RELOC(R_DADAO_LO16,        6)
