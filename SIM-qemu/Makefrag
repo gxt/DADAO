@@ -102,25 +102,21 @@ qemu-0600-install:
 	@make -C $(QEMU_0600_BUILD) install
 
 qemu-0600-highfive:
-	@echo "BEGIN TO BUILD qemu-0600!"
-	@echo "0. Remove old logfiles"
+	@echo "--- BUILD qemu-0600 BEGIN ---"
+	# 0. Remove old logfiles
 	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
 	@rm -fr $(QEMU_0600_LOG_STDOUT) $(QEMU_0600_LOG_STDERR)
-	@echo "1. Clean old qemu ..."
+	# 1. Clean old qemu ...
 	@make -s qemu-0600-clean				1>> $(QEMU_0600_LOG_STDOUT) 2>> $(QEMU_0600_LOG_STDERR)
-	@echo "2. Clone and patch new qemu ..."
+	# 2. Clone and patch new qemu ...
 	@make -s qemu-0600-source				1>> $(QEMU_0600_LOG_STDOUT) 2>> $(QEMU_0600_LOG_STDERR)
-	@echo "2. Clone and patch new qemu complete."
-	@echo "3. Configure qemu ..."
+	# 3. Configure qemu ...
 	@make -s qemu-0600-build-new				1>> $(QEMU_0600_LOG_STDOUT) 2>> $(QEMU_0600_LOG_STDERR)
-	@echo "3. Configure qemu complete."
-	@echo "4. Make all-qemu ..."
+	# 4. Make all-qemu ...
 	@make -s qemu-0600-build				1>> $(QEMU_0600_LOG_STDOUT) 2>> $(QEMU_0600_LOG_STDERR)
-	@echo "4. Make all-qemu complete."
-	@echo "5. Install qemu ..."
+	# 5. Install qemu ...
 	@make -s qemu-0600-install				1>> $(QEMU_0600_LOG_STDOUT) 2>> $(QEMU_0600_LOG_STDERR)
-	@echo "5. Install qemu complete."
-	@echo "BUILD qemu-0600 DONE!"
+	@echo "--- BUILD qemu-0600 DONE! ---"
 
 qemu-0600-tags:
 	@make -C $(QEMU_0600_SOURCE) ctags
