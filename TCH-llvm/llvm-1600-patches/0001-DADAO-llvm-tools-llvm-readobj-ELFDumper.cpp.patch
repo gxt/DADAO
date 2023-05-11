@@ -1,0 +1,25 @@
+From 0464bd1d98741007007ebfdbe839f4dab4710684 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 11:04:15 +0800
+Subject: [PATCH] DADAO: llvm/tools/llvm-readobj/ELFDumper.cpp
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ llvm/tools/llvm-readobj/ELFDumper.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/llvm/tools/llvm-readobj/ELFDumper.cpp b/llvm/tools/llvm-readobj/ELFDumper.cpp
+index 45fff0cc4a76..6cbedcf0efbf 100644
+--- a/llvm/tools/llvm-readobj/ELFDumper.cpp
++++ b/llvm/tools/llvm-readobj/ELFDumper.cpp
+@@ -1200,6 +1200,7 @@ const EnumEntry<unsigned> ElfMachineType[] = {
+   ENUM_ENT(EM_AMDGPU,        "EM_AMDGPU"),
+   ENUM_ENT(EM_RISCV,         "RISC-V"),
+   ENUM_ENT(EM_LANAI,         "EM_LANAI"),
++  ENUM_ENT(EM_DADAO,         "EM_DADAO"),
+   ENUM_ENT(EM_BPF,           "EM_BPF"),
+   ENUM_ENT(EM_VE,            "NEC SX-Aurora Vector Engine"),
+   ENUM_ENT(EM_LOONGARCH,     "LoongArch"),
+-- 
+2.34.1
+

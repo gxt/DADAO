@@ -1,0 +1,25 @@
+From 77840c27975c12e6e60a3260133ff79d5a84e887 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 10:54:09 +0800
+Subject: [PATCH] DADAO: llvm/CMakeLists.txt
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ llvm/CMakeLists.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/llvm/CMakeLists.txt b/llvm/CMakeLists.txt
+index 04d4cf261156..b84a634e118d 100644
+--- a/llvm/CMakeLists.txt
++++ b/llvm/CMakeLists.txt
+@@ -431,6 +431,7 @@ set(LLVM_ALL_TARGETS
+   BPF
+   Hexagon
+   Lanai
++  Dadao
+   LoongArch
+   Mips
+   MSP430
+-- 
+2.34.1
+

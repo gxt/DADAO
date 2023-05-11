@@ -1,0 +1,35 @@
+From 8ec352ebf1ddb770f0a8e3bc1c78c4d1d8eb1104 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 10:59:46 +0800
+Subject: [PATCH] DADAO: llvm/include/llvm/Object/ELFObjectFile.h
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ llvm/include/llvm/Object/ELFObjectFile.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/llvm/include/llvm/Object/ELFObjectFile.h b/llvm/include/llvm/Object/ELFObjectFile.h
+index 8baf6f4c5af3..48c02147a908 100644
+--- a/llvm/include/llvm/Object/ELFObjectFile.h
++++ b/llvm/include/llvm/Object/ELFObjectFile.h
+@@ -1247,6 +1247,8 @@ StringRef ELFObjectFile<ELFT>::getFileFormatName() const {
+       return "elf64-ve";
+     case ELF::EM_LOONGARCH:
+       return "elf64-loongarch";
++    case ELF::EM_DADAO:
++      return "elf64-dadao";
+     default:
+       return "elf64-unknown";
+     }
+@@ -1276,6 +1278,8 @@ template <class ELFT> Triple::ArchType ELFObjectFile<ELFT>::getArch() const {
+     return Triple::hexagon;
+   case ELF::EM_LANAI:
+     return Triple::lanai;
++  case ELF::EM_DADAO:
++    return Triple::dadao;
+   case ELF::EM_MIPS:
+     switch (EF.getHeader().e_ident[ELF::EI_CLASS]) {
+     case ELF::ELFCLASS32:
+-- 
+2.34.1
+

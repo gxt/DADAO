@@ -1,0 +1,40 @@
+From caadccfa4dbcc5de868ad736651762b5129d50ea Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 11:01:56 +0800
+Subject: [PATCH] DADAO: llvm/lib/Object/ELF.cpp
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ llvm/lib/Object/ELF.cpp | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/llvm/lib/Object/ELF.cpp b/llvm/lib/Object/ELF.cpp
+index 81c9a097170d..7b23b1098b4e 100644
+--- a/llvm/lib/Object/ELF.cpp
++++ b/llvm/lib/Object/ELF.cpp
+@@ -94,6 +94,13 @@ StringRef llvm::object::getELFRelocationTypeName(uint32_t Machine,
+       break;
+     }
+     break;
++  case ELF::EM_DADAO:
++    switch (Type) {
++#include "llvm/BinaryFormat/ELFRelocs/Dadao.def"
++    default:
++      break;
++    }
++    break;
+   case ELF::EM_PPC:
+     switch (Type) {
+ #include "llvm/BinaryFormat/ELFRelocs/PowerPC.def"
+@@ -210,6 +217,8 @@ uint32_t llvm::object::getELFRelativeRelocationType(uint32_t Machine) {
+     return ELF::R_HEX_RELATIVE;
+   case ELF::EM_LANAI:
+     break;
++  case ELF::EM_DADAO:
++    break;
+   case ELF::EM_PPC:
+     break;
+   case ELF::EM_PPC64:
+-- 
+2.34.1
+

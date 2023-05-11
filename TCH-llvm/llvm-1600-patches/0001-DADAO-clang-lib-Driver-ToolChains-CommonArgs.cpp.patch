@@ -1,0 +1,41 @@
+From 7a2c2b547bc8739c9d218d5126f0a4d52b2a0bac Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 10:51:56 +0800
+Subject: [PATCH] DADAO: clang/lib/Driver/ToolChains/CommonArgs.cpp
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ clang/lib/Driver/ToolChains/CommonArgs.cpp | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/clang/lib/Driver/ToolChains/CommonArgs.cpp b/clang/lib/Driver/ToolChains/CommonArgs.cpp
+index 0883631dfe98..e7e934785428 100644
+--- a/clang/lib/Driver/ToolChains/CommonArgs.cpp
++++ b/clang/lib/Driver/ToolChains/CommonArgs.cpp
+@@ -341,6 +341,13 @@ static std::string getLanaiTargetCPU(const ArgList &Args) {
+   return "";
+ }
+ 
++static std::string getDadaoTargetCPU(const ArgList &Args) {
++  if (Arg *A = Args.getLastArg(options::OPT_mcpu_EQ)) {
++    return A->getValue();
++  }
++  return "";
++}
++
+ /// Get the (LLVM) name of the WebAssembly cpu we are targeting.
+ static StringRef getWebAssemblyTargetCPU(const ArgList &Args) {
+   // If we have -mcpu=, use that.
+@@ -445,6 +452,9 @@ std::string tools::getCPUName(const Driver &D, const ArgList &Args,
+   case llvm::Triple::lanai:
+     return getLanaiTargetCPU(Args);
+ 
++  case llvm::Triple::dadao:
++    return getDadaoTargetCPU(Args);
++
+   case llvm::Triple::systemz:
+     return systemz::getSystemZTargetCPU(Args);
+ 
+-- 
+2.34.1
+

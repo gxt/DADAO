@@ -1,0 +1,26 @@
+From c2dd4fac81fb88a39949709c793369d64d2a512e Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 11:04:34 +0800
+Subject: [PATCH] DADAO: llvm/tools/opt/opt.cpp
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ llvm/tools/opt/opt.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/llvm/tools/opt/opt.cpp b/llvm/tools/opt/opt.cpp
+index 40632b43e73b..dfd079f4f58a 100644
+--- a/llvm/tools/opt/opt.cpp
++++ b/llvm/tools/opt/opt.cpp
+@@ -357,7 +357,7 @@ static bool shouldPinPassToLegacyPM(StringRef Pass) {
+       "x86-",    "xcore-", "wasm-",  "systemz-", "ppc-",    "nvvm-",
+       "nvptx-",  "mips-",  "lanai-", "hexagon-", "bpf-",    "avr-",
+       "thumb2-", "arm-",   "si-",    "gcn-",     "amdgpu-", "aarch64-",
+-      "amdgcn-", "polly-", "riscv-", "dxil-"};
++      "amdgcn-", "polly-", "riscv-", "dxil-",    "dadao-"};
+   std::vector<StringRef> PassNameContain = {"ehprepare"};
+   std::vector<StringRef> PassNameExact = {
+       "safe-stack",
+-- 
+2.34.1
+

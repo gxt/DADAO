@@ -1,0 +1,28 @@
+From 1013ae1cacf37b3e16f360873e59342def85968a Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 11:03:28 +0800
+Subject: [PATCH] DADAO:
+ llvm/test/tools/llvm-readobj/ELF/file-header-machine-types.test
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ .../test/tools/llvm-readobj/ELF/file-header-machine-types.test | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/llvm/test/tools/llvm-readobj/ELF/file-header-machine-types.test b/llvm/test/tools/llvm-readobj/ELF/file-header-machine-types.test
+index 9ba1dff6ec84..1182a189987f 100644
+--- a/llvm/test/tools/llvm-readobj/ELF/file-header-machine-types.test
++++ b/llvm/test/tools/llvm-readobj/ELF/file-header-machine-types.test
+@@ -474,6 +474,9 @@
+ # RUN: yaml2obj %s -o %t.lanai.o -D MACHINE=EM_LANAI
+ # RUN: llvm-readelf --file-headers %t.lanai.o | FileCheck %s -DMACHINE="EM_LANAI"
+ 
++# RUN: yaml2obj %s -o %t.dadao.o -D MACHINE=EM_DADAO
++# RUN: llvm-readelf --file-headers %t.dadao.o | FileCheck %s -DMACHINE="EM_DADAO"
++
+ # RUN: yaml2obj %s -o %t.bpf.o -D MACHINE=EM_BPF
+ # RUN: llvm-readelf --file-headers %t.bpf.o | FileCheck %s -DMACHINE="EM_BPF"
+ 
+-- 
+2.34.1
+

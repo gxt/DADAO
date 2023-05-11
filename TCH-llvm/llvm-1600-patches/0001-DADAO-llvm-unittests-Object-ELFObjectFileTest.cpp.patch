@@ -1,0 +1,31 @@
+From a45d9fbbeb506f7d750aaa945402dedb279bf8bc Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 11:04:58 +0800
+Subject: [PATCH] DADAO: llvm/unittests/Object/ELFObjectFileTest.cpp
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ llvm/unittests/Object/ELFObjectFileTest.cpp | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/llvm/unittests/Object/ELFObjectFileTest.cpp b/llvm/unittests/Object/ELFObjectFileTest.cpp
+index 6316e180d5d9..91af15021bc5 100644
+--- a/llvm/unittests/Object/ELFObjectFileTest.cpp
++++ b/llvm/unittests/Object/ELFObjectFileTest.cpp
+@@ -255,6 +255,13 @@ TEST(ELFObjectFileTest, MachineTestForLANAI) {
+     checkFormatAndArch(Data, Formats[Idx], Triple::lanai);
+ }
+ 
++TEST(ELFObjectFileTest, MachineTestForDADAO) {
++  std::array<StringRef, 4> Formats = {"elf32-unknown", "elf32-unknown",
++                                      "elf64-dadao", "elf64-dadao"};
++  for (auto [Idx, Data] : enumerate(generateData(ELF::EM_DADAO)))
++    checkFormatAndArch(Data, Formats[Idx], Triple::dadao);
++}
++
+ TEST(ELFObjectFileTest, MachineTestForMSP430) {
+   std::array<StringRef, 4> Formats = {"elf32-msp430", "elf32-msp430",
+                                       "elf64-unknown", "elf64-unknown"};
+-- 
+2.34.1
+

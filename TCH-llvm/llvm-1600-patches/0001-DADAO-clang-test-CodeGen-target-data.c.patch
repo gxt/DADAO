@@ -1,0 +1,28 @@
+From 99a4980ab3390efc7a7b8cb9a04edf5b1be39338 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 10:53:12 +0800
+Subject: [PATCH] DADAO: clang/test/CodeGen/target-data.c
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ clang/test/CodeGen/target-data.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/clang/test/CodeGen/target-data.c b/clang/test/CodeGen/target-data.c
+index e5ee17bc38a7..1942309b0620 100644
+--- a/clang/test/CodeGen/target-data.c
++++ b/clang/test/CodeGen/target-data.c
+@@ -118,6 +118,10 @@
+ // RUN: FileCheck %s -check-prefix=LANAI
+ // LANAI: target datalayout = "E-m:e-p:32:32-i64:64-a:0:32-n32-S64"
+ 
++// RUN: %clang_cc1 -triple dadao-unknown-unknown -o - -emit-llvm %s | \
++// RUN: FileCheck %s -check-prefix=DADAO
++// DADAO: target datalayout = "E-m:e-p:32:32-i64:64-a:0:32-n32-S64"
++
+ // RUN: %clang_cc1 -triple powerpc-unknown -o - -emit-llvm %s | \
+ // RUN: FileCheck %s -check-prefix=PPC
+ // PPC: target datalayout = "E-m:e-p:32:32-i64:64-n32"
+-- 
+2.34.1
+

@@ -1,0 +1,27 @@
+From dc0df91cfed98d71179dc02d6afed3cf9b264c74 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 10:53:49 +0800
+Subject: [PATCH] DADAO: clang/test/Preprocessor/init.c
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ clang/test/Preprocessor/init.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/clang/test/Preprocessor/init.c b/clang/test/Preprocessor/init.c
+index 46f79414fb7c..23e31ca6baee 100644
+--- a/clang/test/Preprocessor/init.c
++++ b/clang/test/Preprocessor/init.c
+@@ -1435,6 +1435,9 @@
+ // RUN: %clang_cc1 -triple lanai-unknown-unknown -E -dM < /dev/null | FileCheck -match-full-lines -check-prefix LANAI %s
+ // LANAI: #define __lanai__ 1
+ //
++// RUN: %clang_cc1 -triple dadao-unknown-unknown -E -dM < /dev/null | FileCheck -match-full-lines -check-prefix DADAO %s
++// DADAO: #define __dadao__ 1
++//
+ // RUN: %clang_cc1 -E -dM -ffreestanding -triple=amd64-unknown-openbsd6.1 < /dev/null | FileCheck -match-full-lines -check-prefix OPENBSD %s
+ // RUN: %clang_cc1 -E -dM -ffreestanding -triple=aarch64-unknown-openbsd6.1 < /dev/null | FileCheck -match-full-lines -check-prefix OPENBSD %s
+ // RUN: %clang_cc1 -E -dM -ffreestanding -triple=arm-unknown-openbsd6.1-gnueabi < /dev/null | FileCheck -match-full-lines -check-prefix OPENBSD %s
+-- 
+2.34.1
+

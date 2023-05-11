@@ -1,0 +1,97 @@
+From 1bb2ead871b3300cf5683dd7077327cc64b30332 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 10:52:54 +0800
+Subject: [PATCH] DADAO: clang/test/CodeGen/ext-int-cc.c
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ clang/test/CodeGen/ext-int-cc.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/clang/test/CodeGen/ext-int-cc.c b/clang/test/CodeGen/ext-int-cc.c
+index bcf29fc1309d..417936b29fc1 100644
+--- a/clang/test/CodeGen/ext-int-cc.c
++++ b/clang/test/CodeGen/ext-int-cc.c
+@@ -12,6 +12,7 @@
+ // RUN: %clang_cc1 -no-enable-noundef-analysis -triple spir -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=SPIR
+ // RUN: %clang_cc1 -no-enable-noundef-analysis -triple hexagon -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=HEX
+ // RUN: %clang_cc1 -no-enable-noundef-analysis -triple lanai -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=LANAI
++// RUN: %clang_cc1 -no-enable-noundef-analysis -triple dadao -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=DADAO
+ // RUN: %clang_cc1 -no-enable-noundef-analysis -triple r600 -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=R600
+ // RUN: %clang_cc1 -no-enable-noundef-analysis -triple arc -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=ARC
+ // RUN: %clang_cc1 -no-enable-noundef-analysis -triple xcore -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=XCORE
+@@ -47,6 +48,7 @@ void ParamPassing(_BitInt(128) b, _BitInt(64) c) {}
+ // SPIR: define{{.*}} spir_func void @ParamPassing(ptr byval(i128) align 8 %{{.+}}, i64 %{{.+}})
+ // HEX: define{{.*}} void @ParamPassing(ptr byval(i128) align 8 %{{.+}}, i64 %{{.+}})
+ // LANAI: define{{.*}} void @ParamPassing(ptr byval(i128) align 4 %{{.+}}, i64 %{{.+}})
++// DADAO: define{{.*}} void @ParamPassing(ptr byval(i128) align 4 %{{.+}}, i64 %{{.+}})
+ // R600: define{{.*}} void @ParamPassing(ptr addrspace(5) byval(i128) align 8 %{{.+}}, i64 %{{.+}})
+ // ARC: define{{.*}} void @ParamPassing(ptr byval(i128) align 4 %{{.+}}, i64 inreg %{{.+}})
+ // XCORE: define{{.*}} void @ParamPassing(ptr byval(i128) align 4 %{{.+}}, i64 %{{.+}})
+@@ -78,6 +80,7 @@ void ParamPassing2(_BitInt(127) b, _BitInt(63) c) {}
+ // SPIR: define{{.*}} spir_func void @ParamPassing2(ptr byval(i127) align 8 %{{.+}}, i63 %{{.+}})
+ // HEX: define{{.*}} void @ParamPassing2(ptr byval(i127) align 8 %{{.+}}, i63 %{{.+}})
+ // LANAI: define{{.*}} void @ParamPassing2(ptr byval(i127) align 4 %{{.+}}, i63 %{{.+}})
++// DADAO: define{{.*}} void @ParamPassing2(ptr byval(i127) align 4 %{{.+}}, i63 %{{.+}})
+ // R600: define{{.*}} void @ParamPassing2(ptr addrspace(5) byval(i127) align 8 %{{.+}}, i63 %{{.+}})
+ // ARC: define{{.*}} void @ParamPassing2(ptr byval(i127) align 4 %{{.+}}, i63 inreg %{{.+}})
+ // XCORE: define{{.*}} void @ParamPassing2(ptr byval(i127) align 4 %{{.+}}, i63 %{{.+}})
+@@ -110,6 +113,7 @@ void ParamPassing3(_BitInt(15) a, _BitInt(31) b) {}
+ // SPIR: define{{.*}} spir_func void @ParamPassing3(i15 signext %{{.+}}, i31 signext %{{.+}})
+ // HEX: define{{.*}} void @ParamPassing3(i15 signext %{{.+}}, i31 signext %{{.+}})
+ // LANAI: define{{.*}} void @ParamPassing3(i15 inreg %{{.+}}, i31 inreg %{{.+}})
++// DADAO: define{{.*}} void @ParamPassing3(i15 inreg %{{.+}}, i31 inreg %{{.+}})
+ // R600: define{{.*}} void @ParamPassing3(i15 signext %{{.+}}, i31 signext %{{.+}})
+ // ARC: define{{.*}} void @ParamPassing3(i15 inreg signext %{{.+}}, i31 inreg signext %{{.+}})
+ // XCORE: define{{.*}} void @ParamPassing3(i15 signext %{{.+}}, i31 signext %{{.+}})
+@@ -146,6 +150,7 @@ void ParamPassing4(_BitInt(129) a) {}
+ // SPIR-NOT: define{{.*}} spir_func void @ParamPassing4(ptr byval(i129) align 8 %{{.+}})
+ // HEX-NOT: define{{.*}} void @ParamPassing4(ptr byval(i129) align 8 %{{.+}})
+ // LANAI-NOT: define{{.*}} void @ParamPassing4(ptr byval(i129) align 4 %{{.+}})
++// DADAO-NOT: define{{.*}} void @ParamPassing4(ptr byval(i129) align 4 %{{.+}})
+ // R600-NOT: define{{.*}} void @ParamPassing4(ptr addrspace(5) byval(i129) align 8 %{{.+}})
+ // ARC-NOT: define{{.*}} void @ParamPassing4(ptr byval(i129) align 4 %{{.+}})
+ // XCORE-NOT: define{{.*}} void @ParamPassing4(ptr byval(i129) align 4 %{{.+}})
+@@ -178,6 +183,7 @@ _BitInt(63) ReturnPassing(void){}
+ // SPIR: define{{.*}} spir_func i63 @ReturnPassing(
+ // HEX: define{{.*}} i63 @ReturnPassing(
+ // LANAI: define{{.*}} i63 @ReturnPassing(
++// DADAO: define{{.*}} i63 @ReturnPassing(
+ // R600: define{{.*}} i63 @ReturnPassing(
+ // ARC: define{{.*}} i63 @ReturnPassing(
+ // XCORE: define{{.*}} i63 @ReturnPassing(
+@@ -209,6 +215,7 @@ _BitInt(64) ReturnPassing2(void){}
+ // SPIR: define{{.*}} spir_func i64 @ReturnPassing2(
+ // HEX: define{{.*}} i64 @ReturnPassing2(
+ // LANAI: define{{.*}} i64 @ReturnPassing2(
++// DADAO: define{{.*}} i64 @ReturnPassing2(
+ // R600: define{{.*}} i64 @ReturnPassing2(
+ // ARC: define{{.*}} i64 @ReturnPassing2(
+ // XCORE: define{{.*}} i64 @ReturnPassing2(
+@@ -242,6 +249,7 @@ _BitInt(127) ReturnPassing3(void){}
+ // SPIR: define{{.*}} spir_func void @ReturnPassing3(ptr noalias sret
+ // HEX: define{{.*}} void @ReturnPassing3(ptr noalias sret
+ // LANAI: define{{.*}} void @ReturnPassing3(ptr noalias sret
++// DADAO: define{{.*}} void @ReturnPassing3(ptr noalias sret
+ // R600: define{{.*}} void @ReturnPassing3(ptr addrspace(5) noalias sret
+ // ARC: define{{.*}} void @ReturnPassing3(ptr noalias sret
+ // XCORE: define{{.*}} void @ReturnPassing3(ptr noalias sret
+@@ -273,6 +281,7 @@ _BitInt(128) ReturnPassing4(void){}
+ // SPIR: define{{.*}} spir_func void @ReturnPassing4(ptr noalias sret
+ // HEX: define{{.*}} void @ReturnPassing4(ptr noalias sret
+ // LANAI: define{{.*}} void @ReturnPassing4(ptr noalias sret
++// DADAO: define{{.*}} void @ReturnPassing4(ptr noalias sret
+ // R600: define{{.*}} void @ReturnPassing4(ptr addrspace(5) noalias sret
+ // ARC: define{{.*}} void @ReturnPassing4(ptr noalias sret
+ // XCORE: define{{.*}} void @ReturnPassing4(ptr noalias sret
+@@ -305,6 +314,7 @@ _BitInt(129) ReturnPassing5(void){}
+ // SPIR-NOT: define{{.*}} spir_func void @ReturnPassing5(ptr noalias sret
+ // HEX-NOT: define{{.*}} void @ReturnPassing5(ptr noalias sret
+ // LANAI-NOT: define{{.*}} void @ReturnPassing5(ptr noalias sret
++// DADAO-NOT: define{{.*}} void @ReturnPassing5(ptr noalias sret
+ // R600-NOT: define{{.*}} void @ReturnPassing5(ptr addrspace(5) noalias sret
+ // ARC-NOT: define{{.*}} void @ReturnPassing5(ptr inreg noalias sret
+ // XCORE-NOT: define{{.*}} void @ReturnPassing5(ptr noalias sret
+-- 
+2.34.1
+

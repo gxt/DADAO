@@ -1,0 +1,26 @@
+From faece8ab5102b28463afb08d2d25ab7c56e9b9dc Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 10:51:37 +0800
+Subject: [PATCH] DADAO: clang/lib/Driver/ToolChains/Clang.h
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ clang/lib/Driver/ToolChains/Clang.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/clang/lib/Driver/ToolChains/Clang.h b/clang/lib/Driver/ToolChains/Clang.h
+index a7625dba6646..4acd1b1bb89a 100644
+--- a/clang/lib/Driver/ToolChains/Clang.h
++++ b/clang/lib/Driver/ToolChains/Clang.h
+@@ -77,6 +77,8 @@ private:
+                             llvm::opt::ArgStringList &CmdArgs) const;
+   void AddLanaiTargetArgs(const llvm::opt::ArgList &Args,
+                           llvm::opt::ArgStringList &CmdArgs) const;
++  void AddDadaoTargetArgs(const llvm::opt::ArgList &Args,
++                          llvm::opt::ArgStringList &CmdArgs) const;
+   void AddWebAssemblyTargetArgs(const llvm::opt::ArgList &Args,
+                                 llvm::opt::ArgStringList &CmdArgs) const;
+   void AddVETargetArgs(const llvm::opt::ArgList &Args,
+-- 
+2.34.1
+

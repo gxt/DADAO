@@ -1,0 +1,45 @@
+From 7a7824f194fc4b76e8831ef51fc8aae3c4e824ec Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 11:02:18 +0800
+Subject: [PATCH] DADAO: llvm/lib/Object/RelocationResolver.cpp
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ llvm/lib/Object/RelocationResolver.cpp | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/llvm/lib/Object/RelocationResolver.cpp b/llvm/lib/Object/RelocationResolver.cpp
+index 13a7a9851137..b0913ce1ab51 100644
+--- a/llvm/lib/Object/RelocationResolver.cpp
++++ b/llvm/lib/Object/RelocationResolver.cpp
+@@ -378,6 +378,18 @@ static uint64_t resolveLanai(uint64_t Type, uint64_t Offset, uint64_t S,
+   llvm_unreachable("Invalid relocation type");
+ }
+ 
++static bool supportsDadao(uint64_t Type) {
++  return Type == ELF::R_DADAO_32;
++}
++
++static uint64_t resolveDadao(uint64_t Type, uint64_t Offset, uint64_t S,
++                             uint64_t /*LocData*/, int64_t Addend) {
++  if (Type == ELF::R_DADAO_32)
++    return (S + Addend) & 0xFFFFFFFF;
++  llvm_unreachable("Invalid relocation type");
++}
++
++
+ static bool supportsMips32(uint64_t Type) {
+   switch (Type) {
+   case ELF::R_MIPS_32:
+@@ -810,6 +822,8 @@ getRelocationResolver(const ObjectFile &Obj) {
+       return {supportsAVR, resolveAVR};
+     case Triple::lanai:
+       return {supportsLanai, resolveLanai};
++    case Triple::dadao:
++      return {supportsDadao, resolveDadao};
+     case Triple::loongarch32:
+       return {supportsLoongArch, resolveLoongArch};
+     case Triple::mipsel:
+-- 
+2.34.1
+

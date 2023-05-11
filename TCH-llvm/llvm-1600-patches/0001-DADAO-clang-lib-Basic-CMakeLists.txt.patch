@@ -1,0 +1,25 @@
+From 37dd95b2e4947e29f00bca5281d82e4e07e6072a Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 10:49:51 +0800
+Subject: [PATCH] DADAO: clang/lib/Basic/CMakeLists.txt
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ clang/lib/Basic/CMakeLists.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/clang/lib/Basic/CMakeLists.txt b/clang/lib/Basic/CMakeLists.txt
+index 32af83ee23f3..6a42e21ab431 100644
+--- a/clang/lib/Basic/CMakeLists.txt
++++ b/clang/lib/Basic/CMakeLists.txt
+@@ -82,6 +82,7 @@ add_clang_library(clangBasic
+   Targets/DirectX.cpp
+   Targets/Hexagon.cpp
+   Targets/Lanai.cpp
++  Targets/Dadao.cpp
+   Targets/Le64.cpp
+   Targets/LoongArch.cpp
+   Targets/M68k.cpp
+-- 
+2.34.1
+

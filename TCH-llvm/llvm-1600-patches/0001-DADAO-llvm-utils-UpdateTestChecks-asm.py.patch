@@ -1,0 +1,56 @@
+From 928d22814302eec26fb508311dc51e25b06ad49a Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 11:05:39 +0800
+Subject: [PATCH] DADAO: llvm/utils/UpdateTestChecks/asm.py
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ llvm/utils/UpdateTestChecks/asm.py | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/llvm/utils/UpdateTestChecks/asm.py b/llvm/utils/UpdateTestChecks/asm.py
+index e24197f3b63b..ada164cc47a9 100644
+--- a/llvm/utils/UpdateTestChecks/asm.py
++++ b/llvm/utils/UpdateTestChecks/asm.py
+@@ -117,6 +117,13 @@ ASM_FUNCTION_LANAI_RE = re.compile(
+     r'.Lfunc_end[0-9]+:\n',
+     flags=(re.M | re.S))
+ 
++ASM_FUNCTION_DADAO_RE = re.compile(
++    r'^_?(?P<func>[^:]+):[ \t]*!+[ \t]*@"?(?P=func)"?\n'
++    r'(?:[ \t]+.cfi_startproc\n)?'  # drop optional cfi noise
++    r'(?P<body>.*?)\s*'
++    r'.Lfunc_end[0-9]+:\n',
++    flags=(re.M | re.S))
++
+ ASM_FUNCTION_SPARC_RE = re.compile(
+     r'^_?(?P<func>[^:]+):[ \t]*!+[ \t]*@"?(?P=func)"?\n'
+     r'(?P<body>.*?)\s*'
+@@ -393,6 +400,16 @@ def scrub_asm_lanai(asm, args):
+   asm = common.SCRUB_TRAILING_WHITESPACE_RE.sub(r'', asm)
+   return asm
+ 
++def scrub_asm_dadao(asm, args):
++  # Scrub runs of whitespace out of the assembly, but leave the leading
++  # whitespace in place.
++  asm = common.SCRUB_WHITESPACE_RE.sub(r' ', asm)
++  # Expand the tabs used for indentation.
++  asm = string.expandtabs(asm, 2)
++  # Strip trailing whitespace.
++  asm = common.SCRUB_TRAILING_WHITESPACE_RE.sub(r'', asm)
++  return asm
++
+ def scrub_asm_sparc(asm, args):
+   # Scrub runs of whitespace out of the assembly, but leave the leading
+   # whitespace in place.
+@@ -507,6 +524,7 @@ def get_run_handler(triple):
+       'riscv32': (scrub_asm_riscv, ASM_FUNCTION_RISCV_RE),
+       'riscv64': (scrub_asm_riscv, ASM_FUNCTION_RISCV_RE),
+       'lanai': (scrub_asm_lanai, ASM_FUNCTION_LANAI_RE),
++      'dadao': (scrub_asm_dadao, ASM_FUNCTION_DADAO_RE),
+       'sparc': (scrub_asm_sparc, ASM_FUNCTION_SPARC_RE),
+       's390x': (scrub_asm_systemz, ASM_FUNCTION_SYSTEMZ_RE),
+       'wasm32': (scrub_asm_wasm, ASM_FUNCTION_WASM_RE),
+-- 
+2.34.1
+

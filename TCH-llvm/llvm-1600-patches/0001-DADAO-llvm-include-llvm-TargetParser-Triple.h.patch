@@ -1,0 +1,25 @@
+From 9b27613a2cf9e1ff8218bd4609446ebd7e79b7f8 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 11:00:20 +0800
+Subject: [PATCH] DADAO: llvm/include/llvm/TargetParser/Triple.h
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ llvm/include/llvm/TargetParser/Triple.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/llvm/include/llvm/TargetParser/Triple.h b/llvm/include/llvm/TargetParser/Triple.h
+index 59513fa2f206..499800935332 100644
+--- a/llvm/include/llvm/TargetParser/Triple.h
++++ b/llvm/include/llvm/TargetParser/Triple.h
+@@ -101,6 +101,7 @@ public:
+     kalimba,        // Kalimba: generic kalimba
+     shave,          // SHAVE: Movidius vector VLIW processors
+     lanai,          // Lanai: Lanai 32-bit
++    dadao,          // Dadao: Dadao 64-bit
+     wasm32,         // WebAssembly with 32-bit pointers
+     wasm64,         // WebAssembly with 64-bit pointers
+     renderscript32, // 32-bit RenderScript
+-- 
+2.34.1
+

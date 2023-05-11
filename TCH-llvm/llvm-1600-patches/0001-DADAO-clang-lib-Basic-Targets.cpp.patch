@@ -1,0 +1,35 @@
+From 60d76fe24b76bdb1b9199a86b3057d95e955a9fb Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 10:50:13 +0800
+Subject: [PATCH] DADAO: clang/lib/Basic/Targets.cpp
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ clang/lib/Basic/Targets.cpp | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/clang/lib/Basic/Targets.cpp b/clang/lib/Basic/Targets.cpp
+index 8400774db93d..d6f2256f8b87 100644
+--- a/clang/lib/Basic/Targets.cpp
++++ b/clang/lib/Basic/Targets.cpp
+@@ -23,6 +23,7 @@
+ #include "Targets/DirectX.h"
+ #include "Targets/Hexagon.h"
+ #include "Targets/Lanai.h"
++#include "Targets/Dadao.h"
+ #include "Targets/Le64.h"
+ #include "Targets/LoongArch.h"
+ #include "Targets/M68k.h"
+@@ -131,6 +132,9 @@ TargetInfo *AllocateTarget(const llvm::Triple &Triple,
+   case llvm::Triple::lanai:
+     return new LanaiTargetInfo(Triple, Opts);
+ 
++  case llvm::Triple::dadao:
++    return new DadaoTargetInfo(Triple, Opts);
++
+   case llvm::Triple::aarch64_32:
+     if (Triple.isOSDarwin())
+       return new DarwinAArch64TargetInfo(Triple, Opts);
+-- 
+2.34.1
+

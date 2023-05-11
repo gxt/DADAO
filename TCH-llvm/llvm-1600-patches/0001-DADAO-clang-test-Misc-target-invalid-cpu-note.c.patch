@@ -1,0 +1,28 @@
+From a7cf3e678aaf6a4ae1258733ee037246d73b8d21 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 10:53:31 +0800
+Subject: [PATCH] DADAO: clang/test/Misc/target-invalid-cpu-note.c
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ clang/test/Misc/target-invalid-cpu-note.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/clang/test/Misc/target-invalid-cpu-note.c b/clang/test/Misc/target-invalid-cpu-note.c
+index 1f205163a966..4f3c01ce8e9a 100644
+--- a/clang/test/Misc/target-invalid-cpu-note.c
++++ b/clang/test/Misc/target-invalid-cpu-note.c
+@@ -67,6 +67,10 @@
+ // LANAI: error: unknown target CPU 'not-a-cpu'
+ // LANAI-NEXT: note: valid target CPU values are: v11{{$}}
+ 
++// RUN: not %clang_cc1 -triple dadao--- -target-cpu not-a-cpu -fsyntax-only %s 2>&1 | FileCheck %s --check-prefix DADAO
++// DADAO: error: unknown target CPU 'not-a-cpu'
++// DADAO-NEXT: note: valid target CPU values are: v11{{$}}
++
+ // RUN: not %clang_cc1 -triple hexagon--- -target-cpu not-a-cpu -fsyntax-only %s 2>&1 | FileCheck %s --check-prefix HEXAGON
+ // HEXAGON: error: unknown target CPU 'not-a-cpu'
+ // HEXAGON-NEXT: note: valid target CPU values are: hexagonv5, hexagonv55, hexagonv60, hexagonv62, hexagonv65, hexagonv66, hexagonv67, hexagonv67t, hexagonv68, hexagonv69, hexagonv71, hexagonv71t, hexagonv73{{$}}
+-- 
+2.34.1
+

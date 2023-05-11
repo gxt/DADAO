@@ -1,0 +1,24 @@
+From 68c47faf8464d282cabd454a639a4f37a5a54e74 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 10:52:35 +0800
+Subject: [PATCH] DADAO: clang/test/CodeGen/builtin-nan-exception.c
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ clang/test/CodeGen/builtin-nan-exception.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/clang/test/CodeGen/builtin-nan-exception.c b/clang/test/CodeGen/builtin-nan-exception.c
+index 7445411ddf89..626716601864 100644
+--- a/clang/test/CodeGen/builtin-nan-exception.c
++++ b/clang/test/CodeGen/builtin-nan-exception.c
+@@ -1,5 +1,6 @@
+ // RUN: %clang -target aarch64 -emit-llvm -S %s -o - | FileCheck %s
+ // RUN: %clang -target lanai -emit-llvm -S %s -o - | FileCheck %s
++// RUN: %clang -target dadao -emit-llvm -S %s -o - | FileCheck %s
+ // RUN: %clang -target riscv64 -emit-llvm -S %s -o - | FileCheck %s
+ // RUN: %clang -target x86_64 -emit-llvm -S %s -o - | FileCheck %s
+ 
+-- 
+2.34.1
+

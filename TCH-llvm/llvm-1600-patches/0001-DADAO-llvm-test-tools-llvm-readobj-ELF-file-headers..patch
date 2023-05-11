@@ -1,0 +1,71 @@
+From 33fc9fd127f90e5b16caef65b7fc0ebd90b6a6e5 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 11:03:48 +0800
+Subject: [PATCH] DADAO: llvm/test/tools/llvm-readobj/ELF/file-headers.test
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ .../tools/llvm-readobj/ELF/file-headers.test  | 47 +++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+
+diff --git a/llvm/test/tools/llvm-readobj/ELF/file-headers.test b/llvm/test/tools/llvm-readobj/ELF/file-headers.test
+index 97ab9f092b22..ec52ed316e18 100644
+--- a/llvm/test/tools/llvm-readobj/ELF/file-headers.test
++++ b/llvm/test/tools/llvm-readobj/ELF/file-headers.test
+@@ -138,6 +138,53 @@ FileHeader:
+ # LANAI-NEXT:}
+ # LANAI-NOT:{{.}}
+ 
++# RUN: yaml2obj %s --docnum=3 -o %t.dadao
++# RUN: llvm-readobj -h %t.dadao \
++# RUN:  | FileCheck %s --strict-whitespace --match-full-lines -DFILE=%t.dadao --check-prefix DADAO
++# RUN: llvm-readobj --file-header %t.dadao \
++# RUN:  | FileCheck %s --strict-whitespace --match-full-lines -DFILE=%t.dadao --check-prefix DADAO
++# RUN: llvm-readobj --file-headers %t.dadao \
++# RUN:  | FileCheck %s --strict-whitespace --match-full-lines -DFILE=%t.dadao --check-prefix DADAO
++
++--- !ELF
++FileHeader:
++  Class:   ELFCLASS64
++  Data:    ELFDATA2MSB
++  Type:    ET_REL
++  Machine: EM_DADAO
++
++#      DADAO:File: [[FILE]]
++# DADAO-NEXT:Format: elf64-dadao
++# DADAO-NEXT:Arch: dadao
++# DADAO-NEXT:AddressSize: 64bit
++# DADAO-NEXT:LoadName: <Not found>
++# DADAO-NEXT:ElfHeader {
++# DADAO-NEXT:  Ident {
++# DADAO-NEXT:    Magic: (7F 45 4C 46)
++# DADAO-NEXT:    Class: 64-bit (0x2)
++# DADAO-NEXT:    DataEncoding: BigEndian (0x2)
++# DADAO-NEXT:    FileVersion: 1
++# DADAO-NEXT:    OS/ABI: SystemV (0x0)
++# DADAO-NEXT:    ABIVersion: 0
++# DADAO-NEXT:    Unused: (00 00 00 00 00 00 00)
++# DADAO-NEXT:  }
++# DADAO-NEXT:  Type: Relocatable (0x1)
++# DADAO-NEXT:  Machine: EM_DADAO (0x0DA0)
++# DADAO-NEXT:  Version: 1
++# DADAO-NEXT:  Entry: 0x0
++# DADAO-NEXT:  ProgramHeaderOffset: 0x0
++# DADAO-NEXT:  SectionHeaderOffset: 0x48
++# DADAO-NEXT:  Flags [ (0x0)
++# DADAO-NEXT:  ]
++# DADAO-NEXT:  HeaderSize: 52
++# DADAO-NEXT:  ProgramHeaderEntrySize: 0
++# DADAO-NEXT:  ProgramHeaderCount: 0
++# DADAO-NEXT:  SectionHeaderEntrySize: 40
++# DADAO-NEXT:  SectionHeaderCount: 3
++# DADAO-NEXT:  StringTableSectionIndex: 2
++# DADAO-NEXT:}
++# DADAO-NOT:{{.}}
++
+ ## Check we are able to dump the file header when the section header table can't be read.
+ 
+ # RUN: yaml2obj %s --docnum=4 -o %t.invalid1
+-- 
+2.34.1
+

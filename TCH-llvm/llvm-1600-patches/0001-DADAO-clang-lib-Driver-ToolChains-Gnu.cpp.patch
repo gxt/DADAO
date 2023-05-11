@@ -1,0 +1,25 @@
+From 3103cdb26b1c916298a3d3e6beb6007f8cd1133d Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 10:52:15 +0800
+Subject: [PATCH] DADAO: clang/lib/Driver/ToolChains/Gnu.cpp
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ clang/lib/Driver/ToolChains/Gnu.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/clang/lib/Driver/ToolChains/Gnu.cpp b/clang/lib/Driver/ToolChains/Gnu.cpp
+index 4f2340316654..f86b1f582814 100644
+--- a/clang/lib/Driver/ToolChains/Gnu.cpp
++++ b/clang/lib/Driver/ToolChains/Gnu.cpp
+@@ -2902,6 +2902,7 @@ bool Generic_GCC::IsIntegratedAssemblerDefault() const {
+   case llvm::Triple::csky:
+   case llvm::Triple::hexagon:
+   case llvm::Triple::lanai:
++  case llvm::Triple::dadao:
+   case llvm::Triple::loongarch32:
+   case llvm::Triple::loongarch64:
+   case llvm::Triple::m68k:
+-- 
+2.34.1
+

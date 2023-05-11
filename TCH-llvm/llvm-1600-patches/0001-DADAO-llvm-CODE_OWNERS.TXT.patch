@@ -1,0 +1,28 @@
+From b06e56fc49d7ad902420558641e04d07ce84bec0 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 10:54:30 +0800
+Subject: [PATCH] DADAO: llvm/CODE_OWNERS.TXT
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ llvm/CODE_OWNERS.TXT | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/llvm/CODE_OWNERS.TXT b/llvm/CODE_OWNERS.TXT
+index 64e646dc10fa..06d085de7469 100644
+--- a/llvm/CODE_OWNERS.TXT
++++ b/llvm/CODE_OWNERS.TXT
+@@ -185,6 +185,10 @@ N: Jacques Pienaar
+ E: jpienaar@google.com
+ D: Lanai Backend
+ 
++N: Guan Xuetao
++E: gxt@pku.edu.cn
++D: Dadao Backend
++
+ N: Simon Pilgrim
+ E: llvm-dev@redking.me.uk
+ D: X86 Backend
+-- 
+2.34.1
+

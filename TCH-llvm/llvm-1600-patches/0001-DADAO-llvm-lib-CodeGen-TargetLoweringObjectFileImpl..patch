@@ -1,0 +1,25 @@
+From 74a5c6c93ae826535765c3e8931fb021ea614c5a Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 11:01:32 +0800
+Subject: [PATCH] DADAO: llvm/lib/CodeGen/TargetLoweringObjectFileImpl.cpp
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ llvm/lib/CodeGen/TargetLoweringObjectFileImpl.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/llvm/lib/CodeGen/TargetLoweringObjectFileImpl.cpp b/llvm/lib/CodeGen/TargetLoweringObjectFileImpl.cpp
+index e760564779c2..53b6ef8e1ffd 100644
+--- a/llvm/lib/CodeGen/TargetLoweringObjectFileImpl.cpp
++++ b/llvm/lib/CodeGen/TargetLoweringObjectFileImpl.cpp
+@@ -204,6 +204,7 @@ void TargetLoweringObjectFileELF::Initialize(MCContext &Ctx,
+     }
+     break;
+   case Triple::lanai:
++  case Triple::dadao:
+     LSDAEncoding = dwarf::DW_EH_PE_absptr;
+     PersonalityEncoding = dwarf::DW_EH_PE_absptr;
+     TTypeEncoding = dwarf::DW_EH_PE_absptr;
+-- 
+2.34.1
+

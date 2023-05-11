@@ -1,0 +1,58 @@
+From 134b6bc9ee2c7bc40b5b2e0ca9c6bc4ee32a6506 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 10:51:17 +0800
+Subject: [PATCH] DADAO: clang/lib/Driver/ToolChains/Clang.cpp
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ clang/lib/Driver/ToolChains/Clang.cpp | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+
+diff --git a/clang/lib/Driver/ToolChains/Clang.cpp b/clang/lib/Driver/ToolChains/Clang.cpp
+index ec6860113b7e..f5ca50493ba1 100644
+--- a/clang/lib/Driver/ToolChains/Clang.cpp
++++ b/clang/lib/Driver/ToolChains/Clang.cpp
+@@ -1730,6 +1730,10 @@ void Clang::RenderTargetOptions(const llvm::Triple &EffectiveTriple,
+     AddLanaiTargetArgs(Args, CmdArgs);
+     break;
+ 
++  case llvm::Triple::dadao:
++    AddDadaoTargetArgs(Args, CmdArgs);
++    break;
++
+   case llvm::Triple::hexagon:
+     AddHexagonTargetArgs(Args, CmdArgs);
+     break;
+@@ -2294,6 +2298,29 @@ void Clang::AddLanaiTargetArgs(const ArgList &Args,
+   }
+ }
+ 
++void Clang::AddDadaoTargetArgs(const ArgList &Args,
++                               ArgStringList &CmdArgs) const {
++  if (Arg *A = Args.getLastArg(options::OPT_mcpu_EQ)) {
++    StringRef CPUName = A->getValue();
++
++    CmdArgs.push_back("-target-cpu");
++    CmdArgs.push_back(Args.MakeArgString(CPUName));
++  }
++  if (Arg *A = Args.getLastArg(options::OPT_mregparm_EQ)) {
++    StringRef Value = A->getValue();
++    // Only support mregparm=4 to support old usage. Report error for all other
++    // cases.
++    int Mregparm;
++    if (Value.getAsInteger(10, Mregparm)) {
++      if (Mregparm != 4) {
++        getToolChain().getDriver().Diag(
++            diag::err_drv_unsupported_option_argument)
++            << A->getSpelling() << Value;
++      }
++    }
++  }
++}
++
+ void Clang::AddWebAssemblyTargetArgs(const ArgList &Args,
+                                      ArgStringList &CmdArgs) const {
+   // Default to "hidden" visibility.
+-- 
+2.34.1
+

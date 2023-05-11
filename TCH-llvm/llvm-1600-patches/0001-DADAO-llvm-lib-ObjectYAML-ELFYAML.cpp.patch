@@ -1,0 +1,35 @@
+From 7821046ce7547813610ec3846515c438154f7756 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 11:02:44 +0800
+Subject: [PATCH] DADAO: llvm/lib/ObjectYAML/ELFYAML.cpp
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ llvm/lib/ObjectYAML/ELFYAML.cpp | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/llvm/lib/ObjectYAML/ELFYAML.cpp b/llvm/lib/ObjectYAML/ELFYAML.cpp
+index 0ca0348f36ed..a8a065170677 100644
+--- a/llvm/lib/ObjectYAML/ELFYAML.cpp
++++ b/llvm/lib/ObjectYAML/ELFYAML.cpp
+@@ -348,6 +348,7 @@ void ScalarEnumerationTraits<ELFYAML::ELF_EM>::enumeration(
+   ECase(EM_AMDGPU);
+   ECase(EM_RISCV);
+   ECase(EM_LANAI);
++  ECase(EM_DADAO);
+   ECase(EM_BPF);
+   ECase(EM_VE);
+   ECase(EM_CSKY);
+@@ -879,6 +880,9 @@ void ScalarEnumerationTraits<ELFYAML::ELF_REL>::enumeration(
+   case ELF::EM_LANAI:
+ #include "llvm/BinaryFormat/ELFRelocs/Lanai.def"
+     break;
++  case ELF::EM_DADAO:
++#include "llvm/BinaryFormat/ELFRelocs/Dadao.def"
++    break;
+   case ELF::EM_AMDGPU:
+ #include "llvm/BinaryFormat/ELFRelocs/AMDGPU.def"
+     break;
+-- 
+2.34.1
+

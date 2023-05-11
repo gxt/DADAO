@@ -1,0 +1,25 @@
+From 8ed2f70aec8b26ab8ac58d164ba47452e3dad5f4 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 11 May 2023 11:00:44 +0800
+Subject: [PATCH] DADAO: llvm/include/llvm/module.modulemap
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ llvm/include/llvm/module.modulemap | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/llvm/include/llvm/module.modulemap b/llvm/include/llvm/module.modulemap
+index 741e0a83b1b7..3aff340170b3 100644
+--- a/llvm/include/llvm/module.modulemap
++++ b/llvm/include/llvm/module.modulemap
+@@ -73,6 +73,7 @@ module LLVM_BinaryFormat {
+     textual header "BinaryFormat/ELFRelocs/Hexagon.def"
+     textual header "BinaryFormat/ELFRelocs/i386.def"
+     textual header "BinaryFormat/ELFRelocs/Lanai.def"
++    textual header "BinaryFormat/ELFRelocs/Dadao.def"
+     textual header "BinaryFormat/ELFRelocs/LoongArch.def"
+     textual header "BinaryFormat/ELFRelocs/M68k.def"
+     textual header "BinaryFormat/ELFRelocs/Mips.def"
+-- 
+2.34.1
+
