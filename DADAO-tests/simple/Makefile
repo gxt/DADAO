@@ -3,7 +3,7 @@ include $(src_dir)/../common.mk
 default: min.ll min.bc min.s min.o min.dump
 
 %.ll: %.c
-	$(DADAO_LLVM_CLANG) -cc1 -emit-llvm $< -o $@
+	$(DADAO_LLVM_CLANG) -target dadao -S -emit-llvm $< -o $@
 
 %.bc: %.ll
 	$(DADAO_LLVM_AS) $< -o $@
@@ -12,7 +12,7 @@ default: min.ll min.bc min.s min.o min.dump
 	$(DADAO_LLVM_LLC) $< -o $@
 
 %.o: %.s
-	$(DADAO_LLVM_MC) $< -filetype=obj -o $@
+	$(DADAO_LLVM_MC) $< -triple dadao -filetype=obj -o $@
 
 %.dump: %.o
 	$(DADAO_LLVM_READOBJ) --all $< > $@
