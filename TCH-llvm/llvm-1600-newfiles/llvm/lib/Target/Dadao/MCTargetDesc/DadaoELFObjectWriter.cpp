@@ -33,7 +33,7 @@ protected:
 } // end anonymous namespace
 
 DadaoELFObjectWriter::DadaoELFObjectWriter(uint8_t OSABI)
-    : MCELFObjectTargetWriter(/*Is64Bit_=*/false, OSABI, ELF::EM_DADAO,
+    : MCELFObjectTargetWriter(/*Is64Bit_=*/true, OSABI, ELF::EM_DADAO,
                               /*HasRelocationAddend_=*/true) {}
 
 unsigned DadaoELFObjectWriter::getRelocType(MCContext & /*Ctx*/,
