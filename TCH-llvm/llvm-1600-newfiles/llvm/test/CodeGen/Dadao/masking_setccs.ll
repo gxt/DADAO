@@ -2,7 +2,7 @@
 
 ; Test that unnecessary masking with 0x1 is not inserted.
 
-target datalayout = "E-m:e-p:32:32-i64:64-a:0:32-n32-S64"
+target datalayout = "E-m:e-p:64:64-i64:64-a:0:64-n64-S128"
 target triple = "dadao"
 
 ; CHECK-LABEL: masking:

@@ -3,7 +3,7 @@
 ; Tests that lowering wide registers (128 bits or more) works on Dadao.
 ; The emitted assembly is not checked, we just do a smoketest.
 
-target datalayout = "E-m:e-p:32:32-i64:64-a:0:32-n32-S64"
+target datalayout = "E-m:e-p:64:64-i64:64-a:0:64-n64-S128"
 target triple = "dadao"
 
 ; CHECK-LABEL: add128:
