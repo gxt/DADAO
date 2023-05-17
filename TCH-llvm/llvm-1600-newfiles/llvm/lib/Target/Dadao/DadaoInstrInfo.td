@@ -21,20 +21,20 @@ include "DadaoInstrFormats.td"
 // -------------------------------------------------- //
 
 //  These are target-independent nodes, but have target-specific formats.
-def SDT_DadaoCallSeqStart : SDCallSeqStart<[SDTCisVT<0, i32>,
-                                            SDTCisVT<1, i32>]>;
-def SDT_DadaoCallSeqEnd   : SDCallSeqEnd<[SDTCisVT<0, i32>,
-                                          SDTCisVT<1, i32>]>;
-def SDT_DadaoCall         : SDTypeProfile<0, -1, [SDTCisVT<0, i32>]>;
+def SDT_DadaoCallSeqStart : SDCallSeqStart<[SDTCisVT<0, i64>,
+                                            SDTCisVT<1, i64>]>;
+def SDT_DadaoCallSeqEnd   : SDCallSeqEnd<[SDTCisVT<0, i64>,
+                                          SDTCisVT<1, i64>]>;
+def SDT_DadaoCall         : SDTypeProfile<0, -1, [SDTCisVT<0, i64>]>;
 def SDT_DadaoSetFlag      : SDTypeProfile<0,  2, [SDTCisSameAs<0, 1>]>;
 def SDT_DadaoSelectCC     : SDTypeProfile<1,  3, [SDTCisSameAs<0, 1>,
                                                   SDTCisSameAs<1, 2>]>;
-def SDT_DadaoSetCC        : SDTypeProfile<1,  1, [SDTCisVT<0, i32>,
-                                                  SDTCisVT<1, i32>]>;
+def SDT_DadaoSetCC        : SDTypeProfile<1,  1, [SDTCisVT<0, i64>,
+                                                  SDTCisVT<1, i64>]>;
 def SDT_DadaoBrCC         : SDTypeProfile<0,  2, [SDTCisVT<0, OtherVT>,
-                                                  SDTCisVT<1, i32>]>;
-def SDT_DadaoAdjDynAlloc  : SDTypeProfile<1,  1, [SDTCisVT<0, i32>,
-                                                  SDTCisVT<1, i32>]>;
+                                                  SDTCisVT<1, i64>]>;
+def SDT_DadaoAdjDynAlloc  : SDTypeProfile<1,  1, [SDTCisVT<0, i64>,
+                                                  SDTCisVT<1, i64>]>;
 
 def Call             : SDNode<"DadaoISD::CALL", SDT_DadaoCall,
                               [SDNPHasChain, SDNPOptInGlue, SDNPOutGlue,
@@ -63,23 +63,23 @@ def DadaoAdjDynAlloc : SDNode<"DadaoISD::ADJDYNALLOC", SDT_DadaoAdjDynAlloc>;
 // Extract bits 0-15 (low-end) of an immediate value.
 def LO16 : SDNodeXForm<imm, [{
   return CurDAG->getTargetConstant((uint64_t)N->getZExtValue() & 0xffff,
-                                   SDLoc(N), MVT::i32);
+                                   SDLoc(N), MVT::i64);
 }]>;
 
 // Extract bits 16-31 (high-end) of an immediate value.
 // Transformation function: shift the immediate value down into the low bits.
 def HI16 : SDNodeXForm<imm, [{
   return CurDAG->getTargetConstant((uint64_t)N->getZExtValue() >> 16, SDLoc(N),
-                                   MVT::i32);
+                                   MVT::i64);
 }]>;
 
 def NEG : SDNodeXForm<imm, [{
-  return CurDAG->getTargetConstant(-N->getSExtValue(), SDLoc(N), MVT::i32);
+  return CurDAG->getTargetConstant(-N->getSExtValue(), SDLoc(N), MVT::i64);
 }]>;
 
 def LO21 : SDNodeXForm<imm, [{
   return CurDAG->getTargetConstant((uint64_t)N->getZExtValue() & 0x1fffff,
-                                   SDLoc(N), MVT::i32);
+                                   SDLoc(N), MVT::i64);
 }]>;
 
 // Branch targets
@@ -95,14 +95,14 @@ def BrTarget   : Operand<OtherVT> {
 def CallTargetAsmOperand : AsmOperandClass {
   let Name = "CallTarget";
 }
-def CallTarget : Operand<i32> {
+def CallTarget : Operand<i64> {
   let ParserMatchClass = CallTargetAsmOperand;
   let EncoderMethod = "getBranchTargetOpValue";
   let DecoderMethod = "decodeBranch";
 }
 
 def ImmShiftAsmOperand : AsmOperandClass { let Name = "ImmShift"; }
-def immShift : Operand<i32>, PatLeaf<(imm), [{
+def immShift : Operand<i64>, PatLeaf<(imm), [{
     int Imm = N->getSExtValue();
     return Imm >= -31 && Imm <= 31;}]> {
   let ParserMatchClass = ImmShiftAsmOperand;
@@ -110,35 +110,35 @@ def immShift : Operand<i32>, PatLeaf<(imm), [{
 }
 
 def Imm10AsmOperand : AsmOperandClass { let Name = "Imm10"; }
-def imm10 : Operand<i32>, PatLeaf<(imm), [{
+def imm10 : Operand<i64>, PatLeaf<(imm), [{
     return isInt<10>(N->getSExtValue()); }]> {
   let ParserMatchClass = Imm10AsmOperand;
 }
 
 def LoImm16AsmOperand : AsmOperandClass { let Name = "LoImm16"; }
-def i32lo16z : Operand<i32>, PatLeaf<(i32 imm), [{
-    // i32lo16 predicate - true if the 32-bit immediate has only rightmost 16
+def i64lo16z : Operand<i64>, PatLeaf<(i64 imm), [{
+    // i64lo16 predicate - true if the 32-bit immediate has only rightmost 16
     // bits set.
     return ((N->getZExtValue() & 0xFFFFUL) == N->getZExtValue());}], LO16> {
   let ParserMatchClass = LoImm16AsmOperand;
 }
-def i32neg16 : Operand<i32>, PatLeaf<(i32 imm), [{
-    // i32neg16 predicate - true if the 32-bit immediate is negative and can
+def i64neg16 : Operand<i64>, PatLeaf<(i64 imm), [{
+    // i64neg16 predicate - true if the 32-bit immediate is negative and can
     // be represented by a 16 bit integer.
     int Imm = N->getSExtValue();
     return (Imm < 0) && (isInt<16>(Imm));}], LO16> {
   let ParserMatchClass = LoImm16AsmOperand;
 }
-def i32lo16s : Operand<i32>, PatLeaf<(i32 imm), [{
-    // i32lo16 predicate - true if the 32-bit immediate has only rightmost 16
+def i64lo16s : Operand<i64>, PatLeaf<(i64 imm), [{
+    // i64lo16 predicate - true if the 32-bit immediate has only rightmost 16
     // bits set.
     return ((int64_t)(N->getSExtValue() & 0xFFFFUL) == N->getSExtValue());}], LO16> {
   let ParserMatchClass = LoImm16AsmOperand;
 }
 
 def LoImm16AndAsmOperand : AsmOperandClass { let Name = "LoImm16And"; }
-def i32lo16and : Operand<i32>, PatLeaf<(i32 imm), [{
-    // i32lo16 predicate - true if the 32-bit immediate has the rightmost 16
+def i64lo16and : Operand<i64>, PatLeaf<(i64 imm), [{
+    // i64lo16 predicate - true if the 32-bit immediate has the rightmost 16
     // bits set and the leftmost 16 bits 1's.
     return (N->getZExtValue() >= 0xFFFF0000UL);}], LO16> {
   let ParserMatchClass = LoImm16AndAsmOperand;
@@ -146,8 +146,8 @@ def i32lo16and : Operand<i32>, PatLeaf<(i32 imm), [{
 }
 
 def HiImm16AsmOperand : AsmOperandClass { let Name = "HiImm16"; }
-def i32hi16 : Operand<i32>, PatLeaf<(i32 imm), [{
-    // i32hi16 predicate - true if the 32-bit immediate has only leftmost 16
+def i64hi16 : Operand<i64>, PatLeaf<(i64 imm), [{
+    // i64hi16 predicate - true if the 32-bit immediate has only leftmost 16
     // bits set.
     return ((N->getZExtValue() & 0xFFFF0000UL) == N->getZExtValue());}], HI16> {
   let ParserMatchClass = HiImm16AsmOperand;
@@ -155,8 +155,8 @@ def i32hi16 : Operand<i32>, PatLeaf<(i32 imm), [{
 }
 
 def HiImm16AndAsmOperand : AsmOperandClass { let Name = "HiImm16And"; }
-def i32hi16and : Operand<i32>, PatLeaf<(i32 imm), [{
-    // i32lo16 predicate - true if the 32-bit immediate has the leftmost 16
+def i64hi16and : Operand<i64>, PatLeaf<(i64 imm), [{
+    // i64lo16 predicate - true if the 32-bit immediate has the leftmost 16
     // bits set and the rightmost 16 bits 1's.
     return ((N->getZExtValue() & 0xFFFFUL) == 0xFFFFUL);}], HI16> {
   let ParserMatchClass = HiImm16AndAsmOperand;
@@ -164,32 +164,32 @@ def i32hi16and : Operand<i32>, PatLeaf<(i32 imm), [{
 }
 
 def LoImm21AsmOperand : AsmOperandClass { let Name = "LoImm21"; }
-def i32lo21 : Operand<i32>, PatLeaf<(i32 imm), [{
-    // i32lo21 predicate - true if the 32-bit immediate has only rightmost 21
+def i64lo21 : Operand<i64>, PatLeaf<(i64 imm), [{
+    // i64lo21 predicate - true if the 32-bit immediate has only rightmost 21
     // bits set.
     return ((N->getZExtValue() & 0x1FFFFFUL) == N->getZExtValue());}], LO21> {
   let ParserMatchClass = LoImm21AsmOperand;
 }
 
-def AluOp : Operand<i32> {
+def AluOp : Operand<i64> {
   let PrintMethod = "printAluOperand";
 }
 
 // Addressing modes.
-def ADDRrr : ComplexPattern<i32, 3, "selectAddrRr", [], []>;
-def ADDRri : ComplexPattern<i32, 3, "selectAddrRi", [frameindex], []>;
-def ADDRsls : ComplexPattern<i32, 1, "selectAddrSls", [frameindex], []>;
-def ADDRspls : ComplexPattern<i32, 3, "selectAddrSpls", [frameindex], []>;
+def ADDRrr : ComplexPattern<i64, 3, "selectAddrRr", [], []>;
+def ADDRri : ComplexPattern<i64, 3, "selectAddrRi", [frameindex], []>;
+def ADDRsls : ComplexPattern<i64, 1, "selectAddrSls", [frameindex], []>;
+def ADDRspls : ComplexPattern<i64, 3, "selectAddrSpls", [frameindex], []>;
 
 // Address operands
 def MemRegImmAsmOperand : AsmOperandClass {
   let Name = "MemRegImm";
   let ParserMethod  = "parseMemoryOperand";
 }
-def MEMri : Operand<i32> {
+def MEMri : Operand<i64> {
   let DecoderMethod = "decodeRiMemoryValue";
   let EncoderMethod = "getRiMemoryOpValue";
-  let MIOperandInfo = (ops GPR:$base, i32lo16s:$offset, AluOp:$Opcode);
+  let MIOperandInfo = (ops GPR:$base, i64lo16s:$offset, AluOp:$Opcode);
   let ParserMatchClass = MemRegImmAsmOperand;
   let PrintMethod   = "printMemRiOperand";
 }
@@ -198,7 +198,7 @@ def MemRegRegAsmOperand : AsmOperandClass {
   let Name = "MemRegReg";
   let ParserMethod  = "parseMemoryOperand";
 }
-def MEMrr : Operand<i32> {
+def MEMrr : Operand<i64> {
   let DecoderMethod = "decodeRrMemoryValue";
   let EncoderMethod = "getRrMemoryOpValue";
   let MIOperandInfo = (ops GPR:$Op1, GPR:$Op2, AluOp:$Opcode);
@@ -210,8 +210,8 @@ def MemImmAsmOperand : AsmOperandClass {
   let Name = "MemImm";
   let ParserMethod  = "parseMemoryOperand";
 }
-def MEMi : Operand<i32> {
-  let MIOperandInfo = (ops i32lo21:$offset);
+def MEMi : Operand<i64> {
+  let MIOperandInfo = (ops i64lo21:$offset);
   let ParserMatchClass = MemImmAsmOperand;
   let PrintMethod   = "printMemImmOperand";
 }
@@ -220,7 +220,7 @@ def MemSplsAsmOperand : AsmOperandClass {
   let Name = "MemSpls";
   let ParserMethod  = "parseMemoryOperand";
 }
-def MEMspls : Operand<i32> {
+def MEMspls : Operand<i64> {
   let DecoderMethod = "decodeSplsValue";
   let EncoderMethod = "getSplsOpValue";
   let MIOperandInfo = (ops GPR:$base, imm10:$offset, AluOp:$Opcode);
@@ -228,14 +228,14 @@ def MEMspls : Operand<i32> {
   let PrintMethod   = "printMemSplsOperand";
 }
 
-def CCOp : Operand<i32> {
+def CCOp : Operand<i64> {
   let PrintMethod = "printCCOperand";
 }
 
 // Predicate operand. Default to 0 = true.
 def CondCodeOperand : AsmOperandClass { let Name = "CondCode"; }
 
-def pred : PredicateOperand<i32, (ops i32imm), (ops (i32 0))> {
+def pred : PredicateOperand<i64, (ops i64imm), (ops (i64 0))> {
   let PrintMethod = "printPredicateOperand";
   let ParserMatchClass = CondCodeOperand;
   let DecoderMethod = "decodePredicateOperand";
@@ -311,110 +311,110 @@ multiclass ALUlogic<bits<3> subOp, string AsmStr, SDNode OpNode,
 // Non flag setting ALU operations
 let isAsCheapAsAMove = 1, F = 0 in {
   let isCommutable = 1 in {
-    defm ADD_ : ALUarith<0b000, "add", add, i32lo16z, i32hi16>;
+    defm ADD_ : ALUarith<0b000, "add", add, i64lo16z, i64hi16>;
   }
-  defm SUB_ : ALUarith<0b010,   "sub", sub, i32lo16z, i32hi16>;
+  defm SUB_ : ALUarith<0b010,   "sub", sub, i64lo16z, i64hi16>;
   let isCommutable = 1 in {
-    defm AND_ : ALUlogic<0b100, "and", and, i32lo16and, i32hi16and>;
-    defm OR_  : ALUlogic<0b101,  "or",  or, i32lo16z, i32hi16>;
-    defm XOR_ : ALUlogic<0b110, "xor", xor, i32lo16z, i32hi16>;
+    defm AND_ : ALUlogic<0b100, "and", and, i64lo16and, i64hi16and>;
+    defm OR_  : ALUlogic<0b101,  "or",  or, i64lo16z, i64hi16>;
+    defm XOR_ : ALUlogic<0b110, "xor", xor, i64lo16z, i64hi16>;
   }
 }
 
-def : Pat<(add GPR:$Rs1, i32lo16z:$imm),
-          (ADD_I_LO GPR:$Rs1, i32lo16z:$imm)>;
+def : Pat<(add GPR:$Rs1, i64lo16z:$imm),
+          (ADD_I_LO GPR:$Rs1, i64lo16z:$imm)>;
 
-def : Pat<(sub GPR:$Rs1, i32lo16z:$imm),
-          (SUB_I_LO GPR:$Rs1, i32lo16z:$imm)>;
+def : Pat<(sub GPR:$Rs1, i64lo16z:$imm),
+          (SUB_I_LO GPR:$Rs1, i64lo16z:$imm)>;
 
-def : Pat<(add GPR:$Rs1, i32hi16:$imm),
-          (ADD_I_HI GPR:$Rs1, i32hi16:$imm)>;
+def : Pat<(add GPR:$Rs1, i64hi16:$imm),
+          (ADD_I_HI GPR:$Rs1, i64hi16:$imm)>;
 
-def : Pat<(sub GPR:$Rs1, i32hi16:$imm),
-          (SUB_I_HI GPR:$Rs1, i32hi16:$imm)>;
+def : Pat<(sub GPR:$Rs1, i64hi16:$imm),
+          (SUB_I_HI GPR:$Rs1, i64hi16:$imm)>;
 
-def : Pat<(i32 i32lo16and:$imm), (AND_I_LO (i32 R1), i32lo16and:$imm)>;
-def : Pat<(i32 i32hi16and:$imm), (AND_I_HI (i32 R1), i32hi16and:$imm)>;
+def : Pat<(i64 i64lo16and:$imm), (AND_I_LO (i64 R1), i64lo16and:$imm)>;
+def : Pat<(i64 i64hi16and:$imm), (AND_I_HI (i64 R1), i64hi16and:$imm)>;
 
 // Change add/sub with negative number to sub/add
-def : Pat<(add GPR:$Rs1, i32neg16:$imm),
+def : Pat<(add GPR:$Rs1, i64neg16:$imm),
           (SUB_I_LO GPR:$Rs1, (NEG $imm))>;
-def : Pat<(sub GPR:$Rs1, i32neg16:$imm),
+def : Pat<(sub GPR:$Rs1, i64neg16:$imm),
           (ADD_I_LO GPR:$Rs1, (NEG $imm))>;
 
 // Flag (incl. carry) setting addition and subtraction
 let F = 1, Defs = [SR] in {
-  defm ADD_F_ : ALUarith<0b000, "add.f", addc, i32lo16z, i32hi16>;
-  defm SUB_F_ : ALUarith<0b010, "sub.f", subc, i32lo16z, i32hi16>;
+  defm ADD_F_ : ALUarith<0b000, "add.f", addc, i64lo16z, i64hi16>;
+  defm SUB_F_ : ALUarith<0b010, "sub.f", subc, i64lo16z, i64hi16>;
 }
 
-def : Pat<(addc GPR:$Rs1, i32lo16z:$imm),
-          (ADD_F_I_LO GPR:$Rs1, i32lo16z:$imm)>;
+def : Pat<(addc GPR:$Rs1, i64lo16z:$imm),
+          (ADD_F_I_LO GPR:$Rs1, i64lo16z:$imm)>;
 
-def : Pat<(subc GPR:$Rs1, i32lo16z:$imm),
-          (SUB_F_I_LO GPR:$Rs1, i32lo16z:$imm)>;
+def : Pat<(subc GPR:$Rs1, i64lo16z:$imm),
+          (SUB_F_I_LO GPR:$Rs1, i64lo16z:$imm)>;
 
-def : Pat<(addc GPR:$Rs1, i32hi16:$imm),
-          (ADD_F_I_HI GPR:$Rs1, i32hi16:$imm)>;
+def : Pat<(addc GPR:$Rs1, i64hi16:$imm),
+          (ADD_F_I_HI GPR:$Rs1, i64hi16:$imm)>;
 
-def : Pat<(subc GPR:$Rs1, i32hi16:$imm),
-          (SUB_F_I_HI GPR:$Rs1, i32hi16:$imm)>;
+def : Pat<(subc GPR:$Rs1, i64hi16:$imm),
+          (SUB_F_I_HI GPR:$Rs1, i64hi16:$imm)>;
 
 // Carry using addition and subtraction
 let F = 0, Uses = [SR] in {
-  defm ADDC_ : ALUarith<0b001, "addc", adde, i32lo16z, i32hi16>;
-  defm SUBB_ : ALUarith<0b011, "subb", sube, i32lo16z, i32hi16>;
+  defm ADDC_ : ALUarith<0b001, "addc", adde, i64lo16z, i64hi16>;
+  defm SUBB_ : ALUarith<0b011, "subb", sube, i64lo16z, i64hi16>;
 }
 
-def : Pat<(adde GPR:$Rs1, i32lo16z:$imm),
-          (ADDC_I_LO GPR:$Rs1, i32lo16z:$imm)>;
+def : Pat<(adde GPR:$Rs1, i64lo16z:$imm),
+          (ADDC_I_LO GPR:$Rs1, i64lo16z:$imm)>;
 
-def : Pat<(sube GPR:$Rs1, i32lo16z:$imm),
-          (SUBB_I_LO GPR:$Rs1, i32lo16z:$imm)>;
+def : Pat<(sube GPR:$Rs1, i64lo16z:$imm),
+          (SUBB_I_LO GPR:$Rs1, i64lo16z:$imm)>;
 
-def : Pat<(adde GPR:$Rs1, i32hi16:$imm),
-          (ADDC_I_HI GPR:$Rs1, i32hi16:$imm)>;
+def : Pat<(adde GPR:$Rs1, i64hi16:$imm),
+          (ADDC_I_HI GPR:$Rs1, i64hi16:$imm)>;
 
-def : Pat<(sube GPR:$Rs1, i32hi16:$imm),
-          (SUBB_I_HI GPR:$Rs1, i32hi16:$imm)>;
+def : Pat<(sube GPR:$Rs1, i64hi16:$imm),
+          (SUBB_I_HI GPR:$Rs1, i64hi16:$imm)>;
 
 // Flag setting ALU operations
 let isAsCheapAsAMove = 1, F = 1, Defs = [SR] in {
   let isCommutable = 1 in {
-    defm AND_F_ : ALUlogic<0b100, "and.f",  and, i32lo16and, i32hi16and>;
-    defm OR_F_  : ALUlogic<0b101,  "or.f",   or, i32lo16z, i32hi16>;
-    defm XOR_F_ : ALUlogic<0b110, "xor.f",  xor, i32lo16z, i32hi16>;
+    defm AND_F_ : ALUlogic<0b100, "and.f",  and, i64lo16and, i64hi16and>;
+    defm OR_F_  : ALUlogic<0b101,  "or.f",   or, i64lo16z, i64hi16>;
+    defm XOR_F_ : ALUlogic<0b110, "xor.f",  xor, i64lo16z, i64hi16>;
   }
 }
 
 let isAsCheapAsAMove = 1, F = 1, Defs = [SR], Uses = [SR] in {
-  defm ADDC_F_ : ALUarith<0b001, "addc.f", adde, i32lo16z, i32hi16>;
-  defm SUBB_F_ : ALUarith<0b011, "subb.f", sube, i32lo16z, i32hi16>;
+  defm ADDC_F_ : ALUarith<0b001, "addc.f", adde, i64lo16z, i64hi16>;
+  defm SUBB_F_ : ALUarith<0b011, "subb.f", sube, i64lo16z, i64hi16>;
 }
 
 def : Pat<(DadaoSubbF GPR:$Rs1, GPR:$Rs2),
           (SUBB_F_R GPR:$Rs1, GPR:$Rs2)>;
 
-def : Pat<(DadaoSubbF GPR:$Rs1, i32lo16z:$imm),
-          (SUBB_F_I_LO GPR:$Rs1, i32lo16z:$imm)>;
+def : Pat<(DadaoSubbF GPR:$Rs1, i64lo16z:$imm),
+          (SUBB_F_I_LO GPR:$Rs1, i64lo16z:$imm)>;
 
-def : Pat<(DadaoSubbF GPR:$Rs1, i32hi16:$imm),
-          (SUBB_F_I_HI GPR:$Rs1, i32hi16:$imm)>;
+def : Pat<(DadaoSubbF GPR:$Rs1, i64hi16:$imm),
+          (SUBB_F_I_HI GPR:$Rs1, i64hi16:$imm)>;
 
 def : InstAlias<"mov $src, $dst", (ADD_R GPR:$dst, GPR:$src, R0, 0)>;
 
 let isAsCheapAsAMove = 1, Rs1 = R0.Num, isCodeGenOnly = 1, H = 1, F = 0,
   isReMaterializable = 1 in
-  def MOVHI : InstRI<0b000, (outs GPR:$Rd), (ins i32hi16:$imm16),
+  def MOVHI : InstRI<0b000, (outs GPR:$Rd), (ins i64hi16:$imm16),
                      "mov\t$imm16, $Rd",
-                     [(set GPR:$Rd, i32hi16:$imm16)]>;
+                     [(set GPR:$Rd, i64hi16:$imm16)]>;
 
-def : InstAlias<"mov $imm16, $dst", (ADD_I_LO GPR:$dst, R0, i32lo16z:$imm16)>;
-def : InstAlias<"mov $imm16, $dst", (ADD_I_HI GPR:$dst, R0, i32hi16:$imm16)>;
+def : InstAlias<"mov $imm16, $dst", (ADD_I_LO GPR:$dst, R0, i64lo16z:$imm16)>;
+def : InstAlias<"mov $imm16, $dst", (ADD_I_HI GPR:$dst, R0, i64hi16:$imm16)>;
 def : InstAlias<"mov $imm16, $dst",
-                (AND_I_LO GPR:$dst, R1, i32lo16and:$imm16)>;
+                (AND_I_LO GPR:$dst, R1, i64lo16and:$imm16)>;
 def : InstAlias<"mov $imm16, $dst",
-                (AND_I_HI GPR:$dst, R1, i32hi16and:$imm16)>;
+                (AND_I_HI GPR:$dst, R1, i64hi16and:$imm16)>;
 
 // Shift instructions
 class ShiftRI<string AsmStr, list<dag> Pattern>
@@ -512,8 +512,8 @@ let E = 0 in {
   let YL = 0b01 in {
     // uld is used here and ld in the alias as the alias is printed out first if
     // an alias exist
-    def LDW_RI : LoadRI<"uld", load, i32>;
-    def LDW_RR : LoadRR<"ld", load, i32>;
+    def LDW_RI : LoadRI<"uld", load, i64>;
+    def LDW_RR : LoadRR<"ld", load, i64>;
   }
 }
 
@@ -521,27 +521,27 @@ def : InstAlias<"ld $src, $dst", (LDW_RI GPR:$dst, MEMri:$src)>;
 
 let E = 1 in {
   let YL = 0b01 in {
-    def LDWz_RR : LoadRR<"uld", zextloadi32, i32>;
+    def LDWz_RR : LoadRR<"uld", zextloadi32, i64>;
   }
 }
 
 let E = 1 in {
   let YL = 0b00 in
-    def LDHz_RR : LoadRR<"uld.h", zextloadi16, i32>;
+    def LDHz_RR : LoadRR<"uld.h", zextloadi16, i64>;
   let YL = 0b10 in
-    def LDBz_RR : LoadRR<"uld.b", zextloadi8, i32>;
+    def LDBz_RR : LoadRR<"uld.b", zextloadi8, i64>;
 }
 
 let E = 0 in {
   let YL = 0b00 in
-    def LDHs_RR : LoadRR<"ld.h", sextloadi16, i32>;
+    def LDHs_RR : LoadRR<"ld.h", sextloadi16, i64>;
   let YL = 0b10 in
-    def LDBs_RR : LoadRR<"ld.b", sextloadi8, i32>;
+    def LDBs_RR : LoadRR<"ld.b", sextloadi8, i64>;
 }
 
 def LDADDR : InstSLS<0x0, (outs GPR:$Rd), (ins MEMi:$src),
                      "ld\t$src, $Rd",
-                     [(set (i32 GPR:$Rd), (load ADDRsls:$src))]>,
+                     [(set (i64 GPR:$Rd), (load ADDRsls:$src))]>,
     Sched<[WriteLD]> {
   bits<21> src;
 
@@ -555,7 +555,7 @@ def LDADDR : InstSLS<0x0, (outs GPR:$Rd), (ins MEMi:$src),
 class LoadSPLS<string asmstring, PatFrag opNode>
   : InstSPLS<(outs GPR:$Rd), (ins MEMspls:$src),
              !strconcat(asmstring, "\t$src, $Rd"),
-             [(set (i32 GPR:$Rd), (opNode ADDRspls:$src))]>,
+             [(set (i64 GPR:$Rd), (opNode ADDRspls:$src))]>,
     Sched<[WriteLDSW]> {
   bits<17> src;
   let Itinerary = IIC_LDSW;
@@ -567,11 +567,12 @@ class LoadSPLS<string asmstring, PatFrag opNode>
   let isReMaterializable = 1;
 }
 
+// FIXME: LANai use zextloadi16 sextloadi16
 let Y = 0, S = 0, E = 1 in
-  def LDHz_RI : LoadSPLS<"uld.h", zextloadi16>;
+  def LDHz_RI : LoadSPLS<"uld.h", zextloadi32>;
 
 let Y = 0, S = 0, E = 0 in
-  def LDHs_RI : LoadSPLS<"ld.h", sextloadi16>;
+  def LDHs_RI : LoadSPLS<"ld.h", sextloadi32>;
 
 let Y = 1, S = 0, E = 1 in
   def LDBz_RI : LoadSPLS<"uld.b", zextloadi8>;
@@ -579,9 +580,9 @@ let Y = 1, S = 0, E = 1 in
 let Y = 1, S = 0, E = 0 in
   def LDBs_RI : LoadSPLS<"ld.b", sextloadi8>;
 
-def SLI : InstSLI<(outs GPR:$Rd), (ins i32lo21:$imm),
+def SLI : InstSLI<(outs GPR:$Rd), (ins i64lo21:$imm),
                   "mov\t$imm, $Rd",
-                  [(set GPR:$Rd, i32lo21:$imm)]> {
+                  [(set GPR:$Rd, i64lo21:$imm)]> {
   bits<21> imm;
 
   let msb = imm{20-16};
@@ -627,20 +628,20 @@ class StoreRI<string OpcString, PatFrag OpNode, ValueType Ty>
 }
 
 let YL = 0b01, E = 0 in {
-  def SW_RR : StoreRR<"st", store, i32>;
-  def SW_RI : StoreRI<"st", store, i32>;
+  def SW_RR : StoreRR<"st", store, i64>;
+  def SW_RI : StoreRI<"st", store, i64>;
 }
 
 let E = 0 in {
   let YL = 0b00 in
-    def STH_RR : StoreRR<"st.h", truncstorei16, i32>;
+    def STH_RR : StoreRR<"st.h", truncstorei32, i64>;
   let YL = 0b10 in
-    def STB_RR : StoreRR<"st.b", truncstorei8, i32>;
+    def STB_RR : StoreRR<"st.b", truncstorei8, i64>;
 }
 
 def STADDR : InstSLS<0x1, (outs), (ins GPR:$Rd, MEMi:$dst),
                      "st\t$Rd, $dst",
-                     [(store (i32 GPR:$Rd), ADDRsls:$dst)]>,
+                     [(store (i64 GPR:$Rd), ADDRsls:$dst)]>,
     Sched<[WriteST]> {
   bits<21> dst;
 
@@ -653,7 +654,7 @@ def STADDR : InstSLS<0x1, (outs), (ins GPR:$Rd, MEMi:$dst),
 class StoreSPLS<string asmstring, PatFrag opNode>
   : InstSPLS<(outs), (ins GPR:$Rd, MEMspls:$dst),
              !strconcat(asmstring, "\t$Rd, $dst"),
-             [(opNode (i32 GPR:$Rd), ADDRspls:$dst)]>,
+             [(opNode (i64 GPR:$Rd), ADDRspls:$dst)]>,
     Sched<[WriteSTSW]> {
   bits<17> dst;
 
@@ -665,8 +666,9 @@ class StoreSPLS<string asmstring, PatFrag opNode>
   let mayStore = 1;
 }
 
+// FIXME: LANai use truncstorei16
 let Y = 0, S = 1, E = 0 in
-  def STH_RI : StoreSPLS<"st.h", truncstorei16>;
+  def STH_RI : StoreSPLS<"st.h", truncstorei32>;
 
 let Y = 1, S = 1, E = 0 in
   def STB_RI : StoreSPLS<"st.b", truncstorei8>;
@@ -707,15 +709,15 @@ multiclass SF<bits<3> op2Val, string AsmStr> {
   let F = 1, Rd = R0.Num, JJJJJ = 0, Defs = [SR], DDDI = 0 in
     def _RR : InstRR<op2Val, (outs), (ins GPR:$Rs1, GPR:$Rs2),
                      !strconcat(AsmStr, "\t$Rs1, $Rs2, %r0"),
-                     [(DadaoSetFlag (i32 GPR:$Rs1), (i32 GPR:$Rs2))]>;
+                     [(DadaoSetFlag (i64 GPR:$Rs1), (i64 GPR:$Rs2))]>;
   let F = 1, Rd = R0.Num, H = 0, Defs = [SR] in
-    def _RI_LO : InstRI<op2Val, (outs), (ins GPR:$Rs1, i32lo16z:$imm16),
+    def _RI_LO : InstRI<op2Val, (outs), (ins GPR:$Rs1, i64lo16z:$imm16),
                      !strconcat(AsmStr, "\t$Rs1, $imm16, %r0"),
-                     [(DadaoSetFlag (i32 GPR:$Rs1), i32lo16z:$imm16)]>;
+                     [(DadaoSetFlag (i64 GPR:$Rs1), i64lo16z:$imm16)]>;
   let F = 1, Rd = R0.Num, H = 1, Defs = [SR] in
-    def _RI_HI : InstRI<op2Val, (outs), (ins GPR:$Rs1, i32hi16:$imm16),
+    def _RI_HI : InstRI<op2Val, (outs), (ins GPR:$Rs1, i64hi16:$imm16),
                      !strconcat(AsmStr, "\t$Rs1, $imm16, %r0"),
-                     [(DadaoSetFlag (i32 GPR:$Rs1), i32hi16:$imm16)]>;
+                     [(DadaoSetFlag (i64 GPR:$Rs1), i64hi16:$imm16)]>;
 }
 let isCodeGenOnly = 1, isCompare = 1 in {
   defm SFSUB_F : SF<0b010, "sub.f">;
@@ -750,10 +752,10 @@ let isReturn = 1, isTerminator = 1, hasDelaySlot = 1, isBarrier = 1,
 // Pessimistically assume ADJCALLSTACKDOWN / ADJCALLSTACKUP will become
 // sub / add which can clobber SP.
 let Defs = [SP], Uses = [SP] in {
-  def ADJCALLSTACKDOWN : Pseudo<(outs), (ins i32imm:$amt1, i32imm:$amt2),
+  def ADJCALLSTACKDOWN : Pseudo<(outs), (ins i64imm:$amt1, i64imm:$amt2),
                                 "#ADJCALLSTACKDOWN $amt1 $amt2",
                                 [(CallSeqStart timm:$amt1, timm:$amt2)]>;
-  def ADJCALLSTACKUP   : Pseudo<(outs), (ins i32imm:$amt1, i32imm:$amt2),
+  def ADJCALLSTACKUP   : Pseudo<(outs), (ins i64imm:$amt1, i64imm:$amt2),
                                 "#ADJCALLSTACKUP $amt1 $amt2",
                                 [(CallSeqEnd timm:$amt1, timm:$amt2)]>;
 }
@@ -767,7 +769,7 @@ let Defs = [SP], Uses = [SP] in {
 let Uses = [SR] in {
   def SCC : InstSCC<(outs GPR:$Rs1), (ins CCOp:$DDDI),
                     "s$DDDI\t$Rs1",
-                    [(set (i32 GPR:$Rs1), (DadaoSetCC imm:$DDDI))]>;
+                    [(set (i64 GPR:$Rs1), (DadaoSetCC imm:$DDDI))]>;
 }
 
 // Select with hardware support
@@ -775,8 +777,8 @@ let Uses = [SR], isSelect = 1 in {
   def SELECT : InstRR<0b111, (outs GPR:$Rd),
                       (ins GPR:$Rs1, GPR:$Rs2, CCOp:$DDDI),
                       "sel.$DDDI $Rs1, $Rs2, $Rd",
-                      [(set (i32 GPR:$Rd),
-                       (DadaoSelectCC (i32 GPR:$Rs1), (i32 GPR:$Rs2),
+                      [(set (i64 GPR:$Rd),
+                       (DadaoSelectCC (i64 GPR:$Rs1), (i64 GPR:$Rs2),
                                       (imm:$DDDI)))]> {
     let JJJJJ = 0;
     let F = 0;
@@ -829,38 +831,39 @@ def TRAILZ : InstSpecial<0b011, (outs GPR:$Rd), (ins GPR:$Rs1),
 //===----------------------------------------------------------------------===//
 
 // unsigned 16-bit immediate
-def : Pat<(i32 i32lo16z:$imm), (OR_I_LO (i32 R0), imm:$imm)>;
+def : Pat<(i64 i64lo16z:$imm), (OR_I_LO (i64 R0), imm:$imm)>;
 
 // arbitrary immediate
-def : Pat<(i32 imm:$imm), (OR_I_LO (MOVHI (HI16 imm:$imm)), (LO16 imm:$imm))>;
+def : Pat<(i64 imm:$imm), (OR_I_LO (MOVHI (HI16 imm:$imm)), (LO16 imm:$imm))>;
 
 // Calls
 def : Pat<(Call tglobaladdr:$dst), (CALL tglobaladdr:$dst)>;
 def : Pat<(Call texternalsym:$dst), (CALL texternalsym:$dst)>;
 
 // Loads
-def : Pat<(extloadi8  ADDRspls:$src), (i32 (LDBz_RI ADDRspls:$src))>;
-def : Pat<(extloadi16 ADDRspls:$src), (i32 (LDHz_RI ADDRspls:$src))>;
+def : Pat<(extloadi8  ADDRspls:$src), (i64 (LDBz_RI ADDRspls:$src))>;
+def : Pat<(extloadi16 ADDRspls:$src), (i64 (LDHz_RI ADDRspls:$src))>;
+def : Pat<(extloadi32 ADDRspls:$src), (i64 (LDHz_RI ADDRspls:$src))>;
 // Loads up to 32-bits are already atomic.
 // TODO: This is a workaround for a particular failing case and should be
 // handled more generally.
-def : Pat<(atomic_load_8  ADDRspls:$src), (i32 (LDBz_RI ADDRspls:$src))>;
+def : Pat<(atomic_load_8  ADDRspls:$src), (i64 (LDBz_RI ADDRspls:$src))>;
 
 // GlobalAddress, ExternalSymbol, Jumptable, ConstantPool
 def : Pat<(DadaoHi tglobaladdr:$dst), (MOVHI tglobaladdr:$dst)>;
-def : Pat<(DadaoLo tglobaladdr:$dst), (OR_I_LO (i32 R0), tglobaladdr:$dst)>;
+def : Pat<(DadaoLo tglobaladdr:$dst), (OR_I_LO (i64 R0), tglobaladdr:$dst)>;
 def : Pat<(DadaoSmall tglobaladdr:$dst), (SLI tglobaladdr:$dst)>;
 def : Pat<(DadaoHi texternalsym:$dst), (MOVHI texternalsym:$dst)>;
-def : Pat<(DadaoLo texternalsym:$dst), (OR_I_LO (i32 R0), texternalsym:$dst)>;
+def : Pat<(DadaoLo texternalsym:$dst), (OR_I_LO (i64 R0), texternalsym:$dst)>;
 def : Pat<(DadaoSmall texternalsym:$dst), (SLI texternalsym:$dst)>;
 def : Pat<(DadaoHi tblockaddress:$dst), (MOVHI tblockaddress:$dst)>;
-def : Pat<(DadaoLo tblockaddress:$dst), (OR_I_LO (i32 R0), tblockaddress:$dst)>;
+def : Pat<(DadaoLo tblockaddress:$dst), (OR_I_LO (i64 R0), tblockaddress:$dst)>;
 def : Pat<(DadaoSmall tblockaddress:$dst), (SLI tblockaddress:$dst)>;
 def : Pat<(DadaoHi tjumptable:$dst), (MOVHI tjumptable:$dst)>;
-def : Pat<(DadaoLo tjumptable:$dst), (OR_I_LO (i32 R0), tjumptable:$dst)>;
+def : Pat<(DadaoLo tjumptable:$dst), (OR_I_LO (i64 R0), tjumptable:$dst)>;
 def : Pat<(DadaoSmall tjumptable:$dst), (SLI tjumptable:$dst)>;
 def : Pat<(DadaoHi tconstpool:$dst), (MOVHI tconstpool:$dst)>;
-def : Pat<(DadaoLo tconstpool:$dst), (OR_I_LO (i32 R0), tconstpool:$dst)>;
+def : Pat<(DadaoLo tconstpool:$dst), (OR_I_LO (i64 R0), tconstpool:$dst)>;
 def : Pat<(DadaoSmall tconstpool:$dst), (SLI tconstpool:$dst)>;
 
 def : Pat<(or GPR:$hi, (DadaoLo tglobaladdr:$lo)),

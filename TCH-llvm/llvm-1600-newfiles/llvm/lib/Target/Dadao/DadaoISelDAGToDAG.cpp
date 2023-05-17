@@ -81,9 +81,9 @@ private:
   bool selectAddrSpls(SDValue Addr, SDValue &Base, SDValue &Offset,
                       SDValue &AluOp);
 
-  // getI32Imm - Return a target constant with the specified value, of type i32.
-  inline SDValue getI32Imm(unsigned Imm, const SDLoc &DL) {
-    return CurDAG->getTargetConstant(Imm, DL, MVT::i32);
+  // getI64Imm - Return a target constant with the specified value, of type i64.
+  inline SDValue getI64Imm(unsigned Imm, const SDLoc &DL) {
+    return CurDAG->getTargetConstant(Imm, DL, MVT::i64);
   }
 
 private:
@@ -134,7 +134,7 @@ bool DadaoDAGToDAGISel::selectAddrRiSpls(SDValue Addr, SDValue &Base,
         int16_t Imm = CN->getSExtValue();
         Offset = CurDAG->getTargetConstant(Imm, DL, CN->getValueType(0));
         Base = CurDAG->getRegister(Dadao::R0, CN->getValueType(0));
-        AluOp = CurDAG->getTargetConstant(LPAC::ADD, DL, MVT::i32);
+        AluOp = CurDAG->getTargetConstant(LPAC::ADD, DL, MVT::i64);
         return true;
       }
       // Allow SLS to match if the constant doesn't fit in 16 bits but can be
@@ -147,7 +147,7 @@ bool DadaoDAGToDAGISel::selectAddrRiSpls(SDValue Addr, SDValue &Base,
         int16_t Imm = CN->getSExtValue();
         Offset = CurDAG->getTargetConstant(Imm, DL, CN->getValueType(0));
         Base = CurDAG->getRegister(Dadao::R0, CN->getValueType(0));
-        AluOp = CurDAG->getTargetConstant(LPAC::ADD, DL, MVT::i32);
+        AluOp = CurDAG->getTargetConstant(LPAC::ADD, DL, MVT::i64);
         return true;
       }
     }
@@ -158,8 +158,8 @@ bool DadaoDAGToDAGISel::selectAddrRiSpls(SDValue Addr, SDValue &Base,
     Base = CurDAG->getTargetFrameIndex(
         FIN->getIndex(),
         getTargetLowering()->getPointerTy(CurDAG->getDataLayout()));
-    Offset = CurDAG->getTargetConstant(0, DL, MVT::i32);
-    AluOp = CurDAG->getTargetConstant(LPAC::ADD, DL, MVT::i32);
+    Offset = CurDAG->getTargetConstant(0, DL, MVT::i64);
+    AluOp = CurDAG->getTargetConstant(LPAC::ADD, DL, MVT::i64);
     return true;
   }
 
@@ -171,7 +171,7 @@ bool DadaoDAGToDAGISel::selectAddrRiSpls(SDValue Addr, SDValue &Base,
   // Address of the form imm + reg
   ISD::NodeType AluOperator = static_cast<ISD::NodeType>(Addr.getOpcode());
   if (AluOperator == ISD::ADD) {
-    AluOp = CurDAG->getTargetConstant(LPAC::ADD, DL, MVT::i32);
+    AluOp = CurDAG->getTargetConstant(LPAC::ADD, DL, MVT::i64);
     // Addresses of the form FI+const
     if (ConstantSDNode *CN = dyn_cast<ConstantSDNode>(Addr.getOperand(1)))
       if ((RiMode && isInt<16>(CN->getSExtValue())) ||
@@ -186,7 +186,7 @@ bool DadaoDAGToDAGISel::selectAddrRiSpls(SDValue Addr, SDValue &Base,
           Base = Addr.getOperand(0);
         }
 
-        Offset = CurDAG->getTargetConstant(CN->getSExtValue(), DL, MVT::i32);
+        Offset = CurDAG->getTargetConstant(CN->getSExtValue(), DL, MVT::i64);
         return true;
       }
   }
@@ -197,8 +197,8 @@ bool DadaoDAGToDAGISel::selectAddrRiSpls(SDValue Addr, SDValue &Base,
     return false;
 
   Base = Addr;
-  Offset = CurDAG->getTargetConstant(0, DL, MVT::i32);
-  AluOp = CurDAG->getTargetConstant(LPAC::ADD, DL, MVT::i32);
+  Offset = CurDAG->getTargetConstant(0, DL, MVT::i64);
+  AluOp = CurDAG->getTargetConstant(LPAC::ADD, DL, MVT::i64);
   return true;
 }
 
@@ -244,7 +244,7 @@ bool DadaoDAGToDAGISel::selectAddrRr(SDValue Addr, SDValue &R1, SDValue &R2,
     // Addresses of the form register OP register
     R1 = Addr.getOperand(0);
     R2 = Addr.getOperand(1);
-    AluOp = CurDAG->getTargetConstant(AluCode, SDLoc(Addr), MVT::i32);
+    AluOp = CurDAG->getTargetConstant(AluCode, SDLoc(Addr), MVT::i64);
     return true;
   }
 
@@ -287,20 +287,20 @@ void DadaoDAGToDAGISel::Select(SDNode *Node) {
   EVT VT = Node->getValueType(0);
   switch (Opcode) {
   case ISD::Constant:
-    if (VT == MVT::i32) {
+    if (VT == MVT::i64) {
       ConstantSDNode *ConstNode = cast<ConstantSDNode>(Node);
       // Materialize zero constants as copies from R0. This allows the coalescer
       // to propagate these into other instructions.
       if (ConstNode->isZero()) {
         SDValue New = CurDAG->getCopyFromReg(CurDAG->getEntryNode(),
-                                             SDLoc(Node), Dadao::R0, MVT::i32);
+                                             SDLoc(Node), Dadao::R0, MVT::i64);
         return ReplaceNode(Node, New.getNode());
       }
       // Materialize all ones constants as copies from R1. This allows the
       // coalescer to propagate these into other instructions.
       if (ConstNode->isAllOnes()) {
         SDValue New = CurDAG->getCopyFromReg(CurDAG->getEntryNode(),
-                                             SDLoc(Node), Dadao::R1, MVT::i32);
+                                             SDLoc(Node), Dadao::R1, MVT::i64);
         return ReplaceNode(Node, New.getNode());
       }
     }
@@ -318,7 +318,7 @@ void DadaoDAGToDAGISel::Select(SDNode *Node) {
 
 void DadaoDAGToDAGISel::selectFrameIndex(SDNode *Node) {
   SDLoc DL(Node);
-  SDValue Imm = CurDAG->getTargetConstant(0, DL, MVT::i32);
+  SDValue Imm = CurDAG->getTargetConstant(0, DL, MVT::i64);
   int FI = cast<FrameIndexSDNode>(Node)->getIndex();
   EVT VT = Node->getValueType(0);
   SDValue TFI = CurDAG->getTargetFrameIndex(FI, VT);

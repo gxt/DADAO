@@ -74,7 +74,7 @@ DadaoTargetLowering::DadaoTargetLowering(const TargetMachine &TM,
                                          const DadaoSubtarget &STI)
     : TargetLowering(TM) {
   // Set up the register classes.
-  addRegisterClass(MVT::i32, &Dadao::GPRRegClass);
+  addRegisterClass(MVT::i64, &Dadao::GPRRegClass);
 
   // Compute derived properties from the register classes
   TRI = STI.getRegisterInfo();
@@ -82,19 +82,19 @@ DadaoTargetLowering::DadaoTargetLowering(const TargetMachine &TM,
 
   setStackPointerRegisterToSaveRestore(Dadao::SP);
 
-  setOperationAction(ISD::BR_CC, MVT::i32, Custom);
+  setOperationAction(ISD::BR_CC, MVT::i64, Custom);
   setOperationAction(ISD::BR_JT, MVT::Other, Expand);
   setOperationAction(ISD::BRCOND, MVT::Other, Expand);
-  setOperationAction(ISD::SETCC, MVT::i32, Custom);
-  setOperationAction(ISD::SELECT, MVT::i32, Expand);
-  setOperationAction(ISD::SELECT_CC, MVT::i32, Custom);
+  setOperationAction(ISD::SETCC, MVT::i64, Custom);
+  setOperationAction(ISD::SELECT, MVT::i64, Expand);
+  setOperationAction(ISD::SELECT_CC, MVT::i64, Custom);
 
-  setOperationAction(ISD::GlobalAddress, MVT::i32, Custom);
-  setOperationAction(ISD::BlockAddress, MVT::i32, Custom);
-  setOperationAction(ISD::JumpTable, MVT::i32, Custom);
-  setOperationAction(ISD::ConstantPool, MVT::i32, Custom);
+  setOperationAction(ISD::GlobalAddress, MVT::i64, Custom);
+  setOperationAction(ISD::BlockAddress, MVT::i64, Custom);
+  setOperationAction(ISD::JumpTable, MVT::i64, Custom);
+  setOperationAction(ISD::ConstantPool, MVT::i64, Custom);
 
-  setOperationAction(ISD::DYNAMIC_STACKALLOC, MVT::i32, Custom);
+  setOperationAction(ISD::DYNAMIC_STACKALLOC, MVT::i64, Custom);
   setOperationAction(ISD::STACKSAVE, MVT::Other, Expand);
   setOperationAction(ISD::STACKRESTORE, MVT::Other, Expand);
 
@@ -103,33 +103,34 @@ DadaoTargetLowering::DadaoTargetLowering(const TargetMachine &TM,
   setOperationAction(ISD::VACOPY, MVT::Other, Expand);
   setOperationAction(ISD::VAEND, MVT::Other, Expand);
 
-  setOperationAction(ISD::SDIV, MVT::i32, Expand);
-  setOperationAction(ISD::UDIV, MVT::i32, Expand);
-  setOperationAction(ISD::SDIVREM, MVT::i32, Expand);
-  setOperationAction(ISD::UDIVREM, MVT::i32, Expand);
-  setOperationAction(ISD::SREM, MVT::i32, Expand);
-  setOperationAction(ISD::UREM, MVT::i32, Expand);
+  setOperationAction(ISD::SDIV, MVT::i64, Expand);
+  setOperationAction(ISD::UDIV, MVT::i64, Expand);
+  setOperationAction(ISD::SDIVREM, MVT::i64, Expand);
+  setOperationAction(ISD::UDIVREM, MVT::i64, Expand);
+  setOperationAction(ISD::SREM, MVT::i64, Expand);
+  setOperationAction(ISD::UREM, MVT::i64, Expand);
 
-  setOperationAction(ISD::MUL, MVT::i32, Custom);
-  setOperationAction(ISD::MULHU, MVT::i32, Expand);
-  setOperationAction(ISD::MULHS, MVT::i32, Expand);
-  setOperationAction(ISD::UMUL_LOHI, MVT::i32, Expand);
-  setOperationAction(ISD::SMUL_LOHI, MVT::i32, Expand);
+  setOperationAction(ISD::MUL, MVT::i64, Custom);
+  setOperationAction(ISD::MULHU, MVT::i64, Expand);
+  setOperationAction(ISD::MULHS, MVT::i64, Expand);
+  setOperationAction(ISD::UMUL_LOHI, MVT::i64, Expand);
+  setOperationAction(ISD::SMUL_LOHI, MVT::i64, Expand);
 
-  setOperationAction(ISD::ROTR, MVT::i32, Expand);
-  setOperationAction(ISD::ROTL, MVT::i32, Expand);
-  setOperationAction(ISD::SHL_PARTS, MVT::i32, Custom);
-  setOperationAction(ISD::SRL_PARTS, MVT::i32, Custom);
-  setOperationAction(ISD::SRA_PARTS, MVT::i32, Expand);
+  setOperationAction(ISD::ROTR, MVT::i64, Expand);
+  setOperationAction(ISD::ROTL, MVT::i64, Expand);
+  setOperationAction(ISD::SHL_PARTS, MVT::i64, Custom);
+  setOperationAction(ISD::SRL_PARTS, MVT::i64, Custom);
+  setOperationAction(ISD::SRA_PARTS, MVT::i64, Expand);
 
-  setOperationAction(ISD::BSWAP, MVT::i32, Expand);
-  setOperationAction(ISD::CTPOP, MVT::i32, Legal);
-  setOperationAction(ISD::CTLZ, MVT::i32, Legal);
-  setOperationAction(ISD::CTTZ, MVT::i32, Legal);
+  setOperationAction(ISD::BSWAP, MVT::i64, Expand);
+  setOperationAction(ISD::CTPOP, MVT::i64, Legal);
+  setOperationAction(ISD::CTLZ, MVT::i64, Legal);
+  setOperationAction(ISD::CTTZ, MVT::i64, Legal);
 
   setOperationAction(ISD::SIGN_EXTEND_INREG, MVT::i1, Expand);
   setOperationAction(ISD::SIGN_EXTEND_INREG, MVT::i8, Expand);
   setOperationAction(ISD::SIGN_EXTEND_INREG, MVT::i16, Expand);
+  setOperationAction(ISD::SIGN_EXTEND_INREG, MVT::i32, Expand);
 
   // Extended load operations for i1 types must be promoted
   for (MVT VT : MVT::integer_valuetypes()) {
@@ -372,9 +373,9 @@ static bool CC_Dadao32_VarArg(unsigned ValNo, MVT ValVT, MVT LocVT,
     return CC_Dadao32(ValNo, ValVT, LocVT, LocInfo, ArgFlags, State);
   }
 
-  // Promote i8/i16 args to i32
-  if (LocVT == MVT::i8 || LocVT == MVT::i16) {
-    LocVT = MVT::i32;
+  // Promote i8/i16/i32 args to i64
+  if (LocVT == MVT::i8 || LocVT == MVT::i16 || LocVT == MVT::i32) {
+    LocVT = MVT::i64;
     if (ArgFlags.isSExt())
       LocInfo = CCValAssign::SExt;
     else if (ArgFlags.isZExt())
@@ -455,7 +456,7 @@ SDValue DadaoTargetLowering::LowerCCCArguments(
       // Arguments passed in registers
       EVT RegVT = VA.getLocVT();
       switch (RegVT.getSimpleVT().SimpleTy) {
-      case MVT::i32: {
+      case MVT::i64: {
         Register VReg = RegInfo.createVirtualRegister(&Dadao::GPRRegClass);
         RegInfo.addLiveIn(VA.getLocReg(), VReg);
         SDValue ArgValue = DAG.getCopyFromReg(Chain, DL, VReg, RegVT);
@@ -496,7 +497,7 @@ SDValue DadaoTargetLowering::LowerCCCArguments(
 
       // Create the SelectionDAG nodes corresponding to a load
       // from this parameter
-      SDValue FIN = DAG.getFrameIndex(FI, MVT::i32);
+      SDValue FIN = DAG.getFrameIndex(FI, MVT::i64);
       InVals.push_back(DAG.getLoad(
           VA.getLocVT(), DL, Chain, FIN,
           MachinePointerInfo::getFixedStack(DAG.getMachineFunction(), FI)));
@@ -509,7 +510,7 @@ SDValue DadaoTargetLowering::LowerCCCArguments(
   if (MF.getFunction().hasStructRetAttr()) {
     Register Reg = DadaoMFI->getSRetReturnReg();
     if (!Reg) {
-      Reg = MF.getRegInfo().createVirtualRegister(getRegClassFor(MVT::i32));
+      Reg = MF.getRegInfo().createVirtualRegister(getRegClassFor(MVT::i64));
       DadaoMFI->setSRetReturnReg(Reg);
     }
     SDValue Copy = DAG.getCopyToReg(DAG.getEntryNode(), DL, Reg, InVals[0]);
@@ -642,7 +643,7 @@ SDValue DadaoTargetLowering::LowerCCCCallTo(
 
     int FI = MFI.CreateStackObject(Size, Alignment, false);
     SDValue FIPtr = DAG.getFrameIndex(FI, getPointerTy(DAG.getDataLayout()));
-    SDValue SizeNode = DAG.getConstant(Size, DL, MVT::i32);
+    SDValue SizeNode = DAG.getConstant(Size, DL, MVT::i64);
 
     Chain = DAG.getMemcpy(Chain, DL, FIPtr, Arg, SizeNode, Alignment,
                           /*IsVolatile=*/false,
@@ -873,7 +874,7 @@ SDValue DadaoTargetLowering::LowerBR_CC(SDValue Op, SelectionDAG &DAG) const {
   SDLoc DL(Op);
 
   LPCC::CondCode CC = IntCondCCodeToICC(Cond, DL, RHS, DAG);
-  SDValue TargetCC = DAG.getConstant(CC, DL, MVT::i32);
+  SDValue TargetCC = DAG.getConstant(CC, DL, MVT::i64);
   SDValue Flag =
       DAG.getNode(DadaoISD::SET_FLAG, DL, MVT::Glue, LHS, RHS, TargetCC);
 
@@ -883,7 +884,7 @@ SDValue DadaoTargetLowering::LowerBR_CC(SDValue Op, SelectionDAG &DAG) const {
 
 SDValue DadaoTargetLowering::LowerMUL(SDValue Op, SelectionDAG &DAG) const {
   EVT VT = Op->getValueType(0);
-  if (VT != MVT::i32)
+  if (VT != MVT::i64)
     return SDValue();
 
   ConstantSDNode *C = dyn_cast<ConstantSDNode>(Op->getOperand(1));
@@ -942,10 +943,10 @@ SDValue DadaoTargetLowering::LowerMUL(SDValue Op, SelectionDAG &DAG) const {
   // positive value (i.e., largest i such that zi == 1 and MulAmt has V<<i as a
   // term NAF).
   if (HighestOne == -1)
-    Res = DAG.getConstant(0, DL, MVT::i32);
+    Res = DAG.getConstant(0, DL, MVT::i64);
   else {
     Res = DAG.getNode(ISD::SHL, DL, VT, V,
-                      DAG.getConstant(HighestOne, DL, MVT::i32));
+                      DAG.getConstant(HighestOne, DL, MVT::i64));
     SignedDigit[HighestOne] = 0;
   }
 
@@ -957,7 +958,7 @@ SDValue DadaoTargetLowering::LowerMUL(SDValue Op, SelectionDAG &DAG) const {
 
     // Shifted multiplicand (v<<i).
     SDValue Op =
-        DAG.getNode(ISD::SHL, DL, VT, V, DAG.getConstant(I, DL, MVT::i32));
+        DAG.getNode(ISD::SHL, DL, VT, V, DAG.getConstant(I, DL, MVT::i64));
     if (SignedDigit[I] == 1)
       Res = DAG.getNode(ISD::ADD, DL, VT, Res, Op);
     else if (SignedDigit[I] == -1)
@@ -973,7 +974,7 @@ SDValue DadaoTargetLowering::LowerSETCC(SDValue Op, SelectionDAG &DAG) const {
   SDLoc DL(Op);
 
   LPCC::CondCode CC = IntCondCCodeToICC(Cond, DL, RHS, DAG);
-  SDValue TargetCC = DAG.getConstant(CC, DL, MVT::i32);
+  SDValue TargetCC = DAG.getConstant(CC, DL, MVT::i64);
   SDValue Flag =
       DAG.getNode(DadaoISD::SET_FLAG, DL, MVT::Glue, LHS, RHS, TargetCC);
 
@@ -990,7 +991,7 @@ SDValue DadaoTargetLowering::LowerSELECT_CC(SDValue Op,
   SDLoc DL(Op);
 
   LPCC::CondCode CC = IntCondCCodeToICC(Cond, DL, RHS, DAG);
-  SDValue TargetCC = DAG.getConstant(CC, DL, MVT::i32);
+  SDValue TargetCC = DAG.getConstant(CC, DL, MVT::i64);
   SDValue Flag =
       DAG.getNode(DadaoISD::SET_FLAG, DL, MVT::Glue, LHS, RHS, TargetCC);
 
@@ -1023,11 +1024,11 @@ SDValue DadaoTargetLowering::LowerDYNAMIC_STACKALLOC(SDValue Op,
   Register SPReg = getStackPointerRegisterToSaveRestore();
 
   // Get a reference to the stack pointer.
-  SDValue StackPointer = DAG.getCopyFromReg(Chain, DL, SPReg, MVT::i32);
+  SDValue StackPointer = DAG.getCopyFromReg(Chain, DL, SPReg, MVT::i64);
 
   // Subtract the dynamic size from the actual stack size to
   // obtain the new stack size.
-  SDValue Sub = DAG.getNode(ISD::SUB, DL, MVT::i32, StackPointer, Size);
+  SDValue Sub = DAG.getNode(ISD::SUB, DL, MVT::i64, StackPointer, Size);
 
   // For Dadao, the outgoing memory arguments area should be on top of the
   // alloca area on the stack i.e., the outgoing memory arguments should be
@@ -1039,7 +1040,7 @@ SDValue DadaoTargetLowering::LowerDYNAMIC_STACKALLOC(SDValue Op,
   // So, we add a pseudo instruction ADJDYNALLOC that will adjust the
   // stack pointer. We replace this instruction with on that has the correct,
   // known offset in emitPrologue().
-  SDValue ArgAdjust = DAG.getNode(DadaoISD::ADJDYNALLOC, DL, MVT::i32, Sub);
+  SDValue ArgAdjust = DAG.getNode(DadaoISD::ADJDYNALLOC, DL, MVT::i64, Sub);
 
   // The Sub result contains the new stack start address, so it
   // must be placed in the stack pointer register.
@@ -1068,7 +1069,7 @@ SDValue DadaoTargetLowering::LowerRETURNADDR(SDValue Op,
 
   // Return the link register, which contains the return address.
   // Mark it an implicit live-in.
-  Register Reg = MF.addLiveIn(TRI->getRARegister(), getRegClassFor(MVT::i32));
+  Register Reg = MF.addLiveIn(TRI->getRARegister(), getRegClassFor(MVT::i64));
   return DAG.getCopyFromReg(DAG.getEntryNode(), DL, Reg, VT);
 }
 
@@ -1136,21 +1137,21 @@ SDValue DadaoTargetLowering::LowerConstantPool(SDValue Op,
   if (getTargetMachine().getCodeModel() == CodeModel::Small ||
       TLOF->isConstantInSmallSection(DAG.getDataLayout(), C)) {
     SDValue Small = DAG.getTargetConstantPool(
-        C, MVT::i32, N->getAlign(), N->getOffset(), DadaoII::MO_NO_FLAG);
-    return DAG.getNode(ISD::OR, DL, MVT::i32,
-                       DAG.getRegister(Dadao::R0, MVT::i32),
-                       DAG.getNode(DadaoISD::SMALL, DL, MVT::i32, Small));
+        C, MVT::i64, N->getAlign(), N->getOffset(), DadaoII::MO_NO_FLAG);
+    return DAG.getNode(ISD::OR, DL, MVT::i64,
+                       DAG.getRegister(Dadao::R0, MVT::i64),
+                       DAG.getNode(DadaoISD::SMALL, DL, MVT::i64, Small));
   } else {
     uint8_t OpFlagHi = DadaoII::MO_ABS_HI;
     uint8_t OpFlagLo = DadaoII::MO_ABS_LO;
 
-    SDValue Hi = DAG.getTargetConstantPool(C, MVT::i32, N->getAlign(),
+    SDValue Hi = DAG.getTargetConstantPool(C, MVT::i64, N->getAlign(),
                                            N->getOffset(), OpFlagHi);
-    SDValue Lo = DAG.getTargetConstantPool(C, MVT::i32, N->getAlign(),
+    SDValue Lo = DAG.getTargetConstantPool(C, MVT::i64, N->getAlign(),
                                            N->getOffset(), OpFlagLo);
-    Hi = DAG.getNode(DadaoISD::HI, DL, MVT::i32, Hi);
-    Lo = DAG.getNode(DadaoISD::LO, DL, MVT::i32, Lo);
-    SDValue Result = DAG.getNode(ISD::OR, DL, MVT::i32, Hi, Lo);
+    Hi = DAG.getNode(DadaoISD::HI, DL, MVT::i64, Hi);
+    Lo = DAG.getNode(DadaoISD::LO, DL, MVT::i64, Lo);
+    SDValue Result = DAG.getNode(ISD::OR, DL, MVT::i64, Hi, Lo);
     return Result;
   }
 }
@@ -1171,9 +1172,9 @@ SDValue DadaoTargetLowering::LowerGlobalAddress(SDValue Op,
   if (TLOF->isGlobalInSmallSection(GO, getTargetMachine())) {
     SDValue Small = DAG.getTargetGlobalAddress(
         GV, DL, getPointerTy(DAG.getDataLayout()), Offset, DadaoII::MO_NO_FLAG);
-    return DAG.getNode(ISD::OR, DL, MVT::i32,
-                       DAG.getRegister(Dadao::R0, MVT::i32),
-                       DAG.getNode(DadaoISD::SMALL, DL, MVT::i32, Small));
+    return DAG.getNode(ISD::OR, DL, MVT::i64,
+                       DAG.getRegister(Dadao::R0, MVT::i64),
+                       DAG.getNode(DadaoISD::SMALL, DL, MVT::i64, Small));
   } else {
     uint8_t OpFlagHi = DadaoII::MO_ABS_HI;
     uint8_t OpFlagLo = DadaoII::MO_ABS_LO;
@@ -1183,9 +1184,9 @@ SDValue DadaoTargetLowering::LowerGlobalAddress(SDValue Op,
         GV, DL, getPointerTy(DAG.getDataLayout()), Offset, OpFlagHi);
     SDValue Lo = DAG.getTargetGlobalAddress(
         GV, DL, getPointerTy(DAG.getDataLayout()), Offset, OpFlagLo);
-    Hi = DAG.getNode(DadaoISD::HI, DL, MVT::i32, Hi);
-    Lo = DAG.getNode(DadaoISD::LO, DL, MVT::i32, Lo);
-    return DAG.getNode(ISD::OR, DL, MVT::i32, Hi, Lo);
+    Hi = DAG.getNode(DadaoISD::HI, DL, MVT::i64, Hi);
+    Lo = DAG.getNode(DadaoISD::LO, DL, MVT::i64, Lo);
+    return DAG.getNode(ISD::OR, DL, MVT::i64, Hi, Lo);
   }
 }
 
@@ -1197,11 +1198,11 @@ SDValue DadaoTargetLowering::LowerBlockAddress(SDValue Op,
   uint8_t OpFlagHi = DadaoII::MO_ABS_HI;
   uint8_t OpFlagLo = DadaoII::MO_ABS_LO;
 
-  SDValue Hi = DAG.getBlockAddress(BA, MVT::i32, true, OpFlagHi);
-  SDValue Lo = DAG.getBlockAddress(BA, MVT::i32, true, OpFlagLo);
-  Hi = DAG.getNode(DadaoISD::HI, DL, MVT::i32, Hi);
-  Lo = DAG.getNode(DadaoISD::LO, DL, MVT::i32, Lo);
-  SDValue Result = DAG.getNode(ISD::OR, DL, MVT::i32, Hi, Lo);
+  SDValue Hi = DAG.getBlockAddress(BA, MVT::i64, true, OpFlagHi);
+  SDValue Lo = DAG.getBlockAddress(BA, MVT::i64, true, OpFlagLo);
+  Hi = DAG.getNode(DadaoISD::HI, DL, MVT::i64, Hi);
+  Lo = DAG.getNode(DadaoISD::LO, DL, MVT::i64, Lo);
+  SDValue Result = DAG.getNode(ISD::OR, DL, MVT::i64, Hi, Lo);
   return Result;
 }
 
@@ -1214,9 +1215,9 @@ SDValue DadaoTargetLowering::LowerJumpTable(SDValue Op,
   if (getTargetMachine().getCodeModel() == CodeModel::Small) {
     SDValue Small = DAG.getTargetJumpTable(
         JT->getIndex(), getPointerTy(DAG.getDataLayout()), DadaoII::MO_NO_FLAG);
-    return DAG.getNode(ISD::OR, DL, MVT::i32,
-                       DAG.getRegister(Dadao::R0, MVT::i32),
-                       DAG.getNode(DadaoISD::SMALL, DL, MVT::i32, Small));
+    return DAG.getNode(ISD::OR, DL, MVT::i64,
+                       DAG.getRegister(Dadao::R0, MVT::i64),
+                       DAG.getNode(DadaoISD::SMALL, DL, MVT::i64, Small));
   } else {
     uint8_t OpFlagHi = DadaoII::MO_ABS_HI;
     uint8_t OpFlagLo = DadaoII::MO_ABS_LO;
@@ -1225,9 +1226,9 @@ SDValue DadaoTargetLowering::LowerJumpTable(SDValue Op,
         JT->getIndex(), getPointerTy(DAG.getDataLayout()), OpFlagHi);
     SDValue Lo = DAG.getTargetJumpTable(
         JT->getIndex(), getPointerTy(DAG.getDataLayout()), OpFlagLo);
-    Hi = DAG.getNode(DadaoISD::HI, DL, MVT::i32, Hi);
-    Lo = DAG.getNode(DadaoISD::LO, DL, MVT::i32, Lo);
-    SDValue Result = DAG.getNode(ISD::OR, DL, MVT::i32, Hi, Lo);
+    Hi = DAG.getNode(DadaoISD::HI, DL, MVT::i64, Hi);
+    Lo = DAG.getNode(DadaoISD::LO, DL, MVT::i64, Lo);
+    SDValue Result = DAG.getNode(ISD::OR, DL, MVT::i64, Hi, Lo);
     return Result;
   }
 }
@@ -1249,33 +1250,33 @@ SDValue DadaoTargetLowering::LowerSHL_PARTS(SDValue Op,
   //   Lo = (ShAmt >= 32) ? 0 : (ShOpLo << ShAmt)
   //   return (Hi << 32) | Lo;
 
-  SDValue RevShAmt = DAG.getNode(ISD::SUB, dl, MVT::i32,
-                                 DAG.getConstant(VTBits, dl, MVT::i32), ShAmt);
+  SDValue RevShAmt = DAG.getNode(ISD::SUB, dl, MVT::i64,
+                                 DAG.getConstant(VTBits, dl, MVT::i64), ShAmt);
   SDValue LoBitsForHi = DAG.getNode(ISD::SRL, dl, VT, ShOpLo, RevShAmt);
 
   // If ShAmt == 0, we just calculated "(SRL ShOpLo, 32)" which is "undef". We
   // wanted 0, so CSEL it directly.
-  SDValue Zero = DAG.getConstant(0, dl, MVT::i32);
-  SDValue SetCC = DAG.getSetCC(dl, MVT::i32, ShAmt, Zero, ISD::SETEQ);
-  LoBitsForHi = DAG.getSelect(dl, MVT::i32, SetCC, Zero, LoBitsForHi);
+  SDValue Zero = DAG.getConstant(0, dl, MVT::i64);
+  SDValue SetCC = DAG.getSetCC(dl, MVT::i64, ShAmt, Zero, ISD::SETEQ);
+  LoBitsForHi = DAG.getSelect(dl, MVT::i64, SetCC, Zero, LoBitsForHi);
 
-  SDValue ExtraShAmt = DAG.getNode(ISD::SUB, dl, MVT::i32, ShAmt,
-                                   DAG.getConstant(VTBits, dl, MVT::i32));
+  SDValue ExtraShAmt = DAG.getNode(ISD::SUB, dl, MVT::i64, ShAmt,
+                                   DAG.getConstant(VTBits, dl, MVT::i64));
   SDValue HiBitsForHi = DAG.getNode(ISD::SHL, dl, VT, ShOpHi, ShAmt);
   SDValue HiForNormalShift =
       DAG.getNode(ISD::OR, dl, VT, LoBitsForHi, HiBitsForHi);
 
   SDValue HiForBigShift = DAG.getNode(ISD::SHL, dl, VT, ShOpLo, ExtraShAmt);
 
-  SetCC = DAG.getSetCC(dl, MVT::i32, ExtraShAmt, Zero, ISD::SETGE);
+  SetCC = DAG.getSetCC(dl, MVT::i64, ExtraShAmt, Zero, ISD::SETGE);
   SDValue Hi =
-      DAG.getSelect(dl, MVT::i32, SetCC, HiForBigShift, HiForNormalShift);
+      DAG.getSelect(dl, MVT::i64, SetCC, HiForBigShift, HiForNormalShift);
 
   // Dadao shifts of larger than register sizes are wrapped rather than
   // clamped, so we can't just emit "lo << b" if b is too big.
   SDValue LoForNormalShift = DAG.getNode(ISD::SHL, dl, VT, ShOpLo, ShAmt);
   SDValue Lo = DAG.getSelect(
-      dl, MVT::i32, SetCC, DAG.getConstant(0, dl, MVT::i32), LoForNormalShift);
+      dl, MVT::i64, SetCC, DAG.getConstant(0, dl, MVT::i64), LoForNormalShift);
 
   SDValue Ops[2] = {Lo, Hi};
   return DAG.getMergeValues(Ops, dl);
@@ -1301,21 +1302,21 @@ SDValue DadaoTargetLowering::LowerSRL_PARTS(SDValue Op,
   // Note: This takes advantage of Dadao's shift behavior to avoid needing to
   // mask the shift amount.
 
-  SDValue Zero = DAG.getConstant(0, dl, MVT::i32);
+  SDValue Zero = DAG.getConstant(0, dl, MVT::i64);
   SDValue NegatedPlus32 = DAG.getNode(
-      ISD::SUB, dl, MVT::i32, DAG.getConstant(VTBits, dl, MVT::i32), ShAmt);
-  SDValue SetCC = DAG.getSetCC(dl, MVT::i32, NegatedPlus32, Zero, ISD::SETLE);
+      ISD::SUB, dl, MVT::i64, DAG.getConstant(VTBits, dl, MVT::i64), ShAmt);
+  SDValue SetCC = DAG.getSetCC(dl, MVT::i64, NegatedPlus32, Zero, ISD::SETLE);
 
-  SDValue Hi = DAG.getNode(ISD::SRL, dl, MVT::i32, ShOpHi, ShAmt);
-  Hi = DAG.getSelect(dl, MVT::i32, SetCC, Zero, Hi);
+  SDValue Hi = DAG.getNode(ISD::SRL, dl, MVT::i64, ShOpHi, ShAmt);
+  Hi = DAG.getSelect(dl, MVT::i64, SetCC, Zero, Hi);
 
-  SDValue Lo = DAG.getNode(ISD::SRL, dl, MVT::i32, ShOpLo, ShAmt);
-  Lo = DAG.getSelect(dl, MVT::i32, SetCC, Hi, Lo);
+  SDValue Lo = DAG.getNode(ISD::SRL, dl, MVT::i64, ShOpLo, ShAmt);
+  Lo = DAG.getSelect(dl, MVT::i64, SetCC, Hi, Lo);
   SDValue CarryBits =
-      DAG.getNode(ISD::SHL, dl, MVT::i32, ShOpHi, NegatedPlus32);
-  SDValue ShiftIsZero = DAG.getSetCC(dl, MVT::i32, ShAmt, Zero, ISD::SETEQ);
-  Lo = DAG.getSelect(dl, MVT::i32, ShiftIsZero, Lo,
-                     DAG.getNode(ISD::OR, dl, MVT::i32, Lo, CarryBits));
+      DAG.getNode(ISD::SHL, dl, MVT::i64, ShOpHi, NegatedPlus32);
+  SDValue ShiftIsZero = DAG.getSetCC(dl, MVT::i64, ShAmt, Zero, ISD::SETEQ);
+  Lo = DAG.getSelect(dl, MVT::i64, ShiftIsZero, Lo,
+                     DAG.getNode(ISD::OR, dl, MVT::i64, Lo, CarryBits));
 
   SDValue Ops[2] = {Lo, Hi};
   return DAG.getMergeValues(Ops, dl);

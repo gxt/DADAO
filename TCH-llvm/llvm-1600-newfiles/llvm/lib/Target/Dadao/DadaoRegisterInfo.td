@@ -42,7 +42,7 @@ let SubRegIndices = [sub_32] in {
 def SR : DadaoReg< 0, "sw">;
 
 // Register classes.
-def GPR : RegisterClass<"Dadao", [i32], 32,
+def GPR : RegisterClass<"Dadao", [i64], 32,
     (add R3, R9, R12, R13, R14, R16, R17,
      (sequence "R%i", 20, 31),
      R6, R7, R18, R19, // registers for passing arguments
@@ -57,7 +57,7 @@ def GPR : RegisterClass<"Dadao", [i32], 32,
     )>;
 
 // Condition code register class
-def CCR : RegisterClass<"Dadao", [i32], 32, (add SR)> {
+def CCR : RegisterClass<"Dadao", [i64], 32, (add SR)> {
   let CopyCost = -1; // Don't allow copying of status registers
   let isAllocatable = 0;
 }
