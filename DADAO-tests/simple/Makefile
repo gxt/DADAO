@@ -1,6 +1,6 @@
 include $(src_dir)/../common.mk
 
-default: min.ll min.bc min.s min.o min.dump
+default: min.ll min.bc min.s min.o min.dump min.disa
 
 %.ll: %.c
 	$(DADAO_LLVM_CLANG) -target dadao -S -emit-llvm $< -o $@
@@ -16,3 +16,6 @@ default: min.ll min.bc min.s min.o min.dump
 
 %.dump: %.o
 	$(DADAO_LLVM_READOBJ) --all $< > $@
+
+%.disa: %.o
+	$(DADAO_LLVM_OBJDUMP) --full-contents --disassemble $< > $@

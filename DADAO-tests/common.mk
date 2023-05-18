@@ -29,3 +29,4 @@ DADAO_LLVM_LLC			:= $(DIR_DADAO_INSTALL)/bin/llc
 DADAO_LLVM_AS			:= $(DIR_DADAO_INSTALL)/bin/llvm-as
 DADAO_LLVM_MC			:= $(DIR_DADAO_INSTALL)/bin/llvm-mc
 DADAO_LLVM_READOBJ		:= $(DIR_DADAO_INSTALL)/bin/llvm-readobj
+DADAO_LLVM_OBJDUMP		:= $(DIR_DADAO_INSTALL)/bin/llvm-objdump
