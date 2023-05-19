@@ -8,6 +8,60 @@
 //  Declarations that describe the Dadao register file
 //===----------------------------------------------------------------------===//
 
+// Registers are identified with 6-bit ID numbers.
+class DadaoRegData<bits<6> num, string n, list<string> altNames = []> : Register<n, altNames> {
+  field bits<6> Num;
+  let Num = num;
+  let Namespace = "Dadao";
+}
+
+class DadaoRegBase<bits<6> num, string n, list<string> altNames = []> : Register<n, altNames> {
+  field bits<6> Num;
+  let Num = num;
+  let Namespace = "Dadao";
+}
+
+foreach i = 0-63 in {
+  def RD#i : DadaoRegData<i, "rd"#i>, DwarfRegNum<[i]>;
+}
+
+foreach i = 0-63 in {
+  def RB#i : DadaoRegBase<i, "rb"#i>, DwarfRegNum<[!add(i, 64)]>;
+}
+
+let Namespace = "Dadao" in {
+  def RDZERO : DadaoRegData<0, "rdzero", ["RD0"]>, DwarfRegAlias<RD0>;
+  def RBIP   : DadaoRegBase<0,   "rbip", ["RB0"]>, DwarfRegAlias<RB0>;
+  def RBSP   : DadaoRegBase<0,   "rbsp", ["RB1"]>, DwarfRegAlias<RB1>;
+  def RBFP   : DadaoRegBase<0,   "rbfp", ["RB2"]>, DwarfRegAlias<RB2>;
+  def RBGP   : DadaoRegBase<0,   "rbgp", ["RB3"]>, DwarfRegAlias<RB3>;
+  def RBTP   : DadaoRegBase<0,   "rbtp", ["RB4"]>, DwarfRegAlias<RB4>;
+}
+
+def GPRD : RegisterClass<"Dadao", [i64], 64,
+    (add RD7,                       // scratch register
+     (sequence "RD%i", 16, 31),     // temporary registers
+     (sequence "RD%i", 32, 63),     // callee saved registers
+     (sequence "RD%i", 8, 15),      // registers for passing arguments
+     RD6, RD5, RD4, RD3, RD2, RD1,  // reserved
+     RD0, RDZERO                    // constant 0
+    )>;
+
+def GPRB : RegisterClass<"Dadao", [i64], 64,
+    (add RB7,                       // scratch register
+     (sequence "RB%i", 16, 31),     // temporary registers
+     (sequence "RB%i", 32, 63),     // callee saved registers
+     (sequence "RB%i", 8, 15),      // registers for passing arguments
+     RB7, RB6, RB5,                 // reserved
+     RB4, RBTP,                     // thread pointer
+     RB3, RBGP,                     // global pointer
+     RB2, RBFP,                     // frame pointer
+     RB1, RBSP,                     // stack pointer
+     RB0, RBIP                      // instruction pointer
+    )>;
+
+//===----------------------------------------------------------------------===//
+
 // Registers are identified with 5-bit ID numbers.
 class DadaoReg<bits<5> num, string n, list<Register> subregs = [],
                list<string> altNames = []> : Register<n, altNames> {
