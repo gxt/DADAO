@@ -47,8 +47,6 @@ def CallSeqEnd       : SDNode<"ISD::CALLSEQ_END", SDT_DadaoCallSeqEnd,
                               [SDNPHasChain, SDNPOptInGlue, SDNPOutGlue]>;
 def DadaoSetFlag     : SDNode<"DadaoISD::SET_FLAG", SDT_DadaoSetFlag,
                               [SDNPOutGlue]>;
-def DadaoSubbF       : SDNode<"DadaoISD::SUBBF", SDT_DadaoSetFlag,
-                              [SDNPOutGlue, SDNPInGlue]>;
 def DadaoBrCC        : SDNode<"DadaoISD::BR_CC", SDT_DadaoBrCC,
                               [SDNPHasChain, SDNPInGlue]>;
 def DadaoSelectCC    : SDNode<"DadaoISD::SELECT_CC", SDT_DadaoSelectCC,
@@ -360,24 +358,6 @@ def : Pat<(addc GPR:$Rs1, i64hi16:$imm),
 def : Pat<(subc GPR:$Rs1, i64hi16:$imm),
           (SUB_F_I_HI GPR:$Rs1, i64hi16:$imm)>;
 
-// Carry using addition and subtraction
-let F = 0, Uses = [SR] in {
-  defm ADDC_ : ALUarith<0b001, "addc", adde, i64lo16z, i64hi16>;
-  defm SUBB_ : ALUarith<0b011, "subb", sube, i64lo16z, i64hi16>;
-}
-
-def : Pat<(adde GPR:$Rs1, i64lo16z:$imm),
-          (ADDC_I_LO GPR:$Rs1, i64lo16z:$imm)>;
-
-def : Pat<(sube GPR:$Rs1, i64lo16z:$imm),
-          (SUBB_I_LO GPR:$Rs1, i64lo16z:$imm)>;
-
-def : Pat<(adde GPR:$Rs1, i64hi16:$imm),
-          (ADDC_I_HI GPR:$Rs1, i64hi16:$imm)>;
-
-def : Pat<(sube GPR:$Rs1, i64hi16:$imm),
-          (SUBB_I_HI GPR:$Rs1, i64hi16:$imm)>;
-
 // Flag setting ALU operations
 let isAsCheapAsAMove = 1, F = 1, Defs = [SR] in {
   let isCommutable = 1 in {
@@ -386,20 +366,6 @@ let isAsCheapAsAMove = 1, F = 1, Defs = [SR] in {
     defm XOR_F_ : ALUlogic<0b110, "xor.f",  xor, i64lo16z, i64hi16>;
   }
 }
-
-let isAsCheapAsAMove = 1, F = 1, Defs = [SR], Uses = [SR] in {
-  defm ADDC_F_ : ALUarith<0b001, "addc.f", adde, i64lo16z, i64hi16>;
-  defm SUBB_F_ : ALUarith<0b011, "subb.f", sube, i64lo16z, i64hi16>;
-}
-
-def : Pat<(DadaoSubbF GPR:$Rs1, GPR:$Rs2),
-          (SUBB_F_R GPR:$Rs1, GPR:$Rs2)>;
-
-def : Pat<(DadaoSubbF GPR:$Rs1, i64lo16z:$imm),
-          (SUBB_F_I_LO GPR:$Rs1, i64lo16z:$imm)>;
-
-def : Pat<(DadaoSubbF GPR:$Rs1, i64hi16:$imm),
-          (SUBB_F_I_HI GPR:$Rs1, i64hi16:$imm)>;
 
 def : InstAlias<"mov $src, $dst", (ADD_R GPR:$dst, GPR:$src, R0, 0)>;
 

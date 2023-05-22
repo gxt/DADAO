@@ -231,12 +231,6 @@ inline static unsigned flagSettingOpcodeVariant(unsigned OldOpcode) {
     return Dadao::ADD_F_I_LO;
   case Dadao::ADD_R:
     return Dadao::ADD_F_R;
-  case Dadao::ADDC_I_HI:
-    return Dadao::ADDC_F_I_HI;
-  case Dadao::ADDC_I_LO:
-    return Dadao::ADDC_F_I_LO;
-  case Dadao::ADDC_R:
-    return Dadao::ADDC_F_R;
   case Dadao::AND_I_HI:
     return Dadao::AND_F_I_HI;
   case Dadao::AND_I_LO:
@@ -263,12 +257,6 @@ inline static unsigned flagSettingOpcodeVariant(unsigned OldOpcode) {
     return Dadao::SUB_F_I_LO;
   case Dadao::SUB_R:
     return Dadao::SUB_F_R;
-  case Dadao::SUBB_I_HI:
-    return Dadao::SUBB_F_I_HI;
-  case Dadao::SUBB_I_LO:
-    return Dadao::SUBB_F_I_LO;
-  case Dadao::SUBB_R:
-    return Dadao::SUBB_F_R;
   case Dadao::XOR_I_HI:
     return Dadao::XOR_F_I_HI;
   case Dadao::XOR_I_LO:

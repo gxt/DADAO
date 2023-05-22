@@ -72,10 +72,6 @@ static bool isALUArithLoOpcode(unsigned Opcode) {
   case Dadao::SUB_I_LO:
   case Dadao::ADD_F_I_LO:
   case Dadao::SUB_F_I_LO:
-  case Dadao::ADDC_I_LO:
-  case Dadao::SUBB_I_LO:
-  case Dadao::ADDC_F_I_LO:
-  case Dadao::SUBB_F_I_LO:
     return true;
   default:
     return false;
@@ -92,14 +88,6 @@ static unsigned getOppositeALULoOpcode(unsigned Opcode) {
     return Dadao::SUB_F_I_LO;
   case Dadao::SUB_F_I_LO:
     return Dadao::ADD_F_I_LO;
-  case Dadao::ADDC_I_LO:
-    return Dadao::SUBB_I_LO;
-  case Dadao::SUBB_I_LO:
-    return Dadao::ADDC_I_LO;
-  case Dadao::ADDC_F_I_LO:
-    return Dadao::SUBB_F_I_LO;
-  case Dadao::SUBB_F_I_LO:
-    return Dadao::ADDC_F_I_LO;
   default:
     llvm_unreachable("Invalid ALU lo opcode");
   }

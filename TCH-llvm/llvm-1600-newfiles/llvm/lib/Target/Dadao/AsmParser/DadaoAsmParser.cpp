@@ -1171,11 +1171,9 @@ static bool MaybePredicatedInst(const OperandVector &Operands) {
     return false;
   return StringSwitch<bool>(
              static_cast<const DadaoOperand &>(*Operands[0]).getToken())
-      .StartsWith("addc", true)
       .StartsWith("add", true)
       .StartsWith("and", true)
       .StartsWith("sh", true)
-      .StartsWith("subb", true)
       .StartsWith("sub", true)
       .StartsWith("or", true)
       .StartsWith("xor", true)
