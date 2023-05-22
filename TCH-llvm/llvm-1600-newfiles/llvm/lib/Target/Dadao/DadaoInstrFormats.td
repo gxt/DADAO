@@ -6,6 +6,50 @@
 //
 //===----------------------------------------------------------------------===//
 
+class Inst_Dadao<dag outs, dag ins, string asmstr, list<dag> pattern>
+    : Instruction {
+  field bits<32> Inst;
+  field bits<32> SoftFail = 0;
+  let Size = 4;
+
+  let Namespace = "Dadao";
+  let DecoderNamespace = "Dadao";
+
+  bits<8> MajorOpcode;
+  bits<6> HexA;       // also Minor Opcode
+  bits<6> HexB;
+  bits<6> HexC;
+  bits<6> HexD;
+
+  let Inst{31 - 24} = MajorOpcode;
+  let Inst{23 - 18} = HexA;
+  let Inst{17 - 12} = HexB;
+  let Inst{11 -  6} = HexC;
+  let Inst{ 5 -  0} = HexD;
+
+  dag OutOperandList = outs;
+  dag InOperandList = ins;
+  let AsmString = asmstr;
+  let Pattern = pattern;
+}
+
+class Inst_ORRR<bits<8> majorop, dag outs, dag ins, string asmstr, list<dag> pattern>
+    : Inst_Dadao<outs, ins, asmstr, pattern> {
+
+  bits<6> RdHb;
+  bits<6> RdHc;
+  bits<6> RdHd;
+
+  let MajorOpcode = majorop;
+  let HexB = RdHb;
+  let HexC = RdHc;
+  let HexD = RdHd;
+}
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
 class InstDadao<dag outs, dag ins, string asmstr, list<dag> pattern>
     : Instruction {
   field bits<32> Inst;

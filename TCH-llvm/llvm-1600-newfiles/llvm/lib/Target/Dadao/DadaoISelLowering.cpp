@@ -74,7 +74,7 @@ DadaoTargetLowering::DadaoTargetLowering(const TargetMachine &TM,
                                          const DadaoSubtarget &STI)
     : TargetLowering(TM) {
   // Set up the register classes.
-  addRegisterClass(MVT::i64, &Dadao::GPRRegClass);
+  addRegisterClass(MVT::i64, &Dadao::GPRDRegClass);
 
   // Compute derived properties from the register classes
   TRI = STI.getRegisterInfo();
@@ -237,7 +237,12 @@ DadaoTargetLowering::getRegForInlineAsmConstraint(const TargetRegisterInfo *TRI,
     // GCC Constraint Letters
     switch (Constraint[0]) {
     case 'r': // GENERAL_REGS
-      return std::make_pair(0U, &Dadao::GPRRegClass);
+      switch (Constraint[1]) {
+      case 'd': // RD regs
+        return std::make_pair(0U, &Dadao::GPRDRegClass);
+      case 'b': // RB regs
+        return std::make_pair(0U, &Dadao::GPRBRegClass);
+      }
     default:
       break;
     }
@@ -457,7 +462,7 @@ SDValue DadaoTargetLowering::LowerCCCArguments(
       EVT RegVT = VA.getLocVT();
       switch (RegVT.getSimpleVT().SimpleTy) {
       case MVT::i64: {
-        Register VReg = RegInfo.createVirtualRegister(&Dadao::GPRRegClass);
+        Register VReg = RegInfo.createVirtualRegister(&Dadao::GPRDRegClass);
         RegInfo.addLiveIn(VA.getLocReg(), VReg);
         SDValue ArgValue = DAG.getCopyFromReg(Chain, DL, VReg, RegVT);
 

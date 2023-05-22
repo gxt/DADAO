@@ -37,7 +37,7 @@ void DadaoInstrInfo::copyPhysReg(MachineBasicBlock &MBB,
                                  MCRegister DestinationRegister,
                                  MCRegister SourceRegister,
                                  bool KillSource) const {
-  if (!Dadao::GPRRegClass.contains(DestinationRegister, SourceRegister)) {
+  if (!Dadao::GPRDRegClass.contains(DestinationRegister, SourceRegister)) {
     llvm_unreachable("Impossible reg-to-reg copy");
   }
 

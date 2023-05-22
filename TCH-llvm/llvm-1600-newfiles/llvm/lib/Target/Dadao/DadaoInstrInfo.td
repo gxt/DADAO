@@ -17,6 +17,25 @@
 include "DadaoInstrFormats.td"
 
 // -------------------------------------------------- //
+// ALU instructions
+// -------------------------------------------------- //
+class ALU_ORRR<bits<6> minorop, string OpcString, SDNode OpNode>
+  : Inst_ORRR<0b00010000, (outs GPRD:$RdHb), (ins GPRD:$RdHc, GPRD:$RdHd),
+            !strconcat(OpcString, "\t$RdHb, $RdHc, $RdHd"),
+            [(set GPRD:$RdHb, (OpNode GPRD:$RdHc, GPRD:$RdHd))]> {
+  let HexA = minorop;
+}
+
+def AND_ORRR  : ALU_ORRR<0b001000,  "and", and>;
+def ORR_ORRR  : ALU_ORRR<0b001001,  "orr", or>;
+def XOR_ORRR  : ALU_ORRR<0b001010,  "xor", xor>;
+// TODO: def XNOR_ORRR : ALU_ORRR<0b001011, "xnor", xnor>;
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+// -------------------------------------------------- //
 // Instruction Operands and Patterns
 // -------------------------------------------------- //
 

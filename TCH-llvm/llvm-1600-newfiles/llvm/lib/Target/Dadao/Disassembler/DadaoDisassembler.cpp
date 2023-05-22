@@ -47,6 +47,14 @@ static DecodeStatus DecodeGPRRegisterClass(MCInst &Inst, unsigned RegNo,
                                            uint64_t Address,
                                            const MCDisassembler *Decoder);
 
+static DecodeStatus DecodeGPRDRegisterClass(MCInst &Inst, unsigned RegNo,
+                                            uint64_t Address,
+                                            const MCDisassembler *Decoder);
+
+static DecodeStatus DecodeGPRBRegisterClass(MCInst &Inst, unsigned RegNo,
+                                            uint64_t Address,
+                                            const MCDisassembler *Decoder);
+
 static DecodeStatus decodeRiMemoryValue(MCInst &Inst, unsigned Insn,
                                         uint64_t Address,
                                         const MCDisassembler *Decoder);
@@ -167,6 +175,48 @@ DecodeStatus DecodeGPRRegisterClass(MCInst &Inst, unsigned RegNo,
     return MCDisassembler::Fail;
 
   unsigned Reg = GPRDecoderTable[RegNo];
+  Inst.addOperand(MCOperand::createReg(Reg));
+  return MCDisassembler::Success;
+}
+
+static const unsigned GPRDDecoderTable[] = {
+    Dadao::RD0,  Dadao::RD1,  Dadao::RD2,  Dadao::RD3,  Dadao::RD4,  Dadao::RD5,  Dadao::RD6,  Dadao::RD7,
+    Dadao::RD8,  Dadao::RD9,  Dadao::RD10, Dadao::RD11, Dadao::RD12, Dadao::RD13, Dadao::RD14, Dadao::RD15,
+    Dadao::RD16, Dadao::RD17, Dadao::RD18, Dadao::RD19, Dadao::RD20, Dadao::RD21, Dadao::RD22, Dadao::RD23,
+    Dadao::RD24, Dadao::RD25, Dadao::RD26, Dadao::RD27, Dadao::RD28, Dadao::RD29, Dadao::RD30, Dadao::RD31,
+    Dadao::RD32, Dadao::RD33, Dadao::RD34, Dadao::RD35, Dadao::RD36, Dadao::RD37, Dadao::RD38, Dadao::RD39,
+    Dadao::RD40, Dadao::RD41, Dadao::RD42, Dadao::RD43, Dadao::RD44, Dadao::RD45, Dadao::RD46, Dadao::RD47,
+    Dadao::RD48, Dadao::RD49, Dadao::RD50, Dadao::RD51, Dadao::RD52, Dadao::RD53, Dadao::RD54, Dadao::RD55,
+    Dadao::RD56, Dadao::RD57, Dadao::RD58, Dadao::RD59, Dadao::RD60, Dadao::RD61, Dadao::RD62, Dadao::RD63};
+
+DecodeStatus DecodeGPRDRegisterClass(MCInst &Inst, unsigned RegNo,
+                                    uint64_t /*Address*/,
+                                    const MCDisassembler * /*Decoder*/) {
+  if (RegNo > 63)
+    return MCDisassembler::Fail;
+
+  unsigned Reg = GPRDDecoderTable[RegNo];
+  Inst.addOperand(MCOperand::createReg(Reg));
+  return MCDisassembler::Success;
+}
+
+static const unsigned GPRBDecoderTable[] = {
+    Dadao::RB0,  Dadao::RB1,  Dadao::RB2,  Dadao::RB3,  Dadao::RB4,  Dadao::RB5,  Dadao::RB6,  Dadao::RB7,
+    Dadao::RB8,  Dadao::RB9,  Dadao::RB10, Dadao::RB11, Dadao::RB12, Dadao::RB13, Dadao::RB14, Dadao::RB15,
+    Dadao::RB16, Dadao::RB17, Dadao::RB18, Dadao::RB19, Dadao::RB20, Dadao::RB21, Dadao::RB22, Dadao::RB23,
+    Dadao::RB24, Dadao::RB25, Dadao::RB26, Dadao::RB27, Dadao::RB28, Dadao::RB29, Dadao::RB30, Dadao::RB31,
+    Dadao::RB32, Dadao::RB33, Dadao::RB34, Dadao::RB35, Dadao::RB36, Dadao::RB37, Dadao::RB38, Dadao::RB39,
+    Dadao::RB40, Dadao::RB41, Dadao::RB42, Dadao::RB43, Dadao::RB44, Dadao::RB45, Dadao::RB46, Dadao::RB47,
+    Dadao::RB48, Dadao::RB49, Dadao::RB50, Dadao::RB51, Dadao::RB52, Dadao::RB53, Dadao::RB54, Dadao::RB55,
+    Dadao::RB56, Dadao::RB57, Dadao::RB58, Dadao::RB59, Dadao::RB60, Dadao::RB61, Dadao::RB62, Dadao::RB63};
+
+DecodeStatus DecodeGPRBRegisterClass(MCInst &Inst, unsigned RegNo,
+                                    uint64_t /*Address*/,
+                                    const MCDisassembler * /*Decoder*/) {
+  if (RegNo > 63)
+    return MCDisassembler::Fail;
+
+  unsigned Reg = GPRBDecoderTable[RegNo];
   Inst.addOperand(MCOperand::createReg(Reg));
   return MCDisassembler::Success;
 }
