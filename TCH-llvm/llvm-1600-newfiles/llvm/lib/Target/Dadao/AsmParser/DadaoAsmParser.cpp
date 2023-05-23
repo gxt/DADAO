@@ -376,6 +376,30 @@ public:
     return isInt<10>(Value);
   }
 
+  bool isLoImm12() {
+    if (!isImm())
+      return false;
+
+    // Constant case
+    if (const MCConstantExpr *ConstExpr = dyn_cast<MCConstantExpr>(Imm.Value)) {
+      int64_t Value = ConstExpr->getValue();
+      // Check if value fits in 12 bits
+      return isUInt<12>(static_cast<int64_t>(Value));
+    }
+
+    // Symbolic reference expression
+    if (const DadaoMCExpr *SymbolRefExpr = dyn_cast<DadaoMCExpr>(Imm.Value))
+      return SymbolRefExpr->getKind() == DadaoMCExpr::VK_Dadao_ABS_LO;
+
+    // Binary expression
+    if (const MCBinaryExpr *BinaryExpr = dyn_cast<MCBinaryExpr>(Imm.Value))
+      if (const DadaoMCExpr *SymbolRefExpr =
+              dyn_cast<DadaoMCExpr>(BinaryExpr->getLHS()))
+        return SymbolRefExpr->getKind() == DadaoMCExpr::VK_Dadao_ABS_LO;
+
+    return false;
+  }
+
   bool isCondCode() {
     if (!isImm())
       return false;
@@ -553,6 +577,30 @@ public:
       assert(BinaryExpr && isa<DadaoMCExpr>(BinaryExpr->getLHS()) &&
              cast<DadaoMCExpr>(BinaryExpr->getLHS())->getKind() ==
                  DadaoMCExpr::VK_Dadao_None);
+#endif
+      Inst.addOperand(MCOperand::createExpr(getImm()));
+    } else
+      assert(false && "Operand type not supported.");
+  }
+
+  void addLoImm12Operands(MCInst &Inst, unsigned N) const {
+    assert(N == 1 && "Invalid number of operands!");
+    if (const MCConstantExpr *ConstExpr = dyn_cast<MCConstantExpr>(getImm()))
+      Inst.addOperand(
+          MCOperand::createImm(static_cast<int64_t>(ConstExpr->getValue())));
+    else if (isa<DadaoMCExpr>(getImm())) {
+#ifndef NDEBUG
+      const DadaoMCExpr *SymbolRefExpr = dyn_cast<DadaoMCExpr>(getImm());
+      assert(SymbolRefExpr &&
+             SymbolRefExpr->getKind() == DadaoMCExpr::VK_Dadao_ABS_LO);
+#endif
+      Inst.addOperand(MCOperand::createExpr(getImm()));
+    } else if (isa<MCBinaryExpr>(getImm())) {
+#ifndef NDEBUG
+      const MCBinaryExpr *BinaryExpr = dyn_cast<MCBinaryExpr>(getImm());
+      assert(BinaryExpr && isa<DadaoMCExpr>(BinaryExpr->getLHS()) &&
+             cast<DadaoMCExpr>(BinaryExpr->getLHS())->getKind() ==
+                 DadaoMCExpr::VK_Dadao_ABS_LO);
 #endif
       Inst.addOperand(MCOperand::createExpr(getImm()));
     } else

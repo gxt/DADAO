@@ -16,6 +16,19 @@
 
 include "DadaoInstrFormats.td"
 
+// Extract bits 0-11 (low-end) of an immediate value.
+def LO12 : SDNodeXForm<imm, [{
+  return CurDAG->getTargetConstant((uint64_t)N->getZExtValue() & 0xFFFULL,
+                                   SDLoc(N), MVT::i64);
+}]>;
+
+def LoImm12AsmOperand : AsmOperandClass { let Name = "LoImm12"; }
+def i64lo12z : Operand<i64>, PatLeaf<(i64 imm), [{
+    // i64lo12z predicate - true if the 64-bit immediate has only rightmost 12 bits set.
+    return ((N->getZExtValue() & 0xFFFULL) == N->getZExtValue());}], LO12> {
+  let ParserMatchClass = LoImm12AsmOperand;
+}
+
 // -------------------------------------------------- //
 // ALU instructions
 // -------------------------------------------------- //
@@ -30,6 +43,14 @@ def AND_ORRR  : ALU_ORRR<0b001000,  "and", and>;
 def ORR_ORRR  : ALU_ORRR<0b001001,  "orr", or>;
 def XOR_ORRR  : ALU_ORRR<0b001010,  "xor", xor>;
 // TODO: def XNOR_ORRR : ALU_ORRR<0b001011, "xnor", xnor>;
+
+class ALU_RRII<bits<8> majorop, string OpcString, SDNode OpNode>
+  : Inst_RRII<majorop, (outs GPRD:$RdHa), (ins GPRD:$RdHb, i64lo12z:$Imm12),
+            !strconcat(OpcString, "\t$RdHa, $RdHb, $Imm12"),
+            [(set GPRD:$RdHa, (OpNode GPRD:$RdHb, i64lo12z:$Imm12))]> {
+}
+
+def ADDI_RRII : ALU_RRII<0b00011001, "addi", add>;
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
