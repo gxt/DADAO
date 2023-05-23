@@ -306,3 +306,15 @@ void DadaoInstPrinter::printPredicateOperand(const MCInst *MI, unsigned OpNo,
   else if (CC != LPCC::ICC_T)
     OS << "." << dadaoCondCodeToString(CC);
 }
+
+void DadaoInstPrinter::printLo12AndImmOperand(const MCInst *MI, unsigned OpNo,
+                                              raw_ostream &OS) {
+  const MCOperand &Op = MI->getOperand(OpNo);
+  if (Op.isImm()) {
+    OS << formatHex(~0xFFF | Op.getImm());
+  } else {
+    // Symbolic operand will be lowered to immediate value by linker
+    assert(Op.isExpr() && "Expected an expression");
+    Op.getExpr()->print(OS, &MAI);
+  }
+}

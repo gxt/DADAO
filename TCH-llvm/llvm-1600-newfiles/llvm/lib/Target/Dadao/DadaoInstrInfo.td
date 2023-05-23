@@ -22,6 +22,15 @@ def LO12 : SDNodeXForm<imm, [{
                                    SDLoc(N), MVT::i64);
 }]>;
 
+def LoImm12AndAsmOperand : AsmOperandClass { let Name = "LoImm12And"; }
+def i64lo12and : Operand<i64>, PatLeaf<(i64 imm), [{
+    // i64lo12and predicate - true if the 64-bit immediate has the rightmost 12
+    // bits set and the leftmost 12 bits 1's.
+    return (N->getZExtValue() >= (~0xFFFULL));}], LO12> {
+  let ParserMatchClass = LoImm12AndAsmOperand;
+  let PrintMethod = "printLo12AndImmOperand";
+}
+
 def LoImm12AsmOperand : AsmOperandClass { let Name = "LoImm12"; }
 def i64lo12z : Operand<i64>, PatLeaf<(i64 imm), [{
     // i64lo12z predicate - true if the 64-bit immediate has only rightmost 12 bits set.
@@ -44,13 +53,14 @@ def ORR_ORRR  : ALU_ORRR<0b001001,  "orr", or>;
 def XOR_ORRR  : ALU_ORRR<0b001010,  "xor", xor>;
 // TODO: def XNOR_ORRR : ALU_ORRR<0b001011, "xnor", xnor>;
 
-class ALU_RRII<bits<8> majorop, string OpcString, SDNode OpNode>
-  : Inst_RRII<majorop, (outs GPRD:$RdHa), (ins GPRD:$RdHb, i64lo12z:$Imm12),
+class ALU_RRII<bits<8> majorop, string OpcString, SDNode OpNode, PatLeaf LoExt>
+  : Inst_RRII<majorop, (outs GPRD:$RdHa), (ins GPRD:$RdHb, LoExt:$Imm12),
             !strconcat(OpcString, "\t$RdHa, $RdHb, $Imm12"),
-            [(set GPRD:$RdHa, (OpNode GPRD:$RdHb, i64lo12z:$Imm12))]> {
+            [(set GPRD:$RdHa, (OpNode GPRD:$RdHb, LoExt:$Imm12))]> {
 }
 
-def ADDI_RRII : ALU_RRII<0b00011001, "addi", add>;
+def ANDI_RRII : ALU_RRII<0b00011000, "andi", and, i64lo12and>;
+def ADDI_RRII : ALU_RRII<0b00011001, "addi", add, i64lo12z>;
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------

@@ -400,6 +400,19 @@ public:
     return false;
   }
 
+  bool isLoImm12And() {
+    if (!isImm())
+      return false;
+
+    const MCConstantExpr *ConstExpr = dyn_cast<MCConstantExpr>(Imm.Value);
+    if (ConstExpr) {
+      int64_t Value = ConstExpr->getValue();
+      // Check if in the form 0xfffXYZW
+      return ((Value & ~0xFFF) == ~0xFFF);
+    }
+    return false;
+  }
+
   bool isCondCode() {
     if (!isImm())
       return false;
@@ -604,6 +617,14 @@ public:
 #endif
       Inst.addOperand(MCOperand::createExpr(getImm()));
     } else
+      assert(false && "Operand type not supported.");
+  }
+
+  void addLoImm12AndOperands(MCInst &Inst, unsigned N) const {
+    assert(N == 1 && "Invalid number of operands!");
+    if (const MCConstantExpr *ConstExpr = dyn_cast<MCConstantExpr>(getImm()))
+      Inst.addOperand(MCOperand::createImm(ConstExpr->getValue() & 0xfff));
+    else
       assert(false && "Operand type not supported.");
   }
 
