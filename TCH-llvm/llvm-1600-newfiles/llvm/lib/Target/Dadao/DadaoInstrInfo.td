@@ -53,14 +53,14 @@ def ORR_ORRR  : ALU_ORRR<0b001001,  "orr", or>;
 def XOR_ORRR  : ALU_ORRR<0b001010,  "xor", xor>;
 // TODO: def XNOR_ORRR : ALU_ORRR<0b001011, "xnor", xnor>;
 
-class ALU_RRII<bits<8> majorop, string OpcString, SDNode OpNode, PatLeaf LoExt>
-  : Inst_RRII<majorop, (outs GPRD:$RdHa), (ins GPRD:$RdHb, LoExt:$Imm12),
-            !strconcat(OpcString, "\t$RdHa, $RdHb, $Imm12"),
-            [(set GPRD:$RdHa, (OpNode GPRD:$RdHb, LoExt:$Imm12))]> {
+class ALU_RRII<bits<8> majorop, string OpcString, SDNode OpNode, RegisterClass GPRx, PatLeaf LoExt>
+  : Inst_RRII<majorop, (outs GPRx:$RxHa), (ins GPRx:$RxHb, LoExt:$Imm12),
+            !strconcat(OpcString, "\t$RxHa, $RxHb, $Imm12"),
+            [(set GPRx:$RxHa, (OpNode GPRx:$RxHb, LoExt:$Imm12))]> {
 }
 
-def ANDI_RRII : ALU_RRII<0b00011000, "andi", and, i64lo12and>;
-def ADDI_RRII : ALU_RRII<0b00011001, "addi", add, i64lo12z>;
+def ANDI_RRII : ALU_RRII<0b00011000, "andi", and, GPRD, i64lo12and>;
+def ADDI_RRII : ALU_RRII<0b00011001, "addi", add, GPRD, i64lo12z>;
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------

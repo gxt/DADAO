@@ -49,13 +49,13 @@ class Inst_ORRR<bits<8> majorop, dag outs, dag ins, string asmstr, list<dag> pat
 class Inst_RRII<bits<8> majorop, dag outs, dag ins, string asmstr, list<dag> pattern>
     : Inst_Dadao<outs, ins, asmstr, pattern> {
 
-  bits<6> RdHa;
-  bits<6> RdHb;
+  bits<6> RxHa;
+  bits<6> RxHb;
   bits<12> Imm12;
 
   let MajorOpcode = majorop;
-  let HexA = RdHa;
-  let HexB = RdHb;
+  let HexA = RxHa;
+  let HexB = RxHb;
   let HexC = Imm12{11 - 6};
   let HexD = Imm12{ 5 - 0};
 }
