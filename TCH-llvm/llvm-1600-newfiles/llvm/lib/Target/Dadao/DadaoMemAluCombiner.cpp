@@ -207,9 +207,6 @@ LPAC::AluCode mergedAluCode(unsigned AluOpcode) {
   case Dadao::SUB_I_LO:
   case Dadao::SUB_R:
     return LPAC::SUB;
-  case Dadao::AND_I_LO:
-  case Dadao::AND_R:
-    return LPAC::AND;
   case Dadao::OR_I_LO:
   case Dadao::OR_R:
     return LPAC::OR;

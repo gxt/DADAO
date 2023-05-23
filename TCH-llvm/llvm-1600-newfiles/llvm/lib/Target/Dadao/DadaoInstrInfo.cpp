@@ -231,12 +231,6 @@ inline static unsigned flagSettingOpcodeVariant(unsigned OldOpcode) {
     return Dadao::ADD_F_I_LO;
   case Dadao::ADD_R:
     return Dadao::ADD_F_R;
-  case Dadao::AND_I_HI:
-    return Dadao::AND_F_I_HI;
-  case Dadao::AND_I_LO:
-    return Dadao::AND_F_I_LO;
-  case Dadao::AND_R:
-    return Dadao::AND_F_R;
   case Dadao::OR_I_HI:
     return Dadao::OR_F_I_HI;
   case Dadao::OR_I_LO:

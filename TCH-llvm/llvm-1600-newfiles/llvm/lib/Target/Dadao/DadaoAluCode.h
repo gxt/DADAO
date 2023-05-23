@@ -22,7 +22,6 @@ namespace LPAC {
 enum AluCode {
   ADD = 0x00,
   SUB = 0x02,
-  AND = 0x04,
   OR = 0x05,
   XOR = 0x06,
   SPECIAL = 0x07,
@@ -77,8 +76,6 @@ inline static const char *dadaoAluCodeToString(unsigned AluOp) {
     return "add";
   case SUB:
     return "sub";
-  case AND:
-    return "and";
   case OR:
     return "or";
   case XOR:
@@ -98,7 +95,6 @@ inline static AluCode stringToDadaoAluCode(StringRef S) {
   return StringSwitch<AluCode>(S)
       .Case("add", ADD)
       .Case("sub", SUB)
-      .Case("and", AND)
       .Case("or", OR)
       .Case("xor", XOR)
       .Case("sh", SHL)
@@ -113,8 +109,6 @@ inline static AluCode isdToDadaoAluCode(ISD::NodeType Node_type) {
     return AluCode::ADD;
   case ISD::SUB:
     return AluCode::SUB;
-  case ISD::AND:
-    return AluCode::AND;
   case ISD::OR:
     return AluCode::OR;
   case ISD::XOR:

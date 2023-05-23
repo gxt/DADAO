@@ -363,7 +363,6 @@ let isAsCheapAsAMove = 1, F = 0 in {
   }
   defm SUB_ : ALUarith<0b010,   "sub", sub, i64lo16z, i64hi16>;
   let isCommutable = 1 in {
-    defm AND_ : ALUlogic<0b100, "and", and, i64lo16and, i64hi16and>;
     defm OR_  : ALUlogic<0b101,  "or",  or, i64lo16z, i64hi16>;
     defm XOR_ : ALUlogic<0b110, "xor", xor, i64lo16z, i64hi16>;
   }
@@ -380,9 +379,6 @@ def : Pat<(add GPR:$Rs1, i64hi16:$imm),
 
 def : Pat<(sub GPR:$Rs1, i64hi16:$imm),
           (SUB_I_HI GPR:$Rs1, i64hi16:$imm)>;
-
-def : Pat<(i64 i64lo16and:$imm), (AND_I_LO (i64 R1), i64lo16and:$imm)>;
-def : Pat<(i64 i64hi16and:$imm), (AND_I_HI (i64 R1), i64hi16and:$imm)>;
 
 // Change add/sub with negative number to sub/add
 def : Pat<(add GPR:$Rs1, i64neg16:$imm),
@@ -411,7 +407,6 @@ def : Pat<(subc GPR:$Rs1, i64hi16:$imm),
 // Flag setting ALU operations
 let isAsCheapAsAMove = 1, F = 1, Defs = [SR] in {
   let isCommutable = 1 in {
-    defm AND_F_ : ALUlogic<0b100, "and.f",  and, i64lo16and, i64hi16and>;
     defm OR_F_  : ALUlogic<0b101,  "or.f",   or, i64lo16z, i64hi16>;
     defm XOR_F_ : ALUlogic<0b110, "xor.f",  xor, i64lo16z, i64hi16>;
   }
@@ -427,10 +422,6 @@ let isAsCheapAsAMove = 1, Rs1 = R0.Num, isCodeGenOnly = 1, H = 1, F = 0,
 
 def : InstAlias<"mov $imm16, $dst", (ADD_I_LO GPR:$dst, R0, i64lo16z:$imm16)>;
 def : InstAlias<"mov $imm16, $dst", (ADD_I_HI GPR:$dst, R0, i64hi16:$imm16)>;
-def : InstAlias<"mov $imm16, $dst",
-                (AND_I_LO GPR:$dst, R1, i64lo16and:$imm16)>;
-def : InstAlias<"mov $imm16, $dst",
-                (AND_I_HI GPR:$dst, R1, i64hi16and:$imm16)>;
 
 // Shift instructions
 class ShiftRI<string AsmStr, list<dag> Pattern>
