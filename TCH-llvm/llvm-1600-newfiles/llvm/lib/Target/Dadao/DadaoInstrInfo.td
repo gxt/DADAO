@@ -48,10 +48,12 @@ class ALU_ORRR<bits<6> minorop, string OpcString, SDNode OpNode>
   let HexA = minorop;
 }
 
-def AND_ORRR  : ALU_ORRR<0b001000,  "and", and>;
-def ORR_ORRR  : ALU_ORRR<0b001001,  "orr", or>;
-def XOR_ORRR  : ALU_ORRR<0b001010,  "xor", xor>;
-// TODO: def XNOR_ORRR : ALU_ORRR<0b001011, "xnor", xnor>;
+let isCommutable = 1 in {
+  def AND_ORRR  : ALU_ORRR<0b001000,  "and", and>;
+  def ORR_ORRR  : ALU_ORRR<0b001001,  "orr", or>;
+  def XOR_ORRR  : ALU_ORRR<0b001010,  "xor", xor>;
+  // TODO: def XNOR_ORRR : ALU_ORRR<0b001011, "xnor", xnor>;
+}
 
 // TODO: ONLY imm6 == 0 permitted
 class ALU_ORRI<bits<6> minorop, string OpcString, RegisterClass GPRx, RegisterClass GPRy>
@@ -75,7 +77,9 @@ class ALU_RRRR<bits<8> majorop, string OpcString, SDNode OpNode>
              (set GPRD:$RdHa, 0)]> {
 }
 
-def ADD_RRRR : ALU_RRRR<0b00011010, "add", add>;
+let isCommutable = 1 in {
+  def ADD_RRRR : ALU_RRRR<0b00011010, "add", add>;
+}
 def SUB_RRRR : ALU_RRRR<0b00011011, "sub", sub>;
 
 class ALU_RRII<bits<8> majorop, string OpcString, SDNode OpNode, RegisterClass GPRx, PatLeaf LoExt>
