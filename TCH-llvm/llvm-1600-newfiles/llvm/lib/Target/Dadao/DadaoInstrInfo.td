@@ -67,6 +67,17 @@ def RD2RB_ORRI : ALU_ORRI<0b101001, "rd2rb", GPRD, GPRB>;
 def RB2RD_ORRI : ALU_ORRI<0b101010, "rb2rd", GPRB, GPRD>;
 def RB2RB_ORRI : ALU_ORRI<0b101011, "rb2rb", GPRB, GPRB>;
 
+// TODO: RdHa SHOULD be handled
+class ALU_RRRR<bits<8> majorop, string OpcString, SDNode OpNode>
+  : Inst_RRRR<majorop, (outs GPRD:$RdHa, GPRD:$RdHb), (ins GPRD:$RdHc, GPRD:$RdHd),
+            !strconcat(OpcString, "\t$RdHa, $RdHb, $RdHc, $RdHd"),
+            [(set GPRD:$RdHb, (OpNode GPRD:$RdHc, GPRD:$RdHd)),
+             (set GPRD:$RdHa, 0)]> {
+}
+
+def ADD_RRRR : ALU_RRRR<0b00011010, "add", add>;
+def SUB_RRRR : ALU_RRRR<0b00011011, "sub", sub>;
+
 class ALU_RRII<bits<8> majorop, string OpcString, SDNode OpNode, RegisterClass GPRx, PatLeaf LoExt>
   : Inst_RRII<majorop, (outs GPRx:$RxHa), (ins GPRx:$RxHb, LoExt:$Imm12),
             !strconcat(OpcString, "\t$RxHa, $RxHb, $Imm12"),
