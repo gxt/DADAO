@@ -72,7 +72,7 @@ void DadaoFrameLowering::replaceAdjDynAllocPseudo(MachineFunction &MF) const {
         Register Dst = MI.getOperand(0).getReg();
         Register Src = MI.getOperand(1).getReg();
 
-        BuildMI(MBB, MI, DL, LII.get(Dadao::ADD_I_LO), Dst)
+        BuildMI(MBB, MI, DL, LII.get(Dadao::ADDI_RRII), Dst)
             .addReg(Src)
             .addImm(MaxCallFrameSize);
         MI.eraseFromParent();
@@ -116,7 +116,7 @@ void DadaoFrameLowering::emitPrologue(MachineFunction &MF,
 
   // Generate new FP
   // add %sp,8,%fp
-  BuildMI(MBB, MBBI, DL, LII.get(Dadao::ADD_I_LO), Dadao::FP)
+  BuildMI(MBB, MBBI, DL, LII.get(Dadao::ADDI_RB_RRII), Dadao::RBFP)
       .addReg(Dadao::SP)
       .addImm(8)
       .setMIFlag(MachineInstr::FrameSetup);
@@ -180,7 +180,7 @@ void DadaoFrameLowering::emitEpilogue(MachineFunction & /*MF*/,
   DebugLoc DL = MBBI->getDebugLoc();
 
   // Restore the stack pointer using the callee's frame pointer value.
-  BuildMI(MBB, MBBI, DL, LII.get(Dadao::ADD_I_LO), Dadao::SP)
+  BuildMI(MBB, MBBI, DL, LII.get(Dadao::ADDI_RB_RRII), Dadao::RBSP)
       .addReg(Dadao::FP)
       .addImm(0);
 

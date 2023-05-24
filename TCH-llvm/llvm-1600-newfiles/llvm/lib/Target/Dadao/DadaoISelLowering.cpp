@@ -75,6 +75,7 @@ DadaoTargetLowering::DadaoTargetLowering(const TargetMachine &TM,
     : TargetLowering(TM) {
   // Set up the register classes.
   addRegisterClass(MVT::i64, &Dadao::GPRDRegClass);
+  addRegisterClass(MVT::i64, &Dadao::GPRBRegClass);
 
   // Compute derived properties from the register classes
   TRI = STI.getRegisterInfo();

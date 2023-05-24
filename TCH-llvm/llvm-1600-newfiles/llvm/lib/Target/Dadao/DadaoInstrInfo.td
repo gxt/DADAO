@@ -61,6 +61,7 @@ class ALU_RRII<bits<8> majorop, string OpcString, SDNode OpNode, RegisterClass G
 
 def ANDI_RRII : ALU_RRII<0b00011000, "andi", and, GPRD, i64lo12and>;
 def ADDI_RRII : ALU_RRII<0b00011001, "addi", add, GPRD, i64lo12z>;
+def ADDI_RB_RRII : ALU_RRII<0b01001001, "addi", add, GPRB, i64lo12z>;
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
