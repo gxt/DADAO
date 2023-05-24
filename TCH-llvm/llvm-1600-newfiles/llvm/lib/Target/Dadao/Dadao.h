@@ -25,10 +25,6 @@ class PassRegistry;
 // Dadao-specific DAG, ready for instruction scheduling.
 FunctionPass *createDadaoISelDag(DadaoTargetMachine &TM);
 
-// createDadaoDelaySlotFillerPass - This pass fills delay slots
-// with useful instructions or nop's
-FunctionPass *createDadaoDelaySlotFillerPass(const DadaoTargetMachine &TM);
-
 // createDadaoMemAluCombinerPass - This pass combines loads/stores and
 // arithmetic operations.
 FunctionPass *createDadaoMemAluCombinerPass();

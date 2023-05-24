@@ -95,7 +95,6 @@ public:
 
   bool addInstSelector() override;
   void addPreSched2() override;
-  void addPreEmitPass() override;
 };
 } // namespace
 
@@ -108,12 +107,6 @@ DadaoTargetMachine::createPassConfig(PassManagerBase &PassManager) {
 bool DadaoPassConfig::addInstSelector() {
   addPass(createDadaoISelDag(getDadaoTargetMachine()));
   return false;
-}
-
-// Implemented by targets that want to run passes immediately before
-// machine code is emitted.
-void DadaoPassConfig::addPreEmitPass() {
-  addPass(createDadaoDelaySlotFillerPass(getDadaoTargetMachine()));
 }
 
 // Run passes after prolog-epilog insertion and before the second instruction

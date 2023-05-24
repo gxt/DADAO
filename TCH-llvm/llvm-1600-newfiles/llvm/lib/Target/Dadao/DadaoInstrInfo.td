@@ -699,7 +699,7 @@ let Y = 1, S = 1, E = 0 in
 // BRANCH instructions
 // -------------------------------------------------- //
 
-let isBranch = 1, isBarrier = 1, isTerminator = 1, hasDelaySlot = 1 in {
+let isBranch = 1, isBarrier = 1, isTerminator = 1 in {
   def BT : InstBR<(outs), (ins BrTarget:$addr),
                   "bt\t$addr",
                   [(br bb:$addr)]> {
@@ -746,13 +746,13 @@ let isCodeGenOnly = 1, isCompare = 1 in {
 }
 
 // Jump and link
-let isCall = 1, hasDelaySlot = 1, isCodeGenOnly = 1, Uses = [SP],
+let isCall = 1, isCodeGenOnly = 1, Uses = [SP],
     Defs = [RCA] in {
   def CALL : Pseudo<(outs), (ins CallTarget:$addr), "", []>;
   def CALLR : Pseudo<(outs), (ins GPR:$Rs1), "", [(Call GPR:$Rs1)]>;
 }
 
-let isReturn = 1, isTerminator = 1, hasDelaySlot = 1, isBarrier = 1,
+let isReturn = 1, isTerminator = 1, isBarrier = 1,
     Uses = [RCA] in {
   def RET : InstRM<0b0, (outs), (ins),
                    "ld\t-4[%fp], %pc ! return",
@@ -807,7 +807,7 @@ let Uses = [SR], isSelect = 1 in {
   }
 }
 
-let isBranch = 1, isBarrier = 1, isTerminator = 1, hasDelaySlot = 1,
+let isBranch = 1, isBarrier = 1, isTerminator = 1,
     isIndirectBranch = 1, Uses = [SR] in {
   def BRIND_CC : InstRR<0b101, (outs), (ins GPR:$Rs1, CCOp:$DDDI),
                         "b$DDDI\t$Rs1", []> {
@@ -827,7 +827,7 @@ let isBranch = 1, isBarrier = 1, isTerminator = 1, hasDelaySlot = 1,
 
 // TODO: This only considers the case where BROFF is an immediate and not where
 // it is a register. Add support for register relative branching.
-let isBranch = 1, isBarrier = 1, isTerminator = 1, hasDelaySlot = 1, Rs1 = 0,
+let isBranch = 1, isBarrier = 1, isTerminator = 1, Rs1 = 0,
     Uses = [SR] in
   def BRR : InstBRR<(outs), (ins i16imm:$imm16, CCOp:$DDDI),
                     "b${DDDI}.r\t$imm16", []>;

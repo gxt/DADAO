@@ -16,7 +16,6 @@ add_public_tablegen_target(DadaoCommonTableGen)
 
 add_llvm_target(DadaoCodeGen
   DadaoAsmPrinter.cpp
-  DadaoDelaySlotFiller.cpp
   DadaoFrameLowering.cpp
   DadaoInstrInfo.cpp
   DadaoISelDAGToDAG.cpp
