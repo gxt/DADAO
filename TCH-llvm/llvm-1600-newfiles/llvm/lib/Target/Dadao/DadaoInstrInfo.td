@@ -53,6 +53,20 @@ def ORR_ORRR  : ALU_ORRR<0b001001,  "orr", or>;
 def XOR_ORRR  : ALU_ORRR<0b001010,  "xor", xor>;
 // TODO: def XNOR_ORRR : ALU_ORRR<0b001011, "xnor", xnor>;
 
+// TODO: ONLY imm6 == 0 permitted
+class ALU_ORRI<bits<6> minorop, string OpcString, RegisterClass GPRx, RegisterClass GPRy>
+  : Inst_ORRI<0b00010000, (outs GPRx:$RxHb), (ins GPRy:$RyHc),
+              !strconcat(OpcString, "\t$RxHb, $RyHc, 0"),
+              [(set GPRx:$RxHb, GPRy:$RyHc)]> {
+  let HexA = minorop;
+  let Imm6 = 0b000000;
+}
+
+def RD2RD_ORRI : ALU_ORRI<0b101000, "rd2rd", GPRD, GPRD>;
+def RD2RB_ORRI : ALU_ORRI<0b101001, "rd2rb", GPRD, GPRB>;
+def RB2RD_ORRI : ALU_ORRI<0b101010, "rb2rd", GPRB, GPRD>;
+def RB2RB_ORRI : ALU_ORRI<0b101011, "rb2rb", GPRB, GPRB>;
+
 class ALU_RRII<bits<8> majorop, string OpcString, SDNode OpNode, RegisterClass GPRx, PatLeaf LoExt>
   : Inst_RRII<majorop, (outs GPRx:$RxHa), (ins GPRx:$RxHb, LoExt:$Imm12),
             !strconcat(OpcString, "\t$RxHa, $RxHb, $Imm12"),

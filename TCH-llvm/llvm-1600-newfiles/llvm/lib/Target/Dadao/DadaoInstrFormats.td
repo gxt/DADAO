@@ -46,6 +46,19 @@ class Inst_ORRR<bits<8> majorop, dag outs, dag ins, string asmstr, list<dag> pat
   let HexD = RdHd;
 }
 
+class Inst_ORRI<bits<8> majorop, dag outs, dag ins, string asmstr, list<dag> pattern>
+    : Inst_Dadao<outs, ins, asmstr, pattern> {
+
+  bits<6> RxHb;
+  bits<6> RyHc;
+  bits<6> Imm6;
+
+  let MajorOpcode = majorop;
+  let HexB = RxHb;
+  let HexC = RyHc;
+  let HexD = Imm6;
+}
+
 class Inst_RRII<bits<8> majorop, dag outs, dag ins, string asmstr, list<dag> pattern>
     : Inst_Dadao<outs, ins, asmstr, pattern> {
 
