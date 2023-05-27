@@ -101,15 +101,15 @@ let isCommutable = 1 in {
 }
 def SUB_RRRR : ALU_RRRR<0b00011011, "sub", sub>;
 
-class ALU_RRII<bits<8> majorop, string OpcString, SDNode OpNode, RegisterClass GPRx, PatLeaf LoExt>
-  : Inst_RRII<majorop, (outs GPRx:$RxHa), (ins GPRx:$RxHb, LoExt:$Imm12),
-            OpcString, "$RxHa, $RxHb, $Imm12",
-            [(set GPRx:$RxHa, (OpNode GPRx:$RxHb, LoExt:$Imm12))]> {
+class ALU_RRII<bits<8> majorop, string OpcString, SDNode OpNode, RegisterClass GPRx, RegisterClass GPRy, PatLeaf LoExt>
+  : Inst_RRII<majorop, (outs GPRx:$RxHa), (ins GPRy:$RyHb, LoExt:$Imm12),
+            OpcString, "$RxHa, $RyHb, $Imm12",
+            [(set GPRx:$RxHa, (OpNode GPRy:$RyHb, LoExt:$Imm12))]> {
 }
 
-def ANDI_RRII : ALU_RRII<0b00011000, "andi", and, GPRD, i64lo12and>;
-def ADDI_RRII : ALU_RRII<0b00011001, "addi", add, GPRD, i64lo12z>;
-def ADDI_RB_RRII : ALU_RRII<0b01001001, "addi", add, GPRB, i64lo12z>;
+def ANDI_RRII : ALU_RRII<0b00011000, "andi", and, GPRD, GPRD, i64lo12and>;
+def ADDI_RRII : ALU_RRII<0b00011001, "addi", add, GPRD, GPRD, i64lo12z>;
+def ADDI_RB_RRII : ALU_RRII<0b01001001, "addi", add, GPRB, GPRB, i64lo12z>;
 
 class ALU_RWII_W0<bits<8> majorop, string OpcString, RegisterClass GPRx, list<dag> pattern>
   : Inst_RWII<majorop, (outs GPRx:$RxHa_wb), (ins GPRx:$RxHa, i64lo16z:$Imm16),
