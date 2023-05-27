@@ -33,7 +33,7 @@ class Inst_Dadao<dag outs, dag ins, string opcstr, string oprstr, list<dag> patt
   let Pattern = pattern;
 }
 
-class Inst_ORRR<bits<8> majorop, dag outs, dag ins, string opcstr, string oprstr, list<dag> pattern>
+class Inst_ORRR<bits<8> majorop, bits<6> minorop, dag outs, dag ins, string opcstr, string oprstr, list<dag> pattern>
     : Inst_Dadao<outs, ins, opcstr, oprstr, pattern> {
 
   bits<6> RdHb;
@@ -41,12 +41,13 @@ class Inst_ORRR<bits<8> majorop, dag outs, dag ins, string opcstr, string oprstr
   bits<6> RdHd;
 
   let MajorOpcode = majorop;
+  let HexA = minorop;
   let HexB = RdHb;
   let HexC = RdHc;
   let HexD = RdHd;
 }
 
-class Inst_ORRI<bits<8> majorop, dag outs, dag ins, string opcstr, string oprstr, list<dag> pattern>
+class Inst_ORRI<bits<8> majorop, bits<6> minorop, dag outs, dag ins, string opcstr, string oprstr, list<dag> pattern>
     : Inst_Dadao<outs, ins, opcstr, oprstr, pattern> {
 
   bits<6> RxHb;
@@ -54,6 +55,7 @@ class Inst_ORRI<bits<8> majorop, dag outs, dag ins, string opcstr, string oprstr
   bits<6> Imm6;
 
   let MajorOpcode = majorop;
+  let HexA = minorop;
   let HexB = RxHb;
   let HexC = RyHc;
   let HexD = Imm6;

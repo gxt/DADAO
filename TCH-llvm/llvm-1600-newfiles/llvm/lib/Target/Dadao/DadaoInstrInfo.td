@@ -62,29 +62,24 @@ def i64lo16s : Operand<i64>, PatLeaf<(i64 imm), [{
 // ALU instructions
 // -------------------------------------------------- //
 class ALU_ORRR<bits<6> minorop, string OpcString, SDNode OpNode>
-  : Inst_ORRR<0b00010000, (outs GPRD:$RdHb), (ins GPRD:$RdHc, GPRD:$RdHd),
+  : Inst_ORRR<0b00010000, minorop, (outs GPRD:$RdHb), (ins GPRD:$RdHc, GPRD:$RdHd),
             OpcString, "$RdHb, $RdHc, $RdHd",
-            [(set GPRD:$RdHb, (OpNode GPRD:$RdHc, GPRD:$RdHd))]> {
-  let HexA = minorop;
-}
+            [(set GPRD:$RdHb, (OpNode GPRD:$RdHc, GPRD:$RdHd))]>;
 
 let isCommutable = 1 in {
   def AND_ORRR  : ALU_ORRR<0b001000,  "and", and>;
   def ORR_ORRR  : ALU_ORRR<0b001001,  "orr", or>;
   def XOR_ORRR  : ALU_ORRR<0b001010,  "xor", xor>;
-  def XNOR_ORRR : Inst_ORRR<0b00010000, (outs GPRD:$RdHb), (ins GPRD:$RdHc, GPRD:$RdHd),
+  def XNOR_ORRR : Inst_ORRR<0b00010000, 0b001011, (outs GPRD:$RdHb), (ins GPRD:$RdHc, GPRD:$RdHd),
                             "xnor", "$RdHb, $RdHc, $RdHd",
-                            [(set GPRD:$RdHb, (not (xor GPRD:$RdHc, GPRD:$RdHd)))]> {
-                              let HexA = 0b001011;
-                            }
+                            [(set GPRD:$RdHb, (not (xor GPRD:$RdHc, GPRD:$RdHd)))]>;
 }
 
 // TODO: ONLY imm6 == 0 permitted
 class ALU_ORRI<bits<6> minorop, string OpcString, RegisterClass GPRx, RegisterClass GPRy>
-  : Inst_ORRI<0b00010000, (outs GPRx:$RxHb), (ins GPRy:$RyHc),
+  : Inst_ORRI<0b00010000, minorop, (outs GPRx:$RxHb), (ins GPRy:$RyHc),
               OpcString, "$RxHb, $RyHc, 0",
               [(set GPRx:$RxHb, GPRy:$RyHc)]> {
-  let HexA = minorop;
   let Imm6 = 0b000000;
 }
 
