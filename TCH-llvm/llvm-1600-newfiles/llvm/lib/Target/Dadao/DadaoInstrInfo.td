@@ -22,6 +22,12 @@ def LO12 : SDNodeXForm<imm, [{
                                    SDLoc(N), MVT::i64);
 }]>;
 
+// Extract bits 0-15 (low-end) of an immediate value.
+def LO16 : SDNodeXForm<imm, [{
+  return CurDAG->getTargetConstant((uint64_t)N->getZExtValue() & 0xffff,
+                                   SDLoc(N), MVT::i64);
+}]>;
+
 def LoImm12AndAsmOperand : AsmOperandClass { let Name = "LoImm12And"; }
 def i64lo12and : Operand<i64>, PatLeaf<(i64 imm), [{
     // i64lo12and predicate - true if the 64-bit immediate has the rightmost 12
@@ -36,6 +42,20 @@ def i64lo12z : Operand<i64>, PatLeaf<(i64 imm), [{
     // i64lo12z predicate - true if the 64-bit immediate has only rightmost 12 bits set.
     return ((N->getZExtValue() & 0xFFFULL) == N->getZExtValue());}], LO12> {
   let ParserMatchClass = LoImm12AsmOperand;
+}
+
+def LoImm16AsmOperand : AsmOperandClass { let Name = "LoImm16"; }
+def i64lo16z : Operand<i64>, PatLeaf<(i64 imm), [{
+    // i64lo16 predicate - true if the 32-bit immediate has only rightmost 16
+    // bits set.
+    return ((N->getZExtValue() & 0xFFFFUL) == N->getZExtValue());}], LO16> {
+  let ParserMatchClass = LoImm16AsmOperand;
+}
+def i64lo16s : Operand<i64>, PatLeaf<(i64 imm), [{
+    // i64lo16 predicate - true if the 32-bit immediate has only rightmost 16
+    // bits set.
+    return ((int64_t)(N->getSExtValue() & 0xFFFFUL) == N->getSExtValue());}], LO16> {
+  let ParserMatchClass = LoImm16AsmOperand;
 }
 
 // -------------------------------------------------- //
@@ -92,6 +112,18 @@ def ANDI_RRII : ALU_RRII<0b00011000, "andi", and, GPRD, i64lo12and>;
 def ADDI_RRII : ALU_RRII<0b00011001, "addi", add, GPRD, i64lo12z>;
 def ADDI_RB_RRII : ALU_RRII<0b01001001, "addi", add, GPRB, i64lo12z>;
 
+class ALU_RWII_W0<bits<8> majorop, string OpcString, RegisterClass GPRx, list<dag> pattern>
+  : Inst_RWII<majorop, (outs GPRx:$RxHa_wb), (ins GPRx:$RxHa, i64lo16z:$Imm16),
+            !strconcat(OpcString, "\t$RxHa, w0, $Imm16"), pattern> {
+  let WPos = 0b00;
+  let Constraints = "$RxHa_wb = $RxHa";
+}
+
+def ORW_RWII_W0   : ALU_RWII_W0<0b00010100, "orw", GPRD,
+  [(set GPRD:$RxHa_wb, (or GPRD:$RxHa, i64lo16z:$Imm16))]>;
+def ANDNW_RWII_W0 : ALU_RWII_W0<0b00010101, "andnw", GPRD,
+  [(set GPRD:$RxHa_wb, (not (and GPRD:$RxHa, i64lo16s:$Imm16)))]>;
+
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -137,12 +169,6 @@ def DadaoHi          : SDNode<"DadaoISD::HI", SDTIntUnaryOp>;
 def DadaoLo          : SDNode<"DadaoISD::LO", SDTIntUnaryOp>;
 def DadaoSmall       : SDNode<"DadaoISD::SMALL", SDTIntUnaryOp>;
 def DadaoAdjDynAlloc : SDNode<"DadaoISD::ADJDYNALLOC", SDT_DadaoAdjDynAlloc>;
-
-// Extract bits 0-15 (low-end) of an immediate value.
-def LO16 : SDNodeXForm<imm, [{
-  return CurDAG->getTargetConstant((uint64_t)N->getZExtValue() & 0xffff,
-                                   SDLoc(N), MVT::i64);
-}]>;
 
 // Extract bits 16-31 (high-end) of an immediate value.
 // Transformation function: shift the immediate value down into the low bits.
@@ -193,24 +219,11 @@ def imm10 : Operand<i64>, PatLeaf<(imm), [{
   let ParserMatchClass = Imm10AsmOperand;
 }
 
-def LoImm16AsmOperand : AsmOperandClass { let Name = "LoImm16"; }
-def i64lo16z : Operand<i64>, PatLeaf<(i64 imm), [{
-    // i64lo16 predicate - true if the 32-bit immediate has only rightmost 16
-    // bits set.
-    return ((N->getZExtValue() & 0xFFFFUL) == N->getZExtValue());}], LO16> {
-  let ParserMatchClass = LoImm16AsmOperand;
-}
 def i64neg16 : Operand<i64>, PatLeaf<(i64 imm), [{
     // i64neg16 predicate - true if the 32-bit immediate is negative and can
     // be represented by a 16 bit integer.
     int Imm = N->getSExtValue();
     return (Imm < 0) && (isInt<16>(Imm));}], LO16> {
-  let ParserMatchClass = LoImm16AsmOperand;
-}
-def i64lo16s : Operand<i64>, PatLeaf<(i64 imm), [{
-    // i64lo16 predicate - true if the 32-bit immediate has only rightmost 16
-    // bits set.
-    return ((int64_t)(N->getSExtValue() & 0xFFFFUL) == N->getSExtValue());}], LO16> {
   let ParserMatchClass = LoImm16AsmOperand;
 }
 
