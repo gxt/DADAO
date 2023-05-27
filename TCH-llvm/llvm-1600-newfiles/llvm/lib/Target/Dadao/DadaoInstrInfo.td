@@ -72,7 +72,11 @@ let isCommutable = 1 in {
   def AND_ORRR  : ALU_ORRR<0b001000,  "and", and>;
   def ORR_ORRR  : ALU_ORRR<0b001001,  "orr", or>;
   def XOR_ORRR  : ALU_ORRR<0b001010,  "xor", xor>;
-  // TODO: def XNOR_ORRR : ALU_ORRR<0b001011, "xnor", xnor>;
+  def XNOR_ORRR : Inst_ORRR<0b00010000, (outs GPRD:$RdHb), (ins GPRD:$RdHc, GPRD:$RdHd),
+                            "xnor", "$RdHb, $RdHc, $RdHd",
+                            [(set GPRD:$RdHb, (not (xor GPRD:$RdHc, GPRD:$RdHd)))]> {
+                              let HexA = 0b001011;
+                            }
 }
 
 // TODO: ONLY imm6 == 0 permitted
