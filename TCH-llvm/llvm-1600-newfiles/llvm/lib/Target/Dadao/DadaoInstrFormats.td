@@ -6,7 +6,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-class Inst_Dadao<dag outs, dag ins, string asmstr, list<dag> pattern>
+class Inst_Dadao<dag outs, dag ins, string opcstr, string oprstr, list<dag> pattern>
     : Instruction {
   field bits<32> Inst;
   field bits<32> SoftFail = 0;
@@ -29,12 +29,12 @@ class Inst_Dadao<dag outs, dag ins, string asmstr, list<dag> pattern>
 
   dag OutOperandList = outs;
   dag InOperandList = ins;
-  let AsmString = asmstr;
+  let AsmString = opcstr # "\t" # oprstr;
   let Pattern = pattern;
 }
 
-class Inst_ORRR<bits<8> majorop, dag outs, dag ins, string asmstr, list<dag> pattern>
-    : Inst_Dadao<outs, ins, asmstr, pattern> {
+class Inst_ORRR<bits<8> majorop, dag outs, dag ins, string opcstr, string oprstr, list<dag> pattern>
+    : Inst_Dadao<outs, ins, opcstr, oprstr, pattern> {
 
   bits<6> RdHb;
   bits<6> RdHc;
@@ -46,8 +46,8 @@ class Inst_ORRR<bits<8> majorop, dag outs, dag ins, string asmstr, list<dag> pat
   let HexD = RdHd;
 }
 
-class Inst_ORRI<bits<8> majorop, dag outs, dag ins, string asmstr, list<dag> pattern>
-    : Inst_Dadao<outs, ins, asmstr, pattern> {
+class Inst_ORRI<bits<8> majorop, dag outs, dag ins, string opcstr, string oprstr, list<dag> pattern>
+    : Inst_Dadao<outs, ins, opcstr, oprstr, pattern> {
 
   bits<6> RxHb;
   bits<6> RyHc;
@@ -59,8 +59,8 @@ class Inst_ORRI<bits<8> majorop, dag outs, dag ins, string asmstr, list<dag> pat
   let HexD = Imm6;
 }
 
-class Inst_RRRR<bits<8> majorop, dag outs, dag ins, string asmstr, list<dag> pattern>
-    : Inst_Dadao<outs, ins, asmstr, pattern> {
+class Inst_RRRR<bits<8> majorop, dag outs, dag ins, string opcstr, string oprstr, list<dag> pattern>
+    : Inst_Dadao<outs, ins, opcstr, oprstr, pattern> {
 
   bits<6> RdHa;
   bits<6> RdHb;
@@ -74,8 +74,8 @@ class Inst_RRRR<bits<8> majorop, dag outs, dag ins, string asmstr, list<dag> pat
   let HexD = RdHd;
 }
 
-class Inst_RRII<bits<8> majorop, dag outs, dag ins, string asmstr, list<dag> pattern>
-    : Inst_Dadao<outs, ins, asmstr, pattern> {
+class Inst_RRII<bits<8> majorop, dag outs, dag ins, string opcstr, string oprstr, list<dag> pattern>
+    : Inst_Dadao<outs, ins, opcstr, oprstr, pattern> {
 
   bits<6> RxHa;
   bits<6> RxHb;
@@ -88,8 +88,8 @@ class Inst_RRII<bits<8> majorop, dag outs, dag ins, string asmstr, list<dag> pat
   let HexD = Imm12{ 5 - 0};
 }
 
-class Inst_RWII<bits<8> majorop, dag outs, dag ins, string asmstr, list<dag> pattern>
-    : Inst_Dadao<outs, ins, asmstr, pattern> {
+class Inst_RWII<bits<8> majorop, dag outs, dag ins, string opcstr, string oprstr, list<dag> pattern>
+    : Inst_Dadao<outs, ins, opcstr, oprstr, pattern> {
 
   bits<6> RxHa;
   bits<2> WPos;

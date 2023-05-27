@@ -63,7 +63,7 @@ def i64lo16s : Operand<i64>, PatLeaf<(i64 imm), [{
 // -------------------------------------------------- //
 class ALU_ORRR<bits<6> minorop, string OpcString, SDNode OpNode>
   : Inst_ORRR<0b00010000, (outs GPRD:$RdHb), (ins GPRD:$RdHc, GPRD:$RdHd),
-            !strconcat(OpcString, "\t$RdHb, $RdHc, $RdHd"),
+            OpcString, "$RdHb, $RdHc, $RdHd",
             [(set GPRD:$RdHb, (OpNode GPRD:$RdHc, GPRD:$RdHd))]> {
   let HexA = minorop;
 }
@@ -78,7 +78,7 @@ let isCommutable = 1 in {
 // TODO: ONLY imm6 == 0 permitted
 class ALU_ORRI<bits<6> minorop, string OpcString, RegisterClass GPRx, RegisterClass GPRy>
   : Inst_ORRI<0b00010000, (outs GPRx:$RxHb), (ins GPRy:$RyHc),
-              !strconcat(OpcString, "\t$RxHb, $RyHc, 0"),
+              OpcString, "$RxHb, $RyHc, 0",
               [(set GPRx:$RxHb, GPRy:$RyHc)]> {
   let HexA = minorop;
   let Imm6 = 0b000000;
@@ -92,7 +92,7 @@ def RB2RB_ORRI : ALU_ORRI<0b101011, "rb2rb", GPRB, GPRB>;
 // TODO: RdHa SHOULD be handled
 class ALU_RRRR<bits<8> majorop, string OpcString, SDNode OpNode>
   : Inst_RRRR<majorop, (outs GPRD:$RdHa, GPRD:$RdHb), (ins GPRD:$RdHc, GPRD:$RdHd),
-            !strconcat(OpcString, "\t$RdHa, $RdHb, $RdHc, $RdHd"),
+            OpcString, "$RdHa, $RdHb, $RdHc, $RdHd",
             [(set GPRD:$RdHb, (OpNode GPRD:$RdHc, GPRD:$RdHd)),
              (set GPRD:$RdHa, 0)]> {
 }
@@ -104,7 +104,7 @@ def SUB_RRRR : ALU_RRRR<0b00011011, "sub", sub>;
 
 class ALU_RRII<bits<8> majorop, string OpcString, SDNode OpNode, RegisterClass GPRx, PatLeaf LoExt>
   : Inst_RRII<majorop, (outs GPRx:$RxHa), (ins GPRx:$RxHb, LoExt:$Imm12),
-            !strconcat(OpcString, "\t$RxHa, $RxHb, $Imm12"),
+            OpcString, "$RxHa, $RxHb, $Imm12",
             [(set GPRx:$RxHa, (OpNode GPRx:$RxHb, LoExt:$Imm12))]> {
 }
 
@@ -114,7 +114,7 @@ def ADDI_RB_RRII : ALU_RRII<0b01001001, "addi", add, GPRB, i64lo12z>;
 
 class ALU_RWII_W0<bits<8> majorop, string OpcString, RegisterClass GPRx, list<dag> pattern>
   : Inst_RWII<majorop, (outs GPRx:$RxHa_wb), (ins GPRx:$RxHa, i64lo16z:$Imm16),
-            !strconcat(OpcString, "\t$RxHa, w0, $Imm16"), pattern> {
+            OpcString, "$RxHa, w0, $Imm16", pattern> {
   let WPos = 0b00;
   let Constraints = "$RxHa_wb = $RxHa";
 }
