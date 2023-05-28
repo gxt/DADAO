@@ -75,18 +75,19 @@ let isCommutable = 1 in {
                             [(set GPRD:$RdHb, (not (xor GPRD:$RdHc, GPRD:$RdHd)))]>;
 }
 
-// TODO: ONLY imm6 == 0 permitted
 class ALU_ORRI<bits<6> minorop, string OpcString, RegisterClass GPRx, RegisterClass GPRy>
   : Inst_ORRI<0b00010000, minorop, (outs GPRx:$RxHb), (ins GPRy:$RyHc),
               OpcString, "$RxHb, $RyHc, 0",
               [(set GPRx:$RxHb, GPRy:$RyHc)]> {
-  let Imm6 = 0b000000;
 }
 
-def RD2RD_ORRI : ALU_ORRI<0b101000, "rd2rd", GPRD, GPRD>;
-def RD2RB_ORRI : ALU_ORRI<0b101001, "rd2rb", GPRD, GPRB>;
-def RB2RD_ORRI : ALU_ORRI<0b101010, "rb2rd", GPRB, GPRD>;
-def RB2RB_ORRI : ALU_ORRI<0b101011, "rb2rb", GPRB, GPRB>;
+// TODO: ONLY imm6 == 0 permitted, fixme later
+let Imm6 = 0b000000 in {
+  def RD2RD_ORRI : ALU_ORRI<0b101000, "rd2rd", GPRD, GPRD>;
+  def RD2RB_ORRI : ALU_ORRI<0b101001, "rd2rb", GPRD, GPRB>;
+  def RB2RD_ORRI : ALU_ORRI<0b101010, "rb2rd", GPRB, GPRD>;
+  def RB2RB_ORRI : ALU_ORRI<0b101011, "rb2rb", GPRB, GPRB>;
+}
 
 // TODO: RdHa SHOULD be handled
 class ALU_RRRR<bits<8> majorop, string OpcString, SDNode OpNode>
