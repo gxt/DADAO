@@ -77,7 +77,6 @@ private:
   bool selectAddrRi(SDValue Addr, SDValue &Base, SDValue &Offset,
                     SDValue &AluOp);
   bool selectAddrRRRI(SDValue Addr, SDValue &R1, SDValue &R2, SDValue &AluOp);
-  bool selectAddrSls(SDValue Addr, SDValue &Offset);
   bool selectAddrSpls(SDValue Addr, SDValue &Base, SDValue &Offset,
                       SDValue &AluOp);
 
@@ -91,36 +90,11 @@ private:
                         SDValue &AluOp, bool RiMode);
 };
 
-bool canBeRepresentedAsSls(const ConstantSDNode &CN) {
-  // Fits in 21-bit signed immediate and two low-order bits are zero.
-  return isInt<21>(CN.getSExtValue()) && ((CN.getSExtValue() & 0x3) == 0);
-}
-
 } // namespace
 
 char DadaoDAGToDAGISel::ID = 0;
 
 INITIALIZE_PASS(DadaoDAGToDAGISel, DEBUG_TYPE, PASS_NAME, false, false)
-
-// Helper functions for ComplexPattern used on DadaoInstrInfo
-// Used on Dadao Load/Store instructions.
-bool DadaoDAGToDAGISel::selectAddrSls(SDValue Addr, SDValue &Offset) {
-  if (ConstantSDNode *CN = dyn_cast<ConstantSDNode>(Addr)) {
-    SDLoc DL(Addr);
-    // Loading from a constant address.
-    if (canBeRepresentedAsSls(*CN)) {
-      int32_t Imm = CN->getSExtValue();
-      Offset = CurDAG->getTargetConstant(Imm, DL, CN->getValueType(0));
-      return true;
-    }
-  }
-  if (Addr.getOpcode() == ISD::OR &&
-      Addr.getOperand(1).getOpcode() == DadaoISD::SMALL) {
-    Offset = Addr.getOperand(1).getOperand(0);
-    return true;
-  }
-  return false;
-}
 
 bool DadaoDAGToDAGISel::selectAddrRiSpls(SDValue Addr, SDValue &Base,
                                          SDValue &Offset, SDValue &AluOp,
@@ -137,10 +111,6 @@ bool DadaoDAGToDAGISel::selectAddrRiSpls(SDValue Addr, SDValue &Base,
         AluOp = CurDAG->getTargetConstant(LPAC::ADD, DL, MVT::i64);
         return true;
       }
-      // Allow SLS to match if the constant doesn't fit in 16 bits but can be
-      // represented as an SLS.
-      if (canBeRepresentedAsSls(*CN))
-        return false;
     } else {
       // Fits in 10-bit signed immediate.
       if (isInt<10>(CN->getSExtValue())) {
@@ -191,11 +161,6 @@ bool DadaoDAGToDAGISel::selectAddrRiSpls(SDValue Addr, SDValue &Base,
       }
   }
 
-  // Let SLS match SMALL instead of RI.
-  if (AluOperator == ISD::OR && RiMode &&
-      Addr.getOperand(1).getOpcode() == DadaoISD::SMALL)
-    return false;
-
   Base = Addr;
   Offset = CurDAG->getTargetConstant(0, DL, MVT::i64);
   AluOp = CurDAG->getTargetConstant(LPAC::ADD, DL, MVT::i64);
@@ -235,10 +200,8 @@ bool DadaoDAGToDAGISel::selectAddrRRRI(SDValue Addr, SDValue &RegBase, SDValue &
     // Skip addresses with hi/lo operands
     if (Addr.getOperand(0).getOpcode() == DadaoISD::HI ||
         Addr.getOperand(0).getOpcode() == DadaoISD::LO ||
-        Addr.getOperand(0).getOpcode() == DadaoISD::SMALL ||
         Addr.getOperand(1).getOpcode() == DadaoISD::HI ||
-        Addr.getOperand(1).getOpcode() == DadaoISD::LO ||
-        Addr.getOperand(1).getOpcode() == DadaoISD::SMALL)
+        Addr.getOperand(1).getOpcode() == DadaoISD::LO)
       return false;
 
     // Addresses of the form register OP register

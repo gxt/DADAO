@@ -109,7 +109,6 @@ struct DadaoOperand : public MCParsedAsmOperand {
     TOKEN,
     REGISTER,
     IMMEDIATE,
-    MEMORY_IMM,
     MEMORY_REG_IMM,
     MEMORY_REG_REG,
   } Kind;
@@ -196,10 +195,8 @@ public:
   bool isImm() const override { return Kind == IMMEDIATE; }
 
   bool isMem() const override {
-    return isMemImm() || isMemRegImm() || isMemRegReg();
+    return isMemRegImm() || isMemRegReg();
   }
-
-  bool isMemImm() const { return Kind == MEMORY_IMM; }
 
   bool isMemRegImm() const { return Kind == MEMORY_REG_IMM; }
 
@@ -334,37 +331,6 @@ public:
     return (Value >= -31) && (Value <= 31);
   }
 
-  bool isLoImm21() {
-    if (!isImm())
-      return false;
-
-    // Constant case
-    if (const MCConstantExpr *ConstExpr = dyn_cast<MCConstantExpr>(Imm.Value)) {
-      int64_t Value = ConstExpr->getValue();
-      return isUInt<21>(Value);
-    }
-
-    // Symbolic reference expression
-    if (const DadaoMCExpr *SymbolRefExpr = dyn_cast<DadaoMCExpr>(Imm.Value))
-      return SymbolRefExpr->getKind() == DadaoMCExpr::VK_Dadao_None;
-    if (const MCSymbolRefExpr *SymbolRefExpr =
-            dyn_cast<MCSymbolRefExpr>(Imm.Value)) {
-      return SymbolRefExpr->getKind() == MCSymbolRefExpr::VK_None;
-    }
-
-    // Binary expression
-    if (const MCBinaryExpr *BinaryExpr = dyn_cast<MCBinaryExpr>(Imm.Value)) {
-      if (const DadaoMCExpr *SymbolRefExpr =
-              dyn_cast<DadaoMCExpr>(BinaryExpr->getLHS()))
-        return SymbolRefExpr->getKind() == DadaoMCExpr::VK_Dadao_None;
-      if (const MCSymbolRefExpr *SymbolRefExpr =
-              dyn_cast<MCSymbolRefExpr>(BinaryExpr->getLHS()))
-        return SymbolRefExpr->getKind() == MCSymbolRefExpr::VK_None;
-    }
-
-    return false;
-  }
-
   bool isImm10() {
     if (!isImm())
       return false;
@@ -463,12 +429,6 @@ public:
     addExpr(Inst, getImm());
   }
 
-  void addMemImmOperands(MCInst &Inst, unsigned N) const {
-    assert(N == 1 && "Invalid number of operands!");
-    const MCExpr *Expr = getMemOffset();
-    addExpr(Inst, Expr);
-  }
-
   void addMemRegImmOperands(MCInst &Inst, unsigned N) const {
     assert(N == 3 && "Invalid number of operands!");
     Inst.addOperand(MCOperand::createReg(getMemBaseReg()));
@@ -565,37 +525,6 @@ public:
       assert(false && "Operand type not supported.");
   }
 
-  void addLoImm21Operands(MCInst &Inst, unsigned N) const {
-    assert(N == 1 && "Invalid number of operands!");
-    if (const MCConstantExpr *ConstExpr = dyn_cast<MCConstantExpr>(getImm()))
-      Inst.addOperand(MCOperand::createImm(ConstExpr->getValue() & 0x1fffff));
-    else if (isa<DadaoMCExpr>(getImm())) {
-#ifndef NDEBUG
-      const DadaoMCExpr *SymbolRefExpr = dyn_cast<DadaoMCExpr>(getImm());
-      assert(SymbolRefExpr &&
-             SymbolRefExpr->getKind() == DadaoMCExpr::VK_Dadao_None);
-#endif
-      Inst.addOperand(MCOperand::createExpr(getImm()));
-    } else if (isa<MCSymbolRefExpr>(getImm())) {
-#ifndef NDEBUG
-      const MCSymbolRefExpr *SymbolRefExpr =
-          dyn_cast<MCSymbolRefExpr>(getImm());
-      assert(SymbolRefExpr &&
-             SymbolRefExpr->getKind() == MCSymbolRefExpr::VK_None);
-#endif
-      Inst.addOperand(MCOperand::createExpr(getImm()));
-    } else if (isa<MCBinaryExpr>(getImm())) {
-#ifndef NDEBUG
-      const MCBinaryExpr *BinaryExpr = dyn_cast<MCBinaryExpr>(getImm());
-      assert(BinaryExpr && isa<DadaoMCExpr>(BinaryExpr->getLHS()) &&
-             cast<DadaoMCExpr>(BinaryExpr->getLHS())->getKind() ==
-                 DadaoMCExpr::VK_Dadao_None);
-#endif
-      Inst.addOperand(MCOperand::createExpr(getImm()));
-    } else
-      assert(false && "Operand type not supported.");
-  }
-
   void addLoImm12Operands(MCInst &Inst, unsigned N) const {
     assert(N == 1 && "Invalid number of operands!");
     if (const MCConstantExpr *ConstExpr = dyn_cast<MCConstantExpr>(getImm()))
@@ -639,9 +568,6 @@ public:
     case REGISTER:
       OS << "Reg: %r" << getReg() << "\n";
       break;
-    case MEMORY_IMM:
-      OS << "MemImm: " << *getMemOffset() << "\n";
-      break;
     case MEMORY_REG_IMM:
       OS << "MemRegImm: " << getMemBaseReg() << "+" << *getMemOffset() << "\n";
       break;
@@ -677,17 +603,6 @@ public:
     Op->Imm.Value = Value;
     Op->StartLoc = Start;
     Op->EndLoc = End;
-    return Op;
-  }
-
-  static std::unique_ptr<DadaoOperand>
-  MorphToMemImm(std::unique_ptr<DadaoOperand> Op) {
-    const MCExpr *Imm = Op->getImm();
-    Op->Kind = MEMORY_IMM;
-    Op->Mem.BaseReg = 0;
-    Op->Mem.AluOp = LPAC::ADD;
-    Op->Mem.OffsetReg = 0;
-    Op->Mem.Offset = Imm;
     return Op;
   }
 
@@ -934,29 +849,6 @@ bool DadaoAsmParser::parsePrePost(StringRef Type, int *OffsetValue) {
   return PreOrPost;
 }
 
-bool shouldBeSls(const DadaoOperand &Op) {
-  // The instruction should be encoded as an SLS if the constant is word
-  // aligned and will fit in 21 bits
-  if (const MCConstantExpr *ConstExpr = dyn_cast<MCConstantExpr>(Op.getImm())) {
-    int64_t Value = ConstExpr->getValue();
-    return (Value % 4 == 0) && (Value >= 0) && (Value <= 0x1fffff);
-  }
-  // The instruction should be encoded as an SLS if the operand is a symbolic
-  // reference with no variant.
-  if (const DadaoMCExpr *SymbolRefExpr = dyn_cast<DadaoMCExpr>(Op.getImm()))
-    return SymbolRefExpr->getKind() == DadaoMCExpr::VK_Dadao_None;
-  // The instruction should be encoded as an SLS if the operand is a binary
-  // expression with the left-hand side being a symbolic reference with no
-  // variant.
-  if (const MCBinaryExpr *BinaryExpr = dyn_cast<MCBinaryExpr>(Op.getImm())) {
-    const DadaoMCExpr *LHSSymbolRefExpr =
-        dyn_cast<DadaoMCExpr>(BinaryExpr->getLHS());
-    return (LHSSymbolRefExpr &&
-            LHSSymbolRefExpr->getKind() == DadaoMCExpr::VK_Dadao_None);
-  }
-  return false;
-}
-
 // Matches memory operand. Returns true if error encountered.
 OperandMatchResultTy
 DadaoAsmParser::parseMemoryOperand(OperandVector &Operands) {
@@ -1012,20 +904,15 @@ DadaoAsmParser::parseMemoryOperand(OperandVector &Operands) {
       if ((Op = parseImmediate()) && Lexer.is(AsmToken::RBrac)) {
         Parser.Lex(); // Eat the ']'
 
-        // Memory address operations aligned to word boundary are encoded as
-        // SLS, the rest as RM.
-        if (shouldBeSls(*Op)) {
-          Operands.push_back(DadaoOperand::MorphToMemImm(std::move(Op)));
-        } else {
-          if (!Op->isLoImm16Signed()) {
-            Error(Parser.getTok().getLoc(),
-                  "Memory address is not word "
-                  "aligned and larger than class RM can handle");
-            return MatchOperand_ParseFail;
-          }
-          Operands.push_back(DadaoOperand::MorphToMemRegImm(
-              Dadao::R0, std::move(Op), LPAC::ADD));
+        if (!Op->isLoImm16Signed()) {
+          Error(Parser.getTok().getLoc(),
+                "Memory address is not word "
+                "aligned and larger than class RM can handle");
+          return MatchOperand_ParseFail;
         }
+        Operands.push_back(DadaoOperand::MorphToMemRegImm(
+            Dadao::R0, std::move(Op), LPAC::ADD));
+
         return MatchOperand_Success;
       }
     }

@@ -458,66 +458,6 @@ class InstSCC<dag outs, dag ins, string asmstr,
 }
 
 //------------------------------------------------------------------------------
-// Special Load/Store (SLS)
-//------------------------------------------------------------------------------
-//
-// Encoding:
-//           -----------------------------------------------------------------
-//           |1.1.1.1| . . . . | . . . . |0.S| . . . . . . . . . . . . . . . |
-//           -----------------------------------------------------------------
-//            opcode     Rd    addr 5msb's            address 16 lsb's
-//
-// Action:
-//           If S = 0 (LOAD):   Rd <- Memory(address);
-//           If S = 1 (STORE):  Memory(address) <- Rd
-//
-// The timing is the same as for RM (*note RM::.) and RRM (*note
-// RRM::.) instructions.  The two low-order bits of the 21-bit address are
-// ignored.  The address is zero extended.  Fullword memory accesses are
-// performed.
-class InstSLS<bit S, dag outs, dag ins, string asmstr, list<dag> pattern>
-    : InstDadao<outs, ins, asmstr, pattern> {
-  bits<5> Rd;
-  bits<5> msb;
-  bits<16> lsb;
-
-  let Opcode = 0b1111;
-  let Inst{27 - 23} = Rd;
-  let Inst{22 - 18} = msb;
-  let Inst{17} = 0;
-  let Inst{16} = S;
-  let Inst{15 - 0} = lsb;
-}
-
-//------------------------------------------------------------------------------
-// Special Load Immediate (SLI)
-//------------------------------------------------------------------------------
-// Encoding:
-//           -----------------------------------------------------------------
-//           |1.1.1.1| . . . . | . . . . |1.0| . . . . . . . . . . . . . . . |
-//           -----------------------------------------------------------------
-//            opcode     Rd    const 5msb's          constant 16 lsb's
-//
-// Action:
-//           Rd <- constant
-//
-// The 21-bit constant is zero-extended.  The timing is the same as the
-// RM instruction (*note RM::.).
-class InstSLI<dag outs, dag ins, string asmstr, list<dag> pattern>
-    : InstDadao<outs, ins, asmstr, pattern> {
-  bits<5> Rd;
-  bits<5> msb;
-  bits<16> lsb;
-
-  let Opcode = 0b1111;
-  let Inst{27 - 23} = Rd;
-  let Inst{22 - 18} = msb;
-  let Inst{17} = 1;
-  let Inst{16} = 0;
-  let Inst{15 - 0} = lsb;
-}
-
-//------------------------------------------------------------------------------
 // Special Part-Word Load/Store (SPLS)
 //------------------------------------------------------------------------------
 // Encoding:

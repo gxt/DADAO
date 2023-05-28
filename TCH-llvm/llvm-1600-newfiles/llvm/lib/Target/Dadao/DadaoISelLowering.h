@@ -56,9 +56,6 @@ enum {
   // Get the Higher/Lower 16 bits from a 32-bit immediate.
   HI,
   LO,
-
-  // Small 21-bit immediate in global memory.
-  SMALL
 };
 } // namespace DadaoISD
 

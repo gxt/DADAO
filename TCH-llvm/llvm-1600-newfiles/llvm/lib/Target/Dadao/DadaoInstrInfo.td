@@ -238,7 +238,6 @@ def DadaoSetCC       : SDNode<"DadaoISD::SETCC", SDT_DadaoSetCC,
                               [SDNPInGlue]>;
 def DadaoHi          : SDNode<"DadaoISD::HI", SDTIntUnaryOp>;
 def DadaoLo          : SDNode<"DadaoISD::LO", SDTIntUnaryOp>;
-def DadaoSmall       : SDNode<"DadaoISD::SMALL", SDTIntUnaryOp>;
 def DadaoAdjDynAlloc : SDNode<"DadaoISD::ADJDYNALLOC", SDT_DadaoAdjDynAlloc>;
 
 // Extract bits 16-31 (high-end) of an immediate value.
@@ -250,11 +249,6 @@ def HI16 : SDNodeXForm<imm, [{
 
 def NEG : SDNodeXForm<imm, [{
   return CurDAG->getTargetConstant(-N->getSExtValue(), SDLoc(N), MVT::i64);
-}]>;
-
-def LO21 : SDNodeXForm<imm, [{
-  return CurDAG->getTargetConstant((uint64_t)N->getZExtValue() & 0x1fffff,
-                                   SDLoc(N), MVT::i64);
 }]>;
 
 // Branch targets
@@ -325,21 +319,12 @@ def i64hi16and : Operand<i64>, PatLeaf<(i64 imm), [{
   let PrintMethod = "printHi16AndImmOperand";
 }
 
-def LoImm21AsmOperand : AsmOperandClass { let Name = "LoImm21"; }
-def i64lo21 : Operand<i64>, PatLeaf<(i64 imm), [{
-    // i64lo21 predicate - true if the 32-bit immediate has only rightmost 21
-    // bits set.
-    return ((N->getZExtValue() & 0x1FFFFFUL) == N->getZExtValue());}], LO21> {
-  let ParserMatchClass = LoImm21AsmOperand;
-}
-
 def AluOp : Operand<i64> {
   let PrintMethod = "printAluOperand";
 }
 
 // Addressing modes.
 def ADDRri : ComplexPattern<i64, 3, "selectAddrRi", [frameindex], []>;
-def ADDRsls : ComplexPattern<i64, 1, "selectAddrSls", [frameindex], []>;
 def ADDRspls : ComplexPattern<i64, 3, "selectAddrSpls", [frameindex], []>;
 
 // Address operands
@@ -353,16 +338,6 @@ def MEMri : Operand<i64> {
   let MIOperandInfo = (ops GPR:$base, i64lo16s:$offset, AluOp:$Opcode);
   let ParserMatchClass = MemRegImmAsmOperand;
   let PrintMethod   = "printMemRiOperand";
-}
-
-def MemImmAsmOperand : AsmOperandClass {
-  let Name = "MemImm";
-  let ParserMethod  = "parseMemoryOperand";
-}
-def MEMi : Operand<i64> {
-  let MIOperandInfo = (ops i64lo21:$offset);
-  let ParserMatchClass = MemImmAsmOperand;
-  let PrintMethod   = "printMemImmOperand";
 }
 
 def MemSplsAsmOperand : AsmOperandClass {
@@ -610,19 +585,6 @@ let E = 0 in {
 
 def : InstAlias<"ld $src, $dst", (LDW_RI GPR:$dst, MEMri:$src)>;
 
-def LDADDR : InstSLS<0x0, (outs GPR:$Rd), (ins MEMi:$src),
-                     "ld\t$src, $Rd",
-                     [(set (i64 GPR:$Rd), (load ADDRsls:$src))]>,
-    Sched<[WriteLD]> {
-  bits<21> src;
-
-  let Itinerary = IIC_LD;
-  let msb = src{20-16};
-  let lsb = src{15-0};
-  let isReMaterializable = 1;
-  let mayLoad = 1;
-}
-
 class LoadSPLS<string asmstring, PatFrag opNode>
   : InstSPLS<(outs GPR:$Rd), (ins MEMspls:$src),
              !strconcat(asmstring, "\t$src, $Rd"),
@@ -651,17 +613,6 @@ let Y = 1, S = 0, E = 1 in
 let Y = 1, S = 0, E = 0 in
   def LDBs_RI : LoadSPLS<"ld.b", sextloadi8>;
 
-def SLI : InstSLI<(outs GPR:$Rd), (ins i64lo21:$imm),
-                  "mov\t$imm, $Rd",
-                  [(set GPR:$Rd, i64lo21:$imm)]> {
-  bits<21> imm;
-
-  let msb = imm{20-16};
-  let lsb = imm{15-0};
-  let isReMaterializable = 1;
-  let isAsCheapAsAMove = 1;
-}
-
 // -------------------------------------------------- //
 // STORE instructions
 // -------------------------------------------------- //
@@ -683,18 +634,6 @@ class StoreRI<string OpcString, PatFrag OpNode, ValueType Ty>
 
 let YL = 0b01, E = 0 in {
   def SW_RI : StoreRI<"st", store, i64>;
-}
-
-def STADDR : InstSLS<0x1, (outs), (ins GPR:$Rd, MEMi:$dst),
-                     "st\t$Rd, $dst",
-                     [(store (i64 GPR:$Rd), ADDRsls:$dst)]>,
-    Sched<[WriteST]> {
-  bits<21> dst;
-
-  let Itinerary = IIC_ST;
-  let msb = dst{20-16};
-  let lsb = dst{15-0};
-  let mayStore = 1;
 }
 
 class StoreSPLS<string asmstring, PatFrag opNode>
@@ -898,37 +837,22 @@ def : Pat<(atomic_load_8  ADDRspls:$src), (i64 (LDBz_RI ADDRspls:$src))>;
 // GlobalAddress, ExternalSymbol, Jumptable, ConstantPool
 def : Pat<(DadaoHi tglobaladdr:$dst), (MOVHI tglobaladdr:$dst)>;
 def : Pat<(DadaoLo tglobaladdr:$dst), (OR_I_LO (i64 R0), tglobaladdr:$dst)>;
-def : Pat<(DadaoSmall tglobaladdr:$dst), (SLI tglobaladdr:$dst)>;
 def : Pat<(DadaoHi texternalsym:$dst), (MOVHI texternalsym:$dst)>;
 def : Pat<(DadaoLo texternalsym:$dst), (OR_I_LO (i64 R0), texternalsym:$dst)>;
-def : Pat<(DadaoSmall texternalsym:$dst), (SLI texternalsym:$dst)>;
 def : Pat<(DadaoHi tblockaddress:$dst), (MOVHI tblockaddress:$dst)>;
 def : Pat<(DadaoLo tblockaddress:$dst), (OR_I_LO (i64 R0), tblockaddress:$dst)>;
-def : Pat<(DadaoSmall tblockaddress:$dst), (SLI tblockaddress:$dst)>;
 def : Pat<(DadaoHi tjumptable:$dst), (MOVHI tjumptable:$dst)>;
 def : Pat<(DadaoLo tjumptable:$dst), (OR_I_LO (i64 R0), tjumptable:$dst)>;
-def : Pat<(DadaoSmall tjumptable:$dst), (SLI tjumptable:$dst)>;
 def : Pat<(DadaoHi tconstpool:$dst), (MOVHI tconstpool:$dst)>;
 def : Pat<(DadaoLo tconstpool:$dst), (OR_I_LO (i64 R0), tconstpool:$dst)>;
-def : Pat<(DadaoSmall tconstpool:$dst), (SLI tconstpool:$dst)>;
 
 def : Pat<(or GPR:$hi, (DadaoLo tglobaladdr:$lo)),
           (OR_I_LO GPR:$hi, tglobaladdr:$lo)>;
-def : Pat<(or R0, (DadaoSmall tglobaladdr:$small)),
-          (SLI tglobaladdr:$small)>;
 def : Pat<(or GPR:$hi, (DadaoLo texternalsym:$lo)),
           (OR_I_LO GPR:$hi, texternalsym:$lo)>;
-def : Pat<(or R0, (DadaoSmall texternalsym:$small)),
-          (SLI texternalsym:$small)>;
 def : Pat<(or GPR:$hi, (DadaoLo tblockaddress:$lo)),
           (OR_I_LO GPR:$hi, tblockaddress:$lo)>;
-def : Pat<(or R0, (DadaoSmall tblockaddress:$small)),
-          (SLI tblockaddress:$small)>;
 def : Pat<(or GPR:$hi, (DadaoLo tjumptable:$lo)),
           (OR_I_LO GPR:$hi, tjumptable:$lo)>;
-def : Pat<(or R0, (DadaoSmall tjumptable:$small)),
-          (SLI tjumptable:$small)>;
 def : Pat<(or GPR:$hi, (DadaoLo tconstpool:$lo)),
           (OR_I_LO GPR:$hi, tconstpool:$lo)>;
-def : Pat<(or R0, (DadaoSmall tconstpool:$small)),
-          (SLI tconstpool:$small)>;

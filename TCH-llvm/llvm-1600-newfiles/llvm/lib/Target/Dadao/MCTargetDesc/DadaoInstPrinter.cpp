@@ -160,20 +160,6 @@ void DadaoInstPrinter::printOperand(const MCInst *MI, unsigned OpNo,
   }
 }
 
-void DadaoInstPrinter::printMemImmOperand(const MCInst *MI, unsigned OpNo,
-                                          raw_ostream &OS) {
-  const MCOperand &Op = MI->getOperand(OpNo);
-  if (Op.isImm()) {
-    OS << '[' << formatHex(Op.getImm()) << ']';
-  } else {
-    // Symbolic operand will be lowered to immediate value by linker
-    assert(Op.isExpr() && "Expected an expression");
-    OS << '[';
-    Op.getExpr()->print(OS, &MAI);
-    OS << ']';
-  }
-}
-
 void DadaoInstPrinter::printHi16ImmOperand(const MCInst *MI, unsigned OpNo,
                                            raw_ostream &OS) {
   const MCOperand &Op = MI->getOperand(OpNo);

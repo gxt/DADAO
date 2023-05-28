@@ -1122,8 +1122,6 @@ const char *DadaoTargetLowering::getTargetNodeName(unsigned Opcode) const {
     return "DadaoISD::HI";
   case DadaoISD::LO:
     return "DadaoISD::LO";
-  case DadaoISD::SMALL:
-    return "DadaoISD::SMALL";
   default:
     return nullptr;
   }
@@ -1134,32 +1132,18 @@ SDValue DadaoTargetLowering::LowerConstantPool(SDValue Op,
   SDLoc DL(Op);
   ConstantPoolSDNode *N = cast<ConstantPoolSDNode>(Op);
   const Constant *C = N->getConstVal();
-  const DadaoTargetObjectFile *TLOF =
-      static_cast<const DadaoTargetObjectFile *>(
-          getTargetMachine().getObjFileLowering());
 
-  // If the code model is small or constant will be placed in the small section,
-  // then assume address will fit in 21-bits.
-  if (getTargetMachine().getCodeModel() == CodeModel::Small ||
-      TLOF->isConstantInSmallSection(DAG.getDataLayout(), C)) {
-    SDValue Small = DAG.getTargetConstantPool(
-        C, MVT::i64, N->getAlign(), N->getOffset(), DadaoII::MO_NO_FLAG);
-    return DAG.getNode(ISD::OR, DL, MVT::i64,
-                       DAG.getRegister(Dadao::R0, MVT::i64),
-                       DAG.getNode(DadaoISD::SMALL, DL, MVT::i64, Small));
-  } else {
-    uint8_t OpFlagHi = DadaoII::MO_ABS_HI;
-    uint8_t OpFlagLo = DadaoII::MO_ABS_LO;
+  uint8_t OpFlagHi = DadaoII::MO_ABS_HI;
+  uint8_t OpFlagLo = DadaoII::MO_ABS_LO;
 
-    SDValue Hi = DAG.getTargetConstantPool(C, MVT::i64, N->getAlign(),
+  SDValue Hi = DAG.getTargetConstantPool(C, MVT::i64, N->getAlign(),
                                            N->getOffset(), OpFlagHi);
-    SDValue Lo = DAG.getTargetConstantPool(C, MVT::i64, N->getAlign(),
+  SDValue Lo = DAG.getTargetConstantPool(C, MVT::i64, N->getAlign(),
                                            N->getOffset(), OpFlagLo);
-    Hi = DAG.getNode(DadaoISD::HI, DL, MVT::i64, Hi);
-    Lo = DAG.getNode(DadaoISD::LO, DL, MVT::i64, Lo);
-    SDValue Result = DAG.getNode(ISD::OR, DL, MVT::i64, Hi, Lo);
-    return Result;
-  }
+  Hi = DAG.getNode(DadaoISD::HI, DL, MVT::i64, Hi);
+  Lo = DAG.getNode(DadaoISD::LO, DL, MVT::i64, Lo);
+  SDValue Result = DAG.getNode(ISD::OR, DL, MVT::i64, Hi, Lo);
+  return Result;
 }
 
 SDValue DadaoTargetLowering::LowerGlobalAddress(SDValue Op,
@@ -1168,32 +1152,17 @@ SDValue DadaoTargetLowering::LowerGlobalAddress(SDValue Op,
   const GlobalValue *GV = cast<GlobalAddressSDNode>(Op)->getGlobal();
   int64_t Offset = cast<GlobalAddressSDNode>(Op)->getOffset();
 
-  const DadaoTargetObjectFile *TLOF =
-      static_cast<const DadaoTargetObjectFile *>(
-          getTargetMachine().getObjFileLowering());
+  uint8_t OpFlagHi = DadaoII::MO_ABS_HI;
+  uint8_t OpFlagLo = DadaoII::MO_ABS_LO;
 
-  // If the code model is small or global variable will be placed in the small
-  // section, then assume address will fit in 21-bits.
-  const GlobalObject *GO = GV->getAliaseeObject();
-  if (TLOF->isGlobalInSmallSection(GO, getTargetMachine())) {
-    SDValue Small = DAG.getTargetGlobalAddress(
-        GV, DL, getPointerTy(DAG.getDataLayout()), Offset, DadaoII::MO_NO_FLAG);
-    return DAG.getNode(ISD::OR, DL, MVT::i64,
-                       DAG.getRegister(Dadao::R0, MVT::i64),
-                       DAG.getNode(DadaoISD::SMALL, DL, MVT::i64, Small));
-  } else {
-    uint8_t OpFlagHi = DadaoII::MO_ABS_HI;
-    uint8_t OpFlagLo = DadaoII::MO_ABS_LO;
-
-    // Create the TargetGlobalAddress node, folding in the constant offset.
-    SDValue Hi = DAG.getTargetGlobalAddress(
-        GV, DL, getPointerTy(DAG.getDataLayout()), Offset, OpFlagHi);
-    SDValue Lo = DAG.getTargetGlobalAddress(
-        GV, DL, getPointerTy(DAG.getDataLayout()), Offset, OpFlagLo);
-    Hi = DAG.getNode(DadaoISD::HI, DL, MVT::i64, Hi);
-    Lo = DAG.getNode(DadaoISD::LO, DL, MVT::i64, Lo);
-    return DAG.getNode(ISD::OR, DL, MVT::i64, Hi, Lo);
-  }
+  // Create the TargetGlobalAddress node, folding in the constant offset.
+  SDValue Hi = DAG.getTargetGlobalAddress(
+      GV, DL, getPointerTy(DAG.getDataLayout()), Offset, OpFlagHi);
+  SDValue Lo = DAG.getTargetGlobalAddress(
+      GV, DL, getPointerTy(DAG.getDataLayout()), Offset, OpFlagLo);
+  Hi = DAG.getNode(DadaoISD::HI, DL, MVT::i64, Hi);
+  Lo = DAG.getNode(DadaoISD::LO, DL, MVT::i64, Lo);
+  return DAG.getNode(ISD::OR, DL, MVT::i64, Hi, Lo);
 }
 
 SDValue DadaoTargetLowering::LowerBlockAddress(SDValue Op,
@@ -1217,26 +1186,17 @@ SDValue DadaoTargetLowering::LowerJumpTable(SDValue Op,
   SDLoc DL(Op);
   JumpTableSDNode *JT = cast<JumpTableSDNode>(Op);
 
-  // If the code model is small assume address will fit in 21-bits.
-  if (getTargetMachine().getCodeModel() == CodeModel::Small) {
-    SDValue Small = DAG.getTargetJumpTable(
-        JT->getIndex(), getPointerTy(DAG.getDataLayout()), DadaoII::MO_NO_FLAG);
-    return DAG.getNode(ISD::OR, DL, MVT::i64,
-                       DAG.getRegister(Dadao::R0, MVT::i64),
-                       DAG.getNode(DadaoISD::SMALL, DL, MVT::i64, Small));
-  } else {
-    uint8_t OpFlagHi = DadaoII::MO_ABS_HI;
-    uint8_t OpFlagLo = DadaoII::MO_ABS_LO;
+  uint8_t OpFlagHi = DadaoII::MO_ABS_HI;
+  uint8_t OpFlagLo = DadaoII::MO_ABS_LO;
 
-    SDValue Hi = DAG.getTargetJumpTable(
-        JT->getIndex(), getPointerTy(DAG.getDataLayout()), OpFlagHi);
-    SDValue Lo = DAG.getTargetJumpTable(
-        JT->getIndex(), getPointerTy(DAG.getDataLayout()), OpFlagLo);
-    Hi = DAG.getNode(DadaoISD::HI, DL, MVT::i64, Hi);
-    Lo = DAG.getNode(DadaoISD::LO, DL, MVT::i64, Lo);
-    SDValue Result = DAG.getNode(ISD::OR, DL, MVT::i64, Hi, Lo);
-    return Result;
-  }
+  SDValue Hi = DAG.getTargetJumpTable(
+      JT->getIndex(), getPointerTy(DAG.getDataLayout()), OpFlagHi);
+  SDValue Lo = DAG.getTargetJumpTable(
+      JT->getIndex(), getPointerTy(DAG.getDataLayout()), OpFlagLo);
+  Hi = DAG.getNode(DadaoISD::HI, DL, MVT::i64, Hi);
+  Lo = DAG.getNode(DadaoISD::LO, DL, MVT::i64, Lo);
+  SDValue Result = DAG.getNode(ISD::OR, DL, MVT::i64, Hi, Lo);
+  return Result;
 }
 
 SDValue DadaoTargetLowering::LowerSHL_PARTS(SDValue Op,
