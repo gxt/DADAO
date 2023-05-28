@@ -62,7 +62,7 @@ public:
                               SmallVectorImpl<MCFixup> &Fixups,
                               const MCSubtargetInfo &SubtargetInfo) const;
 
-  unsigned getRrMemoryOpValue(const MCInst &Inst, unsigned OpNo,
+  unsigned getRRRIMemoryOpValue(const MCInst &Inst, unsigned OpNo,
                               SmallVectorImpl<MCFixup> &Fixups,
                               const MCSubtargetInfo &SubtargetInfo) const;
 
@@ -214,7 +214,7 @@ unsigned DadaoMCCodeEmitter::getRiMemoryOpValue(
   return Encoding;
 }
 
-unsigned DadaoMCCodeEmitter::getRrMemoryOpValue(
+unsigned DadaoMCCodeEmitter::getRRRIMemoryOpValue(
     const MCInst &Inst, unsigned OpNo, SmallVectorImpl<MCFixup> &Fixups,
     const MCSubtargetInfo &SubtargetInfo) const {
   unsigned Encoding;
@@ -222,32 +222,14 @@ unsigned DadaoMCCodeEmitter::getRrMemoryOpValue(
   const MCOperand Op2 = Inst.getOperand(OpNo + 1);
   const MCOperand AluMCOp = Inst.getOperand(OpNo + 2);
 
-  assert(Op1.isReg() && "First operand is not register.");
-  Encoding = (getDadaoRegisterNumbering(Op1.getReg()) << 15);
-  assert(Op2.isReg() && "Second operand is not register.");
-  Encoding |= (getDadaoRegisterNumbering(Op2.getReg()) << 10);
+  assert(Op1.isReg() && "First operand is not RB register.");
+  Encoding = (getDadaoRegisterNumbering(Op1.getReg()) << 12);
+  assert(Op2.isReg() && "Second operand is not RD register.");
+  Encoding |= (getDadaoRegisterNumbering(Op2.getReg()) << 6);
 
   assert(AluMCOp.isImm() && "Third operator is not immediate.");
-  // Set BBB
-  unsigned AluOp = AluMCOp.getImm();
-  Encoding |= LPAC::encodeDadaoAluCode(AluOp) << 5;
-  // Set P and Q
-  if (LPAC::isPreOp(AluOp))
-    Encoding |= (0x3 << 8);
-  if (LPAC::isPostOp(AluOp))
-    Encoding |= (0x1 << 8);
-  // Set JJJJ
-  switch (LPAC::getAluOp(AluOp)) {
-  case LPAC::SHL:
-  case LPAC::SRL:
-    Encoding |= 0x10;
-    break;
-  case LPAC::SRA:
-    Encoding |= 0x18;
-    break;
-  default:
-    break;
-  }
+  // Set Imm6
+  Encoding |= AluMCOp.getImm();
 
   return Encoding;
 }

@@ -16,6 +16,12 @@
 
 include "DadaoInstrFormats.td"
 
+// Extract bits 0-5 (low-end) of an immediate value.
+def LO06 : SDNodeXForm<imm, [{
+  return CurDAG->getTargetConstant((uint64_t)N->getZExtValue() & 0x3FULL,
+                                   SDLoc(N), MVT::i64);
+}]>;
+
 // Extract bits 0-11 (low-end) of an immediate value.
 def LO12 : SDNodeXForm<imm, [{
   return CurDAG->getTargetConstant((uint64_t)N->getZExtValue() & 0xFFFULL,
@@ -56,6 +62,23 @@ def i64lo16s : Operand<i64>, PatLeaf<(i64 imm), [{
     // bits set.
     return ((int64_t)(N->getSExtValue() & 0xFFFFUL) == N->getSExtValue());}], LO16> {
   let ParserMatchClass = LoImm16AsmOperand;
+}
+
+// Addressing modes.
+def ADDR_RRRI : ComplexPattern<i64, 3, "selectAddrRRRI", [], []>;
+
+
+// Address operands.
+def MemRegRegAsmOperand : AsmOperandClass {
+  let Name = "MemRegReg";
+  let ParserMethod  = "parseMemoryOperand";
+}
+def MEM_RRRI : Operand<i64> {
+  let DecoderMethod = "decodeRRRIMemoryValue";
+  let EncoderMethod = "getRRRIMemoryOpValue";
+  let MIOperandInfo = (ops GPRB:$Op1, GPRD:$Op2, LO06);
+  let ParserMatchClass = MemRegRegAsmOperand;
+  let PrintMethod   = "printMemRRRIOperand";
 }
 
 // -------------------------------------------------- //
@@ -123,6 +146,54 @@ def ORW_RWII_W0   : ALU_RWII_W0<0b00010100, "orw", GPRD,
   [(set GPRD:$RxHa_wb, (or GPRD:$RxHa, i64lo16z:$Imm16))]>;
 def ANDNW_RWII_W0 : ALU_RWII_W0<0b00010101, "andnw", GPRD,
   [(set GPRD:$RxHa_wb, (not (and GPRD:$RxHa, i64lo16s:$Imm16)))]>;
+
+// -------------------------------------------------- //
+// LOAD/STORE instructions
+// -------------------------------------------------- //
+
+class LOAD_RRRI<bits<8> majorop, string OpcString, RegisterClass GPRx, PatFrag OpNode, ValueType Ty>
+  : Inst_RRRI<majorop, (outs GPRx:$RxHa), (ins MEM_RRRI:$src),
+            OpcString, "$RxHa, $src",
+            [(set (Ty GPRx:$RxHa), (OpNode ADDR_RRRI:$src))]> {
+  bits<18> src;
+  let RbHb = src{17 - 12};
+  let RdHc = src{11 -  6};
+  let Imm6 = src{ 5 -  0};
+  let mayLoad = 1;
+}
+
+// TODO: ONLY imm6 == 0 permitted, fixme later
+let Imm6 = 0b000000 in {
+  def LDMBS_RRRI : LOAD_RRRI<0b00110100, "ldmbs", GPRD, sextloadi8,  i64>;
+  def LDMWS_RRRI : LOAD_RRRI<0b00110101, "ldmws", GPRD, sextloadi16, i64>;
+  def LDMTS_RRRI : LOAD_RRRI<0b00110110, "ldmts", GPRD, sextloadi32, i64>;
+  def LDMO_RRRI  : LOAD_RRRI<0b00110111, "ldmo",  GPRD, load, i64>;
+
+  def LDMBU_RRRI : LOAD_RRRI<0b01000100, "ldmbu", GPRD, zextloadi8,  i64>;
+  def LDMWU_RRRI : LOAD_RRRI<0b01000101, "ldmwu", GPRD, zextloadi16, i64>;
+  def LDMTU_RRRI : LOAD_RRRI<0b01000110, "ldmtu", GPRD, zextloadi32, i64>;
+  def LDMRB_RRRI : LOAD_RRRI<0b01000111, "ldmrb", GPRB, load, i64>;
+}
+
+class STORE_RRRI<bits<8> majorop, string OpcString, RegisterClass GPRx, PatFrag OpNode, ValueType Ty>
+  : Inst_RRRI<majorop, (outs), (ins GPRx:$RxHa, MEM_RRRI:$dst),
+            OpcString, "$RxHa, $dst",
+            [(OpNode (Ty GPRx:$RxHa), ADDR_RRRI:$dst)]> {
+  bits<18> dst;
+  let RbHb = dst{17 - 12};
+  let RdHc = dst{11 -  6};
+  let Imm6 = dst{ 5 -  0};
+  let mayStore = 1;
+}
+
+// TODO: ONLY imm6 == 0 permitted, fixme later
+let Imm6 = 0b000000 in {
+  def STMB_RRRI  : STORE_RRRI<0b00111100, "stmb",  GPRD, truncstorei8,  i64>;
+  def STMW_RRRI  : STORE_RRRI<0b00111101, "stmw",  GPRD, truncstorei16, i64>;
+  def STMT_RRRI  : STORE_RRRI<0b00111110, "stmt",  GPRD, truncstorei32, i64>;
+  def STMO_RRRI  : STORE_RRRI<0b00111111, "stmo",  GPRD, store, i64>;
+  def STMRB_RRRI : STORE_RRRI<0b01001111, "stmrb", GPRB, store, i64>;
+}
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -267,7 +338,6 @@ def AluOp : Operand<i64> {
 }
 
 // Addressing modes.
-def ADDRrr : ComplexPattern<i64, 3, "selectAddrRr", [], []>;
 def ADDRri : ComplexPattern<i64, 3, "selectAddrRi", [frameindex], []>;
 def ADDRsls : ComplexPattern<i64, 1, "selectAddrSls", [frameindex], []>;
 def ADDRspls : ComplexPattern<i64, 3, "selectAddrSpls", [frameindex], []>;
@@ -283,18 +353,6 @@ def MEMri : Operand<i64> {
   let MIOperandInfo = (ops GPR:$base, i64lo16s:$offset, AluOp:$Opcode);
   let ParserMatchClass = MemRegImmAsmOperand;
   let PrintMethod   = "printMemRiOperand";
-}
-
-def MemRegRegAsmOperand : AsmOperandClass {
-  let Name = "MemRegReg";
-  let ParserMethod  = "parseMemoryOperand";
-}
-def MEMrr : Operand<i64> {
-  let DecoderMethod = "decodeRrMemoryValue";
-  let EncoderMethod = "getRrMemoryOpValue";
-  let MIOperandInfo = (ops GPR:$Op1, GPR:$Op2, AluOp:$Opcode);
-  let ParserMatchClass = MemRegRegAsmOperand;
-  let PrintMethod   = "printMemRrOperand";
 }
 
 def MemImmAsmOperand : AsmOperandClass {
@@ -526,22 +584,6 @@ def : Pat<(sra GPR:$Rs1, GPR:$Rs2),
 // LOAD instructions
 // -------------------------------------------------- //
 
-class LoadRR<string OpcString, PatFrag OpNode, ValueType Ty>
-  : InstRRM<0b0, (outs GPR:$Rd), (ins MEMrr:$src),
-            !strconcat(OpcString, "\t$src, $Rd"),
-            [(set (Ty GPR:$Rd), (OpNode ADDRrr:$src))]>,
-    Sched<[WriteLD]> {
-  bits<20> src;
-
-  let Rs1 = src{19-15};
-  let Rs2 = src{14-10};
-  let P = src{9};
-  let Q = src{8};
-  let BBB = src{7-5};
-  let JJJJJ = src{4-0};
-  let mayLoad = 1;
-}
-
 class LoadRI<string OpcString, PatFrag OpNode, ValueType Ty>
   : InstRM<0b0, (outs GPR:$Rd), (ins MEMri:$src),
            !strconcat(OpcString, "\t$src, $Rd"),
@@ -563,31 +605,10 @@ let E = 0 in {
     // uld is used here and ld in the alias as the alias is printed out first if
     // an alias exist
     def LDW_RI : LoadRI<"uld", load, i64>;
-    def LDW_RR : LoadRR<"ld", load, i64>;
   }
 }
 
 def : InstAlias<"ld $src, $dst", (LDW_RI GPR:$dst, MEMri:$src)>;
-
-let E = 1 in {
-  let YL = 0b01 in {
-    def LDWz_RR : LoadRR<"uld", zextloadi32, i64>;
-  }
-}
-
-let E = 1 in {
-  let YL = 0b00 in
-    def LDHz_RR : LoadRR<"uld.h", zextloadi16, i64>;
-  let YL = 0b10 in
-    def LDBz_RR : LoadRR<"uld.b", zextloadi8, i64>;
-}
-
-let E = 0 in {
-  let YL = 0b00 in
-    def LDHs_RR : LoadRR<"ld.h", sextloadi16, i64>;
-  let YL = 0b10 in
-    def LDBs_RR : LoadRR<"ld.b", sextloadi8, i64>;
-}
 
 def LDADDR : InstSLS<0x0, (outs GPR:$Rd), (ins MEMi:$src),
                      "ld\t$src, $Rd",
@@ -645,23 +666,6 @@ def SLI : InstSLI<(outs GPR:$Rd), (ins i64lo21:$imm),
 // STORE instructions
 // -------------------------------------------------- //
 
-class StoreRR<string OpcString, PatFrag OpNode, ValueType Ty>
-  : InstRRM<0b1, (outs), (ins GPR:$Rd, MEMrr:$dst),
-            !strconcat(OpcString, "\t$Rd, $dst"),
-            [(OpNode (Ty GPR:$Rd), ADDRrr:$dst)]>,
-    Sched<[WriteST]> {
-  bits<20> dst;
-
-  let Itinerary = IIC_ST;
-  let Rs1 = dst{19-15};
-  let Rs2 = dst{14-10};
-  let P = dst{9};
-  let Q = dst{8};
-  let BBB = dst{7-5};
-  let JJJJJ = dst{4-0};
-  let mayStore = 1;
-}
-
 class StoreRI<string OpcString, PatFrag OpNode, ValueType Ty>
   : InstRM<0b1, (outs), (ins GPR:$Rd, MEMri:$dst),
            !strconcat(OpcString, "\t$Rd, $dst"),
@@ -678,15 +682,7 @@ class StoreRI<string OpcString, PatFrag OpNode, ValueType Ty>
 }
 
 let YL = 0b01, E = 0 in {
-  def SW_RR : StoreRR<"st", store, i64>;
   def SW_RI : StoreRI<"st", store, i64>;
-}
-
-let E = 0 in {
-  let YL = 0b00 in
-    def STH_RR : StoreRR<"st.h", truncstorei32, i64>;
-  let YL = 0b10 in
-    def STB_RR : StoreRR<"st.b", truncstorei8, i64>;
 }
 
 def STADDR : InstSLS<0x1, (outs), (ins GPR:$Rd, MEMi:$dst),

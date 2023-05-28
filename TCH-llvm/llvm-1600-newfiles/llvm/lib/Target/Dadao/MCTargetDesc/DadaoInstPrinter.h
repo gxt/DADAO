@@ -31,7 +31,7 @@ public:
   void printPredicateOperand(const MCInst *MI, unsigned OpNum, raw_ostream &O);
   void printMemRiOperand(const MCInst *MI, int OpNo, raw_ostream &O,
                          const char *Modifier = nullptr);
-  void printMemRrOperand(const MCInst *MI, int OpNo, raw_ostream &O,
+  void printMemRRRIOperand(const MCInst *MI, int OpNo, raw_ostream &O,
                          const char *Modifier = nullptr);
   void printMemSplsOperand(const MCInst *MI, int OpNo, raw_ostream &O,
                            const char *Modifier = nullptr);

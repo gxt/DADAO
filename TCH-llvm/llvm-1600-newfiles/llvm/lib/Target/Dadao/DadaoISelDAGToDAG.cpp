@@ -76,7 +76,7 @@ private:
   // Complex Pattern for address selection.
   bool selectAddrRi(SDValue Addr, SDValue &Base, SDValue &Offset,
                     SDValue &AluOp);
-  bool selectAddrRr(SDValue Addr, SDValue &R1, SDValue &R2, SDValue &AluOp);
+  bool selectAddrRRRI(SDValue Addr, SDValue &R1, SDValue &R2, SDValue &AluOp);
   bool selectAddrSls(SDValue Addr, SDValue &Offset);
   bool selectAddrSpls(SDValue Addr, SDValue &Base, SDValue &Offset,
                       SDValue &AluOp);
@@ -212,7 +212,7 @@ bool DadaoDAGToDAGISel::selectAddrSpls(SDValue Addr, SDValue &Base,
   return selectAddrRiSpls(Addr, Base, Offset, AluOp, /*RiMode=*/false);
 }
 
-bool DadaoDAGToDAGISel::selectAddrRr(SDValue Addr, SDValue &R1, SDValue &R2,
+bool DadaoDAGToDAGISel::selectAddrRRRI(SDValue Addr, SDValue &RegBase, SDValue &RegOffset,
                                      SDValue &AluOp) {
   // if Address is FI, get the TargetFrameIndex.
   if (Addr.getOpcode() == ISD::FrameIndex)
@@ -226,7 +226,7 @@ bool DadaoDAGToDAGISel::selectAddrRr(SDValue Addr, SDValue &R1, SDValue &R2,
   // Address of the form OP + OP
   ISD::NodeType AluOperator = static_cast<ISD::NodeType>(Addr.getOpcode());
   LPAC::AluCode AluCode = LPAC::isdToDadaoAluCode(AluOperator);
-  if (AluCode != LPAC::UNKNOWN) {
+  if (AluCode == LPAC::ADD) {
     // Skip addresses of the form FI OP const
     if (ConstantSDNode *CN = dyn_cast<ConstantSDNode>(Addr.getOperand(1)))
       if (isInt<16>(CN->getSExtValue()))
@@ -242,8 +242,8 @@ bool DadaoDAGToDAGISel::selectAddrRr(SDValue Addr, SDValue &R1, SDValue &R2,
       return false;
 
     // Addresses of the form register OP register
-    R1 = Addr.getOperand(0);
-    R2 = Addr.getOperand(1);
+    RegBase = Addr.getOperand(0);
+    RegOffset = Addr.getOperand(1);
     AluOp = CurDAG->getTargetConstant(AluCode, SDLoc(Addr), MVT::i64);
     return true;
   }
@@ -259,7 +259,7 @@ bool DadaoDAGToDAGISel::SelectInlineAsmMemoryOperand(
   default:
     return true;
   case InlineAsm::Constraint_m: // memory
-    if (!selectAddrRr(Op, Op0, Op1, AluOp) &&
+    if (!selectAddrRRRI(Op, Op0, Op1, AluOp) &&
         !selectAddrRi(Op, Op0, Op1, AluOp))
       return true;
     break;

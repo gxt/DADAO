@@ -100,45 +100,45 @@ bool isSpls(uint16_t Opcode) { return Dadao::splsIdempotent(Opcode) == Opcode; }
 unsigned mergedOpcode(unsigned OldOpcode, bool ImmediateOffset) {
   switch (OldOpcode) {
   case Dadao::LDW_RI:
-  case Dadao::LDW_RR:
+  case Dadao::LDMO_RRRI:
     if (ImmediateOffset)
       return Dadao::LDW_RI;
-    return Dadao::LDW_RR;
+    return Dadao::LDMO_RRRI;
   case Dadao::LDHs_RI:
-  case Dadao::LDHs_RR:
+  case Dadao::LDMWS_RRRI:
     if (ImmediateOffset)
       return Dadao::LDHs_RI;
-    return Dadao::LDHs_RR;
+    return Dadao::LDMWS_RRRI;
   case Dadao::LDHz_RI:
-  case Dadao::LDHz_RR:
+  case Dadao::LDMWU_RRRI:
     if (ImmediateOffset)
       return Dadao::LDHz_RI;
-    return Dadao::LDHz_RR;
+    return Dadao::LDMWU_RRRI;
   case Dadao::LDBs_RI:
-  case Dadao::LDBs_RR:
+  case Dadao::LDMBS_RRRI:
     if (ImmediateOffset)
       return Dadao::LDBs_RI;
-    return Dadao::LDBs_RR;
+    return Dadao::LDMBS_RRRI;
   case Dadao::LDBz_RI:
-  case Dadao::LDBz_RR:
+  case Dadao::LDMBU_RRRI:
     if (ImmediateOffset)
       return Dadao::LDBz_RI;
-    return Dadao::LDBz_RR;
+    return Dadao::LDMBU_RRRI;
   case Dadao::SW_RI:
-  case Dadao::SW_RR:
+  case Dadao::STMO_RRRI:
     if (ImmediateOffset)
       return Dadao::SW_RI;
-    return Dadao::SW_RR;
+    return Dadao::STMO_RRRI;
   case Dadao::STB_RI:
-  case Dadao::STB_RR:
+  case Dadao::STMB_RRRI:
     if (ImmediateOffset)
       return Dadao::STB_RI;
-    return Dadao::STB_RR;
+    return Dadao::STMB_RRRI;
   case Dadao::STH_RI:
-  case Dadao::STH_RR:
+  case Dadao::STMW_RRRI:
     if (ImmediateOffset)
       return Dadao::STH_RI;
-    return Dadao::STH_RR;
+    return Dadao::STMW_RRRI;
   default:
     return 0;
   }

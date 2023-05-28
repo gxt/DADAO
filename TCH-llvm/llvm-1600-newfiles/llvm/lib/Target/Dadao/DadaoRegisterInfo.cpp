@@ -93,26 +93,26 @@ static unsigned getOppositeALULoOpcode(unsigned Opcode) {
   }
 }
 
-static unsigned getRRMOpcodeVariant(unsigned Opcode) {
+static unsigned getRRRIOpcodeVariant(unsigned Opcode) {
   switch (Opcode) {
   case Dadao::LDBs_RI:
-    return Dadao::LDBs_RR;
+    return Dadao::LDMBS_RRRI;
   case Dadao::LDBz_RI:
-    return Dadao::LDBz_RR;
+    return Dadao::LDMBU_RRRI;
   case Dadao::LDHs_RI:
-    return Dadao::LDHs_RR;
+    return Dadao::LDMWS_RRRI;
   case Dadao::LDHz_RI:
-    return Dadao::LDHz_RR;
+    return Dadao::LDMWU_RRRI;
   case Dadao::LDW_RI:
-    return Dadao::LDW_RR;
+    return Dadao::LDMO_RRRI;
   case Dadao::STB_RI:
-    return Dadao::STB_RR;
+    return Dadao::STMB_RRRI;
   case Dadao::STH_RI:
-    return Dadao::STH_RR;
+    return Dadao::STMW_RRRI;
   case Dadao::SW_RI:
-    return Dadao::SW_RR;
+    return Dadao::STMO_RRRI;
   default:
-    llvm_unreachable("Opcode has no RRM variant");
+    llvm_unreachable("Opcode has no RRRI variant");
   }
 }
 
@@ -191,12 +191,12 @@ bool DadaoRegisterInfo::eliminateFrameIndex(MachineBasicBlock::iterator II,
       return true;
     }
     if (isSPLSOpcode(MI.getOpcode()) || isRMOpcode(MI.getOpcode())) {
-      MI.setDesc(TII->get(getRRMOpcodeVariant(MI.getOpcode())));
+      MI.setDesc(TII->get(getRRRIOpcodeVariant(MI.getOpcode())));
       if (HasNegOffset) {
         // Change the ALU op (operand 3) from LPAC::ADD (the default) to
         // LPAC::SUB with the already negated offset.
         assert((MI.getOperand(3).getImm() == LPAC::ADD) &&
-               "Unexpected ALU op in RRM instruction");
+               "Unexpected ALU op in RRRI instruction");
         MI.getOperand(3).setImm(LPAC::SUB);
       }
     } else

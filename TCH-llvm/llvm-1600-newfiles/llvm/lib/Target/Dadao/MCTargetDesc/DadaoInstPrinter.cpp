@@ -249,25 +249,20 @@ void DadaoInstPrinter::printMemRiOperand(const MCInst *MI, int OpNo,
   printMemoryBaseRegister(OS, AluCode, RegOp);
 }
 
-void DadaoInstPrinter::printMemRrOperand(const MCInst *MI, int OpNo,
+void DadaoInstPrinter::printMemRRRIOperand(const MCInst *MI, int OpNo,
                                          raw_ostream &OS,
                                          const char * /*Modifier*/) {
   const MCOperand &RegOp = MI->getOperand(OpNo);
   const MCOperand &OffsetOp = MI->getOperand(OpNo + 1);
-  const MCOperand &AluOp = MI->getOperand(OpNo + 2);
-  const unsigned AluCode = AluOp.getImm();
   assert(OffsetOp.isReg() && RegOp.isReg() && "Registers expected.");
 
-  // [ Base OP Offset ]
+  // [ Base, Offset ]
   OS << "[";
-  if (LPAC::isPreOp(AluCode))
-    OS << "*";
   OS << "%" << getRegisterName(RegOp.getReg());
-  if (LPAC::isPostOp(AluCode))
-    OS << "*";
-  OS << " " << LPAC::dadaoAluCodeToString(AluCode) << " ";
+  OS << ", ";
   OS << "%" << getRegisterName(OffsetOp.getReg());
   OS << "]";
+  OS << ", 0";
 }
 
 void DadaoInstPrinter::printMemSplsOperand(const MCInst *MI, int OpNo,

@@ -747,8 +747,9 @@ bool DadaoInstrInfo::getMemOperandWithOffsetWidth(
   default:
     return false;
   case Dadao::LDW_RI:
-  case Dadao::LDW_RR:
-  case Dadao::SW_RR:
+  case Dadao::LDMTU_RRRI:
+  case Dadao::LDMTS_RRRI:
+  case Dadao::STMT_RRRI:
   case Dadao::SW_RI:
     Width = 4;
     break;
@@ -781,8 +782,8 @@ bool DadaoInstrInfo::getMemOperandsWithOffsetWidth(
   default:
     return false;
   case Dadao::LDW_RI:
-  case Dadao::LDW_RR:
-  case Dadao::SW_RR:
+  case Dadao::LDMO_RRRI:
+  case Dadao::STMO_RRRI:
   case Dadao::SW_RI:
   case Dadao::LDHs_RI:
   case Dadao::LDHz_RI:

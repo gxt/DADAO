@@ -59,7 +59,7 @@ static DecodeStatus decodeRiMemoryValue(MCInst &Inst, unsigned Insn,
                                         uint64_t Address,
                                         const MCDisassembler *Decoder);
 
-static DecodeStatus decodeRrMemoryValue(MCInst &Inst, unsigned Insn,
+static DecodeStatus decodeRRRIMemoryValue(MCInst &Inst, unsigned Insn,
                                         uint64_t Address,
                                         const MCDisassembler *Decoder);
 
@@ -103,15 +103,6 @@ static void PostOperandDecodeAdjust(MCInst &Instr, uint32_t Insn) {
     PqShift = 16;
   else if (isSPLSOpcode(Instr.getOpcode()))
     PqShift = 10;
-  else if (isRRMOpcode(Instr.getOpcode())) {
-    PqShift = 16;
-    // Determine RRM ALU op.
-    AluOp = (Insn >> 8) & 0x7;
-    if (AluOp == 7)
-      // Handle JJJJJ
-      // 0b10000 or 0b11000
-      AluOp |= 0x20 | (((Insn >> 3) & 0xf) << 1);
-  }
 
   if (PqShift != -1) {
     unsigned PQ = (Insn >> PqShift) & 0x3;
@@ -234,15 +225,15 @@ static DecodeStatus decodeRiMemoryValue(MCInst &Inst, unsigned Insn,
   return MCDisassembler::Success;
 }
 
-static DecodeStatus decodeRrMemoryValue(MCInst &Inst, unsigned Insn,
+static DecodeStatus decodeRRRIMemoryValue(MCInst &Inst, unsigned Insn,
                                         uint64_t Address,
                                         const MCDisassembler *Decoder) {
-  // RR memory values encoded using 20 bits:
-  //   5 bit register, 5 bit register, 2 bit PQ, 3 bit ALU operator, 5 bit JJJJJ
-  unsigned Register = (Insn >> 15) & 0x1f;
-  Inst.addOperand(MCOperand::createReg(GPRDecoderTable[Register]));
-  Register = (Insn >> 10) & 0x1f;
-  Inst.addOperand(MCOperand::createReg(GPRDecoderTable[Register]));
+  // RRRI memory values encoded using 18 bits:
+  //   6 bit RB register, 6 bit RD register, 6 bit Imm6
+  unsigned Register = (Insn >> 12) & 0x3f;
+  Inst.addOperand(MCOperand::createReg(GPRBDecoderTable[Register]));
+  Register = (Insn >> 6) & 0x3f;
+  Inst.addOperand(MCOperand::createReg(GPRDDecoderTable[Register]));
 
   return MCDisassembler::Success;
 }

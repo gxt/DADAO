@@ -76,6 +76,21 @@ class Inst_RRRR<bits<8> majorop, dag outs, dag ins, string opcstr, string oprstr
   let HexD = RdHd;
 }
 
+class Inst_RRRI<bits<8> majorop, dag outs, dag ins, string opcstr, string oprstr, list<dag> pattern>
+    : Inst_Dadao<outs, ins, opcstr, oprstr, pattern> {
+
+  bits<6> RxHa;
+  bits<6> RbHb;
+  bits<6> RdHc;
+  bits<6> Imm6;
+
+  let MajorOpcode = majorop;
+  let HexA = RxHa;
+  let HexB = RbHb;
+  let HexC = RdHc;
+  let HexD = Imm6;
+}
+
 class Inst_RRII<bits<8> majorop, dag outs, dag ins, string opcstr, string oprstr, list<dag> pattern>
     : Inst_Dadao<outs, ins, opcstr, oprstr, pattern> {
 
@@ -314,72 +329,6 @@ class InstRM<bit S, dag outs, dag ins, string asmstr, list<dag> pattern>
   let Inst{17} = P;
   let Inst{16} = Q;
   let Inst{15 - 0} = imm16;
-
-  let PostEncoderMethod = "adjustPqBitsRmAndRrm";
-}
-
-//------------------------------------------------------------------------------
-// Register Register Memory (RRM)
-//------------------------------------------------------------------------------
-// Encoding:
-//           -----------------------------------------------------------------
-//           |1.0.1.S| . . . . | . . . . |P.Q| . . . . |B.B.B|J.J.J.J.J|Y.L.E|
-//           -----------------------------------------------------------------
-//            opcode     Rd        Rs1           Rs2   \       operation     /
-//
-// Action:
-//           Rd <- Memory(ea)      (Load)    see below for the
-//           Memory(ea) <- Rd      (Store)   definition of ea.
-//
-// The RRM instruction is identical to the RM (*note RM::.) instruction
-// except that:
-//
-// 1. `Rs1 + constant' is replaced with `Rs1 op Rs2', where `op' is
-//    determined in the same way as in the RR instruction (*note RR::.)
-//    and
-//
-// 2. part-word memory accesses are allowed as specified below.
-//
-//    If `BBB' != 111 (i.e.: For all but shift operations):
-//        If `YLE' = 01- => fuLl-word memory access
-//        If `YLE' = 00- => half-word memory access
-//        If `YLE' = 10- => bYte memory access
-//        If `YLE' = --1 => loads are zEro extended
-//        If `YLE' = --0 => loads are sign extended
-//
-//    If `BBB' = 111 (For shift operations):
-//        fullword memory access are performed.
-//
-// All part-word loads write the least significant part of the
-// destination register with the higher-order bits zero- or sign-extended.
-// All part-word stores store the least significant part-word of the
-// source register in the destination memory location.
-//
-// A Jump is accomplished by `Rd' being `pc', and it has *two* delay slots.
-class InstRRM<bit S, dag outs, dag ins, string asmstr,
-              list<dag> pattern>
-    : InstDadao<outs, ins, asmstr, pattern> {
-  bits<5> Rd;
-  bits<5> Rs1;
-  bits<5> Rs2;
-  bits<1> P;
-  bits<1> Q;
-  bits<3> BBB;
-  bits<5> JJJJJ;
-  bits<2> YL;
-  bit E;
-
-  let Opcode{3 - 1} = 0b101;
-  let Opcode{0} = S;
-  let Inst{27 - 23} = Rd;
-  let Inst{22 - 18} = Rs1;
-  let Inst{17} = P;
-  let Inst{16} = Q;
-  let Inst{15 - 11} = Rs2;
-  let Inst{10 - 8} = BBB;
-  let Inst{7 - 3} = JJJJJ;
-  let Inst{2 - 1} = YL;
-  let Inst{0} = E;
 
   let PostEncoderMethod = "adjustPqBitsRmAndRrm";
 }

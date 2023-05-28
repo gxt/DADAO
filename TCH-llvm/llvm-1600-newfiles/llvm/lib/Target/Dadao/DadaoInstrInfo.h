@@ -167,23 +167,6 @@ static inline bool isRMOpcode(unsigned Opcode) {
   }
 }
 
-static inline bool isRRMOpcode(unsigned Opcode) {
-  switch (Opcode) {
-  case Dadao::LDBs_RR:
-  case Dadao::LDBz_RR:
-  case Dadao::LDHs_RR:
-  case Dadao::LDHz_RR:
-  case Dadao::LDWz_RR:
-  case Dadao::LDW_RR:
-  case Dadao::STB_RR:
-  case Dadao::STH_RR:
-  case Dadao::SW_RR:
-    return true;
-  default:
-    return false;
-  }
-}
-
 } // namespace llvm
 
 #endif // LLVM_LIB_TARGET_DADAO_DADAOINSTRINFO_H
