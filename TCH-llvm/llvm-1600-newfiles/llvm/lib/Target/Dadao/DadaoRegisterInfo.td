@@ -39,16 +39,17 @@ let Namespace = "Dadao" in {
 }
 
 def GPRD : RegisterClass<"Dadao", [i64], 64,
-    (add RD7,                       // scratch register
+    (add
      (sequence "RD%i", 16, 31),     // temporary registers
      (sequence "RD%i", 32, 63),     // callee saved registers
      (sequence "RD%i", 8, 15),      // registers for passing arguments
+     RD7,                           // FIXME: conditional reg
      RD6, RD5, RD4, RD3, RD2, RD1,  // reserved
      RD0, RDZERO                    // constant 0
     )>;
 
 def GPRB : RegisterClass<"Dadao", [i64], 64,
-    (add RB7,                       // scratch register
+    (add
      (sequence "RB%i", 16, 31),     // temporary registers
      (sequence "RB%i", 32, 63),     // callee saved registers
      (sequence "RB%i", 8, 15),      // registers for passing arguments
