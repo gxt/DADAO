@@ -391,6 +391,50 @@ public:
     return Value < LPCC::UNKNOWN;
   }
 
+  bool isImmWyde0() {
+    if (!isImm())
+      return false;
+
+    const MCConstantExpr *ConstExpr = dyn_cast<MCConstantExpr>(Imm.Value);
+    if (!ConstExpr)
+      return false;
+    int64_t Value = ConstExpr->getValue();
+    return isInt<16>(Value);
+  }
+
+  bool isImmWyde1() {
+    if (!isImm())
+      return false;
+
+    const MCConstantExpr *ConstExpr = dyn_cast<MCConstantExpr>(Imm.Value);
+    if (!ConstExpr)
+      return false;
+    int64_t Value = ConstExpr->getValue();
+    return Value != 0 && isShiftedUInt<16, 16>(Value);
+  }
+
+  bool isImmWyde2() {
+    if (!isImm())
+      return false;
+
+    const MCConstantExpr *ConstExpr = dyn_cast<MCConstantExpr>(Imm.Value);
+    if (!ConstExpr)
+      return false;
+    int64_t Value = ConstExpr->getValue();
+    return Value != 0 && isShiftedUInt<16, 32>(Value);
+  }
+
+  bool isImmWyde3() {
+    if (!isImm())
+      return false;
+
+    const MCConstantExpr *ConstExpr = dyn_cast<MCConstantExpr>(Imm.Value);
+    if (!ConstExpr)
+      return false;
+    int64_t Value = ConstExpr->getValue();
+    return Value != 0 && isShiftedUInt<16, 48>(Value);
+  }
+
   void addExpr(MCInst &Inst, const MCExpr *Expr) const {
     // Add as immediates where possible. Null MCExpr = 0
     if (Expr == nullptr)
@@ -449,6 +493,26 @@ public:
   }
 
   void addImm12Operands(MCInst &Inst, unsigned N) const {
+    assert(N == 1 && "Invalid number of operands!");
+    addExpr(Inst, getImm());
+  }
+
+  void addImmWyde0Operands(MCInst &Inst, unsigned N) const {
+    assert(N == 1 && "Invalid number of operands!");
+    addExpr(Inst, getImm());
+  }
+
+  void addImmWyde1Operands(MCInst &Inst, unsigned N) const {
+    assert(N == 1 && "Invalid number of operands!");
+    addExpr(Inst, getImm());
+  }
+
+  void addImmWyde2Operands(MCInst &Inst, unsigned N) const {
+    assert(N == 1 && "Invalid number of operands!");
+    addExpr(Inst, getImm());
+  }
+
+  void addImmWyde3Operands(MCInst &Inst, unsigned N) const {
     assert(N == 1 && "Invalid number of operands!");
     addExpr(Inst, getImm());
   }

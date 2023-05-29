@@ -130,16 +130,15 @@ class Inst_RIII<bits<8> majorop, dag outs, dag ins, string opcstr, string oprstr
   let HexD = Imm18{ 5 -  0};
 }
 
-class Inst_RWII<bits<8> majorop, dag outs, dag ins, string opcstr, string oprstr, list<dag> pattern>
+class Inst_RWII<bits<8> majorop, bits<2> wpos, dag outs, dag ins, string opcstr, string oprstr, list<dag> pattern>
     : Inst_Dadao<outs, ins, opcstr, oprstr, pattern> {
 
   bits<6> RxHa;
-  bits<2> WPos;
   bits<16> Imm16;
 
   let MajorOpcode = majorop;
   let HexA = RxHa;
-  let HexB{5-4} = WPos;
+  let HexB{5-4} = wpos;
   let HexB{3-0} = Imm16{15 - 12};
   let HexC = Imm16{11 - 6};
   let HexD = Imm16{ 5 - 0};
