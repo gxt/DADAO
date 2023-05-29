@@ -95,22 +95,19 @@ static unsigned getOppositeALULoOpcode(unsigned Opcode) {
 
 static unsigned getRRRIOpcodeVariant(unsigned Opcode) {
   switch (Opcode) {
-  case Dadao::LDBs_RI:
-    return Dadao::LDMBS_RRRI;
-  case Dadao::LDBz_RI:
-    return Dadao::LDMBU_RRRI;
-  case Dadao::LDHs_RI:
-    return Dadao::LDMWS_RRRI;
-  case Dadao::LDHz_RI:
-    return Dadao::LDMWU_RRRI;
-  case Dadao::LDW_RI:
-    return Dadao::LDMO_RRRI;
-  case Dadao::STB_RI:
-    return Dadao::STMB_RRRI;
-  case Dadao::STH_RI:
-    return Dadao::STMW_RRRI;
-  case Dadao::SW_RI:
-    return Dadao::STMO_RRRI;
+  case Dadao::LDBS_RRII: return Dadao::LDMBS_RRRI;
+  case Dadao::LDBU_RRII: return Dadao::LDMBU_RRRI;
+  case Dadao::LDWS_RRII: return Dadao::LDMWS_RRRI;
+  case Dadao::LDWU_RRII: return Dadao::LDMWU_RRRI;
+  case Dadao::LDTS_RRII: return Dadao::LDMTS_RRRI;
+  case Dadao::LDTU_RRII: return Dadao::LDMTU_RRRI;
+  case Dadao::LDO_RRII:  return Dadao::LDMO_RRRI;
+  case Dadao::LDRB_RRII: return Dadao::LDMRB_RRRI;
+  case Dadao::STB_RRII:  return Dadao::STMB_RRRI;
+  case Dadao::STW_RRII:  return Dadao::STMW_RRRI;
+  case Dadao::STT_RRII:  return Dadao::STMT_RRRI;
+  case Dadao::STO_RRII:  return Dadao::STMO_RRRI;
+  case Dadao::STRB_RRII: return Dadao::STMRB_RRRI;
   default:
     llvm_unreachable("Opcode has no RRRI variant");
   }
@@ -150,8 +147,7 @@ bool DadaoRegisterInfo::eliminateFrameIndex(MachineBasicBlock::iterator II,
   // If the offset is small enough to fit in the immediate field, directly
   // encode it.
   // Otherwise scavenge a register and encode it into a MOVHI, OR_I_LO sequence.
-  if ((isSPLSOpcode(MI.getOpcode()) && !isInt<10>(Offset)) ||
-      !isInt<16>(Offset)) {
+  if (!isInt<12>(Offset)) {
     assert(RS && "Register scavenging must be on");
     Register Reg = RS->FindUnusedReg(&Dadao::GPRRegClass);
     if (!Reg)
@@ -190,7 +186,7 @@ bool DadaoRegisterInfo::eliminateFrameIndex(MachineBasicBlock::iterator II,
       MI.eraseFromParent();
       return true;
     }
-    if (isSPLSOpcode(MI.getOpcode()) || isRMOpcode(MI.getOpcode())) {
+    if (isMemRRIIOpcode(MI.getOpcode())) {
       MI.setDesc(TII->get(getRRRIOpcodeVariant(MI.getOpcode())));
       if (HasNegOffset) {
         // Change the ALU op (operand 3) from LPAC::ADD (the default) to

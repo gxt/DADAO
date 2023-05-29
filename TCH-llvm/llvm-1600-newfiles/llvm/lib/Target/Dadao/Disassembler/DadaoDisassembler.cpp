@@ -55,17 +55,13 @@ static DecodeStatus DecodeGPRBRegisterClass(MCInst &Inst, unsigned RegNo,
                                             uint64_t Address,
                                             const MCDisassembler *Decoder);
 
-static DecodeStatus decodeRiMemoryValue(MCInst &Inst, unsigned Insn,
+static DecodeStatus decodeRRIIMemoryValue(MCInst &Inst, unsigned Insn,
                                         uint64_t Address,
                                         const MCDisassembler *Decoder);
 
 static DecodeStatus decodeRRRIMemoryValue(MCInst &Inst, unsigned Insn,
                                         uint64_t Address,
                                         const MCDisassembler *Decoder);
-
-static DecodeStatus decodeSplsValue(MCInst &Inst, unsigned Insn,
-                                    uint64_t Address,
-                                    const MCDisassembler *Decoder);
 
 static DecodeStatus decodeBranch(MCInst &Inst, unsigned Insn, uint64_t Address,
                                  const MCDisassembler *Decoder);
@@ -99,10 +95,6 @@ static void PostOperandDecodeAdjust(MCInst &Instr, uint32_t Insn) {
   unsigned AluOp = LPAC::ADD;
   // Fix up for pre and post operations.
   int PqShift = -1;
-  if (isRMOpcode(Instr.getOpcode()))
-    PqShift = 16;
-  else if (isSPLSOpcode(Instr.getOpcode()))
-    PqShift = 10;
 
   if (PqShift != -1) {
     unsigned PQ = (Insn >> PqShift) & 0x3;
@@ -212,15 +204,15 @@ DecodeStatus DecodeGPRBRegisterClass(MCInst &Inst, unsigned RegNo,
   return MCDisassembler::Success;
 }
 
-static DecodeStatus decodeRiMemoryValue(MCInst &Inst, unsigned Insn,
+static DecodeStatus decodeRRIIMemoryValue(MCInst &Inst, unsigned Insn,
                                         uint64_t Address,
                                         const MCDisassembler *Decoder) {
-  // RI memory values encoded using 23 bits:
-  //   5 bit register, 16 bit constant
-  unsigned Register = (Insn >> 18) & 0x1f;
+  // RRII memory values encoded using 18 bits:
+  //   6 bit register, 12 bit constant
+  unsigned Register = (Insn >> 12) & 0x3f;
   Inst.addOperand(MCOperand::createReg(GPRDecoderTable[Register]));
-  unsigned Offset = (Insn & 0xffff);
-  Inst.addOperand(MCOperand::createImm(SignExtend32<16>(Offset)));
+  unsigned Offset = (Insn & 0xfff);
+  Inst.addOperand(MCOperand::createImm(SignExtend64<12>(Offset)));
 
   return MCDisassembler::Success;
 }
@@ -234,19 +226,6 @@ static DecodeStatus decodeRRRIMemoryValue(MCInst &Inst, unsigned Insn,
   Inst.addOperand(MCOperand::createReg(GPRBDecoderTable[Register]));
   Register = (Insn >> 6) & 0x3f;
   Inst.addOperand(MCOperand::createReg(GPRDDecoderTable[Register]));
-
-  return MCDisassembler::Success;
-}
-
-static DecodeStatus decodeSplsValue(MCInst &Inst, unsigned Insn,
-                                    uint64_t Address,
-                                    const MCDisassembler *Decoder) {
-  // RI memory values encoded using 17 bits:
-  //   5 bit register, 10 bit constant
-  unsigned Register = (Insn >> 12) & 0x1f;
-  Inst.addOperand(MCOperand::createReg(GPRDecoderTable[Register]));
-  unsigned Offset = (Insn & 0x3ff);
-  Inst.addOperand(MCOperand::createImm(SignExtend32<10>(Offset)));
 
   return MCDisassembler::Success;
 }

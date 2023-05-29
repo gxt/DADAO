@@ -163,7 +163,7 @@ void DadaoAsmPrinter::emitCallInstruction(const MachineInstr *MI) {
 
   // Push rca onto the stack.
   //   st %rca, [--%sp]
-  OutStreamer->emitInstruction(MCInstBuilder(Dadao::SW_RI)
+  OutStreamer->emitInstruction(MCInstBuilder(Dadao::STO_RRII)
                                    .addReg(Dadao::RCA)
                                    .addReg(Dadao::SP)
                                    .addImm(-4)

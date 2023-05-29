@@ -58,17 +58,13 @@ public:
                              SmallVectorImpl<MCFixup> &Fixups,
                              const MCSubtargetInfo &SubtargetInfo) const;
 
-  unsigned getRiMemoryOpValue(const MCInst &Inst, unsigned OpNo,
+  unsigned getRRIIMemoryOpValue(const MCInst &Inst, unsigned OpNo,
                               SmallVectorImpl<MCFixup> &Fixups,
                               const MCSubtargetInfo &SubtargetInfo) const;
 
   unsigned getRRRIMemoryOpValue(const MCInst &Inst, unsigned OpNo,
                               SmallVectorImpl<MCFixup> &Fixups,
                               const MCSubtargetInfo &SubtargetInfo) const;
-
-  unsigned getSplsOpValue(const MCInst &Inst, unsigned OpNo,
-                          SmallVectorImpl<MCFixup> &Fixups,
-                          const MCSubtargetInfo &SubtargetInfo) const;
 
   unsigned getBranchTargetOpValue(const MCInst &Inst, unsigned OpNo,
                                   SmallVectorImpl<MCFixup> &Fixups,
@@ -77,12 +73,6 @@ public:
   void encodeInstruction(const MCInst &Inst, raw_ostream &Ostream,
                          SmallVectorImpl<MCFixup> &Fixups,
                          const MCSubtargetInfo &SubtargetInfo) const override;
-
-  unsigned adjustPqBitsRmAndRrm(const MCInst &Inst, unsigned Value,
-                                const MCSubtargetInfo &STI) const;
-
-  unsigned adjustPqBitsSpls(const MCInst &Inst, unsigned Value,
-                            const MCSubtargetInfo &STI) const;
 };
 
 } // end anonymous namespace
@@ -131,44 +121,6 @@ unsigned DadaoMCCodeEmitter::getMachineOpValue(
   return 0;
 }
 
-// Helper function to adjust P and Q bits on load and store instructions.
-static unsigned adjustPqBits(const MCInst &Inst, unsigned Value,
-                             unsigned PBitShift, unsigned QBitShift) {
-  const MCOperand AluOp = Inst.getOperand(3);
-  unsigned AluCode = AluOp.getImm();
-
-  // Set the P bit to one iff the immediate is nonzero and not a post-op
-  // instruction.
-  const MCOperand Op2 = Inst.getOperand(2);
-  Value &= ~(1 << PBitShift);
-  if (!LPAC::isPostOp(AluCode) &&
-      ((Op2.isImm() && Op2.getImm() != 0) ||
-       (Op2.isReg() && Op2.getReg() != Dadao::R0) || (Op2.isExpr())))
-    Value |= (1 << PBitShift);
-
-  // Set the Q bit to one iff it is a post- or pre-op instruction.
-  assert(Inst.getOperand(0).isReg() && Inst.getOperand(1).isReg() &&
-         "Expected register operand.");
-  Value &= ~(1 << QBitShift);
-  if (LPAC::modifiesOp(AluCode) && ((Op2.isImm() && Op2.getImm() != 0) ||
-                                    (Op2.isReg() && Op2.getReg() != Dadao::R0)))
-    Value |= (1 << QBitShift);
-
-  return Value;
-}
-
-unsigned
-DadaoMCCodeEmitter::adjustPqBitsRmAndRrm(const MCInst &Inst, unsigned Value,
-                                         const MCSubtargetInfo &STI) const {
-  return adjustPqBits(Inst, Value, 17, 16);
-}
-
-unsigned
-DadaoMCCodeEmitter::adjustPqBitsSpls(const MCInst &Inst, unsigned Value,
-                                     const MCSubtargetInfo &STI) const {
-  return adjustPqBits(Inst, Value, 11, 10);
-}
-
 void DadaoMCCodeEmitter::encodeInstruction(
     const MCInst &Inst, raw_ostream &Ostream, SmallVectorImpl<MCFixup> &Fixups,
     const MCSubtargetInfo &SubtargetInfo) const {
@@ -182,7 +134,7 @@ void DadaoMCCodeEmitter::encodeInstruction(
 }
 
 // Encode Dadao Memory Operand
-unsigned DadaoMCCodeEmitter::getRiMemoryOpValue(
+unsigned DadaoMCCodeEmitter::getRRIIMemoryOpValue(
     const MCInst &Inst, unsigned OpNo, SmallVectorImpl<MCFixup> &Fixups,
     const MCSubtargetInfo &SubtargetInfo) const {
   unsigned Encoding;
@@ -196,18 +148,12 @@ unsigned DadaoMCCodeEmitter::getRiMemoryOpValue(
   assert((LPAC::getAluOp(AluOp.getImm()) == LPAC::ADD) &&
          "Register immediate only supports addition operator");
 
-  Encoding = (getDadaoRegisterNumbering(Op1.getReg()) << 18);
+  Encoding = (getDadaoRegisterNumbering(Op1.getReg()) << 12);
   if (Op2.isImm()) {
-    assert(isInt<16>(Op2.getImm()) &&
-           "Constant value truncated (limited to 16-bit)");
+    assert(isInt<12>(Op2.getImm()) &&
+           "Constant value truncated (limited to 12-bit)");
 
-    Encoding |= (Op2.getImm() & 0xffff);
-    if (Op2.getImm() != 0) {
-      if (LPAC::isPreOp(AluOp.getImm()))
-        Encoding |= (0x3 << 16);
-      if (LPAC::isPostOp(AluOp.getImm()))
-        Encoding |= (0x1 << 16);
-    }
+    Encoding |= (Op2.getImm() & 0xfff);
   } else
     getMachineOpValue(Inst, Op2, Fixups, SubtargetInfo);
 
@@ -230,39 +176,6 @@ unsigned DadaoMCCodeEmitter::getRRRIMemoryOpValue(
   assert(AluMCOp.isImm() && "Third operator is not immediate.");
   // Set Imm6
   Encoding |= AluMCOp.getImm();
-
-  return Encoding;
-}
-
-unsigned
-DadaoMCCodeEmitter::getSplsOpValue(const MCInst &Inst, unsigned OpNo,
-                                   SmallVectorImpl<MCFixup> &Fixups,
-                                   const MCSubtargetInfo &SubtargetInfo) const {
-  unsigned Encoding;
-  const MCOperand Op1 = Inst.getOperand(OpNo + 0);
-  const MCOperand Op2 = Inst.getOperand(OpNo + 1);
-  const MCOperand AluOp = Inst.getOperand(OpNo + 2);
-
-  assert(Op1.isReg() && "First operand is not register.");
-  assert((Op2.isImm() || Op2.isExpr()) &&
-         "Second operand is neither an immediate nor an expression.");
-  assert((LPAC::getAluOp(AluOp.getImm()) == LPAC::ADD) &&
-         "Register immediate only supports addition operator");
-
-  Encoding = (getDadaoRegisterNumbering(Op1.getReg()) << 12);
-  if (Op2.isImm()) {
-    assert(isInt<10>(Op2.getImm()) &&
-           "Constant value truncated (limited to 10-bit)");
-
-    Encoding |= (Op2.getImm() & 0x3ff);
-    if (Op2.getImm() != 0) {
-      if (LPAC::isPreOp(AluOp.getImm()))
-        Encoding |= (0x3 << 10);
-      if (LPAC::isPostOp(AluOp.getImm()))
-        Encoding |= (0x1 << 10);
-    }
-  } else
-    getMachineOpValue(Inst, Op2, Fixups, SubtargetInfo);
 
   return Encoding;
 }

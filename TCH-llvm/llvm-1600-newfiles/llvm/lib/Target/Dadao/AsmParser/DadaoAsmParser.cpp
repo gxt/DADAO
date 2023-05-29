@@ -202,8 +202,6 @@ public:
 
   bool isMemRegReg() const { return Kind == MEMORY_REG_REG; }
 
-  bool isMemSpls() const { return isMemRegImm() || isMemRegReg(); }
-
   bool isToken() const override { return Kind == TOKEN; }
 
   bool isBrImm() {
@@ -331,7 +329,7 @@ public:
     return (Value >= -31) && (Value <= 31);
   }
 
-  bool isImm10() {
+  bool isImm12() {
     if (!isImm())
       return false;
 
@@ -339,7 +337,7 @@ public:
     if (!ConstExpr)
       return false;
     int64_t Value = ConstExpr->getValue();
-    return isInt<10>(Value);
+    return isInt<12>(Value);
   }
 
   bool isLoImm12() {
@@ -445,19 +443,12 @@ public:
     Inst.addOperand(MCOperand::createImm(getMemOp()));
   }
 
-  void addMemSplsOperands(MCInst &Inst, unsigned N) const {
-    if (isMemRegImm())
-      addMemRegImmOperands(Inst, N);
-    if (isMemRegReg())
-      addMemRegRegOperands(Inst, N);
-  }
-
   void addImmShiftOperands(MCInst &Inst, unsigned N) const {
     assert(N == 1 && "Invalid number of operands!");
     addExpr(Inst, getImm());
   }
 
-  void addImm10Operands(MCInst &Inst, unsigned N) const {
+  void addImm12Operands(MCInst &Inst, unsigned N) const {
     assert(N == 1 && "Invalid number of operands!");
     addExpr(Inst, getImm());
   }

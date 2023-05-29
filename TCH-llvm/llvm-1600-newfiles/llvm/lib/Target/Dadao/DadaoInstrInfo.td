@@ -34,6 +34,12 @@ def LO16 : SDNodeXForm<imm, [{
                                    SDLoc(N), MVT::i64);
 }]>;
 
+def Imm12AsmOperand : AsmOperandClass { let Name = "Imm12"; }
+def imm12 : Operand<i64>, PatLeaf<(imm), [{
+    return isInt<12>(N->getSExtValue()); }]> {
+  let ParserMatchClass = Imm12AsmOperand;
+}
+
 def LoImm12AndAsmOperand : AsmOperandClass { let Name = "LoImm12And"; }
 def i64lo12and : Operand<i64>, PatLeaf<(i64 imm), [{
     // i64lo12and predicate - true if the 64-bit immediate has the rightmost 12
@@ -66,7 +72,7 @@ def i64lo16s : Operand<i64>, PatLeaf<(i64 imm), [{
 
 // Addressing modes.
 def ADDR_RRRI : ComplexPattern<i64, 3, "selectAddrRRRI", [], []>;
-
+def ADDR_RRII : ComplexPattern<i64, 3, "selectAddrRRII", [frameindex], []>;
 
 // Address operands.
 def MemRegRegAsmOperand : AsmOperandClass {
@@ -79,6 +85,19 @@ def MEM_RRRI : Operand<i64> {
   let MIOperandInfo = (ops GPRB:$Op1, GPRD:$Op2, LO06);
   let ParserMatchClass = MemRegRegAsmOperand;
   let PrintMethod   = "printMemRRRIOperand";
+}
+
+// Address operands
+def MemRegImmAsmOperand : AsmOperandClass {
+  let Name = "MemRegImm";
+  let ParserMethod  = "parseMemoryOperand";
+}
+def MEM_RRII : Operand<i64> {
+  let DecoderMethod = "decodeRRIIMemoryValue";
+  let EncoderMethod = "getRRIIMemoryOpValue";
+  let MIOperandInfo = (ops GPRB:$base, imm12:$offset, LO12);
+  let ParserMatchClass = MemRegImmAsmOperand;
+  let PrintMethod   = "printMemRRIIOperand";
 }
 
 // -------------------------------------------------- //
@@ -148,8 +167,29 @@ def ANDNW_RWII_W0 : ALU_RWII_W0<0b00010101, "andnw", GPRD,
   [(set GPRD:$RxHa_wb, (not (and GPRD:$RxHa, i64lo16s:$Imm16)))]>;
 
 // -------------------------------------------------- //
-// LOAD/STORE instructions
+// LOAD instructions
 // -------------------------------------------------- //
+
+class LOAD_RRII<bits<8> majorop, string OpcString, RegisterClass GPRx, PatFrag OpNode, ValueType Ty>
+  : Inst_RRII<majorop, (outs GPRx:$RxHa), (ins MEM_RRII:$src),
+            OpcString, "$RxHa, $src",
+            [(set (Ty GPRx:$RxHa), (OpNode ADDR_RRII:$src))]> {
+  bits<18> src;
+  let RyHb  = src{17 - 12};
+  let Imm12 = src{11 -  0};
+  let mayLoad = 1;
+  let isReMaterializable = 1;
+}
+
+def LDBS_RRII : LOAD_RRII<0b00110000, "ldbs", GPRD, sextloadi8,  i64>;
+def LDWS_RRII : LOAD_RRII<0b00110001, "ldws", GPRD, sextloadi16, i64>;
+def LDTS_RRII : LOAD_RRII<0b00110010, "ldts", GPRD, sextloadi32, i64>;
+def LDO_RRII  : LOAD_RRII<0b00110011, "ldo",  GPRD, load, i64>;
+
+def LDBU_RRII : LOAD_RRII<0b01000000, "ldbu", GPRD, zextloadi8,  i64>;
+def LDWU_RRII : LOAD_RRII<0b01000001, "ldwu", GPRD, zextloadi16, i64>;
+def LDTU_RRII : LOAD_RRII<0b01000010, "ldtu", GPRD, zextloadi32, i64>;
+def LDRB_RRII : LOAD_RRII<0b01000011, "ldrb", GPRB, load, i64>;
 
 class LOAD_RRRI<bits<8> majorop, string OpcString, RegisterClass GPRx, PatFrag OpNode, ValueType Ty>
   : Inst_RRRI<majorop, (outs GPRx:$RxHa), (ins MEM_RRRI:$src),
@@ -174,6 +214,26 @@ let Imm6 = 0b000000 in {
   def LDMTU_RRRI : LOAD_RRRI<0b01000110, "ldmtu", GPRD, zextloadi32, i64>;
   def LDMRB_RRRI : LOAD_RRRI<0b01000111, "ldmrb", GPRB, load, i64>;
 }
+
+// -------------------------------------------------- //
+// STORE instructions
+// -------------------------------------------------- //
+
+class STORE_RRII<bits<8> majorop, string OpcString, RegisterClass GPRx, PatFrag OpNode, ValueType Ty>
+  : Inst_RRII<majorop, (outs), (ins GPRx:$RxHa, MEM_RRII:$dst),
+            OpcString, "$RxHa, $dst",
+            [(OpNode (Ty GPRx:$RxHa), ADDR_RRII:$dst)]> {
+  bits<18> dst;
+  let RyHb  = dst{17 - 12};
+  let Imm12 = dst{11 -  0};
+  let mayStore = 1;
+}
+
+def STB_RRII  : STORE_RRII<0b00111000, "stb",  GPRD, truncstorei8,  i64>;
+def STW_RRII  : STORE_RRII<0b00111001, "stw",  GPRD, truncstorei16, i64>;
+def STT_RRII  : STORE_RRII<0b00111010, "stt",  GPRD, truncstorei32, i64>;
+def STO_RRII  : STORE_RRII<0b00111011, "sto",  GPRD, store, i64>;
+def STRB_RRII : STORE_RRII<0b01001011, "strb", GPRB, store, i64>;
 
 class STORE_RRRI<bits<8> majorop, string OpcString, RegisterClass GPRx, PatFrag OpNode, ValueType Ty>
   : Inst_RRRI<majorop, (outs), (ins GPRx:$RxHa, MEM_RRRI:$dst),
@@ -278,12 +338,6 @@ def immShift : Operand<i64>, PatLeaf<(imm), [{
   let DecoderMethod = "decodeShiftImm";
 }
 
-def Imm10AsmOperand : AsmOperandClass { let Name = "Imm10"; }
-def imm10 : Operand<i64>, PatLeaf<(imm), [{
-    return isInt<10>(N->getSExtValue()); }]> {
-  let ParserMatchClass = Imm10AsmOperand;
-}
-
 def i64neg16 : Operand<i64>, PatLeaf<(i64 imm), [{
     // i64neg16 predicate - true if the 32-bit immediate is negative and can
     // be represented by a 16 bit integer.
@@ -323,35 +377,6 @@ def AluOp : Operand<i64> {
   let PrintMethod = "printAluOperand";
 }
 
-// Addressing modes.
-def ADDRri : ComplexPattern<i64, 3, "selectAddrRi", [frameindex], []>;
-def ADDRspls : ComplexPattern<i64, 3, "selectAddrSpls", [frameindex], []>;
-
-// Address operands
-def MemRegImmAsmOperand : AsmOperandClass {
-  let Name = "MemRegImm";
-  let ParserMethod  = "parseMemoryOperand";
-}
-def MEMri : Operand<i64> {
-  let DecoderMethod = "decodeRiMemoryValue";
-  let EncoderMethod = "getRiMemoryOpValue";
-  let MIOperandInfo = (ops GPR:$base, i64lo16s:$offset, AluOp:$Opcode);
-  let ParserMatchClass = MemRegImmAsmOperand;
-  let PrintMethod   = "printMemRiOperand";
-}
-
-def MemSplsAsmOperand : AsmOperandClass {
-  let Name = "MemSpls";
-  let ParserMethod  = "parseMemoryOperand";
-}
-def MEMspls : Operand<i64> {
-  let DecoderMethod = "decodeSplsValue";
-  let EncoderMethod = "getSplsOpValue";
-  let MIOperandInfo = (ops GPR:$base, imm10:$offset, AluOp:$Opcode);
-  let ParserMatchClass = MemSplsAsmOperand;
-  let PrintMethod   = "printMemSplsOperand";
-}
-
 def CCOp : Operand<i64> {
   let PrintMethod = "printCCOperand";
 }
@@ -379,16 +404,6 @@ let hasSideEffects = 0, Inst = 0x00000005 in
   def LOG3 : InstDadao<(outs), (ins), "log_3", []>;
 let hasSideEffects = 0, Inst = 0x00000006 in
   def LOG4 : InstDadao<(outs), (ins), "log_4", []>;
-
-// Map an SPLS instruction onto itself. All other instructions will be mapped
-// onto -1. Used to identify SPLS instructions.
-def splsIdempotent : InstrMapping {
-  let FilterClass = "InstSPLS";
-  let RowFields = ["AsmString"];
-  let ColFields = ["PostEncoderMethod"];
-  let KeyCol = ["adjustPqBitsSpls"];
-  let ValueCols = [["adjustPqBitsSpls"]];
-}
 
 // -------------------------------------------------- //
 // ALU instructions
@@ -556,109 +571,6 @@ def : Pat<(sra GPR:$Rs1, GPR:$Rs2),
           (SRA_R GPR:$Rs1, (SUB_R R0, GPR:$Rs2))>;
 
 // -------------------------------------------------- //
-// LOAD instructions
-// -------------------------------------------------- //
-
-class LoadRI<string OpcString, PatFrag OpNode, ValueType Ty>
-  : InstRM<0b0, (outs GPR:$Rd), (ins MEMri:$src),
-           !strconcat(OpcString, "\t$src, $Rd"),
-           [(set (Ty GPR:$Rd), (OpNode ADDRri:$src))]>,
-    Sched<[WriteLD]> {
-  bits<23> src;
-
-  let Itinerary = IIC_LD;
-  let Rs1 = src{22-18};
-  let P = src{17};
-  let Q = src{16};
-  let imm16 = src{15-0};
-  let isReMaterializable = 1;
-  let mayLoad = 1;
-}
-
-let E = 0 in {
-  let YL = 0b01 in {
-    // uld is used here and ld in the alias as the alias is printed out first if
-    // an alias exist
-    def LDW_RI : LoadRI<"uld", load, i64>;
-  }
-}
-
-def : InstAlias<"ld $src, $dst", (LDW_RI GPR:$dst, MEMri:$src)>;
-
-class LoadSPLS<string asmstring, PatFrag opNode>
-  : InstSPLS<(outs GPR:$Rd), (ins MEMspls:$src),
-             !strconcat(asmstring, "\t$src, $Rd"),
-             [(set (i64 GPR:$Rd), (opNode ADDRspls:$src))]>,
-    Sched<[WriteLDSW]> {
-  bits<17> src;
-  let Itinerary = IIC_LDSW;
-  let Rs1 = src{16-12};
-  let P = src{11};
-  let Q = src{10};
-  let imm10 = src{9-0};
-  let mayLoad = 1;
-  let isReMaterializable = 1;
-}
-
-// FIXME: LANai use zextloadi16 sextloadi16
-let Y = 0, S = 0, E = 1 in
-  def LDHz_RI : LoadSPLS<"uld.h", zextloadi32>;
-
-let Y = 0, S = 0, E = 0 in
-  def LDHs_RI : LoadSPLS<"ld.h", sextloadi32>;
-
-let Y = 1, S = 0, E = 1 in
-  def LDBz_RI : LoadSPLS<"uld.b", zextloadi8>;
-
-let Y = 1, S = 0, E = 0 in
-  def LDBs_RI : LoadSPLS<"ld.b", sextloadi8>;
-
-// -------------------------------------------------- //
-// STORE instructions
-// -------------------------------------------------- //
-
-class StoreRI<string OpcString, PatFrag OpNode, ValueType Ty>
-  : InstRM<0b1, (outs), (ins GPR:$Rd, MEMri:$dst),
-           !strconcat(OpcString, "\t$Rd, $dst"),
-           [(OpNode (Ty GPR:$Rd), ADDRri:$dst)]>,
-    Sched<[WriteST]> {
-  bits<23> dst;
-
-  let Itinerary = IIC_ST;
-  let Rs1 = dst{22-18};
-  let P = dst{17};
-  let Q = dst{16};
-  let imm16 = dst{15-0};
-  let mayStore = 1;
-}
-
-let YL = 0b01, E = 0 in {
-  def SW_RI : StoreRI<"st", store, i64>;
-}
-
-class StoreSPLS<string asmstring, PatFrag opNode>
-  : InstSPLS<(outs), (ins GPR:$Rd, MEMspls:$dst),
-             !strconcat(asmstring, "\t$Rd, $dst"),
-             [(opNode (i64 GPR:$Rd), ADDRspls:$dst)]>,
-    Sched<[WriteSTSW]> {
-  bits<17> dst;
-
-  let Itinerary = IIC_STSW;
-  let Rs1 = dst{16-12};
-  let P = dst{11};
-  let Q = dst{10};
-  let imm10 = dst{9-0};
-  let mayStore = 1;
-}
-
-// FIXME: LANai use truncstorei16
-let Y = 0, S = 1, E = 0 in
-  def STH_RI : StoreSPLS<"st.h", truncstorei32>;
-
-let Y = 1, S = 1, E = 0 in
-  def STB_RI : StoreSPLS<"st.b", truncstorei8>;
-
-// -------------------------------------------------- //
 // BRANCH instructions
 // -------------------------------------------------- //
 
@@ -725,9 +637,6 @@ let isReturn = 1, isTerminator = 1, isBarrier = 1,
     let P = 1;
     let Q = 0;
     let imm16 = -4;
-
-    // Post encoding is not needed for RET.
-    let PostEncoderMethod = "";
   }
 }
 
@@ -826,13 +735,13 @@ def : Pat<(Call tglobaladdr:$dst), (CALL tglobaladdr:$dst)>;
 def : Pat<(Call texternalsym:$dst), (CALL texternalsym:$dst)>;
 
 // Loads
-def : Pat<(extloadi8  ADDRspls:$src), (i64 (LDBz_RI ADDRspls:$src))>;
-def : Pat<(extloadi16 ADDRspls:$src), (i64 (LDHz_RI ADDRspls:$src))>;
-def : Pat<(extloadi32 ADDRspls:$src), (i64 (LDHz_RI ADDRspls:$src))>;
+def : Pat<(extloadi8  ADDR_RRII:$src), (i64 (LDBU_RRII ADDR_RRII:$src))>;
+def : Pat<(extloadi16 ADDR_RRII:$src), (i64 (LDWU_RRII ADDR_RRII:$src))>;
+def : Pat<(extloadi32 ADDR_RRII:$src), (i64 (LDTU_RRII ADDR_RRII:$src))>;
 // Loads up to 32-bits are already atomic.
 // TODO: This is a workaround for a particular failing case and should be
 // handled more generally.
-def : Pat<(atomic_load_8  ADDRspls:$src), (i64 (LDBz_RI ADDRspls:$src))>;
+def : Pat<(atomic_load_8  ADDR_RRII:$src), (i64 (LDBU_RRII ADDR_RRII:$src))>;
 
 // GlobalAddress, ExternalSymbol, Jumptable, ConstantPool
 def : Pat<(DadaoHi tglobaladdr:$dst), (MOVHI tglobaladdr:$dst)>;

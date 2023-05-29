@@ -329,8 +329,6 @@ class InstRM<bit S, dag outs, dag ins, string asmstr, list<dag> pattern>
   let Inst{17} = P;
   let Inst{16} = Q;
   let Inst{15 - 0} = imm16;
-
-  let PostEncoderMethod = "adjustPqBitsRmAndRrm";
 }
 
 //------------------------------------------------------------------------------
@@ -455,63 +453,6 @@ class InstSCC<dag outs, dag ins, string asmstr,
   // Set don't cares to zero
   let Inst{23} = 0;
   let Inst{17 - 2} = 0;
-}
-
-//------------------------------------------------------------------------------
-// Special Part-Word Load/Store (SPLS)
-//------------------------------------------------------------------------------
-// Encoding:
-//        -----------------------------------------------------------------
-//        |1.1.1.1| . . . . | . . . . |1.1.0.Y.S.E.P.Q| . . . . . . . . . |
-//        -----------------------------------------------------------------
-//         opcode     Rd        Rs1                       constant (10)
-//
-// Action:
-//        If `YS' = 11  (bYte     Store):
-//             Memory(ea) <- (least significant byte of Rr)
-//        If `YS' = 01  (halfword Store):
-//             Memory(ea) <- (least significant half-word of Rr)
-//        If `YS' = 10  (bYte     load):  Rr <- Memory(ea)
-//        If `YS' = 00  (halfword load):  Rr <- Memory(ea)
-//             [Note: here ea is determined as in the RM instruction. ]
-//        If `SE' = 01 then the value is zEro extended
-//             before being loaded into Rd.
-//        If `SE' = 00 then the value is sign extended
-//             before being loaded into Rd.
-//
-// `P' and `Q' are used to determine `ea' as in the RM instruction. The
-// constant is sign extended.  The timing is the same as the RM and RRM
-// instructions.  *Note RM:: and *Note RRM::.
-//
-// All part-word loads write the part-word into the least significant
-// part of the destination register, with the higher-order bits zero- or
-// sign-extended.  All part-word stores store the least significant
-// part-word of the source register into the destination memory location.
-class InstSPLS<dag outs, dag ins, string asmstr,
-               list<dag> pattern>
-    : InstDadao<outs, ins, asmstr, pattern> {
-  bits<5> Rd;
-  bits<5> Rs1;
-  bits<5> msb;
-  bit Y;
-  bit S;
-  bit E;
-  bits<1> P;
-  bits<1> Q;
-  bits<10> imm10;
-
-  let Opcode = 0b1111;
-  let Inst{27 - 23} = Rd;
-  let Inst{22 - 18} = Rs1;
-  let Inst{17 - 15} = 0b110;
-  let Inst{14} = Y;
-  let Inst{13} = S;
-  let Inst{12} = E;
-  let Inst{11} = P;
-  let Inst{10} = Q;
-  let Inst{9 - 0} = imm10;
-
-  let PostEncoderMethod = "adjustPqBitsSpls";
 }
 
 //------------------------------------------------------------------------------

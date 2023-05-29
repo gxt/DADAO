@@ -59,7 +59,7 @@ void DadaoInstrInfo::storeRegToStackSlot(
   if (!Dadao::GPRRegClass.hasSubClassEq(RegisterClass)) {
     llvm_unreachable("Can't store this register to stack slot");
   }
-  BuildMI(MBB, Position, DL, get(Dadao::SW_RI))
+  BuildMI(MBB, Position, DL, get(Dadao::STO_RRII))
       .addReg(SourceRegister, getKillRegState(IsKill))
       .addFrameIndex(FrameIndex)
       .addImm(0)
@@ -79,7 +79,7 @@ void DadaoInstrInfo::loadRegFromStackSlot(
   if (!Dadao::GPRRegClass.hasSubClassEq(RegisterClass)) {
     llvm_unreachable("Can't load this register from stack slot");
   }
-  BuildMI(MBB, Position, DL, get(Dadao::LDW_RI), DestinationRegister)
+  BuildMI(MBB, Position, DL, get(Dadao::LDO_RRII), DestinationRegister)
       .addFrameIndex(FrameIndex)
       .addImm(0)
       .addImm(LPAC::ADD);
@@ -694,7 +694,7 @@ unsigned DadaoInstrInfo::removeBranch(MachineBasicBlock &MBB,
 
 unsigned DadaoInstrInfo::isLoadFromStackSlot(const MachineInstr &MI,
                                              int &FrameIndex) const {
-  if (MI.getOpcode() == Dadao::LDW_RI)
+  if (MI.getOpcode() == Dadao::LDO_RRII)
     if (MI.getOperand(1).isFI() && MI.getOperand(2).isImm() &&
         MI.getOperand(2).getImm() == 0) {
       FrameIndex = MI.getOperand(1).getIndex();
@@ -705,7 +705,7 @@ unsigned DadaoInstrInfo::isLoadFromStackSlot(const MachineInstr &MI,
 
 unsigned DadaoInstrInfo::isLoadFromStackSlotPostFE(const MachineInstr &MI,
                                                    int &FrameIndex) const {
-  if (MI.getOpcode() == Dadao::LDW_RI) {
+  if (MI.getOpcode() == Dadao::LDO_RRII) {
     unsigned Reg;
     if ((Reg = isLoadFromStackSlot(MI, FrameIndex)))
       return Reg;
@@ -723,7 +723,7 @@ unsigned DadaoInstrInfo::isLoadFromStackSlotPostFE(const MachineInstr &MI,
 
 unsigned DadaoInstrInfo::isStoreToStackSlot(const MachineInstr &MI,
                                             int &FrameIndex) const {
-  if (MI.getOpcode() == Dadao::SW_RI)
+  if (MI.getOpcode() == Dadao::STO_RRII)
     if (MI.getOperand(0).isFI() && MI.getOperand(1).isImm() &&
         MI.getOperand(1).getImm() == 0) {
       FrameIndex = MI.getOperand(0).getIndex();
@@ -746,21 +746,34 @@ bool DadaoInstrInfo::getMemOperandWithOffsetWidth(
   switch (LdSt.getOpcode()) {
   default:
     return false;
-  case Dadao::LDW_RI:
+  case Dadao::LDMO_RRRI:
+  case Dadao::LDO_RRII:
+  case Dadao::STMO_RRRI:
+  case Dadao::STO_RRII:
+    Width = 8;
+    break;
+  case Dadao::LDTU_RRII:
+  case Dadao::LDTS_RRII:
   case Dadao::LDMTU_RRRI:
   case Dadao::LDMTS_RRRI:
   case Dadao::STMT_RRRI:
-  case Dadao::SW_RI:
+  case Dadao::STT_RRII:
     Width = 4;
     break;
-  case Dadao::LDHs_RI:
-  case Dadao::LDHz_RI:
-  case Dadao::STH_RI:
+  case Dadao::LDWU_RRII:
+  case Dadao::LDWS_RRII:
+  case Dadao::LDMWU_RRRI:
+  case Dadao::LDMWS_RRRI:
+  case Dadao::STMW_RRRI:
+  case Dadao::STW_RRII:
     Width = 2;
     break;
-  case Dadao::LDBs_RI:
-  case Dadao::LDBz_RI:
-  case Dadao::STB_RI:
+  case Dadao::LDBU_RRII:
+  case Dadao::LDBS_RRII:
+  case Dadao::LDMBU_RRRI:
+  case Dadao::LDMBS_RRRI:
+  case Dadao::STMB_RRRI:
+  case Dadao::STB_RRII:
     Width = 1;
     break;
   }
@@ -781,15 +794,19 @@ bool DadaoInstrInfo::getMemOperandsWithOffsetWidth(
   switch (LdSt.getOpcode()) {
   default:
     return false;
-  case Dadao::LDW_RI:
   case Dadao::LDMO_RRRI:
   case Dadao::STMO_RRRI:
-  case Dadao::SW_RI:
-  case Dadao::LDHs_RI:
-  case Dadao::LDHz_RI:
-  case Dadao::STH_RI:
-  case Dadao::LDBs_RI:
-  case Dadao::LDBz_RI:
+  case Dadao::LDO_RRII:
+  case Dadao::STO_RRII:
+  case Dadao::LDTU_RRII:
+  case Dadao::LDTS_RRII:
+  case Dadao::STT_RRII:
+  case Dadao::LDWU_RRII:
+  case Dadao::LDWS_RRII:
+  case Dadao::STW_RRII:
+  case Dadao::LDBU_RRII:
+  case Dadao::LDBS_RRII:
+  case Dadao::STB_RRII:
     const MachineOperand *BaseOp;
     OffsetIsScalable = false;
     if (!getMemOperandWithOffsetWidth(LdSt, BaseOp, Offset, Width, TRI))

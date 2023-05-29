@@ -106,42 +106,11 @@ bool DadaoInstPrinter::printMemoryStoreIncrement(const MCInst *MI,
   return false;
 }
 
-bool DadaoInstPrinter::printAlias(const MCInst *MI, raw_ostream &OS) {
-  switch (MI->getOpcode()) {
-  case Dadao::LDW_RI:
-    // ld 4[*%rN], %rX => ld [++imm], %rX
-    // ld -4[*%rN], %rX => ld [--imm], %rX
-    // ld 4[%rN*], %rX => ld [imm++], %rX
-    // ld -4[%rN*], %rX => ld [imm--], %rX
-    return printMemoryLoadIncrement(MI, OS, "ld", 4);
-  case Dadao::LDHs_RI:
-    return printMemoryLoadIncrement(MI, OS, "ld.h", 2);
-  case Dadao::LDHz_RI:
-    return printMemoryLoadIncrement(MI, OS, "uld.h", 2);
-  case Dadao::LDBs_RI:
-    return printMemoryLoadIncrement(MI, OS, "ld.b", 1);
-  case Dadao::LDBz_RI:
-    return printMemoryLoadIncrement(MI, OS, "uld.b", 1);
-  case Dadao::SW_RI:
-    // st %rX, 4[*%rN] => st %rX, [++imm]
-    // st %rX, -4[*%rN] => st %rX, [--imm]
-    // st %rX, 4[%rN*] => st %rX, [imm++]
-    // st %rX, -4[%rN*] => st %rX, [imm--]
-    return printMemoryStoreIncrement(MI, OS, "st", 4);
-  case Dadao::STH_RI:
-    return printMemoryStoreIncrement(MI, OS, "st.h", 2);
-  case Dadao::STB_RI:
-    return printMemoryStoreIncrement(MI, OS, "st.b", 1);
-  default:
-    return false;
-  }
-}
-
 void DadaoInstPrinter::printInst(const MCInst *MI, uint64_t Address,
                                  StringRef Annotation,
                                  const MCSubtargetInfo & /*STI*/,
                                  raw_ostream &OS) {
-  if (!printAlias(MI, OS) && !printAliasInstr(MI, Address, OS))
+  if (!printAliasInstr(MI, Address, OS))
     printInstruction(MI, Address, OS);
   printAnnotation(OS, Annotation);
 }
@@ -220,7 +189,7 @@ static void printMemoryImmediateOffset(const MCAsmInfo &MAI,
     OffsetOp.getExpr()->print(OS, &MAI);
 }
 
-void DadaoInstPrinter::printMemRiOperand(const MCInst *MI, int OpNo,
+void DadaoInstPrinter::printMemRRIIOperand(const MCInst *MI, int OpNo,
                                          raw_ostream &OS,
                                          const char * /*Modifier*/) {
   const MCOperand &RegOp = MI->getOperand(OpNo);
@@ -229,7 +198,7 @@ void DadaoInstPrinter::printMemRiOperand(const MCInst *MI, int OpNo,
   const unsigned AluCode = AluOp.getImm();
 
   // Offset
-  printMemoryImmediateOffset<16>(MAI, OffsetOp, OS);
+  printMemoryImmediateOffset<12>(MAI, OffsetOp, OS);
 
   // Register
   printMemoryBaseRegister(OS, AluCode, RegOp);
@@ -249,21 +218,6 @@ void DadaoInstPrinter::printMemRRRIOperand(const MCInst *MI, int OpNo,
   OS << "%" << getRegisterName(OffsetOp.getReg());
   OS << "]";
   OS << ", 0";
-}
-
-void DadaoInstPrinter::printMemSplsOperand(const MCInst *MI, int OpNo,
-                                           raw_ostream &OS,
-                                           const char * /*Modifier*/) {
-  const MCOperand &RegOp = MI->getOperand(OpNo);
-  const MCOperand &OffsetOp = MI->getOperand(OpNo + 1);
-  const MCOperand &AluOp = MI->getOperand(OpNo + 2);
-  const unsigned AluCode = AluOp.getImm();
-
-  // Offset
-  printMemoryImmediateOffset<10>(MAI, OffsetOp, OS);
-
-  // Register
-  printMemoryBaseRegister(OS, AluCode, RegOp);
 }
 
 void DadaoInstPrinter::printCCOperand(const MCInst *MI, int OpNo,

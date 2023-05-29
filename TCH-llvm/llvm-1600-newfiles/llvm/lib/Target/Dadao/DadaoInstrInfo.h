@@ -143,24 +143,19 @@ public:
                         int *BytesAdded = nullptr) const override;
 };
 
-static inline bool isSPLSOpcode(unsigned Opcode) {
+static inline bool isMemRRIIOpcode(unsigned Opcode) {
   switch (Opcode) {
-  case Dadao::LDBs_RI:
-  case Dadao::LDBz_RI:
-  case Dadao::LDHs_RI:
-  case Dadao::LDHz_RI:
-  case Dadao::STB_RI:
-  case Dadao::STH_RI:
-    return true;
-  default:
-    return false;
-  }
-}
-
-static inline bool isRMOpcode(unsigned Opcode) {
-  switch (Opcode) {
-  case Dadao::LDW_RI:
-  case Dadao::SW_RI:
+  case Dadao::LDBS_RRII:
+  case Dadao::LDBU_RRII:
+  case Dadao::LDWS_RRII:
+  case Dadao::LDWU_RRII:
+  case Dadao::LDTS_RRII:
+  case Dadao::LDTU_RRII:
+  case Dadao::LDO_RRII:
+  case Dadao::STB_RRII:
+  case Dadao::STW_RRII:
+  case Dadao::STT_RRII:
+  case Dadao::STO_RRII:
     return true;
   default:
     return false;

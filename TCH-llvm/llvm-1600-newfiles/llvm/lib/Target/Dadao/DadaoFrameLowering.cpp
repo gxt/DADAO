@@ -107,7 +107,7 @@ void DadaoFrameLowering::emitPrologue(MachineFunction &MF,
 
   // Push old FP
   // st %fp,-4[*%sp]
-  BuildMI(MBB, MBBI, DL, LII.get(Dadao::SW_RI))
+  BuildMI(MBB, MBBI, DL, LII.get(Dadao::STO_RRII))
       .addReg(Dadao::FP)
       .addReg(Dadao::SP)
       .addImm(-4)
@@ -185,7 +185,7 @@ void DadaoFrameLowering::emitEpilogue(MachineFunction & /*MF*/,
       .addImm(0);
 
   // Restore the frame pointer from the stack.
-  BuildMI(MBB, MBBI, DL, LII.get(Dadao::LDW_RI), Dadao::FP)
+  BuildMI(MBB, MBBI, DL, LII.get(Dadao::LDO_RRII), Dadao::RBFP)
       .addReg(Dadao::FP)
       .addImm(-8)
       .addImm(LPAC::ADD);

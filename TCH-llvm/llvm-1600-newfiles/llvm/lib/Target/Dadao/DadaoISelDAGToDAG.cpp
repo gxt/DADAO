@@ -74,20 +74,13 @@ private:
   void selectFrameIndex(SDNode *N);
 
   // Complex Pattern for address selection.
-  bool selectAddrRi(SDValue Addr, SDValue &Base, SDValue &Offset,
-                    SDValue &AluOp);
-  bool selectAddrRRRI(SDValue Addr, SDValue &R1, SDValue &R2, SDValue &AluOp);
-  bool selectAddrSpls(SDValue Addr, SDValue &Base, SDValue &Offset,
-                      SDValue &AluOp);
+  bool selectAddrRRII(SDValue Addr, SDValue &Base, SDValue &Offset, SDValue &AluOp);
+  bool selectAddrRRRI(SDValue Addr, SDValue &Base, SDValue &Offset, SDValue &AluOp);
 
   // getI64Imm - Return a target constant with the specified value, of type i64.
   inline SDValue getI64Imm(unsigned Imm, const SDLoc &DL) {
     return CurDAG->getTargetConstant(Imm, DL, MVT::i64);
   }
-
-private:
-  bool selectAddrRiSpls(SDValue Addr, SDValue &Base, SDValue &Offset,
-                        SDValue &AluOp, bool RiMode);
 };
 
 } // namespace
@@ -96,30 +89,18 @@ char DadaoDAGToDAGISel::ID = 0;
 
 INITIALIZE_PASS(DadaoDAGToDAGISel, DEBUG_TYPE, PASS_NAME, false, false)
 
-bool DadaoDAGToDAGISel::selectAddrRiSpls(SDValue Addr, SDValue &Base,
-                                         SDValue &Offset, SDValue &AluOp,
-                                         bool RiMode) {
+bool DadaoDAGToDAGISel::selectAddrRRII(SDValue Addr, SDValue &Base,
+                                         SDValue &Offset, SDValue &AluOp) {
   SDLoc DL(Addr);
 
   if (ConstantSDNode *CN = dyn_cast<ConstantSDNode>(Addr)) {
-    if (RiMode) {
-      // Fits in 16-bit signed immediate.
-      if (isInt<16>(CN->getSExtValue())) {
-        int16_t Imm = CN->getSExtValue();
-        Offset = CurDAG->getTargetConstant(Imm, DL, CN->getValueType(0));
-        Base = CurDAG->getRegister(Dadao::R0, CN->getValueType(0));
-        AluOp = CurDAG->getTargetConstant(LPAC::ADD, DL, MVT::i64);
-        return true;
-      }
-    } else {
-      // Fits in 10-bit signed immediate.
-      if (isInt<10>(CN->getSExtValue())) {
-        int16_t Imm = CN->getSExtValue();
-        Offset = CurDAG->getTargetConstant(Imm, DL, CN->getValueType(0));
-        Base = CurDAG->getRegister(Dadao::R0, CN->getValueType(0));
-        AluOp = CurDAG->getTargetConstant(LPAC::ADD, DL, MVT::i64);
-        return true;
-      }
+    // Fits in 12-bit signed immediate.
+    if (isInt<12>(CN->getSExtValue())) {
+      int16_t Imm = CN->getSExtValue();
+      Offset = CurDAG->getTargetConstant(Imm, DL, CN->getValueType(0));
+      Base = CurDAG->getRegister(Dadao::R0, CN->getValueType(0));
+      AluOp = CurDAG->getTargetConstant(LPAC::ADD, DL, MVT::i64);
+      return true;
     }
   }
 
@@ -144,8 +125,7 @@ bool DadaoDAGToDAGISel::selectAddrRiSpls(SDValue Addr, SDValue &Base,
     AluOp = CurDAG->getTargetConstant(LPAC::ADD, DL, MVT::i64);
     // Addresses of the form FI+const
     if (ConstantSDNode *CN = dyn_cast<ConstantSDNode>(Addr.getOperand(1)))
-      if ((RiMode && isInt<16>(CN->getSExtValue())) ||
-          (!RiMode && isInt<10>(CN->getSExtValue()))) {
+      if (isInt<12>(CN->getSExtValue())) {
         // If the first operand is a FI, get the TargetFI Node
         if (FrameIndexSDNode *FIN =
                 dyn_cast<FrameIndexSDNode>(Addr.getOperand(0))) {
@@ -165,16 +145,6 @@ bool DadaoDAGToDAGISel::selectAddrRiSpls(SDValue Addr, SDValue &Base,
   Offset = CurDAG->getTargetConstant(0, DL, MVT::i64);
   AluOp = CurDAG->getTargetConstant(LPAC::ADD, DL, MVT::i64);
   return true;
-}
-
-bool DadaoDAGToDAGISel::selectAddrRi(SDValue Addr, SDValue &Base,
-                                     SDValue &Offset, SDValue &AluOp) {
-  return selectAddrRiSpls(Addr, Base, Offset, AluOp, /*RiMode=*/true);
-}
-
-bool DadaoDAGToDAGISel::selectAddrSpls(SDValue Addr, SDValue &Base,
-                                       SDValue &Offset, SDValue &AluOp) {
-  return selectAddrRiSpls(Addr, Base, Offset, AluOp, /*RiMode=*/false);
 }
 
 bool DadaoDAGToDAGISel::selectAddrRRRI(SDValue Addr, SDValue &RegBase, SDValue &RegOffset,
@@ -223,7 +193,7 @@ bool DadaoDAGToDAGISel::SelectInlineAsmMemoryOperand(
     return true;
   case InlineAsm::Constraint_m: // memory
     if (!selectAddrRRRI(Op, Op0, Op1, AluOp) &&
-        !selectAddrRi(Op, Op0, Op1, AluOp))
+        !selectAddrRRII(Op, Op0, Op1, AluOp))
       return true;
     break;
   }

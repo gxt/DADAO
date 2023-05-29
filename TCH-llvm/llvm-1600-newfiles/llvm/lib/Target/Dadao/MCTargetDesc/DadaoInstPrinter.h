@@ -29,12 +29,10 @@ public:
   void printOperand(const MCInst *MI, unsigned OpNo, raw_ostream &O,
                     const char *Modifier = nullptr);
   void printPredicateOperand(const MCInst *MI, unsigned OpNum, raw_ostream &O);
-  void printMemRiOperand(const MCInst *MI, int OpNo, raw_ostream &O,
+  void printMemRRIIOperand(const MCInst *MI, int OpNo, raw_ostream &O,
                          const char *Modifier = nullptr);
   void printMemRRRIOperand(const MCInst *MI, int OpNo, raw_ostream &O,
                          const char *Modifier = nullptr);
-  void printMemSplsOperand(const MCInst *MI, int OpNo, raw_ostream &O,
-                           const char *Modifier = nullptr);
   void printCCOperand(const MCInst *MI, int OpNo, raw_ostream &O);
   void printHi16ImmOperand(const MCInst *MI, unsigned OpNo, raw_ostream &O);
   void printHi16AndImmOperand(const MCInst *MI, unsigned OpNo, raw_ostream &O);
@@ -52,7 +50,6 @@ public:
   void printRegName(raw_ostream &OS, MCRegister Reg) const override;
 
 private:
-  bool printAlias(const MCInst *MI, raw_ostream &Ostream);
   bool printInst(const MCInst *MI, raw_ostream &Ostream, StringRef Alias,
                  unsigned OpNo0, unsigned OpnNo1);
   bool printMemoryLoadIncrement(const MCInst *MI, raw_ostream &Ostream,
