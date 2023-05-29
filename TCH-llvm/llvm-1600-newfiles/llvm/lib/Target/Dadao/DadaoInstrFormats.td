@@ -61,6 +61,18 @@ class Inst_ORRI<bits<8> majorop, bits<6> minorop, dag outs, dag ins, string opcs
   let HexD = Imm6;
 }
 
+class Inst_OIII<bits<8> majorop, bits<6> minorop, dag outs, dag ins, string opcstr, string oprstr, list<dag> pattern>
+    : Inst_Dadao<outs, ins, opcstr, oprstr, pattern> {
+
+  bits<18> Imm18;
+
+  let MajorOpcode = majorop;
+  let HexA = minorop;
+  let HexB = Imm18{17 - 12};
+  let HexC = Imm18{11 -  6};
+  let HexD = Imm18{ 5 -  0};
+}
+
 class Inst_RRRR<bits<8> majorop, dag outs, dag ins, string opcstr, string oprstr, list<dag> pattern>
     : Inst_Dadao<outs, ins, opcstr, oprstr, pattern> {
 
@@ -105,6 +117,19 @@ class Inst_RRII<bits<8> majorop, dag outs, dag ins, string opcstr, string oprstr
   let HexD = Imm12{ 5 - 0};
 }
 
+class Inst_RIII<bits<8> majorop, dag outs, dag ins, string opcstr, string oprstr, list<dag> pattern>
+    : Inst_Dadao<outs, ins, opcstr, oprstr, pattern> {
+
+  bits<6> RxHa;
+  bits<18> Imm18;
+
+  let MajorOpcode = majorop;
+  let HexA = RxHa;
+  let HexB = Imm18{17 - 12};
+  let HexC = Imm18{11 -  6};
+  let HexD = Imm18{ 5 -  0};
+}
+
 class Inst_RWII<bits<8> majorop, dag outs, dag ins, string opcstr, string oprstr, list<dag> pattern>
     : Inst_Dadao<outs, ins, opcstr, oprstr, pattern> {
 
@@ -118,6 +143,18 @@ class Inst_RWII<bits<8> majorop, dag outs, dag ins, string opcstr, string oprstr
   let HexB{3-0} = Imm16{15 - 12};
   let HexC = Imm16{11 - 6};
   let HexD = Imm16{ 5 - 0};
+}
+
+class Inst_IIII<bits<8> majorop, dag outs, dag ins, string opcstr, string oprstr, list<dag> pattern>
+    : Inst_Dadao<outs, ins, opcstr, oprstr, pattern> {
+
+  bits<24> Imm24;
+
+  let MajorOpcode = majorop;
+  let HexA = Imm24{23 - 18};
+  let HexB = Imm24{17 - 12};
+  let HexC = Imm24{11 -  6};
+  let HexD = Imm24{ 5 -  0};
 }
 
 //------------------------------------------------------------------------------
