@@ -28,10 +28,6 @@
 
 using namespace llvm;
 
-namespace llvm {
-void initializeDadaoMemAluCombinerPass(PassRegistry &);
-} // namespace llvm
-
 extern "C" LLVM_EXTERNAL_VISIBILITY void LLVMInitializeDadaoTarget() {
   // Register the target.
   RegisterTargetMachine<DadaoTargetMachine> registered_target(
@@ -94,7 +90,6 @@ public:
   }
 
   bool addInstSelector() override;
-  void addPreSched2() override;
 };
 } // namespace
 
@@ -107,10 +102,4 @@ DadaoTargetMachine::createPassConfig(PassManagerBase &PassManager) {
 bool DadaoPassConfig::addInstSelector() {
   addPass(createDadaoISelDag(getDadaoTargetMachine()));
   return false;
-}
-
-// Run passes after prolog-epilog insertion and before the second instruction
-// scheduling pass.
-void DadaoPassConfig::addPreSched2() {
-  addPass(createDadaoMemAluCombinerPass());
 }

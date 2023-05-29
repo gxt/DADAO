@@ -25,10 +25,6 @@ class PassRegistry;
 // Dadao-specific DAG, ready for instruction scheduling.
 FunctionPass *createDadaoISelDag(DadaoTargetMachine &TM);
 
-// createDadaoMemAluCombinerPass - This pass combines loads/stores and
-// arithmetic operations.
-FunctionPass *createDadaoMemAluCombinerPass();
-
 // createDadaoSetflagAluCombinerPass - This pass combines SET_FLAG and ALU
 // operations.
 FunctionPass *createDadaoSetflagAluCombinerPass();

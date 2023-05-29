@@ -22,7 +22,6 @@ add_llvm_target(DadaoCodeGen
   DadaoISelLowering.cpp
   DadaoMachineFunctionInfo.cpp
   DadaoMCInstLower.cpp
-  DadaoMemAluCombiner.cpp
   DadaoRegisterInfo.cpp
   DadaoSelectionDAGInfo.cpp
   DadaoSubtarget.cpp
