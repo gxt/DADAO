@@ -124,9 +124,9 @@ void DadaoFrameLowering::emitPrologue(MachineFunction &MF,
   // Allocate space on the stack if needed
   // sub %sp,StackSize,%sp
   if (StackSize != 0) {
-    BuildMI(MBB, MBBI, DL, LII.get(Dadao::SUB_I_LO), Dadao::SP)
+    BuildMI(MBB, MBBI, DL, LII.get(Dadao::ADDI_RB_RRII), Dadao::SP)
         .addReg(Dadao::SP)
-        .addImm(StackSize)
+        .addImm(-StackSize)
         .setMIFlag(MachineInstr::FrameSetup);
   }
 

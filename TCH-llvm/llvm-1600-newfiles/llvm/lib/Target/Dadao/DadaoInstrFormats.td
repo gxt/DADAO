@@ -36,15 +36,15 @@ class Inst_Dadao<dag outs, dag ins, string opcstr, string oprstr, list<dag> patt
 class Inst_ORRR<bits<8> majorop, bits<6> minorop, dag outs, dag ins, string opcstr, string oprstr, list<dag> pattern>
     : Inst_Dadao<outs, ins, opcstr, oprstr, pattern> {
 
-  bits<6> RdHb;
-  bits<6> RdHc;
-  bits<6> RdHd;
+  bits<6> RxHb;
+  bits<6> RyHc;
+  bits<6> RzHd;
 
   let MajorOpcode = majorop;
   let HexA = minorop;
-  let HexB = RdHb;
-  let HexC = RdHc;
-  let HexD = RdHd;
+  let HexB = RxHb;
+  let HexC = RyHc;
+  let HexD = RzHd;
 }
 
 class Inst_ORRI<bits<8> majorop, bits<6> minorop, dag outs, dag ins, string opcstr, string oprstr, list<dag> pattern>

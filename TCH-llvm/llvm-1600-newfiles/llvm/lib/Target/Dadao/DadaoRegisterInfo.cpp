@@ -66,33 +66,6 @@ bool DadaoRegisterInfo::requiresRegisterScavenging(
   return true;
 }
 
-static bool isALUArithLoOpcode(unsigned Opcode) {
-  switch (Opcode) {
-  case Dadao::ADD_I_LO:
-  case Dadao::SUB_I_LO:
-  case Dadao::ADD_F_I_LO:
-  case Dadao::SUB_F_I_LO:
-    return true;
-  default:
-    return false;
-  }
-}
-
-static unsigned getOppositeALULoOpcode(unsigned Opcode) {
-  switch (Opcode) {
-  case Dadao::ADD_I_LO:
-    return Dadao::SUB_I_LO;
-  case Dadao::SUB_I_LO:
-    return Dadao::ADD_I_LO;
-  case Dadao::ADD_F_I_LO:
-    return Dadao::SUB_F_I_LO;
-  case Dadao::SUB_F_I_LO:
-    return Dadao::ADD_F_I_LO;
-  default:
-    llvm_unreachable("Invalid ALU lo opcode");
-  }
-}
-
 static unsigned getRRRIOpcodeVariant(unsigned Opcode) {
   switch (Opcode) {
   case Dadao::LDBS_RRII: return Dadao::LDMBS_RRRI;
@@ -164,21 +137,21 @@ bool DadaoRegisterInfo::eliminateFrameIndex(MachineBasicBlock::iterator II,
 
     if (!isInt<16>(Offset)) {
       // Reg = hi(offset) | lo(offset)
-      BuildMI(*MI.getParent(), II, DL, TII->get(Dadao::MOVHI), Reg)
+      BuildMI(*MI.getParent(), II, DL, TII->get(Dadao::SETZW_RWII_W1), Reg)
           .addImm(static_cast<uint32_t>(Offset) >> 16);
       BuildMI(*MI.getParent(), II, DL, TII->get(Dadao::ORW_RWII_W0), Reg)
           .addReg(Reg)
           .addImm(Offset & 0xffffU);
     } else {
       // Reg = mov(offset)
-      BuildMI(*MI.getParent(), II, DL, TII->get(Dadao::ADD_I_LO), Reg)
+      BuildMI(*MI.getParent(), II, DL, TII->get(Dadao::ADDI_RB_RRII), Reg)
           .addImm(0)
           .addImm(Offset);
     }
     // Reg = FrameReg OP Reg
-    if (MI.getOpcode() == Dadao::ADD_I_LO) {
+    if (MI.getOpcode() == Dadao::ADDI_RRII) {
       BuildMI(*MI.getParent(), II, DL,
-              HasNegOffset ? TII->get(Dadao::SUB_R) : TII->get(Dadao::ADD_R),
+              HasNegOffset ? TII->get(Dadao::SUB_RRRR) : TII->get(Dadao::ADD_RRRR),
               MI.getOperand(0).getReg())
           .addReg(FrameReg)
           .addReg(Reg)
@@ -205,24 +178,9 @@ bool DadaoRegisterInfo::eliminateFrameIndex(MachineBasicBlock::iterator II,
     return false;
   }
 
-  // ALU arithmetic ops take unsigned immediates. If the offset is negative,
-  // we replace the instruction with one that inverts the opcode and negates
-  // the immediate.
-  if ((Offset < 0) && isALUArithLoOpcode(MI.getOpcode())) {
-    unsigned NewOpcode = getOppositeALULoOpcode(MI.getOpcode());
-    // We know this is an ALU op, so we know the operands are as follows:
-    // 0: destination register
-    // 1: source register (frame register)
-    // 2: immediate
-    BuildMI(*MI.getParent(), II, DL, TII->get(NewOpcode),
-            MI.getOperand(0).getReg())
-        .addReg(FrameReg)
-        .addImm(-Offset);
-    MI.eraseFromParent();
-  } else {
-    MI.getOperand(FIOperandNum).ChangeToRegister(FrameReg, /*isDef=*/false);
-    MI.getOperand(FIOperandNum + 1).ChangeToImmediate(Offset);
-  }
+  MI.getOperand(FIOperandNum).ChangeToRegister(FrameReg, /*isDef=*/false);
+  MI.getOperand(FIOperandNum + 1).ChangeToImmediate(Offset);
+
   return false;
 }
 

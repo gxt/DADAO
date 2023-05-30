@@ -155,7 +155,7 @@ void DadaoAsmPrinter::emitCallInstruction(const MachineInstr *MI) {
   // Insert save rca instruction immediately before the call.
   // TODO: We should generate a pc-relative mov instruction here instead
   // of pc + 16 (should be mov .+16 %rca).
-  OutStreamer->emitInstruction(MCInstBuilder(Dadao::ADD_I_LO)
+  OutStreamer->emitInstruction(MCInstBuilder(Dadao::ADDI_RB_RRII)
                                    .addReg(Dadao::RCA)
                                    .addReg(Dadao::PC)
                                    .addImm(16),
@@ -177,7 +177,7 @@ void DadaoAsmPrinter::emitCallInstruction(const MachineInstr *MI) {
     TmpInst.setOpcode(Dadao::BT);
     OutStreamer->emitInstruction(TmpInst, STI);
   } else {
-    OutStreamer->emitInstruction(MCInstBuilder(Dadao::ADD_R)
+    OutStreamer->emitInstruction(MCInstBuilder(Dadao::ADD_RB_ORRR)
                                      .addReg(Dadao::PC)
                                      .addReg(MI->getOperand(0).getReg())
                                      .addReg(Dadao::R0)

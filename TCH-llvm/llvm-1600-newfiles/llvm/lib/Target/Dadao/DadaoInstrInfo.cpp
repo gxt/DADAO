@@ -205,7 +205,7 @@ bool DadaoInstrInfo::analyzeCompare(const MachineInstr &MI, Register &SrcReg,
 inline static bool isRedundantFlagInstr(MachineInstr *CmpI, unsigned SrcReg,
                                         unsigned SrcReg2, int64_t ImmValue,
                                         MachineInstr *OI) {
-  if (CmpI->getOpcode() == Dadao::SFSUB_F_RR &&
+/*  if (CmpI->getOpcode() == Dadao::SFSUB_F_RR &&
       OI->getOpcode() == Dadao::SUB_R &&
       ((OI->getOperand(1).getReg() == SrcReg &&
         OI->getOperand(2).getReg() == SrcReg2) ||
@@ -219,12 +219,12 @@ inline static bool isRedundantFlagInstr(MachineInstr *CmpI, unsigned SrcReg,
         OI->getOpcode() == Dadao::SUB_I_HI)) &&
       OI->getOperand(1).getReg() == SrcReg &&
       OI->getOperand(2).getImm() == ImmValue)
-    return true;
+    return true; */
   return false;
 }
 
 inline static unsigned flagSettingOpcodeVariant(unsigned OldOpcode) {
-  switch (OldOpcode) {
+/*  switch (OldOpcode) {
   case Dadao::ADD_I_HI:
     return Dadao::ADD_F_I_HI;
   case Dadao::ADD_I_LO:
@@ -240,6 +240,8 @@ inline static unsigned flagSettingOpcodeVariant(unsigned OldOpcode) {
   default:
     return Dadao::NOP;
   }
+*/
+  return Dadao::NOP;
 }
 
 bool DadaoInstrInfo::optimizeCompareInstr(

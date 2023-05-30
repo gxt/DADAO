@@ -156,22 +156,30 @@ def MEM_RRII : Operand<i64> {
 // ALU instructions
 // -------------------------------------------------- //
 class ALU_ORRR<bits<6> minorop, string OpcString, SDNode OpNode>
-  : Inst_ORRR<0b00010000, minorop, (outs GPRD:$RdHb), (ins GPRD:$RdHc, GPRD:$RdHd),
-            OpcString, "$RdHb, $RdHc, $RdHd",
-            [(set GPRD:$RdHb, (OpNode GPRD:$RdHc, GPRD:$RdHd))]>;
+  : Inst_ORRR<0b00010000, minorop, (outs GPRD:$RxHb), (ins GPRD:$RyHc, GPRD:$RzHd),
+            OpcString, "$RxHb, $RyHc, $RzHd",
+            [(set GPRD:$RxHb, (OpNode GPRD:$RyHc, GPRD:$RzHd))]>;
 
 let isCommutable = 1 in {
   def AND_ORRR  : ALU_ORRR<0b001000,  "and", and>;
   def ORR_ORRR  : ALU_ORRR<0b001001,  "orr", or>;
   def XOR_ORRR  : ALU_ORRR<0b001010,  "xor", xor>;
-  def XNOR_ORRR : Inst_ORRR<0b00010000, 0b001011, (outs GPRD:$RdHb), (ins GPRD:$RdHc, GPRD:$RdHd),
-                            "xnor", "$RdHb, $RdHc, $RdHd",
-                            [(set GPRD:$RdHb, (not (xor GPRD:$RdHc, GPRD:$RdHd)))]>;
+  def XNOR_ORRR : Inst_ORRR<0b00010000, 0b001011, (outs GPRD:$RxHb), (ins GPRD:$RyHc, GPRD:$RzHd),
+                            "xnor", "$RxHb, $RyHc, $RzHd",
+                            [(set GPRD:$RxHb, (not (xor GPRD:$RyHc, GPRD:$RzHd)))]>;
 }
 
 def SHLU_ORRR   : ALU_ORRR<0b010001, "shlu", shl>;
 def SHRS_ORRR   : ALU_ORRR<0b010010, "shrs", sra>;
 def SHRU_ORRR   : ALU_ORRR<0b010011, "shru", srl>;
+
+class ALU_RB_ORRR<bits<6> minorop, string OpcString, SDNode OpNode, RegisterClass GPRx, RegisterClass GPRz>
+  : Inst_ORRR<0b00010000, minorop, (outs GPRx:$RxHb), (ins GPRx:$RyHc, GPRz:$RzHd),
+            OpcString, "$RxHb, $RyHc, $RzHd",
+            [(set GPRx:$RxHb, (OpNode GPRx:$RyHc, GPRz:$RzHd))]>;
+
+def ADD_RB_ORRR : ALU_RB_ORRR<0b101110, "add", add, GPRB, GPRD>;
+def SUB_RB_ORRR : ALU_RB_ORRR<0b101111, "sub", sub, GPRB, GPRD>;
 
 class R2R_ORRI<bits<6> minorop, string OpcString, RegisterClass GPRx, RegisterClass GPRy>
   : Inst_ORRI<0b00010000, minorop, (outs GPRx:$RxHb), (ins GPRy:$RyHc),
@@ -524,89 +532,6 @@ let hasSideEffects = 0, Inst = 0x00000005 in
 let hasSideEffects = 0, Inst = 0x00000006 in
   def LOG4 : InstDadao<(outs), (ins), "log_4", []>;
 
-// -------------------------------------------------- //
-// ALU instructions
-// -------------------------------------------------- //
-multiclass ALUbase<bits<3> subOp, string AsmStr,
-                   PatLeaf LoExt, PatLeaf HiExt,
-                   list<dag> loPattern, list<dag> hiPattern> {
-  // Register Immediate
-  let H = 0 in
-    def LO : InstRI<subOp, (outs GPR:$Rd), (ins GPR:$Rs1, LoExt:$imm16),
-                    !strconcat(AsmStr, "\t$Rs1, $imm16, $Rd"),
-                    loPattern>;
-  let H = 1 in
-    def HI : InstRI<subOp, (outs GPR:$Rd), (ins GPR:$Rs1, HiExt:$imm16),
-                    !strconcat(AsmStr, "\t$Rs1, $imm16, $Rd"),
-                    hiPattern>;
-
-}
-
-multiclass ALUarith<bits<3> subOp, string AsmStr, SDNode OpNode,
-                    PatLeaf LoExt, PatLeaf HiExt> {
-  defm I_ : ALUbase<subOp, AsmStr, LoExt, HiExt, [], []>;
-
-  // Register Register
-  let JJJJJ = 0 in
-    def R : InstRR<subOp, (outs GPR:$Rd), (ins GPR:$Rs1, GPR:$Rs2, pred:$DDDI),
-                   !strconcat(AsmStr, "$DDDI\t$Rs1, $Rs2, $Rd"),
-                   [(set GPR:$Rd, (OpNode GPR:$Rs1, GPR:$Rs2))]>;
-}
-
-// Non flag setting ALU operations
-let isAsCheapAsAMove = 1, F = 0 in {
-  let isCommutable = 1 in {
-    defm ADD_ : ALUarith<0b000, "add", add, i64lo16z, i64hi16>;
-  }
-  defm SUB_ : ALUarith<0b010,   "sub", sub, i64lo16z, i64hi16>;
-}
-
-def : Pat<(add GPR:$Rs1, i64lo16z:$imm),
-          (ADD_I_LO GPR:$Rs1, i64lo16z:$imm)>;
-
-def : Pat<(sub GPR:$Rs1, i64lo16z:$imm),
-          (SUB_I_LO GPR:$Rs1, i64lo16z:$imm)>;
-
-def : Pat<(add GPR:$Rs1, i64hi16:$imm),
-          (ADD_I_HI GPR:$Rs1, i64hi16:$imm)>;
-
-def : Pat<(sub GPR:$Rs1, i64hi16:$imm),
-          (SUB_I_HI GPR:$Rs1, i64hi16:$imm)>;
-
-// Change add/sub with negative number to sub/add
-def : Pat<(add GPR:$Rs1, i64neg16:$imm),
-          (SUB_I_LO GPR:$Rs1, (NEG $imm))>;
-def : Pat<(sub GPR:$Rs1, i64neg16:$imm),
-          (ADD_I_LO GPR:$Rs1, (NEG $imm))>;
-
-// Flag (incl. carry) setting addition and subtraction
-let F = 1, Defs = [SR] in {
-  defm ADD_F_ : ALUarith<0b000, "add.f", addc, i64lo16z, i64hi16>;
-  defm SUB_F_ : ALUarith<0b010, "sub.f", subc, i64lo16z, i64hi16>;
-}
-
-def : Pat<(addc GPR:$Rs1, i64lo16z:$imm),
-          (ADD_F_I_LO GPR:$Rs1, i64lo16z:$imm)>;
-
-def : Pat<(subc GPR:$Rs1, i64lo16z:$imm),
-          (SUB_F_I_LO GPR:$Rs1, i64lo16z:$imm)>;
-
-def : Pat<(addc GPR:$Rs1, i64hi16:$imm),
-          (ADD_F_I_HI GPR:$Rs1, i64hi16:$imm)>;
-
-def : Pat<(subc GPR:$Rs1, i64hi16:$imm),
-          (SUB_F_I_HI GPR:$Rs1, i64hi16:$imm)>;
-
-def : InstAlias<"mov $src, $dst", (ADD_R GPR:$dst, GPR:$src, R0, 0)>;
-
-let isAsCheapAsAMove = 1, Rs1 = R0.Num, isCodeGenOnly = 1, H = 1, F = 0,
-  isReMaterializable = 1 in
-  def MOVHI : InstRI<0b000, (outs GPR:$Rd), (ins i64hi16:$imm16),
-                     "mov\t$imm16, $Rd",
-                     [(set GPR:$Rd, i64hi16:$imm16)]>;
-
-def : InstAlias<"mov $imm16, $dst", (ADD_I_LO GPR:$dst, R0, i64lo16z:$imm16)>;
-def : InstAlias<"mov $imm16, $dst", (ADD_I_HI GPR:$dst, R0, i64hi16:$imm16)>;
 
 // -------------------------------------------------- //
 // BRANCH instructions
@@ -776,15 +701,15 @@ def : Pat<(extloadi32 ADDR_RRII:$src), (i64 (LDTU_RRII ADDR_RRII:$src))>;
 def : Pat<(atomic_load_8  ADDR_RRII:$src), (i64 (LDBU_RRII ADDR_RRII:$src))>;
 
 // GlobalAddress, ExternalSymbol, Jumptable, ConstantPool
-def : Pat<(DadaoHi tglobaladdr:$dst), (MOVHI tglobaladdr:$dst)>;
+def : Pat<(DadaoHi tglobaladdr:$dst), (SETZW_RWII_W1 tglobaladdr:$dst)>;
 def : Pat<(DadaoLo tglobaladdr:$dst), (ORW_RWII_W0 (i64 RD0), tglobaladdr:$dst)>;
-def : Pat<(DadaoHi texternalsym:$dst), (MOVHI texternalsym:$dst)>;
+def : Pat<(DadaoHi texternalsym:$dst), (SETZW_RWII_W1 texternalsym:$dst)>;
 def : Pat<(DadaoLo texternalsym:$dst), (ORW_RWII_W0 (i64 RD0), texternalsym:$dst)>;
-def : Pat<(DadaoHi tblockaddress:$dst), (MOVHI tblockaddress:$dst)>;
+def : Pat<(DadaoHi tblockaddress:$dst), (SETZW_RWII_W1 tblockaddress:$dst)>;
 def : Pat<(DadaoLo tblockaddress:$dst), (ORW_RWII_W0 (i64 RD0), tblockaddress:$dst)>;
-def : Pat<(DadaoHi tjumptable:$dst), (MOVHI tjumptable:$dst)>;
+def : Pat<(DadaoHi tjumptable:$dst), (SETZW_RWII_W1 tjumptable:$dst)>;
 def : Pat<(DadaoLo tjumptable:$dst), (ORW_RWII_W0 (i64 RD0), tjumptable:$dst)>;
-def : Pat<(DadaoHi tconstpool:$dst), (MOVHI tconstpool:$dst)>;
+def : Pat<(DadaoHi tconstpool:$dst), (SETZW_RWII_W1 tconstpool:$dst)>;
 def : Pat<(DadaoLo tconstpool:$dst), (ORW_RWII_W0 (i64 RD0), tconstpool:$dst)>;
 
 def : Pat<(or GPR:$hi, (DadaoLo tglobaladdr:$lo)),

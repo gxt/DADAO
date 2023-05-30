@@ -255,7 +255,7 @@ void DadaoDAGToDAGISel::selectFrameIndex(SDNode *Node) {
   int FI = cast<FrameIndexSDNode>(Node)->getIndex();
   EVT VT = Node->getValueType(0);
   SDValue TFI = CurDAG->getTargetFrameIndex(FI, VT);
-  unsigned Opc = Dadao::ADD_I_LO;
+  unsigned Opc = Dadao::ADDI_RB_RRII;
   if (Node->hasOneUse()) {
     CurDAG->SelectNodeTo(Node, Opc, VT, TFI, Imm);
     return;
