@@ -34,6 +34,10 @@ def LO16 : SDNodeXForm<imm, [{
                                    SDLoc(N), MVT::i64);
 }]>;
 
+def NEG : SDNodeXForm<imm, [{
+  return CurDAG->getTargetConstant(-N->getSExtValue(), SDLoc(N), MVT::i64);
+}]>;
+
 def ImmHex1AsmOperand : AsmOperandClass { let Name = "ImmHex1"; }
 def i64h1 : Operand<i64>, PatLeaf<(imm), [{
     return N->getZExtValue() <= 63;}]> {
@@ -59,6 +63,14 @@ def LoImm12AsmOperand : AsmOperandClass { let Name = "LoImm12"; }
 def i64lo12z : Operand<i64>, PatLeaf<(i64 imm), [{
     // i64lo12z predicate - true if the 64-bit immediate has only rightmost 12 bits set.
     return ((N->getZExtValue() & 0xFFFULL) == N->getZExtValue());}], LO12> {
+  let ParserMatchClass = LoImm12AsmOperand;
+}
+
+def i64neg12 : Operand<i64>, PatLeaf<(i64 imm), [{
+    // i64neg12 predicate - true if the immediate is negative and can
+    // be represented by a 12 bit integer.
+    int Imm = N->getSExtValue();
+    return (Imm < 0) && (isInt<12>(Imm));}], LO12> {
   let ParserMatchClass = LoImm12AsmOperand;
 }
 
@@ -203,6 +215,9 @@ class ALU_RRII<bits<8> majorop, string OpcString, SDNode OpNode, RegisterClass G
 def ANDI_RRII : ALU_RRII<0b00011000, "andi", and, GPRD, GPRD, i64lo12and>;
 def ADDI_RRII : ALU_RRII<0b00011001, "addi", add, GPRD, GPRD, i64lo12z>;
 def ADDI_RB_RRII : ALU_RRII<0b01001001, "addi", add, GPRB, GPRB, i64lo12z>;
+
+def : Pat<(sub GPRD:$Rs1, i64neg12:$imm),
+          (ADDI_RRII GPRD:$Rs1, (NEG $imm))>;
 
 // -------------------------------------------------- //
 // WYDE instructions
@@ -413,10 +428,6 @@ def DadaoAdjDynAlloc : SDNode<"DadaoISD::ADJDYNALLOC", SDT_DadaoAdjDynAlloc>;
 def HI16 : SDNodeXForm<imm, [{
   return CurDAG->getTargetConstant((uint64_t)N->getZExtValue() >> 16, SDLoc(N),
                                    MVT::i64);
-}]>;
-
-def NEG : SDNodeXForm<imm, [{
-  return CurDAG->getTargetConstant(-N->getSExtValue(), SDLoc(N), MVT::i64);
 }]>;
 
 // Branch targets
