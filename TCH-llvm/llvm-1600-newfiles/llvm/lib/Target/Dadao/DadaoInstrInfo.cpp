@@ -41,7 +41,7 @@ void DadaoInstrInfo::copyPhysReg(MachineBasicBlock &MBB,
     llvm_unreachable("Impossible reg-to-reg copy");
   }
 
-  BuildMI(MBB, Position, DL, get(Dadao::OR_I_LO), DestinationRegister)
+  BuildMI(MBB, Position, DL, get(Dadao::ORW_RWII_W0), DestinationRegister)
       .addReg(SourceRegister, getKillRegState(KillSource))
       .addImm(0);
 }
@@ -231,24 +231,12 @@ inline static unsigned flagSettingOpcodeVariant(unsigned OldOpcode) {
     return Dadao::ADD_F_I_LO;
   case Dadao::ADD_R:
     return Dadao::ADD_F_R;
-  case Dadao::OR_I_HI:
-    return Dadao::OR_F_I_HI;
-  case Dadao::OR_I_LO:
-    return Dadao::OR_F_I_LO;
-  case Dadao::OR_R:
-    return Dadao::OR_F_R;
   case Dadao::SUB_I_HI:
     return Dadao::SUB_F_I_HI;
   case Dadao::SUB_I_LO:
     return Dadao::SUB_F_I_LO;
   case Dadao::SUB_R:
     return Dadao::SUB_F_R;
-  case Dadao::XOR_I_HI:
-    return Dadao::XOR_F_I_HI;
-  case Dadao::XOR_I_LO:
-    return Dadao::XOR_F_I_LO;
-  case Dadao::XOR_R:
-    return Dadao::XOR_F_R;
   default:
     return Dadao::NOP;
   }

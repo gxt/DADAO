@@ -146,7 +146,7 @@ bool DadaoRegisterInfo::eliminateFrameIndex(MachineBasicBlock::iterator II,
   // Replace frame index with a frame pointer reference.
   // If the offset is small enough to fit in the immediate field, directly
   // encode it.
-  // Otherwise scavenge a register and encode it into a MOVHI, OR_I_LO sequence.
+  // Otherwise scavenge a register and encode it into a MOVHI, ORW_RWII_W0 sequence.
   if (!isInt<12>(Offset)) {
     assert(RS && "Register scavenging must be on");
     Register Reg = RS->FindUnusedReg(&Dadao::GPRRegClass);
@@ -166,7 +166,7 @@ bool DadaoRegisterInfo::eliminateFrameIndex(MachineBasicBlock::iterator II,
       // Reg = hi(offset) | lo(offset)
       BuildMI(*MI.getParent(), II, DL, TII->get(Dadao::MOVHI), Reg)
           .addImm(static_cast<uint32_t>(Offset) >> 16);
-      BuildMI(*MI.getParent(), II, DL, TII->get(Dadao::OR_I_LO), Reg)
+      BuildMI(*MI.getParent(), II, DL, TII->get(Dadao::ORW_RWII_W0), Reg)
           .addReg(Reg)
           .addImm(Offset & 0xffffU);
     } else {

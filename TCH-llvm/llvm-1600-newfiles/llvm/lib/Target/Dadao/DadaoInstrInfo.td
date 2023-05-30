@@ -270,6 +270,10 @@ def SETOW_RWII_W1   : SETOW_RWII<0b00010111, 0b01, "setow", "w1", i64w1>;
 def SETOW_RWII_W2   : SETOW_RWII<0b00010111, 0b10, "setow", "w2", i64w2>;
 def SETOW_RWII_W3   : SETOW_RWII<0b00010111, 0b11, "setow", "w3", i64w3>;
 
+// arbitrary immediate
+def : Pat<(i64 imm:$imm), (ORW_RWII_W3 (ORW_RWII_W2 (ORW_RWII_W1 (SETZW_RWII_W0
+                          (Wyde0 imm:$imm)), (Wyde1 imm:$imm)), (Wyde2 imm:$imm)), (Wyde3 imm:$imm))>;
+
 // -------------------------------------------------- //
 // LOAD instructions
 // -------------------------------------------------- //
@@ -538,29 +542,12 @@ multiclass ALUarith<bits<3> subOp, string AsmStr, SDNode OpNode,
                    [(set GPR:$Rd, (OpNode GPR:$Rs1, GPR:$Rs2))]>;
 }
 
-multiclass ALUlogic<bits<3> subOp, string AsmStr, SDNode OpNode,
-                    PatLeaf LoExt, PatLeaf HiExt> {
-  defm I_ : ALUbase<subOp, AsmStr, LoExt, HiExt,
-                    [(set GPR:$Rd, (OpNode GPR:$Rs1, LoExt:$imm16))],
-                    [(set GPR:$Rd, (OpNode GPR:$Rs1, HiExt:$imm16))]>;
-
-  // Register Register
-  let JJJJJ = 0 in
-    def R : InstRR<subOp, (outs GPR:$Rd), (ins GPR:$Rs1, GPR:$Rs2, pred:$DDDI),
-                   !strconcat(AsmStr, "$DDDI\t$Rs1, $Rs2, $Rd"),
-                   [(set GPR:$Rd, (OpNode GPR:$Rs1, GPR:$Rs2))]>;
-}
-
 // Non flag setting ALU operations
 let isAsCheapAsAMove = 1, F = 0 in {
   let isCommutable = 1 in {
     defm ADD_ : ALUarith<0b000, "add", add, i64lo16z, i64hi16>;
   }
   defm SUB_ : ALUarith<0b010,   "sub", sub, i64lo16z, i64hi16>;
-  let isCommutable = 1 in {
-    defm OR_  : ALUlogic<0b101,  "or",  or, i64lo16z, i64hi16>;
-    defm XOR_ : ALUlogic<0b110, "xor", xor, i64lo16z, i64hi16>;
-  }
 }
 
 def : Pat<(add GPR:$Rs1, i64lo16z:$imm),
@@ -598,14 +585,6 @@ def : Pat<(addc GPR:$Rs1, i64hi16:$imm),
 
 def : Pat<(subc GPR:$Rs1, i64hi16:$imm),
           (SUB_F_I_HI GPR:$Rs1, i64hi16:$imm)>;
-
-// Flag setting ALU operations
-let isAsCheapAsAMove = 1, F = 1, Defs = [SR] in {
-  let isCommutable = 1 in {
-    defm OR_F_  : ALUlogic<0b101,  "or.f",   or, i64lo16z, i64hi16>;
-    defm XOR_F_ : ALUlogic<0b110, "xor.f",  xor, i64lo16z, i64hi16>;
-  }
-}
 
 def : InstAlias<"mov $src, $dst", (ADD_R GPR:$dst, GPR:$src, R0, 0)>;
 
@@ -772,12 +751,6 @@ def TRAILZ : InstSpecial<0b011, (outs GPR:$Rd), (ins GPR:$Rs1),
 // Non-Instruction Patterns
 //===----------------------------------------------------------------------===//
 
-// unsigned 16-bit immediate
-def : Pat<(i64 i64lo16z:$imm), (OR_I_LO (i64 R0), imm:$imm)>;
-
-// arbitrary immediate
-def : Pat<(i64 imm:$imm), (OR_I_LO (MOVHI (HI16 imm:$imm)), (LO16 imm:$imm))>;
-
 // Calls
 def : Pat<(Call tglobaladdr:$dst), (CALL tglobaladdr:$dst)>;
 def : Pat<(Call texternalsym:$dst), (CALL texternalsym:$dst)>;
@@ -793,23 +766,23 @@ def : Pat<(atomic_load_8  ADDR_RRII:$src), (i64 (LDBU_RRII ADDR_RRII:$src))>;
 
 // GlobalAddress, ExternalSymbol, Jumptable, ConstantPool
 def : Pat<(DadaoHi tglobaladdr:$dst), (MOVHI tglobaladdr:$dst)>;
-def : Pat<(DadaoLo tglobaladdr:$dst), (OR_I_LO (i64 R0), tglobaladdr:$dst)>;
+def : Pat<(DadaoLo tglobaladdr:$dst), (ORW_RWII_W0 (i64 RD0), tglobaladdr:$dst)>;
 def : Pat<(DadaoHi texternalsym:$dst), (MOVHI texternalsym:$dst)>;
-def : Pat<(DadaoLo texternalsym:$dst), (OR_I_LO (i64 R0), texternalsym:$dst)>;
+def : Pat<(DadaoLo texternalsym:$dst), (ORW_RWII_W0 (i64 RD0), texternalsym:$dst)>;
 def : Pat<(DadaoHi tblockaddress:$dst), (MOVHI tblockaddress:$dst)>;
-def : Pat<(DadaoLo tblockaddress:$dst), (OR_I_LO (i64 R0), tblockaddress:$dst)>;
+def : Pat<(DadaoLo tblockaddress:$dst), (ORW_RWII_W0 (i64 RD0), tblockaddress:$dst)>;
 def : Pat<(DadaoHi tjumptable:$dst), (MOVHI tjumptable:$dst)>;
-def : Pat<(DadaoLo tjumptable:$dst), (OR_I_LO (i64 R0), tjumptable:$dst)>;
+def : Pat<(DadaoLo tjumptable:$dst), (ORW_RWII_W0 (i64 RD0), tjumptable:$dst)>;
 def : Pat<(DadaoHi tconstpool:$dst), (MOVHI tconstpool:$dst)>;
-def : Pat<(DadaoLo tconstpool:$dst), (OR_I_LO (i64 R0), tconstpool:$dst)>;
+def : Pat<(DadaoLo tconstpool:$dst), (ORW_RWII_W0 (i64 RD0), tconstpool:$dst)>;
 
 def : Pat<(or GPR:$hi, (DadaoLo tglobaladdr:$lo)),
-          (OR_I_LO GPR:$hi, tglobaladdr:$lo)>;
+          (ORW_RWII_W0 GPRD:$hi, tglobaladdr:$lo)>;
 def : Pat<(or GPR:$hi, (DadaoLo texternalsym:$lo)),
-          (OR_I_LO GPR:$hi, texternalsym:$lo)>;
+          (ORW_RWII_W0 GPRD:$hi, texternalsym:$lo)>;
 def : Pat<(or GPR:$hi, (DadaoLo tblockaddress:$lo)),
-          (OR_I_LO GPR:$hi, tblockaddress:$lo)>;
+          (ORW_RWII_W0 GPRD:$hi, tblockaddress:$lo)>;
 def : Pat<(or GPR:$hi, (DadaoLo tjumptable:$lo)),
-          (OR_I_LO GPR:$hi, tjumptable:$lo)>;
+          (ORW_RWII_W0 GPRD:$hi, tjumptable:$lo)>;
 def : Pat<(or GPR:$hi, (DadaoLo tconstpool:$lo)),
-          (OR_I_LO GPR:$hi, tconstpool:$lo)>;
+          (ORW_RWII_W0 GPRD:$hi, tconstpool:$lo)>;
