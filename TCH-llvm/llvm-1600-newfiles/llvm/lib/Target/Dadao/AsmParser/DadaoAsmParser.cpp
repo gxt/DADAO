@@ -435,6 +435,17 @@ public:
     return Value != 0 && isShiftedUInt<16, 48>(Value);
   }
 
+  bool isImmHex1() {
+    if (!isImm())
+      return false;
+
+    const MCConstantExpr *ConstExpr = dyn_cast<MCConstantExpr>(Imm.Value);
+    if (!ConstExpr)
+      return false;
+    int64_t Value = ConstExpr->getValue();
+    return (Value <= 63);
+  }
+
   void addExpr(MCInst &Inst, const MCExpr *Expr) const {
     // Add as immediates where possible. Null MCExpr = 0
     if (Expr == nullptr)
@@ -513,6 +524,11 @@ public:
   }
 
   void addImmWyde3Operands(MCInst &Inst, unsigned N) const {
+    assert(N == 1 && "Invalid number of operands!");
+    addExpr(Inst, getImm());
+  }
+
+  void addImmHex1Operands(MCInst &Inst, unsigned N) const {
     assert(N == 1 && "Invalid number of operands!");
     addExpr(Inst, getImm());
   }

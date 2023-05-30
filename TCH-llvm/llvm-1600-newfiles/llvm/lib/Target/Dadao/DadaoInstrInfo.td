@@ -34,6 +34,12 @@ def LO16 : SDNodeXForm<imm, [{
                                    SDLoc(N), MVT::i64);
 }]>;
 
+def ImmHex1AsmOperand : AsmOperandClass { let Name = "ImmHex1"; }
+def i64h1 : Operand<i64>, PatLeaf<(imm), [{
+    return N->getZExtValue() <= 63;}]> {
+  let ParserMatchClass = ImmHex1AsmOperand;
+}
+
 def Imm12AsmOperand : AsmOperandClass { let Name = "Imm12"; }
 def imm12 : Operand<i64>, PatLeaf<(imm), [{
     return isInt<12>(N->getSExtValue()); }]> {
@@ -151,19 +157,29 @@ let isCommutable = 1 in {
                             [(set GPRD:$RdHb, (not (xor GPRD:$RdHc, GPRD:$RdHd)))]>;
 }
 
-class ALU_ORRI<bits<6> minorop, string OpcString, RegisterClass GPRx, RegisterClass GPRy>
+def SHLU_ORRR   : ALU_ORRR<0b010001, "shlu", shl>;
+def SHRS_ORRR   : ALU_ORRR<0b010010, "shrs", sra>;
+def SHRU_ORRR   : ALU_ORRR<0b010011, "shru", srl>;
+
+class R2R_ORRI<bits<6> minorop, string OpcString, RegisterClass GPRx, RegisterClass GPRy>
   : Inst_ORRI<0b00010000, minorop, (outs GPRx:$RxHb), (ins GPRy:$RyHc),
-              OpcString, "$RxHb, $RyHc, 0",
-              [(set GPRx:$RxHb, GPRy:$RyHc)]> {
-}
+              OpcString, "$RxHb, $RyHc, 0", [(set GPRx:$RxHb, GPRy:$RyHc)]>;
 
 // TODO: ONLY imm6 == 0 permitted, fixme later
 let Imm6 = 0b000000 in {
-  def RD2RD_ORRI : ALU_ORRI<0b101000, "rd2rd", GPRD, GPRD>;
-  def RD2RB_ORRI : ALU_ORRI<0b101001, "rd2rb", GPRD, GPRB>;
-  def RB2RD_ORRI : ALU_ORRI<0b101010, "rb2rd", GPRB, GPRD>;
-  def RB2RB_ORRI : ALU_ORRI<0b101011, "rb2rb", GPRB, GPRB>;
+  def RD2RD_ORRI : R2R_ORRI<0b101000, "rd2rd", GPRD, GPRD>;
+  def RD2RB_ORRI : R2R_ORRI<0b101001, "rd2rb", GPRD, GPRB>;
+  def RB2RD_ORRI : R2R_ORRI<0b101010, "rb2rd", GPRB, GPRD>;
+  def RB2RB_ORRI : R2R_ORRI<0b101011, "rb2rb", GPRB, GPRB>;
 }
+
+class SHIFT_ORRI<bits<6> minorop, string OpcString, SDNode OpNode>
+  : Inst_ORRI<0b00010000, minorop, (outs GPRD:$RxHb), (ins GPRD:$RyHc, i64h1:$Imm6),
+              OpcString, "$RxHb, $RyHc, $Imm6", [(set GPRD:$RxHb, (OpNode GPRD:$RyHc, i64h1:$Imm6))]>;
+
+def SHLU_ORRI   : SHIFT_ORRI<0b011001, "shlu", shl>;
+def SHRS_ORRI   : SHIFT_ORRI<0b011010, "shrs", sra>;
+def SHRU_ORRI   : SHIFT_ORRI<0b011011, "shru", srl>;
 
 // TODO: RdHa SHOULD be handled
 class ALU_RRRR<bits<8> majorop, string OpcString, SDNode OpNode>
@@ -601,62 +617,6 @@ let isAsCheapAsAMove = 1, Rs1 = R0.Num, isCodeGenOnly = 1, H = 1, F = 0,
 
 def : InstAlias<"mov $imm16, $dst", (ADD_I_LO GPR:$dst, R0, i64lo16z:$imm16)>;
 def : InstAlias<"mov $imm16, $dst", (ADD_I_HI GPR:$dst, R0, i64hi16:$imm16)>;
-
-// Shift instructions
-class ShiftRI<string AsmStr, list<dag> Pattern>
-  : InstRI<0b111, (outs GPR:$Rd), (ins GPR:$Rs1, immShift:$imm16),
-           !strconcat(AsmStr, "\t$Rs1, $imm16, $Rd"), Pattern> {
-  let isReMaterializable = 1;
-}
-
-let F = 0 in {
-  let H = 0 in
-    def SL_I : ShiftRI<"sh", [(set GPR:$Rd, (shl GPR:$Rs1, immShift:$imm16))]>;
-  let H = 1 in
-    def SA_I : ShiftRI<"sha", []>;
-}
-def : Pat<(srl GPR:$Rs1, immShift:$imm), (SL_I GPR:$Rs1, (NEG $imm))>;
-def : Pat<(sra GPR:$Rs1, immShift:$imm), (SA_I GPR:$Rs1, (NEG $imm))>;
-
-let F = 1, Defs = [SR] in {
-  let H = 0 in
-    def SL_F_I : ShiftRI<"sh.f", []>;
-  let H = 1 in
-    def SA_F_I : ShiftRI<"sha.f", []>;
-}
-
-class ShiftRR<string AsmStr, list<dag> Pattern>
-  : InstRR<0b111, (outs GPR:$Rd), (ins GPR:$Rs1, GPR:$Rs2, pred:$DDDI), AsmStr,
-           Pattern>;
-
-let F = 0 in {
-  let JJJJJ = 0b10000 in
-    def SHL_R : ShiftRR<"sh$DDDI\t$Rs1, $Rs2, $Rd",
-                        [(set GPR:$Rd, (shl GPR:$Rs1, GPR:$Rs2))]>;
-  let isCodeGenOnly = 1 in {
-    let JJJJJ = 0b10000 in
-      def SRL_R : ShiftRR<"sh$DDDI\t$Rs1, $Rs2, $Rd", []>;
-  }
-  let JJJJJ = 0b11000 in
-    def SRA_R : ShiftRR<"sha$DDDI\t$Rs1, $Rs2, $Rd", []>;
-}
-
-let F = 1, Defs = [SR] in {
-  let JJJJJ = 0b10000 in
-    def SHL_F_R : ShiftRR<"sh.f$DDDI\t$Rs1, $Rs2, $Rd", []>;
-  let isCodeGenOnly = 1 in {
-    let JJJJJ = 0b10000 in
-      def SRL_F_R : ShiftRR<"sh.f$DDDI\t$Rs1, $Rs2, $Rd", []>;
-  }
-  let JJJJJ = 0b11000 in
-    def SRA_F_R : ShiftRR<"sha.f$DDDI\t$Rs1, $Rs2, $Rd", []>;
-}
-
-// Expand shift-right operations
-def : Pat<(srl GPR:$Rs1, GPR:$Rs2),
-          (SRL_R GPR:$Rs1, (SUB_R R0, GPR:$Rs2))>;
-def : Pat<(sra GPR:$Rs1, GPR:$Rs2),
-          (SRA_R GPR:$Rs1, (SUB_R R0, GPR:$Rs2))>;
 
 // -------------------------------------------------- //
 // BRANCH instructions
