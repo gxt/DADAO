@@ -368,64 +368,6 @@ class InstRM<bit S, dag outs, dag ins, string asmstr, list<dag> pattern>
 }
 
 //------------------------------------------------------------------------------
-// Conditional Branch (BR)
-//------------------------------------------------------------------------------
-// Encoding:
-//           -----------------------------------------------------------------
-//           |1.1.1.0|D.D.D| . . . . . . . . . . . . . . . . . . . . . . |0.I|
-//           -----------------------------------------------------------------
-//            opcode condition                   constant (23)
-//
-// Action:
-//            if (condition) { `pc' <- 4*(zero-extended constant) }
-//
-// The BR instruction is an absolute branch.
-// The constant is scaled as shown by its position in the instruction word such
-// that it specifies word-aligned addresses in the range [0,2^25-4]
-//
-// The `DDDI' field selects the condition that causes the branch to be taken.
-// (the `I' (Invert sense) bit inverts the sense of the condition):
-//
-//   DDDI  logical function                        [code, used for...]
-//   ----  --------------------------------------  ------------------------
-//   0000  1                                       [T, true]
-//   0001  0                                       [F, false]
-//   0010  C AND Z'                                [HI, high]
-//   0011  C' OR Z                                 [LS, low or same]
-//   0100  C'                                      [CC, carry cleared]
-//   0101  C                                       [CS, carry set]
-//   0110  Z'                                      [NE, not equal]
-//   0111  Z                                       [EQ, equal]
-//   1000  V'                                      [VC, oVerflow cleared]
-//   1001  V                                       [VS, oVerflow set]
-//   1010  N'                                      [PL, plus]
-//   1011  N                                       [MI, minus]
-//   1100  (N AND V) OR (N' AND V')                [GE, greater than or equal]
-//   1101  (N AND V') OR (N' AND V)                [LT, less than]
-//   1110  (N AND V AND Z') OR (N' AND V' AND Z')  [GT, greater than]
-//   1111  (Z) OR (N AND V') OR (N' AND V)         [LE, less than or equal]
-//
-// If the branch is not taken, the BR instruction is a no-op.  If the branch is
-// taken, the processor starts executing instructions at the branch target
-// address *after* the processor has executed one more instruction.  That is,
-// the branch has one “branch delay slot”.  Be very careful if you find yourself
-// wanting to put a branch in a branch delays slot!
-class InstBR<dag outs, dag ins, string asmstr, list<dag> pattern>
-    : InstDadao<outs, ins, asmstr, pattern> {
-  let Itinerary = IIC_ALU;
-  bits<25> addr;
-  bits<4> DDDI;
-
-  let Opcode = 0b1110;
-  let Inst{27 - 25} = DDDI{3 - 1};
-  let Inst{24 - 0} = addr;
-  // These instructions overwrite the last two address bits (which are assumed
-  // and ensured to be 0).
-  let Inst{1} = 0;
-  let Inst{0} = DDDI{0};
-}
-
-//------------------------------------------------------------------------------
 // Conditional Set (SCC)
 //------------------------------------------------------------------------------
 // Encoding:

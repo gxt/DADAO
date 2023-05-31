@@ -18,9 +18,12 @@ include "DadaoInstrFormats.td"
 
 //  These are target-independent nodes, but have target-specific formats.
 def SDT_DadaoSetFlag      : SDTypeProfile<0,  2, [SDTCisSameAs<0, 1>]>;
+def SDT_DadaoBrCC         : SDTypeProfile<0,  2, [SDTCisVT<0, OtherVT>, SDTCisVT<1, i64>]>;
 
 def DadaoSetFlag     : SDNode<"DadaoISD::SET_FLAG", SDT_DadaoSetFlag,
                               [SDNPOutGlue]>;
+def DadaoBrCC        : SDNode<"DadaoISD::BR_CC", SDT_DadaoBrCC,
+                              [SDNPHasChain, SDNPInGlue]>;
 
 // Extract bits 0-5 (low-end) of an immediate value.
 def LO06 : SDNodeXForm<imm, [{
@@ -433,8 +436,20 @@ let Imm6 = 0b000000 in {
 // BRANCH instructions
 // -------------------------------------------------- //
 
+// Branch targets
+// TODO: BrTarget SHOULD BE relative addr, NOT absolute addr
+def BrTargetAsmOperand : AsmOperandClass {
+  let Name = "BrTarget";
+}
+def BrTarget   : Operand<OtherVT> {
+  let ParserMatchClass = BrTargetAsmOperand;
+  let EncoderMethod = "getBranchTargetOpValue";
+  let DecoderMethod = "decodeBranch";
+}
+
 class BRANCH_RIII<bits<8> majorop, string OpcString>
-  : Inst_RIII<majorop, (outs), (ins GPRD:$RxHa, i16imm:$Imm18), OpcString, "$RxHa, $Imm18", []> {
+  : Inst_RIII<majorop, (outs), (ins GPRD:$RxHa, BrTarget:$Imm18), OpcString, "$RxHa, $Imm18",
+              [(DadaoBrCC bb:$Imm18, GPRD:$RxHa)]> {
     let isBranch = 1;
     let isBarrier = 1;
     let isTerminator = 1;
@@ -449,6 +464,23 @@ def BRZ_RIII  : BRANCH_RIII<0b00101010, "brz">;
 def BRNZ_RIII : BRANCH_RIII<0b00101011, "brnz">;
 def BRP_RIII  : BRANCH_RIII<0b00101101, "brp">;
 def BRNP_RIII : BRANCH_RIII<0b00101110, "brnp">;
+
+def JUMP_IIII : Inst_IIII<0b01100100, (outs), (ins BrTarget:$Imm24), "jump", "$Imm24", [(br bb:$Imm24)]> {
+  let isBranch = 1;
+  let isBarrier = 1;
+  let isTerminator = 1;
+}
+
+/*
+def JUMP_RRII : Inst_RRII<0b01100101, (outs), (ins GPRB:$RxHa, GPRD:$RyHb, i64lo12s:$Imm12),
+      "jump", "$RxHa, $RyHb, $Imm12",
+      [(brind (GPRB:$RxHa, GPRD:$RyHb, i64lo12s:$Imm12))]> {
+  let isBranch = 1;
+  let isBarrier = 1;
+  let isTerminator = 1;
+  let isIndirectBranch = 1;
+}
+*/
 
 
 //------------------------------------------------------------------------------
@@ -469,8 +501,6 @@ def SDT_DadaoSelectCC     : SDTypeProfile<1,  3, [SDTCisSameAs<0, 1>,
                                                   SDTCisSameAs<1, 2>]>;
 def SDT_DadaoSetCC        : SDTypeProfile<1,  1, [SDTCisVT<0, i64>,
                                                   SDTCisVT<1, i64>]>;
-def SDT_DadaoBrCC         : SDTypeProfile<0,  2, [SDTCisVT<0, OtherVT>,
-                                                  SDTCisVT<1, i64>]>;
 def SDT_DadaoAdjDynAlloc  : SDTypeProfile<1,  1, [SDTCisVT<0, i64>,
                                                   SDTCisVT<1, i64>]>;
 
@@ -483,8 +513,6 @@ def CallSeqStart     : SDNode<"ISD::CALLSEQ_START", SDT_DadaoCallSeqStart,
                               [SDNPHasChain, SDNPOutGlue]>;
 def CallSeqEnd       : SDNode<"ISD::CALLSEQ_END", SDT_DadaoCallSeqEnd,
                               [SDNPHasChain, SDNPOptInGlue, SDNPOutGlue]>;
-def DadaoBrCC        : SDNode<"DadaoISD::BR_CC", SDT_DadaoBrCC,
-                              [SDNPHasChain, SDNPInGlue]>;
 def DadaoSelectCC    : SDNode<"DadaoISD::SELECT_CC", SDT_DadaoSelectCC,
                               [SDNPInGlue]>;
 def DadaoSetCC       : SDNode<"DadaoISD::SETCC", SDT_DadaoSetCC,
@@ -499,16 +527,6 @@ def HI16 : SDNodeXForm<imm, [{
   return CurDAG->getTargetConstant((uint64_t)N->getZExtValue() >> 16, SDLoc(N),
                                    MVT::i64);
 }]>;
-
-// Branch targets
-def BrTargetAsmOperand : AsmOperandClass {
-  let Name = "BrTarget";
-}
-def BrTarget   : Operand<OtherVT> {
-  let ParserMatchClass = BrTargetAsmOperand;
-  let EncoderMethod = "getBranchTargetOpValue";
-  let DecoderMethod = "decodeBranch";
-}
 
 def CallTargetAsmOperand : AsmOperandClass {
   let Name = "CallTarget";
@@ -599,28 +617,6 @@ let hasSideEffects = 0, Inst = 0x00000006 in
 // BRANCH instructions
 // -------------------------------------------------- //
 
-let isBranch = 1, isBarrier = 1, isTerminator = 1 in {
-  def BT : InstBR<(outs), (ins BrTarget:$addr),
-                  "bt\t$addr",
-                  [(br bb:$addr)]> {
-    let DDDI = 0b0000;
-  }
-  let Uses = [SR] in
-    def BRCC : InstBR<(outs), (ins BrTarget:$addr, CCOp:$DDDI),
-                      "b$DDDI\t$addr",
-                      [(DadaoBrCC bb:$addr, imm:$DDDI)]>;
-
-  let isIndirectBranch = 1 in {
-    def JR : InstRR<0b101, (outs), (ins GPR:$Rs2), "bt\t$Rs2",
-                    [(brind GPR:$Rs2)]> {
-      let Rs1 = R0.Num;
-      let Rd = R2.Num;
-      let F = 0;
-      let JJJJJ = 0;
-      let DDDI = 0;
-    }
-  }
-}
 
 // Jump and link
 let isCall = 1, isCodeGenOnly = 1, Uses = [SP],

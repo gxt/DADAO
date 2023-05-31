@@ -551,7 +551,7 @@ bool DadaoInstrInfo::analyzeBranch(MachineBasicBlock &MBB,
       return true;
 
     // Handle unconditional branches.
-    if (Instruction->getOpcode() == Dadao::BT) {
+    if (Instruction->getOpcode() == Dadao::JUMP_IIII) {
       if (!AllowModify) {
         TrueBlock = Instruction->getOperand(0).getMBB();
         continue;
@@ -578,7 +578,9 @@ bool DadaoInstrInfo::analyzeBranch(MachineBasicBlock &MBB,
 
     // Handle conditional branches
     unsigned Opcode = Instruction->getOpcode();
-    if (Opcode != Dadao::BRCC)
+    if (Opcode != Dadao::BRN_RIII && Opcode != Dadao::BRNN_RIII &&
+        Opcode != Dadao::BRZ_RIII && Opcode != Dadao::BRNZ_RIII &&
+        Opcode != Dadao::BRP_RIII && Opcode != Dadao::BRNP_RIII)
       return true; // Unknown opcode.
 
     // Multiple conditional branches are not handled here so only proceed if
@@ -632,7 +634,7 @@ unsigned DadaoInstrInfo::insertBranch(MachineBasicBlock &MBB,
   // If condition is empty then an unconditional branch is being inserted.
   if (Condition.empty()) {
     assert(!FalseBlock && "Unconditional branch with multiple successors!");
-    BuildMI(&MBB, DL, get(Dadao::BT)).addMBB(TrueBlock);
+    BuildMI(&MBB, DL, get(Dadao::JUMP_IIII)).addMBB(TrueBlock);
     return 1;
   }
 
@@ -640,14 +642,35 @@ unsigned DadaoInstrInfo::insertBranch(MachineBasicBlock &MBB,
   assert((Condition.size() == 1) &&
          "Dadao branch conditions should have one component.");
   unsigned ConditionalCode = Condition[0].getImm();
-  BuildMI(&MBB, DL, get(Dadao::BRCC)).addMBB(TrueBlock).addImm(ConditionalCode);
+  switch (ConditionalCode) {
+  case LPCC::ICC_EQ: //  equal
+    BuildMI(&MBB, DL, get(Dadao::BRZ_RIII)).addMBB(TrueBlock);
+    break;
+  case LPCC::ICC_NE: //  not equal
+    BuildMI(&MBB, DL, get(Dadao::BRNZ_RIII)).addMBB(TrueBlock);
+    break;
+  case LPCC::ICC_GE: //  greater than or equal
+    BuildMI(&MBB, DL, get(Dadao::BRNN_RIII)).addMBB(TrueBlock);
+    break;
+  case LPCC::ICC_LT: //  less than
+    BuildMI(&MBB, DL, get(Dadao::BRN_RIII)).addMBB(TrueBlock);
+    break;
+  case LPCC::ICC_GT: //  greater than
+    BuildMI(&MBB, DL, get(Dadao::BRP_RIII)).addMBB(TrueBlock);
+    break;
+  case LPCC::ICC_LE: //  less than or equal
+    BuildMI(&MBB, DL, get(Dadao::BRNP_RIII)).addMBB(TrueBlock);
+    break;
+  default:
+    llvm_unreachable("Invalid condtional code");
+  }
 
   // If no false block, then false behavior is fall through and no branch needs
   // to be inserted.
   if (!FalseBlock)
     return 1;
 
-  BuildMI(&MBB, DL, get(Dadao::BT)).addMBB(FalseBlock);
+  BuildMI(&MBB, DL, get(Dadao::JUMP_IIII)).addMBB(FalseBlock);
   return 2;
 }
 
@@ -662,8 +685,13 @@ unsigned DadaoInstrInfo::removeBranch(MachineBasicBlock &MBB,
     --Instruction;
     if (Instruction->isDebugInstr())
       continue;
-    if (Instruction->getOpcode() != Dadao::BT &&
-        Instruction->getOpcode() != Dadao::BRCC) {
+    if (Instruction->getOpcode() != Dadao::JUMP_IIII &&
+        Instruction->getOpcode() != Dadao::BRN_RIII &&
+        Instruction->getOpcode() != Dadao::BRNN_RIII &&
+        Instruction->getOpcode() != Dadao::BRZ_RIII &&
+        Instruction->getOpcode() != Dadao::BRNZ_RIII &&
+        Instruction->getOpcode() != Dadao::BRP_RIII &&
+        Instruction->getOpcode() != Dadao::BRNP_RIII) {
       break;
     }
 
