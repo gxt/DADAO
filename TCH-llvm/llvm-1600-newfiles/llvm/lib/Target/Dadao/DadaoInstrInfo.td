@@ -429,6 +429,28 @@ let Imm6 = 0b000000 in {
   def STMRB_RRRI : STORE_RRRI<0b01001111, "stmrb", GPRB, store, i64>;
 }
 
+// -------------------------------------------------- //
+// BRANCH instructions
+// -------------------------------------------------- //
+
+class BRANCH_RIII<bits<8> majorop, string OpcString>
+  : Inst_RIII<majorop, (outs), (ins GPRD:$RxHa, i16imm:$Imm18), OpcString, "$RxHa, $Imm18", []> {
+    let isBranch = 1;
+    let isBarrier = 1;
+    let isTerminator = 1;
+    let Uses = [RDCC];
+    let RxHa = RDCC.Num;
+  }
+
+// TODO: NOT finised
+def BRN_RIII  : BRANCH_RIII<0b00101000, "brn">;
+def BRNN_RIII : BRANCH_RIII<0b00101001, "brnn">;
+def BRZ_RIII  : BRANCH_RIII<0b00101010, "brz">;
+def BRNZ_RIII : BRANCH_RIII<0b00101011, "brnz">;
+def BRP_RIII  : BRANCH_RIII<0b00101101, "brp">;
+def BRNP_RIII : BRANCH_RIII<0b00101110, "brnp">;
+
+
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -676,13 +698,6 @@ let isBranch = 1, isBarrier = 1, isTerminator = 1,
     let JJJJJ = 0;
   }
 }
-
-// TODO: This only considers the case where BROFF is an immediate and not where
-// it is a register. Add support for register relative branching.
-let isBranch = 1, isBarrier = 1, isTerminator = 1, Rs1 = 0,
-    Uses = [SR] in
-  def BRR : InstBRR<(outs), (ins i16imm:$imm16, CCOp:$DDDI),
-                    "b${DDDI}.r\t$imm16", []>;
 
 let F = 0 in {
 // Population Count (POPC)

@@ -426,39 +426,6 @@ class InstBR<dag outs, dag ins, string asmstr, list<dag> pattern>
 }
 
 //------------------------------------------------------------------------------
-// Conditional Branch Relative (BRR)
-//------------------------------------------------------------------------------
-// Encoding:
-//           -----------------------------------------------------------------
-//           |1.1.1.0|D.D.D|1|-| . . . . |-.-| . . . . . . . . . . . . . |1.I|
-//           -----------------------------------------------------------------
-//            opcode condition     Rs1           constant (14)
-// Action:
-//           if (condition) { ‘pc’ <- Rs1 + 4*sign-extended constant) }
-//
-// BRR behaves like BR, except the branch target address is a 16-bit PC relative
-// offset.
-class InstBRR<dag outs, dag ins, string asmstr, list<dag> pattern>
-    : InstDadao<outs, ins, asmstr, pattern> {
-  bits<4> DDDI;
-  bits<5> Rs1;
-  bits<16> imm16;
-
-  let Opcode = 0b1110;
-  let Inst{27 - 25} = DDDI{3 - 1};
-  let Inst{24} = 1;
-  let Inst{22 - 18} = Rs1;
-  let Inst{17 - 16} = 0;
-  let Inst{15 - 0} = imm16;
-  // Overwrite last two bits which have to be zero
-  let Inst{1} = 1;
-  let Inst{0} = DDDI{0};
-
-  // Set don't cares to zero
-  let Inst{23} = 0;
-}
-
-//------------------------------------------------------------------------------
 // Conditional Set (SCC)
 //------------------------------------------------------------------------------
 // Encoding:
