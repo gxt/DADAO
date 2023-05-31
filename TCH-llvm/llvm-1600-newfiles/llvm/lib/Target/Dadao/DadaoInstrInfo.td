@@ -16,6 +16,12 @@
 
 include "DadaoInstrFormats.td"
 
+//  These are target-independent nodes, but have target-specific formats.
+def SDT_DadaoSetFlag      : SDTypeProfile<0,  2, [SDTCisSameAs<0, 1>]>;
+
+def DadaoSetFlag     : SDNode<"DadaoISD::SET_FLAG", SDT_DadaoSetFlag,
+                              [SDNPOutGlue]>;
+
 // Extract bits 0-5 (low-end) of an immediate value.
 def LO06 : SDNodeXForm<imm, [{
   return CurDAG->getTargetConstant((uint64_t)N->getZExtValue() & 0x3FULL,
@@ -63,6 +69,11 @@ def LoImm12AsmOperand : AsmOperandClass { let Name = "LoImm12"; }
 def i64lo12z : Operand<i64>, PatLeaf<(i64 imm), [{
     // i64lo12z predicate - true if the 64-bit immediate has only rightmost 12 bits set.
     return ((N->getZExtValue() & 0xFFFULL) == N->getZExtValue());}], LO12> {
+  let ParserMatchClass = LoImm12AsmOperand;
+}
+def i64lo12s : Operand<i64>, PatLeaf<(i64 imm), [{
+    // i64lo12s predicate - true if the 64-bit immediate has only rightmost 12 bits set.
+    return ((int64_t)(N->getSExtValue() & 0xFFFULL) == N->getSExtValue());}], LO12> {
   let ParserMatchClass = LoImm12AsmOperand;
 }
 
@@ -226,6 +237,38 @@ def ADDI_RB_RRII : ALU_RRII<0b01001001, "addi", add, GPRB, GPRB, i64lo12z>;
 
 def : Pat<(sub GPRD:$Rs1, i64neg12:$imm),
           (ADDI_RRII GPRD:$Rs1, (NEG $imm))>;
+
+// -------------------------------------------------- //
+// Compare instructions
+// -------------------------------------------------- //
+
+class COMPARE_ORRR<bits<6> minorop, string OpcString, RegisterClass GPRcmp>
+  : Inst_ORRR<0b00010000, minorop, (outs GPRD:$RxHb), (ins GPRcmp:$RyHc, GPRcmp:$RzHd), OpcString, "$RxHb, $RyHc, $RzHd",
+             [(set GPRD:$RxHb, (DadaoSetFlag GPRcmp:$RyHc, GPRcmp:$RzHd))]> {
+
+  let RxHb = RDCC.Num;
+  let Defs = [RDCC];
+  let isCodeGenOnly = 1;
+  let isCompare = 1;
+}
+
+def CMP_ORRR    : COMPARE_ORRR<0b101101, "cmp",  GPRB>;
+def CMPS_ORRR   : COMPARE_ORRR<0b100100, "cmps", GPRD>;
+// TODO: CMPU should be impled with new SET_FLAG
+def CMPU_ORRR   : COMPARE_ORRR<0b100101, "cmpu", GPRD>;
+
+class COMPARE_RRII<bits<8> majorop, string OpcString, PatLeaf LoExt>
+  : Inst_RRII<majorop, (outs GPRD:$RxHa), (ins GPRD:$RyHb, LoExt:$Imm12), OpcString, "$RxHa, $RyHb, $Imm12",
+             [(set GPRD:$RxHa, (DadaoSetFlag GPRD:$RyHb, LoExt:$Imm12))]> {
+
+  let RxHa = RDCC.Num;
+  let Defs = [RDCC];
+  let isCodeGenOnly = 1;
+  let isCompare = 1;
+}
+
+def CMPS_RRII   : COMPARE_RRII<0b00010010, "cmps", i64lo12s>;
+def CMPU_RRII   : COMPARE_RRII<0b00010011, "cmpu", i64lo12z>;
 
 // -------------------------------------------------- //
 // WYDE instructions
@@ -400,7 +443,6 @@ def SDT_DadaoCallSeqStart : SDCallSeqStart<[SDTCisVT<0, i64>,
 def SDT_DadaoCallSeqEnd   : SDCallSeqEnd<[SDTCisVT<0, i64>,
                                           SDTCisVT<1, i64>]>;
 def SDT_DadaoCall         : SDTypeProfile<0, -1, [SDTCisVT<0, i64>]>;
-def SDT_DadaoSetFlag      : SDTypeProfile<0,  2, [SDTCisSameAs<0, 1>]>;
 def SDT_DadaoSelectCC     : SDTypeProfile<1,  3, [SDTCisSameAs<0, 1>,
                                                   SDTCisSameAs<1, 2>]>;
 def SDT_DadaoSetCC        : SDTypeProfile<1,  1, [SDTCisVT<0, i64>,
@@ -419,8 +461,6 @@ def CallSeqStart     : SDNode<"ISD::CALLSEQ_START", SDT_DadaoCallSeqStart,
                               [SDNPHasChain, SDNPOutGlue]>;
 def CallSeqEnd       : SDNode<"ISD::CALLSEQ_END", SDT_DadaoCallSeqEnd,
                               [SDNPHasChain, SDNPOptInGlue, SDNPOutGlue]>;
-def DadaoSetFlag     : SDNode<"DadaoISD::SET_FLAG", SDT_DadaoSetFlag,
-                              [SDNPOutGlue]>;
 def DadaoBrCC        : SDNode<"DadaoISD::BR_CC", SDT_DadaoBrCC,
                               [SDNPHasChain, SDNPInGlue]>;
 def DadaoSelectCC    : SDNode<"DadaoISD::SELECT_CC", SDT_DadaoSelectCC,
@@ -558,29 +598,6 @@ let isBranch = 1, isBarrier = 1, isTerminator = 1 in {
       let DDDI = 0;
     }
   }
-}
-
-// -------------------------------------------------- //
-// Condition/SF instructions
-// -------------------------------------------------- //
-
-// Instructions to set flags used in lowering comparisons.
-multiclass SF<bits<3> op2Val, string AsmStr> {
-  let F = 1, Rd = R0.Num, JJJJJ = 0, Defs = [SR], DDDI = 0 in
-    def _RR : InstRR<op2Val, (outs), (ins GPR:$Rs1, GPR:$Rs2),
-                     !strconcat(AsmStr, "\t$Rs1, $Rs2, %r0"),
-                     [(DadaoSetFlag (i64 GPR:$Rs1), (i64 GPR:$Rs2))]>;
-  let F = 1, Rd = R0.Num, H = 0, Defs = [SR] in
-    def _RI_LO : InstRI<op2Val, (outs), (ins GPR:$Rs1, i64lo16z:$imm16),
-                     !strconcat(AsmStr, "\t$Rs1, $imm16, %r0"),
-                     [(DadaoSetFlag (i64 GPR:$Rs1), i64lo16z:$imm16)]>;
-  let F = 1, Rd = R0.Num, H = 1, Defs = [SR] in
-    def _RI_HI : InstRI<op2Val, (outs), (ins GPR:$Rs1, i64hi16:$imm16),
-                     !strconcat(AsmStr, "\t$Rs1, $imm16, %r0"),
-                     [(DadaoSetFlag (i64 GPR:$Rs1), i64hi16:$imm16)]>;
-}
-let isCodeGenOnly = 1, isCompare = 1 in {
-  defm SFSUB_F : SF<0b010, "sub.f">;
 }
 
 // Jump and link

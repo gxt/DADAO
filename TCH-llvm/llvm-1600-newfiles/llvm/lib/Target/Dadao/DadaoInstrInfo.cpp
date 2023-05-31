@@ -180,14 +180,16 @@ bool DadaoInstrInfo::analyzeCompare(const MachineInstr &MI, Register &SrcReg,
   switch (MI.getOpcode()) {
   default:
     break;
-  case Dadao::SFSUB_F_RI_LO:
-  case Dadao::SFSUB_F_RI_HI:
+  case Dadao::CMPS_RRII:
+  case Dadao::CMPU_RRII:
     SrcReg = MI.getOperand(0).getReg();
     SrcReg2 = Register();
     CmpMask = ~0;
     CmpValue = MI.getOperand(1).getImm();
     return true;
-  case Dadao::SFSUB_F_RR:
+  case Dadao::CMPS_ORRR:
+  case Dadao::CMPU_ORRR:
+  case Dadao::CMP_ORRR:
     SrcReg = MI.getOperand(0).getReg();
     SrcReg2 = MI.getOperand(1).getReg();
     CmpMask = ~0;
@@ -273,7 +275,7 @@ bool DadaoInstrInfo::optimizeCompareInstr(
     // Conservatively refuse to convert an instruction which isn't in the same
     // BB as the comparison. Don't return if SFSUB_F_RI and CmpValue != 0 as Sub
     // may still be a candidate.
-    if (CmpInstr.getOpcode() == Dadao::SFSUB_F_RI_LO)
+    if (CmpInstr.getOpcode() == Dadao::CMPS_RRII)
       MI = nullptr;
     else
       return false;

@@ -61,6 +61,11 @@ def GPRB : RegisterClass<"Dadao", [i64], 64,
      RB0, RBIP                      // instruction pointer
     )>;
 
+// Define a temp register to capture the dependencies between the set flag
+// and setcc instructions
+// TODO: Every general RD can be used as RDCC
+def RDCC  : DadaoRegData<7, "rdcc">;
+
 //===----------------------------------------------------------------------===//
 
 // Registers are identified with 5-bit ID numbers.
