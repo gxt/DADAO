@@ -56,10 +56,10 @@ void DadaoInstrInfo::storeRegToStackSlot(
     DL = Position->getDebugLoc();
   }
 
-  if (!Dadao::GPRRegClass.hasSubClassEq(RegisterClass)) {
+  if (!Dadao::GPRDRegClass.hasSubClassEq(RegisterClass)) {
     llvm_unreachable("Can't store this register to stack slot");
   }
-  BuildMI(MBB, Position, DL, get(Dadao::STO_RRII))
+  BuildMI(MBB, Position, DL, get(Dadao::STRB_RRII))
       .addReg(SourceRegister, getKillRegState(IsKill))
       .addFrameIndex(FrameIndex)
       .addImm(0)
@@ -76,10 +76,10 @@ void DadaoInstrInfo::loadRegFromStackSlot(
     DL = Position->getDebugLoc();
   }
 
-  if (!Dadao::GPRRegClass.hasSubClassEq(RegisterClass)) {
+  if (!Dadao::GPRDRegClass.hasSubClassEq(RegisterClass)) {
     llvm_unreachable("Can't load this register from stack slot");
   }
-  BuildMI(MBB, Position, DL, get(Dadao::LDO_RRII), DestinationRegister)
+  BuildMI(MBB, Position, DL, get(Dadao::LDRB_RRII), DestinationRegister)
       .addFrameIndex(FrameIndex)
       .addImm(0)
       .addImm(LPAC::ADD);

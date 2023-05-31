@@ -107,25 +107,25 @@ void DadaoFrameLowering::emitPrologue(MachineFunction &MF,
 
   // Push old FP
   // st %fp,-4[*%sp]
-  BuildMI(MBB, MBBI, DL, LII.get(Dadao::STO_RRII))
-      .addReg(Dadao::FP)
-      .addReg(Dadao::SP)
-      .addImm(-4)
+  BuildMI(MBB, MBBI, DL, LII.get(Dadao::STRB_RRII))
+      .addReg(Dadao::RBFP)
+      .addReg(Dadao::RBSP)
+      .addImm(-8)
       .addImm(LPAC::makePreOp(LPAC::ADD))
       .setMIFlag(MachineInstr::FrameSetup);
 
   // Generate new FP
   // add %sp,8,%fp
   BuildMI(MBB, MBBI, DL, LII.get(Dadao::ADDI_RB_RRII), Dadao::RBFP)
-      .addReg(Dadao::SP)
+      .addReg(Dadao::RBSP)
       .addImm(8)
       .setMIFlag(MachineInstr::FrameSetup);
 
   // Allocate space on the stack if needed
   // sub %sp,StackSize,%sp
   if (StackSize != 0) {
-    BuildMI(MBB, MBBI, DL, LII.get(Dadao::ADDI_RB_RRII), Dadao::SP)
-        .addReg(Dadao::SP)
+    BuildMI(MBB, MBBI, DL, LII.get(Dadao::ADDI_RB_RRII), Dadao::RBSP)
+        .addReg(Dadao::RBSP)
         .addImm(-StackSize)
         .setMIFlag(MachineInstr::FrameSetup);
   }
@@ -181,12 +181,12 @@ void DadaoFrameLowering::emitEpilogue(MachineFunction & /*MF*/,
 
   // Restore the stack pointer using the callee's frame pointer value.
   BuildMI(MBB, MBBI, DL, LII.get(Dadao::ADDI_RB_RRII), Dadao::RBSP)
-      .addReg(Dadao::FP)
+      .addReg(Dadao::RBFP)
       .addImm(0);
 
   // Restore the frame pointer from the stack.
-  BuildMI(MBB, MBBI, DL, LII.get(Dadao::LDO_RRII), Dadao::RBFP)
-      .addReg(Dadao::FP)
+  BuildMI(MBB, MBBI, DL, LII.get(Dadao::LDRB_RRII), Dadao::RBFP)
+      .addReg(Dadao::RBFP)
       .addImm(-8)
       .addImm(LPAC::ADD);
 }

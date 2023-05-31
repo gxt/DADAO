@@ -216,8 +216,8 @@ Register DadaoTargetLowering::getRegisterByName(
   // Only unallocatable registers should be matched here.
   Register Reg = StringSwitch<unsigned>(RegName)
                      .Case("pc", Dadao::PC)
-                     .Case("sp", Dadao::SP)
-                     .Case("fp", Dadao::FP)
+                     .Case("rbsp", Dadao::RBSP)
+                     .Case("rbfp", Dadao::RBFP)
                      .Case("rr1", Dadao::RR1)
                      .Case("r10", Dadao::R10)
                      .Case("rr2", Dadao::RR2)
@@ -1086,7 +1086,7 @@ SDValue DadaoTargetLowering::LowerFRAMEADDR(SDValue Op,
 
   EVT VT = Op.getValueType();
   SDLoc DL(Op);
-  SDValue FrameAddr = DAG.getCopyFromReg(DAG.getEntryNode(), DL, Dadao::FP, VT);
+  SDValue FrameAddr = DAG.getCopyFromReg(DAG.getEntryNode(), DL, Dadao::RBFP, VT);
   unsigned Depth = cast<ConstantSDNode>(Op.getOperand(0))->getZExtValue();
   while (Depth--) {
     const unsigned Offset = -8;

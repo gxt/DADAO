@@ -46,9 +46,9 @@ BitVector DadaoRegisterInfo::getReservedRegs(const MachineFunction &MF) const {
   Reserved.set(Dadao::R1);
   Reserved.set(Dadao::PC);
   Reserved.set(Dadao::R2);
-  Reserved.set(Dadao::SP);
+  Reserved.set(Dadao::RBSP);
   Reserved.set(Dadao::R4);
-  Reserved.set(Dadao::FP);
+  Reserved.set(Dadao::RBFP);
   Reserved.set(Dadao::R5);
   Reserved.set(Dadao::RR1);
   Reserved.set(Dadao::R10);
@@ -122,9 +122,9 @@ bool DadaoRegisterInfo::eliminateFrameIndex(MachineBasicBlock::iterator II,
   // Otherwise scavenge a register and encode it into a MOVHI, ORW_RWII_W0 sequence.
   if (!isInt<12>(Offset)) {
     assert(RS && "Register scavenging must be on");
-    Register Reg = RS->FindUnusedReg(&Dadao::GPRRegClass);
+    Register Reg = RS->FindUnusedReg(&Dadao::GPRDRegClass);
     if (!Reg)
-      Reg = RS->scavengeRegister(&Dadao::GPRRegClass, II, SPAdj);
+      Reg = RS->scavengeRegister(&Dadao::GPRDRegClass, II, SPAdj);
     assert(Reg && "Register scavenger failed");
 
     bool HasNegOffset = false;
@@ -198,7 +198,7 @@ unsigned DadaoRegisterInfo::getRARegister() const { return Dadao::RCA; }
 
 Register
 DadaoRegisterInfo::getFrameRegister(const MachineFunction & /*MF*/) const {
-  return Dadao::FP;
+  return Dadao::RBFP;
 }
 
 Register DadaoRegisterInfo::getBaseRegister() const { return Dadao::R14; }
