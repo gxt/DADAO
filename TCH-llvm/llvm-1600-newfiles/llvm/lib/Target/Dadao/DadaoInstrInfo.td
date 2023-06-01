@@ -521,16 +521,14 @@ def JUMP_IIII : Inst_IIII<0b01100100, (outs), (ins BrTarget:$Imm24), "jump", "$I
   let isTerminator = 1;
 }
 
-/*
 def JUMP_RRII : Inst_RRII<0b01100101, (outs), (ins GPRB:$RxHa, GPRD:$RyHb, i64lo12s:$Imm12),
       "jump", "$RxHa, $RyHb, $Imm12",
-      [(brind (GPRB:$RxHa, GPRD:$RyHb, i64lo12s:$Imm12))]> {
+      [(brind (add (add GPRB:$RxHa, GPRD:$RyHb), i64lo12s:$Imm12))]> {
   let isBranch = 1;
   let isBarrier = 1;
   let isTerminator = 1;
   let isIndirectBranch = 1;
 }
-*/
 
 // -------------------------------------------------- //
 // CALL and RET instructions
@@ -692,24 +690,6 @@ let Defs = [SP], Uses = [SP] in {
   def ADJDYNALLOC : Pseudo<(outs GPR:$dst), (ins GPR:$src),
                            "#ADJDYNALLOC $dst $src",
                            [(set GPR:$dst, (DadaoAdjDynAlloc GPR:$src))]>;
-}
-
-let isBranch = 1, isBarrier = 1, isTerminator = 1,
-    isIndirectBranch = 1, Uses = [SR] in {
-  def BRIND_CC : InstRR<0b101, (outs), (ins GPR:$Rs1, CCOp:$DDDI),
-                        "b$DDDI\t$Rs1", []> {
-    let F = 0;
-    let JJJJJ = 0;
-    let Rd = PC.Num;
-    let Rs2 = R0.Num;
-  }
-
-  def BRIND_CCA : InstRR<0b101, (outs), (ins GPR:$Rs1, GPR:$Rs2, CCOp:$DDDI),
-                         "b${DDDI}\t$Rs1 add $Rs2", []> {
-    let F = 0;
-    let Rd = PC.Num;
-    let JJJJJ = 0;
-  }
 }
 
 let F = 0 in {

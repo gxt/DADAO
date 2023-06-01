@@ -257,69 +257,6 @@ class InstRI<bits<3> op, dag outs, dag ins, string asmstr,
 }
 
 //------------------------------------------------------------------------------
-// Register Register (RR)
-//------------------------------------------------------------------------------
-// Encoding:
-//           -----------------------------------------------------------------
-//           |1.1.0.0| . . . . | . . . . |F.I| . . . . |B.B.B|J.J.J.J.J|D.D.D|
-//           -----------------------------------------------------------------
-//            opcode     Rd        Rs1           Rs2   \       operation     /
-//
-// Action:
-//           `Rd <- Rs1 op Rs2' iff condition DDDI is true.
-//
-// `DDDI' is as described for the BR instruction.
-//
-// `F' determines whether the instruction modifies (1) or does not
-// modify (0) the program flags.
-//
-// `BBB' determines the operation: `add' (000), `addc' (001), `sub'
-// (010), `subb' (011), `and' (100), `or' (101), `xor' (110), or "special"
-// (111).  The `JJJJJ' field is irrelevant except for special.
-//
-// `JJJJJ' determines which special operation is performed.  `10---'
-// is a logical shift, and `11---' is an arithmetic shift, and ‘00000` is
-// the SELECT operation.  The amount and direction of the shift are
-// determined by the contents of `Rs2' interpreted as a two's complement
-// number (in the same way as shifts in the Register-Immediate
-// instructions in *Note RI::).  For the SELECT operation, Rd gets Rs1 if
-// condition DDDI is true, Rs2 otherwise. All other `JJJJJ' combinations
-// are reserved for instructions that may be defined in the future.
-//
-// If the `F' bit is 1, RR instructions modify the condition bits, `Z'
-// (Zero), `N' (Negative), `V' (oVerflow), and `C' (Carry), according to
-// the result.  All RR instructions modify the `Z', `N', and `V' flags.
-// Except for arithmetic instructions (`add', `addc', `sub', `subb'), `V'
-// is cleared.  Only arithmetic instructions and shifts modify `C'. Right
-// shifts clear C.
-//
-// DDDI is as described in the table for the BR instruction and only used for
-// the select instruction.
-//
-// A Jump is accomplished by `Rd' being `pc', and it has one shadow.
-class InstRR<bits<3> op, dag outs, dag ins, string asmstr,
-             list<dag> pattern>
-    : InstDadao<outs, ins, asmstr, pattern>, Sched<[WriteALU]> {
-  let Itinerary = IIC_ALU;
-  bits<5> Rd;
-  bits<5> Rs1;
-  bits<5> Rs2;
-  bit F;
-  bits<4> DDDI;
-  bits<5> JJJJJ;
-
-  let Opcode = 0b1100;
-  let Inst{27 - 23} = Rd;
-  let Inst{22 - 18} = Rs1;
-  let Inst{17} = F;
-  let Inst{16} = DDDI{0};
-  let Inst{15 - 11} = Rs2;
-  let Inst{10 - 8} = op;
-  let Inst{7 - 3} = JJJJJ;
-  let Inst{2 - 0} = DDDI{3 - 1};
-}
-
-//------------------------------------------------------------------------------
 // Register Memory (RM)
 //------------------------------------------------------------------------------
 // Encoding:
