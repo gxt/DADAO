@@ -221,42 +221,6 @@ public:
 
   bool isCallTarget() { return isImm() || isToken(); }
 
-  bool isHiImm16() {
-    if (!isImm())
-      return false;
-
-    // Constant case
-    if (const MCConstantExpr *ConstExpr = dyn_cast<MCConstantExpr>(Imm.Value)) {
-      int64_t Value = ConstExpr->getValue();
-      return Value != 0 && isShiftedUInt<16, 16>(Value);
-    }
-
-    // Symbolic reference expression
-    if (const DadaoMCExpr *SymbolRefExpr = dyn_cast<DadaoMCExpr>(Imm.Value))
-      return SymbolRefExpr->getKind() == DadaoMCExpr::VK_Dadao_ABS_HI;
-
-    // Binary expression
-    if (const MCBinaryExpr *BinaryExpr = dyn_cast<MCBinaryExpr>(Imm.Value))
-      if (const DadaoMCExpr *SymbolRefExpr =
-              dyn_cast<DadaoMCExpr>(BinaryExpr->getLHS()))
-        return SymbolRefExpr->getKind() == DadaoMCExpr::VK_Dadao_ABS_HI;
-
-    return false;
-  }
-
-  bool isHiImm16And() {
-    if (!isImm())
-      return false;
-
-    const MCConstantExpr *ConstExpr = dyn_cast<MCConstantExpr>(Imm.Value);
-    if (ConstExpr) {
-      int64_t Value = ConstExpr->getValue();
-      // Check if in the form 0xXYZWffff
-      return (Value != 0) && ((Value & ~0xffff0000) == 0xffff);
-    }
-    return false;
-  }
-
   bool isLoImm16() {
     if (!isImm())
       return false;
@@ -316,17 +280,6 @@ public:
       return ((Value & ~0xffff) == 0xffff0000);
     }
     return false;
-  }
-
-  bool isImmShift() {
-    if (!isImm())
-      return false;
-
-    const MCConstantExpr *ConstExpr = dyn_cast<MCConstantExpr>(Imm.Value);
-    if (!ConstExpr)
-      return false;
-    int64_t Value = ConstExpr->getValue();
-    return (Value >= -31) && (Value <= 31);
   }
 
   bool isImm12() {
@@ -399,20 +352,6 @@ public:
         return SymbolRefExpr->getKind() == DadaoMCExpr::VK_Dadao_ABS_LO;
 
     return false;
-  }
-
-  bool isCondCode() {
-    if (!isImm())
-      return false;
-
-    const MCConstantExpr *ConstExpr = dyn_cast<MCConstantExpr>(Imm.Value);
-    if (!ConstExpr)
-      return false;
-    uint64_t Value = ConstExpr->getValue();
-    // The condition codes are between 0 (ICC_T) and 15 (ICC_LE). If the
-    // unsigned value of the immediate is less than LPCC::UNKNOWN (16) then
-    // value corresponds to a valid condition code.
-    return Value < LPCC::UNKNOWN;
   }
 
   bool isImmWyde0() {

@@ -199,6 +199,14 @@ def MEM_RRII : Operand<i64> {
 }
 
 // -------------------------------------------------- //
+// NOOP instructions
+// -------------------------------------------------- //
+
+def SWYM_OIII  : Inst_OIII<0b00010000, 0b000000, (outs), (ins i64lo18z:$Imm18), "swym", "$Imm18", []> {
+  let hasSideEffects = 0;
+}
+
+// -------------------------------------------------- //
 // ALU instructions
 // -------------------------------------------------- //
 class ALU_ORRR<bits<6> minorop, string OpcString, SDNode OpNode>
@@ -570,10 +578,6 @@ def RET_RIII : Inst_RIII<0b01101110, (outs GPRD:$RxHa), (ins i64lo18s:$Imm18),
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-// -------------------------------------------------- //
-// Instruction Operands and Patterns
-// -------------------------------------------------- //
-
 //  These are target-independent nodes, but have target-specific formats.
 def SDT_DadaoCallSeqStart : SDCallSeqStart<[SDTCisVT<0, i64>,
                                             SDTCisVT<1, i64>]>;
@@ -590,122 +594,21 @@ def DadaoHi          : SDNode<"DadaoISD::HI", SDTIntUnaryOp>;
 def DadaoLo          : SDNode<"DadaoISD::LO", SDTIntUnaryOp>;
 def DadaoAdjDynAlloc : SDNode<"DadaoISD::ADJDYNALLOC", SDT_DadaoAdjDynAlloc>;
 
-// Extract bits 16-31 (high-end) of an immediate value.
-// Transformation function: shift the immediate value down into the low bits.
-def HI16 : SDNodeXForm<imm, [{
-  return CurDAG->getTargetConstant((uint64_t)N->getZExtValue() >> 16, SDLoc(N),
-                                   MVT::i64);
-}]>;
-
-def ImmShiftAsmOperand : AsmOperandClass { let Name = "ImmShift"; }
-def immShift : Operand<i64>, PatLeaf<(imm), [{
-    int Imm = N->getSExtValue();
-    return Imm >= -31 && Imm <= 31;}]> {
-  let ParserMatchClass = ImmShiftAsmOperand;
-  let DecoderMethod = "decodeShiftImm";
-}
-
-def i64neg16 : Operand<i64>, PatLeaf<(i64 imm), [{
-    // i64neg16 predicate - true if the 32-bit immediate is negative and can
-    // be represented by a 16 bit integer.
-    int Imm = N->getSExtValue();
-    return (Imm < 0) && (isInt<16>(Imm));}], LO16> {
-  let ParserMatchClass = LoImm16AsmOperand;
-}
-
-def LoImm16AndAsmOperand : AsmOperandClass { let Name = "LoImm16And"; }
-def i64lo16and : Operand<i64>, PatLeaf<(i64 imm), [{
-    // i64lo16 predicate - true if the 32-bit immediate has the rightmost 16
-    // bits set and the leftmost 16 bits 1's.
-    return (N->getZExtValue() >= 0xFFFF0000UL);}], LO16> {
-  let ParserMatchClass = LoImm16AndAsmOperand;
-  let PrintMethod = "printLo16AndImmOperand";
-}
-
-def HiImm16AsmOperand : AsmOperandClass { let Name = "HiImm16"; }
-def i64hi16 : Operand<i64>, PatLeaf<(i64 imm), [{
-    // i64hi16 predicate - true if the 32-bit immediate has only leftmost 16
-    // bits set.
-    return ((N->getZExtValue() & 0xFFFF0000UL) == N->getZExtValue());}], HI16> {
-  let ParserMatchClass = HiImm16AsmOperand;
-  let PrintMethod = "printHi16ImmOperand";
-}
-
-def HiImm16AndAsmOperand : AsmOperandClass { let Name = "HiImm16And"; }
-def i64hi16and : Operand<i64>, PatLeaf<(i64 imm), [{
-    // i64lo16 predicate - true if the 32-bit immediate has the leftmost 16
-    // bits set and the rightmost 16 bits 1's.
-    return ((N->getZExtValue() & 0xFFFFUL) == 0xFFFFUL);}], HI16> {
-  let ParserMatchClass = HiImm16AndAsmOperand;
-  let PrintMethod = "printHi16AndImmOperand";
-}
-
-def AluOp : Operand<i64> {
-  let PrintMethod = "printAluOperand";
-}
-
-def CCOp : Operand<i64> {
-  let PrintMethod = "printCCOperand";
-}
-
-// Predicate operand. Default to 0 = true.
-def CondCodeOperand : AsmOperandClass { let Name = "CondCode"; }
-
-def pred : PredicateOperand<i64, (ops i64imm), (ops (i64 0))> {
-  let PrintMethod = "printPredicateOperand";
-  let ParserMatchClass = CondCodeOperand;
-  let DecoderMethod = "decodePredicateOperand";
-}
-
-let hasSideEffects = 0, Inst = 0x00000001 in
-  def NOP : InstDadao<(outs), (ins), "nop", []>;
-
-// Special NOPs to change logging level in vdadao.
-let hasSideEffects = 0, Inst = 0x00000002 in
-  def LOG0 : InstDadao<(outs), (ins), "log_0", []>;
-let hasSideEffects = 0, Inst = 0x00000003 in
-  def LOG1 : InstDadao<(outs), (ins), "log_1", []>;
-let hasSideEffects = 0, Inst = 0x00000004 in
-  def LOG2 : InstDadao<(outs), (ins), "log_2", []>;
-let hasSideEffects = 0, Inst = 0x00000005 in
-  def LOG3 : InstDadao<(outs), (ins), "log_3", []>;
-let hasSideEffects = 0, Inst = 0x00000006 in
-  def LOG4 : InstDadao<(outs), (ins), "log_4", []>;
-
 // ADJCALLSTACKDOWN/UP implicitly use/def SP because they may be expanded into
 // a stack adjustment and the codegen must know that they may modify the stack
 // pointer before prolog-epilog rewriting occurs.
 // Pessimistically assume ADJCALLSTACKDOWN / ADJCALLSTACKUP will become
 // sub / add which can clobber SP.
-let Defs = [SP], Uses = [SP] in {
+let Defs = [RBSP], Uses = [RBSP] in {
   def ADJCALLSTACKDOWN : Pseudo<(outs), (ins i64imm:$amt1, i64imm:$amt2),
-                                "#ADJCALLSTACKDOWN $amt1 $amt2",
+                                "#ADJCALLSTACKDOWN", "$amt1 $amt2",
                                 [(CallSeqStart timm:$amt1, timm:$amt2)]>;
   def ADJCALLSTACKUP   : Pseudo<(outs), (ins i64imm:$amt1, i64imm:$amt2),
-                                "#ADJCALLSTACKUP $amt1 $amt2",
+                                "#ADJCALLSTACKUP", "$amt1 $amt2",
                                 [(CallSeqEnd timm:$amt1, timm:$amt2)]>;
-}
-
-let Defs = [SP], Uses = [SP] in {
-  def ADJDYNALLOC : Pseudo<(outs GPR:$dst), (ins GPR:$src),
-                           "#ADJDYNALLOC $dst $src",
-                           [(set GPR:$dst, (DadaoAdjDynAlloc GPR:$src))]>;
-}
-
-let F = 0 in {
-// Population Count (POPC)
-def POPC: InstSpecial<0b001, (outs GPR:$Rd), (ins GPR:$Rs1),
-                      "popc\t$Rs1, $Rd",
-                      [(set GPR:$Rd, (ctpop GPR:$Rs1))]>;
-
-// Count Leading Zeros (LEADZ)
-def LEADZ: InstSpecial<0b010, (outs GPR:$Rd), (ins GPR:$Rs1),
-                       "leadz\t$Rs1, $Rd", [(set GPR:$Rd, (ctlz GPR:$Rs1))]>;
-
-// Count Trailing Zeros (TRAILZ)
-def TRAILZ : InstSpecial<0b011, (outs GPR:$Rd), (ins GPR:$Rs1),
-                         "trailz\t$Rs1, $Rd",
-                         [(set GPR:$Rd, (cttz GPR:$Rs1))]>;
+  def ADJDYNALLOC      : Pseudo<(outs GPRD:$dst), (ins GPRD:$src),
+                                "#ADJDYNALLOC", "$dst $src",
+                                [(set GPRD:$dst, (DadaoAdjDynAlloc GPRD:$src))]>;
 }
 
 //===----------------------------------------------------------------------===//

@@ -243,7 +243,7 @@ inline static unsigned flagSettingOpcodeVariant(unsigned OldOpcode) {
     return Dadao::NOP;
   }
 */
-  return Dadao::NOP;
+  return Dadao::SWYM_OIII;
 }
 
 bool DadaoInstrInfo::optimizeCompareInstr(
@@ -312,7 +312,7 @@ bool DadaoInstrInfo::optimizeCompareInstr(
   if (!MI)
     MI = Sub;
 
-  if (flagSettingOpcodeVariant(MI->getOpcode()) != Dadao::NOP) {
+  if (flagSettingOpcodeVariant(MI->getOpcode()) != Dadao::SWYM_OIII) {
     bool isSafe = false;
 
     SmallVector<std::pair<MachineOperand *, LPCC::CondCode>, 4>
