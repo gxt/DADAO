@@ -19,6 +19,8 @@ include "DadaoInstrFormats.td"
 //  These are target-independent nodes, but have target-specific formats.
 def SDT_DadaoSetFlag      : SDTypeProfile<0,  2, [SDTCisSameAs<0, 1>]>;
 def SDT_DadaoBrCC         : SDTypeProfile<0,  2, [SDTCisVT<0, OtherVT>, SDTCisVT<1, i64>]>;
+def SDT_DadaoSetCC        : SDTypeProfile<1,  1, [SDTCisVT<0, i64>,
+                                                  SDTCisVT<1, i64>]>;
 def SDT_DadaoSelectCC     : SDTypeProfile<1,  3, [SDTCisSameAs<0, 1>,
                                                   SDTCisSameAs<1, 2>]>;
 def SDT_DadaoCall         : SDTypeProfile<0, -1, [SDTCisVT<0, i64>]>;
@@ -27,6 +29,8 @@ def DadaoSetFlag     : SDNode<"DadaoISD::SET_FLAG", SDT_DadaoSetFlag,
                               [SDNPOutGlue]>;
 def DadaoBrCC        : SDNode<"DadaoISD::BR_CC", SDT_DadaoBrCC,
                               [SDNPHasChain, SDNPInGlue]>;
+def DadaoSetCC       : SDNode<"DadaoISD::SETCC", SDT_DadaoSetCC,
+                              [SDNPInGlue]>;
 def DadaoSelectCC    : SDNode<"DadaoISD::SELECT_CC", SDT_DadaoSelectCC,
                               [SDNPInGlue]>;
 def DadaoCall        : SDNode<"DadaoISD::CALL", SDT_DadaoCall,
@@ -248,7 +252,7 @@ class ALU_RRRR<bits<8> majorop, string OpcString, SDNode OpNode>
   : Inst_RRRR<majorop, (outs GPRD:$RdHa, GPRD:$RdHb), (ins GPRD:$RdHc, GPRD:$RdHd),
             OpcString, "$RdHa, $RdHb, $RdHc, $RdHd",
             [(set GPRD:$RdHb, (OpNode GPRD:$RdHc, GPRD:$RdHd)),
-             (set GPRD:$RdHa, 0)]> {
+             (set GPRD:$RdHa, (DadaoSetCC 0))]> {
 }
 
 let isCommutable = 1 in {
@@ -577,8 +581,6 @@ def SDT_DadaoCallSeqStart : SDCallSeqStart<[SDTCisVT<0, i64>,
                                             SDTCisVT<1, i64>]>;
 def SDT_DadaoCallSeqEnd   : SDCallSeqEnd<[SDTCisVT<0, i64>,
                                           SDTCisVT<1, i64>]>;
-def SDT_DadaoSetCC        : SDTypeProfile<1,  1, [SDTCisVT<0, i64>,
-                                                  SDTCisVT<1, i64>]>;
 def SDT_DadaoAdjDynAlloc  : SDTypeProfile<1,  1, [SDTCisVT<0, i64>,
                                                   SDTCisVT<1, i64>]>;
 
@@ -586,8 +588,6 @@ def CallSeqStart     : SDNode<"ISD::CALLSEQ_START", SDT_DadaoCallSeqStart,
                               [SDNPHasChain, SDNPOutGlue]>;
 def CallSeqEnd       : SDNode<"ISD::CALLSEQ_END", SDT_DadaoCallSeqEnd,
                               [SDNPHasChain, SDNPOptInGlue, SDNPOutGlue]>;
-def DadaoSetCC       : SDNode<"DadaoISD::SETCC", SDT_DadaoSetCC,
-                              [SDNPInGlue]>;
 def DadaoHi          : SDNode<"DadaoISD::HI", SDTIntUnaryOp>;
 def DadaoLo          : SDNode<"DadaoISD::LO", SDTIntUnaryOp>;
 def DadaoAdjDynAlloc : SDNode<"DadaoISD::ADJDYNALLOC", SDT_DadaoAdjDynAlloc>;
@@ -692,12 +692,6 @@ let Defs = [SP], Uses = [SP] in {
   def ADJDYNALLOC : Pseudo<(outs GPR:$dst), (ins GPR:$src),
                            "#ADJDYNALLOC $dst $src",
                            [(set GPR:$dst, (DadaoAdjDynAlloc GPR:$src))]>;
-}
-
-let Uses = [SR] in {
-  def SCC : InstSCC<(outs GPR:$Rs1), (ins CCOp:$DDDI),
-                    "s$DDDI\t$Rs1",
-                    [(set (i64 GPR:$Rs1), (DadaoSetCC imm:$DDDI))]>;
 }
 
 let isBranch = 1, isBarrier = 1, isTerminator = 1,

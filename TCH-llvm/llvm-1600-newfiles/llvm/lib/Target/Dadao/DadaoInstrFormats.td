@@ -368,39 +368,6 @@ class InstRM<bit S, dag outs, dag ins, string asmstr, list<dag> pattern>
 }
 
 //------------------------------------------------------------------------------
-// Conditional Set (SCC)
-//------------------------------------------------------------------------------
-// Encoding:
-//           -----------------------------------------------------------------
-//           |1.1.1.0|D.D.D|0.-| . . . . |-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-|1.I|
-//           -----------------------------------------------------------------
-//            opcode condition     Rs1
-//
-// Action:
-//       Rs1 <- logical function result
-//
-// SCC sets dst_reg to the boolean result of computing the logical function
-// specified by DDDI, as described in the table for the BR instruction.
-class InstSCC<dag outs, dag ins, string asmstr,
-              list<dag> pattern>
-    : InstDadao<outs, ins, asmstr, pattern> {
-  let Itinerary = IIC_ALU;
-  bits<5> Rs1; // dst_reg in documentation
-  bits<4> DDDI;
-
-  let Opcode = 0b1110;
-  let Inst{27 - 25} = DDDI{3 - 1};
-  let Inst{24} = 0;
-  let Inst{22 - 18} = Rs1;
-  let Inst{1} = 1;
-  let Inst{0} = DDDI{0};
-
-  // Set don't cares to zero
-  let Inst{23} = 0;
-  let Inst{17 - 2} = 0;
-}
-
-//------------------------------------------------------------------------------
 // Special instructions (popc, leadz, trailz)
 //------------------------------------------------------------------------------
 // Encoding:
