@@ -47,7 +47,7 @@ static MCInstrInfo *createDadaoMCInstrInfo() {
 
 static MCRegisterInfo *createDadaoMCRegisterInfo(const Triple & /*TT*/) {
   MCRegisterInfo *X = new MCRegisterInfo();
-  InitDadaoMCRegisterInfo(X, Dadao::RCA, 0, 0, Dadao::PC);
+  InitDadaoMCRegisterInfo(X, Dadao::RBCA, 0, 0, Dadao::RBIP);
   return X;
 }
 

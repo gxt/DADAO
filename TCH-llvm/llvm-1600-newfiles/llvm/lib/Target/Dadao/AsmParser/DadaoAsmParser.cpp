@@ -969,7 +969,7 @@ DadaoAsmParser::parseMemoryOperand(OperandVector &Operands) {
           return MatchOperand_ParseFail;
         }
         Operands.push_back(DadaoOperand::MorphToMemRegImm(
-            Dadao::R0, std::move(Op), LPAC::ADD));
+            Dadao::RDZERO, std::move(Op), LPAC::ADD));
 
         return MatchOperand_Success;
       }

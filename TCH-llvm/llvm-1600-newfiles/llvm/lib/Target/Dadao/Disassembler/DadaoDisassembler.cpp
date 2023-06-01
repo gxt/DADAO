@@ -89,7 +89,7 @@ static void PostOperandDecodeAdjust(MCInst &Instr, uint32_t Insn) {
     switch (PQ) {
     case 0x0:
       if (Instr.getOperand(2).isReg()) {
-        Instr.getOperand(2).setReg(Dadao::R0);
+        Instr.getOperand(2).setReg(Dadao::RDZERO);
       }
       if (Instr.getOperand(2).isImm())
         Instr.getOperand(2).setImm(0);

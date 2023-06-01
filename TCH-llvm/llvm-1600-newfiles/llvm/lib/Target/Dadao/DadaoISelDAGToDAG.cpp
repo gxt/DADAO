@@ -98,7 +98,7 @@ bool DadaoDAGToDAGISel::selectAddrRRII(SDValue Addr, SDValue &Base,
     if (isInt<12>(CN->getSExtValue())) {
       int16_t Imm = CN->getSExtValue();
       Offset = CurDAG->getTargetConstant(Imm, DL, CN->getValueType(0));
-      Base = CurDAG->getRegister(Dadao::R0, CN->getValueType(0));
+      Base = CurDAG->getRegister(Dadao::RDZERO, CN->getValueType(0));
       AluOp = CurDAG->getTargetConstant(LPAC::ADD, DL, MVT::i64);
       return true;
     }
@@ -222,18 +222,11 @@ void DadaoDAGToDAGISel::Select(SDNode *Node) {
   case ISD::Constant:
     if (VT == MVT::i64) {
       ConstantSDNode *ConstNode = cast<ConstantSDNode>(Node);
-      // Materialize zero constants as copies from R0. This allows the coalescer
+      // Materialize zero constants as copies from RDZERO. This allows the coalescer
       // to propagate these into other instructions.
       if (ConstNode->isZero()) {
         SDValue New = CurDAG->getCopyFromReg(CurDAG->getEntryNode(),
-                                             SDLoc(Node), Dadao::R0, MVT::i64);
-        return ReplaceNode(Node, New.getNode());
-      }
-      // Materialize all ones constants as copies from R1. This allows the
-      // coalescer to propagate these into other instructions.
-      if (ConstNode->isAllOnes()) {
-        SDValue New = CurDAG->getCopyFromReg(CurDAG->getEntryNode(),
-                                             SDLoc(Node), Dadao::R1, MVT::i64);
+                                             SDLoc(Node), Dadao::RDZERO, MVT::i64);
         return ReplaceNode(Node, New.getNode());
       }
     }

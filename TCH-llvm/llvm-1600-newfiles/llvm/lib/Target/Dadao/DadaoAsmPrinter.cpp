@@ -152,20 +152,20 @@ void DadaoAsmPrinter::emitCallInstruction(const MachineInstr *MI) {
 
   DadaoMCInstLower MCInstLowering(OutContext, *this);
   MCSubtargetInfo STI = getSubtargetInfo();
-  // Insert save rca instruction immediately before the call.
-  // TODO: We should generate a pc-relative mov instruction here instead
-  // of pc + 16 (should be mov .+16 %rca).
+  // Insert save rbca instruction immediately before the call.
+  // TODO: We should generate a rbip-relative mov instruction here instead
+  // of rbip + 16 (should be mov .+16 %rbca).
   OutStreamer->emitInstruction(MCInstBuilder(Dadao::ADDI_RB_RRII)
-                                   .addReg(Dadao::RCA)
-                                   .addReg(Dadao::PC)
+                                   .addReg(Dadao::RBCA)
+                                   .addReg(Dadao::RBIP)
                                    .addImm(16),
                                STI);
 
-  // Push rca onto the stack.
-  //   st %rca, [--%sp]
-  OutStreamer->emitInstruction(MCInstBuilder(Dadao::STO_RRII)
-                                   .addReg(Dadao::RCA)
-                                   .addReg(Dadao::SP)
+  // Push rbca onto the stack.
+  //   st %rbca, [--%rbsp]
+  OutStreamer->emitInstruction(MCInstBuilder(Dadao::STRB_RRII)
+                                   .addReg(Dadao::RBCA)
+                                   .addReg(Dadao::RBSP)
                                    .addImm(-4)
                                    .addImm(LPAC::makePreOp(LPAC::ADD)),
                                STI);
@@ -178,9 +178,9 @@ void DadaoAsmPrinter::emitCallInstruction(const MachineInstr *MI) {
     OutStreamer->emitInstruction(TmpInst, STI);
   } else {
     OutStreamer->emitInstruction(MCInstBuilder(Dadao::ADD_RB_ORRR)
-                                     .addReg(Dadao::PC)
+                                     .addReg(Dadao::RBIP)
                                      .addReg(MI->getOperand(0).getReg())
-                                     .addReg(Dadao::R0)
+                                     .addReg(Dadao::RDZERO)
                                      .addImm(LPCC::ICC_T),
                                  STI);
   }

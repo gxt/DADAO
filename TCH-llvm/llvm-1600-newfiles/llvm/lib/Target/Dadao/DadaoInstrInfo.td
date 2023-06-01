@@ -629,24 +629,19 @@ def : Pat<(extloadi32 ADDR_RRII:$src), (i64 (LDTU_RRII ADDR_RRII:$src))>;
 def : Pat<(atomic_load_8  ADDR_RRII:$src), (i64 (LDBU_RRII ADDR_RRII:$src))>;
 
 // GlobalAddress, ExternalSymbol, Jumptable, ConstantPool
-def : Pat<(DadaoHi tglobaladdr:$dst), (SETZW_RWII_W1 tglobaladdr:$dst)>;
-def : Pat<(DadaoLo tglobaladdr:$dst), (ORW_RWII_W0 (i64 RD0), tglobaladdr:$dst)>;
-def : Pat<(DadaoHi texternalsym:$dst), (SETZW_RWII_W1 texternalsym:$dst)>;
-def : Pat<(DadaoLo texternalsym:$dst), (ORW_RWII_W0 (i64 RD0), texternalsym:$dst)>;
+def : Pat<(DadaoHi tglobaladdr:$dst),   (SETZW_RWII_W1 tglobaladdr:$dst)>;
+def : Pat<(DadaoLo tglobaladdr:$dst),   (ORW_RWII_W0 (i64 RD0), tglobaladdr:$dst)>;
+def : Pat<(DadaoHi texternalsym:$dst),  (SETZW_RWII_W1 texternalsym:$dst)>;
+def : Pat<(DadaoLo texternalsym:$dst),  (ORW_RWII_W0 (i64 RD0), texternalsym:$dst)>;
 def : Pat<(DadaoHi tblockaddress:$dst), (SETZW_RWII_W1 tblockaddress:$dst)>;
 def : Pat<(DadaoLo tblockaddress:$dst), (ORW_RWII_W0 (i64 RD0), tblockaddress:$dst)>;
-def : Pat<(DadaoHi tjumptable:$dst), (SETZW_RWII_W1 tjumptable:$dst)>;
-def : Pat<(DadaoLo tjumptable:$dst), (ORW_RWII_W0 (i64 RD0), tjumptable:$dst)>;
-def : Pat<(DadaoHi tconstpool:$dst), (SETZW_RWII_W1 tconstpool:$dst)>;
-def : Pat<(DadaoLo tconstpool:$dst), (ORW_RWII_W0 (i64 RD0), tconstpool:$dst)>;
+def : Pat<(DadaoHi tjumptable:$dst),    (SETZW_RWII_W1 tjumptable:$dst)>;
+def : Pat<(DadaoLo tjumptable:$dst),    (ORW_RWII_W0 (i64 RD0), tjumptable:$dst)>;
+def : Pat<(DadaoHi tconstpool:$dst),    (SETZW_RWII_W1 tconstpool:$dst)>;
+def : Pat<(DadaoLo tconstpool:$dst),    (ORW_RWII_W0 (i64 RD0), tconstpool:$dst)>;
 
-def : Pat<(or GPR:$hi, (DadaoLo tglobaladdr:$lo)),
-          (ORW_RWII_W0 GPRD:$hi, tglobaladdr:$lo)>;
-def : Pat<(or GPR:$hi, (DadaoLo texternalsym:$lo)),
-          (ORW_RWII_W0 GPRD:$hi, texternalsym:$lo)>;
-def : Pat<(or GPR:$hi, (DadaoLo tblockaddress:$lo)),
-          (ORW_RWII_W0 GPRD:$hi, tblockaddress:$lo)>;
-def : Pat<(or GPR:$hi, (DadaoLo tjumptable:$lo)),
-          (ORW_RWII_W0 GPRD:$hi, tjumptable:$lo)>;
-def : Pat<(or GPR:$hi, (DadaoLo tconstpool:$lo)),
-          (ORW_RWII_W0 GPRD:$hi, tconstpool:$lo)>;
+def : Pat<(or GPRD:$hi, (DadaoLo tglobaladdr:$lo)),   (ORW_RWII_W0 GPRD:$hi, tglobaladdr:$lo)>;
+def : Pat<(or GPRD:$hi, (DadaoLo texternalsym:$lo)),  (ORW_RWII_W0 GPRD:$hi, texternalsym:$lo)>;
+def : Pat<(or GPRD:$hi, (DadaoLo tblockaddress:$lo)), (ORW_RWII_W0 GPRD:$hi, tblockaddress:$lo)>;
+def : Pat<(or GPRD:$hi, (DadaoLo tjumptable:$lo)),    (ORW_RWII_W0 GPRD:$hi, tjumptable:$lo)>;
+def : Pat<(or GPRD:$hi, (DadaoLo tconstpool:$lo)),    (ORW_RWII_W0 GPRD:$hi, tconstpool:$lo)>;

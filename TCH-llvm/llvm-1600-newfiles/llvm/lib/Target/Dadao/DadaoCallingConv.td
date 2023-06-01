@@ -20,11 +20,10 @@ def CC_Dadao32 : CallingConv<[
   CCIfType<[i8, i16, i32], CCPromoteToType<i64>>,
 
   // Put argument in registers if marked 'inreg' and not a vararg call.
-  CCIfNotVarArg<CCIfInReg<CCIfType<[i64],
-                                   CCAssignToReg<[R6, R7, R18, R19]>>>>,
+  CCIfNotVarArg<CCIfInReg<CCIfType<[i64], CCAssignToReg<[ RD8, RD9, RD10, RD11, RD12, RD13, RD14 ]>>>>,
 
-  // Otherwise they are assigned to the stack in 4-byte aligned units.
-  CCAssignToStack<4, 4>
+  // Otherwise they are assigned to the stack in 8-byte aligned units.
+  CCAssignToStack<8, 8>
 ]>;
 
 // Dadao 32-bit Fast Calling convention.
@@ -33,17 +32,15 @@ def CC_Dadao32_Fast : CallingConv<[
   CCIfType<[ i8, i16, i32 ], CCPromoteToType<i64>>,
 
   // Put arguments in registers.
-  CCIfNotVarArg<CCIfType<[i64], CCAssignToReg<[ R6, R7, R18, R19 ]>>>,
+  CCIfNotVarArg<CCIfType<[i64], CCAssignToReg<[ RD8, RD9, RD10, RD11, RD12, RD13, RD14 ]>>>,
 
-  // Otherwise they are assigned to the stack in 4-byte aligned units.
-  CCAssignToStack<4, 4>
+  // Otherwise they are assigned to the stack in 8-byte aligned units.
+  CCAssignToStack<8, 8>
 ]>;
 
 // Dadao 32-bit C return-value convention.
 def RetCC_Dadao32 : CallingConv<[
-  // Specify two registers to allow returning 64-bit results that have already
-  // been lowered to 2 32-bit values.
-  CCIfType<[i64], CCAssignToReg<[RV, R9]>>
+  CCIfType<[i64], CCAssignToReg<[RDRV]>>
 ]>;
 
 def CSR: CalleeSavedRegs<(add)>;

@@ -199,18 +199,18 @@ void DadaoFrameLowering::determineCalleeSaves(MachineFunction &MF,
   MachineFrameInfo &MFI = MF.getFrameInfo();
   const DadaoRegisterInfo *LRI =
       static_cast<const DadaoRegisterInfo *>(STI.getRegisterInfo());
-  int Offset = -4;
+  int Offset = -8;
 
-  // Reserve 4 bytes for the saved RCA
-  MFI.CreateFixedObject(4, Offset, true);
-  Offset -= 4;
+  // Reserve 8 bytes for the saved RBCA
+  MFI.CreateFixedObject(8, Offset, true);
+  Offset -= 8;
 
-  // Reserve 4 bytes for the saved FP
+  // Reserve 8 bytes for the saved RBFP
   MFI.CreateFixedObject(4, Offset, true);
-  Offset -= 4;
+  Offset -= 8;
 
   if (LRI->hasBasePointer(MF)) {
-    MFI.CreateFixedObject(4, Offset, true);
+    MFI.CreateFixedObject(8, Offset, true);
     SavedRegs.reset(LRI->getBaseRegister());
   }
 }

@@ -81,7 +81,7 @@ DadaoTargetLowering::DadaoTargetLowering(const TargetMachine &TM,
   TRI = STI.getRegisterInfo();
   computeRegisterProperties(TRI);
 
-  setStackPointerRegisterToSaveRestore(Dadao::SP);
+  setStackPointerRegisterToSaveRestore(Dadao::RBSP);
 
   setOperationAction(ISD::BR_CC, MVT::i64, Custom);
   setOperationAction(ISD::BR_JT, MVT::Other, Expand);
@@ -215,14 +215,10 @@ Register DadaoTargetLowering::getRegisterByName(
   const MachineFunction & /*MF*/) const {
   // Only unallocatable registers should be matched here.
   Register Reg = StringSwitch<unsigned>(RegName)
-                     .Case("pc", Dadao::PC)
+                     .Case("rbip", Dadao::RBIP)
                      .Case("rbsp", Dadao::RBSP)
                      .Case("rbfp", Dadao::RBFP)
-                     .Case("rr1", Dadao::RR1)
-                     .Case("r10", Dadao::R10)
-                     .Case("rr2", Dadao::RR2)
-                     .Case("r11", Dadao::R11)
-                     .Case("rca", Dadao::RCA)
+                     .Case("rbca", Dadao::RBCA)
                      .Default(0);
 
   if (Reg)
@@ -511,7 +507,7 @@ SDValue DadaoTargetLowering::LowerCCCArguments(
   }
 
   // The Dadao ABI for returning structs by value requires that we copy
-  // the sret argument into rv for the return. Save the argument into
+  // the sret argument into rdrv for the return. Save the argument into
   // a virtual register so that we can access it from the return points.
   if (MF.getFunction().hasStructRetAttr()) {
     Register Reg = DadaoMFI->getSRetReturnReg();
@@ -574,9 +570,9 @@ DadaoTargetLowering::LowerReturn(SDValue Chain, CallingConv::ID CallConv,
   }
 
   // The Dadao ABI for returning structs by value requires that we copy
-  // the sret argument into rv for the return. We saved the argument into
+  // the sret argument into rdrv for the return. We saved the argument into
   // a virtual register in the entry block, so now we copy the value out
-  // and into rv.
+  // and into rdrv.
   if (DAG.getMachineFunction().getFunction().hasStructRetAttr()) {
     MachineFunction &MF = DAG.getMachineFunction();
     DadaoMachineFunctionInfo *DadaoMFI = MF.getInfo<DadaoMachineFunctionInfo>();
@@ -586,10 +582,10 @@ DadaoTargetLowering::LowerReturn(SDValue Chain, CallingConv::ID CallConv,
     SDValue Val =
         DAG.getCopyFromReg(Chain, DL, Reg, getPointerTy(DAG.getDataLayout()));
 
-    Chain = DAG.getCopyToReg(Chain, DL, Dadao::RV, Val, Flag);
+    Chain = DAG.getCopyToReg(Chain, DL, Dadao::RDRV, Val, Flag);
     Flag = Chain.getValue(1);
     RetOps.push_back(
-        DAG.getRegister(Dadao::RV, getPointerTy(DAG.getDataLayout())));
+        DAG.getRegister(Dadao::RDRV, getPointerTy(DAG.getDataLayout())));
   }
 
   RetOps[0] = Chain; // Update chain
@@ -700,7 +696,7 @@ SDValue DadaoTargetLowering::LowerCCCCallTo(
       assert(VA.isMemLoc());
 
       if (StackPtr.getNode() == nullptr)
-        StackPtr = DAG.getCopyFromReg(Chain, DL, Dadao::SP,
+        StackPtr = DAG.getCopyFromReg(Chain, DL, Dadao::RBSP,
                                       getPointerTy(DAG.getDataLayout()));
 
       SDValue PtrOff =
@@ -1039,7 +1035,7 @@ SDValue DadaoTargetLowering::LowerDYNAMIC_STACKALLOC(SDValue Op,
   // For Dadao, the outgoing memory arguments area should be on top of the
   // alloca area on the stack i.e., the outgoing memory arguments should be
   // at a lower address than the alloca area. Move the alloca area down the
-  // stack by adding back the space reserved for outgoing arguments to SP
+  // stack by adding back the space reserved for outgoing arguments to RBSP
   // here.
   //
   // We do not know what the size of the outgoing args is at this point.

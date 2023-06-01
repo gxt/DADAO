@@ -32,7 +32,7 @@
 
 using namespace llvm;
 
-DadaoRegisterInfo::DadaoRegisterInfo() : DadaoGenRegisterInfo(Dadao::RCA) {}
+DadaoRegisterInfo::DadaoRegisterInfo() : DadaoGenRegisterInfo(Dadao::RBCA) {}
 
 const uint16_t *
 DadaoRegisterInfo::getCalleeSavedRegs(const MachineFunction * /*MF*/) const {
@@ -42,20 +42,11 @@ DadaoRegisterInfo::getCalleeSavedRegs(const MachineFunction * /*MF*/) const {
 BitVector DadaoRegisterInfo::getReservedRegs(const MachineFunction &MF) const {
   BitVector Reserved(getNumRegs());
 
-  Reserved.set(Dadao::R0);
-  Reserved.set(Dadao::R1);
-  Reserved.set(Dadao::PC);
-  Reserved.set(Dadao::R2);
+  Reserved.set(Dadao::RDZERO);
+  Reserved.set(Dadao::RBIP);
   Reserved.set(Dadao::RBSP);
-  Reserved.set(Dadao::R4);
   Reserved.set(Dadao::RBFP);
-  Reserved.set(Dadao::R5);
-  Reserved.set(Dadao::RR1);
-  Reserved.set(Dadao::R10);
-  Reserved.set(Dadao::RR2);
-  Reserved.set(Dadao::R11);
-  Reserved.set(Dadao::RCA);
-  Reserved.set(Dadao::R15);
+  Reserved.set(Dadao::RBCA);
   if (hasBasePointer(MF))
     Reserved.set(getBaseRegister());
   return Reserved;
@@ -103,8 +94,8 @@ bool DadaoRegisterInfo::eliminateFrameIndex(MachineBasicBlock::iterator II,
   int Offset = MF.getFrameInfo().getObjectOffset(FrameIndex) +
                MI.getOperand(FIOperandNum + 1).getImm();
 
-  // Addressable stack objects are addressed using neg. offsets from fp
-  // or pos. offsets from sp/basepointer
+  // Addressable stack objects are addressed using neg. offsets from rbfp
+  // or pos. offsets from rbsp/basepointer
   if (!HasFP || (hasStackRealignment(MF) && FrameIndex >= 0))
     Offset += MF.getFrameInfo().getStackSize();
 
@@ -113,7 +104,7 @@ bool DadaoRegisterInfo::eliminateFrameIndex(MachineBasicBlock::iterator II,
     if (hasBasePointer(MF))
       FrameReg = getBaseRegister();
     else if (hasStackRealignment(MF))
-      FrameReg = Dadao::SP;
+      FrameReg = Dadao::RBSP;
   }
 
   // Replace frame index with a frame pointer reference.
@@ -194,14 +185,15 @@ bool DadaoRegisterInfo::hasBasePointer(const MachineFunction &MF) const {
   return false;
 }
 
-unsigned DadaoRegisterInfo::getRARegister() const { return Dadao::RCA; }
+unsigned DadaoRegisterInfo::getRARegister() const { return Dadao::RBCA; }
 
 Register
 DadaoRegisterInfo::getFrameRegister(const MachineFunction & /*MF*/) const {
   return Dadao::RBFP;
 }
 
-Register DadaoRegisterInfo::getBaseRegister() const { return Dadao::R14; }
+// TODO: use reserved rb6 reg
+Register DadaoRegisterInfo::getBaseRegister() const { return Dadao::RB6; }
 
 const uint32_t *
 DadaoRegisterInfo::getCallPreservedMask(const MachineFunction & /*MF*/,

@@ -263,7 +263,7 @@ bool DadaoInstrInfo::optimizeCompareInstr(
   if (I == B)
     return false;
 
-  // There are two possible candidates which can be changed to set SR:
+  // There are two possible candidates which can be changed to set RDCC:
   // One is MI, the other is a SUB instruction.
   // * For SFSUB_F_RR(r1,r2), we are looking for SUB(r1,r2) or SUB(r2,r1).
   // * For SFSUB_F_RI(r1, CmpValue), we are looking for SUB(r1, CmpValue).
@@ -281,15 +281,15 @@ bool DadaoInstrInfo::optimizeCompareInstr(
       return false;
   }
 
-  // Check that SR isn't set between the comparison instruction and the
+  // Check that RDCC isn't set between the comparison instruction and the
   // instruction we want to change while searching for Sub.
   const TargetRegisterInfo *TRI = &getRegisterInfo();
   for (--I; I != E; --I) {
     const MachineInstr &Instr = *I;
 
-    if (Instr.modifiesRegister(Dadao::SR, TRI) ||
-        Instr.readsRegister(Dadao::SR, TRI))
-      // This instruction modifies or uses SR after the one we want to change.
+    if (Instr.modifiesRegister(Dadao::RDCC, TRI) ||
+        Instr.readsRegister(Dadao::RDCC, TRI))
+      // This instruction modifies or uses RDCC after the one we want to change.
       // We can't do this transformation.
       return false;
 
@@ -324,17 +324,17 @@ bool DadaoInstrInfo::optimizeCompareInstr(
       for (unsigned IO = 0, EO = Instr.getNumOperands(); !isSafe && IO != EO;
            ++IO) {
         const MachineOperand &MO = Instr.getOperand(IO);
-        if (MO.isRegMask() && MO.clobbersPhysReg(Dadao::SR)) {
+        if (MO.isRegMask() && MO.clobbersPhysReg(Dadao::RDCC)) {
           isSafe = true;
           break;
         }
-        if (!MO.isReg() || MO.getReg() != Dadao::SR)
+        if (!MO.isReg() || MO.getReg() != Dadao::RDCC)
           continue;
         if (MO.isDef()) {
           isSafe = true;
           break;
         }
-        // Condition code is after the operand before SR.
+        // Condition code is after the operand before RDCC.
         LPCC::CondCode CC;
         CC = (LPCC::CondCode)Instr.getOperand(IO - 1).getImm();
 
@@ -360,7 +360,7 @@ bool DadaoInstrInfo::optimizeCompareInstr(
           case LPCC::ICC_PL: // N
           case LPCC::ICC_F:  // none
           case LPCC::ICC_T:  // none
-            // SR can be used multiple times, we should continue.
+            // RDCC can be used multiple times, we should continue.
             break;
           case LPCC::ICC_CS: // C
           case LPCC::ICC_CC: // C
@@ -381,18 +381,18 @@ bool DadaoInstrInfo::optimizeCompareInstr(
       }
     }
 
-    // If SR is not killed nor re-defined, we should check whether it is
+    // If RDCC is not killed nor re-defined, we should check whether it is
     // live-out. If it is live-out, do not optimize.
     if (!isSafe) {
       MachineBasicBlock *MBB = CmpInstr.getParent();
       for (const MachineBasicBlock *Succ : MBB->successors())
-        if (Succ->isLiveIn(Dadao::SR))
+        if (Succ->isLiveIn(Dadao::RDCC))
           return false;
     }
 
-    // Toggle the optional operand to SR.
+    // Toggle the optional operand to RDCC.
     MI->setDesc(get(flagSettingOpcodeVariant(MI->getOpcode())));
-    MI->addRegisterDefined(Dadao::SR);
+    MI->addRegisterDefined(Dadao::RDCC);
     CmpInstr.eraseFromParent();
     return true;
   }
@@ -433,7 +433,7 @@ static MachineInstr *canFoldIntoSelect(Register Reg,
   if (!MI->isPredicable())
     return nullptr;
   // Check if MI has any non-dead defs or physreg uses. This also detects
-  // predicated instructions which will be reading SR.
+  // predicated instructions which will be reading RDCC.
   for (const MachineOperand &MO : llvm::drop_begin(MI->operands(), 1)) {
     // Reject frame index operands.
     if (MO.isFI() || MO.isCPI() || MO.isJTI())
