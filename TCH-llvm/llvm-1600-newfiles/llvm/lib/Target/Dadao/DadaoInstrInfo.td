@@ -565,9 +565,23 @@ def CALL_RRII : Inst_RRII<0b01101101, (outs), (ins GPRB:$RxHa, GPRD:$RyHb, i64lo
   let Defs = [RASP];
 }
 
+/*
 def RET_RIII : Inst_RIII<0b01101110, (outs GPRD:$RxHa), (ins i64lo18s:$Imm18),
                 "ret", "$RxHa, $Imm18",
                 [(set GPRD:$RxHa, (i64 i64lo18s:$Imm18)), (DadaoRet)]> {
+  let isReturn = 1;
+  let isTerminator = 1;
+  let isBarrier = 1;
+  let Uses = [RASP];
+}
+*/
+
+def _RET_FIXME : Inst_Dadao<(outs), (ins), "ret", "", [(DadaoRet)]> {
+  let MajorOpcode = 0b01101110;
+  let HexA = 0;
+  let HexB = 0;
+  let HexC = 0;
+  let HexD = 0;
   let isReturn = 1;
   let isTerminator = 1;
   let isBarrier = 1;
