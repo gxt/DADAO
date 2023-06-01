@@ -19,12 +19,16 @@ include "DadaoInstrFormats.td"
 //  These are target-independent nodes, but have target-specific formats.
 def SDT_DadaoSetFlag      : SDTypeProfile<0,  2, [SDTCisSameAs<0, 1>]>;
 def SDT_DadaoBrCC         : SDTypeProfile<0,  2, [SDTCisVT<0, OtherVT>, SDTCisVT<1, i64>]>;
+def SDT_DadaoSelectCC     : SDTypeProfile<1,  3, [SDTCisSameAs<0, 1>,
+                                                  SDTCisSameAs<1, 2>]>;
 def SDT_DadaoCall         : SDTypeProfile<0, -1, [SDTCisVT<0, i64>]>;
 
 def DadaoSetFlag     : SDNode<"DadaoISD::SET_FLAG", SDT_DadaoSetFlag,
                               [SDNPOutGlue]>;
 def DadaoBrCC        : SDNode<"DadaoISD::BR_CC", SDT_DadaoBrCC,
                               [SDNPHasChain, SDNPInGlue]>;
+def DadaoSelectCC    : SDNode<"DadaoISD::SELECT_CC", SDT_DadaoSelectCC,
+                              [SDNPInGlue]>;
 def DadaoCall        : SDNode<"DadaoISD::CALL", SDT_DadaoCall,
                               [SDNPHasChain, SDNPOptInGlue, SDNPOutGlue,
                                SDNPVariadic]>;
@@ -298,6 +302,24 @@ def CMPS_RRII   : COMPARE_RRII<0b00010010, "cmps", i64lo12s>;
 def CMPU_RRII   : COMPARE_RRII<0b00010011, "cmpu", i64lo12z>;
 
 // -------------------------------------------------- //
+// Conditional Set instructions
+// -------------------------------------------------- //
+
+class CONDSET_RRRR<bits<8> majorop, string OpcString>
+  : Inst_RRRR<majorop, (outs GPRD:$RdHb), (ins GPRD:$RdHc, GPRD:$RdHd, GPRD:$RdHa),
+              OpcString, "$RdHa, $RdHb, $RdHc, $RdHd",
+              [(set (i64 GPRD:$RdHb), (DadaoSelectCC (i64 GPRD:$RdHc), (i64 GPRD:$RdHd),
+                                      (imm:$RdHa)))]> {
+    let RdHa = RDCC.Num;
+    let Uses = [RDCC];
+    let isSelect = 1;
+  }
+
+def CSN     : CONDSET_RRRR<0b00100000, "csn">;
+def CSZ     : CONDSET_RRRR<0b00100010, "csz">;
+def CSP     : CONDSET_RRRR<0b00100100, "csp">;
+
+// -------------------------------------------------- //
 // WYDE instructions
 // -------------------------------------------------- //
 
@@ -555,8 +577,6 @@ def SDT_DadaoCallSeqStart : SDCallSeqStart<[SDTCisVT<0, i64>,
                                             SDTCisVT<1, i64>]>;
 def SDT_DadaoCallSeqEnd   : SDCallSeqEnd<[SDTCisVT<0, i64>,
                                           SDTCisVT<1, i64>]>;
-def SDT_DadaoSelectCC     : SDTypeProfile<1,  3, [SDTCisSameAs<0, 1>,
-                                                  SDTCisSameAs<1, 2>]>;
 def SDT_DadaoSetCC        : SDTypeProfile<1,  1, [SDTCisVT<0, i64>,
                                                   SDTCisVT<1, i64>]>;
 def SDT_DadaoAdjDynAlloc  : SDTypeProfile<1,  1, [SDTCisVT<0, i64>,
@@ -566,8 +586,6 @@ def CallSeqStart     : SDNode<"ISD::CALLSEQ_START", SDT_DadaoCallSeqStart,
                               [SDNPHasChain, SDNPOutGlue]>;
 def CallSeqEnd       : SDNode<"ISD::CALLSEQ_END", SDT_DadaoCallSeqEnd,
                               [SDNPHasChain, SDNPOptInGlue, SDNPOutGlue]>;
-def DadaoSelectCC    : SDNode<"DadaoISD::SELECT_CC", SDT_DadaoSelectCC,
-                              [SDNPInGlue]>;
 def DadaoSetCC       : SDNode<"DadaoISD::SETCC", SDT_DadaoSetCC,
                               [SDNPInGlue]>;
 def DadaoHi          : SDNode<"DadaoISD::HI", SDTIntUnaryOp>;
@@ -680,19 +698,6 @@ let Uses = [SR] in {
   def SCC : InstSCC<(outs GPR:$Rs1), (ins CCOp:$DDDI),
                     "s$DDDI\t$Rs1",
                     [(set (i64 GPR:$Rs1), (DadaoSetCC imm:$DDDI))]>;
-}
-
-// Select with hardware support
-let Uses = [SR], isSelect = 1 in {
-  def SELECT : InstRR<0b111, (outs GPR:$Rd),
-                      (ins GPR:$Rs1, GPR:$Rs2, CCOp:$DDDI),
-                      "sel.$DDDI $Rs1, $Rs2, $Rd",
-                      [(set (i64 GPR:$Rd),
-                       (DadaoSelectCC (i64 GPR:$Rs1), (i64 GPR:$Rs2),
-                                      (imm:$DDDI)))]> {
-    let JJJJJ = 0;
-    let F = 0;
-  }
 }
 
 let isBranch = 1, isBarrier = 1, isTerminator = 1,

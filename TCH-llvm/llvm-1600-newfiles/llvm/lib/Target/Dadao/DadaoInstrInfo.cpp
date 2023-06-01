@@ -404,7 +404,8 @@ bool DadaoInstrInfo::analyzeSelect(const MachineInstr &MI,
                                    SmallVectorImpl<MachineOperand> &Cond,
                                    unsigned &TrueOp, unsigned &FalseOp,
                                    bool &Optimizable) const {
-  assert(MI.getOpcode() == Dadao::SELECT && "unknown select instruction");
+  assert((MI.getOpcode() == Dadao::CSN || MI.getOpcode() == Dadao::CSZ
+        || MI.getOpcode() == Dadao::CSP) && "unknown select instruction");
   // Select operands:
   // 0: Def.
   // 1: True use.
@@ -457,7 +458,8 @@ MachineInstr *
 DadaoInstrInfo::optimizeSelect(MachineInstr &MI,
                                SmallPtrSetImpl<MachineInstr *> &SeenMIs,
                                bool /*PreferFalse*/) const {
-  assert(MI.getOpcode() == Dadao::SELECT && "unknown select instruction");
+  assert((MI.getOpcode() == Dadao::CSN || MI.getOpcode() == Dadao::CSZ
+        || MI.getOpcode() == Dadao::CSP) && "unknown select instruction");
   MachineRegisterInfo &MRI = MI.getParent()->getParent()->getRegInfo();
   MachineInstr *DefMI = canFoldIntoSelect(MI.getOperand(1).getReg(), MRI);
   bool Invert = !DefMI;
