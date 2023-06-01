@@ -21,12 +21,22 @@ class DadaoRegBase<bits<6> num, string n, list<string> altNames = []> : Register
   let Namespace = "Dadao";
 }
 
+class DadaoRegRAddr<bits<6> num, string n, list<string> altNames = []> : Register<n, altNames> {
+  field bits<6> Num;
+  let Num = num;
+  let Namespace = "Dadao";
+}
+
 foreach i = 0-63 in {
   def RD#i : DadaoRegData<i, "rd"#i>, DwarfRegNum<[i]>;
 }
 
 foreach i = 0-63 in {
   def RB#i : DadaoRegBase<i, "rb"#i>, DwarfRegNum<[!add(i, 64)]>;
+}
+
+foreach i = 0-63 in {
+  def RA#i : DadaoRegBase<i, "ra"#i>, DwarfRegNum<[!add(i, 128)]>;
 }
 
 let Namespace = "Dadao" in {
@@ -36,6 +46,8 @@ let Namespace = "Dadao" in {
   def RBFP   : DadaoRegBase<0,   "rbfp", ["RB2"]>, DwarfRegAlias<RB2>;
   def RBGP   : DadaoRegBase<0,   "rbgp", ["RB3"]>, DwarfRegAlias<RB3>;
   def RBTP   : DadaoRegBase<0,   "rbtp", ["RB4"]>, DwarfRegAlias<RB4>;
+  def RAVV   : DadaoRegRAddr<0,  "ravv", ["RA0"]>, DwarfRegAlias<RA0>;
+  def RASP   : DadaoRegRAddr<0,  "rasp", ["RA63"]>, DwarfRegAlias<RA63>;
 }
 
 def GPRD : RegisterClass<"Dadao", [i64], 64,
@@ -59,6 +71,12 @@ def GPRB : RegisterClass<"Dadao", [i64], 64,
      RB2, RBFP,                     // frame pointer
      RB1, RBSP,                     // stack pointer
      RB0, RBIP                      // instruction pointer
+    )>;
+
+def GPRA : RegisterClass<"Dadao", [i64], 64,
+    (add RA0, RAVV,                 // oVerflow/underflow Vector
+     (sequence "RA%i", 1, 62),      // RA stack
+     RA63, RASP                     // RA stack pointer
     )>;
 
 // Define a temp register to capture the dependencies between the set flag

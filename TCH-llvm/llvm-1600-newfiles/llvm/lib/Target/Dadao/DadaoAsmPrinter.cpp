@@ -147,7 +147,7 @@ bool DadaoAsmPrinter::PrintAsmOperand(const MachineInstr *MI, unsigned OpNo,
 
 //===----------------------------------------------------------------------===//
 void DadaoAsmPrinter::emitCallInstruction(const MachineInstr *MI) {
-  assert((MI->getOpcode() == Dadao::CALL || MI->getOpcode() == Dadao::CALLR) &&
+  assert((MI->getOpcode() == Dadao::CALL_IIII || MI->getOpcode() == Dadao::CALL_RRII) &&
          "Unsupported call function");
 
   DadaoMCInstLower MCInstLowering(OutContext, *this);
@@ -171,7 +171,7 @@ void DadaoAsmPrinter::emitCallInstruction(const MachineInstr *MI) {
                                STI);
 
   // Lower the call instruction.
-  if (MI->getOpcode() == Dadao::CALL) {
+  if (MI->getOpcode() == Dadao::CALL_IIII) {
     MCInst TmpInst;
     MCInstLowering.Lower(MI, TmpInst);
     TmpInst.setOpcode(Dadao::JUMP_IIII);

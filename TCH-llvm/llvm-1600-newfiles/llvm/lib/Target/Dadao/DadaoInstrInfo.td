@@ -19,11 +19,17 @@ include "DadaoInstrFormats.td"
 //  These are target-independent nodes, but have target-specific formats.
 def SDT_DadaoSetFlag      : SDTypeProfile<0,  2, [SDTCisSameAs<0, 1>]>;
 def SDT_DadaoBrCC         : SDTypeProfile<0,  2, [SDTCisVT<0, OtherVT>, SDTCisVT<1, i64>]>;
+def SDT_DadaoCall         : SDTypeProfile<0, -1, [SDTCisVT<0, i64>]>;
 
 def DadaoSetFlag     : SDNode<"DadaoISD::SET_FLAG", SDT_DadaoSetFlag,
                               [SDNPOutGlue]>;
 def DadaoBrCC        : SDNode<"DadaoISD::BR_CC", SDT_DadaoBrCC,
                               [SDNPHasChain, SDNPInGlue]>;
+def DadaoCall        : SDNode<"DadaoISD::CALL", SDT_DadaoCall,
+                              [SDNPHasChain, SDNPOptInGlue, SDNPOutGlue,
+                               SDNPVariadic]>;
+def DadaoRet         : SDNode<"DadaoISD::RET_FLAG", SDTNone,
+                              [SDNPHasChain, SDNPOptInGlue, SDNPVariadic]>;
 
 // Extract bits 0-5 (low-end) of an immediate value.
 def LO06 : SDNodeXForm<imm, [{
@@ -40,6 +46,12 @@ def LO12 : SDNodeXForm<imm, [{
 // Extract bits 0-15 (low-end) of an immediate value.
 def LO16 : SDNodeXForm<imm, [{
   return CurDAG->getTargetConstant((uint64_t)N->getZExtValue() & 0xffff,
+                                   SDLoc(N), MVT::i64);
+}]>;
+
+// Extract bits 0-17 (low-end) of an immediate value.
+def LO18 : SDNodeXForm<imm, [{
+  return CurDAG->getTargetConstant((uint64_t)N->getZExtValue() & 0x3FFFFULL,
                                    SDLoc(N), MVT::i64);
 }]>;
 
@@ -86,6 +98,18 @@ def i64neg12 : Operand<i64>, PatLeaf<(i64 imm), [{
     int Imm = N->getSExtValue();
     return (Imm < 0) && (isInt<12>(Imm));}], LO12> {
   let ParserMatchClass = LoImm12AsmOperand;
+}
+
+def LoImm18AsmOperand : AsmOperandClass { let Name = "LoImm18"; }
+def i64lo18z : Operand<i64>, PatLeaf<(i64 imm), [{
+    // i64lo18z predicate - true if the 64-bit immediate has only rightmost 18 bits set.
+    return ((N->getZExtValue() & 0x3FFFFULL) == N->getZExtValue());}], LO18> {
+  let ParserMatchClass = LoImm18AsmOperand;
+}
+def i64lo18s : Operand<i64>, PatLeaf<(i64 imm), [{
+    // i64lo18s predicate - true if the 64-bit immediate has only rightmost 18 bits set.
+    return ((int64_t)(N->getSExtValue() & 0x3FFFFULL) == N->getSExtValue());}], LO18> {
+  let ParserMatchClass = LoImm18AsmOperand;
 }
 
 def LoImm16AsmOperand : AsmOperandClass { let Name = "LoImm16"; }
@@ -482,6 +506,41 @@ def JUMP_RRII : Inst_RRII<0b01100101, (outs), (ins GPRB:$RxHa, GPRD:$RyHb, i64lo
 }
 */
 
+// -------------------------------------------------- //
+// CALL and RET instructions
+// -------------------------------------------------- //
+
+def CallTargetAsmOperand : AsmOperandClass {
+  let Name = "CallTarget";
+}
+def CallTarget : Operand<i64> {
+  let ParserMatchClass = CallTargetAsmOperand;
+  let EncoderMethod = "getBranchTargetOpValue";
+  let DecoderMethod = "decodeBranch";
+}
+
+def CALL_IIII : Inst_IIII<0b01101100, (outs), (ins CallTarget:$Imm24), "call", "$Imm24", [(DadaoCall bb:$Imm24)]> {
+  let isCall = 1;
+  let isCodeGenOnly = 1;
+  let Uses = [RASP];
+}
+
+def CALL_RRII : Inst_RRII<0b01101101, (outs), (ins GPRB:$RxHa, GPRD:$RyHb, i64lo12s:$Imm12),
+      "call", "$RxHa, $RyHb, $Imm12",
+      [(DadaoCall GPRB:$RxHa, GPRD:$RyHb, i64lo12s:$Imm12)]> {
+  let isCall = 1;
+  let isCodeGenOnly = 1;
+  let Defs = [RASP];
+}
+
+def RET_RIII : Inst_RIII<0b01101110, (outs GPRD:$RxHa), (ins i64lo18s:$Imm18),
+                "ret", "$RxHa, $Imm18",
+                [(set GPRD:$RxHa, (i64 i64lo18s:$Imm18)), (DadaoRet)]> {
+  let isReturn = 1;
+  let isTerminator = 1;
+  let isBarrier = 1;
+  let Uses = [RASP];
+}
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -496,7 +555,6 @@ def SDT_DadaoCallSeqStart : SDCallSeqStart<[SDTCisVT<0, i64>,
                                             SDTCisVT<1, i64>]>;
 def SDT_DadaoCallSeqEnd   : SDCallSeqEnd<[SDTCisVT<0, i64>,
                                           SDTCisVT<1, i64>]>;
-def SDT_DadaoCall         : SDTypeProfile<0, -1, [SDTCisVT<0, i64>]>;
 def SDT_DadaoSelectCC     : SDTypeProfile<1,  3, [SDTCisSameAs<0, 1>,
                                                   SDTCisSameAs<1, 2>]>;
 def SDT_DadaoSetCC        : SDTypeProfile<1,  1, [SDTCisVT<0, i64>,
@@ -504,11 +562,6 @@ def SDT_DadaoSetCC        : SDTypeProfile<1,  1, [SDTCisVT<0, i64>,
 def SDT_DadaoAdjDynAlloc  : SDTypeProfile<1,  1, [SDTCisVT<0, i64>,
                                                   SDTCisVT<1, i64>]>;
 
-def Call             : SDNode<"DadaoISD::CALL", SDT_DadaoCall,
-                              [SDNPHasChain, SDNPOptInGlue, SDNPOutGlue,
-                               SDNPVariadic]>;
-def RetFlag          : SDNode<"DadaoISD::RET_FLAG", SDTNone,
-                              [SDNPHasChain, SDNPOptInGlue, SDNPVariadic]>;
 def CallSeqStart     : SDNode<"ISD::CALLSEQ_START", SDT_DadaoCallSeqStart,
                               [SDNPHasChain, SDNPOutGlue]>;
 def CallSeqEnd       : SDNode<"ISD::CALLSEQ_END", SDT_DadaoCallSeqEnd,
@@ -527,15 +580,6 @@ def HI16 : SDNodeXForm<imm, [{
   return CurDAG->getTargetConstant((uint64_t)N->getZExtValue() >> 16, SDLoc(N),
                                    MVT::i64);
 }]>;
-
-def CallTargetAsmOperand : AsmOperandClass {
-  let Name = "CallTarget";
-}
-def CallTarget : Operand<i64> {
-  let ParserMatchClass = CallTargetAsmOperand;
-  let EncoderMethod = "getBranchTargetOpValue";
-  let DecoderMethod = "decodeBranch";
-}
 
 def ImmShiftAsmOperand : AsmOperandClass { let Name = "ImmShift"; }
 def immShift : Operand<i64>, PatLeaf<(imm), [{
@@ -611,32 +655,6 @@ let hasSideEffects = 0, Inst = 0x00000005 in
   def LOG3 : InstDadao<(outs), (ins), "log_3", []>;
 let hasSideEffects = 0, Inst = 0x00000006 in
   def LOG4 : InstDadao<(outs), (ins), "log_4", []>;
-
-
-// -------------------------------------------------- //
-// BRANCH instructions
-// -------------------------------------------------- //
-
-
-// Jump and link
-let isCall = 1, isCodeGenOnly = 1, Uses = [SP],
-    Defs = [RCA] in {
-  def CALL : Pseudo<(outs), (ins CallTarget:$addr), "", []>;
-  def CALLR : Pseudo<(outs), (ins GPR:$Rs1), "", [(Call GPR:$Rs1)]>;
-}
-
-let isReturn = 1, isTerminator = 1, isBarrier = 1,
-    Uses = [RCA] in {
-  def RET : InstRM<0b0, (outs), (ins),
-                   "ld\t-4[%fp], %pc ! return",
-                   [(RetFlag)]> {
-    let Rd = PC.Num;
-    let Rs1 = FP.Num;
-    let P = 1;
-    let Q = 0;
-    let imm16 = -4;
-  }
-}
 
 // ADJCALLSTACKDOWN/UP implicitly use/def SP because they may be expanded into
 // a stack adjustment and the codegen must know that they may modify the stack
@@ -716,8 +734,8 @@ def TRAILZ : InstSpecial<0b011, (outs GPR:$Rd), (ins GPR:$Rs1),
 //===----------------------------------------------------------------------===//
 
 // Calls
-def : Pat<(Call tglobaladdr:$dst), (CALL tglobaladdr:$dst)>;
-def : Pat<(Call texternalsym:$dst), (CALL texternalsym:$dst)>;
+def : Pat<(DadaoCall tglobaladdr:$dst), (CALL_IIII tglobaladdr:$dst)>;
+def : Pat<(DadaoCall texternalsym:$dst), (CALL_IIII texternalsym:$dst)>;
 
 // Loads
 def : Pat<(extloadi8  ADDR_RRII:$src), (i64 (LDBU_RRII ADDR_RRII:$src))>;
