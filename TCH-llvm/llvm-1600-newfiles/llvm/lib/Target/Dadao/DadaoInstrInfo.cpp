@@ -578,7 +578,7 @@ bool DadaoInstrInfo::analyzeBranch(MachineBasicBlock &MBB,
       continue;
     }
 
-    // Handle conditional branches
+  /*  // Handle conditional branches
     unsigned Opcode = Instruction->getOpcode();
     if (Opcode != Dadao::BRN_RIII && Opcode != Dadao::BRNN_RIII &&
         Opcode != Dadao::BRZ_RIII && Opcode != Dadao::BRNZ_RIII &&
@@ -597,7 +597,7 @@ bool DadaoInstrInfo::analyzeBranch(MachineBasicBlock &MBB,
       Condition.push_back(MachineOperand::CreateImm(BranchCond));
       continue;
     }
-
+  */
     // Multiple conditional branches are not handled.
     return true;
   }
