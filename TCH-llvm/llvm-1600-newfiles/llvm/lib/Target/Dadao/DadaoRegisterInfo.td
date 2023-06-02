@@ -41,15 +41,15 @@ foreach i = 0-63 in {
 
 let Namespace = "Dadao" in {
   def RDZERO : DadaoRegData<0, "rdzero", ["RD0"]>, DwarfRegAlias<RD0>;
-  def RDRV   : DadaoRegData<0,   "rdrv", ["RD15"]>, DwarfRegAlias<RD15>;
+  def RDRV   : DadaoRegData<15,  "rdrv", ["RD15"]>, DwarfRegAlias<RD15>;
   def RBIP   : DadaoRegBase<0,   "rbip", ["RB0"]>, DwarfRegAlias<RB0>;
-  def RBSP   : DadaoRegBase<0,   "rbsp", ["RB1"]>, DwarfRegAlias<RB1>;
-  def RBFP   : DadaoRegBase<0,   "rbfp", ["RB2"]>, DwarfRegAlias<RB2>;
-  def RBGP   : DadaoRegBase<0,   "rbgp", ["RB3"]>, DwarfRegAlias<RB3>;
-  def RBTP   : DadaoRegBase<0,   "rbtp", ["RB4"]>, DwarfRegAlias<RB4>;
-  def RBCA   : DadaoRegBase<0,   "rbca", ["RB7"]>, DwarfRegAlias<RB7>;
+  def RBSP   : DadaoRegBase<1,   "rbsp", ["RB1"]>, DwarfRegAlias<RB1>;
+  def RBFP   : DadaoRegBase<2,   "rbfp", ["RB2"]>, DwarfRegAlias<RB2>;
+  def RBGP   : DadaoRegBase<3,   "rbgp", ["RB3"]>, DwarfRegAlias<RB3>;
+  def RBTP   : DadaoRegBase<4,   "rbtp", ["RB4"]>, DwarfRegAlias<RB4>;
+  def RBCA   : DadaoRegBase<7,   "rbca", ["RB7"]>, DwarfRegAlias<RB7>;
   def RAVV   : DadaoRegRAddr<0,  "ravv", ["RA0"]>, DwarfRegAlias<RA0>;
-  def RASP   : DadaoRegRAddr<0,  "rasp", ["RA63"]>, DwarfRegAlias<RA63>;
+  def RASP   : DadaoRegRAddr<63, "rasp", ["RA63"]>, DwarfRegAlias<RA63>;
 }
 
 def GPRD : RegisterClass<"Dadao", [i64], 64,
