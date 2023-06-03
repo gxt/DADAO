@@ -42,13 +42,10 @@ DadaoRegisterInfo::getCalleeSavedRegs(const MachineFunction * /*MF*/) const {
 BitVector DadaoRegisterInfo::getReservedRegs(const MachineFunction &MF) const {
   BitVector Reserved(getNumRegs());
 
-  Reserved.set(Dadao::RDZERO);
-  Reserved.set(Dadao::RBIP);
-  Reserved.set(Dadao::RBSP);
-  Reserved.set(Dadao::RBFP);
-  Reserved.set(Dadao::RBCA);
-  if (hasBasePointer(MF))
-    Reserved.set(getBaseRegister());
+  Reserved.set(Dadao::RD0, Dadao::RD8);
+  Reserved.set(Dadao::RB0, Dadao::RB8);
+  Reserved.set(Dadao::RAVV);
+  Reserved.set(Dadao::RASP);
   return Reserved;
 }
 

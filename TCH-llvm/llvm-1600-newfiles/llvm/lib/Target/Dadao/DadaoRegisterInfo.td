@@ -77,6 +77,7 @@ def GPRB : RegisterClass<"Dadao", [i64], 64,
      RB0, RBIP                      // instruction pointer
     )>;
 
+let isAllocatable = false in
 def GPRA : RegisterClass<"Dadao", [i64], 64,
     (add RA0, RAVV,                 // oVerflow/underflow Vector
      (sequence "RA%i", 1, 62),      // RA stack
