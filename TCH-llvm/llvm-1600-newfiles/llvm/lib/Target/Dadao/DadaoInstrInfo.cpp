@@ -37,13 +37,32 @@ void DadaoInstrInfo::copyPhysReg(MachineBasicBlock &MBB,
                                  MCRegister DestinationRegister,
                                  MCRegister SourceRegister,
                                  bool KillSource) const {
-  if (!Dadao::GPRDRegClass.contains(DestinationRegister, SourceRegister)) {
-    llvm_unreachable("Impossible reg-to-reg copy");
+  if (Dadao::GPRDRegClass.contains(DestinationRegister, SourceRegister)) {
+    BuildMI(MBB, Position, DL, get(Dadao::RD2RD_ORRI), DestinationRegister)
+        .addReg(SourceRegister, getKillRegState(KillSource));
+        //.addImm(0);
+    return;
+  }
+  if (Dadao::GPRBRegClass.contains(DestinationRegister, SourceRegister)) {
+    BuildMI(MBB, Position, DL, get(Dadao::RB2RB_ORRI), DestinationRegister)
+        .addReg(SourceRegister, getKillRegState(KillSource));
+        //.addImm(0);
+    return;
+  }
+  if (Dadao::GPRDRegClass.contains(DestinationRegister) && Dadao::GPRBRegClass.contains(SourceRegister)) {
+    BuildMI(MBB, Position, DL, get(Dadao::RB2RD_ORRI), DestinationRegister)
+        .addReg(SourceRegister, getKillRegState(KillSource));
+        //.addImm(0);
+    return;
+  }
+  if (Dadao::GPRBRegClass.contains(DestinationRegister) && Dadao::GPRDRegClass.contains(SourceRegister)) {
+    BuildMI(MBB, Position, DL, get(Dadao::RD2RB_ORRI), DestinationRegister)
+        .addReg(SourceRegister, getKillRegState(KillSource));
+        //.addImm(0);
+    return;
   }
 
-  BuildMI(MBB, Position, DL, get(Dadao::ORW_RWII_W0), DestinationRegister)
-      .addReg(SourceRegister, getKillRegState(KillSource))
-      .addImm(0);
+  llvm_unreachable("Impossible reg-to-reg copy");
 }
 
 void DadaoInstrInfo::storeRegToStackSlot(
