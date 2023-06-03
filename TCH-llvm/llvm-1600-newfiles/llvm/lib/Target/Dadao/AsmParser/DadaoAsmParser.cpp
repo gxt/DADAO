@@ -446,7 +446,7 @@ public:
   }
 
   void addMemRegImmOperands(MCInst &Inst, unsigned N) const {
-    assert(N == 3 && "Invalid number of operands!");
+    assert(N == 2 && "Invalid number of operands!");
     Inst.addOperand(MCOperand::createReg(getMemBaseReg()));
     const MCExpr *Expr = getMemOffset();
     addExpr(Inst, Expr);
