@@ -111,7 +111,6 @@ void DadaoFrameLowering::emitPrologue(MachineFunction &MF,
       .addReg(Dadao::RBFP)
       .addReg(Dadao::RBSP)
       .addImm(-8)
-      .addImm(LPAC::makePreOp(LPAC::ADD))
       .setMIFlag(MachineInstr::FrameSetup);
 
   // Generate new FP
@@ -187,8 +186,7 @@ void DadaoFrameLowering::emitEpilogue(MachineFunction & /*MF*/,
   // Restore the frame pointer from the stack.
   BuildMI(MBB, MBBI, DL, LII.get(Dadao::LDRB_RRII), Dadao::RBFP)
       .addReg(Dadao::RBFP)
-      .addImm(-8)
-      .addImm(LPAC::ADD);
+      .addImm(-8);
 }
 
 void DadaoFrameLowering::determineCalleeSaves(MachineFunction &MF,

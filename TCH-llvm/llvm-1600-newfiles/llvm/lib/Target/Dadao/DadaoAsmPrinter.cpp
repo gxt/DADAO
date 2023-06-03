@@ -166,8 +166,7 @@ void DadaoAsmPrinter::emitCallInstruction(const MachineInstr *MI) {
   OutStreamer->emitInstruction(MCInstBuilder(Dadao::STRB_RRII)
                                    .addReg(Dadao::RBCA)
                                    .addReg(Dadao::RBSP)
-                                   .addImm(-4)
-                                   .addImm(LPAC::makePreOp(LPAC::ADD)),
+                                   .addImm(-8),
                                STI);
 
   // Lower the call instruction.
@@ -180,8 +179,7 @@ void DadaoAsmPrinter::emitCallInstruction(const MachineInstr *MI) {
     OutStreamer->emitInstruction(MCInstBuilder(Dadao::ADD_RB_ORRR)
                                      .addReg(Dadao::RBIP)
                                      .addReg(MI->getOperand(0).getReg())
-                                     .addReg(Dadao::RDZERO)
-                                     .addImm(LPCC::ICC_T),
+                                     .addReg(Dadao::RDZERO),
                                  STI);
   }
 }

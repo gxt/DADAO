@@ -140,13 +140,10 @@ unsigned DadaoMCCodeEmitter::getRRIIMemoryOpValue(
   unsigned Encoding;
   const MCOperand Op1 = Inst.getOperand(OpNo + 0);
   const MCOperand Op2 = Inst.getOperand(OpNo + 1);
-  const MCOperand AluOp = Inst.getOperand(OpNo + 2);
 
   assert(Op1.isReg() && "First operand is not register.");
   assert((Op2.isImm() || Op2.isExpr()) &&
          "Second operand is neither an immediate nor an expression.");
-  assert((LPAC::getAluOp(AluOp.getImm()) == LPAC::ADD) &&
-         "Register immediate only supports addition operator");
 
   Encoding = (getDadaoRegisterNumbering(Op1.getReg()) << 12);
   if (Op2.isImm()) {

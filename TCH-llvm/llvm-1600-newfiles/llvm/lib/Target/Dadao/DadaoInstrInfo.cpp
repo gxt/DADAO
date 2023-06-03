@@ -62,8 +62,7 @@ void DadaoInstrInfo::storeRegToStackSlot(
   BuildMI(MBB, Position, DL, get(Dadao::STRB_RRII))
       .addReg(SourceRegister, getKillRegState(IsKill))
       .addFrameIndex(FrameIndex)
-      .addImm(0)
-      .addImm(LPAC::ADD);
+      .addImm(0);
 }
 
 void DadaoInstrInfo::loadRegFromStackSlot(
@@ -81,8 +80,7 @@ void DadaoInstrInfo::loadRegFromStackSlot(
   }
   BuildMI(MBB, Position, DL, get(Dadao::LDRB_RRII), DestinationRegister)
       .addFrameIndex(FrameIndex)
-      .addImm(0)
-      .addImm(LPAC::ADD);
+      .addImm(0);
 }
 
 bool DadaoInstrInfo::areMemAccessesTriviallyDisjoint(

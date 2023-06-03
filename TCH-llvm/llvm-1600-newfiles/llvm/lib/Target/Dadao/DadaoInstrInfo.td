@@ -170,7 +170,7 @@ def i64w3 : Operand<i64>, PatLeaf<(i64 imm), [{
 
 // Addressing modes.
 def ADDR_RRRI : ComplexPattern<i64, 3, "selectAddrRRRI", [], []>;
-def ADDR_RRII : ComplexPattern<i64, 3, "selectAddrRRII", [frameindex], []>;
+def ADDR_RRII : ComplexPattern<i64, 2, "selectAddrRRII", [frameindex], []>;
 
 // Address operands.
 def MemRegRegAsmOperand : AsmOperandClass {
@@ -193,7 +193,7 @@ def MemRegImmAsmOperand : AsmOperandClass {
 def MEM_RRII : Operand<i64> {
   let DecoderMethod = "decodeRRIIMemoryValue";
   let EncoderMethod = "getRRIIMemoryOpValue";
-  let MIOperandInfo = (ops GPRB:$base, imm12:$offset, LO12);
+  let MIOperandInfo = (ops GPRB:$base, imm12:$offset);
   let ParserMatchClass = MemRegImmAsmOperand;
   let PrintMethod   = "printMemRRIIOperand";
 }
