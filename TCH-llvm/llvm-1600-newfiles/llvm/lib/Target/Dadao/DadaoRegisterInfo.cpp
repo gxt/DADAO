@@ -44,6 +44,9 @@ BitVector DadaoRegisterInfo::getReservedRegs(const MachineFunction &MF) const {
 
   Reserved.set(Dadao::RD0, Dadao::RD8);
   Reserved.set(Dadao::RB0, Dadao::RB8);
+  Reserved.set(Dadao::RDZERO);
+  Reserved.set(Dadao::RBSP);
+  Reserved.set(Dadao::RBFP);
   Reserved.set(Dadao::RAVV);
   Reserved.set(Dadao::RASP);
   return Reserved;
