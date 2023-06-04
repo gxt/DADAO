@@ -38,12 +38,31 @@ enum TOF {
 } // namespace DadaoII
 
 static inline unsigned getDadaoRegisterNumbering(unsigned Reg) {
+
+  if ((Reg >= Dadao::RD0) && (Reg <= Dadao::RD63))   return (Reg - Dadao::RD0);
+  if ((Reg >= Dadao::RB0) && (Reg <= Dadao::RB63))   return (Reg - Dadao::RB0);
+  if ((Reg >= Dadao::RA0) && (Reg <= Dadao::RA63))   return (Reg - Dadao::RA0);
+
   switch (Reg) {
-  case Dadao::RD0:
   case Dadao::RDZERO:
   case Dadao::RBIP:
-  case Dadao::RB0:
+  case Dadao::RAVV:
     return 0;
+  case Dadao::RBSP:
+    return 1;
+  case Dadao::RBFP:
+    return 2;
+  case Dadao::RBGP:
+    return 3;
+  case Dadao::RBTP:
+    return 4;
+  case Dadao::RBCA:
+  case Dadao::RDCC:
+    return 7;
+  case Dadao::RDRV:
+    return 15;
+  case Dadao::RASP:
+    return 63;
   default:
     llvm_unreachable("Unknown register number!");
   }
