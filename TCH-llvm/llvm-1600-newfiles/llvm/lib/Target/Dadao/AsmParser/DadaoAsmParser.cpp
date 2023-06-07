@@ -879,10 +879,7 @@ DadaoAsmParser::parseMemoryOperand(OperandVector &Operands) {
   unsigned BaseReg = 0;
   unsigned RegCnt = 0;
 
-  // Try to parse the offset
-  std::unique_ptr<DadaoOperand> Op = parseRegister();
-  if (!Op)
-    Op = parseImmediate();
+  std::unique_ptr<DadaoOperand> Op = nullptr;
 
   // Only continue if next token is '['
   if (Lexer.isNot(AsmToken::LBrac)) {
@@ -925,6 +922,17 @@ DadaoAsmParser::parseMemoryOperand(OperandVector &Operands) {
     return MatchOperand_ParseFail;
   }
   BaseReg = Op->getReg();
+
+  if (Lexer.isNot(AsmToken::Comma)) {
+      Error(Parser.getTok().getLoc(), "Expected ','");
+      return MatchOperand_ParseFail;
+  }
+
+  Parser.Lex(); // Eat the ','.
+  // Try to parse the offset
+  Op = parseRegister();
+  if (!Op)
+    Op = parseImmediate();
 
   // If ] match form (1) else match form (2)
   if (Lexer.is(AsmToken::RBrac)) {

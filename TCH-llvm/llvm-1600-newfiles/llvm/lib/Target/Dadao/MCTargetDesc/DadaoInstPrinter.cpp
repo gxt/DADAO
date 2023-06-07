@@ -105,9 +105,7 @@ void DadaoInstPrinter::printLo16AndImmOperand(const MCInst *MI, unsigned OpNo,
 
 static void printMemoryBaseRegister(raw_ostream &OS, const MCOperand &RegOp) {
   assert(RegOp.isReg() && "Register operand expected");
-  OS << "[";
   OS << "%" << DadaoInstPrinter::getRegisterName(RegOp.getReg());
-  OS << "]";
 }
 
 template <unsigned SizeInBits>
@@ -128,11 +126,13 @@ void DadaoInstPrinter::printMemRRIIOperand(const MCInst *MI, int OpNo,
   const MCOperand &RegOp = MI->getOperand(OpNo);
   const MCOperand &OffsetOp = MI->getOperand(OpNo + 1);
 
-  // Offset
-  printMemoryImmediateOffset<12>(MAI, OffsetOp, OS);
-
+  OS << "[";
   // Register
   printMemoryBaseRegister(OS, RegOp);
+  OS << ", ";
+  // Offset
+  printMemoryImmediateOffset<12>(MAI, OffsetOp, OS);
+  OS << "]";
 }
 
 void DadaoInstPrinter::printMemRRRIOperand(const MCInst *MI, int OpNo,
