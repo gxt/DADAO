@@ -45,67 +45,6 @@ bool DadaoInstPrinter::printInst(const MCInst *MI, raw_ostream &OS,
   return true;
 }
 
-static bool usesGivenOffset(const MCInst *MI, int AddOffset) {
-  unsigned AluCode = MI->getOperand(3).getImm();
-  return LPAC::encodeDadaoAluCode(AluCode) == LPAC::ADD &&
-         (MI->getOperand(2).getImm() == AddOffset ||
-          MI->getOperand(2).getImm() == -AddOffset);
-}
-
-static bool isPreIncrementForm(const MCInst *MI, int AddOffset) {
-  unsigned AluCode = MI->getOperand(3).getImm();
-  return LPAC::isPreOp(AluCode) && usesGivenOffset(MI, AddOffset);
-}
-
-static bool isPostIncrementForm(const MCInst *MI, int AddOffset) {
-  unsigned AluCode = MI->getOperand(3).getImm();
-  return LPAC::isPostOp(AluCode) && usesGivenOffset(MI, AddOffset);
-}
-
-static StringRef decIncOperator(const MCInst *MI) {
-  if (MI->getOperand(2).getImm() < 0)
-    return "--";
-  return "++";
-}
-
-bool DadaoInstPrinter::printMemoryLoadIncrement(const MCInst *MI,
-                                                raw_ostream &OS,
-                                                StringRef Opcode,
-                                                int AddOffset) {
-  if (isPreIncrementForm(MI, AddOffset)) {
-    OS << "\t" << Opcode << "\t[" << decIncOperator(MI) << "%"
-       << getRegisterName(MI->getOperand(1).getReg()) << "], %"
-       << getRegisterName(MI->getOperand(0).getReg());
-    return true;
-  }
-  if (isPostIncrementForm(MI, AddOffset)) {
-    OS << "\t" << Opcode << "\t[%"
-       << getRegisterName(MI->getOperand(1).getReg()) << decIncOperator(MI)
-       << "], %" << getRegisterName(MI->getOperand(0).getReg());
-    return true;
-  }
-  return false;
-}
-
-bool DadaoInstPrinter::printMemoryStoreIncrement(const MCInst *MI,
-                                                 raw_ostream &OS,
-                                                 StringRef Opcode,
-                                                 int AddOffset) {
-  if (isPreIncrementForm(MI, AddOffset)) {
-    OS << "\t" << Opcode << "\t%" << getRegisterName(MI->getOperand(0).getReg())
-       << ", [" << decIncOperator(MI) << "%"
-       << getRegisterName(MI->getOperand(1).getReg()) << "]";
-    return true;
-  }
-  if (isPostIncrementForm(MI, AddOffset)) {
-    OS << "\t" << Opcode << "\t%" << getRegisterName(MI->getOperand(0).getReg())
-       << ", [%" << getRegisterName(MI->getOperand(1).getReg())
-       << decIncOperator(MI) << "]";
-    return true;
-  }
-  return false;
-}
-
 void DadaoInstPrinter::printInst(const MCInst *MI, uint64_t Address,
                                  StringRef Annotation,
                                  const MCSubtargetInfo & /*STI*/,

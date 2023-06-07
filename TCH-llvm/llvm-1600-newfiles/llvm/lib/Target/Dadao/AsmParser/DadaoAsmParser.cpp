@@ -54,13 +54,11 @@ class DadaoAsmParser : public MCTargetAsmParser {
 
   std::unique_ptr<DadaoOperand> parseIdentifier();
 
-  unsigned parseAluOperator(bool PreOp, bool PostOp);
+  unsigned parseAluOperator();
 
   // Split the mnemonic stripping conditional code and quantifiers
   StringRef splitMnemonic(StringRef Name, SMLoc NameLoc,
                           OperandVector *Operands);
-
-  bool parsePrePost(StringRef Type, int *OffsetValue);
 
   bool ParseDirective(AsmToken DirectiveID) override;
 
@@ -862,15 +860,7 @@ std::unique_ptr<DadaoOperand> DadaoAsmParser::parseImmediate() {
   }
 }
 
-static unsigned AluWithPrePost(unsigned AluCode, bool PreOp, bool PostOp) {
-  if (PreOp)
-    return LPAC::makePreOp(AluCode);
-  if (PostOp)
-    return LPAC::makePostOp(AluCode);
-  return AluCode;
-}
-
-unsigned DadaoAsmParser::parseAluOperator(bool PreOp, bool PostOp) {
+unsigned DadaoAsmParser::parseAluOperator() {
   StringRef IdString;
   Parser.parseIdentifier(IdString);
   unsigned AluCode = LPAC::stringToDadaoAluCode(IdString);
@@ -883,28 +873,6 @@ unsigned DadaoAsmParser::parseAluOperator(bool PreOp, bool PostOp) {
 
 static int SizeForSuffix(StringRef T) {
   return StringSwitch<int>(T).EndsWith(".h", 2).EndsWith(".b", 1).Default(4);
-}
-
-bool DadaoAsmParser::parsePrePost(StringRef Type, int *OffsetValue) {
-  bool PreOrPost = false;
-  if (Lexer.getKind() == Lexer.peekTok(true).getKind()) {
-    PreOrPost = true;
-    if (Lexer.is(AsmToken::Minus))
-      *OffsetValue = -SizeForSuffix(Type);
-    else if (Lexer.is(AsmToken::Plus))
-      *OffsetValue = SizeForSuffix(Type);
-    else
-      return false;
-
-    // Eat the '-' '-' or '+' '+'
-    Parser.Lex();
-    Parser.Lex();
-  } else if (Lexer.is(AsmToken::Star)) {
-    Parser.Lex(); // Eat the '*'
-    PreOrPost = true;
-  }
-
-  return PreOrPost;
 }
 
 // Matches memory operand. Returns true if error encountered.
@@ -929,7 +897,6 @@ DadaoAsmParser::parseMemoryOperand(OperandVector &Operands) {
   int OffsetValue = 0;
   unsigned BaseReg = 0;
   unsigned AluOp = LPAC::ADD;
-  bool PostOp = false, PreOp = false;
 
   // Try to parse the offset
   std::unique_ptr<DadaoOperand> Op = parseRegister();
@@ -952,9 +919,6 @@ DadaoAsmParser::parseMemoryOperand(OperandVector &Operands) {
   std::unique_ptr<DadaoOperand> Offset = nullptr;
   if (Op)
     Offset.swap(Op);
-
-  // Determine if a pre operation
-  PreOp = parsePrePost(Type, &OffsetValue);
 
   Op = parseRegister();
   if (!Op) {
@@ -981,10 +945,6 @@ DadaoAsmParser::parseMemoryOperand(OperandVector &Operands) {
   }
   BaseReg = Op->getReg();
 
-  // Determine if a post operation
-  if (!PreOp)
-    PostOp = parsePrePost(Type, &OffsetValue);
-
   // If ] match form (1) else match form (2)
   if (Lexer.is(AsmToken::RBrac)) {
     Parser.Lex(); // Eat the ']'.
@@ -1003,7 +963,7 @@ DadaoAsmParser::parseMemoryOperand(OperandVector &Operands) {
     }
 
     // Parse operator
-    AluOp = parseAluOperator(PreOp, PostOp);
+    AluOp = parseAluOperator();
 
     // Second form requires offset register
     Offset = parseRegister();
@@ -1013,10 +973,6 @@ DadaoAsmParser::parseMemoryOperand(OperandVector &Operands) {
     }
     Parser.Lex(); // Eat the ']'.
   }
-
-  // First form has addition as operator. Add pre- or post-op indicator as
-  // needed.
-  AluOp = AluWithPrePost(AluOp, PreOp, PostOp);
 
   // Ensure immediate offset is not too large
   if (Offset->isImm() && !Offset->isLoImm16Signed()) {
@@ -1144,8 +1100,6 @@ static bool IsMemoryAssignmentError(const OperandVector &Operands) {
   //
   // TODO: This test is focussed on one specific instance (ld/st).
   // Extend it to handle more cases or be more robust.
-  bool Modifies = false;
-
   int Offset = 0;
 
   if (Operands.size() < 5)
@@ -1157,22 +1111,8 @@ static bool IsMemoryAssignmentError(const OperandVector &Operands) {
            Operands[2]->isReg() && Operands[3]->isImm() &&
            Operands[4]->isImm() && Operands[5]->isReg())
     Offset = 1;
-  else
-    return false;
 
-  int PossibleAluOpIdx = Offset + 3;
-  int PossibleBaseIdx = Offset + 1;
-  int PossibleDestIdx = Offset + 4;
-  if (DadaoOperand *PossibleAluOp =
-          static_cast<DadaoOperand *>(Operands[PossibleAluOpIdx].get()))
-    if (PossibleAluOp->isImm())
-      if (const MCConstantExpr *ConstExpr =
-              dyn_cast<MCConstantExpr>(PossibleAluOp->getImm()))
-        Modifies = LPAC::modifiesOp(ConstExpr->getValue());
-  return Modifies && Operands[PossibleBaseIdx]->isReg() &&
-         Operands[PossibleDestIdx]->isReg() &&
-         Operands[PossibleBaseIdx]->getReg() ==
-             Operands[PossibleDestIdx]->getReg();
+  return false;
 }
 
 static bool IsRegister(const MCParsedAsmOperand &op) {

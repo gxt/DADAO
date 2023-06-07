@@ -37,11 +37,6 @@ enum AluCode {
   UNKNOWN = 0xFF,
 };
 
-// Bits indicating post- and pre-operators should be tested and set using Is*
-// and Make* utility functions
-const int Dadao_PRE_OP = 0x40;
-const int Dadao_POST_OP = 0x80;
-
 inline static unsigned encodeDadaoAluCode(unsigned AluOp) {
   unsigned const OP_ENCODING_MASK = 0x07;
   return AluOp & OP_ENCODING_MASK;
@@ -50,24 +45,6 @@ inline static unsigned encodeDadaoAluCode(unsigned AluOp) {
 inline static unsigned getAluOp(unsigned AluOp) {
   unsigned const ALU_MASK = 0x3F;
   return AluOp & ALU_MASK;
-}
-
-inline static bool isPreOp(unsigned AluOp) { return AluOp & Dadao_PRE_OP; }
-
-inline static bool isPostOp(unsigned AluOp) { return AluOp & Dadao_POST_OP; }
-
-inline static unsigned makePreOp(unsigned AluOp) {
-  assert(!isPostOp(AluOp) && "Operator can't be a post- and pre-op");
-  return AluOp | Dadao_PRE_OP;
-}
-
-inline static unsigned makePostOp(unsigned AluOp) {
-  assert(!isPreOp(AluOp) && "Operator can't be a post- and pre-op");
-  return AluOp | Dadao_POST_OP;
-}
-
-inline static bool modifiesOp(unsigned AluOp) {
-  return isPreOp(AluOp) || isPostOp(AluOp);
 }
 
 inline static const char *dadaoAluCodeToString(unsigned AluOp) {

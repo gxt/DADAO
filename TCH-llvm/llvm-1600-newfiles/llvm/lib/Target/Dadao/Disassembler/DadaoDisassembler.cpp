@@ -79,34 +79,6 @@ static DecodeStatus readInstruction32(ArrayRef<uint8_t> Bytes, uint64_t &Size,
   return MCDisassembler::Success;
 }
 
-static void PostOperandDecodeAdjust(MCInst &Instr, uint32_t Insn) {
-  unsigned AluOp = LPAC::ADD;
-  // Fix up for pre and post operations.
-  int PqShift = -1;
-
-  if (PqShift != -1) {
-    unsigned PQ = (Insn >> PqShift) & 0x3;
-    switch (PQ) {
-    case 0x0:
-      if (Instr.getOperand(2).isReg()) {
-        Instr.getOperand(2).setReg(Dadao::RDZERO);
-      }
-      if (Instr.getOperand(2).isImm())
-        Instr.getOperand(2).setImm(0);
-      break;
-    case 0x1:
-      AluOp = LPAC::makePostOp(AluOp);
-      break;
-    case 0x2:
-      break;
-    case 0x3:
-      AluOp = LPAC::makePreOp(AluOp);
-      break;
-    }
-    Instr.addOperand(MCOperand::createImm(AluOp));
-  }
-}
-
 DecodeStatus
 DadaoDisassembler::getInstruction(MCInst &Instr, uint64_t &Size,
                                   ArrayRef<uint8_t> Bytes, uint64_t Address,
@@ -123,7 +95,6 @@ DadaoDisassembler::getInstruction(MCInst &Instr, uint64_t &Size,
       decodeInstruction(DecoderTableDadao32, Instr, Insn, Address, this, STI);
 
   if (Result != MCDisassembler::Fail) {
-    PostOperandDecodeAdjust(Instr, Insn);
     Size = 4;
     return Result;
   }

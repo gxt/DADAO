@@ -52,10 +52,6 @@ public:
 private:
   bool printInst(const MCInst *MI, raw_ostream &Ostream, StringRef Alias,
                  unsigned OpNo0, unsigned OpnNo1);
-  bool printMemoryLoadIncrement(const MCInst *MI, raw_ostream &Ostream,
-                                StringRef Opcode, int AddOffset);
-  bool printMemoryStoreIncrement(const MCInst *MI, raw_ostream &Ostream,
-                                 StringRef Opcode, int AddOffset);
 };
 
 } // end namespace llvm
