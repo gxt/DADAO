@@ -10,7 +10,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include "DadaoAluCode.h"
 #include "DadaoMachineFunctionInfo.h"
 #include "DadaoRegisterInfo.h"
 #include "DadaoSubtarget.h"
@@ -75,7 +74,7 @@ private:
 
   // Complex Pattern for address selection.
   bool selectAddrRRII(SDValue Addr, SDValue &Base, SDValue &Offset);
-  bool selectAddrRRRI(SDValue Addr, SDValue &Base, SDValue &Offset, SDValue &AluOp);
+  bool selectAddrRRRI(SDValue Addr, SDValue &Base, SDValue &Offset, SDValue &RegCnt);
 
   // getI64Imm - Return a target constant with the specified value, of type i64.
   inline SDValue getI64Imm(unsigned Imm, const SDLoc &DL) {
@@ -144,7 +143,7 @@ bool DadaoDAGToDAGISel::selectAddrRRII(SDValue Addr, SDValue &Base,
 }
 
 bool DadaoDAGToDAGISel::selectAddrRRRI(SDValue Addr, SDValue &RegBase, SDValue &RegOffset,
-                                     SDValue &AluOp) {
+                                     SDValue &RegCnt) {
   // if Address is FI, get the TargetFrameIndex.
   if (Addr.getOpcode() == ISD::FrameIndex)
     return false;
@@ -156,8 +155,7 @@ bool DadaoDAGToDAGISel::selectAddrRRRI(SDValue Addr, SDValue &RegBase, SDValue &
 
   // Address of the form OP + OP
   ISD::NodeType AluOperator = static_cast<ISD::NodeType>(Addr.getOpcode());
-  LPAC::AluCode AluCode = LPAC::isdToDadaoAluCode(AluOperator);
-  if (AluCode == LPAC::ADD) {
+  if (AluOperator == ISD::ADD) {
     // Skip addresses of the form FI OP const
     if (ConstantSDNode *CN = dyn_cast<ConstantSDNode>(Addr.getOperand(1)))
       if (isInt<16>(CN->getSExtValue()))
@@ -173,9 +171,11 @@ bool DadaoDAGToDAGISel::selectAddrRRRI(SDValue Addr, SDValue &RegBase, SDValue &
     // Addresses of the form register OP register
     RegBase = Addr.getOperand(0);
     RegOffset = Addr.getOperand(1);
-    AluOp = CurDAG->getTargetConstant(AluCode, SDLoc(Addr), MVT::i64);
     return true;
   }
+
+// TODO:
+//   RegCnt = CurDAG->getTargetConstant(RegCnt, SDLoc(Addr), MVT::i64);
 
   // Skip addresses with zero offset
   return false;
@@ -183,12 +183,12 @@ bool DadaoDAGToDAGISel::selectAddrRRRI(SDValue Addr, SDValue &RegBase, SDValue &
 
 bool DadaoDAGToDAGISel::SelectInlineAsmMemoryOperand(
     const SDValue &Op, unsigned ConstraintCode, std::vector<SDValue> &OutOps) {
-  SDValue Op0, Op1, AluOp;
+  SDValue Op0, Op1, RegCnt;
   switch (ConstraintCode) {
   default:
     return true;
   case InlineAsm::Constraint_m: // memory
-    if (!selectAddrRRRI(Op, Op0, Op1, AluOp) &&
+    if (!selectAddrRRRI(Op, Op0, Op1, RegCnt) &&
         !selectAddrRRII(Op, Op0, Op1))
       return true;
     break;
@@ -196,7 +196,7 @@ bool DadaoDAGToDAGISel::SelectInlineAsmMemoryOperand(
 
   OutOps.push_back(Op0);
   OutOps.push_back(Op1);
-  OutOps.push_back(AluOp);
+  OutOps.push_back(RegCnt);
   return false;
 }
 

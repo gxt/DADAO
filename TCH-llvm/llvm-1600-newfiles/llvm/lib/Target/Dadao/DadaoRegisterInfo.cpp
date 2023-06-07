@@ -11,7 +11,6 @@
 //===----------------------------------------------------------------------===//
 
 #include "DadaoRegisterInfo.h"
-#include "DadaoAluCode.h"
 #include "DadaoCondCode.h"
 #include "DadaoFrameLowering.h"
 #include "DadaoInstrInfo.h"
@@ -151,13 +150,6 @@ bool DadaoRegisterInfo::eliminateFrameIndex(MachineBasicBlock::iterator II,
     }
     if (isMemRRIIOpcode(MI.getOpcode())) {
       MI.setDesc(TII->get(getRRRIOpcodeVariant(MI.getOpcode())));
-      if (HasNegOffset) {
-        // Change the ALU op (operand 3) from LPAC::ADD (the default) to
-        // LPAC::SUB with the already negated offset.
-        assert((MI.getOperand(3).getImm() == LPAC::ADD) &&
-               "Unexpected ALU op in RRRI instruction");
-        MI.getOperand(3).setImm(LPAC::SUB);
-      }
     } else
       llvm_unreachable("Unexpected opcode in frame index operation");
 

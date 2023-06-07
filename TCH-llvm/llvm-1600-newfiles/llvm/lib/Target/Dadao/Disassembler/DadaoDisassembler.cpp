@@ -12,7 +12,6 @@
 
 #include "DadaoDisassembler.h"
 
-#include "DadaoAluCode.h"
 #include "DadaoCondCode.h"
 #include "DadaoInstrInfo.h"
 #include "TargetInfo/DadaoTargetInfo.h"

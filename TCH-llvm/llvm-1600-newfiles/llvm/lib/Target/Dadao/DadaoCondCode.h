@@ -4,6 +4,7 @@
 #define LLVM_LIB_TARGET_DADAO_DADAOCONDCODE_H
 
 #include "llvm/ADT/StringSwitch.h"
+#include "llvm/Support/ErrorHandling.h"
 
 namespace llvm {
 namespace LPCC {

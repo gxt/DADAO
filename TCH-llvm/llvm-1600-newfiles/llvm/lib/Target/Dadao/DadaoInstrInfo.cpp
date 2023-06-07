@@ -11,7 +11,6 @@
 //===----------------------------------------------------------------------===//
 
 #include "DadaoInstrInfo.h"
-#include "DadaoAluCode.h"
 #include "DadaoCondCode.h"
 #include "MCTargetDesc/DadaoBaseInfo.h"
 #include "llvm/ADT/STLExtras.h"
@@ -770,8 +769,7 @@ bool DadaoInstrInfo::getMemOperandWithOffsetWidth(
   // and with add as ALU op.
   if (LdSt.getNumOperands() != 4)
     return false;
-  if (!LdSt.getOperand(1).isReg() || !LdSt.getOperand(2).isImm() ||
-      !(LdSt.getOperand(3).isImm() && LdSt.getOperand(3).getImm() == LPAC::ADD))
+  if (!LdSt.getOperand(1).isReg() || !LdSt.getOperand(2).isImm())
     return false;
 
   switch (LdSt.getOpcode()) {

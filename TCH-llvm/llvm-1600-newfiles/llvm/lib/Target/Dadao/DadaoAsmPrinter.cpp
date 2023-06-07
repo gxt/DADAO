@@ -11,7 +11,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include "DadaoAluCode.h"
 #include "DadaoCondCode.h"
 #include "DadaoInstrInfo.h"
 #include "DadaoMCInstLower.h"

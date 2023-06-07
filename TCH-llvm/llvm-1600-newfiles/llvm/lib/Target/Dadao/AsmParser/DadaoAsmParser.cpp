@@ -6,7 +6,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include "DadaoAluCode.h"
 #include "DadaoCondCode.h"
 #include "DadaoInstrInfo.h"
 #include "MCTargetDesc/DadaoMCExpr.h"
@@ -53,8 +52,6 @@ class DadaoAsmParser : public MCTargetAsmParser {
   std::unique_ptr<DadaoOperand> parseImmediate();
 
   std::unique_ptr<DadaoOperand> parseIdentifier();
-
-  unsigned parseAluOperator();
 
   // Split the mnemonic stripping conditional code and quantifiers
   StringRef splitMnemonic(StringRef Name, SMLoc NameLoc,
@@ -129,7 +126,7 @@ struct DadaoOperand : public MCParsedAsmOperand {
   struct MemOp {
     unsigned BaseReg;
     unsigned OffsetReg;
-    unsigned AluOp;
+    unsigned RegCnt;
     const MCExpr *Offset;
   };
 
@@ -184,7 +181,7 @@ public:
 
   unsigned getMemOp() const {
     assert(isMem() && "Invalid type access!");
-    return Mem.AluOp;
+    return Mem.RegCnt;
   }
 
   // Functions for testing operand type
@@ -664,23 +661,22 @@ public:
 
   static std::unique_ptr<DadaoOperand>
   MorphToMemRegReg(unsigned BaseReg, std::unique_ptr<DadaoOperand> Op,
-                   unsigned AluOp) {
+                   unsigned RegCnt) {
     unsigned OffsetReg = Op->getReg();
     Op->Kind = MEMORY_REG_REG;
     Op->Mem.BaseReg = BaseReg;
-    Op->Mem.AluOp = AluOp;
+    Op->Mem.RegCnt = RegCnt;
     Op->Mem.OffsetReg = OffsetReg;
     Op->Mem.Offset = nullptr;
     return Op;
   }
 
   static std::unique_ptr<DadaoOperand>
-  MorphToMemRegImm(unsigned BaseReg, std::unique_ptr<DadaoOperand> Op,
-                   unsigned AluOp) {
+  MorphToMemRegImm(unsigned BaseReg, std::unique_ptr<DadaoOperand> Op) {
     const MCExpr *Imm = Op->getImm();
     Op->Kind = MEMORY_REG_IMM;
     Op->Mem.BaseReg = BaseReg;
-    Op->Mem.AluOp = AluOp;
+    Op->Mem.RegCnt = 0;
     Op->Mem.OffsetReg = 0;
     Op->Mem.Offset = Imm;
     return Op;
@@ -860,21 +856,6 @@ std::unique_ptr<DadaoOperand> DadaoAsmParser::parseImmediate() {
   }
 }
 
-unsigned DadaoAsmParser::parseAluOperator() {
-  StringRef IdString;
-  Parser.parseIdentifier(IdString);
-  unsigned AluCode = LPAC::stringToDadaoAluCode(IdString);
-  if (AluCode == LPAC::UNKNOWN) {
-    Error(Parser.getTok().getLoc(), "Can't parse ALU operator");
-    return 0;
-  }
-  return AluCode;
-}
-
-static int SizeForSuffix(StringRef T) {
-  return StringSwitch<int>(T).EndsWith(".h", 2).EndsWith(".b", 1).Default(4);
-}
-
 // Matches memory operand. Returns true if error encountered.
 OperandMatchResultTy
 DadaoAsmParser::parseMemoryOperand(OperandVector &Operands) {
@@ -882,7 +863,7 @@ DadaoAsmParser::parseMemoryOperand(OperandVector &Operands) {
   // The memory operands are of the form:
   //  (1)  Register|Immediate|'' '[' '*'? Register '*'? ']' or
   //                            ^
-  //  (2)  '[' '*'? Register '*'? AluOperator Register ']'
+  //  (2)  '[' '*'? Register '*'? ADD Register ']'
   //      ^
   //  (3)  '[' '--'|'++' Register '--'|'++' ']'
   //
@@ -896,7 +877,7 @@ DadaoAsmParser::parseMemoryOperand(OperandVector &Operands) {
   // Use 0 if no offset given
   int OffsetValue = 0;
   unsigned BaseReg = 0;
-  unsigned AluOp = LPAC::ADD;
+  unsigned RegCnt = 0;
 
   // Try to parse the offset
   std::unique_ptr<DadaoOperand> Op = parseRegister();
@@ -933,7 +914,7 @@ DadaoAsmParser::parseMemoryOperand(OperandVector &Operands) {
           return MatchOperand_ParseFail;
         }
         Operands.push_back(DadaoOperand::MorphToMemRegImm(
-            Dadao::RDZERO, std::move(Op), LPAC::ADD));
+            Dadao::RDZERO, std::move(Op)));
 
         return MatchOperand_Success;
       }
@@ -962,9 +943,6 @@ DadaoAsmParser::parseMemoryOperand(OperandVector &Operands) {
       return MatchOperand_ParseFail;
     }
 
-    // Parse operator
-    AluOp = parseAluOperator();
-
     // Second form requires offset register
     Offset = parseRegister();
     if (!BaseReg || Lexer.isNot(AsmToken::RBrac)) {
@@ -984,8 +962,8 @@ DadaoAsmParser::parseMemoryOperand(OperandVector &Operands) {
 
   Operands.push_back(
       Offset->isImm()
-          ? DadaoOperand::MorphToMemRegImm(BaseReg, std::move(Offset), AluOp)
-          : DadaoOperand::MorphToMemRegReg(BaseReg, std::move(Offset), AluOp));
+          ? DadaoOperand::MorphToMemRegImm(BaseReg, std::move(Offset))
+          : DadaoOperand::MorphToMemRegReg(BaseReg, std::move(Offset), RegCnt));
 
   return MatchOperand_Success;
 }
@@ -1094,27 +1072,6 @@ StringRef DadaoAsmParser::splitMnemonic(StringRef Name, SMLoc NameLoc,
   return Mnemonic;
 }
 
-static bool IsMemoryAssignmentError(const OperandVector &Operands) {
-  // Detects if a memory operation has an erroneous base register modification.
-  // Memory operations are detected by matching the types of operands.
-  //
-  // TODO: This test is focussed on one specific instance (ld/st).
-  // Extend it to handle more cases or be more robust.
-  int Offset = 0;
-
-  if (Operands.size() < 5)
-    return false;
-  else if (Operands[0]->isToken() && Operands[1]->isReg() &&
-           Operands[2]->isImm() && Operands[3]->isImm() && Operands[4]->isReg())
-    Offset = 0;
-  else if (Operands[0]->isToken() && Operands[1]->isToken() &&
-           Operands[2]->isReg() && Operands[3]->isImm() &&
-           Operands[4]->isImm() && Operands[5]->isReg())
-    Offset = 1;
-
-  return false;
-}
-
 static bool IsRegister(const MCParsedAsmOperand &op) {
   return static_cast<const DadaoOperand &>(op).isReg();
 }
@@ -1177,13 +1134,6 @@ bool DadaoAsmParser::ParseInstruction(ParseInstructionInfo & /*Info*/,
     // Parse next operand
     if (parseOperand(&Operands, Mnemonic) != MatchOperand_Success)
       return true;
-  }
-
-  if (IsMemoryAssignmentError(Operands)) {
-    Error(Parser.getTok().getLoc(),
-          "the destination register can't equal the base register in an "
-          "instruction that modifies the base register.");
-    return true;
   }
 
   // Insert always true operand for instruction that may be predicated but

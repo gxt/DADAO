@@ -10,7 +10,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include "DadaoAluCode.h"
 #include "MCTargetDesc/DadaoBaseInfo.h"
 #include "MCTargetDesc/DadaoFixupKinds.h"
 #include "MCTargetDesc/DadaoMCExpr.h"
