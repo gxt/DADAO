@@ -124,7 +124,7 @@ void DadaoFrameLowering::emitPrologue(MachineFunction &MF,
   if (StackSize != 0) {
     BuildMI(MBB, MBBI, DL, LII.get(Dadao::ADDI_RB_RRII), Dadao::RBSP)
         .addReg(Dadao::RBSP)
-        .addImm(-StackSize)
+        .addImm(-(long long)StackSize)
         .setMIFlag(MachineInstr::FrameSetup);
   }
 

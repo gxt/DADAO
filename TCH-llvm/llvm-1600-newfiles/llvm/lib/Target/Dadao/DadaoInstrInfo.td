@@ -275,11 +275,13 @@ class ALU_RRII<bits<8> majorop, string OpcString, SDNode OpNode, RegisterClass G
 }
 
 def ANDI_RRII : ALU_RRII<0b00011000, "andi", and, GPRD, GPRD, i64lo12and>;
-def ADDI_RRII : ALU_RRII<0b00011001, "addi", add, GPRD, GPRD, i64lo12z>;
-def ADDI_RB_RRII : ALU_RRII<0b01001001, "addi", add, GPRB, GPRB, i64lo12z>;
+def ADDI_RRII : ALU_RRII<0b00011001, "addi", add, GPRD, GPRD, imm12>;
+def ADDI_RB_RRII : ALU_RRII<0b01001001, "addi", add, GPRB, GPRB, imm12>;
 
 def : Pat<(sub GPRD:$Rs1, i64neg12:$imm),
           (ADDI_RRII GPRD:$Rs1, (NEG $imm))>;
+def : Pat<(sub GPRB:$Rs1, i64neg12:$imm),
+          (ADDI_RB_RRII GPRB:$Rs1, (NEG $imm))>;
 
 // -------------------------------------------------- //
 // Compare instructions
