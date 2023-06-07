@@ -37,17 +37,17 @@ ArrayRef<TargetInfo::GCCRegAlias> DadaoTargetInfo::getGCCRegAliases() const {
 }
 
 bool DadaoTargetInfo::isValidCPUName(StringRef Name) const {
-  return llvm::StringSwitch<bool>(Name).Case("v11", true).Default(false);
+  return llvm::StringSwitch<bool>(Name).Case("wuming", true).Default(false);
 }
 void DadaoTargetInfo::fillValidCPUList(
     SmallVectorImpl<StringRef> &Values) const {
-  Values.emplace_back("v11");
+  Values.emplace_back("wuming");
 }
 
 bool DadaoTargetInfo::setCPU(const std::string &Name) {
-  CPU = llvm::StringSwitch<CPUKind>(Name).Case("v11", CK_V11).Default(CK_NONE);
+  CPU = llvm::StringSwitch<CPUKind>(Name).Case("wuming", DADAO_WUMING).Default(DADAO_NONE);
 
-  return CPU != CK_NONE;
+  return CPU != DADAO_NONE;
 }
 
 bool DadaoTargetInfo::hasFeature(StringRef Feature) const {
@@ -61,10 +61,10 @@ void DadaoTargetInfo::getTargetDefines(const LangOptions &Opts,
 
   // Set define for the CPU specified.
   switch (CPU) {
-  case CK_V11:
-    Builder.defineMacro("__DADAO_V11__");
+  case DADAO_WUMING:
+    Builder.defineMacro("__DADAO_WUMING__");
     break;
-  case CK_NONE:
+  case DADAO_NONE:
     llvm_unreachable("Unhandled target CPU");
   }
 }

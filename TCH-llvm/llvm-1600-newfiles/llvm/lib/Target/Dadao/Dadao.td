@@ -28,7 +28,7 @@ def DadaoInstrInfo : InstrInfo;
 //===----------------------------------------------------------------------===//
 
 def : ProcessorModel<"generic", DadaoSchedModel, []>;
-def : ProcessorModel<"v11", DadaoSchedModel, []>;
+def : ProcessorModel<"wuming", DadaoSchedModel, []>;
 
 def DadaoInstPrinter : AsmWriter {
   string AsmWriterClassName  = "InstPrinter";

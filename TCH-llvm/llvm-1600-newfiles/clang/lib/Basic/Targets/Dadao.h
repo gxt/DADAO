@@ -25,8 +25,8 @@ class LLVM_LIBRARY_VISIBILITY DadaoTargetInfo : public TargetInfo {
   // Class for Dadao (32-bit).
   // The CPU profiles supported by the Dadao backend
   enum CPUKind {
-    CK_NONE,
-    CK_V11,
+    DADAO_NONE,
+    DADAO_WUMING,
   } CPU;
 
   static const TargetInfo::GCCRegAlias GCCRegAliases[];
@@ -49,8 +49,8 @@ public:
     // toolchain
     RegParmMax = 4;
 
-    // Set the default CPU to V11
-    CPU = CK_V11;
+    // Set the default CPU to WUMING
+    CPU = DADAO_WUMING;
 
     // Temporary approach to make everything at least word-aligned and allow for
     // safely casting between pointers with different alignment requirements.
