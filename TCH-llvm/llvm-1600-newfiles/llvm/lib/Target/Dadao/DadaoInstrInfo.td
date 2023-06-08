@@ -245,14 +245,14 @@ def SUB_RB_ORRR : ALU_RB_ORRR<0b101111, "sub", sub, GPRB, GPRD>;
 
 class R2R_ORRI<bits<6> minorop, string OpcString, RegisterClass GPRx, RegisterClass GPRy>
   : Inst_ORRI<0b00010000, minorop, (outs GPRx:$RxHb), (ins GPRy:$RyHc),
-              OpcString, "$RxHb, $RyHc, 0", [(set GPRx:$RxHb, GPRy:$RyHc)]>;
+              OpcString, "$RxHb, $RyHc", [(set GPRx:$RxHb, GPRy:$RyHc)]>;
 
 // TODO: ONLY imm6 == 0 permitted, fixme later
 let Imm6 = 0b000000 in {
-  def RD2RD_ORRI : R2R_ORRI<0b101000, "rd2rd", GPRD, GPRD>;
-  def RD2RB_ORRI : R2R_ORRI<0b101001, "rd2rb", GPRD, GPRB>;
-  def RB2RD_ORRI : R2R_ORRI<0b101010, "rb2rd", GPRB, GPRD>;
-  def RB2RB_ORRI : R2R_ORRI<0b101011, "rb2rb", GPRB, GPRB>;
+  def RD2RD_ORRI : R2R_ORRI<0b101000, "setrd", GPRD, GPRD>;
+  def RD2RB_ORRI : R2R_ORRI<0b101001, "setrb", GPRD, GPRB>;
+  def RB2RD_ORRI : R2R_ORRI<0b101010, "setrd", GPRB, GPRD>;
+  def RB2RB_ORRI : R2R_ORRI<0b101011, "setrb", GPRB, GPRB>;
 }
 
 class SHIFT_ORRI<bits<6> minorop, string OpcString, SDNode OpNode>
