@@ -914,11 +914,6 @@ DadaoAsmParser::parseMemoryOperand(OperandVector &Operands) {
   //
   //  (4) '[' Immediate ']' (for SLS)
 
-  // Store the type for use in parsing pre/post increment/decrement operators
-  StringRef Type;
-  if (Operands[0]->isToken())
-    Type = static_cast<DadaoOperand *>(Operands[0].get())->getToken();
-
   // Use 0 if no offset given
   int OffsetValue = 0;
   unsigned BaseReg = 0;
