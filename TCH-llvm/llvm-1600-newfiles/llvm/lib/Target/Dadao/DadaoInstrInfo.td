@@ -168,6 +168,14 @@ def i64w3 : Operand<i64>, PatLeaf<(i64 imm), [{
   let ParserMatchClass = ImmWyde3AsmOperand;
 }
 
+// Predicate operand for wyde position. Default to 0 = w0.
+def WydePositionOperand : AsmOperandClass { let Name = "WydePosition"; }
+def wposPred : PredicateOperand<i64, (ops i64imm), (ops (i64 0))> {
+  let PrintMethod = "printWPosOperand";
+  let ParserMatchClass = WydePositionOperand;
+  let DecoderMethod = "decodeWPosOperand";
+}
+
 // Addressing modes.
 def ADDR_RRRI : ComplexPattern<i64, 3, "selectAddrRRRI", [], []>;
 def ADDR_RRII : ComplexPattern<i64, 2, "selectAddrRRII", [frameindex], []>;
@@ -337,67 +345,64 @@ def CSP     : CONDSET_RRRR<0b00100100, "csp">;
 // WYDE instructions
 // -------------------------------------------------- //
 
-class ORW_RWII<bits<8> majorop, bits<2> wpos, string OpcString, string WPosString,
-              RegisterClass GPRx, PatLeaf wposExt>
-  : Inst_RWII<majorop, wpos, (outs GPRx:$RxHa_wb), (ins GPRx:$RxHa, wposExt:$Imm16),
-              OpcString, "$RxHa, " # WPosString # ", $Imm16",
+class ORW_RWII<bits<8> majorop, bits<2> wpos, RegisterClass GPRx, PatLeaf wposExt>
+  : Inst_RWII<majorop, wpos, (outs GPRx:$RxHa_wb), (ins GPRx:$RxHa, wposPred:$WPos, wposExt:$Imm16),
+              "orw", "$RxHa, $WPos, $Imm16",
               [(set GPRx:$RxHa_wb, (or GPRx:$RxHa, wposExt:$Imm16))]> {
   let Constraints = "$RxHa_wb = $RxHa";
 }
 
-def ORW_RWII_W0   : ORW_RWII<0b00010100, 0b00, "orw", "w0", GPRD, i64w0>;
-def ORW_RWII_W1   : ORW_RWII<0b00010100, 0b01, "orw", "w1", GPRD, i64w1>;
-def ORW_RWII_W2   : ORW_RWII<0b00010100, 0b10, "orw", "w2", GPRD, i64w2>;
-def ORW_RWII_W3   : ORW_RWII<0b00010100, 0b11, "orw", "w3", GPRD, i64w3>;
+def ORW_RWII_W0   : ORW_RWII<0b00010100, 0b00, GPRD, i64w0>;
+def ORW_RWII_W1   : ORW_RWII<0b00010100, 0b01, GPRD, i64w1>;
+def ORW_RWII_W2   : ORW_RWII<0b00010100, 0b10, GPRD, i64w2>;
+def ORW_RWII_W3   : ORW_RWII<0b00010100, 0b11, GPRD, i64w3>;
 
-def ORW_RB_RWII_W0 : ORW_RWII<0b01001100, 0b00, "orw", "w0", GPRB, i64w0>;
-def ORW_RB_RWII_W1 : ORW_RWII<0b01001100, 0b01, "orw", "w1", GPRB, i64w1>;
-def ORW_RB_RWII_W2 : ORW_RWII<0b01001100, 0b10, "orw", "w2", GPRB, i64w2>;
-def ORW_RB_RWII_W3 : ORW_RWII<0b01001100, 0b11, "orw", "w3", GPRB, i64w3>;
+def ORW_RB_RWII_W0 : ORW_RWII<0b01001100, 0b00, GPRB, i64w0>;
+def ORW_RB_RWII_W1 : ORW_RWII<0b01001100, 0b01, GPRB, i64w1>;
+def ORW_RB_RWII_W2 : ORW_RWII<0b01001100, 0b10, GPRB, i64w2>;
+def ORW_RB_RWII_W3 : ORW_RWII<0b01001100, 0b11, GPRB, i64w3>;
 
-class ANDNW_RWII<bits<8> majorop, bits<2> wpos, string OpcString, string WPosString,
-                  RegisterClass GPRx, PatLeaf wposExt>
-  : Inst_RWII<majorop, wpos, (outs GPRx:$RxHa_wb), (ins GPRx:$RxHa, wposExt:$Imm16),
-            OpcString, "$RxHa, " # WPosString # ", $Imm16",
+class ANDNW_RWII<bits<8> majorop, bits<2> wpos, RegisterClass GPRx, PatLeaf wposExt>
+  : Inst_RWII<majorop, wpos, (outs GPRx:$RxHa_wb), (ins GPRx:$RxHa, wposPred:$WPos, wposExt:$Imm16),
+            "andnw", "$RxHa, $WPos, $Imm16",
             [(set GPRx:$RxHa_wb, (and (i64 GPRx:$RxHa), (not wposExt:$Imm16)))]> {
   let Constraints = "$RxHa_wb = $RxHa";
 }
 
-def ANDNW_RWII_W0 : ANDNW_RWII<0b00010101, 0b00, "andnw", "w0", GPRD, i64w0>;
-def ANDNW_RWII_W1 : ANDNW_RWII<0b00010101, 0b01, "andnw", "w1", GPRD, i64w1>;
-def ANDNW_RWII_W2 : ANDNW_RWII<0b00010101, 0b10, "andnw", "w2", GPRD, i64w2>;
-def ANDNW_RWII_W3 : ANDNW_RWII<0b00010101, 0b11, "andnw", "w3", GPRD, i64w3>;
+def ANDNW_RWII_W0 : ANDNW_RWII<0b00010101, 0b00, GPRD, i64w0>;
+def ANDNW_RWII_W1 : ANDNW_RWII<0b00010101, 0b01, GPRD, i64w1>;
+def ANDNW_RWII_W2 : ANDNW_RWII<0b00010101, 0b10, GPRD, i64w2>;
+def ANDNW_RWII_W3 : ANDNW_RWII<0b00010101, 0b11, GPRD, i64w3>;
 
-def ANDNW_RB_RWII_W0 : ANDNW_RWII<0b01001101, 0b00, "andnw", "w0", GPRB, i64w0>;
-def ANDNW_RB_RWII_W1 : ANDNW_RWII<0b01001101, 0b01, "andnw", "w1", GPRB, i64w1>;
-def ANDNW_RB_RWII_W2 : ANDNW_RWII<0b01001101, 0b10, "andnw", "w2", GPRB, i64w2>;
-def ANDNW_RB_RWII_W3 : ANDNW_RWII<0b01001101, 0b11, "andnw", "w3", GPRB, i64w3>;
+def ANDNW_RB_RWII_W0 : ANDNW_RWII<0b01001101, 0b00, GPRB, i64w0>;
+def ANDNW_RB_RWII_W1 : ANDNW_RWII<0b01001101, 0b01, GPRB, i64w1>;
+def ANDNW_RB_RWII_W2 : ANDNW_RWII<0b01001101, 0b10, GPRB, i64w2>;
+def ANDNW_RB_RWII_W3 : ANDNW_RWII<0b01001101, 0b11, GPRB, i64w3>;
 
-class SETZW_RWII<bits<8> majorop, bits<2> wpos, string OpcString, string WPosString,
-              RegisterClass GPRx, PatLeaf wposExt>
-  : Inst_RWII<majorop, wpos, (outs GPRx:$RxHa), (ins wposExt:$Imm16),
-              OpcString, "$RxHa, " # WPosString # ", $Imm16",
+class SETZW_RWII<bits<8> majorop, bits<2> wpos, RegisterClass GPRx, PatLeaf wposExt>
+  : Inst_RWII<majorop, wpos, (outs GPRx:$RxHa), (ins wposPred:$WPos, wposExt:$Imm16),
+              "setzw", "$RxHa, $WPos, $Imm16",
               [(set GPRx:$RxHa, wposExt:$Imm16)]>;
 
-def SETZW_RWII_W0   : SETZW_RWII<0b00010110, 0b00, "setzw", "w0", GPRD, i64w0>;
-def SETZW_RWII_W1   : SETZW_RWII<0b00010110, 0b01, "setzw", "w1", GPRD, i64w1>;
-def SETZW_RWII_W2   : SETZW_RWII<0b00010110, 0b10, "setzw", "w2", GPRD, i64w2>;
-def SETZW_RWII_W3   : SETZW_RWII<0b00010110, 0b11, "setzw", "w3", GPRD, i64w3>;
+def SETZW_RWII_W0   : SETZW_RWII<0b00010110, 0b00, GPRD, i64w0>;
+def SETZW_RWII_W1   : SETZW_RWII<0b00010110, 0b01, GPRD, i64w1>;
+def SETZW_RWII_W2   : SETZW_RWII<0b00010110, 0b10, GPRD, i64w2>;
+def SETZW_RWII_W3   : SETZW_RWII<0b00010110, 0b11, GPRD, i64w3>;
 
-def SETZW_RB_RWII_W0 : SETZW_RWII<0b01001110, 0b00, "setzw", "w0", GPRB, i64w0>;
-def SETZW_RB_RWII_W1 : SETZW_RWII<0b01001110, 0b01, "setzw", "w1", GPRB, i64w1>;
-def SETZW_RB_RWII_W2 : SETZW_RWII<0b01001110, 0b10, "setzw", "w2", GPRB, i64w2>;
-def SETZW_RB_RWII_W3 : SETZW_RWII<0b01001110, 0b11, "setzw", "w3", GPRB, i64w3>;
+def SETZW_RB_RWII_W0 : SETZW_RWII<0b01001110, 0b00, GPRB, i64w0>;
+def SETZW_RB_RWII_W1 : SETZW_RWII<0b01001110, 0b01, GPRB, i64w1>;
+def SETZW_RB_RWII_W2 : SETZW_RWII<0b01001110, 0b10, GPRB, i64w2>;
+def SETZW_RB_RWII_W3 : SETZW_RWII<0b01001110, 0b11, GPRB, i64w3>;
 
-class SETOW_RWII<bits<8> majorop, bits<2> wpos, string OpcString, string WPosString, PatLeaf wposExt>
-  : Inst_RWII<majorop, wpos, (outs GPRD:$RxHa), (ins wposExt:$Imm16),
-              OpcString, "$RxHa, " # WPosString # ", $Imm16",
+class SETOW_RWII<bits<8> majorop, bits<2> wpos, PatLeaf wposExt>
+  : Inst_RWII<majorop, wpos, (outs GPRD:$RxHa), (ins wposPred:$WPos, wposExt:$Imm16),
+              "setow", "$RxHa, $WPos, $Imm16",
               [(set GPRD:$RxHa, (and (not 0), wposExt:$Imm16))]>;
 
-def SETOW_RWII_W0   : SETOW_RWII<0b00010111, 0b00, "setow", "w0", i64w0>;
-def SETOW_RWII_W1   : SETOW_RWII<0b00010111, 0b01, "setow", "w1", i64w1>;
-def SETOW_RWII_W2   : SETOW_RWII<0b00010111, 0b10, "setow", "w2", i64w2>;
-def SETOW_RWII_W3   : SETOW_RWII<0b00010111, 0b11, "setow", "w3", i64w3>;
+def SETOW_RWII_W0   : SETOW_RWII<0b00010111, 0b00, i64w0>;
+def SETOW_RWII_W1   : SETOW_RWII<0b00010111, 0b01, i64w1>;
+def SETOW_RWII_W2   : SETOW_RWII<0b00010111, 0b10, i64w2>;
+def SETOW_RWII_W3   : SETOW_RWII<0b00010111, 0b11, i64w3>;
 
 // arbitrary immediate
 def : Pat<(i64 imm:$imm), (ORW_RWII_W3 (ORW_RWII_W2 (ORW_RWII_W1 (SETZW_RWII_W0

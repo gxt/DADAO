@@ -28,7 +28,7 @@ public:
                  const MCSubtargetInfo &STI, raw_ostream &O) override;
   void printOperand(const MCInst *MI, unsigned OpNo, raw_ostream &O,
                     const char *Modifier = nullptr);
-  void printPredicateOperand(const MCInst *MI, unsigned OpNum, raw_ostream &O);
+  void printWPosOperand(const MCInst *MI, unsigned OpNum, raw_ostream &O);
   void printMemRRIIOperand(const MCInst *MI, int OpNo, raw_ostream &O,
                          const char *Modifier = nullptr);
   void printMemRRRIOperand(const MCInst *MI, int OpNo, raw_ostream &O,

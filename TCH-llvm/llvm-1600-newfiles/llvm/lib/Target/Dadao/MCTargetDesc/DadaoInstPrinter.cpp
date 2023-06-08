@@ -13,6 +13,7 @@
 #include "DadaoInstPrinter.h"
 #include "DadaoMCExpr.h"
 #include "DadaoCondCode.h"
+#include "DadaoWydePosition.h"
 #include "MCTargetDesc/DadaoMCTargetDesc.h"
 #include "llvm/MC/MCAsmInfo.h"
 #include "llvm/MC/MCExpr.h"
@@ -162,15 +163,15 @@ void DadaoInstPrinter::printCCOperand(const MCInst *MI, int OpNo,
     OS << dadaoCondCodeToString(CC);
 }
 
-void DadaoInstPrinter::printPredicateOperand(const MCInst *MI, unsigned OpNo,
+void DadaoInstPrinter::printWPosOperand(const MCInst *MI, unsigned OpNo,
                                              raw_ostream &OS) {
-  LPCC::CondCode CC =
-      static_cast<LPCC::CondCode>(MI->getOperand(OpNo).getImm());
+  DDWP::WydePosition WP =
+      static_cast<DDWP::WydePosition>(MI->getOperand(OpNo).getImm());
   // Handle the undefined value here for printing so we don't abort().
-  if (CC >= LPCC::UNKNOWN)
+  if (WP >= DDWP::BEYOND)
     OS << "<und>";
-  else if (CC != LPCC::ICC_T)
-    OS << "." << dadaoCondCodeToString(CC);
+  else
+    OS << dadaoWydePositionToString(WP);
 }
 
 void DadaoInstPrinter::printLo12AndImmOperand(const MCInst *MI, unsigned OpNo,

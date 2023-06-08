@@ -13,6 +13,7 @@
 #include "DadaoDisassembler.h"
 
 #include "DadaoCondCode.h"
+#include "DadaoWydePosition.h"
 #include "DadaoInstrInfo.h"
 #include "TargetInfo/DadaoTargetInfo.h"
 #include "llvm/MC/MCDecoderOps.h"
@@ -60,6 +61,10 @@ static DecodeStatus decodeRRRIMemoryValue(MCInst &Inst, unsigned Insn,
 
 static DecodeStatus decodeBranch(MCInst &Inst, unsigned Insn, uint64_t Address,
                                  const MCDisassembler *Decoder);
+
+static DecodeStatus decodeWPosOperand(MCInst &Inst, unsigned wpos,
+                                            uint64_t Address,
+                                            const MCDisassembler *Decoder);
 
 #include "DadaoGenDisassemblerTables.inc"
 
@@ -182,5 +187,14 @@ static DecodeStatus decodeBranch(MCInst &MI, unsigned Insn, uint64_t Address,
   if (!tryAddingSymbolicOperand(Insn + Address, false, Address, 2, 23, MI,
                                 Decoder))
     MI.addOperand(MCOperand::createImm(Insn));
+  return MCDisassembler::Success;
+}
+
+static DecodeStatus decodeWPosOperand(MCInst &Inst, unsigned wpos,
+                                            uint64_t Address,
+                                            const MCDisassembler *Decoder) {
+  if (wpos >= DDWP::BEYOND)
+    return MCDisassembler::Fail;
+  Inst.addOperand(MCOperand::createImm(wpos));
   return MCDisassembler::Success;
 }

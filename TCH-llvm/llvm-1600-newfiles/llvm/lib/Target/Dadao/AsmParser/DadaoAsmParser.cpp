@@ -7,6 +7,7 @@
 //===----------------------------------------------------------------------===//
 
 #include "DadaoCondCode.h"
+#include "DadaoWydePosition.h"
 #include "DadaoInstrInfo.h"
 #include "MCTargetDesc/DadaoMCExpr.h"
 #include "TargetInfo/DadaoTargetInfo.h"
@@ -424,6 +425,17 @@ public:
     return (Value <= 63);
   }
 
+  bool isWydePosition() {
+    if (!isImm())
+      return false;
+
+    const MCConstantExpr *ConstExpr = dyn_cast<MCConstantExpr>(Imm.Value);
+    if (!ConstExpr)
+      return false;
+    uint64_t Value = ConstExpr->getValue();
+    return (Value < DDWP::BEYOND);
+  }
+
   void addExpr(MCInst &Inst, const MCExpr *Expr) const {
     // Add as immediates where possible. Null MCExpr = 0
     if (Expr == nullptr)
@@ -455,7 +467,7 @@ public:
     addExpr(Inst, getImm());
   }
 
-  void addCondCodeOperands(MCInst &Inst, unsigned N) const {
+  void addWydePositionOperands(MCInst &Inst, unsigned N) const {
     assert(N == 1 && "Invalid number of operands!");
     addExpr(Inst, getImm());
   }
@@ -816,6 +828,13 @@ std::unique_ptr<DadaoOperand> DadaoAsmParser::parseIdentifier() {
   StringRef Identifier;
   if (Parser.parseIdentifier(Identifier))
     return nullptr;
+
+  DDWP::WydePosition wydepos = DDWP::wposToDadaoWydePosition(Identifier);
+
+  if (wydepos != DDWP::BEYOND) {
+    Res = MCConstantExpr::create(wydepos, getContext());
+    return DadaoOperand::createImm(Res, Start, End);
+  }
 
   // Check if identifier has a modifier
   if (Identifier.equals_insensitive("hi"))
