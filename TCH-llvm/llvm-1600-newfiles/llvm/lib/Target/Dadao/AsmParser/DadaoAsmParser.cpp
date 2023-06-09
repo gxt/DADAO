@@ -1052,74 +1052,6 @@ DadaoAsmParser::parseOperand(OperandVector *Operands, StringRef Mnemonic) {
   return MatchOperand_Success;
 }
 
-// Split the mnemonic into ASM operand, conditional code and instruction
-// qualifier (half-word, byte).
-StringRef DadaoAsmParser::splitMnemonic(StringRef Name, SMLoc NameLoc,
-                                        OperandVector *Operands) {
-  size_t Next = Name.find('.');
-
-  StringRef Mnemonic = Name;
-
-  bool IsBRR = false;
-  if (Name.endswith(".r")) {
-    Mnemonic = Name.substr(0, Name.size() - 2);
-    IsBRR = true;
-  }
-
-  // Match b?? and s?? (BR, BRR, and SCC instruction classes).
-  if (Mnemonic[0] == 'b' ||
-      (Mnemonic[0] == 's' && !Mnemonic.startswith("sel") &&
-       !Mnemonic.startswith("st"))) {
-    // Parse instructions with a conditional code. For example, 'bne' is
-    // converted into two operands 'b' and 'ne'.
-    LPCC::CondCode CondCode =
-        LPCC::suffixToDadaoCondCode(Mnemonic.substr(1, Next));
-    if (CondCode != LPCC::UNKNOWN) {
-      Mnemonic = Mnemonic.slice(0, 1);
-      Operands->push_back(DadaoOperand::CreateToken(Mnemonic, NameLoc));
-      Operands->push_back(DadaoOperand::createImm(
-          MCConstantExpr::create(CondCode, getContext()), NameLoc, NameLoc));
-      if (IsBRR) {
-        Operands->push_back(DadaoOperand::CreateToken(".r", NameLoc));
-      }
-      return Mnemonic;
-    }
-  }
-
-  // Parse other instructions with condition codes (RR instructions).
-  // We ignore .f here and assume they are flag-setting operations, not
-  // conditional codes (except for select instructions where flag-setting
-  // variants are not yet implemented).
-  if (Mnemonic.startswith("sel") ||
-      (!Mnemonic.endswith(".f") && !Mnemonic.startswith("st"))) {
-    LPCC::CondCode CondCode = LPCC::suffixToDadaoCondCode(Mnemonic);
-    if (CondCode != LPCC::UNKNOWN) {
-      size_t Next = Mnemonic.rfind('.', Name.size());
-      // 'sel' doesn't use a predicate operand whose printer adds the period,
-      // but instead has the period as part of the identifier (i.e., 'sel.' is
-      // expected by the generated matcher). If the mnemonic starts with 'sel'
-      // then include the period as part of the mnemonic, else don't include it
-      // as part of the mnemonic.
-      if (Mnemonic.startswith("sel")) {
-        Mnemonic = Mnemonic.substr(0, Next + 1);
-      } else {
-        Mnemonic = Mnemonic.substr(0, Next);
-      }
-      Operands->push_back(DadaoOperand::CreateToken(Mnemonic, NameLoc));
-      Operands->push_back(DadaoOperand::createImm(
-          MCConstantExpr::create(CondCode, getContext()), NameLoc, NameLoc));
-      return Mnemonic;
-    }
-  }
-
-  Operands->push_back(DadaoOperand::CreateToken(Mnemonic, NameLoc));
-  if (IsBRR) {
-    Operands->push_back(DadaoOperand::CreateToken(".r", NameLoc));
-  }
-
-  return Mnemonic;
-}
-
 static bool IsRegister(const MCParsedAsmOperand &op) {
   return static_cast<const DadaoOperand &>(op).isReg();
 }
@@ -1127,8 +1059,10 @@ static bool IsRegister(const MCParsedAsmOperand &op) {
 bool DadaoAsmParser::ParseInstruction(ParseInstructionInfo & /*Info*/,
                                       StringRef Name, SMLoc NameLoc,
                                       OperandVector &Operands) {
+  StringRef Mnemonic = Name;
+
   // First operand is token for instruction
-  StringRef Mnemonic = splitMnemonic(Name, NameLoc, &Operands);
+  Operands.push_back(DadaoOperand::CreateToken(Mnemonic, NameLoc));
 
   // If there are no more operands, then finish
   if (Lexer.is(AsmToken::EndOfStatement))
