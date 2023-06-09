@@ -301,14 +301,13 @@ class COMPARE_ORRR<bits<6> minorop, string OpcString, RegisterClass GPRcmp>
 
   let RxHb = RDCC.Num;
   let Defs = [RDCC];
-  let isCodeGenOnly = 1;
   let isCompare = 1;
 }
 
-def CMP_ORRR    : COMPARE_ORRR<0b101101, "cmp",  GPRB>;
 def CMPS_ORRR   : COMPARE_ORRR<0b100100, "cmps", GPRD>;
 // TODO: CMPU should be impled with new SET_FLAG
 def CMPU_ORRR   : COMPARE_ORRR<0b100101, "cmpu", GPRD>;
+def CMP_ORRR    : COMPARE_ORRR<0b101101, "cmp",  GPRB>;
 
 class COMPARE_RRII<bits<8> majorop, string OpcString, PatLeaf LoExt>
   : Inst_RRII<majorop, (outs GPRD:$RxHa), (ins GPRD:$RyHb, LoExt:$Imm12), OpcString, "$RxHa, $RyHb, $Imm12",
@@ -316,7 +315,6 @@ class COMPARE_RRII<bits<8> majorop, string OpcString, PatLeaf LoExt>
 
   let RxHa = RDCC.Num;
   let Defs = [RDCC];
-  let isCodeGenOnly = 1;
   let isCompare = 1;
 }
 
