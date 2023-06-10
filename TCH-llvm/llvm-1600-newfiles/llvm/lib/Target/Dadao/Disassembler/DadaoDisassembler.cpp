@@ -154,7 +154,7 @@ static DecodeStatus decodeRRIIMemoryValue(MCInst &Inst, unsigned Insn,
   // RRII memory values encoded using 18 bits:
   //   6 bit register, 12 bit constant
   unsigned Register = (Insn >> 12) & 0x3f;
-  Inst.addOperand(MCOperand::createReg(GPRDDecoderTable[Register]));
+  Inst.addOperand(MCOperand::createReg(GPRBDecoderTable[Register]));
   unsigned Offset = (Insn & 0xfff);
   Inst.addOperand(MCOperand::createImm(SignExtend64<12>(Offset)));
 
