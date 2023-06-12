@@ -7,6 +7,20 @@
 #include "llvm/Support/ErrorHandling.h"
 
 namespace llvm {
+namespace DDCC {
+enum CondCode {
+  RV_N   = 0b000, // Reg Value: Negative, less than
+  RV_NN  = 0b001, // Reg Value: Not Negative, greater thand or equal
+  RV_Z   = 0b010, // Reg Value: Zero, equal
+  RV_NZ  = 0b011, // Reg Value: Not Zero, not equal
+  RV_P   = 0b100, // Reg Value: Positive, greater
+  RV_NP  = 0b101, // Reg Value: Not Positive, less than or equal
+  RV_EQ  = 0b110, // TWO Reg Values: equal
+  RV_NE  = 0b111, // TWO Reg Values: not equal
+  BEYOND
+};
+}   // namespace DDCC
+
 namespace LPCC {
 enum CondCode {
   ICC_T = 0,   //  true
