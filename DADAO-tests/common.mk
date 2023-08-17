@@ -24,9 +24,9 @@ DADAO_ELF_LINK_FLAGS		?= -static -nostdlib -nostartfiles $(DADAO_ELF_LINK_EXTRA_
 DADAO_ELF_GCC_FLAGS		?= -static -fvisibility=hidden $(DADAO_ELF_GCC_EXTRA_FLAGS) $(DADAO_ELF_LINK_FLAGS)
 DADAO_ELF_OBJDUMP_FLAGS		?= --disassemble-all --disassemble-zeroes --section=.text --section=.text.startup --section=.text.init --section=.data
 
-DADAO_LLVM_CLANG		:= $(DIR_DADAO_INSTALL)/bin/clang
-DADAO_LLVM_LLC			:= $(DIR_DADAO_INSTALL)/bin/llc
-DADAO_LLVM_AS			:= $(DIR_DADAO_INSTALL)/bin/llvm-as
-DADAO_LLVM_MC			:= $(DIR_DADAO_INSTALL)/bin/llvm-mc
-DADAO_LLVM_READOBJ		:= $(DIR_DADAO_INSTALL)/bin/llvm-readobj
-DADAO_LLVM_OBJDUMP		:= $(DIR_DADAO_INSTALL)/bin/llvm-objdump
+DADAO_LLVM_CLANG		:= $(DIR_DADAO_BUILD)/llvm-1600/bin/clang
+DADAO_LLVM_LLC			:= $(DIR_DADAO_BUILD)/llvm-1600/bin/llc
+DADAO_LLVM_AS			:= $(DIR_DADAO_BUILD)/llvm-1600/bin/llvm-as
+DADAO_LLVM_MC			:= $(DIR_DADAO_BUILD)/llvm-1600/bin/llvm-mc
+DADAO_LLVM_READOBJ		:= $(DIR_DADAO_BUILD)/llvm-1600/bin/llvm-readobj
+DADAO_LLVM_OBJDUMP		:= $(DIR_DADAO_BUILD)/llvm-1600/bin/llvm-objdump
