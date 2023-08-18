@@ -96,3 +96,27 @@ llvm-1600-highfive:
 
 llvm-1600-check-llvm:
 	@ninja -C $(LLVM_1600_BUILD) check-llvm
+
+###
+LLVM_1600_TABLEGEN	:= $(LLVM_1600_BUILD)/NATIVE/bin/llvm-tblgen			\
+				-I $(LLVM_1600_SOURCE)/llvm/lib/Target/Dadao/		\
+				-I $(LLVM_1600_BUILD)/include/				\
+				-I $(LLVM_1600_SOURCE)/llvm/include/			\
+				-I $(LLVM_1600_SOURCE)/llvm/lib/Target/			\
+				$(LLVM_1600_SOURCE)/llvm/lib/Target/Dadao/Dadao.td
+
+llvm-1600-tablegen:
+	# -print-enum samples
+	@$(LLVM_1600_TABLEGEN)	-print-enums -class=RegisterClass
+	@$(LLVM_1600_TABLEGEN)	-print-enums -class=Register
+	# output files in $(DIR_DADAO_TARGET)
+	@$(LLVM_1600_TABLEGEN) -o $(DIR_DADAO_TARGET)/DadaoGenAsmMatcher.inc		-gen-asm-matcher
+	@$(LLVM_1600_TABLEGEN) -o $(DIR_DADAO_TARGET)/DadaoGenAsmWriter.inc		-gen-asm-writer
+	@$(LLVM_1600_TABLEGEN) -o $(DIR_DADAO_TARGET)/DadaoGenCallingConv.inc		-gen-callingconv
+	@$(LLVM_1600_TABLEGEN) -o $(DIR_DADAO_TARGET)/DadaoGenDAGISel.inc		-gen-dag-isel
+	@$(LLVM_1600_TABLEGEN) -o $(DIR_DADAO_TARGET)/DadaoGenDisassemblerTables.inc	-gen-disassembler
+	@$(LLVM_1600_TABLEGEN) -o $(DIR_DADAO_TARGET)/DadaoGenInstrInfo.inc		-gen-instr-info
+	@$(LLVM_1600_TABLEGEN) -o $(DIR_DADAO_TARGET)/DadaoGenMCCodeEmitter.inc		-gen-emitter
+	@$(LLVM_1600_TABLEGEN) -o $(DIR_DADAO_TARGET)/DadaoGenRegisterInfo.inc		-gen-register-info
+	@$(LLVM_1600_TABLEGEN) -o $(DIR_DADAO_TARGET)/DadaoGenSubtargetInfo.inc		-gen-subtarget
+
