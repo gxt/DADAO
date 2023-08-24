@@ -52,6 +52,7 @@ let Namespace = "Dadao" in {
   def RASP   : DadaoRegRAddr<63, "rasp", ["RA63"]>, DwarfRegAlias<RA63>;
 }
 
+let AllocationPriority = 3 in
 def GPRD : RegisterClass<"Dadao", [i64], 64,
     (add
      (sequence "RD%i", 16, 31),     // temporary registers
