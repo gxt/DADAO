@@ -250,8 +250,8 @@ class R2R_ORRI<bits<6> minorop, string OpcString, RegisterClass GPRx, RegisterCl
 // TODO: ONLY imm6 == 0 permitted, fixme later
 let Imm6 = 0b000000 in {
   def RD2RD_ORRI : R2R_ORRI<0b101000, "setrd", GPRD, GPRD>;
-  def RD2RB_ORRI : R2R_ORRI<0b101001, "setrb", GPRD, GPRB>;
-  def RB2RD_ORRI : R2R_ORRI<0b101010, "setrd", GPRB, GPRD>;
+  def RD2RB_ORRI : R2R_ORRI<0b101001, "setrb", GPRB, GPRD>;
+  def RB2RD_ORRI : R2R_ORRI<0b101010, "setrd", GPRD, GPRB>;
   def RB2RB_ORRI : R2R_ORRI<0b101011, "setrb", GPRB, GPRB>;
 }
 
