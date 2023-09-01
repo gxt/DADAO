@@ -52,6 +52,8 @@ endif
 llvm-1600-build-new:
 	@rm -fr $(LLVM_1600_BUILD)
 	@mkdir -p $(LLVM_1600_BUILD)
+	# NOTE: $(LLVM_1600_SOURCE)/build is softlink to $(LLVM_1600_BUILD)
+	@ln -s $(LLVM_1600_BUILD) $(LLVM_1600_SOURCE)/build
 	@cmake -S $(LLVM_1600_SOURCE)/llvm -B $(LLVM_1600_BUILD) -G Ninja	\
 		-DCMAKE_BUILD_TYPE=Release					\
 		-DCMAKE_INSTALL_PREFIX=$(LLVM_1600_INSTALL)			\
