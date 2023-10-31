@@ -99,6 +99,9 @@ llvm-1600-highfive:
 llvm-1600-check-llvm:
 	@ninja -C $(LLVM_1600_BUILD) check-llvm
 
+llvm-1600-check-lit:
+	@ $(LLVM_1600_BUILD)/bin/llvm-lit $(LLVM_1600_SOURCE)/llvm/test/ -v --vg --vg-leak > $(LLVM_1600_SOURCE)/llvm/test/lit.sum
+
 ###
 LLVM_1600_TABLEGEN	:= $(LLVM_1600_BUILD)/NATIVE/bin/llvm-tblgen			\
 				-I $(LLVM_1600_SOURCE)/llvm/lib/Target/Dadao/		\
