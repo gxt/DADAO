@@ -36,7 +36,7 @@ public:
   DadaoTargetInfo(const llvm::Triple &Triple, const TargetOptions &)
       : TargetInfo(Triple) {
     // Description string has to be kept in sync with backend.
-    resetDataLayout("E"        // Big endian
+    resetDataLayout("e"        // Little endian
                     "-m:e"     // ELF name manging
                     "-p:64:64" // 64 bit pointers, 64 bit aligned
                     "-i64:64"  // 64 bit integers, 64 bit aligned

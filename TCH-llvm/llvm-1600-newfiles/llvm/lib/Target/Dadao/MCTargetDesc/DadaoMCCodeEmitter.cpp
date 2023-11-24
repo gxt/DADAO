@@ -127,8 +127,8 @@ void DadaoMCCodeEmitter::encodeInstruction(
   unsigned Value = getBinaryCodeForInstr(Inst, Fixups, SubtargetInfo);
   ++MCNumEmitted; // Keep track of the number of emitted insns.
 
-  // Emit bytes in big-endian
-  for (int i = (4 - 1) * 8; i >= 0; i -= 8)
+  // Emit bytes in little-endian
+  for (int i = 0; i <= (4 - 1) * 8; i += 8)
     Ostream << static_cast<char>((Value >> i) & 0xff);
 }
 

@@ -38,7 +38,7 @@ extern "C" LLVM_EXTERNAL_VISIBILITY void LLVMInitializeDadaoTarget() {
 
 static std::string computeDataLayout() {
   // Data layout (keep in sync with clang/lib/Basic/Targets.cpp)
-  return "E"        // Big endian
+  return "e"        // Little endian
          "-m:e"     // ELF name manging
          "-p:64:64" // 64-bit pointers, 64 bit aligned
          "-i64:64"  // 64 bit integers, 64 bit aligned

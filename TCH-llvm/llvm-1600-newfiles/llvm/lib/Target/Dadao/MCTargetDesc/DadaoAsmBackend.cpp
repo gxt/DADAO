@@ -45,8 +45,9 @@ class DadaoAsmBackend : public MCAsmBackend {
   Triple::OSType OSType;
 
 public:
+  /* Use little endian MCAsmBackend */
   DadaoAsmBackend(const Target &T, Triple::OSType OST)
-      : MCAsmBackend(support::big), OSType(OST) {}
+      : MCAsmBackend(support::little), OSType(OST) {}
 
   void applyFixup(const MCAssembler &Asm, const MCFixup &Fixup,
                   const MCValue &Target, MutableArrayRef<char> Data,

@@ -20,7 +20,7 @@ void DadaoMCAsmInfo::anchor() {}
 
 DadaoMCAsmInfo::DadaoMCAsmInfo(const Triple & /*TheTriple*/,
                                const MCTargetOptions &Options) {
-  IsLittleEndian = false;
+  IsLittleEndian = true;
   PrivateGlobalPrefix = ".L";
   WeakRefDirective = "\t.weak\t";
   ExceptionsType = ExceptionHandling::DwarfCFI;

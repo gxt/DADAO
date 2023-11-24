@@ -1,15 +1,15 @@
-From 865858b22ce6f8acb54321a17d08055f3a634302 Mon Sep 17 00:00:00 2001
+From cbdbf2128cc175fb320b12a36c77a52fb1def3fb Mon Sep 17 00:00:00 2001
 From: Guan Xuetao <gxt@pku.edu.cn>
-Date: Thu, 11 May 2023 11:03:06 +0800
+Date: Thu, 23 Nov 2023 21:02:50 +0800
 Subject: [PATCH] DADAO: llvm/lib/TargetParser/Triple.cpp
 
 Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
 ---
- llvm/lib/TargetParser/Triple.cpp | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ llvm/lib/TargetParser/Triple.cpp | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 diff --git a/llvm/lib/TargetParser/Triple.cpp b/llvm/lib/TargetParser/Triple.cpp
-index a68035989a93..68b762d44eec 100644
+index a68035989a93..65f9c5b77b6b 100644
 --- a/llvm/lib/TargetParser/Triple.cpp
 +++ b/llvm/lib/TargetParser/Triple.cpp
 @@ -43,6 +43,7 @@ StringRef Triple::getArchTypeName(ArchType Kind) {
@@ -84,6 +84,14 @@ index a68035989a93..68b762d44eec 100644
    case Triple::sparcv9:
    case Triple::systemz:
    case Triple::m68k:
+@@ -1753,6 +1762,7 @@ bool Triple::isLittleEndian() const {
+   case Triple::avr:
+   case Triple::bpfel:
+   case Triple::csky:
++  case Triple::dadao:
+   case Triple::dxil:
+   case Triple::hexagon:
+   case Triple::hsail64:
 -- 
 2.34.1
 
