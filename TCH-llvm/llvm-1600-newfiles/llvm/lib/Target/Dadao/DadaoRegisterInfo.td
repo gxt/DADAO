@@ -36,7 +36,7 @@ foreach i = 0-63 in {
 }
 
 foreach i = 0-63 in {
-  def RA#i : DadaoRegBase<i, "ra"#i>, DwarfRegNum<[!add(i, 128)]>;
+  def RA#i : DadaoRegRAddr<i, "ra"#i>, DwarfRegNum<[!add(i, 128)]>;
 }
 
 let Namespace = "Dadao" in {
