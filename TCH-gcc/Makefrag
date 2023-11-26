@@ -96,8 +96,8 @@ gcc-1003-build-new:
 			--with-newlib
 
 gcc-1003-build:
-	@$(DADAO_MAKEP) -C $(GCC_1003_BUILD) all
-#	@$(DADAO_MAKEP) -C $(GCC_1003_BUILD) all-gcc		; if ONLY gcc required, no libgcc and others
+	@$(DADAO_MAKE) -C $(GCC_1003_BUILD) all
+#	@$(DADAO_MAKE) -C $(GCC_1003_BUILD) all-gcc		; if ONLY gcc required, no libgcc and others
 
 gcc-1003-install:
 	@$(DADAO_MAKE) -C $(GCC_1003_BUILD) install
@@ -123,7 +123,7 @@ gcc-1003-highfive:
 gcc-1003-check:
 	@echo "Run gcc-testsuite with qemu simulator"
 	@test -f $(DIR_DADAO_INSTALL)/usr/bin/runtest || $(DADAO_MAKE) -C $(DIR_DADAO_TOP) qemu-dejagnu-prepare
-	@$(DADAO_MAKEP) -C $(GCC_1003_BUILD) check-gcc-c				\
+	@$(DADAO_MAKE) -C $(GCC_1003_BUILD) check-gcc-c				\
 		RUNTESTFLAGS="--target_board=qemu-dadao"
 
 gcc-1003-tags:
