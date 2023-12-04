@@ -76,6 +76,7 @@ tests-isa-bare-highfive:
 	@echo "src_dir\t\t\t\t:= $(TESTS_ISA_SOURCE)"		>  $(TESTS_ISA_BARE_BUILD)/common.mk
 	@echo "DADAO_TOP\t\t\t:= $(DIR_DADAO_TOP)"		>> $(TESTS_ISA_BARE_BUILD)/common.mk
 	@cat $(TESTS_COMMON_MK)					>> $(TESTS_ISA_BARE_BUILD)/common.mk
+	# NOTE: CAN ONLY RUN ONE BY ONE, so add j1 option
 	@$(DADAO_MAKE) -j1 -C $(TESTS_ISA_BARE_BUILD) dduii-bare
 	@$(DADAO_MAKE) -j1 -C $(TESTS_ISA_BARE_BUILD) run-bare
 
@@ -86,6 +87,7 @@ tests-isa-qemu-highfive:
 	@echo "src_dir\t\t\t\t:= $(TESTS_ISA_SOURCE)"		>  $(TESTS_ISA_QEMU_BUILD)/common.mk
 	@echo "DADAO_TOP\t\t\t:= $(DIR_DADAO_TOP)"		>> $(TESTS_ISA_QEMU_BUILD)/common.mk
 	@cat $(TESTS_COMMON_MK)					>> $(TESTS_ISA_QEMU_BUILD)/common.mk
+	# NOTE: CAN ONLY RUN ONE BY ONE, so add j1 option
 	@$(DADAO_MAKE) -j1 -C $(TESTS_ISA_QEMU_BUILD) dduii-qemu
 	@$(DADAO_MAKE) -j1 -C $(TESTS_ISA_QEMU_BUILD) run-qemu
 
