@@ -1,7 +1,7 @@
 bootrom_img = bootrom.dadao.img
 bootrom_dump = bootrom.dadao.dump
 
-include $(src_dir)/../common.mk
+include common.mk
 
 default: img dump
 
