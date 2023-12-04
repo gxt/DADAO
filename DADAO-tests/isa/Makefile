@@ -4,7 +4,7 @@
 
 src_dir ?= .
 
-include $(src_dir)/../common.mk
+include common.mk
 include $(src_dir)/dduii/Makefrag
 include $(src_dir)/ddfii/Makefrag
 
