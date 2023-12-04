@@ -154,25 +154,25 @@ void DadaoAsmPrinter::emitCallInstruction(const MachineInstr *MI) {
   // Insert save rbca instruction immediately before the call.
   // TODO: We should generate a rbip-relative mov instruction here instead
   // of rbip + 16 (should be mov .+16 %rbca).
-  OutStreamer->emitInstruction(MCInstBuilder(Dadao::ADDI_RB_RRII)
-                                   .addReg(Dadao::RBCA)
-                                   .addReg(Dadao::RBIP)
-                                   .addImm(16),
-                               STI);
+//   OutStreamer->emitInstruction(MCInstBuilder(Dadao::ADDI_RB_RRII)
+//                                    .addReg(Dadao::RBCA)
+//                                    .addReg(Dadao::RBIP)
+//                                    .addImm(16),
+//                                STI);
 
-  // Push rbca onto the stack.
-  //   st %rbca, [--%rbsp]
-  OutStreamer->emitInstruction(MCInstBuilder(Dadao::STRB_RRII)
-                                   .addReg(Dadao::RBCA)
-                                   .addReg(Dadao::RBSP)
-                                   .addImm(-8),
-                               STI);
+//   // Push rbca onto the stack.
+//   //   st %rbca, [--%rbsp]
+//   OutStreamer->emitInstruction(MCInstBuilder(Dadao::STRB_RRII)
+//                                    .addReg(Dadao::RBCA)
+//                                    .addReg(Dadao::RBSP)
+//                                    .addImm(-8),
+//                                STI);
 
   // Lower the call instruction.
   if (MI->getOpcode() == Dadao::CALL_IIII) {
     MCInst TmpInst;
     MCInstLowering.Lower(MI, TmpInst);
-    TmpInst.setOpcode(Dadao::JUMP_IIII);
+    TmpInst.setOpcode(Dadao::CALL_IIII);
     OutStreamer->emitInstruction(TmpInst, STI);
   } else {
     OutStreamer->emitInstruction(MCInstBuilder(Dadao::ADD_RB_ORRR)
