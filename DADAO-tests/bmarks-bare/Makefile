@@ -13,7 +13,7 @@ bmarks = \
 #--------------------------------------------------------------------
 # Build rules
 #--------------------------------------------------------------------
-include $(src_dir)/../common.mk
+include common.mk
 
 DADAO_ELF_GCC_EXTRA_FLAGS	:= -DPREALLOCATE=1 -std=gnu99 -ffast-math -fno-common -fno-builtin-printf -fno-tree-loop-distribute-patterns -Xassembler --multiple-to-single
 DADAO_ELF_LINK_EXTRA_FLAGS	:= -T $(src_dir)/common/benchmarks.ld

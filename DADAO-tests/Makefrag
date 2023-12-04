@@ -27,7 +27,10 @@ tests-bmarks-bare-highfive:
 	@rm -fr $(TESTS_BMARKS_BARE_BUILD)
 	@mkdir -p $(TESTS_BMARKS_BARE_BUILD)
 	@ln -s $(TESTS_BMARKS_BARE_SOURCE)/Makefile $(TESTS_BMARKS_BARE_BUILD)/Makefile
-	@$(DADAO_MAKE) src_dir=$(TESTS_BMARKS_BARE_SOURCE) -C $(TESTS_BMARKS_BARE_BUILD)
+	@echo "src_dir\t\t\t\t:= $(TESTS_BMARKS_BARE_SOURCE)"	>  $(TESTS_BMARKS_BARE_BUILD)/common.mk
+	@echo "DADAO_TOP\t\t\t:= $(DIR_DADAO_TOP)"		>> $(TESTS_BMARKS_BARE_BUILD)/common.mk
+	@cat $(TESTS_COMMON_MK)					>> $(TESTS_BMARKS_BARE_BUILD)/common.mk
+	@$(DADAO_MAKE) -C $(TESTS_BMARKS_BARE_BUILD)
 	@make -C $(DIR_DADAO_TOP)									\
 		CHIPYARD_$(VER_CHIPYARD)_DADAO_BINARY=$(TESTS_BMARKS_BARE_BUILD)/dhrystone.dadao	\
 		chipyard-$(VER_CHIPYARD)-run-binary-stage5
