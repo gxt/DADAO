@@ -31,3 +31,4 @@ DADAO_LLVM_AS			:= $(DIR_DADAO_BUILD)/llvm-1600/bin/llvm-as
 DADAO_LLVM_MC			:= $(DIR_DADAO_BUILD)/llvm-1600/bin/llvm-mc
 DADAO_LLVM_READOBJ		:= $(DIR_DADAO_BUILD)/llvm-1600/bin/llvm-readobj
 DADAO_LLVM_OBJDUMP		:= $(DIR_DADAO_BUILD)/llvm-1600/bin/llvm-objdump
+DADAO_LLVM_LLD			:= $(DIR_DADAO_BUILD)/llvm-1600/bin/ld.lld
