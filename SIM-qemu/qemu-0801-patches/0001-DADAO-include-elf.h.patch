@@ -1,0 +1,26 @@
+From 44c8c344e47648ae88c5cde84878525628f68dbb Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 7 Dec 2023 06:14:46 +0800
+Subject: [PATCH] DADAO: include/elf.h
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ include/elf.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/elf.h b/include/elf.h
+index ec9755e73b..989b5db95a 100644
+--- a/include/elf.h
++++ b/include/elf.h
+@@ -208,6 +208,8 @@ typedef struct mips_elf_abiflags_v0 {
+ 
+ #define EM_AARCH64          183
+ 
++#define EM_DADAO            0x0DA0    /* DADAO */
++
+ #define EF_AVR_MACH         0x7F /* Mask for AVR e_flags to get core type */
+ 
+ /* This is the info that is needed to parse the dynamic section of the file */
+-- 
+2.40.1
+

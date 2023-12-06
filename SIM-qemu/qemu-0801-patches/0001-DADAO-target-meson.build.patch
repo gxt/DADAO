@@ -1,0 +1,25 @@
+From 185d2c3ab850cf98f93b4491d69331aa978de268 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 7 Dec 2023 06:34:14 +0800
+Subject: [PATCH] DADAO: target/meson.build
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ target/meson.build | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/target/meson.build b/target/meson.build
+index a53a60486f..211d50a02d 100644
+--- a/target/meson.build
++++ b/target/meson.build
+@@ -2,6 +2,7 @@ subdir('alpha')
+ subdir('arm')
+ subdir('avr')
+ subdir('cris')
++subdir('dadao')
+ subdir('hexagon')
+ subdir('hppa')
+ subdir('i386')
+-- 
+2.40.1
+

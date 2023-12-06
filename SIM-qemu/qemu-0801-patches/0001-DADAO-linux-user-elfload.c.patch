@@ -1,0 +1,42 @@
+From 989f32e2bf092ad85126a7078cc32b76d00fbc7f Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 7 Dec 2023 06:27:32 +0800
+Subject: [PATCH] DADAO: linux-user/elfload.c
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ linux-user/elfload.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/linux-user/elfload.c b/linux-user/elfload.c
+index 47170fe5d3..463518f9dc 100644
+--- a/linux-user/elfload.c
++++ b/linux-user/elfload.c
+@@ -1863,6 +1863,24 @@ static inline void init_thread(struct target_pt_regs *regs,
+ 
+ #endif /* TARGET_HEXAGON */
+ 
++#ifdef TARGET_DADAO
++
++#define ELF_START_MMAP 0x80000000
++
++#define ELF_CLASS      ELFCLASS64
++#define ELF_ARCH       EM_DADAO
++
++static inline void init_thread(struct target_pt_regs *regs,
++                               struct image_info *infop)
++{
++    regs->REG_PC = infop->entry;
++    regs->REG_SP = infop->start_stack;
++}
++
++#define ELF_EXEC_PAGESIZE 4096
++
++#endif /* TARGET_DADAO */
++
+ #ifndef ELF_BASE_PLATFORM
+ #define ELF_BASE_PLATFORM (NULL)
+ #endif
+-- 
+2.40.1
+

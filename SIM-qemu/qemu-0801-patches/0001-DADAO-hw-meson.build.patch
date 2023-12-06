@@ -1,0 +1,25 @@
+From df2763b1b97a0bd7e6cae51a742265f8d5266d81 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 7 Dec 2023 06:36:50 +0800
+Subject: [PATCH] DADAO: hw/meson.build
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ hw/meson.build | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/hw/meson.build b/hw/meson.build
+index c7ac7d3d75..b92862a417 100644
+--- a/hw/meson.build
++++ b/hw/meson.build
+@@ -48,6 +48,7 @@ subdir('alpha')
+ subdir('arm')
+ subdir('avr')
+ subdir('cris')
++subdir('dadao')
+ subdir('hppa')
+ subdir('i386')
+ subdir('loongarch')
+-- 
+2.40.1
+

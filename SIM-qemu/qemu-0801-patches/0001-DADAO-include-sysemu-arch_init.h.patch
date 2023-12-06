@@ -1,0 +1,25 @@
+From 03eaf4b0701c0147dcc7062ff2da66ba664517b1 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 7 Dec 2023 06:21:20 +0800
+Subject: [PATCH] DADAO: include/sysemu/arch_init.h
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ include/sysemu/arch_init.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/sysemu/arch_init.h b/include/sysemu/arch_init.h
+index 8850cb1a14..9206c091a8 100644
+--- a/include/sysemu/arch_init.h
++++ b/include/sysemu/arch_init.h
+@@ -25,6 +25,7 @@ enum {
+     QEMU_ARCH_AVR = (1 << 21),
+     QEMU_ARCH_HEXAGON = (1 << 22),
+     QEMU_ARCH_LOONGARCH = (1 << 23),
++    QEMU_ARCH_DADAO = (1 << 27),
+ };
+ 
+ extern const uint32_t arch_type;
+-- 
+2.40.1
+

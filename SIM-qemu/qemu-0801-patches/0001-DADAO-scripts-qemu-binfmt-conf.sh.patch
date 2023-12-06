@@ -1,0 +1,37 @@
+From 028dd3fd17d11b0ad49240bd4b791b1c2e7a30a7 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 7 Dec 2023 06:36:04 +0800
+Subject: [PATCH] DADAO: scripts/qemu-binfmt-conf.sh
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ scripts/qemu-binfmt-conf.sh | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/qemu-binfmt-conf.sh b/scripts/qemu-binfmt-conf.sh
+index 6ef9f118d9..3876f6a2ef 100755
+--- a/scripts/qemu-binfmt-conf.sh
++++ b/scripts/qemu-binfmt-conf.sh
+@@ -4,7 +4,7 @@
+ qemu_target_list="i386 i486 alpha arm armeb sparc sparc32plus sparc64 \
+ ppc ppc64 ppc64le m68k mips mipsel mipsn32 mipsn32el mips64 mips64el \
+ sh4 sh4eb s390x aarch64 aarch64_be hppa riscv32 riscv64 xtensa xtensaeb \
+-microblaze microblazeel or1k x86_64 hexagon loongarch64"
++microblaze microblazeel or1k x86_64 hexagon loongarch64 dadao"
+ 
+ i386_magic='\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x03\x00'
+ i386_mask='\xff\xff\xff\xff\xff\xfe\xfe\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff'
+@@ -144,6 +144,10 @@ loongarch64_magic='\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x
+ loongarch64_mask='\xff\xff\xff\xff\xff\xff\xff\xfc\x00\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff'
+ loongarch64_family=loongarch
+ 
++dadao_magic='\x7fELF\x02\x02\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\xDA\xDA'
++dadao_mask='\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff'
++dadao_family=dadao
++
+ qemu_get_family() {
+     cpu=${HOST_ARCH:-$(uname -m)}
+     case "$cpu" in
+-- 
+2.40.1
+

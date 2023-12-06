@@ -1,0 +1,48 @@
+From 497f633b9a86497b7be626b4237c12fc87db18ff Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 7 Dec 2023 06:31:34 +0800
+Subject: [PATCH] DADAO: linux-user/syscall_defs.h
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ linux-user/syscall_defs.h | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/linux-user/syscall_defs.h b/linux-user/syscall_defs.h
+index 77ba343c85..17a8ceae8c 100644
+--- a/linux-user/syscall_defs.h
++++ b/linux-user/syscall_defs.h
+@@ -74,7 +74,8 @@
+     || defined(TARGET_M68K) || defined(TARGET_CRIS)                     \
+     || defined(TARGET_S390X) || defined(TARGET_OPENRISC)                \
+     || defined(TARGET_NIOS2) || defined(TARGET_RISCV)                   \
+-    || defined(TARGET_XTENSA) || defined(TARGET_LOONGARCH64)
++    || defined(TARGET_XTENSA) || defined(TARGET_LOONGARCH64)            \
++    || defined(TARGET_DADAO)
+ 
+ #define TARGET_IOC_SIZEBITS     14
+ #define TARGET_IOC_DIRBITS      2
+@@ -1972,7 +1973,8 @@ struct target_stat64  {
+ };
+ 
+ #elif defined(TARGET_OPENRISC) || defined(TARGET_NIOS2) \
+-    || defined(TARGET_RISCV) || defined(TARGET_HEXAGON)
++    || defined(TARGET_RISCV) || defined(TARGET_HEXAGON) \
++    || defined(TARGET_DADAO)
+ 
+ /* These are the asm-generic versions of the stat and stat64 structures */
+ 
+@@ -2149,8 +2151,8 @@ struct target_statfs64 {
+ };
+ #elif (defined(TARGET_PPC64) || defined(TARGET_X86_64) ||       \
+        defined(TARGET_SPARC64) || defined(TARGET_AARCH64) ||    \
+-       defined(TARGET_RISCV) || defined(TARGET_LOONGARCH64)) && \
+-    !defined(TARGET_ABI32)
++       defined(TARGET_RISCV) || defined(TARGET_LOONGARCH64)) || \
++       defined(TARGET_DADAO) && !defined(TARGET_ABI32)
+ struct target_statfs {
+     abi_long f_type;
+     abi_long f_bsize;
+-- 
+2.40.1
+
