@@ -1,0 +1,25 @@
+From ddeabd24032df28578b04533e5805ceab35551f4 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 7 Dec 2023 09:43:29 +0800
+Subject: [PATCH] DADAO: target/Kconfig
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ target/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/target/Kconfig b/target/Kconfig
+index 83da0bd293..9387b6d417 100644
+--- a/target/Kconfig
++++ b/target/Kconfig
+@@ -2,6 +2,7 @@ source alpha/Kconfig
+ source arm/Kconfig
+ source avr/Kconfig
+ source cris/Kconfig
++source dadao/Kconfig
+ source hppa/Kconfig
+ source i386/Kconfig
+ source loongarch/Kconfig
+-- 
+2.40.1
+

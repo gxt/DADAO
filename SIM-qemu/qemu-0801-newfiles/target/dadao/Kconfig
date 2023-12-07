@@ -1,0 +1,2 @@
+config DADAO
+    bool
