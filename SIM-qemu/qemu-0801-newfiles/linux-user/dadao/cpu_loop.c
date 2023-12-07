@@ -12,7 +12,9 @@
 
 #include "qemu/osdep.h"
 #include "qemu.h"
+#include "user-internals.h"
 #include "cpu_loop-common.h"
+#include "signal-common.h"
 
 #include "dadao-abi.h"
 
@@ -21,7 +23,6 @@ void cpu_loop(CPUDADAOState *env)
     CPUState *cs = env_cpu(env);
     int trapnr;
     abi_long ret;
-    target_siginfo_t info;
 
     /* debug */
     qemu_log("--- %016lx : program start ---\n", env->REG_PC);
@@ -47,34 +48,23 @@ void cpu_loop(CPUDADAOState *env)
                              DDABI_ARG(env, 6),
                              0);
             env->REG_PC += 4;
-            if (ret == -TARGET_ERESTARTSYS) {
+            if (ret == -QEMU_ERESTARTSYS) {
                 env->REG_PC -= 4;
-            } else if (ret != -TARGET_QEMU_ESIGRETURN) {
+            } else if (ret != -QEMU_ESIGRETURN) {
                 DDABI_RETVAL(env) = ret;
             }
             break;
         case DADAO_EXCP_ILLI:
             qemu_log("--- %016lx : illegal instruction ---\n", env->REG_PC);
-            info.si_signo = TARGET_SIGILL;
-            info.si_errno = 0;
-            info.si_code = TARGET_ILL_ILLOPC;
-            info._sifields._sigfault._addr = env->REG_PC;
-            queue_signal(env, info.si_signo, QEMU_SI_FAULT, &info);
+            force_sig_fault(TARGET_SIGILL, TARGET_ILL_ILLOPC, env->REG_PC);
             break;
         case DADAO_EXCP_DEBG:
             qemu_log("--- %016lx : breakpoint ---\n", env->REG_PC);
             cpu_dump_state(cs, stderr, 0);
             break;
         case DADAO_EXCP_FPER:
-            qemu_log("--- %016lx : floating point exception ---\n", env->REG_PC);
-            info.si_signo = TARGET_SIGFPE;
-            info.si_errno = 0;
-            info.si_code = 0;
-            info._sifields._sigfault._addr = env->REG_PC;
-            queue_signal(env, info.si_signo, QEMU_SI_FAULT, &info);
-            break;
         case DADAO_EXCP_TRIP:
-            qemu_log("--- %016lx : trip exception ---\n", env->REG_PC);
+            qemu_log("--- %016lx : unhandled exception ---\n", env->REG_PC);
             /* fall through */
         default:
             g_assert_not_reached();
