@@ -95,6 +95,12 @@ static const VMStateDescription vmstate_dadao_cpu = {
     .unmigratable = 1,
 };
 
+#include "hw/core/sysemu-cpu-ops.h"
+
+static const struct SysemuCPUOps dadao_sysemu_ops = {
+    .get_phys_page_debug = dadao_cpu_get_phys_page_debug,
+};
+
 #include "hw/core/tcg-cpu-ops.h"
 
 static struct TCGCPUOps dadao_tcg_ops = {
@@ -119,10 +125,8 @@ static void dadao_cpu_class_init(ObjectClass *oc, void *data)
     cc->has_work = dadao_cpu_has_work;
     cc->dump_state = dadao_cpu_dump_state;
     cc->set_pc = dadao_cpu_set_pc;
-#ifndef CONFIG_USER_ONLY
-    cc->get_phys_page_debug = dadao_cpu_get_phys_page_debug;
-#endif
     dc->vmsd = &vmstate_dadao_cpu;
+    cc->sysemu_ops = &dadao_sysemu_ops;
     cc->tcg_ops = &dadao_tcg_ops;
 }
 
