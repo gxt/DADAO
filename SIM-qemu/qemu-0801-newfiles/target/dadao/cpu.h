@@ -15,11 +15,12 @@
 
 #include "cpu-qom.h"
 #include "exec/cpu-defs.h"
+#include "qemu/cpu-float.h"
 
 #define REG_PC  rb[0]
 #define REG_SP  rb[1]
 
-typedef struct CPUDADAOState {
+typedef struct CPUArchState {
     uint64_t rd[64];        /* general registers */
     uint64_t rb[64];        /* pointer registers */
     uint64_t rf[64];        /* floating-point registers */
@@ -54,7 +55,7 @@ typedef struct CPUDADAOState {
  *
  * A DADAO CPU.
  */
-struct DADAOCPU {
+struct ArchCPU {
     /*< private >*/
     CPUState parent_obj;
     /*< public >*/
@@ -99,9 +100,6 @@ static inline int cpu_mmu_index(CPUDADAOState *env, bool ifetch)
 {
     return 0;
 }
-
-typedef CPUDADAOState CPUArchState;
-typedef DADAOCPU ArchCPU;
 
 #include "exec/cpu-all.h"
 
