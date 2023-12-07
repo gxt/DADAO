@@ -35,7 +35,6 @@
 #include "exec/helper-proto.h"
 #include "exec/helper-gen.h"
 
-#include "trace-tcg.h"
 #include "exec/log.h"
 
 typedef struct DisasContext {
