@@ -32,6 +32,14 @@ static inline void set_feature(CPUDADAOState *env, int feature)
     env->features |= feature;
 }
 
+static void dadao_restore_state_to_opc(CPUState *cs,
+                                          const TranslationBlock *tb,
+                                          const uint64_t *data)
+{
+    DADAOCPU *cpu = DADAO_CPU(cs);
+    cpu->env.REG_PC = data[0];
+}
+
 /* CPU models */
 
 static ObjectClass *dadao_cpu_class_by_name(const char *cpu_model)
@@ -105,9 +113,10 @@ static const struct SysemuCPUOps dadao_sysemu_ops = {
 
 static struct TCGCPUOps dadao_tcg_ops = {
     .initialize = dadao_translate_init,
+    .restore_state_to_opc = dadao_restore_state_to_opc,
+#ifndef CONFIG_USER_ONLY
     .cpu_exec_interrupt = dadao_cpu_exec_interrupt,
     .tlb_fill = dadao_cpu_tlb_fill,
-#ifndef CONFIG_USER_ONLY
     .do_interrupt = dadao_cpu_do_interrupt,
 #endif
 };
