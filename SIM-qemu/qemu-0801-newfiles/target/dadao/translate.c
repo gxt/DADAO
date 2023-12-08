@@ -37,6 +37,10 @@
 
 #include "exec/log.h"
 
+#define HELPER_H "helper.h"
+#include "exec/helper-info.c.inc"
+#undef  HELPER_H
+
 typedef struct DisasContext {
     DisasContextBase base;
     uint32_t mem_idx;
