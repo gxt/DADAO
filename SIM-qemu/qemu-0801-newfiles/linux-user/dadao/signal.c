@@ -46,3 +46,8 @@ long do_rt_sigreturn(CPUDADAOState *env)
 {
     return 0;
 }
+
+void setup_sigtramp(abi_ulong sigtramp_page)
+{
+    assert(false);
+}
