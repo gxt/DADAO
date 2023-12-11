@@ -1,6 +1,6 @@
 include common.mk
 
-default: test.ll test.bc test.s test.o test.dump test.disa test.elf
+default: test.ll test.bc test.s test.o test.elf
 
 %.ll: %.c
 	$(DADAO_LLVM_CLANG) -target dadao -S -emit-llvm $< -o $@
