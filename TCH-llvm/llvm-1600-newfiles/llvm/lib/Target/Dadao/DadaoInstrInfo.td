@@ -247,8 +247,8 @@ class R2R_ORRI<bits<6> minorop, string OpcString, RegisterClass GPRx, RegisterCl
   : Inst_ORRI<0b00010000, minorop, (outs GPRx:$RxHb), (ins GPRy:$RyHc),
               OpcString, "$RxHb, $RyHc", [(set GPRx:$RxHb, GPRy:$RyHc)]>;
 
-// TODO: ONLY imm6 == 0 permitted, fixme later
-let Imm6 = 0b000000 in {
+// TODO: ONLY imm6 == 1 permitted, fixme later
+let Imm6 = 0b000001 in {
   def RD2RD_ORRI : R2R_ORRI<0b101000, "setrd", GPRD, GPRD>;
   def RD2RB_ORRI : R2R_ORRI<0b101001, "setrb", GPRB, GPRD>;
   def RB2RD_ORRI : R2R_ORRI<0b101010, "setrd", GPRD, GPRB>;
