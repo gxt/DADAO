@@ -41,7 +41,7 @@ foreach i = 0-63 in {
 
 let Namespace = "Dadao" in {
   def RDZERO : DadaoRegData<0, "rdzero", ["RD0"]>, DwarfRegAlias<RD0>;
-  def RDRV   : DadaoRegData<15,  "rdrv", ["RD15"]>, DwarfRegAlias<RD15>;
+  def RDRV   : DadaoRegData<31,  "rdrv", ["RD31"]>, DwarfRegAlias<RD31>;
   def RBIP   : DadaoRegBase<0,   "rbip", ["RB0"]>, DwarfRegAlias<RB0>;
   def RBSP   : DadaoRegBase<1,   "rbsp", ["RB1"]>, DwarfRegAlias<RB1>;
   def RBFP   : DadaoRegBase<2,   "rbfp", ["RB2"]>, DwarfRegAlias<RB2>;
@@ -58,7 +58,7 @@ def GPRD : RegisterClass<"Dadao", [i64], 64,
      (sequence "RD%i", 16, 31),     // temporary registers
      (sequence "RD%i", 32, 63),     // callee saved registers
      (sequence "RD%i", 8, 14),      // registers for passing arguments
-     RD15, RDRV,                    // return value
+     RD31, RDRV,                    // return value
      RD7,                           // FIXME: conditional reg
      RD6, RD5, RD4, RD3, RD2, RD1,  // reserved
      RD0, RDZERO                    // constant 0

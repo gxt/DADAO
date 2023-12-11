@@ -60,7 +60,7 @@ static inline unsigned getDadaoRegisterNumbering(unsigned Reg) {
   case Dadao::RDCC:
     return 7;
   case Dadao::RDRV:
-    return 15;
+    return 31;
   case Dadao::RASP:
     return 63;
   default:
