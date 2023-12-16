@@ -8,11 +8,9 @@
  *  Guan Xuetao <gxt@pku.edu.cn>
  */
 #include "qemu/osdep.h"
-
 #include "qemu.h"
 #include "user-internals.h"
 #include "signal-common.h"
-
 #include "linux-user/trace.h"
 
 struct target_sigcontext {
@@ -49,5 +47,13 @@ long do_rt_sigreturn(CPUDADAOState *env)
 
 void setup_sigtramp(abi_ulong sigtramp_page)
 {
-    assert(false);
+    uint32_t *tramp = lock_user(VERIFY_WRITE, sigtramp_page, 8, 0);
+    assert(tramp != NULL);
+
+    /* This is addi rd15, rd0, __NR_sigreturn; trap cp0, 0 */
+    __put_user(0x193C0000 | TARGET_NR_rt_sigreturn, tramp + 0);
+    __put_user(0x76000000, tramp + 1);
+
+    default_rt_sigreturn = sigtramp_page;
+    unlock_user(tramp, sigtramp_page, 8);
 }
