@@ -62,6 +62,15 @@ void cpu_loop(CPUDADAOState *env)
             qemu_log("--- %016lx : breakpoint ---\n", env->REG_PC);
             cpu_dump_state(cs, stderr, 0);
             break;
+        case EXCP_INTERRUPT:
+            /* We processed the pending cpu work above.  */
+            break;
+        case EXCP_DEBUG:
+            force_sig_fault(TARGET_SIGTRAP, TARGET_TRAP_BRKPT, env->REG_PC);
+            break;
+        case EXCP_ATOMIC:
+            cpu_exec_step_atomic(cs);
+            break;
         case DADAO_EXCP_FPER:
         case DADAO_EXCP_TRIP:
             qemu_log("--- %016lx : unhandled exception ---\n", env->REG_PC);
