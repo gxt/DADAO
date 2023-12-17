@@ -36,12 +36,14 @@ void setup_rt_frame(int sig, struct target_sigaction *ka,
                     target_siginfo_t *info,
                     target_sigset_t *set, CPUDADAOState *env)
 {
+    assert(false);
     return;
 }
 
 /* required by `syscall.c` */
 long do_rt_sigreturn(CPUDADAOState *env)
 {
+    assert(false);
     return 0;
 }
 
