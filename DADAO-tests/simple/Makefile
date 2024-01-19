@@ -21,7 +21,22 @@ default: test.ll test.bc test.s test.o test.elf
 	$(DADAO_LLVM_OBJDUMP) --full-contents --disassemble $< > $@
 
 %.elf:	%.o
-	$(DADAO_ELF_COLLECT2) -plugin $(DIR_DADAO_INSTALL)/libexec/gcc/dadao-unknown-elf/10.3.0/liblto_plugin.so -plugin-opt=$(DIR_DADAO_INSTALL)/libexec/gcc/dadao-unknown-elf/10.3.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccQddCQF.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc --defsym __.DADAO.start..text=0x400000 -o $@ $(DIR_DADAO_INSTALL)/lib/gcc/dadao-unknown-elf/10.3.0/crti.o $(DIR_DADAO_INSTALL)/lib/gcc/dadao-unknown-elf/10.3.0/crtbegin.o -L$(DIR_DADAO_INSTALL)/lib/gcc/dadao-unknown-elf/10.3.0 -L$(DIR_DADAO_INSTALL)/lib/gcc/dadao-unknown-elf/10.3.0/../../../../dadao-unknown-elf/lib $< -lgcc -lc -lgcc $(DIR_DADAO_INSTALL)/lib/gcc/dadao-unknown-elf/10.3.0/crtend.o $(DIR_DADAO_INSTALL)/lib/gcc/dadao-unknown-elf/10.3.0/crtn.o
+	$(DADAO_ELF_COLLECT2)											\
+		-plugin $(DIR_DADAO_INSTALL)/libexec/gcc/dadao-unknown-elf/10.3.0/liblto_plugin.so		\
+		-plugin-opt=$(DIR_DADAO_INSTALL)/libexec/gcc/dadao-unknown-elf/10.3.0/lto-wrapper		\
+		-plugin-opt=-fresolution=/tmp/ccQddCQF.res							\
+		-plugin-opt=-pass-through=-lgcc									\
+		-plugin-opt=-pass-through=-lc									\
+		-plugin-opt=-pass-through=-lgcc									\
+		--defsym __.DADAO.start..text=0x400000								\
+		-o $@												\
+		$(DIR_DADAO_INSTALL)/lib/gcc/dadao-unknown-elf/10.3.0/crti.o					\
+		$(DIR_DADAO_INSTALL)/lib/gcc/dadao-unknown-elf/10.3.0/crtbegin.o				\
+		-L$(DIR_DADAO_INSTALL)/lib/gcc/dadao-unknown-elf/10.3.0						\
+		-L$(DIR_DADAO_INSTALL)/lib/gcc/dadao-unknown-elf/10.3.0/../../../../dadao-unknown-elf/lib	\
+		$< -lgcc -lc -lgcc										\
+		$(DIR_DADAO_INSTALL)/lib/gcc/dadao-unknown-elf/10.3.0/crtend.o					\
+		$(DIR_DADAO_INSTALL)/lib/gcc/dadao-unknown-elf/10.3.0/crtn.o
 
 %.lld:	%.o
 	$(DADAO_LLVM_LLD) -nostdlib -nostartfiles -o $@ $<
