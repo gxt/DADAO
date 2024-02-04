@@ -556,7 +556,7 @@ def CallTarget : Operand<i64> {
 
 def CALL_IIII : Inst_IIII<0b01101100, (outs), (ins CallTarget:$Imm24), "call", "$Imm24", [(DadaoCall bb:$Imm24)]> {
   let isCall = 1;
-  let isCodeGenOnly = 1;
+  let isCodeGenOnly = 0;
   let Uses = [RASP];
 }
 
@@ -564,7 +564,7 @@ def CALL_RRII : Inst_RRII<0b01101101, (outs), (ins GPRB:$RxHa, GPRD:$RyHb, i64lo
       "call", "$RxHa, $RyHb, $Imm12",
       [(DadaoCall GPRB:$RxHa, GPRD:$RyHb, i64lo12s:$Imm12)]> {
   let isCall = 1;
-  let isCodeGenOnly = 1;
+  let isCodeGenOnly = 0;
   let Defs = [RASP];
 }
 
