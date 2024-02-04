@@ -105,7 +105,7 @@ void DadaoFrameLowering::emitPrologue(MachineFunction &MF,
   unsigned StackSize = MFI.getStackSize();
 
   // Push old FP
-  // st %fp,-4[*%sp]
+  // st %fp,-8[*%sp]
   BuildMI(MBB, MBBI, DL, LII.get(Dadao::STRB_RRII))
       .addReg(Dadao::RBFP)
       .addReg(Dadao::RBSP)
@@ -113,10 +113,10 @@ void DadaoFrameLowering::emitPrologue(MachineFunction &MF,
       .setMIFlag(MachineInstr::FrameSetup);
 
   // Generate new FP
-  // add %sp,8,%fp
+  // add %sp,0,%fp
   BuildMI(MBB, MBBI, DL, LII.get(Dadao::ADDI_RB_RRII), Dadao::RBFP)
       .addReg(Dadao::RBSP)
-      .addImm(8)
+      .addImm(0)
       .setMIFlag(MachineInstr::FrameSetup);
 
   // Allocate space on the stack if needed
