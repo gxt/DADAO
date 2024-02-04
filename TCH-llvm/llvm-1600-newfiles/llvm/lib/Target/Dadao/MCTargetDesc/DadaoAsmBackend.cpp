@@ -17,7 +17,7 @@
 #include "llvm/MC/MCSubtargetInfo.h"
 #include "llvm/Support/ErrorHandling.h"
 #include "llvm/Support/raw_ostream.h"
-
+#include <iostream>
 using namespace llvm;
 
 // Prepare value for the target space
@@ -30,11 +30,12 @@ static unsigned adjustFixupValue(unsigned Kind, uint64_t Value) {
     return Value;
   case Dadao::FIXUP_DADAO_21:
   case Dadao::FIXUP_DADAO_21_F:
-  case Dadao::FIXUP_DADAO_25:
   case Dadao::FIXUP_DADAO_32:
   case Dadao::FIXUP_DADAO_HI16:
   case Dadao::FIXUP_DADAO_LO16:
     return Value;
+  case Dadao::FIXUP_DADAO_25:
+    return Value >> 2;
   default:
     llvm_unreachable("Unknown fixup kind!");
   }
@@ -107,7 +108,7 @@ void DadaoAsmBackend::applyFixup(const MCAssembler &Asm, const MCFixup &Fixup,
 
   // Load instruction and apply value
   for (unsigned i = 0; i != NumBytes; ++i) {
-    unsigned Idx = (FullSize - 1 - i);
+    unsigned Idx = i;
     CurVal |= static_cast<uint64_t>(static_cast<uint8_t>(Data[Offset + Idx]))
               << (i * 8);
   }
@@ -118,7 +119,7 @@ void DadaoAsmBackend::applyFixup(const MCAssembler &Asm, const MCFixup &Fixup,
 
   // Write out the fixed up bytes back to the code/data bits.
   for (unsigned i = 0; i != NumBytes; ++i) {
-    unsigned Idx = (FullSize - 1 - i);
+    unsigned Idx = i;
     Data[Offset + Idx] = static_cast<uint8_t>((CurVal >> (i * 8)) & 0xff);
   }
 }
@@ -144,7 +145,7 @@ DadaoAsmBackend::getFixupKindInfo(MCFixupKind Kind) const {
       {"FIXUP_DADAO_NONE", 0, 32, 0},
       {"FIXUP_DADAO_21", 16, 16 /*21*/, 0},
       {"FIXUP_DADAO_21_F", 16, 16 /*21*/, 0},
-      {"FIXUP_DADAO_25", 7, 25, 0},
+      {"FIXUP_DADAO_25", 0, 24, MCFixupKindInfo::FKF_IsPCRel },
       {"FIXUP_DADAO_32", 0, 32, 0},
       {"FIXUP_DADAO_HI16", 16, 16, 0},
       {"FIXUP_DADAO_LO16", 16, 16, 0}};
