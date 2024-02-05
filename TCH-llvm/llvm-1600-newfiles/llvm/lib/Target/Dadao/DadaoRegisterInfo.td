@@ -88,4 +88,9 @@ def GPRA : RegisterClass<"Dadao", [i64], 64,
 // Define a temp register to capture the dependencies between the set flag
 // and setcc instructions
 // TODO: Every general RD can be used as RDCC
+
+// Guorui Wen: In DadaoInstrInfo.td, Many CMP instructions implicitly define (write to) register RDCC.
+// However, RDCC doesn't belong to any physical register class, causing failed assertion when
+// execution reaches llvm/lib/CodeGen/SelectionDAG/InstrEmitter.cpp:1136
+
 def RDCC  : DadaoRegData<7, "rdcc">;

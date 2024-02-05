@@ -296,10 +296,9 @@ def : Pat<(sub GPRB:$Rs1, i64neg12:$imm),
 // -------------------------------------------------- //
 
 class COMPARE_ORRR<bits<6> minorop, string OpcString, RegisterClass GPRcmp>
-  : Inst_ORRR<0b00010000, minorop, (outs), (ins GPRD:$RxHb, GPRcmp:$RyHc, GPRcmp:$RzHd), OpcString, "$RxHb, $RyHc, $RzHd",
+  : Inst_ORRR<0b00010000, minorop, (outs GPRD:$RxHb), (ins GPRcmp:$RyHc, GPRcmp:$RzHd), OpcString, "$RxHb, $RyHc, $RzHd",
              [(DadaoSetFlag GPRD:$RxHb, GPRcmp:$RyHc, GPRcmp:$RzHd)]> {
 
-  let Defs = [RDCC];
   let isCompare = 1;
 }
 
@@ -324,13 +323,10 @@ def CMPU_RRII   : COMPARE_RRII<0b00010011, "cmpu", i64lo12z>;
 // -------------------------------------------------- //
 
 class CONDSET_RRRR<bits<8> majorop, string OpcString>
-  : Inst_RRRR<majorop, (outs GPRD:$RdHb), (ins GPRD:$RdHc, GPRD:$RdHd, GPRD:$RdHa),
+  : Inst_RRRR<majorop, (outs GPRD:$RdHb), (ins GPRD:$RdHa, GPRD:$RdHc, GPRD:$RdHd),
               OpcString, "$RdHa, $RdHb, $RdHc, $RdHd",
               [(set (i64 GPRD:$RdHb), (DadaoSelectCC (i64 GPRD:$RdHc), (i64 GPRD:$RdHd),
                                       (imm:$RdHa)))]> {
-    let RdHa = RDCC.Num;
-    let Uses = [RDCC];
-    let isSelect = 1;
   }
 
 def CSN     : CONDSET_RRRR<0b00100000, "csn">;
