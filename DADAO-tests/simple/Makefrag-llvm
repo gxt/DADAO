@@ -1,5 +1,3 @@
-include common.mk
-
 default: test.ll test.bc test.s test.o test.elf
 
 %.ll: %.c
