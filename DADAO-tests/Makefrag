@@ -113,7 +113,7 @@ tests-simple-gcc-elf-highfive:
 	@echo "include Makefrag-run"								>> $(TESTS_SIMPLE_BUILD)/Makefile
 	@$(DADAO_MAKE) -C $(TESTS_SIMPLE_BUILD)
 
-tests-simple-gnu-highfive:
+tests-simple-gcc-gnu-highfive:
 	@rm -fr $(TESTS_SIMPLE_BUILD)
 	@mkdir -p $(TESTS_SIMPLE_BUILD)
 	@ln -s -t $(TESTS_SIMPLE_BUILD) $(TESTS_COMMON_MK)
