@@ -1,4 +1,4 @@
-default: test.ll test.bc test.s test.o test.elf
+default: test.ll test.bc test.s test.o test.exe
 
 %.ll: %.c
 	$(DADAO_LLVM_CLANG) -target dadao -S -emit-llvm $< -o $@
@@ -18,7 +18,7 @@ default: test.ll test.bc test.s test.o test.elf
 %.disa: %.o
 	$(DADAO_LLVM_OBJDUMP) --full-contents --disassemble $< > $@
 
-%.elf:	%.o
+%.exe:	%.o
 	$(DADAO_ELF_COLLECT2)											\
 		-plugin $(DIR_DADAO_INSTALL)/libexec/gcc/dadao-unknown-elf/10.3.0/liblto_plugin.so		\
 		-plugin-opt=$(DIR_DADAO_INSTALL)/libexec/gcc/dadao-unknown-elf/10.3.0/lto-wrapper		\
@@ -38,6 +38,3 @@ default: test.ll test.bc test.s test.o test.elf
 
 %.lld:	%.o
 	$(DADAO_LLVM_LLD) -nostdlib -nostartfiles -o $@ $<
-
-%.qemu: %.elf
-	$(DADAO_QEMU_USER) -D $@ $<

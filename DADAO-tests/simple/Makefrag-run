@@ -1,0 +1,5 @@
+%.qemulog: %.exe
+	$(DADAO_QEMU_USER) -D $@ $<
+
+# -singlestep is deprecated, should be replace with -one-insn-per-tb
+# -strace

@@ -99,6 +99,7 @@ tests-simple-llvm-highfive:
 	@echo "DIR_DADAO_TOP\t\t\t:= $(DIR_DADAO_TOP)"				>  $(TESTS_SIMPLE_BUILD)/Makefile
 	@echo "include common.mk"									>> $(TESTS_SIMPLE_BUILD)/Makefile
 	@echo "include Makefrag-llvm"								>> $(TESTS_SIMPLE_BUILD)/Makefile
+	@echo "include Makefrag-run"								>> $(TESTS_SIMPLE_BUILD)/Makefile
 	@$(DADAO_MAKE) -C $(TESTS_SIMPLE_BUILD)
 
 tests-simple-gcc-elf-highfive:
@@ -109,6 +110,7 @@ tests-simple-gcc-elf-highfive:
 	@echo "DIR_DADAO_TOP\t\t\t:= $(DIR_DADAO_TOP)"				>  $(TESTS_SIMPLE_BUILD)/Makefile
 	@echo "include common.mk"									>> $(TESTS_SIMPLE_BUILD)/Makefile
 	@echo "include Makefrag-gcc-elf"							>> $(TESTS_SIMPLE_BUILD)/Makefile
+	@echo "include Makefrag-run"								>> $(TESTS_SIMPLE_BUILD)/Makefile
 	@$(DADAO_MAKE) -C $(TESTS_SIMPLE_BUILD)
 
 tests-simple-gnu-highfive:
