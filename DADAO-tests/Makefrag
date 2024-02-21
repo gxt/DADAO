@@ -25,14 +25,21 @@ TESTS_SIMPLE_SOURCE			:= $(DIR_TESTS_SOURCE)/simple
 TESTS_SIMPLE_TARGET			:= $(DIR_TESTS_TARGET)/simple
 
 tests-bmarks-bare-highfive:
+	#
+	# TARGET DIR: $(TESTS_BMARKS_BARE_TARGET)
+	# NOTE: ONLY dhrystone here
+	#
 	@rm -fr $(TESTS_BMARKS_BARE_TARGET)
 	@mkdir -p $(TESTS_BMARKS_BARE_TARGET)
-	@ln -s $(TESTS_BMARKS_BARE_SOURCE)/Makefile $(TESTS_BMARKS_BARE_TARGET)/Makefile
-	@echo "src_dir\t\t\t\t:= $(TESTS_BMARKS_BARE_SOURCE)"	>  $(TESTS_BMARKS_BARE_TARGET)/common.mk
-	@echo "DIR_DADAO_TOP\t\t\t:= $(DIR_DADAO_TOP)"		>> $(TESTS_BMARKS_BARE_TARGET)/common.mk
-	@cat $(TESTS_COMMON_MK)					>> $(TESTS_BMARKS_BARE_TARGET)/common.mk
+	@ln -s -t $(TESTS_BMARKS_BARE_TARGET) $(TESTS_COMMON_MK)
+	@ln -s -t $(TESTS_BMARKS_BARE_TARGET) $(TESTS_BMARKS_BARE_SOURCE)/Makefrag
+	@echo "DIR_DADAO_TOP\t\t\t:= $(DIR_DADAO_TOP)"				>> $(TESTS_BMARKS_BARE_TARGET)/Makefile
+	@echo "include common.mk"									>> $(TESTS_BMARKS_BARE_TARGET)/Makefile
+	@echo ""													>> $(TESTS_BMARKS_BARE_TARGET)/Makefile
+	@echo "src_dir\t\t\t\t:= $(TESTS_BMARKS_BARE_SOURCE)"		>> $(TESTS_BMARKS_BARE_TARGET)/Makefile
+	@echo "include Makefrag"									>> $(TESTS_BMARKS_BARE_TARGET)/Makefile
 	@$(DADAO_MAKE) -C $(TESTS_BMARKS_BARE_TARGET)
-	@make -C $(DIR_DADAO_TOP)									\
+	@make -C $(DIR_DADAO_TOP)																\
 		CHIPYARD_$(VER_CHIPYARD)_DADAO_BINARY=$(TESTS_BMARKS_BARE_TARGET)/dhrystone.dadao	\
 		chipyard-$(VER_CHIPYARD)-run-binary-stage5
 
@@ -62,6 +69,9 @@ include DADAO-tests/Makefrag-bmarks-qemu-mibench
 include DADAO-tests/Makefrag-simple-multi-arch
 
 tests-bootrom-highfive:
+	#
+	# TARGET DIR: $(TESTS_BOOTROM_TARGET)
+	#
 	@rm -fr $(TESTS_BOOTROM_TARGET)
 	@mkdir -p $(TESTS_BOOTROM_TARGET)
 	@ln -s -t $(TESTS_BOOTROM_TARGET) $(TESTS_COMMON_MK)
