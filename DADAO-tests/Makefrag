@@ -74,13 +74,19 @@ tests-bootrom-highfive:
 	@$(DADAO_MAKE) -C $(TESTS_BOOTROM_TARGET)
 
 tests-isa-bare-highfive:
+	#
+	# TARGET DIR: $(TESTS_ISA_BARE_TARGET)
+	# NOTE: CAN ONLY RUN ONE BY ONE, so add j1 option for make
+	#
 	@rm -fr $(TESTS_ISA_BARE_TARGET)
 	@mkdir -p $(TESTS_ISA_BARE_TARGET)
-	@ln -s $(TESTS_ISA_SOURCE)/Makefile $(TESTS_ISA_BARE_TARGET)/Makefile
-	@echo "src_dir\t\t\t\t:= $(TESTS_ISA_SOURCE)"		>  $(TESTS_ISA_BARE_TARGET)/common.mk
-	@echo "DIR_DADAO_TOP\t\t\t:= $(DIR_DADAO_TOP)"		>> $(TESTS_ISA_BARE_TARGET)/common.mk
-	@cat $(TESTS_COMMON_MK)					>> $(TESTS_ISA_BARE_TARGET)/common.mk
-	# NOTE: CAN ONLY RUN ONE BY ONE, so add j1 option
+	@ln -s -t $(TESTS_ISA_BARE_TARGET) $(TESTS_COMMON_MK)
+	@ln -s -t $(TESTS_ISA_BARE_TARGET) $(TESTS_ISA_SOURCE)/Makefrag
+	@echo "DIR_DADAO_TOP\t\t\t:= $(DIR_DADAO_TOP)"				>  $(TESTS_ISA_BARE_TARGET)/Makefile
+	@echo "include common.mk"									>> $(TESTS_ISA_BARE_TARGET)/Makefile
+	@echo ""													>> $(TESTS_ISA_BARE_TARGET)/Makefile
+	@echo "src_dir\t\t\t\t:= $(TESTS_ISA_SOURCE)"				>> $(TESTS_ISA_BARE_TARGET)/Makefile
+	@echo "include Makefrag"									>> $(TESTS_ISA_BARE_TARGET)/Makefile
 	@$(DADAO_MAKE) -j1 -C $(TESTS_ISA_BARE_TARGET) dduii-bare
 	@$(DADAO_MAKE) -j1 -C $(TESTS_ISA_BARE_TARGET) run-bare
 
