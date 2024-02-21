@@ -64,10 +64,13 @@ include DADAO-tests/Makefrag-simple-multi-arch
 tests-bootrom-highfive:
 	@rm -fr $(TESTS_BOOTROM_TARGET)
 	@mkdir -p $(TESTS_BOOTROM_TARGET)
-	@cp $(TESTS_BOOTROM_SOURCE)/* $(TESTS_BOOTROM_TARGET)
-	@echo "src_dir\t\t\t\t:= $(TESTS_BOOTROM_SOURCE)"	>  $(TESTS_BOOTROM_TARGET)/common.mk
-	@echo "DIR_DADAO_TOP\t\t\t:= $(DIR_DADAO_TOP)"		>> $(TESTS_BOOTROM_TARGET)/common.mk
-	@cat $(TESTS_COMMON_MK)					>> $(TESTS_BOOTROM_TARGET)/common.mk
+	@ln -s -t $(TESTS_BOOTROM_TARGET) $(TESTS_COMMON_MK)
+	@ln -s -t $(TESTS_BOOTROM_TARGET) $(TESTS_BOOTROM_SOURCE)/*
+	@echo "DIR_DADAO_TOP\t\t\t:= $(DIR_DADAO_TOP)"				>> $(TESTS_BOOTROM_TARGET)/Makefile
+	@echo "include common.mk"									>> $(TESTS_BOOTROM_TARGET)/Makefile
+	@echo ""													>> $(TESTS_BOOTROM_TARGET)/Makefile
+	@echo "src_dir\t\t\t\t:= $(TESTS_BOOTROM_SOURCE)"			>> $(TESTS_BOOTROM_TARGET)/Makefile
+	@echo "include Makefrag"									>> $(TESTS_BOOTROM_TARGET)/Makefile
 	@$(DADAO_MAKE) -C $(TESTS_BOOTROM_TARGET)
 
 tests-isa-bare-highfive:
