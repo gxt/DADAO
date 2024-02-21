@@ -1,27 +1,28 @@
 #
 # Makefile for tests
 #
-TESTS_COMMON_MK			:= $(DIR_DADAO_TOP)/DADAO-tests/common.mk
+
+DIR_TESTS_SOURCE		:= $(DIR_DADAO_TOP)/DADAO-tests
+DIR_TESTS_TARGET		:= $(DIR_DADAO_TARGET)
+
+TESTS_COMMON_MK			:= $(DIR_TESTS_SOURCE)/common.mk
 
 include $(TESTS_COMMON_MK)
 
-TESTS_BMARKS_BARE_SOURCE	:= $(DIR_DADAO_TOP)/DADAO-tests/bmarks-bare/
-TESTS_BMARKS_BARE_BUILD		:= $(DIR_DADAO_TOP)/__tests/bmarks-bare/
-TESTS_BMARKS_QEMU_SOURCE	:= $(DIR_DADAO_TOP)/DADAO-tests/bmarks-qemu/
-TESTS_BMARKS_QEMU_BUILD		:= $(DIR_DADAO_TOP)/__tests/bmarks-qemu/
+TESTS_BMARKS_BARE_SOURCE	:= $(DIR_TESTS_SOURCE)/bmarks-bare/
+TESTS_BMARKS_BARE_BUILD		:= $(DIR_TESTS_TARGET)/bmarks-bare/
+TESTS_BMARKS_QEMU_SOURCE	:= $(DIR_TESTS_SOURCE)/bmarks-qemu/
+TESTS_BMARKS_QEMU_BUILD		:= $(DIR_TESTS_TARGET)/bmarks-qemu/
 
-TESTS_BOOTROM_SOURCE		:= $(DIR_DADAO_TOP)/DADAO-tests/bootrom/
-TESTS_BOOTROM_BUILD		:= $(DIR_DADAO_TOP)/__tests/bootrom/
+TESTS_BOOTROM_SOURCE		:= $(DIR_TESTS_SOURCE)/bootrom/
+TESTS_BOOTROM_BUILD		:= $(DIR_TESTS_TARGET)/bootrom/
 
-TESTS_ISA_SOURCE		:= $(DIR_DADAO_TOP)/DADAO-tests/isa
-TESTS_ISA_BARE_BUILD		:= $(DIR_DADAO_TOP)/__tests/isa-bare
-TESTS_ISA_QEMU_BUILD		:= $(DIR_DADAO_TOP)/__tests/isa-qemu
+TESTS_ISA_SOURCE		:= $(DIR_TESTS_SOURCE)/isa
+TESTS_ISA_BARE_BUILD		:= $(DIR_TESTS_TARGET)/isa-bare
+TESTS_ISA_QEMU_BUILD		:= $(DIR_TESTS_TARGET)/isa-qemu
 
-TESTS_SIMPLE_SOURCE		:= $(DIR_DADAO_TOP)/DADAO-tests/simple
-TESTS_SIMPLE_BUILD		:= $(DIR_DADAO_TOP)/__tests/simple
-TESTS_SIMPLE_INSN		?= insn-simple
-TESTS_SIMPLE_HELLOWORLD		?= helloworld
-#EXTRA_GCC_FLAGS		+= -fdump-tree-all -fdump-ipa-all -fdump-rtl-all
+TESTS_SIMPLE_SOURCE		:= $(DIR_TESTS_SOURCE)/simple
+TESTS_SIMPLE_BUILD		:= $(DIR_TESTS_TARGET)/simple
 
 tests-bmarks-bare-highfive:
 	@rm -fr $(TESTS_BMARKS_BARE_BUILD)
