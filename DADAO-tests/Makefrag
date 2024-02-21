@@ -46,19 +46,19 @@ tests-bmarks-bare-highfive:
 tests-bmarks-qemu-dhrystone-highfive:
 	@rm -fr $(TESTS_BMARKS_QEMU_TARGET)/dhrystone
 	@mkdir -p $(TESTS_BMARKS_QEMU_TARGET)/dhrystone
-	@cd $(TESTS_BMARKS_QEMU_TARGET)/dhrystone ;					\
-		$(DADAO_ELF_GCC)							\
-			-static								\
-			-save-temps							\
-			-DHZ=250							\
-			-DTIME								\
-			-o $(TESTS_BMARKS_QEMU_TARGET)/dhrystone/dhry			\
-			$(TESTS_BMARKS_QEMU_SOURCE)/dhry-c/dhry_1.c			\
+	@cd $(TESTS_BMARKS_QEMU_TARGET)/dhrystone ;							\
+		$(DADAO_ELF_GCC)												\
+			-static														\
+			-save-temps													\
+			-DHZ=250													\
+			-DTIME														\
+			-o $(TESTS_BMARKS_QEMU_TARGET)/dhrystone/dhry				\
+			$(TESTS_BMARKS_QEMU_SOURCE)/dhry-c/dhry_1.c					\
 			$(TESTS_BMARKS_QEMU_SOURCE)/dhry-c/dhry_2.c
-	@$(DADAO_ELF_READELF) -a $(TESTS_BMARKS_QEMU_TARGET)/dhrystone/dhry	> $(TESTS_BMARKS_QEMU_TARGET)/dhrystone/dhry.elf
+	@$(DADAO_ELF_READELF) -a $(TESTS_BMARKS_QEMU_TARGET)/dhrystone/dhry		> $(TESTS_BMARKS_QEMU_TARGET)/dhrystone/dhry.elf
 	@$(DADAO_ELF_OBJDUMP) -lDS $(TESTS_BMARKS_QEMU_TARGET)/dhrystone/dhry	> $(TESTS_BMARKS_QEMU_TARGET)/dhrystone/dhry.dump
-	@echo 10 | $(DADAO_QEMU_USER)							\
-		-singlestep -strace							\
+	@echo 10 | $(DADAO_QEMU_USER)										\
+		-singlestep -strace												\
 		-D $(TESTS_BMARKS_QEMU_TARGET)/dhrystone/dhrystone.qemulog		\
 		$(TESTS_BMARKS_QEMU_TARGET)/dhrystone/dhry
 
