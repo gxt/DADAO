@@ -249,7 +249,7 @@ def SUB_RB_ORRR : ALU_RB_ORRR<0b101111, "sub", sub, GPRB, GPRD>;
 
 class R2R_ORRI<bits<6> minorop, string OpcString, RegisterClass GPRx, RegisterClass GPRy>
   : Inst_ORRI<0b00010000, minorop, (outs GPRx:$RxHb), (ins GPRy:$RyHc),
-              OpcString, "$RxHb, $RyHc", [(set GPRx:$RxHb, GPRy:$RyHc)]>;
+              OpcString, "$RxHb, $RyHc", []>;
 
 // TODO: ONLY imm6 == 1 permitted, fixme later
 let Imm6 = 0b000001 in {
