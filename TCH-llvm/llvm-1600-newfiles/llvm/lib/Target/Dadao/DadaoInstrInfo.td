@@ -296,6 +296,27 @@ def : Pat<(sub GPRB:$Rs1, i64neg12:$imm),
           (ADDI_RB_RRII GPRB:$Rs1, (NEG $imm))>;
 
 // -------------------------------------------------- //
+// Mul Div Rem instructions
+// -------------------------------------------------- //
+
+def MULS_RRRR
+  : Inst_RRRR<0b00011100, (outs GPRD:$RdHa, GPRD:$RdHb), (ins GPRD:$RdHc, GPRD:$RdHd),
+            "muls", "$RdHa, $RdHb, $RdHc, $RdHd",
+            []>;
+def MULU_RRRR
+  : Inst_RRRR<0b00011101, (outs GPRD:$RdHa, GPRD:$RdHb), (ins GPRD:$RdHc, GPRD:$RdHd),
+            "mulu", "$RdHa, $RdHb, $RdHc, $RdHd",
+            []>;
+def DIVS_RRRR
+  : Inst_RRRR<0b00011110, (outs GPRD:$RdHa, GPRD:$RdHb), (ins GPRD:$RdHc, GPRD:$RdHd),
+            "divs", "$RdHa, $RdHb, $RdHc, $RdHd",
+            []>;
+def DIVU_RRRR
+  : Inst_RRRR<0b00011111, (outs GPRD:$RdHa, GPRD:$RdHb), (ins GPRD:$RdHc, GPRD:$RdHd),
+            "divu", "$RdHa, $RdHb, $RdHc, $RdHd",
+            []>;
+
+// -------------------------------------------------- //
 // Compare instructions
 // -------------------------------------------------- //
 
