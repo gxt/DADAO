@@ -970,9 +970,9 @@ DadaoAsmParser::parseMemoryOperand(OperandVector &Operands) {
 
   Parser.Lex(); // Eat the ','.
   // Try to parse the offset
-  Op = parseRegister();
-  if (!Op)
-    Op = parseImmediate();
+  Offset = parseRegister();
+  if (!Offset)
+    Offset = parseImmediate();
 
   // If ] match form (1) else match form (2)
   if (Lexer.is(AsmToken::RBrac)) {
