@@ -870,11 +870,9 @@ SDValue DadaoTargetLowering::LowerBR_CC(SDValue Op, SelectionDAG &DAG) const {
 
   LPCC::CondCode CC = IntCondCCodeToICC(Cond, DL, RHS, DAG);
   SDValue TargetCC = DAG.getConstant(CC, DL, MVT::i64);
-  SDValue Flag =
-      DAG.getNode(DadaoISD::SET_FLAG, DL, MVT::Glue, TargetCC, LHS, RHS);
 
-  return DAG.getNode(DadaoISD::BR_CC, DL, Op.getValueType(), Chain, Dest,
-                     TargetCC, Flag);
+  return DAG.getNode(DadaoISD::BR_CC, DL, Op.getValueType(), Chain, TargetCC,
+                     LHS, RHS, Dest);
 }
 
 SDValue DadaoTargetLowering::LowerSETCC(SDValue Op, SelectionDAG &DAG) const {

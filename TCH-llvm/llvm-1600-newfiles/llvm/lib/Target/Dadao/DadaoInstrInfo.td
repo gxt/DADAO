@@ -18,7 +18,9 @@ include "DadaoInstrFormats.td"
 
 //  These are target-independent nodes, but have target-specific formats.
 def SDT_DadaoSetFlag      : SDTypeProfile<0,  3, [SDTCisSameAs<0, 1>]>;
-def SDT_DadaoBrCC         : SDTypeProfile<0,  2, [SDTCisVT<0, OtherVT>, SDTCisVT<1, i64>]>;
+def SDT_DadaoBrCC         : SDTypeProfile<0,  4, [
+  SDTCisVT<0, i64>, SDTCisSameAs<1, 2>, SDTCisVT<3, OtherVT>
+]>;
 def SDT_DadaoSetCC        : SDTypeProfile<1,  1, [SDTCisVT<0, i64>,
                                                   SDTCisVT<1, i64>]>;
 def SDT_DadaoSelectCC     : SDTypeProfile<1,  3, [SDTCisSameAs<0, 1>,
@@ -28,7 +30,7 @@ def SDT_DadaoCall         : SDTypeProfile<0, -1, [SDTCisVT<0, i64>]>;
 def DadaoSetFlag     : SDNode<"DadaoISD::SET_FLAG", SDT_DadaoSetFlag,
                               [SDNPOutGlue]>;
 def DadaoBrCC        : SDNode<"DadaoISD::BR_CC", SDT_DadaoBrCC,
-                              [SDNPHasChain, SDNPInGlue]>;
+                              [SDNPHasChain]>;
 def DadaoSetCC       : SDNode<"DadaoISD::SETCC", SDT_DadaoSetCC,
                               [SDNPInGlue]>;
 def DadaoSelectCC    : SDNode<"DadaoISD::SELECT_CC", SDT_DadaoSelectCC,
@@ -530,13 +532,11 @@ def BrTarget   : Operand<OtherVT> {
 }
 
 class BRANCH_RIII<bits<8> majorop, string OpcString>
-  : Inst_RIII<majorop, (outs), (ins GPRD:$RxHa, BrTarget:$Imm18), OpcString, "$RxHa, $Imm18",
-              [(DadaoBrCC bb:$Imm18, GPRD:$RxHa)]> {
+  : Inst_RIII<majorop, (outs), (ins BrTarget:$Imm18, GPRD:$RxHa), OpcString, "$RxHa, $Imm18",
+              []> {
     let isBranch = 1;
     let isBarrier = 1;
     let isTerminator = 1;
-    let Uses = [RDCC];
-    let RxHa = RDCC.Num;
   }
 
 // TODO: NOT finised
@@ -544,8 +544,19 @@ def BRN_RIII  : BRANCH_RIII<0b00101000, "brn">;
 def BRNN_RIII : BRANCH_RIII<0b00101001, "brnn">;
 def BRZ_RIII  : BRANCH_RIII<0b00101010, "brz">;
 def BRNZ_RIII : BRANCH_RIII<0b00101011, "brnz">;
-def BRP_RIII  : BRANCH_RIII<0b00101101, "brp">;
-def BRNP_RIII : BRANCH_RIII<0b00101110, "brnp">;
+def BRP_RIII  : BRANCH_RIII<0b00101100, "brp">;
+def BRNP_RIII : BRANCH_RIII<0b00101101, "brnp">;
+
+class BRANCH_RRII<bits<8> majorop, string OpcString>
+  : Inst_RRII<majorop, (outs), (ins BrTarget:$Imm12, GPRD:$RxHa, GPRD:$RyHb), OpcString, "$RxHa, $Imm12",
+              []> {
+    let isBranch = 1;
+    let isBarrier = 1;
+    let isTerminator = 1;
+  }
+
+def BREQ_RRII : BRANCH_RRII<0b00101110, "breq">;
+def BRNE_RRII : BRANCH_RRII<0b00101111, "brne">;
 
 def JUMP_IIII : Inst_IIII<0b01100100, (outs), (ins BrTarget:$Imm24), "jump", "$Imm24", [(br bb:$Imm24)]> {
   let isBranch = 1;

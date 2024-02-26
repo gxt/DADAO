@@ -78,6 +78,7 @@ private:
   void selectDIVREM(SDNode *N);
   void selectFrameIndex(SDNode *N);
   void selectSETCC(SDNode *N);
+  void selectBR_CC(SDNode *N);
 
   // Complex Pattern for address selection.
   bool selectAddrRRII(SDValue Addr, SDValue &Base, SDValue &Offset);
@@ -249,6 +250,9 @@ void DadaoDAGToDAGISel::Select(SDNode *Node) {
   case DadaoISD::SETCC:
     selectSETCC(Node);
     return;
+  case DadaoISD::BR_CC:
+    selectBR_CC(Node);
+    return;
   default:
     break;
   }
@@ -388,10 +392,84 @@ void DadaoDAGToDAGISel::selectSETCC(SDNode *Node) {
     Instr_final =
         CurDAG->getMachineNode(Dadao::ANDI_RRII, DL, VT, Instr_a, Instr_b);
     break;
+  default:
+    llvm_unreachable("condition code not implemented yet");
   }
   ReplaceNode(Node, Instr_final);
   Select(Const_0.getNode());
   Select(Const_1.getNode());
+}
+
+void DadaoDAGToDAGISel::selectBR_CC(SDNode *Node) {
+  SDLoc DL(Node);
+
+  SDNode *TargetCC = Node->getOperand(1).getNode();
+  int64_t CC =
+      cast<ConstantSDNode>(TargetCC)->getConstantIntValue()->getSExtValue();
+  SDValue LHS = Node->getOperand(2);
+  SDValue RHS = Node->getOperand(3);
+  SDNode *BranchDest = Node->getOperand(4).getNode();
+
+  EVT VT = Node->getValueType(0);
+  SDValue Instr_a;
+  SDNode *Instr_final;
+  unsigned OpcodeCmp = Dadao::INSTRUCTION_LIST_END;
+  unsigned OpcodeBr = Dadao::INSTRUCTION_LIST_END;
+  switch (CC) {
+    case LPCC::ICC_GT:
+    case LPCC::ICC_LT:
+    case LPCC::ICC_GE:
+    case LPCC::ICC_LE:
+      OpcodeCmp = Dadao::CMPS_ORRR;
+      break;
+    case LPCC::ICC_UGT:
+    case LPCC::ICC_ULT:
+    case LPCC::ICC_UGE:
+    case LPCC::ICC_ULE:
+      OpcodeCmp = Dadao::CMPU_ORRR;
+      break;
+    case LPCC::ICC_EQ:
+    case LPCC::ICC_NE:
+      // We don't need cmp instruction in this case.
+      OpcodeCmp = Dadao::INSTRUCTION_LIST_END;
+      break;
+    default:
+      llvm_unreachable("condition code not implemented yet");
+  }
+  switch (CC) {
+    case LPCC::ICC_GT:
+    case LPCC::ICC_UGT:
+      OpcodeBr = Dadao::BRP_RIII;
+      break;
+    case LPCC::ICC_LT:
+    case LPCC::ICC_ULT:
+      OpcodeBr = Dadao::BRN_RIII;
+      break;
+    case LPCC::ICC_GE:
+    case LPCC::ICC_UGE:
+      OpcodeBr = Dadao::BRNN_RIII;
+      break;
+    case LPCC::ICC_LE:
+    case LPCC::ICC_ULE:
+      OpcodeBr = Dadao::BRNP_RIII;
+      break;
+    case LPCC::ICC_EQ:
+      OpcodeBr = Dadao::BREQ_RRII;
+      break;
+    case LPCC::ICC_NE:
+      OpcodeBr = Dadao::BRNE_RRII;
+      break;
+  }
+  if (OpcodeCmp == Dadao::INSTRUCTION_LIST_END) {
+    // EQ or NE
+    Instr_final = CurDAG->getMachineNode(OpcodeBr, DL, VT, SDValue(BranchDest,0), LHS, RHS);
+  } else {
+    // LT, GT, LE, GE, or their unsigned version
+    Instr_a =
+      SDValue(CurDAG->getMachineNode(OpcodeCmp, DL, MVT::i64, LHS, RHS), 0);
+    Instr_final = CurDAG->getMachineNode(OpcodeBr, DL, VT, SDValue(BranchDest,0), Instr_a);
+  }
+  ReplaceNode(Node, Instr_final);
 }
 
 // createDadaoISelDag - This pass converts a legalized DAG into a
