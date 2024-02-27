@@ -12,6 +12,7 @@ QEMU_0801_FIXUPS	:= $(DIR_DADAO_TOP)/SIM-qemu/qemu-0801-fixups
 
 QEMU_0801_SOURCE	:= $(DIR_DADAO_SOURCE)/qemu-0801
 QEMU_0801_DECODEFILE	:= $(QEMU_0801_SOURCE)/target/dadao/insns.decode
+QEMU_0801_DISASFILE	:= $(QEMU_0801_SOURCE)/disas/dadao.h
 QEMU_0801_BUILD		:= $(DIR_DADAO_BUILD)/qemu-0801
 QEMU_0801_INSTALL	?= $(DIR_DADAO_INSTALL)
 #QEMU_0801_INSTALL	?= $(DIR_DADAO_BUILD)/__qemu-0801
@@ -47,6 +48,13 @@ qemu-0801-source:
 	@cd $(QEMU_0801_SOURCE);					\
 		git add target/dadao;					\
 		git commit -sm"DADAO: add target support"
+	# disas
+	@cp -a $(QEMU_0801_NEWFILES)/disas/* $(QEMU_0801_SOURCE)/disas/
+	@make -s -C $(DIR_DADAO_TOP) opcodes-disassemble
+	@cp $(OPCODES_OUTPUT_DIS) $(QEMU_0801_DISASFILE)
+	@cd $(QEMU_0801_SOURCE);					\
+		git add disas;						\
+		git commit -sm"DADAO: add disas support"
 	# hw
 	@cp -a $(QEMU_0801_NEWFILES)/hw/* $(QEMU_0801_SOURCE)/hw/
 	@cd $(QEMU_0801_SOURCE);					\

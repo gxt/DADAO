@@ -1,0 +1,24 @@
+From fd12a487e5a8eeb19ab7515cde09a3831a2b4adf Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Tue, 27 Feb 2024 17:18:03 +0800
+Subject: [PATCH] DADAO: disas/meson.build
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ disas/meson.build | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/disas/meson.build b/disas/meson.build
+index 815523ab85..1f36cf1ae3 100644
+--- a/disas/meson.build
++++ b/disas/meson.build
+@@ -1,5 +1,6 @@
+ common_ss.add(when: 'CONFIG_ALPHA_DIS', if_true: files('alpha.c'))
+ common_ss.add(when: 'CONFIG_CRIS_DIS', if_true: files('cris.c'))
++common_ss.add(when: 'CONFIG_DADAO_DIS', if_true: files('dadao.c'))
+ common_ss.add(when: 'CONFIG_HEXAGON_DIS', if_true: files('hexagon.c'))
+ common_ss.add(when: 'CONFIG_HPPA_DIS', if_true: files('hppa.c'))
+ common_ss.add(when: 'CONFIG_M68K_DIS', if_true: files('m68k.c'))
+-- 
+2.34.1
+

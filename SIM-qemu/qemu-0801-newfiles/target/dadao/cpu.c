@@ -40,6 +40,11 @@ static void dadao_restore_state_to_opc(CPUState *cs,
     cpu->env.REG_PC = data[0];
 }
 
+static void dadao_disas_set_info(CPUState *cpu, disassemble_info *info)
+{
+    info->print_insn = print_insn_dadao;
+}
+
 /* CPU models */
 
 static ObjectClass *dadao_cpu_class_by_name(const char *cpu_model)
@@ -136,6 +141,7 @@ static void dadao_cpu_class_init(ObjectClass *oc, void *data)
     cc->set_pc = dadao_cpu_set_pc;
     dc->vmsd = &vmstate_dadao_cpu;
     cc->sysemu_ops = &dadao_sysemu_ops;
+    cc->disas_set_info = dadao_disas_set_info;
     cc->tcg_ops = &dadao_tcg_ops;
 }
 
