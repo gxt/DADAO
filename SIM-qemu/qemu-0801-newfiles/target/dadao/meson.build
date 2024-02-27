@@ -1,4 +1,7 @@
+gen = decodetree.process('insns.decode', extra_args: '--decode=disas_dadao')
+
 dadao_ss = ss.source_set()
+dadao_ss.add(gen)
 dadao_ss.add(files(
   'cpu.c',
   'helper.c',

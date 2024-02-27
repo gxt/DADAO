@@ -11,8 +11,7 @@ QEMU_0801_PATCHES	:= $(DIR_DADAO_TOP)/SIM-qemu/qemu-0801-patches
 QEMU_0801_FIXUPS	:= $(DIR_DADAO_TOP)/SIM-qemu/qemu-0801-fixups
 
 QEMU_0801_SOURCE	:= $(DIR_DADAO_SOURCE)/qemu-0801
-QEMU_0801_DECODETREE	:= $(QEMU_0801_SOURCE)/scripts/decodetree.py
-QEMU_0801_DECODEFILE	:= $(QEMU_0801_SOURCE)/target/dadao/decode-dadao.inc.c
+QEMU_0801_DECODEFILE	:= $(QEMU_0801_SOURCE)/target/dadao/insns.decode
 QEMU_0801_BUILD		:= $(DIR_DADAO_BUILD)/qemu-0801
 QEMU_0801_INSTALL	?= $(DIR_DADAO_INSTALL)
 #QEMU_0801_INSTALL	?= $(DIR_DADAO_BUILD)/__qemu-0801
@@ -44,7 +43,7 @@ qemu-0801-source:
 	@cp -a $(QEMU_0801_NEWFILES)/target/* $(QEMU_0801_SOURCE)/target/
 	@echo "TARGET-DECODE: Generate dadao decodetree file"
 	@make -s -C $(DIR_DADAO_TOP) opcodes-qemu
-	@$(PYTHON) $(QEMU_0801_DECODETREE) --decode disas_dadao -o $(QEMU_0801_DECODEFILE) $(OPCODES_OUTPUT_QEMU)
+	@cp $(OPCODES_OUTPUT_QEMU) $(QEMU_0801_DECODEFILE)
 	@cd $(QEMU_0801_SOURCE);					\
 		git add target/dadao;					\
 		git commit -sm"DADAO: add target support"

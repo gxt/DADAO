@@ -131,7 +131,7 @@ void dadao_translate_init(void)
 
 bool disas_dadao(DisasContext *ctx, uint32_t insn);
 
-#include "decode-dadao.inc.c"
+#include "decode-insns.c.inc"
 
 static void gen_exception(int excp)
 {
