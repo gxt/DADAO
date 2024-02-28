@@ -1,0 +1,25 @@
+From c6480f12a41ebcdc27fcbaaf67aae0a28b18f405 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Wed, 28 Feb 2024 08:46:16 +0800
+Subject: [PATCH] DADAO: include/disas/dis-asm.h
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ include/disas/dis-asm.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/disas/dis-asm.h b/include/disas/dis-asm.h
+index 13fa1edd41..9677fece23 100644
+--- a/include/disas/dis-asm.h
++++ b/include/disas/dis-asm.h
+@@ -458,6 +458,7 @@ int print_insn_little_nios2     (bfd_vma, disassemble_info*);
+ int print_insn_xtensa           (bfd_vma, disassemble_info*);
+ int print_insn_riscv32          (bfd_vma, disassemble_info*);
+ int print_insn_riscv64          (bfd_vma, disassemble_info*);
++int print_insn_dadao            (bfd_vma, disassemble_info*);
+ int print_insn_rx(bfd_vma, disassemble_info *);
+ int print_insn_hexagon(bfd_vma, disassemble_info *);
+ 
+-- 
+2.34.1
+

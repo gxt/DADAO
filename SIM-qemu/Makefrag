@@ -14,6 +14,7 @@ QEMU_0600_FIXUPS	:= $(DIR_DADAO_TOP)/SIM-qemu/qemu-0600-fixups
 QEMU_0600_SOURCE	:= $(DIR_DADAO_SOURCE)/qemu-0600
 QEMU_0600_DECODETREE	:= $(QEMU_0600_SOURCE)/scripts/decodetree.py
 QEMU_0600_DECODEFILE	:= $(QEMU_0600_SOURCE)/target/dadao/decode-dadao.inc.c
+QEMU_0600_DISASFILE	:= $(QEMU_0600_SOURCE)/disas/dadao.h
 QEMU_0600_BUILD		:= $(DIR_DADAO_BUILD)/qemu-0600
 QEMU_0600_INSTALL	?= $(DIR_DADAO_INSTALL)
 #QEMU_0600_INSTALL	?= $(DIR_DADAO_BUILD)/__qemu-0600
@@ -61,6 +62,13 @@ endif
 	@cd $(QEMU_0600_SOURCE);					\
 		git add target/dadao;					\
 		git commit -sm"DADAO-target: add dadao support"
+	# disas
+	@cp -a $(QEMU_0600_NEWFILES)/disas/* $(QEMU_0600_SOURCE)/disas/
+	@make -s -C $(DIR_DADAO_TOP) opcodes-disassemble
+	@cp $(OPCODES_OUTPUT_DIS) $(QEMU_0600_DISASFILE)
+	@cd $(QEMU_0600_SOURCE);					\
+		git add disas;						\
+		git commit -sm"DADAO: add disas support"
 	# hw
 	@echo "HW: Copy hw/dadao dir"
 	@cp -a $(QEMU_0600_NEWFILES)/hw/* $(QEMU_0600_SOURCE)/hw/

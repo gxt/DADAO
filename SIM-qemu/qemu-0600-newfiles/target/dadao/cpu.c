@@ -32,6 +32,11 @@ static inline void set_feature(CPUDADAOState *env, int feature)
     env->features |= feature;
 }
 
+static void dadao_disas_set_info(CPUState *cpu, disassemble_info *info)
+{
+    info->print_insn = print_insn_dadao;
+}
+
 /* CPU models */
 
 static ObjectClass *dadao_cpu_class_by_name(const char *cpu_model)
@@ -123,6 +128,7 @@ static void dadao_cpu_class_init(ObjectClass *oc, void *data)
     cc->get_phys_page_debug = dadao_cpu_get_phys_page_debug;
 #endif
     dc->vmsd = &vmstate_dadao_cpu;
+    cc->disas_set_info = dadao_disas_set_info;
     cc->tcg_ops = &dadao_tcg_ops;
 }
 
