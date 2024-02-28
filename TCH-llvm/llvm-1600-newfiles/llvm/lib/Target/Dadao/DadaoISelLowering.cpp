@@ -883,10 +883,8 @@ SDValue DadaoTargetLowering::LowerSETCC(SDValue Op, SelectionDAG &DAG) const {
 
   LPCC::CondCode CC = IntCondCCodeToICC(Cond, DL, RHS, DAG);
   SDValue TargetCC = DAG.getConstant(CC, DL, MVT::i64);
-  SDValue Flag =
-      DAG.getNode(DadaoISD::SET_FLAG, DL, MVT::Glue, LHS, RHS, TargetCC);
 
-  return DAG.getNode(DadaoISD::SETCC, DL, Op.getValueType(), TargetCC, Flag);
+  return DAG.getNode(DadaoISD::SETCC, DL, Op.getValueType(), LHS, RHS, TargetCC);
 }
 
 SDValue DadaoTargetLowering::LowerSELECT_CC(SDValue Op,
@@ -900,12 +898,7 @@ SDValue DadaoTargetLowering::LowerSELECT_CC(SDValue Op,
 
   LPCC::CondCode CC = IntCondCCodeToICC(Cond, DL, RHS, DAG);
   SDValue TargetCC = DAG.getConstant(CC, DL, MVT::i64);
-  SDValue Flag =
-      DAG.getNode(DadaoISD::SET_FLAG, DL, MVT::Glue, LHS, RHS, TargetCC);
-
-  SDVTList VTs = DAG.getVTList(Op.getValueType(), MVT::Glue);
-  return DAG.getNode(DadaoISD::SELECT_CC, DL, VTs, TrueV, FalseV, TargetCC,
-                     Flag);
+  return DAG.getNode(DadaoISD::SELECT_CC, DL, Op.getValueType(), LHS, RHS, TrueV, FalseV, TargetCC);
 }
 
 SDValue DadaoTargetLowering::LowerVASTART(SDValue Op, SelectionDAG &DAG) const {
@@ -1014,8 +1007,6 @@ const char *DadaoTargetLowering::getTargetNodeName(unsigned Opcode) const {
     return "DadaoISD::SETCC";
   case DadaoISD::SUBBF:
     return "DadaoISD::SUBBF";
-  case DadaoISD::SET_FLAG:
-    return "DadaoISD::SET_FLAG";
   case DadaoISD::BR_CC:
     return "DadaoISD::BR_CC";
   case DadaoISD::Wrapper:

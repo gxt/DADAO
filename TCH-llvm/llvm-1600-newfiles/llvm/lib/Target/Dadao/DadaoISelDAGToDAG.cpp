@@ -317,12 +317,11 @@ void DadaoDAGToDAGISel::selectFrameIndex(SDNode *Node) {
 void DadaoDAGToDAGISel::selectSETCC(SDNode *Node) {
   SDLoc DL(Node);
 
-  SDNode *TargetCC = Node->getOperand(0).getNode();
+  SDNode *TargetCC = Node->getOperand(2).getNode();
   int64_t CC =
       cast<ConstantSDNode>(TargetCC)->getConstantIntValue()->getSExtValue();
-  SDNode *Flag = Node->getOperand(1).getNode();
-  SDValue LHS = Flag->getOperand(0);
-  SDValue RHS = Flag->getOperand(1);
+  SDValue LHS = Node->getOperand(0);
+  SDValue RHS = Node->getOperand(1);
 
   EVT VT = Node->getValueType(0); // This should always be MVT::i64 for SETCC
   SDValue Const_1 = CurDAG->getConstant(1, DL, MVT::i64);

@@ -40,9 +40,6 @@ enum {
   // SETCC - Store the conditional code to a register.
   SETCC,
 
-  // SET_FLAG - Set flag compare.
-  SET_FLAG,
-
   // SUBBF - Subtract with borrow that sets flags.
   SUBBF,
 

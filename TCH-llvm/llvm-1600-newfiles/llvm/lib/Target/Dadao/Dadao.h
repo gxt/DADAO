@@ -25,10 +25,6 @@ class PassRegistry;
 // Dadao-specific DAG, ready for instruction scheduling.
 FunctionPass *createDadaoISelDag(DadaoTargetMachine &TM);
 
-// createDadaoSetflagAluCombinerPass - This pass combines SET_FLAG and ALU
-// operations.
-FunctionPass *createDadaoSetflagAluCombinerPass();
-
 void initializeDadaoDAGToDAGISelPass(PassRegistry &);
 
 } // namespace llvm

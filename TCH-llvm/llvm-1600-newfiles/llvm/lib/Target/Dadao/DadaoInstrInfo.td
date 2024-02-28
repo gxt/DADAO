@@ -17,7 +17,6 @@
 include "DadaoInstrFormats.td"
 
 //  These are target-independent nodes, but have target-specific formats.
-def SDT_DadaoSetFlag      : SDTypeProfile<0,  3, [SDTCisSameAs<0, 1>]>;
 def SDT_DadaoBrCC         : SDTypeProfile<0,  4, [
   SDTCisVT<0, i64>, SDTCisSameAs<1, 2>, SDTCisVT<3, OtherVT>
 ]>;
@@ -27,8 +26,6 @@ def SDT_DadaoSelectCC     : SDTypeProfile<1,  3, [SDTCisSameAs<0, 1>,
                                                   SDTCisSameAs<1, 2>]>;
 def SDT_DadaoCall         : SDTypeProfile<0, -1, [SDTCisVT<0, i64>]>;
 
-def DadaoSetFlag     : SDNode<"DadaoISD::SET_FLAG", SDT_DadaoSetFlag,
-                              [SDNPOutGlue]>;
 def DadaoBrCC        : SDNode<"DadaoISD::BR_CC", SDT_DadaoBrCC,
                               [SDNPHasChain]>;
 def DadaoSetCC       : SDNode<"DadaoISD::SETCC", SDT_DadaoSetCC,
@@ -324,19 +321,18 @@ def DIVU_RRRR
 
 class COMPARE_ORRR<bits<6> minorop, string OpcString, RegisterClass GPRcmp>
   : Inst_ORRR<0b00010000, minorop, (outs GPRD:$RxHb), (ins GPRcmp:$RyHc, GPRcmp:$RzHd), OpcString, "$RxHb, $RyHc, $RzHd",
-             [(DadaoSetFlag GPRD:$RxHb, GPRcmp:$RyHc, GPRcmp:$RzHd)]> {
+             []> {
 
   let isCompare = 1;
 }
 
 def CMPS_ORRR   : COMPARE_ORRR<0b100100, "cmps", GPRD>;
-// TODO: CMPU should be impled with new SET_FLAG
 def CMPU_ORRR   : COMPARE_ORRR<0b100101, "cmpu", GPRD>;
 def CMP_ORRR    : COMPARE_ORRR<0b101101, "cmp",  GPRB>;
 
 class COMPARE_RRII<bits<8> majorop, string OpcString, PatLeaf LoExt>
   : Inst_RRII<majorop, (outs), (ins GPRD:$RxHa, GPRD:$RyHb, LoExt:$Imm12), OpcString, "$RxHa, $RyHb, $Imm12",
-             [(DadaoSetFlag GPRD:$RxHa, GPRD:$RyHb, LoExt:$Imm12)]> {
+             []> {
 
   let Defs = [RDCC];
   let isCompare = 1;
