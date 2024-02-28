@@ -14,12 +14,28 @@
 #include "exec/exec-all.h"
 #include "migration/vmstate.h"
 #include "qapi/error.h"
+#include "tcg/tcg.h"
 
 static void dadao_cpu_set_pc(CPUState *cs, vaddr value)
 {
     DADAOCPU *cpu = DADAO_CPU(cs);
 
     cpu->env.REG_PC = value;
+}
+
+static vaddr dadao_cpu_get_pc(CPUState *cs)
+{
+    DADAOCPU *cpu = DADAO_CPU(cs);
+
+    return cpu->env.REG_PC;
+}
+
+static void dadao_cpu_synchronize_from_tb(CPUState *cs, const TranslationBlock *tb)
+{
+    DADAOCPU *cpu = DADAO_CPU(cs);
+
+    tcg_debug_assert(!(cs->tcg_cflags & CF_PCREL));
+    cpu->env.REG_PC = tb->pc;
 }
 
 static bool dadao_cpu_has_work(CPUState *cs)
@@ -118,6 +134,7 @@ static const struct SysemuCPUOps dadao_sysemu_ops = {
 
 static struct TCGCPUOps dadao_tcg_ops = {
     .initialize = dadao_translate_init,
+    .synchronize_from_tb = dadao_cpu_synchronize_from_tb,
     .restore_state_to_opc = dadao_restore_state_to_opc,
 #ifndef CONFIG_USER_ONLY
     .cpu_exec_interrupt = dadao_cpu_exec_interrupt,
@@ -139,6 +156,7 @@ static void dadao_cpu_class_init(ObjectClass *oc, void *data)
     cc->has_work = dadao_cpu_has_work;
     cc->dump_state = dadao_cpu_dump_state;
     cc->set_pc = dadao_cpu_set_pc;
+    cc->get_pc = dadao_cpu_get_pc;
     dc->vmsd = &vmstate_dadao_cpu;
     cc->sysemu_ops = &dadao_sysemu_ops;
     cc->disas_set_info = dadao_disas_set_info;
