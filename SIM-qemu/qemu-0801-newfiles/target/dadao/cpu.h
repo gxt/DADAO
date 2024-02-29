@@ -79,7 +79,6 @@ enum {
     DADAO_EXCP_ILLI = 5,
     DADAO_EXCP_INTR = 6,
     DADAO_EXCP_HALT = 7,
-    DADAO_EXCP_DEBG = 8,
     DADAO_EXCP_FPER = 9,
 };
 

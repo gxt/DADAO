@@ -58,10 +58,6 @@ void cpu_loop(CPUDADAOState *env)
             qemu_log("--- %016lx : illegal instruction ---\n", env->REG_PC);
             force_sig_fault(TARGET_SIGILL, TARGET_ILL_ILLOPC, env->REG_PC);
             break;
-        case DADAO_EXCP_DEBG:
-            qemu_log("--- %016lx : breakpoint ---\n", env->REG_PC);
-            cpu_dump_state(cs, stderr, 0);
-            break;
         case EXCP_INTERRUPT:
             /* We processed the pending cpu work above.  */
             break;
