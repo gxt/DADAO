@@ -1627,11 +1627,6 @@ static void dadao_tr_translate_insn(DisasContextBase *dcbase, CPUState *cs)
         ctx->base.pc_next += 4;
         tcg_gen_movi_i64(cpu_pc, ctx->base.pc_next);
     }
-
-    if (ctx->base.max_insns == 1) {  /* single step mode */
-        gen_exception(DADAO_EXCP_DEBG);
-        ctx->base.is_jmp = DISAS_NORETURN;
-    }
 }
 
 static void dadao_tr_tb_stop(DisasContextBase *dcbase, CPUState *cs)
