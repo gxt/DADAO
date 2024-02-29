@@ -1,0 +1,26 @@
+From 1835c0421f596bca603c6dbc0d12b76c5c20e952 Mon Sep 17 00:00:00 2001
+From: Gao Siyuan <2000012960@stu.pku.edu.cn>
+Date: Thu, 29 Feb 2024 10:39:05 +0800
+Subject: [PATCH] DADAO: llvm/lib/MC/ELFObjectWriter.cpp
+
+Signed-off-by: Gao Siyuan <2000012960@stu.pku.edu.cn>
+---
+ llvm/lib/MC/ELFObjectWriter.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/llvm/lib/MC/ELFObjectWriter.cpp b/llvm/lib/MC/ELFObjectWriter.cpp
+index 07ed3409707b..82e53d07d849 100644
+--- a/llvm/lib/MC/ELFObjectWriter.cpp
++++ b/llvm/lib/MC/ELFObjectWriter.cpp
+@@ -1515,6 +1515,8 @@ void ELFObjectWriter::recordRelocation(MCAssembler &Asm,
+     else
+       RenamedSymA->setUsedInReloc();
+   }
++  if(Type == ELF::R_DADAO_25)
++    FixupOffset += 4;
+   ELFRelocationEntry Rec(FixupOffset, RenamedSymA, Type, Addend, SymA, C);
+   Relocations[&FixupSection].push_back(Rec);
+ }
+-- 
+2.34.1
+
