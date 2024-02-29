@@ -1631,8 +1631,8 @@ static void dadao_tr_translate_insn(DisasContextBase *dcbase, CPUState *cs)
         return;
     }
 
+    ctx->base.pc_next += 4;
     if (ctx->base.is_jmp == DISAS_NEXT) {
-        ctx->base.pc_next += 4;
         tcg_gen_movi_i64(cpu_pc, ctx->base.pc_next);
     }
 }
