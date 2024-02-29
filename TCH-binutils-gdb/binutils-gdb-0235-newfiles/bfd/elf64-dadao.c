@@ -603,7 +603,7 @@ dadao_elf_perform_relocation(asection *isec, reloc_howto_type *howto,
                                value);
         if (r == bfd_reloc_ok)
         {
-            bfd_put_32(abfd, DADAO_INSN_CALL_IIII | ((value >> 2) & 0xFFFFFF), (bfd_byte *)datap);
+            bfd_put_32(abfd, insn_origin | ((value >> 2) & 0xFFFFFF), (bfd_byte *)datap);
         }
         else
         {
@@ -624,7 +624,7 @@ dadao_elf_perform_relocation(asection *isec, reloc_howto_type *howto,
                                value);
         if (r == bfd_reloc_ok)
         {
-            bfd_put_32(abfd, DADAO_INSN_JUMP_IIII | ((value >> 2) & 0xFFFFFF), (bfd_byte *)datap);
+            bfd_put_32(abfd, insn_origin | ((value >> 2) & 0xFFFFFF), (bfd_byte *)datap);
         }
         else
         {
