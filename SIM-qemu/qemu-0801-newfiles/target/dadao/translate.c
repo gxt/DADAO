@@ -44,6 +44,9 @@
 typedef struct DisasContext {
     DisasContextBase base;
     uint32_t mem_idx;
+
+    /* If not -1, jmp_pc contains this value and so is a direct jump.  */
+    uint64_t jmp_pc_imm;
 } DisasContext;
 
 /* is_jmp field values */
@@ -53,6 +56,7 @@ static TCGv_i64 cpu_rd[64];
 static TCGv_i64 cpu_rb[64];
 static TCGv_i64 cpu_rf[64];
 static TCGv_i64 cpu_ra[64];
+static TCGv_i64 jmp_pc;
 static TCGv_i64 load_res;
 static TCGv_i64 load_val;
 
@@ -121,6 +125,9 @@ void dadao_translate_init(void)
                                            regnames[i + 64 * 3]);
     }
 
+    jmp_pc = tcg_global_mem_new_i64(cpu_env,
+                                     offsetof(CPUDADAOState, jmp_pc),
+                                     "jmp_pc");
     load_res = tcg_global_mem_new_i64(cpu_env,
                                      offsetof(CPUDADAOState, load_res),
                                      "load_res");
@@ -1227,16 +1234,16 @@ static bool trans_UNIMP(DisasContext *ctx, arg_UNIMP *a)
 
 static bool trans_JUMPi(DisasContext *ctx, arg_JUMPi *a)
 {
-    tcg_gen_movi_i64(cpu_pc, ctx->base.pc_next + a->imms24 * 4);
     ctx->base.is_jmp = DISAS_JUMP;
+    ctx->jmp_pc_imm = ctx->base.pc_next + a->imms24 * 4;
     return true;
 }
 
 static bool trans_JUMPr(DisasContext *ctx, arg_JUMPr *a)
 {
-    tcg_gen_mov_i64(cpu_pc, cpu_rb[a->ha]);
-    tcg_gen_add_i64(cpu_pc, cpu_pc, cpu_rd[a->hb]);
-    tcg_gen_addi_i64(cpu_pc, cpu_pc, a->imms12 * 4);
+    tcg_gen_mov_i64(jmp_pc, cpu_rb[a->ha]);
+    tcg_gen_add_i64(jmp_pc, jmp_pc, cpu_rd[a->hb]);
+    tcg_gen_addi_i64(jmp_pc, jmp_pc, a->imms12 * 4);
     ctx->base.is_jmp = DISAS_JUMP;
     return true;
 }
@@ -1269,11 +1276,11 @@ static void pop_return_address(DisasContext *ctx)
     tcg_gen_brcond_i64(TCG_COND_NE, cpu_rasp, zero, rasp_set);
     gen_exception(DADAO_EXCP_TRIP);
     gen_set_label(rasp_set);
-    tcg_gen_qemu_ld_i64(cpu_pc, cpu_rasp, ctx->mem_idx, MO_TEUQ);
+    tcg_gen_qemu_ld_i64(jmp_pc, cpu_rasp, ctx->mem_idx, MO_TEUQ);
     tcg_gen_addi_i64(cpu_rasp, cpu_rasp, 8);
     tcg_gen_br(done);
     gen_set_label(reg_ras_not_empty);
-    tcg_gen_mov_i64(cpu_pc, cpu_ra[63]);
+    tcg_gen_mov_i64(jmp_pc, cpu_ra[63]);
     for (int i = 62; i >= 1; --i) {
         tcg_gen_mov_i64(cpu_ra[i + 1], cpu_ra[i]);
     }
@@ -1307,7 +1314,7 @@ static bool trans_br_all(DisasContext *ctx, arg_disas_dadao5 *a, TCGCond cond)
     TCGv_i64 zero = tcg_constant_i64(0);
     TCGv_i64 next = tcg_constant_i64(ctx->base.pc_next + 4);
     TCGv_i64 dest = tcg_constant_i64(ctx->base.pc_next + a->imms18 * 4);
-    tcg_gen_movcond_i64(cond, cpu_pc, cpu_rd[a->ha], zero, dest, next);
+    tcg_gen_movcond_i64(cond, jmp_pc, cpu_rd[a->ha], zero, dest, next);
     ctx->base.is_jmp = DISAS_JUMP;
     return true;
 }
@@ -1316,7 +1323,7 @@ static bool trans_br_eq_ne(DisasContext* ctx, arg_disas_dadao0* a, TCGCond cond)
 {
     TCGv_i64 next = tcg_constant_i64(ctx->base.pc_next + 4);
     TCGv_i64 dest = tcg_constant_i64(ctx->base.pc_next + a->imms12 * 4);
-    tcg_gen_movcond_i64(cond, cpu_pc, cpu_rd[a->ha], cpu_rd[a->hb], dest, next);
+    tcg_gen_movcond_i64(cond, jmp_pc, cpu_rd[a->ha], cpu_rd[a->hb], dest, next);
     ctx->base.is_jmp = DISAS_JUMP;
     return true;
 }
@@ -1598,6 +1605,7 @@ static void dadao_tr_init_disas_context(DisasContextBase *dcbase, CPUState *cs)
     CPUDADAOState *env = cs->env_ptr;
     
     ctx->mem_idx = cpu_mmu_index(env, false);
+    ctx->jmp_pc_imm = -1;
 }
 
 static void dadao_tr_tb_start(DisasContextBase *dcbase, CPUState *cs)
@@ -1632,14 +1640,37 @@ static void dadao_tr_translate_insn(DisasContextBase *dcbase, CPUState *cs)
 static void dadao_tr_tb_stop(DisasContextBase *dcbase, CPUState *cs)
 {
     DisasContext *ctx = container_of(dcbase, DisasContext, base);
+    target_ulong jmp_dest;
+
+    /* For DISAS_TOO_MANY, jump to the next insn.  */
+    jmp_dest = ctx->base.pc_next;
 
     switch (ctx->base.is_jmp) {
     case DISAS_NORETURN:
         break;
-    case DISAS_TOO_MANY:
-        tcg_gen_movi_i64(cpu_pc, ctx->base.pc_next);
-        /* fall through */
     case DISAS_JUMP:
+        jmp_dest = ctx->jmp_pc_imm;
+        if (jmp_dest == -1) {
+            /* The jump destination is indirect/computed; use jmp_pc.  */
+            tcg_gen_mov_tl(cpu_pc, jmp_pc);
+            tcg_gen_discard_tl(jmp_pc);
+            tcg_gen_lookup_and_goto_ptr();
+            break;
+        }
+        /* The jump destination is direct; use jmp_pc_imm.
+           However, we will have stored into jmp_pc as well;
+           we know now that it wasn't needed.  */
+        tcg_gen_discard_tl(jmp_pc);
+        /* fall through */
+
+    case DISAS_TOO_MANY:
+        if (translator_use_goto_tb(&ctx->base, jmp_dest)) {
+            tcg_gen_goto_tb(0);
+            tcg_gen_movi_tl(cpu_pc, jmp_dest);
+            tcg_gen_exit_tb(ctx->base.tb, 0);
+            break;
+        }
+        tcg_gen_movi_tl(cpu_pc, jmp_dest);
         tcg_gen_lookup_and_goto_ptr();
         break;
     default:

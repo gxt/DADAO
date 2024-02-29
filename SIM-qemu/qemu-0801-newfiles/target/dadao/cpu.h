@@ -26,6 +26,8 @@ typedef struct CPUArchState {
     uint64_t rf[64];        /* floating-point registers */
     uint64_t ra[64];        /* return address registers */
 
+    uint64_t jmp_pc;        /* Jump PC */
+
     uint64_t load_res;
     uint64_t load_val;
 
