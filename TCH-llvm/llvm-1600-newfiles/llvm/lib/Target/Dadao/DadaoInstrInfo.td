@@ -139,6 +139,10 @@ def Wyde1 : SDNodeXForm<imm, [{ return CurDAG->getTargetConstant(((uint64_t)N->g
 def Wyde2 : SDNodeXForm<imm, [{ return CurDAG->getTargetConstant(((uint64_t)N->getZExtValue() >> 32) & 0xFFFF, SDLoc(N), MVT::i64); }]>;
 def Wyde3 : SDNodeXForm<imm, [{ return CurDAG->getTargetConstant(((uint64_t)N->getZExtValue() >> 48) & 0xFFFF, SDLoc(N), MVT::i64); }]>;
 
+// Bitwise NOT of w1/w2
+def NotWyde1 : SDNodeXForm<imm, [{ return CurDAG->getTargetConstant((~ ( (uint64_t)N->getZExtValue() >> 16 ) ) & 0xFFFF, SDLoc(N), MVT::i64); }]>;
+def NotWyde2 : SDNodeXForm<imm, [{ return CurDAG->getTargetConstant((~ ( (uint64_t)N->getZExtValue() >> 32 ) ) & 0xFFFF, SDLoc(N), MVT::i64); }]>;
+
 def ImmWyde0AsmOperand : AsmOperandClass { let Name = "ImmWyde0"; }
 def i64w0 : Operand<i64>, PatLeaf<(i64 imm), [{
     // i64w0 predicate - true if the immediate has only wyde 0 set.
@@ -418,6 +422,33 @@ def SETOW_RWII_W0   : SETOW_RWII<0b00010111, 0b00, i64w0, wposPred0>;
 def SETOW_RWII_W1   : SETOW_RWII<0b00010111, 0b01, i64w1, wposPred1>;
 def SETOW_RWII_W2   : SETOW_RWII<0b00010111, 0b10, i64w2, wposPred2>;
 def SETOW_RWII_W3   : SETOW_RWII<0b00010111, 0b11, i64w3, wposPred3>;
+
+// immediate with all ones but the lower 16-bit
+def oimm16 : PatLeaf<(imm), [{
+    return ((~0xFFFFULL) & N->getZExtValue()) == (~0xFFFFULL); }]>;
+def : Pat<(i64 oimm16:$imm), (SETOW_RWII_W0 (Wyde0 imm:$imm))>;
+
+// immediate with all zeros but the lower 32-bit
+def zimm32 : PatLeaf<(imm), [{
+    return ((~0xFFFFFFFFULL) & N->getZExtValue()) == 0ULL; }]>;
+def : Pat<(i64 zimm32:$imm), (ORW_RWII_W1 (SETZW_RWII_W0 (Wyde0 imm:$imm)), (Wyde1 imm:$imm))>;
+
+// immediate with all ones but the lower 32-bit
+def oimm32 : PatLeaf<(imm), [{
+    return ((~0xFFFFFFFFULL) & N->getZExtValue()) == (~0xFFFFFFFFULL); }]>;
+def : Pat<(i64 oimm32:$imm), (ANDNW_RWII_W1 (SETOW_RWII_W0 (Wyde0 imm:$imm)), (NotWyde1 imm:$imm))>;
+
+// immediate with all zeros but the lower 48-bit
+def zimm48 : PatLeaf<(imm), [{
+    return ((~0xFFFFFFFFFFFFULL) & N->getZExtValue()) == 0ULL; }]>;
+def : Pat<(i64 zimm48:$imm), (ORW_RWII_W2 (ORW_RWII_W1 (SETZW_RWII_W0
+                          (Wyde0 imm:$imm)), (Wyde1 imm:$imm)), (Wyde2 imm:$imm))>;
+
+// immediate with all ones but the lower 48-bit
+def oimm48 : PatLeaf<(imm), [{
+    return ((~0xFFFFFFFFFFFFULL) & N->getZExtValue()) == (~0xFFFFFFFFFFFFULL); }]>;
+def : Pat<(i64 oimm48:$imm), (ANDNW_RWII_W2 (ANDNW_RWII_W1 (SETOW_RWII_W0
+                          (Wyde0 imm:$imm)), (NotWyde1 imm:$imm)), (NotWyde2 imm:$imm))>;
 
 // arbitrary immediate
 def : Pat<(i64 imm:$imm), (ORW_RWII_W3 (ORW_RWII_W2 (ORW_RWII_W1 (SETZW_RWII_W0
