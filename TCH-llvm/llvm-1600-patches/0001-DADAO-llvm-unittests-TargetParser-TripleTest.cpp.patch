@@ -1,15 +1,15 @@
-From 922a7784a6309622cbbe6835e752de09a2b7625c Mon Sep 17 00:00:00 2001
-From: Guan Xuetao <gxt@pku.edu.cn>
-Date: Thu, 11 May 2023 11:05:18 +0800
+From c7248acfae9633cd3ae410e795f3b124d3dc516d Mon Sep 17 00:00:00 2001
+From: Guorui Wen <grwen@stu.pku.edu.cn>
+Date: Sat, 2 Mar 2024 13:20:48 +0800
 Subject: [PATCH] DADAO: llvm/unittests/TargetParser/TripleTest.cpp
 
-Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+Signed-off-by: Guorui Wen <grwen@stu.pku.edu.cn>
 ---
- llvm/unittests/TargetParser/TripleTest.cpp | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ llvm/unittests/TargetParser/TripleTest.cpp | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
 diff --git a/llvm/unittests/TargetParser/TripleTest.cpp b/llvm/unittests/TargetParser/TripleTest.cpp
-index 77de43a16d0a..5934198070cf 100644
+index 77de43a16d0a..14ec4dea168f 100644
 --- a/llvm/unittests/TargetParser/TripleTest.cpp
 +++ b/llvm/unittests/TargetParser/TripleTest.cpp
 @@ -397,6 +397,18 @@ TEST(TripleTest, ParsedIDs) {
@@ -43,13 +43,14 @@ index 77de43a16d0a..5934198070cf 100644
    T.setArch(Triple::riscv32);
    EXPECT_FALSE(T.isArch16Bit());
    EXPECT_TRUE(T.isArch32Bit());
-@@ -1567,6 +1584,10 @@ TEST(TripleTest, EndianArchVariants) {
+@@ -1567,6 +1584,11 @@ TEST(TripleTest, EndianArchVariants) {
    EXPECT_EQ(Triple::lanai, T.getBigEndianArchVariant().getArch());
    EXPECT_EQ(Triple::UnknownArch, T.getLittleEndianArchVariant().getArch());
  
 +  T.setArch(Triple::dadao);
-+  EXPECT_EQ(Triple::dadao, T.getBigEndianArchVariant().getArch());
-+  EXPECT_EQ(Triple::UnknownArch, T.getLittleEndianArchVariant().getArch());
++  EXPECT_TRUE(T.isLittleEndian());
++  EXPECT_EQ(Triple::UnknownArch, T.getBigEndianArchVariant().getArch());
++  EXPECT_EQ(Triple::dadao, T.getLittleEndianArchVariant().getArch());
 +
    T.setArch(Triple::tcele);
    EXPECT_EQ(Triple::tce, T.getBigEndianArchVariant().getArch());
