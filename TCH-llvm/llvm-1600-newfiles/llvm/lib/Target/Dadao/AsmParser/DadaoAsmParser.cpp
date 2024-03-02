@@ -378,7 +378,7 @@ public:
     if (!ConstExpr)
       return false;
     int64_t Value = ConstExpr->getValue();
-    return isInt<16>(Value);
+    return isUInt<16>(Value);
   }
 
   bool isImmWyde1() {
