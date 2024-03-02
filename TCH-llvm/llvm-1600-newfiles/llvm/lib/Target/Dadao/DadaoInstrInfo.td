@@ -238,14 +238,6 @@ def SHLU_ORRR   : ALU_ORRR<0b010001, "shlu", shl>;
 def SHRS_ORRR   : ALU_ORRR<0b010010, "shrs", sra>;
 def SHRU_ORRR   : ALU_ORRR<0b010011, "shru", srl>;
 
-class ALU_RB_ORRR<bits<6> minorop, string OpcString, SDNode OpNode, RegisterClass GPRx, RegisterClass GPRz>
-  : Inst_ORRR<0b00010000, minorop, (outs GPRx:$RxHb), (ins GPRx:$RyHc, GPRz:$RzHd),
-            OpcString, "$RxHb, $RyHc, $RzHd",
-            [(set GPRx:$RxHb, (OpNode GPRx:$RyHc, GPRz:$RzHd))]>;
-
-def ADD_RB_ORRR : ALU_RB_ORRR<0b101110, "add", add, GPRB, GPRD>;
-def SUB_RB_ORRR : ALU_RB_ORRR<0b101111, "sub", sub, GPRB, GPRD>;
-
 class R2R_ORRI<bits<6> minorop, string OpcString, RegisterClass GPRx, RegisterClass GPRy>
   : Inst_ORRI<0b00010000, minorop, (outs GPRx:$RxHb), (ins GPRy:$RyHc),
               OpcString, "$RxHb, $RyHc", []>;
@@ -278,6 +270,14 @@ let isCommutable = 1 in {
   def ADD_RRRR : ALU_RRRR<0b00011010, "add", add>;
 }
 def SUB_RRRR : ALU_RRRR<0b00011011, "sub", sub>;
+
+class ALU_RB_ORRR<bits<6> minorop, string OpcString, SDNode OpNode, RegisterClass GPRx, RegisterClass GPRz>
+  : Inst_ORRR<0b00010000, minorop, (outs GPRx:$RxHb), (ins GPRx:$RyHc, GPRz:$RzHd),
+            OpcString, "$RxHb, $RyHc, $RzHd",
+            [(set GPRx:$RxHb, (OpNode GPRx:$RyHc, GPRz:$RzHd))]>;
+
+def ADD_RB_ORRR : ALU_RB_ORRR<0b101110, "add", add, GPRB, GPRD>;
+def SUB_RB_ORRR : ALU_RB_ORRR<0b101111, "sub", sub, GPRB, GPRD>;
 
 class ALU_RRII<bits<8> majorop, string OpcString, SDNode OpNode, RegisterClass GPRx, RegisterClass GPRy, PatLeaf LoExt>
   : Inst_RRII<majorop, (outs GPRx:$RxHa), (ins GPRy:$RyHb, LoExt:$Imm12),
