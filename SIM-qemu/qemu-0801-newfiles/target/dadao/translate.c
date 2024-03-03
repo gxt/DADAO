@@ -146,6 +146,13 @@ static void gen_exception(int excp)
     gen_helper_exception(cpu_env, tmp);
 }
 
+static void gen_exception_illegal_instruction(DisasContext *ctx)
+{
+    tcg_gen_movi_tl(cpu_pc, ctx->base.pc_next);
+    gen_exception(DADAO_EXCP_ILLI);
+    ctx->base.is_jmp = DISAS_NORETURN;
+}
+
 /* load store instructions */
 
 static bool trans_ld_all(DisasContext *ctx, arg_disas_dadao0 *a, 
@@ -1229,7 +1236,8 @@ static bool trans_SWYM(DisasContext *ctx, arg_SWYM *a)
 
 static bool trans_UNIMP(DisasContext *ctx, arg_UNIMP *a)
 {
-    return false;
+    gen_exception_illegal_instruction(ctx);
+    return true;
 }
 
 static bool trans_JUMPi(DisasContext *ctx, arg_JUMPi *a)
@@ -1626,8 +1634,7 @@ static void dadao_tr_translate_insn(DisasContextBase *dcbase, CPUState *cs)
     uint32_t insn = translator_ldl(&cpu->env, &ctx->base, ctx->base.pc_next);
 
     if (!disas_dadao(ctx, insn)) {
-        gen_exception(DADAO_EXCP_ILLI);
-        ctx->base.is_jmp = DISAS_NORETURN;
+        gen_exception_illegal_instruction(ctx);
         return;
     }
 
