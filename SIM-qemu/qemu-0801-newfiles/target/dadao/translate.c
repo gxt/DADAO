@@ -656,6 +656,7 @@ static bool trans_ADDrd(DisasContext *ctx, arg_ADDrd *a)
     TCGv_i64 negative = tcg_constant_i64(-1);
     int64_t is_negative = 0x8000000000000000;
     if (a->ha == 0) {
+        if (a->hb == 0) return true;
         tcg_gen_add_i64(cpu_rd[a->hb], cpu_rd[a->hc], cpu_rd[a->hd]);
         return true;
     }
@@ -679,6 +680,7 @@ static bool trans_SUBrd(DisasContext *ctx, arg_SUBrd *a)
     TCGv_i64 negative = tcg_constant_i64(-1);
     int64_t is_negative = 0x8000000000000000;
     if (a->ha == 0) {
+        if (a->hb == 0) return true;
         tcg_gen_sub_i64(cpu_rd[a->hb], cpu_rd[a->hc], cpu_rd[a->hd]);
         return true;
     }
