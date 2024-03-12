@@ -1719,40 +1719,31 @@ void dadao_cpu_dump_state(CPUState *cs, FILE *f, int flags)
 {
     DADAOCPU *cpu = DADAO_CPU(cs);
     CPUDADAOState *env = &cpu->env;
-    for (int i = 0; i < 64; i += 4) {
-        if (env->rd[i + 0] || env->rd[i + 1] || env->rd[i + 2] || env->rd[i + 3]) {
-            qemu_log("[RD%02d]=%016lx ", i + 0, env->rd[i + 0]);
-            qemu_log("[RD%02d]=%016lx ", i + 1, env->rd[i + 1]);
-            qemu_log("[RD%02d]=%016lx ", i + 2, env->rd[i + 2]);
-            qemu_log("[RD%02d]=%016lx ", i + 3, env->rd[i + 3]);
-            qemu_log("\n");
+    int i, j;
+
+    for (i = 0, j = 0; i < 64; i ++) {
+        if (env->rb[i]) {
+            qemu_log("[RB%02d]=%016lx ", i, env->rb[i]);
+            j++;
+            if (j % 4 == 0)   qemu_log("\n");
         }
     }
-    for (int i = 0; i < 64; i += 4) {
-        if (env->rb[i + 0] || env->rb[i + 1] || env->rb[i + 2] || env->rb[i + 3]) {
-            qemu_log("[RB%02d]=%016lx ", i + 0, env->rb[i + 0]);
-            qemu_log("[RB%02d]=%016lx ", i + 1, env->rb[i + 1]);
-            qemu_log("[RB%02d]=%016lx ", i + 2, env->rb[i + 2]);
-            qemu_log("[RB%02d]=%016lx ", i + 3, env->rb[i + 3]);
-            qemu_log("\n");
+    qemu_log("\n");
+
+    for (i = 0, j = 0; i < 64; i ++) {
+        if (env->rd[i]) {
+            qemu_log("[RD%02d]=%016lx ", i, env->rd[i]);
+            j++;
+            if (j % 4 == 0)   qemu_log("\n");
         }
     }
-    for (int i = 0; i < 64; i += 4) {
-        if (env->rf[i + 0] || env->rf[i + 1] || env->rf[i + 2] || env->rf[i + 3]) {
-            qemu_log("[RF%02d]=%016lx ", i + 0, env->rf[i + 0]);
-            qemu_log("[RF%02d]=%016lx ", i + 1, env->rf[i + 1]);
-            qemu_log("[RF%02d]=%016lx ", i + 2, env->rf[i + 2]);
-            qemu_log("[RF%02d]=%016lx ", i + 3, env->rf[i + 3]);
-            qemu_log("\n");
-        }
-    }
-    for (int i = 0; i < 64; i += 4) {
-        if (env->ra[i + 0] || env->ra[i + 1] || env->ra[i + 2] || env->ra[i + 3]) {
-            qemu_log("[RA%02d]=%016lx ", i + 0, env->ra[i + 0]);
-            qemu_log("[RA%02d]=%016lx ", i + 1, env->ra[i + 1]);
-            qemu_log("[RA%02d]=%016lx ", i + 2, env->ra[i + 2]);
-            qemu_log("[RA%02d]=%016lx ", i + 3, env->ra[i + 3]);
-            qemu_log("\n");
+    qemu_log("\n");
+
+    for (i = 0, j = 0; i < 64; i ++) {
+        if (env->rf[i]) {
+            qemu_log("[RF%02d]=%016lx ", i, env->rf[i]);
+            j++;
+            if (j % 4 == 0)   qemu_log("\n");
         }
     }
     qemu_log("\n");
