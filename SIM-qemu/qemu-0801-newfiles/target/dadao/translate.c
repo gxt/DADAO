@@ -1753,10 +1753,11 @@ void dadao_cpu_dump_state(CPUState *cs, FILE *f, int flags)
         if (env->ra[i]) {
             qemu_log(" %016lx", env->ra[i]);
             j++;
-            if (j % 8 == 0)   qemu_log("\n");
-        }
+            if (j % 4 == 0)   qemu_log("\n           ");
+        } else
+            break;
     }
-    if (j % 8 != 0)           qemu_log("\n");
-    if (env->ra[0])           qemu_log("[RA00]=%016lx\n", env->ra[0]);
+    if ((j == 0) || (j % 4 != 0))   qemu_log("\n");
+    if (env->ra[0])                 qemu_log("[RA00]=%016lx\n", env->ra[0]);
 }
 
