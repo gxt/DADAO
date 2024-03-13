@@ -13,6 +13,7 @@
 #include "DadaoISelLowering.h"
 #include "Dadao.h"
 #include "DadaoCondCode.h"
+#include "DadaoCallingConv.h"
 #include "DadaoMachineFunctionInfo.h"
 #include "DadaoSubtarget.h"
 #include "DadaoTargetObjectFile.h"
@@ -410,6 +411,7 @@ SDValue DadaoTargetLowering::LowerCall(TargetLowering::CallLoweringInfo &CLI,
   bool &IsTailCall = CLI.IsTailCall;
   CallingConv::ID CallConv = CLI.CallConv;
   bool IsVarArg = CLI.IsVarArg;
+  ArgListTy &Args = CLI.Args;
 
   // Dadao target does not yet support tail call optimization.
   IsTailCall = false;
@@ -418,7 +420,7 @@ SDValue DadaoTargetLowering::LowerCall(TargetLowering::CallLoweringInfo &CLI,
   case CallingConv::Fast:
   case CallingConv::C:
     return LowerCCCCallTo(Chain, Callee, CallConv, IsVarArg, IsTailCall, Outs,
-                          OutVals, Ins, DL, DAG, InVals);
+                          OutVals, Ins, DL, DAG, InVals, Args);
   default:
     report_fatal_error("Unsupported calling convention");
   }
@@ -437,8 +439,12 @@ SDValue DadaoTargetLowering::LowerCCCArguments(
 
   // Assign locations to all of the incoming arguments.
   SmallVector<CCValAssign, 16> ArgLocs;
-  CCState CCInfo(CallConv, IsVarArg, DAG.getMachineFunction(), ArgLocs,
-                 *DAG.getContext());
+  // Assign locations to all of the incoming arguments.
+  SmallVector<Type *, 4> ArgTypes;
+  for (const Argument &Arg : MF.getFunction().args())
+    ArgTypes.emplace_back(Arg.getType());
+  DadaoCCState CCInfo(ArgTypes, CallConv, IsVarArg, MF, ArgLocs, *DAG.getContext());
+  
   if (CallConv == CallingConv::Fast) {
     CCInfo.AnalyzeFormalArguments(Ins, CC_Dadao32_Fast);
   } else {
@@ -599,13 +605,19 @@ SDValue DadaoTargetLowering::LowerCCCCallTo(
     bool /*IsTailCall*/, const SmallVectorImpl<ISD::OutputArg> &Outs,
     const SmallVectorImpl<SDValue> &OutVals,
     const SmallVectorImpl<ISD::InputArg> &Ins, const SDLoc &DL,
-    SelectionDAG &DAG, SmallVectorImpl<SDValue> &InVals) const {
-  // Analyze operands of the call, assigning locations to each operand.
+    SelectionDAG &DAG, SmallVectorImpl<SDValue> &InVals, ArgListTy &Args) const {
+  MachineFunction &MF = DAG.getMachineFunction();
+  MachineFrameInfo &MFI = MF.getFrameInfo();
+
+  // Assign locations to all of the incoming arguments.
   SmallVector<CCValAssign, 16> ArgLocs;
-  CCState CCInfo(CallConv, IsVarArg, DAG.getMachineFunction(), ArgLocs,
-                 *DAG.getContext());
+  // Assign locations to all of the incoming arguments.
+  SmallVector<Type *, 4> ArgTypes;
+  for (const auto &Arg : Args)
+    ArgTypes.emplace_back(Arg.Ty);
+  DadaoCCState CCInfo(ArgTypes, CallConv, IsVarArg, MF, ArgLocs, *DAG.getContext());
+  // Analyze operands of the call, assigning locations to each operand.
   GlobalAddressSDNode *G = dyn_cast<GlobalAddressSDNode>(Callee);
-  MachineFrameInfo &MFI = DAG.getMachineFunction().getFrameInfo();
 
   NumFixedArgs = 0;
   if (IsVarArg && G) {

@@ -115,7 +115,7 @@ private:
                          const SmallVectorImpl<SDValue> &OutVals,
                          const SmallVectorImpl<ISD::InputArg> &Ins,
                          const SDLoc &dl, SelectionDAG &DAG,
-                         SmallVectorImpl<SDValue> &InVals) const;
+                         SmallVectorImpl<SDValue> &InVals, ArgListTy &Args) const;
 
   SDValue LowerCCCArguments(SDValue Chain, CallingConv::ID CallConv,
                             bool IsVarArg,

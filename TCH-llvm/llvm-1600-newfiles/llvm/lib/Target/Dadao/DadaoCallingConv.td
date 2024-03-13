@@ -19,7 +19,7 @@ def CC_Dadao32 : CallingConv<[
   // Promote i8/i16/i32 args to i64
   CCIfType<[i8, i16, i32], CCPromoteToType<i64>>,
   // Put argument in registers if marked 'inreg' and not a vararg call.
-  CCIfNotVarArg<CCIfInReg<CCIfType<[i64], CCAssignToReg<[RD16, RD17, RD18, RD19, RD20, RD21, RD22, RD23, RD24, RD25, RD26, RD27, RD28, RD29, RD30, RD31]>>>>,
+  CCIfNotVarArg<CCIfInReg<CCIfType<[i64], CCCustom<"CC_Dadao_AssignToReg">>>>,
   // Otherwise they are assigned to the stack in 8-byte aligned units.
   CCAssignToStack<8, 8>
 ]>;
