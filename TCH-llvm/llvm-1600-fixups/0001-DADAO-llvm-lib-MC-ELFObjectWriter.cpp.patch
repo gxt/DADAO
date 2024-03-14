@@ -16,7 +16,7 @@ index 07ed3409707b..82e53d07d849 100644
      else
        RenamedSymA->setUsedInReloc();
    }
-+  if(Type == ELF::R_DADAO_25)
++  if(Type == ELF::R_DADAO_25 || Type == ELF::R_DADAO_ABS)
 +    FixupOffset += 4;
    ELFRelocationEntry Rec(FixupOffset, RenamedSymA, Type, Addend, SymA, C);
    Relocations[&FixupSection].push_back(Rec);

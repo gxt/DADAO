@@ -78,12 +78,12 @@ public:
 
 static Dadao::Fixups FixupKind(const MCExpr *Expr) {
   if (isa<MCSymbolRefExpr>(Expr))
-    return Dadao::FIXUP_DADAO_21;
+    return Dadao::FIXUP_DADAO_ABS;
   if (const DadaoMCExpr *McExpr = dyn_cast<DadaoMCExpr>(Expr)) {
     DadaoMCExpr::VariantKind ExprKind = McExpr->getKind();
     switch (ExprKind) {
     case DadaoMCExpr::VK_Dadao_None:
-      return Dadao::FIXUP_DADAO_21;
+      return Dadao::FIXUP_DADAO_ABS;
     case DadaoMCExpr::VK_Dadao_ABS_HI:
       return Dadao::FIXUP_DADAO_HI16;
     case DadaoMCExpr::VK_Dadao_ABS_LO:

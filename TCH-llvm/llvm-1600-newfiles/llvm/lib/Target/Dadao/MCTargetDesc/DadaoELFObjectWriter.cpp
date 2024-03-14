@@ -62,6 +62,9 @@ unsigned DadaoELFObjectWriter::getRelocType(MCContext & /*Ctx*/,
   case Dadao::FIXUP_DADAO_LO16:
     Type = ELF::R_DADAO_LO16;
     break;
+  case Dadao::FIXUP_DADAO_ABS:
+    Type = ELF::R_DADAO_ABS;
+    break;
   case Dadao::FIXUP_DADAO_NONE:
     Type = ELF::R_DADAO_NONE;
     break;
@@ -80,6 +83,7 @@ bool DadaoELFObjectWriter::needsRelocateWithSymbol(const MCSymbol & /*SD*/,
   case ELF::R_DADAO_25:
   case ELF::R_DADAO_32:
   case ELF::R_DADAO_HI16:
+  case ELF::R_DADAO_ABS:
     return true;
   default:
     return false;

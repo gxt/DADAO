@@ -17,3 +17,5 @@ ELF_RELOC(R_DADAO_32,          4)
 ELF_RELOC(R_DADAO_HI16,        5)
 // Lower 16-bits of a symbolic relocation
 ELF_RELOC(R_DADAO_LO16,        6)
+// Absolute symbol relocation
+ELF_RELOC(R_DADAO_ABS,         13)

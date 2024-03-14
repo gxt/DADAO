@@ -31,6 +31,7 @@ enum Fixups {
   FIXUP_DADAO_32,   // general 32-bit relocation
   FIXUP_DADAO_HI16, // upper 16-bits of a symbolic relocation
   FIXUP_DADAO_LO16, // lower 16-bits of a symbolic relocation
+  FIXUP_DADAO_ABS,  // absolute symbol relocation
 
   // Marker
   LastTargetFixupKind,
