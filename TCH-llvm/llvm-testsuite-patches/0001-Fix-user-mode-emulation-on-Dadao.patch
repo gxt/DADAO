@@ -1,0 +1,140 @@
+From 96d0891ff873b0dfa1023377c85cd9565ce1043e Mon Sep 17 00:00:00 2001
+From: Guorui Wen <grwen@stu.pku.edu.cn>
+Date: Wed, 13 Mar 2024 09:15:12 +0800
+Subject: [PATCH] Fix user mode emulation on Dadao
+
+1. Build fpcmp and timeit on host only.
+2. Build SingleSource/UnitTests only.
+3. Remove tests involving floating points.
+---
+ CMakeLists.txt                              |  8 +++----
+ SingleSource/CMakeLists.txt                 |  2 +-
+ SingleSource/UnitTests/2002-05-03-NotTest.c |  3 ++-
+ SingleSource/UnitTests/CMakeLists.txt       | 25 +++++++++++++++++++++
+ cmake/modules/TestSuite.cmake               |  2 --
+ tools/CMakeLists.txt                        | 12 +++++-----
+ 6 files changed, 38 insertions(+), 14 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 660ea0059..4e2336bcf 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -300,10 +300,10 @@ mark_as_advanced(TEST_SUITE_LIT)
+ 
+ add_subdirectory(tools)
+ # Shortcut for the path to the fpcmp executable
+-set(FPCMP fpcmp-target)
+-if (TEST_SUITE_USER_MODE_EMULATION)
+-  set(FPCMP fpcmp)
+-endif()
++set(FPCMP fpcmp)
++#if (TEST_SUITE_USER_MODE_EMULATION STREQUAL "False")
++  #set(FPCMP fpcmp-target)
++#endif()
+ 
+ add_subdirectory(litsupport)
+ 
+diff --git a/SingleSource/CMakeLists.txt b/SingleSource/CMakeLists.txt
+index 21cae5c26..10e16fa72 100644
+--- a/SingleSource/CMakeLists.txt
++++ b/SingleSource/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-add_subdirectory(Benchmarks)
++# add_subdirectory(Benchmarks)
+ if(NOT TEST_SUITE_BENCHMARKING_ONLY)
+   add_subdirectory(UnitTests)
+   add_subdirectory(Regression)
+diff --git a/SingleSource/UnitTests/2002-05-03-NotTest.c b/SingleSource/UnitTests/2002-05-03-NotTest.c
+index bf4502de6..da556ff07 100644
+--- a/SingleSource/UnitTests/2002-05-03-NotTest.c
++++ b/SingleSource/UnitTests/2002-05-03-NotTest.c
+@@ -1,5 +1,6 @@
+ 
+-#include <stdio.h>
++//#include <stdio.h>
++int printf(const char *, ...);
+ 
+ void testBitWiseNot(int A, int B, int C, int D) {
+   printf("Bitwise Not: %d %d %d %d\n", ~A, ~B, ~C, ~D);
+diff --git a/SingleSource/UnitTests/CMakeLists.txt b/SingleSource/UnitTests/CMakeLists.txt
+index e70fcbd37..cef9a27dd 100644
+--- a/SingleSource/UnitTests/CMakeLists.txt
++++ b/SingleSource/UnitTests/CMakeLists.txt
+@@ -56,6 +56,31 @@ if(NOT ARCH STREQUAL "x86")
+   )
+ endif()
+ 
++# For Dadao ARCH, remove all test cases using float/double
++list(REMOVE_ITEM Source
++
++2002-05-02-ArgumentTest.c
++2002-05-02-ManyArguments.c
++2002-10-12-StructureArgs.c
++2002-10-12-StructureArgsSimple.c
++2003-05-07-VarArgs.c
++2003-08-05-CastFPToUint.c
++2003-08-11-VaListArg.c
++2004-02-02-NegativeZero.c
++2005-05-12-Int64ToFP.c
++2005-07-17-INT-To-FP.c
++2006-01-23-UnionInit.c
++2007-01-04-KNR-Args.c
++2009-04-16-BitfieldInitialization.c
++2009-12-07-StructReturn.c
++byval-alignment.c
++FloatPrecision.c
++ms_struct-bitfield.c
++StructModifyTest.c
++
++)
++
++
+ # Enable matrix types extension tests for compilers supporting -fenable-matrix.
+ check_c_compiler_flag(-fenable-matrix COMPILER_HAS_MATRIX_FLAG)
+ if (COMPILER_HAS_MATRIX_FLAG)
+diff --git a/cmake/modules/TestSuite.cmake b/cmake/modules/TestSuite.cmake
+index a05fefd5e..2e85ed7c4 100644
+--- a/cmake/modules/TestSuite.cmake
++++ b/cmake/modules/TestSuite.cmake
+@@ -107,9 +107,7 @@ function(test_suite_add_build_dependencies target)
+   add_dependencies(${target}
+     build-HashProgramOutput.sh
+     build-timeit
+-    build-timeit-target
+     build-fpcmp
+-    build-fpcmp-target
+     build-litsupport
+   )
+ endfunction()
+diff --git a/tools/CMakeLists.txt b/tools/CMakeLists.txt
+index e0f3f1b83..1ee656812 100644
+--- a/tools/CMakeLists.txt
++++ b/tools/CMakeLists.txt
+@@ -7,9 +7,9 @@
+ 
+ include(Host)
+ 
+-add_executable(fpcmp-target ${CMAKE_CURRENT_SOURCE_DIR}/fpcmp.c)
+-llvm_codesign(fpcmp-target)
+-add_executable(build-fpcmp-target ALIAS fpcmp-target)
++#add_executable(fpcmp-target ${CMAKE_CURRENT_SOURCE_DIR}/fpcmp.c)
++#llvm_codesign(fpcmp-target)
++#add_executable(build-fpcmp-target ALIAS fpcmp-target)
+ llvm_add_host_executable(build-fpcmp fpcmp fpcmp.c)
+ 
+ add_custom_command(
+@@ -34,8 +34,8 @@ if(TEST_SUITE_USE_PERF)
+     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/timeit.sh)
+   add_custom_target(build-timeit-target DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/timeit-target)
+ else()
+-  add_executable(timeit-target ${CMAKE_CURRENT_SOURCE_DIR}/timeit.c)
+-  llvm_codesign(timeit-target)
+-  add_executable(build-timeit-target ALIAS timeit-target)
++  # add_executable(timeit-target ${CMAKE_CURRENT_SOURCE_DIR}/timeit.c)
++  # llvm_codesign(timeit-target)
++  # add_executable(build-timeit-target ALIAS timeit-target)
+   llvm_add_host_executable(build-timeit timeit timeit.c)
+ endif()
+-- 
+2.34.1
+
