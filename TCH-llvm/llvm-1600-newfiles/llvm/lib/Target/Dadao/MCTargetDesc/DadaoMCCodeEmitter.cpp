@@ -10,6 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+#include "DadaoMCTargetDesc.h"
 #include "MCTargetDesc/DadaoBaseInfo.h"
 #include "MCTargetDesc/DadaoFixupKinds.h"
 #include "MCTargetDesc/DadaoMCExpr.h"
@@ -19,6 +20,7 @@
 #include "llvm/MC/MCExpr.h"
 #include "llvm/MC/MCFixup.h"
 #include "llvm/MC/MCInst.h"
+#include "llvm/MC/MCInstBuilder.h"
 #include "llvm/MC/MCInstrInfo.h"
 #include "llvm/MC/MCRegisterInfo.h"
 #include "llvm/MC/MCSubtargetInfo.h"
@@ -123,6 +125,26 @@ unsigned DadaoMCCodeEmitter::getMachineOpValue(
 void DadaoMCCodeEmitter::encodeInstruction(
     const MCInst &Inst, raw_ostream &Ostream, SmallVectorImpl<MCFixup> &Fixups,
     const MCSubtargetInfo &SubtargetInfo) const {
+  // PseudoSETRD has no patterns and can only be constructed by parsing operands from assembly text input.
+  // Therefore, rd2rd also needs to be checked (and possibly expanded).
+  // TODO: Select PseudoSETRD in ISel so that only PseudoSETRD needs to be expanded here.
+  if (Inst.getOpcode() == Dadao::PseudoSETRD
+  || ( (Inst.getOpcode() == Dadao::RD2RD_ORRI) && Inst.getOperand(1).isExpr())) {
+    MCOperand SrcSymbol = Inst.getOperand(1);
+
+    // Emit relocation R_DADAO_ABS
+    Fixups.push_back(MCFixup::create(
+      0, SrcSymbol.getExpr(), MCFixupKind(Dadao::FIXUP_DADAO_ABS), Inst.getLoc()));
+
+    // Emit setzw_w0 + swym + swym + swym
+    MCInst NewInst = MCInstBuilder(Dadao::SETZW_RWII_W0).addOperand(Inst.getOperand(0)).addImm(0).addImm(0);
+    encodeInstruction(NewInst, Ostream, Fixups, SubtargetInfo);
+
+    MCInst TmpInst = MCInstBuilder(Dadao::SWYM_OIII).addImm(0);
+    for (int i = 0; i < 3; ++i)
+      encodeInstruction(TmpInst, Ostream, Fixups, SubtargetInfo);
+    return;
+  }
   // Get instruction encoding and emit it
   unsigned Value = getBinaryCodeForInstr(Inst, Fixups, SubtargetInfo);
   ++MCNumEmitted; // Keep track of the number of emitted insns.

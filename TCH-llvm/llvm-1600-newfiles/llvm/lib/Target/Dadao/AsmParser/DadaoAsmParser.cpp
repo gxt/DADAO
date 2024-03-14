@@ -47,6 +47,8 @@ namespace {
 struct DadaoOperand;
 
 class DadaoAsmParser : public MCTargetAsmParser {
+  SMLoc getLoc() const { return getParser().getTok().getLoc(); }
+
   // Parse operands
   std::unique_ptr<DadaoOperand> parseRegister(bool RestoreOnFailure = false);
 
@@ -62,6 +64,8 @@ class DadaoAsmParser : public MCTargetAsmParser {
 
   bool ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
                         SMLoc NameLoc, OperandVector &Operands) override;
+
+  OperandMatchResultTy parseBareSymbol(OperandVector &Operands);
 
   bool parseRegister(MCRegister &RegNum, SMLoc &StartLoc,
                      SMLoc &EndLoc) override;
@@ -434,6 +438,13 @@ public:
       return false;
     uint64_t Value = ConstExpr->getValue();
     return (Value < DDWP::BEYOND);
+  }
+
+  bool isBareSymbol() const {
+    // This method is called on operands constructed by DadaoAsmParser::ParseInstruction --> parseOperand
+    // --> parseBareSymbol. In parseBareSymbol, a valid asm identifier is ensured (among other things). 
+    // So we do nothing here.
+    return true;
   }
 
   void addExpr(MCInst &Inst, const MCExpr *Expr) const {
@@ -1104,6 +1115,61 @@ bool DadaoAsmParser::ParseInstruction(ParseInstructionInfo & /*Info*/,
   }
 
   return false;
+}
+
+OperandMatchResultTy DadaoAsmParser::parseBareSymbol(OperandVector &Operands) {
+  SMLoc S = getLoc();
+  const MCExpr *Res;
+
+  if (getLexer().getKind() != AsmToken::Identifier)
+    return MatchOperand_NoMatch;
+
+  StringRef Identifier;
+  AsmToken Tok = getLexer().getTok();
+
+  if (getParser().parseIdentifier(Identifier))
+    return MatchOperand_ParseFail;
+
+  SMLoc E = SMLoc::getFromPointer(S.getPointer() + Identifier.size());
+
+  if (Identifier.consume_back("@plt")) {
+    Error(getLoc(), "'@plt' operand not valid for instruction");
+    return MatchOperand_ParseFail;
+  }
+
+  MCSymbol *Sym = getContext().getOrCreateSymbol(Identifier);
+
+  if (Sym->isVariable()) {
+    const MCExpr *V = Sym->getVariableValue(/*SetUsed=*/false);
+    if (!isa<MCSymbolRefExpr>(V)) {
+      getLexer().UnLex(Tok); // Put back if it's not a bare symbol.
+      return MatchOperand_NoMatch;
+    }
+    Res = V;
+  } else
+    Res = MCSymbolRefExpr::create(Sym, MCSymbolRefExpr::VK_None, getContext());
+
+  MCBinaryExpr::Opcode Opcode;
+  switch (getLexer().getKind()) {
+  default:
+    Operands.push_back(DadaoOperand::createImm(Res, S, E));
+    return MatchOperand_Success;
+  case AsmToken::Plus:
+    Opcode = MCBinaryExpr::Add;
+    getLexer().Lex();
+    break;
+  case AsmToken::Minus:
+    Opcode = MCBinaryExpr::Sub;
+    getLexer().Lex();
+    break;
+  }
+
+  const MCExpr *Expr;
+  if (getParser().parseExpression(Expr, E))
+    return MatchOperand_ParseFail;
+  Res = MCBinaryExpr::create(Opcode, Res, Expr, getContext());
+  Operands.push_back(DadaoOperand::createImm(Res, S, E));
+  return MatchOperand_Success;
 }
 
 #define GET_REGISTER_MATCHER

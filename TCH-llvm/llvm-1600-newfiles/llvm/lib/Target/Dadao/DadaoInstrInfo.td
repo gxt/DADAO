@@ -213,6 +213,17 @@ def MEM_RRII : Operand<i64> {
   let PrintMethod   = "printMemRRIIOperand";
 }
 
+def BareSymbol : AsmOperandClass {
+  let Name = "BareSymbol";
+  let RenderMethod = "addImmOperands";
+  let ParserMethod = "parseBareSymbol";
+}
+
+// A bare symbol.
+def bare_symbol : Operand<i64> {
+  let ParserMatchClass = BareSymbol;
+}
+
 // -------------------------------------------------- //
 // NOOP instructions
 // -------------------------------------------------- //
@@ -253,6 +264,13 @@ let Imm6 = 0b000001 in {
   def RB2RD_ORRI : R2R_ORRI<0b101010, "setrd", GPRD, GPRB>;
   def RB2RB_ORRI : R2R_ORRI<0b101011, "setrb", GPRB, GPRB>;
 }
+
+// Pseudo: setrd %rd, .Label
+class PseudoSETRX<string OpcString, RegisterClass GPRx>
+  : Pseudo<(outs GPRx:$RxHb), (ins bare_symbol:$addr), OpcString, "$RxHb, $addr", []>;
+
+def PseudoSETRD : PseudoSETRX<"setrd", GPRD>;
+def PseudoSETRB : PseudoSETRX<"setrb", GPRB>;
 
 class SHIFT_ORRI<bits<6> minorop, string OpcString, SDNode OpNode>
   : Inst_ORRI<0b00010000, minorop, (outs GPRD:$RxHb), (ins GPRD:$RyHc, i64h1:$Imm6),

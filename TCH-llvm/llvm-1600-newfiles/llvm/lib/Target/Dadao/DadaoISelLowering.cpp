@@ -91,7 +91,7 @@ DadaoTargetLowering::DadaoTargetLowering(const TargetMachine &TM,
   setOperationAction(ISD::SELECT, MVT::i64, Expand);
   setOperationAction(ISD::SELECT_CC, MVT::i64, Custom);
 
-  setOperationAction(ISD::GlobalAddress, MVT::i64, Custom);
+  setOperationAction(ISD::GlobalAddress, MVT::i64, Legal);
   setOperationAction(ISD::BlockAddress, MVT::i64, Custom);
   setOperationAction(ISD::JumpTable, MVT::i64, Custom);
   setOperationAction(ISD::ConstantPool, MVT::i64, Custom);
@@ -173,8 +173,6 @@ SDValue DadaoTargetLowering::LowerOperation(SDValue Op,
     return LowerBR_CC(Op, DAG);
   case ISD::ConstantPool:
     return LowerConstantPool(Op, DAG);
-  case ISD::GlobalAddress:
-    return LowerGlobalAddress(Op, DAG);
   case ISD::BlockAddress:
     return LowerBlockAddress(Op, DAG);
   case ISD::JumpTable:
@@ -1049,25 +1047,6 @@ SDValue DadaoTargetLowering::LowerConstantPool(SDValue Op,
   Lo = DAG.getNode(DadaoISD::LO, DL, MVT::i64, Lo);
   SDValue Result = DAG.getNode(ISD::OR, DL, MVT::i64, Hi, Lo);
   return Result;
-}
-
-SDValue DadaoTargetLowering::LowerGlobalAddress(SDValue Op,
-                                                SelectionDAG &DAG) const {
-  SDLoc DL(Op);
-  const GlobalValue *GV = cast<GlobalAddressSDNode>(Op)->getGlobal();
-  int64_t Offset = cast<GlobalAddressSDNode>(Op)->getOffset();
-
-  uint8_t OpFlagHi = DadaoII::MO_ABS_HI;
-  uint8_t OpFlagLo = DadaoII::MO_ABS_LO;
-
-  // Create the TargetGlobalAddress node, folding in the constant offset.
-  SDValue Hi = DAG.getTargetGlobalAddress(
-      GV, DL, getPointerTy(DAG.getDataLayout()), Offset, OpFlagHi);
-  SDValue Lo = DAG.getTargetGlobalAddress(
-      GV, DL, getPointerTy(DAG.getDataLayout()), Offset, OpFlagLo);
-  Hi = DAG.getNode(DadaoISD::HI, DL, MVT::i64, Hi);
-  Lo = DAG.getNode(DadaoISD::LO, DL, MVT::i64, Lo);
-  return DAG.getNode(ISD::OR, DL, MVT::i64, Hi, Lo);
 }
 
 SDValue DadaoTargetLowering::LowerBlockAddress(SDValue Op,
