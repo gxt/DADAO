@@ -10,6 +10,7 @@
 #include "DadaoWydePosition.h"
 #include "DadaoInstrInfo.h"
 #include "MCTargetDesc/DadaoMCExpr.h"
+#include "MCTargetDesc/DadaoMCTargetDesc.h"
 #include "TargetInfo/DadaoTargetInfo.h"
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/ADT/StringRef.h"
@@ -48,6 +49,10 @@ struct DadaoOperand;
 
 class DadaoAsmParser : public MCTargetAsmParser {
   SMLoc getLoc() const { return getParser().getTok().getLoc(); }
+
+  unsigned
+  checkEarlyTargetMatchPredicate(MCInst &Inst,
+                                 const OperandVector &Operands) override;
 
   // Parse operands
   std::unique_ptr<DadaoOperand> parseRegister(bool RestoreOnFailure = false);
@@ -386,36 +391,15 @@ public:
   }
 
   bool isImmWyde1() {
-    if (!isImm())
-      return false;
-
-    const MCConstantExpr *ConstExpr = dyn_cast<MCConstantExpr>(Imm.Value);
-    if (!ConstExpr)
-      return false;
-    int64_t Value = ConstExpr->getValue();
-    return Value != 0 && isShiftedUInt<16, 16>(Value);
+    return isImmWyde0();
   }
 
   bool isImmWyde2() {
-    if (!isImm())
-      return false;
-
-    const MCConstantExpr *ConstExpr = dyn_cast<MCConstantExpr>(Imm.Value);
-    if (!ConstExpr)
-      return false;
-    int64_t Value = ConstExpr->getValue();
-    return Value != 0 && isShiftedUInt<16, 32>(Value);
+    return isImmWyde0();
   }
 
   bool isImmWyde3() {
-    if (!isImm())
-      return false;
-
-    const MCConstantExpr *ConstExpr = dyn_cast<MCConstantExpr>(Imm.Value);
-    if (!ConstExpr)
-      return false;
-    int64_t Value = ConstExpr->getValue();
-    return Value != 0 && isShiftedUInt<16, 48>(Value);
+    return isImmWyde0();
   }
 
   bool isImmHex1() {
@@ -770,6 +754,49 @@ bool DadaoAsmParser::MatchAndEmitInstruction(SMLoc IdLoc, unsigned &Opcode,
   }
 
   llvm_unreachable("Unknown match type detected!");
+}
+
+static unsigned checkOpcodeWydeposMatch(unsigned int Opcode, uint64_t Wydepos) {
+  uint64_t CorrectWydepos = DDWP::BEYOND; 
+  switch (Opcode) {
+    case Dadao::ORW_RWII_W0:
+      CorrectWydepos = DDWP::WPOS_0;
+      break;
+    case Dadao::ORW_RWII_W1:
+      CorrectWydepos = DDWP::WPOS_1;
+      break;
+    case Dadao::ORW_RWII_W2:
+      CorrectWydepos = DDWP::WPOS_2;
+      break;
+    case Dadao::ORW_RWII_W3:
+      CorrectWydepos = DDWP::WPOS_3;
+      break;
+    default:
+      llvm_unreachable("Invalid Opcode to check wyde position!");
+  }
+  return (Wydepos == CorrectWydepos) ? MCTargetAsmParser::Match_Success : MCTargetAsmParser::Match_InvalidOperand;
+}
+
+unsigned
+DadaoAsmParser::checkEarlyTargetMatchPredicate(MCInst &Inst,
+                                              const OperandVector &Operands) {
+  switch (Inst.getOpcode()) {
+  default:
+    return Match_Success;
+  case Dadao::ORW_RWII_W0:
+  case Dadao::ORW_RWII_W1:
+  case Dadao::ORW_RWII_W2:
+  case Dadao::ORW_RWII_W3:
+    // TODO: Is there a safe way to do this?
+    const DadaoOperand *WydePosOperand = (const DadaoOperand *)Operands[2].get();
+    if (!WydePosOperand->isImm())
+      return Match_InvalidOperand;
+    const MCConstantExpr *ConstExpr = dyn_cast<MCConstantExpr>(WydePosOperand->getImm());
+    if (!ConstExpr)
+      return Match_InvalidOperand;
+    uint64_t Value = ConstExpr->getValue();
+    return checkOpcodeWydeposMatch(Inst.getOpcode(), Value);
+  }
 }
 
 // Both '%rN' and 'rN' are parsed as valid registers. This was done to remain
