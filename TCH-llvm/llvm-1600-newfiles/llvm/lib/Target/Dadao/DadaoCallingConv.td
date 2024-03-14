@@ -15,7 +15,7 @@
 //===----------------------------------------------------------------------===//
 
 // Dadao 32-bit C Calling convention.
-def CC_Dadao32 : CallingConv<[
+def CC_Dadao32_Fast : CallingConv<[
   // Promote i8/i16/i32 args to i64
   CCIfType<[i8, i16, i32], CCPromoteToType<i64>>,
   // Put argument in registers if marked 'inreg' and not a vararg call.
@@ -25,7 +25,7 @@ def CC_Dadao32 : CallingConv<[
 ]>;
 
 
-def CC_Dadao32_Fast : CallingConv<[
+def CC_Dadao32 : CallingConv<[
   // Promote i8/i16/i32 args to i64
   CCIfType<[i8, i16, i32], CCPromoteToType<i64>>,
   // Put argument in registers if marked 'inreg' and not a vararg call.
