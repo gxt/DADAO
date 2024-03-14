@@ -40,19 +40,19 @@ static int dd_fill_abs (unsigned int opcode,unsigned int reg, bfd_vma addr, bfd*
 
     if (imm_w16_1) {
         bfd_put_32(abfd, opcode | reg | DADAO_WYDE_WL | imm_w16_1, (bfd_byte *)datap);
-        tmp = 4;
+        tmp += 4;
     }
     if (imm_w16_2) {
         bfd_put_32(abfd, (tmp == 0 ? opcode : insn_type) | reg | DADAO_WYDE_WK | imm_w16_2, (bfd_byte *)datap + tmp);
-        tmp = 4;
+        tmp += 4;
     }
     if (imm_w16_3) {
         bfd_put_32(abfd, (tmp == 0 ? opcode : insn_type) | reg | DADAO_WYDE_WJ | imm_w16_3, (bfd_byte *)datap + tmp);
-        tmp = 4;
+        tmp += 4;
     }
     if (imm_w16_4) {
         bfd_put_32(abfd, (tmp == 0 ? opcode : insn_type) | reg | DADAO_WYDE_WH | imm_w16_4, (bfd_byte *)datap + tmp);
-        tmp = 4;
+        tmp += 4;
     }
     /* If set 0 to reg, then just use opcode */
     if (!tmp) {
