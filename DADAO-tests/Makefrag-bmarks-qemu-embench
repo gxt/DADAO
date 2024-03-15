@@ -1,12 +1,11 @@
 #
 # Makefile for embench
 #
-TBQ_EMBENCH_LOCAL	:= /pub/GITHUB/embench/embench-iot.git
 TBQ_EMBENCH_GITHUB	:= https://github.com/embench/embench-iot.git
-TBQ_EMBENCH_SOURCE	:= $(TESTS_BMARKS_QEMU_BUILD)/embench-iot
-TBQ_EMBENCH_NEWFILES	:= $(TESTS_BMARKS_QEMU_SOURCE)/embench-iot
-TBQ_EMBENCH_BUILD	:= $(TESTS_BMARKS_QEMU_BUILD)/embench-build
-TBQ_EMBENCH_LOG		:= $(TESTS_BMARKS_QEMU_BUILD)/embench-log
+TBQ_EMBENCH_SOURCE	:= $(DIR_DADAO_SOURCE)/embench-iot
+TBQ_EMBENCH_NEWFILES	:= $(DIR_TESTS_SOURCE)/bmarks-qemu/embench-iot
+TBQ_EMBENCH_BUILD	:= $(DIR_DADAO_BUILD)/embench-build
+TBQ_EMBENCH_LOG		:= $(DIR_DADAO_LOG)/embench-log
 
 tests-bmarks-qemu-embench-clean:
 	# Remove old embench source dir ...
@@ -18,11 +17,7 @@ tests-bmarks-qemu-embench-clean:
 
 tests-bmarks-qemu-embench-source:
 	# Clone official repo
-ifeq ($(wildcard $(TBQ_EMBENCH_LOCAL)),)
 	@git clone -q $(TBQ_EMBENCH_GITHUB) -- $(TBQ_EMBENCH_SOURCE)
-else
-	@git clone -q $(TBQ_EMBENCH_LOCAL) -- $(TBQ_EMBENCH_SOURCE)
-endif
 	# Add dadao support
 	@cp -a $(TBQ_EMBENCH_NEWFILES)/config/dadao $(TBQ_EMBENCH_SOURCE)/config
 	@cd $(TBQ_EMBENCH_SOURCE);				\
