@@ -24,10 +24,6 @@ void cpu_loop(CPUDADAOState *env)
     int trapnr;
     abi_long ret;
 
-    /* debug */
-    qemu_log("--- %016lx : program start ---\n", env->REG_PC);
-    cpu_dump_state(cs, stderr, 0);
-
     for (;;) {
         cpu_exec_start(cs);
         trapnr = cpu_exec(cs);
@@ -36,7 +32,6 @@ void cpu_loop(CPUDADAOState *env)
 
         switch (trapnr) {
         case DADAO_EXCP_TRAP:
-            qemu_log("--- %016lx : system call ---\n", env->REG_PC);
             ret = do_syscall(env,
                              DDABI_SYSCALL_NUM(env),
                              DDABI_ARG(env, 0),
