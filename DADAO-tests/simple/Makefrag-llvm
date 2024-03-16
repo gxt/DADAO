@@ -1,7 +1,8 @@
-default: test.ll test.bc test.s test.o test.exe
+default: test.ll test.bc test.s test.o test.exe test.qemu
 
 %.ll: %.c
-	$(DADAO_LLVM_CLANG) -target dadao -S -emit-llvm $< -o $@
+	$(DADAO_LLVM_CLANG) -target dadao -S -emit-llvm \
+		-I$(DIR_DADAO_INSTALL)/dadao-unknown-elf/include/ -D__DADAO__=1 $< -o $@
 
 %.bc: %.ll
 	$(DADAO_LLVM_AS) $< -o $@
@@ -38,3 +39,6 @@ default: test.ll test.bc test.s test.o test.exe
 
 %.lld:	%.o
 	$(DADAO_LLVM_LLD) -nostdlib -nostartfiles -o $@ $<
+
+%.qemu: %.exe
+	$(DIR_DADAO_INSTALL)/bin/qemu-dadao $<
