@@ -65,6 +65,7 @@ tests-bmarks-qemu-dhrystone-highfive:
 include DADAO-tests/Makefrag-bmarks-qemu-embench
 include DADAO-tests/Makefrag-bmarks-qemu-coremark
 include DADAO-tests/Makefrag-bmarks-qemu-mibench
+include DADAO-tests/Makefrag-llvm-testsuite
 
 include DADAO-tests/Makefrag-simple-multi-arch
 

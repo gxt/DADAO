@@ -1,0 +1,70 @@
+#
+# Makefile for llvm-testsuite
+#
+
+LLVM_TESTSUITE_LOCAL		:= /pub/GITHUB/llvm/llvm-test-suite.git
+LLVM_TESTSUITE_VERSION		:= llvmorg-16.0.0
+LLVM_TESTSUITE_BRANCH		:= dadao-1600
+
+LLVM_TESTSUITE_NEWFILES		:= $(DIR_DADAO_TOP)/TCH-llvm/llvm-testsuite-newfiles
+LLVM_TESTSUITE_PATCHES		:= $(DIR_DADAO_TOP)/TCH-llvm/llvm-testsuite-patches
+
+LLVM_TESTSUITE_SOURCE		:= $(DIR_DADAO_SOURCE)/llvm-testsuite
+LLVM_TESTSUITE_BUILD		:= $(DIR_DADAO_BUILD)/llvm-testsuite
+LLVM_TESTSUITE_LOG_STDOUT	:= $(DIR_DADAO_LOG)/llvm-testsuite.out
+LLVM_TESTSUITE_LOG_STDERR	:= $(DIR_DADAO_LOG)/llvm-testsuite.err
+
+tests-llvm-testsuite-clean:
+	# Remove old llvm-testsuite source dir ...
+	@rm -fr $(LLVM_TESTSUITE_SOURCE)
+	# Remove old llvm-testsuite build dir ...
+	@rm -fr $(LLVM_TESTSUITE_BUILD)
+
+tests-llvm-testsuite-source:
+	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
+	@rm -fr $(LLVM_TESTSUITE_SOURCE)
+	# Clone local repo
+	@git clone -q $(LLVM_TESTSUITE_LOCAL) -- $(LLVM_TESTSUITE_SOURCE)
+	# Specify version
+	@cd $(LLVM_TESTSUITE_SOURCE); git checkout -qb $(LLVM_TESTSUITE_BRANCH) $(LLVM_TESTSUITE_VERSION)
+	# New files
+	@cp  $(LLVM_TESTSUITE_NEWFILES)/run-testsuite.sh $(LLVM_TESTSUITE_SOURCE)
+	# Patches
+	@cd $(LLVM_TESTSUITE_SOURCE); test ! -d $(LLVM_TESTSUITE_PATCHES) || git am $(LLVM_TESTSUITE_PATCHES)/*.patch
+
+tests-llvm-testsuite-build-new:
+	@rm -fr $(LLVM_TESTSUITE_BUILD)
+	@mkdir -p $(LLVM_TESTSUITE_BUILD)
+	# NOTE: $(LLVM_TESTSUITE_SOURCE)/build is softlink to $(LLVM_TESTSUITE_BUILD)
+	@ln -s $(LLVM_TESTSUITE_BUILD) $(LLVM_TESTSUITE_SOURCE)/build
+	@cmake -S $(LLVM_TESTSUITE_SOURCE) -B $(LLVM_TESTSUITE_BUILD) \
+		-DTEST_SUITE_USER_MODE_EMULATION=True\
+		-DCMAKE_CXX_COMPILER_WORKS=1\
+		-DCMAKE_SIZEOF_VOID_P=8\
+		-DCMAKE_SIZEOF_UNSIGNED_INT=4\
+		-DCMAKE_C_COMPILER='$(LLVM_1600_BUILD)/bin/clang;-v;-mllvm --optimize-regalloc;-mllvm --regalloc=greedy;-target dadao;-B$(DIR_DADAO_INSTALL)/bin/dadao-unknown-elf-'\
+		-DTEST_SUITE_SUBDIRS=SingleSource\
+		-DENDIAN=little\
+		-DCMAKE_C_FLAGS="-I$(DIR_DADAO_INSTALL)/dadao-unknown-elf/include/ -D__DADAO__=1"\
+		-DLINK_OPTIONS='--defsym;__.DADAO.start..text=0x400000'
+
+tests-llvm-testsuite-build:
+	@cd $(LLVM_TESTSUITE_SOURCE); DIR_DADAO_TOP=$(DIR_DADAO_TOP) bash ./run-testsuite.sh	
+
+
+tests-llvm-testsuite-highfive:
+	@echo "BEGIN TO BUILD llvm-testsuite                    at `date +%T`"
+	@echo "0. Remove old logfiles                           at `date +%T`"
+	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
+	@rm -fr $(LLVM_TESTSUITE_LOG_STDOUT) $(LLVM_TESTSUITE_LOG_STDERR)
+	@echo "1. Clean old dirs                                at `date +%T`"
+	@make -s tests-llvm-testsuite-clean					1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
+	@echo "2. New source                                    at `date +%T`"
+	@make -s tests-llvm-testsuite-source				1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
+	@echo "3. Configure                                     at `date +%T`"
+	@make -s tests-llvm-testsuite-build-new				1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
+	@echo "4. Build                                         at `date +%T`"
+	@make -s tests-llvm-testsuite-build					1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
+#	@echo "5. Install                                       at `date +%T`"
+#	@make -s tests-llvm-testsuite-install				1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
+	@echo "BUILD tests-llvm-testsuite DONE!                            at `date +%T`"
