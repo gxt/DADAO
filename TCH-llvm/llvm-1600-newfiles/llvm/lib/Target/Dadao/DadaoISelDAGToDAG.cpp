@@ -181,7 +181,9 @@ bool DadaoDAGToDAGISel::selectAddrRRRI(SDValue Addr, SDValue &RegBase, SDValue &
     // Addresses of the form register OP register
     RegBase = Addr.getOperand(0);
     RegOffset = Addr.getOperand(1);
-    return true;
+    // RegCnt is not set. So whenever we return true here, a null pointer will be accessed later, causing seg fault.
+    // TODO: When LDT/STM is really needed, set RegCnt appropriately and return true.
+    return false;
   }
 
 // TODO:
