@@ -12,6 +12,7 @@
 
 #include "DadaoInstrInfo.h"
 #include "DadaoCondCode.h"
+#include "DadaoRegisterInfo.h"
 #include "MCTargetDesc/DadaoBaseInfo.h"
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/ADT/SmallVector.h"
@@ -74,10 +75,18 @@ void DadaoInstrInfo::storeRegToStackSlot(
     DL = Position->getDebugLoc();
   }
 
-  if (!Dadao::GPRDRegClass.hasSubClassEq(RegisterClass)) {
+  unsigned Opcode = Dadao::INSTRUCTION_LIST_END;
+  if (Dadao::GPRDRegClass.contains(SourceRegister)) {
+    Opcode = Dadao::STO_RRII;
+  }
+  else if (Dadao::GPRBRegClass.contains(SourceRegister)) {
+    Opcode = Dadao::STRB_RRII;
+  }
+  else {
     llvm_unreachable("Can't store this register to stack slot");
   }
-  BuildMI(MBB, Position, DL, get(Dadao::STRB_RRII))
+
+  BuildMI(MBB, Position, DL, get(Opcode))
       .addReg(SourceRegister, getKillRegState(IsKill))
       .addFrameIndex(FrameIndex)
       .addImm(0);
@@ -92,11 +101,17 @@ void DadaoInstrInfo::loadRegFromStackSlot(
   if (Position != MBB.end()) {
     DL = Position->getDebugLoc();
   }
-
-  if (!Dadao::GPRDRegClass.hasSubClassEq(RegisterClass)) {
+  unsigned Opcode = Dadao::INSTRUCTION_LIST_END;
+  if (Dadao::GPRDRegClass.contains(DestinationRegister)) {
+    Opcode = Dadao::LDO_RRII;
+  }
+  else if (Dadao::GPRBRegClass.contains(DestinationRegister)) {
+    Opcode = Dadao::LDRB_RRII;
+  }
+  else {
     llvm_unreachable("Can't load this register from stack slot");
   }
-  BuildMI(MBB, Position, DL, get(Dadao::LDRB_RRII), DestinationRegister)
+  BuildMI(MBB, Position, DL, get(Opcode), DestinationRegister)
       .addFrameIndex(FrameIndex)
       .addImm(0);
 }
