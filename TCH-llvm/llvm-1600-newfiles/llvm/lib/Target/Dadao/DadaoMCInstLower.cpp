@@ -101,6 +101,8 @@ void DadaoMCInstLower::Lower(const MachineInstr *MI, MCInst &OutMI) const {
       if (MO.isImplicit())
         continue;
       MCOp = MCOperand::createReg(MO.getReg());
+      if (MO.isDead() && MO.getReg() >= Dadao::RD0 && MO.getReg() <= Dadao::RD63)
+        MCOp = MCOperand::createReg(Dadao::RD0);
       break;
     case MachineOperand::MO_Immediate:
       MCOp = MCOperand::createImm(MO.getImm());
