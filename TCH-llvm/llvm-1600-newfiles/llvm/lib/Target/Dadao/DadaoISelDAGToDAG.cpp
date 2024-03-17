@@ -409,6 +409,7 @@ void DadaoDAGToDAGISel::selectSETCC(SDNode *Node) {
 void DadaoDAGToDAGISel::selectBR_CC(SDNode *Node) {
   SDLoc DL(Node);
 
+  SDValue Chain = Node->getOperand(0);
   SDNode *TargetCC = Node->getOperand(1).getNode();
   int64_t CC =
       cast<ConstantSDNode>(TargetCC)->getConstantIntValue()->getSExtValue();
@@ -468,12 +469,13 @@ void DadaoDAGToDAGISel::selectBR_CC(SDNode *Node) {
   }
   if (OpcodeCmp == Dadao::INSTRUCTION_LIST_END) {
     // EQ or NE
-    Instr_final = CurDAG->getMachineNode(OpcodeBr, DL, VT, SDValue(BranchDest,0), LHS, RHS);
+    SDValue Ops[] = { SDValue(BranchDest,0), LHS, RHS, Chain };
+    Instr_final = CurDAG->getMachineNode(OpcodeBr, DL, VT, Ops);
   } else {
     // LT, GT, LE, GE, or their unsigned version
     Instr_a =
       SDValue(CurDAG->getMachineNode(OpcodeCmp, DL, MVT::i64, LHS, RHS), 0);
-    Instr_final = CurDAG->getMachineNode(OpcodeBr, DL, VT, SDValue(BranchDest,0), Instr_a);
+    Instr_final = CurDAG->getMachineNode(OpcodeBr, DL, VT, SDValue(BranchDest,0), Instr_a, Chain);
   }
   ReplaceNode(Node, Instr_final);
 }
