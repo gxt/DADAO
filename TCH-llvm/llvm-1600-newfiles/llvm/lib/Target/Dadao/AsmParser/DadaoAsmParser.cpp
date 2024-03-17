@@ -760,15 +760,27 @@ static unsigned checkOpcodeWydeposMatch(unsigned int Opcode, uint64_t Wydepos) {
   uint64_t CorrectWydepos = DDWP::BEYOND; 
   switch (Opcode) {
     case Dadao::ORW_RWII_W0:
+    case Dadao::ANDNW_RWII_W0:
+    case Dadao::SETZW_RWII_W0:
+    case Dadao::SETOW_RWII_W0:
       CorrectWydepos = DDWP::WPOS_0;
       break;
     case Dadao::ORW_RWII_W1:
+    case Dadao::ANDNW_RWII_W1:
+    case Dadao::SETZW_RWII_W1:
+    case Dadao::SETOW_RWII_W1:
       CorrectWydepos = DDWP::WPOS_1;
       break;
     case Dadao::ORW_RWII_W2:
+    case Dadao::ANDNW_RWII_W2:
+    case Dadao::SETZW_RWII_W2:
+    case Dadao::SETOW_RWII_W2:
       CorrectWydepos = DDWP::WPOS_2;
       break;
     case Dadao::ORW_RWII_W3:
+    case Dadao::ANDNW_RWII_W3:
+    case Dadao::SETZW_RWII_W3:
+    case Dadao::SETOW_RWII_W3:
       CorrectWydepos = DDWP::WPOS_3;
       break;
     default:
@@ -787,6 +799,18 @@ DadaoAsmParser::checkEarlyTargetMatchPredicate(MCInst &Inst,
   case Dadao::ORW_RWII_W1:
   case Dadao::ORW_RWII_W2:
   case Dadao::ORW_RWII_W3:
+  case Dadao::ANDNW_RWII_W0:
+  case Dadao::ANDNW_RWII_W1:
+  case Dadao::ANDNW_RWII_W2:
+  case Dadao::ANDNW_RWII_W3:
+  case Dadao::SETZW_RWII_W0:
+  case Dadao::SETZW_RWII_W1:
+  case Dadao::SETZW_RWII_W2:
+  case Dadao::SETZW_RWII_W3:
+  case Dadao::SETOW_RWII_W0:
+  case Dadao::SETOW_RWII_W1:
+  case Dadao::SETOW_RWII_W2:
+  case Dadao::SETOW_RWII_W3:
     // TODO: Is there a safe way to do this?
     const DadaoOperand *WydePosOperand = (const DadaoOperand *)Operands[2].get();
     if (!WydePosOperand->isImm())
