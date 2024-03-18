@@ -28,7 +28,7 @@ tests-llvm-testsuite-source:
 	# Specify version
 	@cd $(LLVM_TESTSUITE_SOURCE); git checkout -qb $(LLVM_TESTSUITE_BRANCH) $(LLVM_TESTSUITE_VERSION)
 	# New files
-	@cp  $(LLVM_TESTSUITE_NEWFILES)/run-testsuite.sh $(LLVM_TESTSUITE_SOURCE)
+	@cp  $(LLVM_TESTSUITE_NEWFILES)/* $(LLVM_TESTSUITE_SOURCE)
 	# Patches
 	@cd $(LLVM_TESTSUITE_SOURCE); test ! -d $(LLVM_TESTSUITE_PATCHES) || git am $(LLVM_TESTSUITE_PATCHES)/*.patch
 
@@ -49,7 +49,7 @@ tests-llvm-testsuite-build-new:
 		-DLINK_OPTIONS='--defsym;__.DADAO.start..text=0x400000'
 
 tests-llvm-testsuite-build:
-	@cd $(LLVM_TESTSUITE_SOURCE); DIR_DADAO_TOP=$(DIR_DADAO_TOP) bash ./run-testsuite.sh	
+	@cd $(LLVM_TESTSUITE_SOURCE); DIR_DADAO_TOP=$(DIR_DADAO_TOP) ./run-testsuite.py
 
 
 tests-llvm-testsuite-highfive:
