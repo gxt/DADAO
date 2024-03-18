@@ -13,8 +13,11 @@ ELF_RELOC(R_DADAO_21_F,        2)
 ELF_RELOC(R_DADAO_25,          16)
 // General 32-bit relocation
 ELF_RELOC(R_DADAO_32,          4)
+// General 64-bit relocation
+ELF_RELOC(R_DADAO_64,          5)
 // Upper 16-bits of a symbolic relocation
-ELF_RELOC(R_DADAO_HI16,        5)
+// TODO: Remove R_DADAO_HI16 and R_DADAO_LO16
+ELF_RELOC(R_DADAO_HI16,        7)
 // Lower 16-bits of a symbolic relocation
 ELF_RELOC(R_DADAO_LO16,        6)
 // Absolute symbol relocation
