@@ -35,6 +35,12 @@ class LLVM_LIBRARY_VISIBILITY DadaoTargetInfo : public TargetInfo {
 public:
   DadaoTargetInfo(const llvm::Triple &Triple, const TargetOptions &)
       : TargetInfo(Triple) {
+    // The default is PointerWidth = PointerAlign = 32.
+    PointerWidth = PointerAlign = 64;
+    // TODO: There are probably other options in TargetInfo that are used by clang frontend
+    // but unaffected by resetDataLayout. We should check the settings of all of them
+    // in TargetInfo::TargetInfo.
+
     // Description string has to be kept in sync with backend.
     resetDataLayout("e"        // Little endian
                     "-m:e"     // ELF name manging
