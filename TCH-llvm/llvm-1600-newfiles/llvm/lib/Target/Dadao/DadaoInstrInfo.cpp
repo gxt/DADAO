@@ -76,10 +76,10 @@ void DadaoInstrInfo::storeRegToStackSlot(
   }
 
   unsigned Opcode = Dadao::INSTRUCTION_LIST_END;
-  if (Dadao::GPRDRegClass.contains(SourceRegister)) {
+  if (Dadao::GPRDRegClass.hasSubClassEq(RegisterClass)) {
     Opcode = Dadao::STO_RRII;
   }
-  else if (Dadao::GPRBRegClass.contains(SourceRegister)) {
+  else if (Dadao::GPRBRegClass.hasSubClassEq(RegisterClass)) {
     Opcode = Dadao::STRB_RRII;
   }
   else {
@@ -102,10 +102,10 @@ void DadaoInstrInfo::loadRegFromStackSlot(
     DL = Position->getDebugLoc();
   }
   unsigned Opcode = Dadao::INSTRUCTION_LIST_END;
-  if (Dadao::GPRDRegClass.contains(DestinationRegister)) {
+  if (Dadao::GPRDRegClass.hasSubClassEq(RegisterClass)) {
     Opcode = Dadao::LDO_RRII;
   }
-  else if (Dadao::GPRBRegClass.contains(DestinationRegister)) {
+  else if (Dadao::GPRBRegClass.hasSubClassEq(RegisterClass)) {
     Opcode = Dadao::LDRB_RRII;
   }
   else {
