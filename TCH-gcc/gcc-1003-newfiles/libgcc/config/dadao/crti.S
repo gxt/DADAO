@@ -10,6 +10,7 @@ _start:
 	addi	rb2, rb2, 8
 
 	call	_init
+	setzw	rd16, w0, 1
 	call	main
 
 	# rd5 as caller saved
