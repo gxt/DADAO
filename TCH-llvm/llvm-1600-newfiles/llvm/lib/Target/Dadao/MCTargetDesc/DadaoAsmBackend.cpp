@@ -36,6 +36,8 @@ static unsigned adjustFixupValue(unsigned Kind, uint64_t Value) {
   case Dadao::FIXUP_DADAO_ABS:
     return Value;
   case Dadao::FIXUP_DADAO_25:
+  case Dadao::FIXUP_DADAO_18:
+  case Dadao::FIXUP_DADAO_12:
     return Value >> 2;
   default:
     llvm_unreachable("Unknown fixup kind!");
@@ -147,6 +149,8 @@ DadaoAsmBackend::getFixupKindInfo(MCFixupKind Kind) const {
       {"FIXUP_DADAO_21", 16, 16 /*21*/, 0},
       {"FIXUP_DADAO_21_F", 16, 16 /*21*/, 0},
       {"FIXUP_DADAO_25", 0, 24, MCFixupKindInfo::FKF_IsPCRel },
+      {"FIXUP_DADAO_18", 0, 18, MCFixupKindInfo::FKF_IsPCRel },
+      {"FIXUP_DADAO_12", 0, 12, MCFixupKindInfo::FKF_IsPCRel },
       {"FIXUP_DADAO_32", 0, 32, 0},
       {"FIXUP_DADAO_HI16", 16, 16, 0},
       {"FIXUP_DADAO_LO16", 16, 16, 0},

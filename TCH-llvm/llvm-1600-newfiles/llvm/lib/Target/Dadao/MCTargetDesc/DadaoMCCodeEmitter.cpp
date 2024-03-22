@@ -10,6 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+#include "DadaoFixupKinds.h"
 #include "DadaoMCTargetDesc.h"
 #include "MCTargetDesc/DadaoBaseInfo.h"
 #include "MCTargetDesc/DadaoFixupKinds.h"
@@ -205,6 +206,26 @@ unsigned DadaoMCCodeEmitter::getBranchTargetOpValue(
   if (MCOp.isReg() || MCOp.isImm())
     return getMachineOpValue(Inst, MCOp, Fixups, SubtargetInfo);
 
+  switch (Inst.getOpcode()) {
+    case Dadao::BRN_RIII:
+    case Dadao::BRNN_RIII:
+    case Dadao::BRZ_RIII:
+    case Dadao::BRNZ_RIII:
+    case Dadao::BRP_RIII:
+    case Dadao::BRNP_RIII:
+      Fixups.push_back(MCFixup::create(
+        0, MCOp.getExpr(), static_cast<MCFixupKind>(Dadao::FIXUP_DADAO_18)
+      ));
+      return 0;
+    case Dadao::CALL_RRII:
+    case Dadao::JUMP_RRII:
+    case Dadao::BREQ_RRII:
+    case Dadao::BRNE_RRII:
+      Fixups.push_back(MCFixup::create(
+        0, MCOp.getExpr(), static_cast<MCFixupKind>(Dadao::FIXUP_DADAO_12)
+      ));
+      return 0;
+  }
   Fixups.push_back(MCFixup::create(
       0, MCOp.getExpr(), static_cast<MCFixupKind>(Dadao::FIXUP_DADAO_25)));
 

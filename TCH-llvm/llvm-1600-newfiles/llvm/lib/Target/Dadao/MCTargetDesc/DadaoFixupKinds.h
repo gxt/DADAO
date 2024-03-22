@@ -28,6 +28,8 @@ enum Fixups {
   FIXUP_DADAO_21,   // 21-bit symbol relocation
   FIXUP_DADAO_21_F, // 21-bit symbol relocation, last two bits masked to 0
   FIXUP_DADAO_25,   // 25-bit branch targets
+  FIXUP_DADAO_18,   // 18-bit PC-relative target
+  FIXUP_DADAO_12,   // 12-bit PC-relative target
   FIXUP_DADAO_32,   // general 32-bit relocation
   FIXUP_DADAO_HI16, // upper 16-bits of a symbolic relocation
   FIXUP_DADAO_LO16, // lower 16-bits of a symbolic relocation
