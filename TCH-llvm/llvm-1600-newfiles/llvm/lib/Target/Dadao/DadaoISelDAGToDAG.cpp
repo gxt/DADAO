@@ -85,6 +85,7 @@ private:
   // Complex Pattern for address selection.
   bool selectAddrRRII(SDValue Addr, SDValue &Base, SDValue &Offset);
   bool selectAddrRRRI(SDValue Addr, SDValue &Base, SDValue &Offset, SDValue &RegCnt);
+  bool selectIndirectCallTarget(SDValue Addr, SDValue &BaseReg, SDValue &OffsetReg, SDValue &OffsetImm);
 
   // getI64Imm - Return a target constant with the specified value, of type i64.
   inline SDValue getI64Imm(unsigned Imm, const SDLoc &DL) {
@@ -191,6 +192,21 @@ bool DadaoDAGToDAGISel::selectAddrRRRI(SDValue Addr, SDValue &RegBase, SDValue &
 
   // Skip addresses with zero offset
   return false;
+}
+
+bool DadaoDAGToDAGISel::selectIndirectCallTarget(SDValue Addr, SDValue &BaseReg, SDValue &OffsetReg, SDValue &OffsetImm) {
+  SDLoc DL(Addr);
+
+  // Skip direct calls
+  if ((Addr.getOpcode() == ISD::TargetExternalSymbol ||
+       Addr.getOpcode() == ISD::TargetGlobalAddress))
+    return false;
+  
+  // TODO: Recognize nonzero offset
+  BaseReg = Addr;
+  OffsetReg = CurDAG->getRegister(Dadao::RDZERO, MVT::i64);
+  OffsetImm = CurDAG->getTargetConstant(0, DL, MVT::i64);
+  return true;
 }
 
 bool DadaoDAGToDAGISel::SelectInlineAsmMemoryOperand(

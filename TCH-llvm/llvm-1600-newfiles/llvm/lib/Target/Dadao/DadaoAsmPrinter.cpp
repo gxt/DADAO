@@ -169,10 +169,9 @@ void DadaoAsmPrinter::emitCallInstruction(const MachineInstr *MI) {
 //                                STI);
 
   // Lower the call instruction.
-  if (MI->getOpcode() == Dadao::CALL_IIII) {
+  if (MI->getOpcode() == Dadao::CALL_IIII || MI->getOpcode() == Dadao::CALL_RRII) {
     MCInst TmpInst;
     MCInstLowering.Lower(MI, TmpInst);
-    TmpInst.setOpcode(Dadao::CALL_IIII);
     OutStreamer->emitInstruction(TmpInst, STI);
   } else {
     OutStreamer->emitInstruction(MCInstBuilder(Dadao::ADD_RB_ORRR)
