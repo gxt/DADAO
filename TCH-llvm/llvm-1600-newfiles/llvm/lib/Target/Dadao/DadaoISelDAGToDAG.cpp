@@ -80,6 +80,7 @@ private:
   void selectFrameIndex(SDNode *N);
   void selectSETCC(SDNode *N);
   void selectBR_CC(SDNode *N);
+  void selectSELECT_CC(SDNode *N);
   void selectGlobalAddress(SDNode *N);
 
   // Complex Pattern for address selection.
@@ -272,6 +273,9 @@ void DadaoDAGToDAGISel::Select(SDNode *Node) {
     return;
   case DadaoISD::BR_CC:
     selectBR_CC(Node);
+    return;
+  case DadaoISD::SELECT_CC:
+    selectSELECT_CC(Node);
     return;
   case ISD::GlobalAddress:
     selectGlobalAddress(Node);
@@ -494,6 +498,23 @@ void DadaoDAGToDAGISel::selectBR_CC(SDNode *Node) {
     Instr_final = CurDAG->getMachineNode(OpcodeBr, DL, VT, SDValue(BranchDest,0), Instr_a, Chain);
   }
   ReplaceNode(Node, Instr_final);
+}
+
+void DadaoDAGToDAGISel::selectSELECT_CC(SDNode *Node) {
+  SDLoc DL(Node);
+
+  SDValue LHS = Node->getOperand(0);
+  SDValue RHS = Node->getOperand(1);
+  SDValue TrueV = Node->getOperand(2);
+  SDValue FalseV = Node->getOperand(3);
+  SDValue TargetCC = Node->getOperand(4);
+
+  EVT VT = Node->getValueType(0);
+
+  SDValue InstrCmp = CurDAG->getNode(DadaoISD::SETCC, DL, VT, LHS, RHS, TargetCC);
+  SDNode *Instr_final = CurDAG->getMachineNode(Dadao::CSP, DL, VT, InstrCmp, TrueV, FalseV);
+  ReplaceNode(Node, Instr_final);
+  Select(InstrCmp.getNode());
 }
 
 void DadaoDAGToDAGISel::selectGlobalAddress(SDNode *Node) {
