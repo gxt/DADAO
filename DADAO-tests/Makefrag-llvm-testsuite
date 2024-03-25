@@ -37,6 +37,8 @@ tests-llvm-testsuite-build-new:
 	@mkdir -p $(LLVM_TESTSUITE_BUILD)
 	# NOTE: $(LLVM_TESTSUITE_SOURCE)/build is softlink to $(LLVM_TESTSUITE_BUILD)
 	@ln -s $(LLVM_TESTSUITE_BUILD) $(LLVM_TESTSUITE_SOURCE)/build
+
+tests-llvm-testsuite-build:
 	@cmake -S $(LLVM_TESTSUITE_SOURCE) -B $(LLVM_TESTSUITE_BUILD) \
 		-DTEST_SUITE_USER_MODE_EMULATION=True\
 		-DCMAKE_BUILD_TYPE=Debug\
@@ -51,7 +53,7 @@ tests-llvm-testsuite-build-new:
 		-DCMAKE_C_FLAGS="-I$(DIR_DADAO_INSTALL)/dadao-unknown-elf/include/ -D__DADAO__=1"\
 		-DLINK_OPTIONS='--defsym;__.DADAO.start..text=0x400000'
 
-tests-llvm-testsuite-build:
+tests-llvm-testsuite-runtest:
 	@cd $(LLVM_TESTSUITE_SOURCE); DIR_DADAO_TOP=$(DIR_DADAO_TOP) ./run-testsuite.py
 
 
@@ -68,6 +70,6 @@ tests-llvm-testsuite-highfive:
 	@make -s tests-llvm-testsuite-build-new				1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
 	@echo "4. Build                                         at `date +%T`"
 	@make -s tests-llvm-testsuite-build					1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
-#	@echo "5. Install                                       at `date +%T`"
-#	@make -s tests-llvm-testsuite-install				1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
-	@echo "BUILD tests-llvm-testsuite DONE!                            at `date +%T`"
+	@echo "5. Runtest                                       at `date +%T`"
+	@make -s tests-llvm-testsuite-runtest				1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
+	@echo "BUILD tests-llvm-testsuite DONE!                 at `date +%T`"
