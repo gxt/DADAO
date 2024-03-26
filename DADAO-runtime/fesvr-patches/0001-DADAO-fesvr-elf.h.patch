@@ -1,7 +1,7 @@
 From d81812fef2797f12b5382a898526ce83b607888a Mon Sep 17 00:00:00 2001
 From: Guan Xuetao <gxt@pku.edu.cn>
 Date: Sun, 18 Dec 2022 18:33:53 +0800
-Subject: [PATCH] DADAO-rte: fesvr/elf.h
+Subject: [PATCH] DADAO: fesvr/elf.h
 
 Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
 ---

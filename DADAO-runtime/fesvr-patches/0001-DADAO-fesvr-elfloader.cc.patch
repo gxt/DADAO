@@ -1,7 +1,7 @@
 From a84de273b95b98b12a8b5c4566f75b9baefa55a0 Mon Sep 17 00:00:00 2001
 From: Guan Xuetao <gxt@pku.edu.cn>
 Date: Sun, 18 Dec 2022 18:34:52 +0800
-Subject: [PATCH] DADAO-rte: fesvr/elfloader.cc
+Subject: [PATCH] DADAO: fesvr/elfloader.cc
 
 Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
 ---
