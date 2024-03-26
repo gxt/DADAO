@@ -1,3 +1,6 @@
+# common.mk
+
+RUNTIME_COMMON_MK		:= $(DIR_DADAO_TOP)/DADAO-runtime/common.mk
 
 DIR_DADAO_BUILD			?= $(DIR_DADAO_TOP)/__build/
 DIR_DADAO_TARGET		?= $(DIR_DADAO_TOP)/__dadao/
@@ -23,9 +26,9 @@ DADAO_QEMU_SYS			?= $(DIR_DADAO_INSTALL)/bin/qemu-system-dadao
 
 #EXTRA_GCC_FLAGS		+= -fdump-tree-all -fdump-ipa-all -fdump-rtl-all
 
-DADAO_ELF_LINK_FLAGS		?= -static -nostdlib -nostartfiles $(DADAO_ELF_LINK_EXTRA_FLAGS)
+DADAO_ELF_LINK_FLAGS	?= -static -nostdlib -nostartfiles $(DADAO_ELF_LINK_EXTRA_FLAGS)
 DADAO_ELF_GCC_FLAGS		?= -static -fvisibility=hidden $(DADAO_ELF_GCC_EXTRA_FLAGS) $(DADAO_ELF_LINK_FLAGS)
-DADAO_ELF_OBJDUMP_FLAGS		?= --disassemble-all --disassemble-zeroes --section=.text --section=.text.startup --section=.text.init --section=.data
+DADAO_ELF_OBJDUMP_FLAGS	?= --disassemble-all --disassemble-zeroes --section=.text --section=.text.startup --section=.text.init --section=.data
 
 DADAO_LLVM_CLANG		:= $(DIR_DADAO_BUILD)/llvm-1600/bin/clang
 DADAO_LLVM_LLC			:= $(DIR_DADAO_BUILD)/llvm-1600/bin/llc
