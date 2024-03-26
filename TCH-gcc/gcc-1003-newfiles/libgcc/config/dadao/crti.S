@@ -16,6 +16,10 @@ _start:
 	# rd5 as caller saved
 	rd2rd	rd32, rd31, 1
 
+	# call fflush(NULL) to flush all output streams
+	setzw	rd16, w0, 0
+	call	fflush
+
 	call	_fini
 
 	ldrb    rb2, rb1, 0
