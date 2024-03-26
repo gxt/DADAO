@@ -30,7 +30,7 @@ chipyard-0107-prepare:
 	@make -s -C $(DIR_DADAO_TOP) opcodes-highfive
 	@make -s -C $(DIR_DADAO_TOP) tests-bootrom-highfive
 	# Check necessary fesvr headers
-	@test -d $(DIR_DADAO_TARGET)/include/fesvr || make -s -C $(DIR_DADAO_TOP) rte-highfive
+	@test -d $(DIR_DADAO_TARGET)/include/fesvr || make -s -C $(DIR_DADAO_TOP) runtime-fesvr-highfive
 	# Generate instructions.scala
 	@make -s -C $(DIR_DADAO_TOP) opcodes-bitpat
 	@cat $(DIR_DADAO_TOP)/SOC-chipyard/instructions.scala-head		>  $(CHIPYARD_0107_INSTRUCTIONS)
