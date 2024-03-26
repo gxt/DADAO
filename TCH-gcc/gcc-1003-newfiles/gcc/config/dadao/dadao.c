@@ -927,6 +927,18 @@ static void dd_option_override (void)
 #undef	TARGET_OPTION_OVERRIDE
 #define	TARGET_OPTION_OVERRIDE				dd_option_override
 
+/* Fix newlib's ffs recursively calling itself.
+ * Copied from gcc/config/mmix/mmix.c .
+ * See commit e6bf23cce3ed63800f4545cd9a79e3500b24625c. */
+static void
+dadao_init_libfuncs (void)
+{
+  set_optab_libfunc (ffs_optab, SImode, "__ffsdi2");
+}
+
+#undef TARGET_INIT_LIBFUNCS
+#define TARGET_INIT_LIBFUNCS dadao_init_libfuncs
+
 /* XXX gccint 18.25 Node: Emulating TLS */
 /* (empty) */
 
