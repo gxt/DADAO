@@ -94,7 +94,7 @@ DadaoTargetLowering::DadaoTargetLowering(const TargetMachine &TM,
   setOperationAction(ISD::GlobalAddress, MVT::i64, Legal);
   setOperationAction(ISD::BlockAddress, MVT::i64, Custom);
   setOperationAction(ISD::JumpTable, MVT::i64, Custom);
-  setOperationAction(ISD::ConstantPool, MVT::i64, Custom);
+  setOperationAction(ISD::ConstantPool, MVT::i64, Legal);
 
   setOperationAction(ISD::DYNAMIC_STACKALLOC, MVT::i64, Custom);
   setOperationAction(ISD::STACKSAVE, MVT::Other, Expand);
@@ -171,8 +171,6 @@ SDValue DadaoTargetLowering::LowerOperation(SDValue Op,
   switch (Op.getOpcode()) {
   case ISD::BR_CC:
     return LowerBR_CC(Op, DAG);
-  case ISD::ConstantPool:
-    return LowerConstantPool(Op, DAG);
   case ISD::BlockAddress:
     return LowerBlockAddress(Op, DAG);
   case ISD::JumpTable:
@@ -1033,25 +1031,6 @@ const char *DadaoTargetLowering::getTargetNodeName(unsigned Opcode) const {
   default:
     return nullptr;
   }
-}
-
-SDValue DadaoTargetLowering::LowerConstantPool(SDValue Op,
-                                               SelectionDAG &DAG) const {
-  SDLoc DL(Op);
-  ConstantPoolSDNode *N = cast<ConstantPoolSDNode>(Op);
-  const Constant *C = N->getConstVal();
-
-  uint8_t OpFlagHi = DadaoII::MO_ABS_HI;
-  uint8_t OpFlagLo = DadaoII::MO_ABS_LO;
-
-  SDValue Hi = DAG.getTargetConstantPool(C, MVT::i64, N->getAlign(),
-                                           N->getOffset(), OpFlagHi);
-  SDValue Lo = DAG.getTargetConstantPool(C, MVT::i64, N->getAlign(),
-                                           N->getOffset(), OpFlagLo);
-  Hi = DAG.getNode(DadaoISD::HI, DL, MVT::i64, Hi);
-  Lo = DAG.getNode(DadaoISD::LO, DL, MVT::i64, Lo);
-  SDValue Result = DAG.getNode(ISD::OR, DL, MVT::i64, Hi, Lo);
-  return Result;
 }
 
 SDValue DadaoTargetLowering::LowerBlockAddress(SDValue Op,

@@ -82,6 +82,7 @@ private:
   void selectBR_CC(SDNode *N);
   void selectSELECT_CC(SDNode *N);
   void selectGlobalAddress(SDNode *N);
+  void selectConstantPool(SDNode *N);
 
   // Complex Pattern for address selection.
   bool selectAddrRRII(SDValue Addr, SDValue &Base, SDValue &Offset);
@@ -279,6 +280,9 @@ void DadaoDAGToDAGISel::Select(SDNode *Node) {
     return;
   case ISD::GlobalAddress:
     selectGlobalAddress(Node);
+    return;
+  case ISD::ConstantPool:
+    selectConstantPool(Node);
     return;
   default:
     break;
@@ -523,6 +527,14 @@ void DadaoDAGToDAGISel::selectGlobalAddress(SDNode *Node) {
   int64_t Offset = cast<GlobalAddressSDNode>(Node)->getOffset();
   SDValue tga = CurDAG->getTargetGlobalAddress(GV, DL, MVT::i64, Offset);
   ReplaceNode(Node, CurDAG->getMachineNode(Dadao::RD2RD_ORRI, DL, MVT::i64, tga));
+}
+
+void DadaoDAGToDAGISel::selectConstantPool(SDNode *Node) {
+  SDLoc DL(Node);
+  ConstantPoolSDNode *N = cast<ConstantPoolSDNode>(Node);
+  const Constant *C = N->getConstVal();
+  SDValue tcp = CurDAG->getTargetConstantPool(C, MVT::i64, N->getAlign(), N->getOffset());
+  ReplaceNode(Node, CurDAG->getMachineNode(Dadao::RD2RD_ORRI, DL, MVT::i64, tcp));
 }
 
 // createDadaoISelDag - This pass converts a legalized DAG into a
