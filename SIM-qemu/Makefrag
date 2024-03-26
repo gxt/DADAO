@@ -111,16 +111,3 @@ qemu-0801-highfive:
 qemu-0801-tags:
 	@make -C $(QEMU_0801_SOURCE) ctags
 
-qemu-dejagnu-prepare:
-	@mkdir -p $(DIR_DADAO_INSTALL)/usr/bin
-	@mkdir -p $(DIR_DADAO_INSTALL)/usr/share/dejagnu/baseboards
-	@ln -s -t $(DIR_DADAO_INSTALL)/usr/bin/ /usr/bin/runtest
-	@ln -s $(DIR_DADAO_INSTALL)/bin/qemu-dadao $(DIR_DADAO_INSTALL)/usr/bin/dadao-unknown-elf-run
-	@ln -s -t $(DIR_DADAO_INSTALL)/usr/share/dejagnu/			\
-		/usr/share/dejagnu/*.c						\
-		/usr/share/dejagnu/*.exp					\
-		/usr/share/dejagnu/libexec					\
-		/usr/share/dejagnu/config
-	@ln -s -t $(DIR_DADAO_INSTALL)/usr/share/dejagnu/baseboards/		\
-		/usr/share/dejagnu/baseboards/basic-sim.exp			\
-		$(DIR_DADAO_TOP)/SIM-qemu/qemu-dadao.exp

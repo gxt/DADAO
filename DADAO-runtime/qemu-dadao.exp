@@ -1,0 +1,22 @@
+load_generic_config						"sim"
+process_multilib_options				""
+
+if { [board_info $board obj_format] == "pe" } {
+  set	additional_options				"-Wl,-oformat,pe-dadao-little,--image-base,0"
+} else {
+  set	additional_options				""
+}
+
+load_base_board_description				"basic-sim"
+
+setup_sim		dadao
+set_board_info	compiler				"[find_gcc]"
+set_board_info	cflags					""
+set_board_info	ldflags					"$additional_options"
+set_board_info	ldscript				""
+set_board_info	gcc,stack_size			16384
+set_board_info	gdb,nosignals			1
+set_board_info	gcc,timeout				360
+set_board_info	needs_status_wrapper	1
+
+unset			additional_options
