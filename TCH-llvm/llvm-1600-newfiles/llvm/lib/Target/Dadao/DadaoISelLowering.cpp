@@ -120,9 +120,9 @@ DadaoTargetLowering::DadaoTargetLowering(const TargetMachine &TM,
   setOperationAction(ISD::SRA_PARTS, MVT::i64, Expand);
 
   setOperationAction(ISD::BSWAP, MVT::i64, Expand);
-  setOperationAction(ISD::CTPOP, MVT::i64, Legal);
-  setOperationAction(ISD::CTLZ, MVT::i64, Legal);
-  setOperationAction(ISD::CTTZ, MVT::i64, Legal);
+  setOperationAction(ISD::CTPOP, MVT::i64, Expand);
+  setOperationAction(ISD::CTLZ, MVT::i64, Expand);
+  setOperationAction(ISD::CTTZ, MVT::i64, Expand);
 
   setOperationAction(ISD::SIGN_EXTEND_INREG, MVT::i1, Expand);
   setOperationAction(ISD::SIGN_EXTEND_INREG, MVT::i8, Expand);
