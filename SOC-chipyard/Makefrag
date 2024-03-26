@@ -28,7 +28,7 @@ chipyard-0107-clean:
 
 chipyard-0107-prepare:
 	@make -s -C $(DIR_DADAO_TOP) opcodes-highfive
-	@make -s -C $(DIR_DADAO_TOP) tests-bootrom-highfive
+	@make -s -C $(DIR_DADAO_TOP) runtime-bootrom-highfive
 	# Check necessary fesvr headers
 	@test -d $(DIR_DADAO_TARGET)/include/fesvr || make -s -C $(DIR_DADAO_TOP) runtime-fesvr-highfive
 	# Generate instructions.scala
@@ -74,7 +74,7 @@ chipyard-0107-build:
 		make -j16 VERILATOR_THREADS=8							\
 			CONFIG=Wuming1StageConfig						\
 			BOOTROM_FILES=bootrom.dadao.img						\
-			BOOTROM_FILES_DIR=$(TESTS_BOOTROM_BUILD)				\
+			BOOTROM_FILES_DIR=$(RUNTIME_BOOTROM_TARGET)				\
 			sim_dir=$(CHIPYARD_0107_BUILD)
 	# build Wuming5StageConfig
 	@cd $(CHIPYARD_0107_SOURCE)/sims/verilator;						\
@@ -82,7 +82,7 @@ chipyard-0107-build:
 		make -j16 VERILATOR_THREADS=8							\
 			CONFIG=Wuming5StageConfig						\
 			BOOTROM_FILES=bootrom.dadao.img						\
-			BOOTROM_FILES_DIR=$(TESTS_BOOTROM_BUILD)				\
+			BOOTROM_FILES_DIR=$(RUNTIME_BOOTROM_TARGET)				\
 			sim_dir=$(CHIPYARD_0107_BUILD)
 
 chipyard-0107-run-binary-stage1:
@@ -90,7 +90,7 @@ chipyard-0107-run-binary-stage1:
 		RISCV=$(DIR_DADAO_TARGET)							\
 		make CONFIG=Wuming1StageConfig							\
 			BOOTROM_FILES=bootrom.dadao.img						\
-			BOOTROM_FILES_DIR=$(TESTS_BOOTROM_BUILD)				\
+			BOOTROM_FILES_DIR=$(RUNTIME_BOOTROM_TARGET)				\
 			sim_dir=$(CHIPYARD_0107_BUILD)						\
 			BINARY=$(CHIPYARD_0107_DADAO_BINARY)					\
 			run-binary
@@ -100,7 +100,7 @@ chipyard-0107-run-binary-stage5:
 		RISCV=$(DIR_DADAO_TARGET)							\
 		make CONFIG=Wuming5StageConfig							\
 			BOOTROM_FILES=bootrom.dadao.img						\
-			BOOTROM_FILES_DIR=$(TESTS_BOOTROM_BUILD)				\
+			BOOTROM_FILES_DIR=$(RUNTIME_BOOTROM_TARGET)				\
 			sim_dir=$(CHIPYARD_0107_BUILD)						\
 			BINARY=$(CHIPYARD_0107_DADAO_BINARY)					\
 			run-binary
