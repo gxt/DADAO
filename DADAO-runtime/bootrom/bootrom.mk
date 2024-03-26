@@ -11,7 +11,7 @@ dump: $(bootrom_dump)
 	$(DADAO_ELF_OBJCOPY) -O binary --change-addresses=-0x10000 $< $@
 
 %.elf: %.S linker.ld
-	$(DADAO_ELF_GCC) -I$(src_dir)/../env/ -Tlinker.ld $< -nostdlib -static -o $@
+	$(DADAO_ELF_GCC) -Iinclude -Tlinker.ld $< -nostdlib -static -o $@
 
 %.dump: %.elf
 	$(DADAO_ELF_OBJDUMP) -d $< > $@

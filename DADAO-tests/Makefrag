@@ -10,9 +10,6 @@ TESTS_BMARKS_BARE_TARGET	:= $(DIR_TESTS_TARGET)/bmarks-bare/
 TESTS_BMARKS_QEMU_SOURCE	:= $(DIR_TESTS_SOURCE)/bmarks-qemu/
 TESTS_BMARKS_QEMU_TARGET	:= $(DIR_TESTS_TARGET)/bmarks-qemu/
 
-TESTS_BOOTROM_SOURCE		:= $(DIR_TESTS_SOURCE)/bootrom/
-TESTS_BOOTROM_TARGET		:= $(DIR_TESTS_TARGET)/bootrom/
-
 TESTS_ISA_SOURCE			:= $(DIR_TESTS_SOURCE)/isa
 TESTS_ISA_BARE_TARGET		:= $(DIR_TESTS_TARGET)/isa-bare
 TESTS_ISA_QEMU_TARGET		:= $(DIR_TESTS_TARGET)/isa-qemu
@@ -64,21 +61,6 @@ include DADAO-tests/Makefrag-bmarks-qemu-mibench
 include DADAO-tests/Makefrag-llvm-testsuite
 
 include DADAO-tests/Makefrag-simple-multi-arch
-
-tests-bootrom-highfive:
-	#
-	# TARGET DIR: $(TESTS_BOOTROM_TARGET)
-	#
-	@rm -fr $(TESTS_BOOTROM_TARGET)
-	@mkdir -p $(TESTS_BOOTROM_TARGET)
-	@ln -s -t $(TESTS_BOOTROM_TARGET) $(RUNTIME_COMMON_MK)
-	@ln -s -t $(TESTS_BOOTROM_TARGET) $(TESTS_BOOTROM_SOURCE)/*
-	@echo "DIR_DADAO_TOP\t\t\t:= $(DIR_DADAO_TOP)"				>> $(TESTS_BOOTROM_TARGET)/Makefile
-	@echo "include common.mk"									>> $(TESTS_BOOTROM_TARGET)/Makefile
-	@echo ""													>> $(TESTS_BOOTROM_TARGET)/Makefile
-	@echo "src_dir\t\t\t\t:= $(TESTS_BOOTROM_SOURCE)"			>> $(TESTS_BOOTROM_TARGET)/Makefile
-	@echo "include Makefrag"									>> $(TESTS_BOOTROM_TARGET)/Makefile
-	@$(DADAO_MAKE) -C $(TESTS_BOOTROM_TARGET)
 
 tests-isa-bare-highfive:
 	#
