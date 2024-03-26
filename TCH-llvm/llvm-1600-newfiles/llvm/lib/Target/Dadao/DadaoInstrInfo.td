@@ -593,7 +593,7 @@ def BRP_RIII  : BRANCH_RIII<0b00101100, "brp">;
 def BRNP_RIII : BRANCH_RIII<0b00101101, "brnp">;
 
 class BRANCH_RRII<bits<8> majorop, string OpcString>
-  : Inst_RRII<majorop, (outs), (ins BrTarget:$Imm12, GPRD:$RxHa, GPRD:$RyHb), OpcString, "$RxHa, $Imm12",
+  : Inst_RRII<majorop, (outs), (ins BrTarget:$Imm12, GPRD:$RxHa, GPRD:$RyHb), OpcString, "$RxHa, $RyHb, $Imm12",
               []> {
     let isBranch = 1;
     let isBarrier = 1;
