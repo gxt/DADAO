@@ -444,6 +444,18 @@ void DadaoDAGToDAGISel::selectBR_CC(SDNode *Node) {
   EVT VT = Node->getValueType(0);
   SDValue Instr_a;
   SDNode *Instr_final;
+
+  if (CC == LPCC::ICC_PL) {
+    Instr_final = CurDAG->getMachineNode(Dadao::BRNN_RIII, DL, VT, SDValue(BranchDest,0), LHS, Chain);
+    ReplaceNode(Node, Instr_final);
+    return;
+  }
+  if (CC == LPCC::ICC_MI) {
+    Instr_final = CurDAG->getMachineNode(Dadao::BRN_RIII, DL, VT, SDValue(BranchDest,0), LHS, Chain);
+    ReplaceNode(Node, Instr_final);
+    return;
+  }
+
   unsigned OpcodeCmp = Dadao::INSTRUCTION_LIST_END;
   unsigned OpcodeBr = Dadao::INSTRUCTION_LIST_END;
   switch (CC) {
