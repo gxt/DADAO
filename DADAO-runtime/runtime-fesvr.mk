@@ -1,7 +1,6 @@
 #
 # Makefile for runtime-fesvr
 #
-RUNTIME_FESVR_LOCAL			:= /pub/GITHUB/riscv/riscv-isa-sim.git
 RUNTIME_FESVR_GITHUB		:= https://github.com/riscv/riscv-isa-sim.git
 
 RUNTIME_FESVR_SOURCE		:= $(DIR_DADAO_SOURCE)/runtime-fesvr
@@ -29,13 +28,8 @@ runtime-fesvr-source:
 	# Remove old runtime-fesvr source dir ...
 	@rm -fr $(RUNTIME_FESVR_SOURCE)
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
-ifeq ($(wildcard $(RUNTIME_FESVR_LOCAL)),)
 	# Clone remote repo
 	@git clone -q $(RUNTIME_FESVR_GITHUB) -- $(RUNTIME_FESVR_SOURCE)
-else
-	# Clone local repo
-	@git clone -q $(RUNTIME_FESVR_LOCAL) -- $(RUNTIME_FESVR_SOURCE)
-endif
 	# Checkout specified version
 	@cd $(RUNTIME_FESVR_SOURCE); git checkout -qb $(RUNTIME_FESVR_BRANCH) $(RUNTIME_FESVR_VERSION)
 	# Apply patches
@@ -63,19 +57,19 @@ runtime-fesvr-install:
 #	@make -C $(RUNTIME_FESVR_BUILD) install
 
 runtime-fesvr-highfive:
-	@echo "--- BUILD runtime-fesvr BEGIN ---"
-	# 0. Remove old runtime-fesvr logfiles
+	@echo "BUILD runtime-fesvr BEGIN                        at `date +%T`"
+	@echo "0. Remove old logfiles                           at `date +%T`"
 	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
 	@rm -fr $(RUNTIME_FESVR_LOG_STDOUT) $(RUNTIME_FESVR_LOG_STDERR)
-	# 1. Clean old runtime-fesvr ...
-	@make -s runtime-fesvr-clean				1>> $(RUNTIME_FESVR_LOG_STDOUT) 2>> $(RUNTIME_FESVR_LOG_STDERR)
-	# 2. Clone runtime-fesvr ...
-	@make -s runtime-fesvr-source				1>> $(RUNTIME_FESVR_LOG_STDOUT) 2>> $(RUNTIME_FESVR_LOG_STDERR)
-	# 3. Configure runtime-fesvr ...
-	@make -s runtime-fesvr-build-new			1>> $(RUNTIME_FESVR_LOG_STDOUT) 2>> $(RUNTIME_FESVR_LOG_STDERR)
-	# 4. Make runtime-fesvr ...
-	@make -s runtime-fesvr-build				1>> $(RUNTIME_FESVR_LOG_STDOUT) 2>> $(RUNTIME_FESVR_LOG_STDERR)
-	# 5. Install runtime-fesvr ...
-	@make -s runtime-fesvr-install				1>> $(RUNTIME_FESVR_LOG_STDOUT) 2>> $(RUNTIME_FESVR_LOG_STDERR)
-	@echo "--- BUILD runtime-fesvr DONE! ---"
+	@echo "1. Clean old dirs                                at `date +%T`"
+	@make -s runtime-fesvr-clean							1>> $(RUNTIME_FESVR_LOG_STDOUT) 2>> $(RUNTIME_FESVR_LOG_STDERR)
+	@echo "2. New source                                    at `date +%T`"
+	@make -s runtime-fesvr-source							1>> $(RUNTIME_FESVR_LOG_STDOUT) 2>> $(RUNTIME_FESVR_LOG_STDERR)
+	@echo "3. Configure                                     at `date +%T`"
+	@make -s runtime-fesvr-build-new						1>> $(RUNTIME_FESVR_LOG_STDOUT) 2>> $(RUNTIME_FESVR_LOG_STDERR)
+	@echo "4. Build                                         at `date +%T`"
+	@make -s runtime-fesvr-build							1>> $(RUNTIME_FESVR_LOG_STDOUT) 2>> $(RUNTIME_FESVR_LOG_STDERR)
+	@echo "5. Install                                       at `date +%T`"
+	@make -s runtime-fesvr-install							1>> $(RUNTIME_FESVR_LOG_STDOUT) 2>> $(RUNTIME_FESVR_LOG_STDERR)
+	@echo "BUILD runtime-fesvr DONE!                        at `date +%T`"
 
