@@ -39,6 +39,7 @@ include SOC-chipyard/*.mk
 include DADAO-opcodes/*.mk
 include DADAO-runtime/common.mk
 include DADAO-runtime/runtime-*.mk
+include DADAO-testset/testset-*.mk
 include DADAO-testset/Makefrag
 include ENV-proxylinux/Makefrag
 
@@ -79,12 +80,12 @@ dadao-highfive:
 	@make --silent soc-highfive
 	@echo "=== BUILD DONE! ==="
 	@echo "=== TEST@qemu  BEGIN ==="
-	@make --silent tests-isa-qemu-highfive
+	@make --silent testset-isa-qemu-highfive
 	@make --silent tests-bmarks-qemu-dhrystone-highfive
 #	@make --silent tests-bmarks-qemu-embench-highfive
 	@echo "=== TEST@qemu DONE! ==="
 	@echo "=== TEST@bare BEGIN ==="
-	@make --silent tests-isa-bare-highfive
+	@make --silent testset-isa-bare-highfive
 	@make --silent tests-bmarks-bare-highfive
 	@echo "=== TEST@bare DONE! ==="
 

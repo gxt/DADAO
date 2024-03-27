@@ -10,10 +10,6 @@ TESTS_BMARKS_BARE_TARGET	:= $(DIR_TESTS_TARGET)/bmarks-bare/
 TESTS_BMARKS_QEMU_SOURCE	:= $(DIR_TESTS_SOURCE)/bmarks-qemu/
 TESTS_BMARKS_QEMU_TARGET	:= $(DIR_TESTS_TARGET)/bmarks-qemu/
 
-TESTS_ISA_SOURCE			:= $(DIR_TESTS_SOURCE)/isa
-TESTS_ISA_BARE_TARGET		:= $(DIR_TESTS_TARGET)/isa-bare
-TESTS_ISA_QEMU_TARGET		:= $(DIR_TESTS_TARGET)/isa-qemu
-
 TESTS_SIMPLE_SOURCE			:= $(DIR_TESTS_SOURCE)/simple
 TESTS_SIMPLE_TARGET			:= $(DIR_TESTS_TARGET)/simple
 
@@ -61,40 +57,6 @@ include DADAO-testset/Makefrag-bmarks-qemu-mibench
 include DADAO-testset/Makefrag-llvm-testsuite
 
 include DADAO-testset/Makefrag-simple-multi-arch
-
-tests-isa-bare-highfive:
-	#
-	# TARGET DIR: $(TESTS_ISA_BARE_TARGET)
-	# NOTE: CAN ONLY RUN ONE BY ONE, so add j1 option for make
-	#
-	@rm -fr $(TESTS_ISA_BARE_TARGET)
-	@mkdir -p $(TESTS_ISA_BARE_TARGET)
-	@ln -s -t $(TESTS_ISA_BARE_TARGET) $(RUNTIME_COMMON_MK)
-	@ln -s -t $(TESTS_ISA_BARE_TARGET) $(TESTS_ISA_SOURCE)/Makefrag
-	@echo "DIR_DADAO_TOP\t\t\t:= $(DIR_DADAO_TOP)"				>  $(TESTS_ISA_BARE_TARGET)/Makefile
-	@echo "include common.mk"									>> $(TESTS_ISA_BARE_TARGET)/Makefile
-	@echo ""													>> $(TESTS_ISA_BARE_TARGET)/Makefile
-	@echo "src_dir\t\t\t\t:= $(TESTS_ISA_SOURCE)"				>> $(TESTS_ISA_BARE_TARGET)/Makefile
-	@echo "include Makefrag"									>> $(TESTS_ISA_BARE_TARGET)/Makefile
-	@$(DADAO_MAKE) -j1 -C $(TESTS_ISA_BARE_TARGET) dduii-bare
-	@$(DADAO_MAKE) -j1 -C $(TESTS_ISA_BARE_TARGET) run-bare
-
-tests-isa-qemu-highfive:
-	#
-	# TARGET DIR: $(TESTS_ISA_QEMU_TARGET)
-	# NOTE: CAN ONLY RUN ONE BY ONE, so add j1 option for make
-	#
-	@rm -fr $(TESTS_ISA_QEMU_TARGET)
-	@mkdir -p $(TESTS_ISA_QEMU_TARGET)
-	@ln -s -t $(TESTS_ISA_QEMU_TARGET) $(RUNTIME_COMMON_MK)
-	@ln -s -t $(TESTS_ISA_QEMU_TARGET) $(TESTS_ISA_SOURCE)/Makefrag
-	@echo "DIR_DADAO_TOP\t\t\t:= $(DIR_DADAO_TOP)"				>  $(TESTS_ISA_QEMU_TARGET)/Makefile
-	@echo "include common.mk"									>> $(TESTS_ISA_QEMU_TARGET)/Makefile
-	@echo ""													>> $(TESTS_ISA_QEMU_TARGET)/Makefile
-	@echo "src_dir\t\t\t\t:= $(TESTS_ISA_SOURCE)"				>> $(TESTS_ISA_QEMU_TARGET)/Makefile
-	@echo "include Makefrag"									>> $(TESTS_ISA_QEMU_TARGET)/Makefile
-	@$(DADAO_MAKE) -j1 -C $(TESTS_ISA_QEMU_TARGET) dduii-qemu
-	@$(DADAO_MAKE) -j1 -C $(TESTS_ISA_QEMU_TARGET) run-qemu
 
 tests-simple-llvm-highfive:
 	#
