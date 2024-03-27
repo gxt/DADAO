@@ -2,7 +2,7 @@
 # Makefile for tests
 #
 
-DIR_TESTS_SOURCE		:= $(DIR_DADAO_TOP)/DADAO-tests
+DIR_TESTS_SOURCE		:= $(DIR_DADAO_TOP)/DADAO-testset
 DIR_TESTS_TARGET		:= $(DIR_DADAO_TARGET)
 
 TESTS_BMARKS_BARE_SOURCE	:= $(DIR_TESTS_SOURCE)/bmarks-bare/
@@ -55,12 +55,12 @@ tests-bmarks-qemu-dhrystone-highfive:
 		-D $(TESTS_BMARKS_QEMU_TARGET)/dhrystone/dhrystone.qemulog		\
 		$(TESTS_BMARKS_QEMU_TARGET)/dhrystone/dhry
 
-include DADAO-tests/Makefrag-bmarks-qemu-embench
-include DADAO-tests/Makefrag-bmarks-qemu-coremark
-include DADAO-tests/Makefrag-bmarks-qemu-mibench
-include DADAO-tests/Makefrag-llvm-testsuite
+include DADAO-testset/Makefrag-bmarks-qemu-embench
+include DADAO-testset/Makefrag-bmarks-qemu-coremark
+include DADAO-testset/Makefrag-bmarks-qemu-mibench
+include DADAO-testset/Makefrag-llvm-testsuite
 
-include DADAO-tests/Makefrag-simple-multi-arch
+include DADAO-testset/Makefrag-simple-multi-arch
 
 tests-isa-bare-highfive:
 	#
