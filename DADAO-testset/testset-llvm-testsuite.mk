@@ -2,29 +2,29 @@
 # Makefile for llvm-testsuite
 #
 
-LLVM_TESTSUITE_LOCAL		:= /pub/GITHUB/llvm/llvm-test-suite.git
+LLVM_TESTSUITE_GITHUB		:= https://github.com/llvm/llvm-test-suite.git
 LLVM_TESTSUITE_VERSION		:= llvmorg-16.0.0
 LLVM_TESTSUITE_BRANCH		:= dadao-1600
 
-LLVM_TESTSUITE_NEWFILES		:= $(DIR_DADAO_TOP)/TCH-llvm/llvm-testsuite-newfiles
-LLVM_TESTSUITE_PATCHES		:= $(DIR_DADAO_TOP)/TCH-llvm/llvm-testsuite-patches
+LLVM_TESTSUITE_NEWFILES		:= $(DIR_DADAO_TOP)/DADAO-testset/llvm-testsuite-newfiles
+LLVM_TESTSUITE_PATCHES		:= $(DIR_DADAO_TOP)/DADAO-testset/llvm-testsuite-patches
 
 LLVM_TESTSUITE_SOURCE		:= $(DIR_DADAO_SOURCE)/llvm-testsuite
 LLVM_TESTSUITE_BUILD		:= $(DIR_DADAO_BUILD)/llvm-testsuite
 LLVM_TESTSUITE_LOG_STDOUT	:= $(DIR_DADAO_LOG)/llvm-testsuite.out
 LLVM_TESTSUITE_LOG_STDERR	:= $(DIR_DADAO_LOG)/llvm-testsuite.err
 
-tests-llvm-testsuite-clean:
+testset-llvm-testsuite-clean:
 	# Remove old llvm-testsuite source dir ...
 	@rm -fr $(LLVM_TESTSUITE_SOURCE)
 	# Remove old llvm-testsuite build dir ...
 	@rm -fr $(LLVM_TESTSUITE_BUILD)
 
-tests-llvm-testsuite-source:
+testset-llvm-testsuite-source:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@rm -fr $(LLVM_TESTSUITE_SOURCE)
 	# Clone local repo
-	@git clone -q $(LLVM_TESTSUITE_LOCAL) -- $(LLVM_TESTSUITE_SOURCE)
+	@git clone -q $(LLVM_TESTSUITE_GITHUB) -- $(LLVM_TESTSUITE_SOURCE)
 	# Specify version
 	@cd $(LLVM_TESTSUITE_SOURCE); git checkout -qb $(LLVM_TESTSUITE_BRANCH) $(LLVM_TESTSUITE_VERSION)
 	# New files
@@ -32,13 +32,13 @@ tests-llvm-testsuite-source:
 	# Patches
 	@cd $(LLVM_TESTSUITE_SOURCE); test ! -d $(LLVM_TESTSUITE_PATCHES) || git am $(LLVM_TESTSUITE_PATCHES)/*.patch
 
-tests-llvm-testsuite-build-new:
+testset-llvm-testsuite-build-new:
 	@rm -fr $(LLVM_TESTSUITE_BUILD)
 	@mkdir -p $(LLVM_TESTSUITE_BUILD)
 	# NOTE: $(LLVM_TESTSUITE_SOURCE)/build is softlink to $(LLVM_TESTSUITE_BUILD)
 	@ln -s $(LLVM_TESTSUITE_BUILD) $(LLVM_TESTSUITE_SOURCE)/build
 
-tests-llvm-testsuite-build:
+testset-llvm-testsuite-build:
 	@cmake -S $(LLVM_TESTSUITE_SOURCE) -B $(LLVM_TESTSUITE_BUILD) \
 		-DTEST_SUITE_USER_MODE_EMULATION=True\
 		-DCMAKE_BUILD_TYPE=Debug\
@@ -53,23 +53,23 @@ tests-llvm-testsuite-build:
 		-DCMAKE_C_FLAGS="-I$(DIR_DADAO_INSTALL)/dadao-unknown-elf/include/ -D__DADAO__=1"\
 		-DLINK_OPTIONS='--defsym;__.DADAO.start..text=0x400000'
 
-tests-llvm-testsuite-runtest:
+testset-llvm-testsuite-runtest:
 	@cd $(LLVM_TESTSUITE_SOURCE); DIR_DADAO_TOP=$(DIR_DADAO_TOP) ./run-testsuite.py
 
 
-tests-llvm-testsuite-highfive:
+testset-llvm-testsuite-highfive:
 	@echo "BEGIN TO BUILD llvm-testsuite                    at `date +%T`"
 	@echo "0. Remove old logfiles                           at `date +%T`"
 	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
 	@rm -fr $(LLVM_TESTSUITE_LOG_STDOUT) $(LLVM_TESTSUITE_LOG_STDERR)
 	@echo "1. Clean old dirs                                at `date +%T`"
-	@make -s tests-llvm-testsuite-clean					1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
+	@make -s testset-llvm-testsuite-clean					1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
 	@echo "2. New source                                    at `date +%T`"
-	@make -s tests-llvm-testsuite-source				1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
+	@make -s testset-llvm-testsuite-source					1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
 	@echo "3. Configure                                     at `date +%T`"
-	@make -s tests-llvm-testsuite-build-new				1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
+	@make -s testset-llvm-testsuite-build-new				1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
 	@echo "4. Build                                         at `date +%T`"
-	@make -s tests-llvm-testsuite-build					1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
+	@make -s testset-llvm-testsuite-build					1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
 	@echo "5. Runtest                                       at `date +%T`"
-	@make -s tests-llvm-testsuite-runtest				1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
-	@echo "BUILD tests-llvm-testsuite DONE!                 at `date +%T`"
+	@make -s testset-llvm-testsuite-runtest					1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
+	@echo "BUILD llvm-testsuite DONE!                       at `date +%T`"
