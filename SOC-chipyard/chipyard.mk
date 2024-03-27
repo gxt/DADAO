@@ -79,7 +79,7 @@ chipyard-0107-build:
 			BOOTROM_FILES_DIR=$(RUNTIME_BOOTROM_TARGET)				\
 			sim_dir=$(CHIPYARD_0107_BUILD)
 
-chipyard-0107-run-binary-stage1:
+chipyard-0107-run-binary-Wuming1StageConfig:
 	@cd $(CHIPYARD_0107_SOURCE)/sims/verilator;						\
 		RISCV=$(DIR_DADAO_TARGET)							\
 		make CONFIG=Wuming1StageConfig							\
@@ -89,7 +89,7 @@ chipyard-0107-run-binary-stage1:
 			BINARY=$(CHIPYARD_0107_DADAO_BINARY)					\
 			run-binary
 
-chipyard-0107-run-binary-stage5:
+chipyard-0107-run-binary-Wuming5StageConfig:
 	@cd $(CHIPYARD_0107_SOURCE)/sims/verilator;						\
 		RISCV=$(DIR_DADAO_TARGET)							\
 		make CONFIG=Wuming5StageConfig							\
@@ -99,12 +99,12 @@ chipyard-0107-run-binary-stage5:
 			BINARY=$(CHIPYARD_0107_DADAO_BINARY)					\
 			run-binary
 
-chipyard-0107-tracer-stage1:
+chipyard-0107-tracer-Wuming1StageConfig:
 	# analyzes the contents of the omitted trace file and generates basic statistics
 	@$(OPCODES_DST_DIR)/tracer.py								\
 		$(CHIPYARD_0107_BUILD)/output/chipyard.TestHarness.Wuming1StageConfig/dhrystone.out
 
-chipyard-0107-tracer-stage5:
+chipyard-0107-tracer-Wuming5StageConfig:
 	# analyzes the contents of the omitted trace file and generates basic statistics
 	@$(OPCODES_DST_DIR)/tracer.py								\
 		$(CHIPYARD_0107_BUILD)/output/chipyard.TestHarness.Wuming5StageConfig/dhrystone.out
