@@ -41,7 +41,6 @@ include SOC-chipyard/*.mk
 include DADAO-opcodes/*.mk
 include DADAO-runtime/runtime-*.mk
 include DADAO-testset/testset-*.mk
-include DADAO-testset/Makefrag
 include ENV-proxylinux/Makefrag
 
 tch-gnu-highfive:
