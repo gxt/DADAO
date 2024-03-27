@@ -1,7 +1,7 @@
 #ifndef DADAO_ENCODING_H
 #define DADAO_ENCODING_H
 
-#include "assembler.h"
+#include "simrisc/assembler.h"
 
 // TODO: SHOULD redefine following regs, but now reuse risc-v csr module
 #if 1

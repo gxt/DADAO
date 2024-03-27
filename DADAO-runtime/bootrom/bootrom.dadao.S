@@ -1,6 +1,6 @@
 #define BOOTADDR_REG 0x4000
 
-#include "encoding.h"
+#include "simrisc/encoding.h"
 
 // boot all cores (only hart 0) and jump to main program execution
 .section .text.start, "ax", @progbits
