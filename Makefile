@@ -34,7 +34,7 @@ include TCH-newlib-cygwin/Makefrag
 include TCH-llvm/Makefrag
 include ENV-linux/Makefrag
 include SIM-qemu/Makefrag
-include SOC-chipyard/Makefrag
+include SOC-chipyard/*.mk
 
 include DADAO-opcodes/*.mk
 include DADAO-runtime/common.mk
