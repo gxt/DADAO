@@ -14,9 +14,6 @@ CHIPYARD_0107_NEWFILES		:= $(DIR_DADAO_TOP)/SOC-chipyard/chipyard-0107-newfiles
 CHIPYARD_0107_PATCHES		:= $(DIR_DADAO_TOP)/SOC-chipyard/chipyard-0107-patches
 CHIPYARD_0107_INSTRUCTIONS	:= $(CHIPYARD_0107_NEWFILES)/generators/dadao-wuming/src/main/scala/common/instructions.scala
 
-#CHIPYARD_0107_DADAO_BINARY	?= $(CHIPYARD_0107_SOURCE)/generators/riscv-sodor/riscv-bmarks/dhrystone.riscv
-CHIPYARD_0107_DADAO_BINARY	?= $(DIR_DADAO_TARGET)/bmarks-bare/dhrystone.dadao
-
 chipyard-0107-clean:
 	@echo "Remove old chipyard source dir ..."
 	@rm -fr $(CHIPYARD_0107_SOURCE)
@@ -62,52 +59,13 @@ chipyard-0107-build-new:
 	@mkdir -p $(CHIPYARD_0107_BUILD)
 
 chipyard-0107-build:
-	# build Wuming1StageConfig
 	@cd $(CHIPYARD_0107_SOURCE)/sims/verilator;						\
 		RISCV=$(DIR_DADAO_TARGET)							\
 		make -j16 VERILATOR_THREADS=8							\
-			CONFIG=Wuming1StageConfig						\
+			CONFIG=$(RUNTIME_BARE_CONFIG)						\
 			BOOTROM_FILES=bootrom.dadao.img						\
 			BOOTROM_FILES_DIR=$(RUNTIME_BOOTROM_TARGET)				\
 			sim_dir=$(CHIPYARD_0107_BUILD)
-	# build Wuming5StageConfig
-	@cd $(CHIPYARD_0107_SOURCE)/sims/verilator;						\
-		RISCV=$(DIR_DADAO_TARGET)							\
-		make -j16 VERILATOR_THREADS=8							\
-			CONFIG=Wuming5StageConfig						\
-			BOOTROM_FILES=bootrom.dadao.img						\
-			BOOTROM_FILES_DIR=$(RUNTIME_BOOTROM_TARGET)				\
-			sim_dir=$(CHIPYARD_0107_BUILD)
-
-chipyard-0107-run-binary-Wuming1StageConfig:
-	@cd $(CHIPYARD_0107_SOURCE)/sims/verilator;						\
-		RISCV=$(DIR_DADAO_TARGET)							\
-		make CONFIG=Wuming1StageConfig							\
-			BOOTROM_FILES=bootrom.dadao.img						\
-			BOOTROM_FILES_DIR=$(RUNTIME_BOOTROM_TARGET)				\
-			sim_dir=$(CHIPYARD_0107_BUILD)						\
-			BINARY=$(CHIPYARD_0107_DADAO_BINARY)					\
-			run-binary
-
-chipyard-0107-run-binary-Wuming5StageConfig:
-	@cd $(CHIPYARD_0107_SOURCE)/sims/verilator;						\
-		RISCV=$(DIR_DADAO_TARGET)							\
-		make CONFIG=Wuming5StageConfig							\
-			BOOTROM_FILES=bootrom.dadao.img						\
-			BOOTROM_FILES_DIR=$(RUNTIME_BOOTROM_TARGET)				\
-			sim_dir=$(CHIPYARD_0107_BUILD)						\
-			BINARY=$(CHIPYARD_0107_DADAO_BINARY)					\
-			run-binary
-
-chipyard-0107-tracer-Wuming1StageConfig:
-	# analyzes the contents of the omitted trace file and generates basic statistics
-	@$(OPCODES_DST_DIR)/tracer.py								\
-		$(CHIPYARD_0107_BUILD)/output/chipyard.TestHarness.Wuming1StageConfig/dhrystone.out
-
-chipyard-0107-tracer-Wuming5StageConfig:
-	# analyzes the contents of the omitted trace file and generates basic statistics
-	@$(OPCODES_DST_DIR)/tracer.py								\
-		$(CHIPYARD_0107_BUILD)/output/chipyard.TestHarness.Wuming5StageConfig/dhrystone.out
 
 chipyard-0107-highfive:
 	@echo "BEGIN TO BUILD chipyard                          at `date +%T`"
