@@ -13,5 +13,5 @@ runtime-bootrom-highfive:	runtime-common-headers
 	@echo "DIR_DADAO_TOP\t\t\t:= $(DIR_DADAO_TOP)"				>> $(RUNTIME_BOOTROM_TARGET)/Makefile
 	@echo "include common.mk"									>> $(RUNTIME_BOOTROM_TARGET)/Makefile
 	@echo "include bootrom.mk"									>> $(RUNTIME_BOOTROM_TARGET)/Makefile
-	@$(DADAO_MAKE) -C $(RUNTIME_BOOTROM_TARGET)
+	@$(DADAO_MAKE) -C $(RUNTIME_BOOTROM_TARGET) default
 
