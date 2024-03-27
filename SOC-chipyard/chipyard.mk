@@ -1,13 +1,12 @@
 #
 # Makefile for SoC in chipyard
 #
-CHIPYARD_0107_LOCAL		:= /pub/GITHUB/ucb-bar/chipyard.git
 CHIPYARD_0107_GITHUB		:= https://github.com/ucb-bar/chipyard.git
 CHIPYARD_0107_VERSION		:= 1.7.0
 CHIPYARD_0107_BRANCH		:= dadao
 
 CHIPYARD_0107_SOURCE		:= $(DIR_DADAO_SOURCE)/chipyard-0107
-CHIPYARD_0107_BUILD		:= $(DIR_DADAO_BUILD)/chipyard-0107
+CHIPYARD_0107_BUILD			:= $(DIR_DADAO_BUILD)/chipyard-0107
 CHIPYARD_0107_LOG_STDOUT	:= $(DIR_DADAO_LOG)/chipyard-0107.out
 CHIPYARD_0107_LOG_STDERR	:= $(DIR_DADAO_LOG)/chipyard-0107.err
 
@@ -40,13 +39,8 @@ chipyard-0107-prepare:
 chipyard-0107-source:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@rm -fr $(CHIPYARD_0107_SOURCE)
-ifeq ($(wildcard $(CHIPYARD_0107_LOCAL)),)
-	# Clone remote repo
+	# Clone github repo
 	@git clone -q $(CHIPYARD_0107_GITHUB) -- $(CHIPYARD_0107_SOURCE)
-else
-	# Clone local repo
-	@git clone -q $(CHIPYARD_0107_LOCAL) -- $(CHIPYARD_0107_SOURCE)
-endif
 	@cd $(CHIPYARD_0107_SOURCE); git checkout -qb $(CHIPYARD_0107_BRANCH) $(CHIPYARD_0107_VERSION)
 	# Setup submodules by terribly downloading git repos from github.com
 	@cd $(CHIPYARD_0107_SOURCE); ./scripts/init-submodules-no-riscv-tools.sh
@@ -116,20 +110,20 @@ chipyard-0107-tracer-stage5:
 		$(CHIPYARD_0107_BUILD)/output/chipyard.TestHarness.Wuming5StageConfig/dhrystone.out
 
 chipyard-0107-highfive:
-	@echo "--- BUILD chipyard-0107 BEGIN ---"
-	# 0. Remove old chipyard logfiles
+	@echo "BEGIN TO BUILD chipyard                          at `date +%T`"
+	@echo "0. Remove old logfiles                           at `date +%T`"
 	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
 	@rm -fr $(CHIPYARD_0107_LOG_STDOUT) $(CHIPYARD_0107_LOG_STDERR)
-	# 1. Clean old chipyard ...
+	@echo "1. Clean old dirs                                at `date +%T`"
 	@make -s chipyard-0107-clean			1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
-	# 2. Prepare chipyard ...
+	@echo "2. Prepare                                       at `date +%T`"
 	@make -s chipyard-0107-prepare			1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
-	# 3. Clone chipyard ...
+	@echo "3. New source                                    at `date +%T`"
 	@make -s chipyard-0107-source			1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
-	# 4. Clean chipyard build dir ...
+	@echo "4. Configure                                     at `date +%T`"
 	@make -s chipyard-0107-build-new		1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
-	# 5. Build chipyard ...
+	@echo "5. Build                                         at `date +%T`"
 	@make -s chipyard-0107-build			1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
 	# No installation needed
-	@echo "--- BUILD chipyard-0107 DONE! ---"
+	@echo "BUILD chipyard DONE!                             at `date +%T`"
 
