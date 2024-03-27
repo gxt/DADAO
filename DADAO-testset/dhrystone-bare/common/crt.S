@@ -1,6 +1,6 @@
 # See LICENSE for license details.
 
-#include "encoding.h"
+#include "simrisc/encoding.h"
 
 	.section ".text.init"
 	.globl	_start

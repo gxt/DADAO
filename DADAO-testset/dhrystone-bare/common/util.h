@@ -75,7 +75,7 @@ static uintptr_t insn_len(uintptr_t pc)
 }
 
 #ifdef __dadao__
-#include "encoding.h"
+#include "simrisc/encoding.h"
 #endif
 
 #define stringify_1(s) #s

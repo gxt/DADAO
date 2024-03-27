@@ -16,7 +16,7 @@ bmarks = \
 DADAO_ELF_GCC_EXTRA_FLAGS	:= -DPREALLOCATE=1 -std=gnu99 -ffast-math -fno-common -fno-builtin-printf -fno-tree-loop-distribute-patterns -Xassembler --multiple-to-single
 DADAO_ELF_LINK_EXTRA_FLAGS	:= -T $(src_dir)/common/benchmarks.ld
 
-incs  += -I$(src_dir)/../env -I$(src_dir)/common $(addprefix -I$(src_dir)/, $(bmarks))
+incs  += -I$(src_dir)/../include -I$(src_dir)/common $(addprefix -I$(src_dir)/, $(bmarks))
 objs  :=
 
 define compile_template
