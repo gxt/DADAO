@@ -4,8 +4,8 @@
 
 src_dir ?= .
 
-include $(src_dir)/dduii/Makefrag
-include $(src_dir)/ddfii/Makefrag
+include $(src_dir)/dduii/dduii.mk
+include $(src_dir)/ddfii/ddfii.mk
 
 default: all
 
