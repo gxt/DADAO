@@ -27,6 +27,8 @@ all:
 	@echo "- VERSION 0.4 -"
 	@echo ""
 
+include DADAO-runtime/common.mk
+
 include TCH-binutils-gdb/Makefrag
 include TCH-gcc/Makefrag
 include TCH-glibc/Makefrag
@@ -37,7 +39,6 @@ include SIM-qemu/Makefrag
 include SOC-chipyard/*.mk
 
 include DADAO-opcodes/*.mk
-include DADAO-runtime/common.mk
 include DADAO-runtime/runtime-*.mk
 include DADAO-testset/testset-*.mk
 include DADAO-testset/Makefrag
