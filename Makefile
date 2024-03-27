@@ -81,12 +81,11 @@ dadao-highfive:
 	@echo "=== BUILD DONE! ==="
 	@echo "=== TEST@qemu  BEGIN ==="
 	@make --silent testset-isa-qemu-highfive
-	@make --silent tests-bmarks-qemu-dhrystone-highfive
-#	@make --silent tests-bmarks-qemu-embench-highfive
+	@make --silent testset-dhrystone-qemu-highfive
 	@echo "=== TEST@qemu DONE! ==="
 	@echo "=== TEST@bare BEGIN ==="
 	@make --silent testset-isa-bare-highfive
-	@make --silent tests-bmarks-bare-highfive
+	@make --silent testset-dhrystone-bare-highfive
 	@echo "=== TEST@bare DONE! ==="
 
 dadao-clean:
