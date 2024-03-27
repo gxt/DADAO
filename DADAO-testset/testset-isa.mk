@@ -11,6 +11,7 @@ testset-isa-bare-highfive:	runtime-common-headers
 	@mkdir -p $(TESTSET_ISA_BARE_TARGET)
 	@ln -s -t $(TESTSET_ISA_BARE_TARGET) $(RUNTIME_COMMON_MK)
 	@ln -s -t $(TESTSET_ISA_BARE_TARGET) $(TESTSET_ISA_SOURCE)/*
+	@ln -s -t $(TESTSET_ISA_BARE_TARGET) $(CHIPYARD_0107_BUILD)/output
 	@echo "DIR_DADAO_TOP\t\t\t:= $(DIR_DADAO_TOP)"				>  $(TESTSET_ISA_BARE_TARGET)/Makefile
 	@echo "include common.mk"									>> $(TESTSET_ISA_BARE_TARGET)/Makefile
 	@echo "include isa.mk"										>> $(TESTSET_ISA_BARE_TARGET)/Makefile
