@@ -9,7 +9,6 @@ TESTS_SIMPLE_SOURCE			:= $(DIR_TESTS_SOURCE)/simple
 TESTS_SIMPLE_TARGET			:= $(DIR_TESTS_TARGET)/simple
 
 include DADAO-testset/Makefrag-bmarks-qemu-embench
-include DADAO-testset/Makefrag-bmarks-qemu-coremark
 include DADAO-testset/Makefrag-bmarks-qemu-mibench
 include DADAO-testset/Makefrag-llvm-testsuite
 
