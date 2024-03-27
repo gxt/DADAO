@@ -12,7 +12,7 @@ testset-isa-bare-highfive:	runtime-common-headers
 	@ln -s -t $(TESTSET_ISA_BARE_TARGET) $(RUNTIME_COMMON_MK)
 	@ln -s -t $(TESTSET_ISA_BARE_TARGET) $(TESTSET_ISA_SOURCE)/*
 	@echo "DIR_DADAO_TOP\t\t\t:= $(DIR_DADAO_TOP)"				>  $(TESTSET_ISA_BARE_TARGET)/Makefile
-	@echo "include $(RUNTIME_COMMON_MK)"						>> $(TESTSET_ISA_BARE_TARGET)/Makefile
+	@echo "include common.mk"									>> $(TESTSET_ISA_BARE_TARGET)/Makefile
 	@echo "include isa.mk"										>> $(TESTSET_ISA_BARE_TARGET)/Makefile
 	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_BARE_TARGET) dduii-bare
 	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_BARE_TARGET) run-bare
@@ -27,7 +27,7 @@ testset-isa-qemu-highfive:	runtime-common-headers
 	@ln -s -t $(TESTSET_ISA_QEMU_TARGET) $(RUNTIME_COMMON_MK)
 	@ln -s -t $(TESTSET_ISA_BARE_TARGET) $(TESTSET_ISA_SOURCE)/*
 	@echo "DIR_DADAO_TOP\t\t\t:= $(DIR_DADAO_TOP)"				>  $(TESTSET_ISA_QEMU_TARGET)/Makefile
-	@echo "include $(RUNTIME_COMMON_MK)"						>> $(TESTSET_ISA_BARE_TARGET)/Makefile
+	@echo "include common.mk"									>> $(TESTSET_ISA_BARE_TARGET)/Makefile
 	@echo "include isa.mk"										>> $(TESTSET_ISA_BARE_TARGET)/Makefile
 	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_QEMU_TARGET) dduii-qemu
 	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_QEMU_TARGET) run-qemu
