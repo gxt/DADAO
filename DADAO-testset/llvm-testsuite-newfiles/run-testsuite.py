@@ -26,12 +26,14 @@ os.chdir("SingleSource/UnitTests")
 
 # Only C targets, excluding C++.
 # Files containing float/double keywords also excluded.
+# Files related to ms_struct excluded.
 
 # all_targets=$(ls -l *.c | awk '{print $9}' | cut -d '.' -f1 | sort | uniq)
 # skip_targets=$(grep -nl 'double\|float' *.c  | cut -d '.' -f1 | sort | uniq)
 # targets=$(comm -13 <(echo "$skip_targets" ) <(echo "$all_targets"))
 
-all_targets, _ = get_command_stdout("ls -l *.c | awk '{print $9}' | cut -d '.' -f1 | sort | uniq", checked=True)
+# 2006-12-01-float_varg will cause qemu to run infinitely.
+all_targets, _ = get_command_stdout("ls -l *.c | awk '{print $9}' | cut -d '.' -f1 | sort | uniq | grep -v ms_struct | grep -v 2006-12-01-float_varg", checked=True)
 skip_targets, _ = get_command_stdout("grep -nl 'double\|float' *.c  | cut -d '.' -f1 | sort | uniq", checked=True)
 targets, _ = get_command_stdout('comm -13 <(echo "{}" ) <(echo "{}")'.format(skip_targets.strip(), all_targets.strip()), checked=True)
 
@@ -48,7 +50,7 @@ n_run_succ=0
 
 for target in targets.split():
     n_total += 1
-    print("Trying to build target: {}".format(target))
+    print("Trying to build target: {}".format(target), flush=True)
     out, rc = get_command_stdout("make {} 1>&2".format(target))
     if rc == 0:
         print("Target {} build succeeds".format(target))
