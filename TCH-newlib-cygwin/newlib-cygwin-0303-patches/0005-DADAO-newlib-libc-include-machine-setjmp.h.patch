@@ -18,8 +18,8 @@ index 55152b0d7..230a29942 100644
  
 +#ifdef __DADAO__
 +/* Using a layout compatible with GCC's built-in.  */
-+#define _JBLEN 5
-+#define _JBTYPE unsigned long
++#define _JBLEN 162
++#define _JBTYPE unsigned long long
 +#endif
 +
  #ifdef __mt__
