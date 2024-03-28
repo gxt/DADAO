@@ -340,17 +340,17 @@ static bool trans_LDMTU(DisasContext *ctx, arg_LDMTU *a)
 
 static bool trans_LDMRB(DisasContext *ctx, arg_LDMRB *a)
 {
-    return trans_ldm_all(ctx, a, cpu_rd, MO_TEUQ);
+    return trans_ldm_all(ctx, a, cpu_rb, MO_TEUQ);
 }
 
 static bool trans_LDMFT(DisasContext *ctx, arg_LDMFT *a)
 {
-    return trans_ldm_all(ctx, a, cpu_rd, MO_TEUL);
+    return trans_ldm_all(ctx, a, cpu_rf, MO_TEUL);
 }
 
 static bool trans_LDMFO(DisasContext *ctx, arg_LDMFO *a)
 {
-    return trans_ldm_all(ctx, a, cpu_rd, MO_TEUQ);
+    return trans_ldm_all(ctx, a, cpu_rf, MO_TEUQ);
 }
 
 static bool trans_LDMRA(DisasContext *ctx, arg_LDMRA *a)
@@ -380,17 +380,17 @@ static bool trans_STMO(DisasContext *ctx, arg_STMO *a)
 
 static bool trans_STMRB(DisasContext *ctx, arg_STMRB *a)
 {
-    return trans_stm_all(ctx, a, cpu_rd, MO_TEUQ);
+    return trans_stm_all(ctx, a, cpu_rb, MO_TEUQ);
 }
 
 static bool trans_STMFT(DisasContext *ctx, arg_STMFT *a)
 {
-    return trans_stm_all(ctx, a, cpu_rd, MO_TEUL);
+    return trans_stm_all(ctx, a, cpu_rf, MO_TEUL);
 }
 
 static bool trans_STMFO(DisasContext *ctx, arg_STMFO *a)
 {
-    return trans_stm_all(ctx, a, cpu_rd, MO_TEUQ);
+    return trans_stm_all(ctx, a, cpu_rf, MO_TEUQ);
 }
 
 static bool trans_STMRA(DisasContext *ctx, arg_STMRA *a)
