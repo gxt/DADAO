@@ -651,48 +651,48 @@ static bool trans_ADRP(DisasContext *ctx, arg_ADRP *a)
 
 static bool trans_ADDrd(DisasContext *ctx, arg_ADDrd *a)
 {
-    TCGv_i64 zero = tcg_constant_i64(0);
-    TCGv_i64 flag = tcg_constant_i64(0);
-    TCGv_i64 negative = tcg_constant_i64(-1);
-    int64_t is_negative = 0x8000000000000000;
-    if (a->ha == 0) {
-        if (a->hb == 0) return true;
+    if ((a->ha == 0) && (a->hb != 0)) { /* make the common case fast */
         tcg_gen_add_i64(cpu_rd[a->hb], cpu_rd[a->hc], cpu_rd[a->hd]);
         return true;
     }
-    tcg_gen_add2_i64(cpu_rd[a->hb], cpu_rd[a->ha],
-                     cpu_rd[a->hc], zero, cpu_rd[a->hd], zero);
-    tcg_gen_movcond_i64(TCG_COND_EQ, cpu_rd[a->ha], cpu_rd[a->ha], zero,
-                        zero, negative);
-    tcg_gen_andi_i64(flag, cpu_rd[a->hb], is_negative);
-    tcg_gen_movcond_i64(TCG_COND_EQ, cpu_rd[a->ha], flag, zero,
-                        zero, negative);
-    if (a->hb == 0) {
-        tcg_gen_movi_i64(cpu_rd[a->hb], 0);
+
+    TCGv_i64 temp1 = tcg_temp_new_i64();
+    TCGv_i64 temp2 = tcg_temp_new_i64();
+    TCGv_i64 temp3 = tcg_temp_new_i64();
+    TCGv_i64 temp4 = tcg_temp_new_i64();
+
+    tcg_gen_sari_i64(temp1, cpu_rd[a->hc], 63);
+    tcg_gen_sari_i64(temp2, cpu_rd[a->hd], 63);
+    tcg_gen_add2_i64(temp3, temp4, cpu_rd[a->hc], temp1, cpu_rd[a->hd], temp2);
+    if (a->hb != 0) {
+        tcg_gen_mov_i64(cpu_rd[a->hb], temp3);
+    }
+    if (a->ha != 0) {
+        tcg_gen_mov_i64(cpu_rd[a->ha], temp4);
     }
     return true;
 }
 
 static bool trans_SUBrd(DisasContext *ctx, arg_SUBrd *a)
 {
-    TCGv_i64 zero = tcg_constant_i64(0);
-    TCGv_i64 flag = tcg_constant_i64(0);
-    TCGv_i64 negative = tcg_constant_i64(-1);
-    int64_t is_negative = 0x8000000000000000;
-    if (a->ha == 0) {
-        if (a->hb == 0) return true;
+    if ((a->ha == 0) && (a->hb != 0)) { /* make the common case fast */
         tcg_gen_sub_i64(cpu_rd[a->hb], cpu_rd[a->hc], cpu_rd[a->hd]);
         return true;
     }
-    tcg_gen_sub2_i64(cpu_rd[a->hb], cpu_rd[a->ha],
-                     cpu_rd[a->hc], zero, cpu_rd[a->hd], zero);
-    tcg_gen_movcond_i64(TCG_COND_EQ, cpu_rd[a->ha], cpu_rd[a->ha], zero,
-                        zero, negative);
-    tcg_gen_andi_i64(flag, cpu_rd[a->hb], is_negative);
-    tcg_gen_movcond_i64(TCG_COND_EQ, cpu_rd[a->ha], flag, zero,
-                        zero, negative);
-    if (a->hb == 0) {
-        tcg_gen_movi_i64(cpu_rd[a->hb], 0);
+
+    TCGv_i64 temp1 = tcg_temp_new_i64();
+    TCGv_i64 temp2 = tcg_temp_new_i64();
+    TCGv_i64 temp3 = tcg_temp_new_i64();
+    TCGv_i64 temp4 = tcg_temp_new_i64();
+
+    tcg_gen_sari_i64(temp1, cpu_rd[a->hc], 63);
+    tcg_gen_sari_i64(temp2, cpu_rd[a->hd], 63);
+    tcg_gen_sub2_i64(temp3, temp4, cpu_rd[a->hc], temp1, cpu_rd[a->hd], temp2);
+    if (a->hb != 0) {
+        tcg_gen_mov_i64(cpu_rd[a->hb], temp3);
+    }
+    if (a->ha != 0) {
+        tcg_gen_mov_i64(cpu_rd[a->ha], temp4);
     }
     return true;
 }
