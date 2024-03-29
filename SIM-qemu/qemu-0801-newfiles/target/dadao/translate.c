@@ -180,14 +180,24 @@ INSN_LD_RRII(LDFO, cpu_rf, MO_TEUQ)
 
 #undef INSN_LD_RD_RRII
 
-static bool trans_st_all(DisasContext *ctx, arg_disas_dadao0 *a, 
-                         TCGv_i64* cpu_ha, MemOp mop)
-{
-    TCGv_i64 addr = tcg_temp_new_i64();
-    tcg_gen_addi_i64(addr, cpu_rb[a->hb], a->imms12);
-    tcg_gen_qemu_st_i64(cpu_ha[a->ha], addr, ctx->mem_idx, mop);
-    return true;
-}
+#define INSN_ST_RRII(insn, src_reg, memop)									\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)				\
+	{																		\
+		TCGv_i64 addr = tcg_temp_new_i64();									\
+		tcg_gen_addi_i64(addr, cpu_rb[a->hb], a->imms12);					\
+		tcg_gen_qemu_st_i64(src_reg[a->ha], addr, ctx->mem_idx, memop);		\
+		return true;														\
+	}
+
+INSN_ST_RRII(STB,  cpu_rd, MO_UB)
+INSN_ST_RRII(STW,  cpu_rd, MO_TEUW)
+INSN_ST_RRII(STT,  cpu_rd, MO_TEUL)
+INSN_ST_RRII(STO,  cpu_rd, MO_TEUQ)
+INSN_ST_RRII(STRB, cpu_rb, MO_TEUQ)
+INSN_ST_RRII(STFT, cpu_rf, MO_TEUL)
+INSN_ST_RRII(STFO, cpu_rf, MO_TEUQ)
+
+#undef INSN_ST_RRII
 
 static bool trans_ldm_all(DisasContext *ctx, arg_disas_dadao1 *a,
                           TCGv_i64* cpu_ha, MemOp mop)
@@ -229,41 +239,6 @@ static bool trans_stm_all(DisasContext *ctx, arg_disas_dadao1 *a,
         tcg_gen_qemu_st_i64(cpu_ha[++a->ha], addr, ctx->mem_idx, mop);
     }
     return true;
-}
-
-static bool trans_STB(DisasContext *ctx, arg_STB *a)
-{
-    return trans_st_all(ctx, a, cpu_rd, MO_UB);
-}
-
-static bool trans_STW(DisasContext *ctx, arg_STW *a)
-{
-    return trans_st_all(ctx, a, cpu_rd, MO_TEUW);
-}
-
-static bool trans_STT(DisasContext *ctx, arg_STT *a)
-{
-    return trans_st_all(ctx, a, cpu_rd, MO_TEUL);
-}
-
-static bool trans_STO(DisasContext *ctx, arg_STO *a)
-{
-    return trans_st_all(ctx, a, cpu_rd, MO_TEUQ);
-}
-
-static bool trans_STRB(DisasContext *ctx, arg_STRB *a)
-{
-    return trans_st_all(ctx, a, cpu_rb, MO_TEUQ);
-}
-
-static bool trans_STFT(DisasContext *ctx, arg_STFT *a)
-{
-    return trans_st_all(ctx, a, cpu_rf, MO_TEUL);
-}
-
-static bool trans_STFO(DisasContext *ctx, arg_STFO *a)
-{
-    return trans_st_all(ctx, a, cpu_rf, MO_TEUQ);
 }
 
 static bool trans_LDMBS(DisasContext *ctx, arg_LDMBS *a)
