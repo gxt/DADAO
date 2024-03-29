@@ -19,7 +19,8 @@ VER_CHIPYARD		:= 0107
 
 _DADAO_CORES_		:= $(shell expr `nproc` / 2)
 DADAO_PATH		:= $(DIR_DADAO_INSTALL)/bin/:$(DIR_DADAO_INSTALL)/usr/bin:/bin:/usr/bin
-DADAO_MAKE		:= make --silent DIR_DADAO_TOP=$(DIR_DADAO_TOP) PATH=$(DADAO_PATH) --jobs=$(_DADAO_CORES_)
+# Note the '-' at the beginning of the line which tells make to ignore any output to stderr
+DADAO_MAKE		:= -make --silent DIR_DADAO_TOP=$(DIR_DADAO_TOP) PATH=$(DADAO_PATH) --jobs=$(_DADAO_CORES_)
 
 all:
 	@echo ""
