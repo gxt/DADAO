@@ -302,8 +302,6 @@ void DadaoDAGToDAGISel::selectMUL(SDNode *Node) {
 
   ReplaceUses(SDValue(Node, 0),
     SDValue(CurDAG->getMachineNode(Dadao::MULS_RRRR, DL, MVT::i64, MVT::i64, LHS, RHS), 1));
-  Select(LHS.getNode());
-  Select(RHS.getNode());
 }
 
 void DadaoDAGToDAGISel::selectDIVREM(SDNode *Node) {
@@ -327,8 +325,6 @@ void DadaoDAGToDAGISel::selectDIVREM(SDNode *Node) {
 
   ReplaceUses(SDValue(Node, 0),
     SDValue(CurDAG->getMachineNode(Opcode, DL, MVT::i64, MVT::i64, LHS, RHS), resno));
-  Select(LHS.getNode());
-  Select(RHS.getNode());
 }
 
 void DadaoDAGToDAGISel::selectFrameIndex(SDNode *Node) {
