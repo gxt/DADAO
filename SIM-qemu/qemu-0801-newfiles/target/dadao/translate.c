@@ -327,36 +327,6 @@ INSN_CSET2_RRRR(CSNE, TCG_COND_NE)
 
 #undef INSN_CSET2_RRRR
 
-static bool trans_ORWrd(DisasContext *ctx, arg_ORWrd *a)
-{
-    if (a->ha == 0) {
-        return true;
-    }
-    int64_t arg = (int64_t)a->immu16 << (a->ww * 16);
-    tcg_gen_ori_i64(cpu_rd[a->ha], cpu_rd[a->ha], arg);
-    return true;
-}
-
-static bool trans_ANDNWrd(DisasContext *ctx, arg_ANDNWrd *a)
-{
-    if (a->ha == 0) {
-        return true;
-    }
-    int64_t arg = ~((int64_t)a->immu16 << (a->ww * 16));
-    tcg_gen_andi_i64(cpu_rd[a->ha], cpu_rd[a->ha], arg);
-    return true;
-}
-
-static bool trans_SETZWrd(DisasContext *ctx, arg_SETZWrd *a)
-{
-    if (a->ha == 0) {
-        return true;
-    }
-    int64_t arg = (int64_t)a->immu16 << (a->ww * 16);
-    tcg_gen_movi_i64(cpu_rd[a->ha], arg);
-    return true;
-}
-
 static bool trans_SETOW(DisasContext *ctx, arg_SETOW *a)
 {
     if (a->ha == 0) {
@@ -368,35 +338,47 @@ static bool trans_SETOW(DisasContext *ctx, arg_SETOW *a)
     return true;
 }
 
-static bool trans_ORWrb(DisasContext *ctx, arg_ORWrb *a)
-{
-    if (a->ha == 0) {
-        return true;
-    }
-    int64_t arg = (int64_t)a->immu16 << (a->ww * 16);
-    tcg_gen_ori_i64(cpu_rb[a->ha], cpu_rb[a->ha], arg);
-    return true;
-}
+#define INSN_SETZW_RWII(insn, cpu_ha)								\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)		\
+	{																\
+		if (a->ha == 0)			return true;						\
+		int64_t arg = (int64_t)a->immu16 << (a->ww * 16);			\
+		tcg_gen_movi_i64(cpu_ha[a->ha], arg);						\
+		return true;												\
+	}
 
-static bool trans_ANDNWrb(DisasContext *ctx, arg_ANDNWrb *a)
-{
-    if (a->ha == 0) {
-        return true;
-    }
-    int64_t arg = ~((int64_t)a->immu16 << (a->ww * 16));
-    tcg_gen_andi_i64(cpu_rb[a->ha], cpu_rb[a->ha], arg);
-    return true;
-}
+INSN_SETZW_RWII(SETZWrd, cpu_rd)
+INSN_SETZW_RWII(SETZWrb, cpu_rb)
 
-static bool trans_SETZWrb(DisasContext *ctx, arg_SETZWrb *a)
-{
-    if (a->ha == 0) {
-        return true;
-    }
-    int64_t arg = (int64_t)a->immu16 << (a->ww * 16);
-    tcg_gen_movi_i64(cpu_rb[a->ha], arg);
-    return true;
-}
+#undef INSN_SETZW_RWII
+
+#define INSN_ORW_RWII(insn, cpu_ha)									\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)		\
+	{																\
+		if (a->ha == 0)			return true;						\
+		int64_t arg = (int64_t)a->immu16 << (a->ww * 16);			\
+		tcg_gen_ori_i64(cpu_ha[a->ha], cpu_ha[a->ha], arg);			\
+		return true;												\
+	}
+
+INSN_ORW_RWII(ORWrd, cpu_rd)
+INSN_ORW_RWII(ORWrb, cpu_rb)
+
+#undef INSN_ORW_RWII
+
+#define INSN_ANDNW_RWII(insn, cpu_ha)								\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)		\
+	{																\
+		if (a->ha == 0)			return true;						\
+		int64_t arg = ~((int64_t)a->immu16 << (a->ww * 16));		\
+		tcg_gen_andi_i64(cpu_ha[a->ha], cpu_ha[a->ha], arg);		\
+		return true;												\
+	}
+
+INSN_ANDNW_RWII(ANDNWrd, cpu_rd)
+INSN_ANDNW_RWII(ANDNWrb, cpu_rb)
+
+#undef INSN_ANDNW_RWII
 
 static bool trans_SETW(DisasContext *ctx, arg_SETW *a)
 {
