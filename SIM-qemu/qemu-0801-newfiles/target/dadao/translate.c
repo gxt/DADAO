@@ -60,8 +60,9 @@ static TCGv_i64 jmp_pc;
 static TCGv_i64 load_res;
 static TCGv_i64 load_val;
 
-#define cpu_pc   cpu_rb[0]
-#define cpu_rasp cpu_ra[0]
+#define cpu_pc			cpu_rb[0]
+#define cpu_rasp		cpu_ra[0]
+#define cpu_rdzero		cpu_rd[0]
 
 static const char *regnames[] = {
     "rd00", "rd01", "rd02", "rd03", "rd04", "rd05", "rd06", "rd07",
@@ -297,51 +298,34 @@ INSN_R2R_ORRI(RA2RD, cpu_ra, cpu_rd)
 
 #undef INSN_R2R_ORRI
 
-static bool trans_cs_all(DisasContext* ctx, arg_disas_dadao3* a, TCGCond cond)
-{
-    if (a->hb == 0) {
-        return true;
-    }
-    TCGv_i64 zero = tcg_constant_i64(0);
-    tcg_gen_movcond_i64(cond, cpu_rd[a->hb], cpu_rd[a->ha], zero,
-                        cpu_rd[a->hc], cpu_rd[a->hd]);
-    return true;
-}
+#define INSN_CSET1_RRRR(insn, cond)												\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)					\
+	{																			\
+		if (a->hb == 0)				return true;								\
+		tcg_gen_movcond_i64(cond, cpu_rd[a->hb], cpu_rd[a->ha],					\
+				cpu_rdzero, cpu_rd[a->hc], cpu_rd[a->hd]);						\
+		return true;															\
+	}
 
-static bool trans_cs_eq_ne(DisasContext* ctx, arg_disas_dadao3* a, TCGCond cond)
-{
-    if (a->hc == 0) {
-        return true;
-    }
-    tcg_gen_movcond_i64(cond, cpu_rd[a->hc], cpu_rd[a->ha], cpu_rd[a->hb],
-                        cpu_rd[a->hd], cpu_rd[a->hc]);
-    return true;
-}
+INSN_CSET1_RRRR(CSN, TCG_COND_LT)
+INSN_CSET1_RRRR(CSZ, TCG_COND_EQ)
+INSN_CSET1_RRRR(CSP, TCG_COND_GT)
 
-static bool trans_CSN(DisasContext *ctx, arg_CSN *a)
-{
-    return trans_cs_all(ctx, a, TCG_COND_LT);
-}
+#undef INSN_CSET1_RRRR
 
-static bool trans_CSZ(DisasContext *ctx, arg_CSZ *a)
-{
-    return trans_cs_all(ctx, a, TCG_COND_EQ);
-}
+#define INSN_CSET2_RRRR(insn, cond)												\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)					\
+	{																			\
+		if (a->hc == 0)				return true;								\
+		tcg_gen_movcond_i64(cond, cpu_rd[a->hc], cpu_rd[a->ha],					\
+				cpu_rd[a->hb], cpu_rd[a->hd], cpu_rd[a->hc]);					\
+		return true;															\
+	}
 
-static bool trans_CSP(DisasContext *ctx, arg_CSP *a)
-{
-    return trans_cs_all(ctx, a, TCG_COND_GT);
-}
+INSN_CSET2_RRRR(CSEQ, TCG_COND_EQ)
+INSN_CSET2_RRRR(CSNE, TCG_COND_NE)
 
-static bool trans_CSEQ(DisasContext *ctx, arg_CSEQ *a)
-{
-    return trans_cs_eq_ne(ctx, a, TCG_COND_EQ);
-}
-
-static bool trans_CSNE(DisasContext *ctx, arg_CSNE *a)
-{
-    return trans_cs_eq_ne(ctx, a, TCG_COND_NE);
-}
+#undef INSN_CSET2_RRRR
 
 static bool trans_ORWrd(DisasContext *ctx, arg_ORWrd *a)
 {
