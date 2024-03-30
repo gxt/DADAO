@@ -227,6 +227,7 @@ INSN_LDM_RRRI(LDMWU, cpu_rd, MO_TEUW)
 INSN_LDM_RRRI(LDMTS, cpu_rd, MO_TESL)
 INSN_LDM_RRRI(LDMTU, cpu_rd, MO_TEUL)
 INSN_LDM_RRRI(LDMO,  cpu_rd, MO_TEUQ)
+
 INSN_LDM_RRRI(LDMRB, cpu_rb, MO_TEUQ)
 INSN_LDM_RRRI(LDMFT, cpu_rf, MO_TEUL)
 INSN_LDM_RRRI(LDMFO, cpu_rf, MO_TEUQ)
@@ -234,62 +235,33 @@ INSN_LDM_RRRI(LDMRA, cpu_ra, MO_TEUQ)
 
 #undef INSN_LDM_RRRI
 
-static bool trans_stm_all(DisasContext *ctx, arg_disas_dadao1 *a,
-                          TCGv_i64* cpu_ha, MemOp mop)
-{
-    if (a->ha + a->immu6 > 64 || a->immu6 == 0) {
-        return false;
-    }
-    TCGv_i64 addr = tcg_temp_new_i64();
-    tcg_gen_add_i64(addr, cpu_rb[a->hb], cpu_rd[a->hc]);
-    tcg_gen_qemu_st_i64(cpu_ha[a->ha], addr, ctx->mem_idx, mop);
-    a->immu6--;
-    while (a->immu6--) {
-        tcg_gen_addi_i64(addr, addr, 1 << (mop & 3));
-        tcg_gen_qemu_st_i64(cpu_ha[++a->ha], addr, ctx->mem_idx, mop);
-    }
-    return true;
-}
+#define INSN_STM_RRRI(insn, src_reg, memop)										\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)					\
+	{																			\
+		if (a->immu6 == 0)			return false;								\
+		if (a->ha + a->immu6 > 64)	return false;								\
+		TCGv_i64 addr = tcg_temp_new_i64();										\
+		tcg_gen_add_i64(addr, cpu_rb[a->hb], cpu_rd[a->hc]);					\
+		do {																	\
+			tcg_gen_qemu_st_i64(src_reg[a->ha], addr, ctx->mem_idx, memop);		\
+			a->ha++;															\
+			a->immu6--;															\
+			tcg_gen_addi_i64(addr, addr, 1 << (memop & 3));						\
+		} while (a->immu6 != 0);												\
+		return true;															\
+	}
 
-static bool trans_STMB(DisasContext *ctx, arg_STMB *a)
-{
-    return trans_stm_all(ctx, a, cpu_rd, MO_UB);
-}
+INSN_STM_RRRI(STMB, cpu_rd, MO_UB)
+INSN_STM_RRRI(STMW, cpu_rd, MO_TEUW)
+INSN_STM_RRRI(STMT, cpu_rd, MO_TEUL)
+INSN_STM_RRRI(STMO, cpu_rd, MO_TEUQ)
 
-static bool trans_STMW(DisasContext *ctx, arg_STMW *a)
-{
-    return trans_stm_all(ctx, a, cpu_rd, MO_TEUW);
-}
+INSN_STM_RRRI(STMRB, cpu_rb, MO_TEUQ)
+INSN_STM_RRRI(STMFT, cpu_rf, MO_TEUL)
+INSN_STM_RRRI(STMFO, cpu_rf, MO_TEUQ)
+INSN_STM_RRRI(STMRA, cpu_ra, MO_TEUQ)
 
-static bool trans_STMT(DisasContext *ctx, arg_STMT *a)
-{
-    return trans_stm_all(ctx, a, cpu_rd, MO_TEUL);
-}
-
-static bool trans_STMO(DisasContext *ctx, arg_STMO *a)
-{
-    return trans_stm_all(ctx, a, cpu_rd, MO_TEUQ);
-}
-
-static bool trans_STMRB(DisasContext *ctx, arg_STMRB *a)
-{
-    return trans_stm_all(ctx, a, cpu_rb, MO_TEUQ);
-}
-
-static bool trans_STMFT(DisasContext *ctx, arg_STMFT *a)
-{
-    return trans_stm_all(ctx, a, cpu_rf, MO_TEUL);
-}
-
-static bool trans_STMFO(DisasContext *ctx, arg_STMFO *a)
-{
-    return trans_stm_all(ctx, a, cpu_rf, MO_TEUQ);
-}
-
-static bool trans_STMRA(DisasContext *ctx, arg_STMRA *a)
-{
-    return trans_stm_all(ctx, a, cpu_ra, MO_TEUQ);
-}
+#undef INSN_STM_RRRI
 
 /* register assignment instructions */
 
