@@ -265,41 +265,37 @@ INSN_STM_RRRI(STMRA, cpu_ra, MO_TEUQ)
 
 /* register assignment instructions */
 
-static bool trans_hb2ha_all(DisasContext* ctx, arg_disas_dadao2* a,
-                            TCGv_i64* cpu_hb, TCGv_i64* cpu_ha) 
-{
-    if (a->hb + a->immu6 > 64 || a->hc + a->immu6 > 64 || a->immu6 == 0) {
-        return false;
-    }
-    if (a->hb == 0 && a->immu6 == 1 && cpu_ha != cpu_rf) {
-        return true;
-    }
-    if (a->hb == 0 && cpu_ha != cpu_rf) {
-        a->hb++;
-	a->hc++;
-	a->immu6--;
-    }
-    if (cpu_hb != cpu_ha) {
-        while (a->immu6--) {
-            tcg_gen_mov_i64(cpu_ha[a->hb++], cpu_hb[a->hc++]);
-        }
-    } else {
-        if (a->hb < a->hc) {
-            while (a->immu6--) {
-                tcg_gen_mov_i64(cpu_ha[a->hb++], cpu_hb[a->hc++]);
-            }
-        } else if (a->hb > a->hc) {
-            a->hb += a->immu6; a->hc += a->immu6;
-	    a->hb--; a->hc--;
-            while (a->immu6--) {
-                tcg_gen_mov_i64(cpu_ha[a->hb--], cpu_hb[a->hc--]);
-            }
-        } else {
-            /* a->hb == a->hc, do nothing */
-        }
-    }
-    return true;
-}
+#define INSN_R2R_ORRI(insn, src_reg, dest_reg)									\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)					\
+	{																			\
+		if (a->immu6 == 0)			return false;								\
+		if (a->hb + a->immu6 > 64)	return false;								\
+		if (a->hc + a->immu6 > 64)	return false;								\
+		if (a->hb > a->hc) {													\
+			a->hb += a->immu6 - 1;												\
+			a->hc += a->immu6 - 1;												\
+		}																		\
+		do {																	\
+			if ((a->hb != 0) || (dest_reg == cpu_rf) || (dest_reg == cpu_ra))	\
+				tcg_gen_mov_i64(dest_reg[a->hb], src_reg[a->hc]);				\
+			if (a->hb > a->hc)		a->hb--, a->hc--;							\
+			else					a->hb++, a->hc++;							\
+			a->immu6--;															\
+		} while (a->immu6 != 0);												\
+		return true;															\
+	}
+
+INSN_R2R_ORRI(RD2RD, cpu_rd, cpu_rd)
+INSN_R2R_ORRI(RD2RB, cpu_rd, cpu_rb)
+INSN_R2R_ORRI(RB2RD, cpu_rb, cpu_rd)
+INSN_R2R_ORRI(RB2RB, cpu_rb, cpu_rb)
+INSN_R2R_ORRI(RD2RF, cpu_rd, cpu_rf)
+INSN_R2R_ORRI(RF2RD, cpu_rf, cpu_rd)
+INSN_R2R_ORRI(RF2RF, cpu_rf, cpu_rf)
+INSN_R2R_ORRI(RD2RA, cpu_rd, cpu_ra)
+INSN_R2R_ORRI(RA2RD, cpu_ra, cpu_rd)
+
+#undef INSN_R2R_ORRI
 
 static bool trans_cs_all(DisasContext* ctx, arg_disas_dadao3* a, TCGCond cond)
 {
@@ -320,51 +316,6 @@ static bool trans_cs_eq_ne(DisasContext* ctx, arg_disas_dadao3* a, TCGCond cond)
     tcg_gen_movcond_i64(cond, cpu_rd[a->hc], cpu_rd[a->ha], cpu_rd[a->hb],
                         cpu_rd[a->hd], cpu_rd[a->hc]);
     return true;
-}
-
-static bool trans_RD2RD(DisasContext* ctx, arg_RD2RD* a)
-{
-    return trans_hb2ha_all(ctx, a, cpu_rd, cpu_rd);
-}
-
-static bool trans_RD2RB(DisasContext* ctx, arg_RD2RB* a)
-{
-    return trans_hb2ha_all(ctx, a, cpu_rd, cpu_rb);
-}
-
-static bool trans_RB2RD(DisasContext* ctx, arg_RB2RD* a)
-{
-    return trans_hb2ha_all(ctx, a, cpu_rb, cpu_rd);
-}
-
-static bool trans_RB2RB(DisasContext* ctx, arg_RB2RB* a)
-{
-    return trans_hb2ha_all(ctx, a, cpu_rb, cpu_rb);
-}
-
-static bool trans_RD2RF(DisasContext* ctx, arg_RD2RF* a)
-{
-    return trans_hb2ha_all(ctx, a, cpu_rd, cpu_rf);
-}
-
-static bool trans_RF2RD(DisasContext* ctx, arg_RF2RD* a)
-{
-    return trans_hb2ha_all(ctx, a, cpu_rf, cpu_rd);
-}
-
-static bool trans_RF2RF(DisasContext* ctx, arg_RF2RF* a)
-{
-    return trans_hb2ha_all(ctx, a, cpu_rf, cpu_rf);
-}
-
-static bool trans_RD2RA(DisasContext* ctx, arg_RD2RA* a)
-{
-    return trans_hb2ha_all(ctx, a, cpu_rd, cpu_ra);
-}
-
-static bool trans_RA2RD(DisasContext* ctx, arg_RA2RD* a)
-{
-    return trans_hb2ha_all(ctx, a, cpu_ra, cpu_rd);
 }
 
 static bool trans_CSN(DisasContext *ctx, arg_CSN *a)
