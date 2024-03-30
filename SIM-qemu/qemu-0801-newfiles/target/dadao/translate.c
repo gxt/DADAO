@@ -162,6 +162,7 @@ static void gen_exception_illegal_instruction(DisasContext *ctx)
 		TCGv_i64 temp = tcg_temp_new_i64();									\
 		tcg_gen_addi_i64(addr, cpu_rb[a->hb], a->imms12);					\
 		tcg_gen_qemu_ld_i64(temp, addr, ctx->mem_idx, memop);				\
+		/* load op SHOULD be gen even if dest reg is read only */			\
 		if ((a->ha != 0) || (dest_reg == cpu_rf))							\
 			tcg_gen_mov_i64(dest_reg[a->ha], temp);							\
 		return true;														\
@@ -178,7 +179,7 @@ INSN_LD_RRII(LDRB, cpu_rb, MO_TEUQ)
 INSN_LD_RRII(LDFT, cpu_rf, MO_TEUL)
 INSN_LD_RRII(LDFO, cpu_rf, MO_TEUQ)
 
-#undef INSN_LD_RD_RRII
+#undef INSN_LD_RRII
 
 #define INSN_ST_RRII(insn, src_reg, memop)									\
 	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)				\
@@ -199,30 +200,39 @@ INSN_ST_RRII(STFO, cpu_rf, MO_TEUQ)
 
 #undef INSN_ST_RRII
 
-static bool trans_ldm_all(DisasContext *ctx, arg_disas_dadao1 *a,
-                          TCGv_i64* cpu_ha, MemOp mop)
-{
-    if (a->ha + a->immu6 > 64 || a->immu6 == 0) {
-        return false;
-    }
-    if (a->ha == 0 && a->immu6 == 1 && cpu_ha != cpu_rf) {
-        return true;
-    }
-    TCGv_i64 addr = tcg_temp_new_i64();
-    tcg_gen_add_i64(addr, cpu_rb[a->hb], cpu_rd[a->hc]);
-    if (a->ha == 0 && cpu_ha != cpu_rf) {
-        a->ha++;
-	a->immu6--;
-	tcg_gen_addi_i64(addr, addr, 1 << (mop & 3));
-    }
-    tcg_gen_qemu_ld_i64(cpu_ha[a->ha], addr, ctx->mem_idx, mop);
-    a->immu6--;
-    while (a->immu6--) {
-        tcg_gen_addi_i64(addr, addr, 1 << (mop & 3));
-        tcg_gen_qemu_ld_i64(cpu_ha[++a->ha], addr, ctx->mem_idx, mop);
-    }
-    return true;
-}
+#define INSN_LDM_RRRI(insn, dest_reg, memop)									\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)					\
+	{																			\
+		if (a->immu6 == 0)			return false;								\
+		if (a->ha + a->immu6 > 64)	return false;								\
+		TCGv_i64 addr = tcg_temp_new_i64();										\
+		TCGv_i64 temp = tcg_temp_new_i64();										\
+		tcg_gen_add_i64(addr, cpu_rb[a->hb], cpu_rd[a->hc]);					\
+		do {																	\
+			tcg_gen_qemu_ld_i64(temp, addr, ctx->mem_idx, memop);				\
+			/* load op SHOULD be gen even if dest reg is read only */			\
+			if ((a->ha != 0) || (dest_reg == cpu_rf) || (dest_reg == cpu_ra))	\
+				tcg_gen_mov_i64(dest_reg[a->ha], temp);							\
+			a->ha++;															\
+			a->immu6--;															\
+			tcg_gen_addi_i64(addr, addr, 1 << (memop & 3));						\
+		} while (a->immu6 != 0);												\
+		return true;															\
+	}
+
+INSN_LDM_RRRI(LDMBS, cpu_rd, MO_SB)
+INSN_LDM_RRRI(LDMBU, cpu_rd, MO_UB)
+INSN_LDM_RRRI(LDMWS, cpu_rd, MO_TESW)
+INSN_LDM_RRRI(LDMWU, cpu_rd, MO_TEUW)
+INSN_LDM_RRRI(LDMTS, cpu_rd, MO_TESL)
+INSN_LDM_RRRI(LDMTU, cpu_rd, MO_TEUL)
+INSN_LDM_RRRI(LDMO,  cpu_rd, MO_TEUQ)
+INSN_LDM_RRRI(LDMRB, cpu_rb, MO_TEUQ)
+INSN_LDM_RRRI(LDMFT, cpu_rf, MO_TEUL)
+INSN_LDM_RRRI(LDMFO, cpu_rf, MO_TEUQ)
+INSN_LDM_RRRI(LDMRA, cpu_ra, MO_TEUQ)
+
+#undef INSN_LDM_RRRI
 
 static bool trans_stm_all(DisasContext *ctx, arg_disas_dadao1 *a,
                           TCGv_i64* cpu_ha, MemOp mop)
@@ -239,61 +249,6 @@ static bool trans_stm_all(DisasContext *ctx, arg_disas_dadao1 *a,
         tcg_gen_qemu_st_i64(cpu_ha[++a->ha], addr, ctx->mem_idx, mop);
     }
     return true;
-}
-
-static bool trans_LDMBS(DisasContext *ctx, arg_LDMBS *a)
-{
-    return trans_ldm_all(ctx, a, cpu_rd, MO_SB);
-}
-
-static bool trans_LDMWS(DisasContext *ctx, arg_LDMWS *a)
-{
-    return trans_ldm_all(ctx, a, cpu_rd, MO_TESW);
-}
-
-static bool trans_LDMTS(DisasContext *ctx, arg_LDMTS *a)
-{
-    return trans_ldm_all(ctx, a, cpu_rd, MO_TESL);
-}
-
-static bool trans_LDMO(DisasContext *ctx, arg_LDMO *a)
-{
-    return trans_ldm_all(ctx, a, cpu_rd, MO_TEUQ);
-}
-
-static bool trans_LDMBU(DisasContext *ctx, arg_LDMBU *a)
-{
-    return trans_ldm_all(ctx, a, cpu_rd, MO_UB);
-}
-
-static bool trans_LDMWU(DisasContext *ctx, arg_LDMWU *a)
-{
-    return trans_ldm_all(ctx, a, cpu_rd, MO_TEUW);
-}
-
-static bool trans_LDMTU(DisasContext *ctx, arg_LDMTU *a)
-{
-    return trans_ldm_all(ctx, a, cpu_rd, MO_TEUL);
-}
-
-static bool trans_LDMRB(DisasContext *ctx, arg_LDMRB *a)
-{
-    return trans_ldm_all(ctx, a, cpu_rb, MO_TEUQ);
-}
-
-static bool trans_LDMFT(DisasContext *ctx, arg_LDMFT *a)
-{
-    return trans_ldm_all(ctx, a, cpu_rf, MO_TEUL);
-}
-
-static bool trans_LDMFO(DisasContext *ctx, arg_LDMFO *a)
-{
-    return trans_ldm_all(ctx, a, cpu_rf, MO_TEUQ);
-}
-
-static bool trans_LDMRA(DisasContext *ctx, arg_LDMRA *a)
-{
-    return trans_ldm_all(ctx, a, cpu_ra, MO_TEUQ);
 }
 
 static bool trans_STMB(DisasContext *ctx, arg_STMB *a)
