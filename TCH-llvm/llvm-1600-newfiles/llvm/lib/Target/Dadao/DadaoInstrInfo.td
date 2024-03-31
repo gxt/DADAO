@@ -304,7 +304,7 @@ def SUB_RB_ORRR : ALU_RB_ORRR<0b101111, "sub", sub, GPRB, GPRD>;
 class ALU_RRII<bits<8> majorop, string OpcString, SDNode OpNode, RegisterClass GPRx, RegisterClass GPRy, PatLeaf LoExt>
   : Inst_RRII<majorop, (outs GPRx:$RxHa), (ins GPRy:$RyHb, LoExt:$Imm12),
             OpcString, "$RxHa, $RyHb, $Imm12",
-            [(set GPRx:$RxHa, (OpNode GPRy:$RyHb, LoExt:$Imm12))]> {
+            []> {
 }
 
 def ANDI_RRII : ALU_RRII<0b00011000, "andi", and, GPRD, GPRD, i64lo12and>;
