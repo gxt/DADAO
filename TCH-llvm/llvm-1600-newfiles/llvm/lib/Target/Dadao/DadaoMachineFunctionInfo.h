@@ -37,9 +37,12 @@ class DadaoMachineFunctionInfo : public MachineFunctionInfo {
   // VarArgsFrameIndex - FrameIndex for start of varargs area.
   int VarArgsFrameIndex;
 
+  unsigned VarArgsSaveSize;
+
+  int SpOffset;
 public:
   DadaoMachineFunctionInfo(const Function &F, const TargetSubtargetInfo *STI)
-      : VarArgsFrameIndex(0) {}
+      : VarArgsFrameIndex(0), VarArgsSaveSize(0), SpOffset(0){}
   MachineFunctionInfo *
   clone(BumpPtrAllocator &Allocator, MachineFunction &DestMF,
         const DenseMap<MachineBasicBlock *, MachineBasicBlock *> &Src2DstMBB)
@@ -50,6 +53,13 @@ public:
 
   int getVarArgsFrameIndex() const { return VarArgsFrameIndex; }
   void setVarArgsFrameIndex(int Index) { VarArgsFrameIndex = Index; }
+
+  unsigned getVarArgsSaveSize() const { return VarArgsSaveSize; }
+  void setVarArgsSaveSize(int Size) { VarArgsSaveSize = Size; }
+
+  int getSpOffset() const { return SpOffset; }
+  void setSpOffset(int Offset) { SpOffset = Offset;}
+
 };
 
 } // namespace llvm

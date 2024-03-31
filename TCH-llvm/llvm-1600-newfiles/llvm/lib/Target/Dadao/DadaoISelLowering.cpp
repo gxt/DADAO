@@ -18,6 +18,7 @@
 #include "DadaoSubtarget.h"
 #include "DadaoTargetObjectFile.h"
 #include "MCTargetDesc/DadaoBaseInfo.h"
+#include "MCTargetDesc/DadaoMCTargetDesc.h"
 #include "llvm/ADT/APInt.h"
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/SmallVector.h"
@@ -56,7 +57,10 @@
 #define DEBUG_TYPE "dadao-lower"
 
 using namespace llvm;
-
+static const MCPhysReg ArgGPRs[] = {Dadao::RD16, Dadao::RD17, Dadao::RD18, Dadao::RD19,
+                                          Dadao::RD20, Dadao::RD21, Dadao::RD22, Dadao::RD23,
+                                          Dadao::RD24, Dadao::RD25, Dadao::RD26, Dadao::RD27,
+                                         Dadao::RD28, Dadao::RD29, Dadao::RD30, Dadao::RD31};
 // Limit on number of instructions the lowered multiplication may have before a
 // call to the library function should be generated instead. The threshold is
 // currently set to 14 as this was the smallest threshold that resulted in all
@@ -518,11 +522,57 @@ SDValue DadaoTargetLowering::LowerCCCArguments(
     Chain = DAG.getNode(ISD::TokenFactor, DL, MVT::Other, Copy, Chain);
   }
 
+  std::vector<SDValue> OutChains;
   if (IsVarArg) {
+    int XLen = 64;
+    int XLenInBytes = 8;
+    MVT XLenVT = MVT::i64;
+    ArrayRef<MCPhysReg> ArgRegs = ArrayRef(ArgGPRs);
+    unsigned Idx = CCInfo.getFirstUnallocated(ArgRegs);
+    const TargetRegisterClass *RC = &Dadao::GPRDRegClass;
+
+    // Offset of the first variable argument from stack pointer, and size of
+    // the vararg save area. For now, the varargs save area is either zero or
+    // large enough to hold rd16-rd31.
+    int VaArgOffset, VarArgsSaveSize;
+
+    // If all registers are allocated, then all varargs must be passed on the
+    // stack and we don't need to save any argregs.
+    if (ArgRegs.size() == Idx) {
+      VaArgOffset = CCInfo.getNextStackOffset();
+      VarArgsSaveSize = 0;
+    } else {
+      VarArgsSaveSize = XLenInBytes * (ArgRegs.size() - Idx);
+      VaArgOffset = -VarArgsSaveSize;
+    }
+
     // Record the frame index of the first variable argument
     // which is a value necessary to VASTART.
-    int FI = MFI.CreateFixedObject(4, CCInfo.getNextStackOffset(), true);
+    int FI = MFI.CreateFixedObject(XLenInBytes, VaArgOffset, true);
     DadaoMFI->setVarArgsFrameIndex(FI);
+
+    // Copy the integer registers that may have been used for passing varargs
+    // to the vararg save area.
+    for (unsigned I = Idx; I < ArgRegs.size();
+         ++I, VaArgOffset += XLenInBytes) {
+      const Register Reg = RegInfo.createVirtualRegister(RC);
+      RegInfo.addLiveIn(ArgRegs[I], Reg);
+      SDValue ArgValue = DAG.getCopyFromReg(Chain, DL, Reg, XLenVT);
+      FI = MFI.CreateFixedObject(XLenInBytes, VaArgOffset, true);
+      SDValue PtrOff = DAG.getFrameIndex(FI, getPointerTy(DAG.getDataLayout()));
+      SDValue Store = DAG.getStore(Chain, DL, ArgValue, PtrOff,
+                                   MachinePointerInfo::getFixedStack(MF, FI));
+      cast<StoreSDNode>(Store.getNode())
+          ->getMemOperand()
+          ->setValue((Value *)nullptr);
+      OutChains.push_back(Store);
+    }
+    DadaoMFI->setVarArgsSaveSize(VarArgsSaveSize);
+  }
+  
+  if (!OutChains.empty()) {
+    OutChains.push_back(Chain);
+    Chain = DAG.getNode(ISD::TokenFactor, DL, MVT::Other, OutChains);
   }
 
   return Chain;
@@ -606,7 +656,6 @@ SDValue DadaoTargetLowering::LowerCCCCallTo(
     const SmallVectorImpl<SDValue> &OutVals,
     const SmallVectorImpl<ISD::InputArg> &Ins, const SDLoc &DL,
     SelectionDAG &DAG, SmallVectorImpl<SDValue> &InVals, ArgListTy &Args) const {
-  IsVarArg = false;
   MachineFunction &MF = DAG.getMachineFunction();
   MachineFrameInfo &MFI = MF.getFrameInfo();
 
@@ -627,7 +676,7 @@ SDValue DadaoTargetLowering::LowerCCCCallTo(
       NumFixedArgs = CalleeFn->getFunctionType()->getNumParams();
   }
   if (NumFixedArgs)
-    CCInfo.AnalyzeCallOperands(Outs, CC_Dadao32_VarArg);
+    CCInfo.AnalyzeCallOperands(Outs, CC_Dadao32);
   else {
     if (CallConv == CallingConv::Fast)
       CCInfo.AnalyzeCallOperands(Outs, CC_Dadao32_Fast);
