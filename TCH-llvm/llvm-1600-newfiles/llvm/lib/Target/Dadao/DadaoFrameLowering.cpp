@@ -14,6 +14,7 @@
 
 #include "DadaoInstrInfo.h"
 #include "DadaoSubtarget.h"
+#include "DadaoMachineFunctionInfo.h"
 #include "llvm/CodeGen/MachineFrameInfo.h"
 #include "llvm/CodeGen/MachineFunction.h"
 #include "llvm/CodeGen/MachineInstrBuilder.h"
@@ -25,6 +26,7 @@ using namespace llvm;
 // Determines the size of the frame and maximum call frame size.
 void DadaoFrameLowering::determineFrameLayout(MachineFunction &MF) const {
   MachineFrameInfo &MFI = MF.getFrameInfo();
+  DadaoMachineFunctionInfo *DadaoMFI = MF.getInfo<DadaoMachineFunctionInfo>();
   const DadaoRegisterInfo *LRI = STI.getRegisterInfo();
 
   // Get the number of bytes to allocate from the FrameInfo.
@@ -89,6 +91,7 @@ void DadaoFrameLowering::emitPrologue(MachineFunction &MF,
   assert(&MF.front() == &MBB && "Shrink-wrapping not yet supported");
 
   MachineFrameInfo &MFI = MF.getFrameInfo();
+  DadaoMachineFunctionInfo *FuncInfo = MF.getInfo<DadaoMachineFunctionInfo>();
   const DadaoInstrInfo &LII =
       *static_cast<const DadaoInstrInfo *>(STI.getInstrInfo());
   MachineBasicBlock::iterator MBBI = MBB.begin();
@@ -109,7 +112,7 @@ void DadaoFrameLowering::emitPrologue(MachineFunction &MF,
   BuildMI(MBB, MBBI, DL, LII.get(Dadao::STRB_RRII))
       .addReg(Dadao::RBFP)
       .addReg(Dadao::RBSP)
-      .addImm(-8)
+      .addImm(FuncInfo->getSpOffset())
       .setMIFlag(MachineInstr::FrameSetup);
 
   // Generate new FP
@@ -170,9 +173,10 @@ MachineBasicBlock::iterator DadaoFrameLowering::eliminateCallFramePseudoInstr(
 //      ld -8[%fp],%fp  # restore the caller's frame pointer
 // before RET and the delay slot filler will move RET such that these
 // instructions execute in the delay slots of the load to PC.
-void DadaoFrameLowering::emitEpilogue(MachineFunction & /*MF*/,
+void DadaoFrameLowering::emitEpilogue(MachineFunction & MF,
                                       MachineBasicBlock &MBB) const {
   MachineBasicBlock::iterator MBBI = MBB.getLastNonDebugInstr();
+  DadaoMachineFunctionInfo *FuncInfo = MF.getInfo<DadaoMachineFunctionInfo>();
   const DadaoInstrInfo &LII =
       *static_cast<const DadaoInstrInfo *>(STI.getInstrInfo());
   DebugLoc DL = MBBI->getDebugLoc();
@@ -185,7 +189,7 @@ void DadaoFrameLowering::emitEpilogue(MachineFunction & /*MF*/,
   // Restore the frame pointer from the stack.
   BuildMI(MBB, MBBI, DL, LII.get(Dadao::LDRB_RRII), Dadao::RBFP)
       .addReg(Dadao::RBFP)
-      .addImm(-8);
+      .addImm(FuncInfo->getSpOffset());
 }
 
 void DadaoFrameLowering::determineCalleeSaves(MachineFunction &MF,
@@ -194,16 +198,14 @@ void DadaoFrameLowering::determineCalleeSaves(MachineFunction &MF,
   TargetFrameLowering::determineCalleeSaves(MF, SavedRegs, RS);
 
   MachineFrameInfo &MFI = MF.getFrameInfo();
+  DadaoMachineFunctionInfo *FuncInfo = MF.getInfo<DadaoMachineFunctionInfo>();
   const DadaoRegisterInfo *LRI =
       static_cast<const DadaoRegisterInfo *>(STI.getRegisterInfo());
-  int Offset = -8;
+  int Offset = -FuncInfo->getVarArgsSaveSize()-8;
+  FuncInfo->setSpOffset(Offset);
 
-  // Reserve 8 bytes for the saved RBCA
+  // Reserve 8 bytes for the saved RBSP
   MFI.CreateFixedObject(8, Offset, true);
-  Offset -= 8;
-
-  // Reserve 8 bytes for the saved RBFP
-  MFI.CreateFixedObject(4, Offset, true);
   Offset -= 8;
 
   if (LRI->hasBasePointer(MF)) {
