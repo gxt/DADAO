@@ -424,6 +424,19 @@ INSN_ALG1_ORRR(SUBrb, sub)
 
 #undef INSN_ALG1_ORRR
 
+#define INSN_ALG1_RRII(insn, src_dest)													\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\
+	{																					\
+		if (a->ha == 0)			return true;											\
+		tcg_gen_addi_i64(src_dest[a->ha], src_dest[a->hb], a->imms12);					\
+		return true;																	\
+	}
+
+INSN_ALG1_RRII(ADDIrd, cpu_rd)
+INSN_ALG1_RRII(ADDIrb, cpu_rb)
+
+#undef INSN_ALG1_RRII
+
 /* logic instructions */
 
 static bool trans_ANDI(DisasContext *ctx, arg_ANDI *a)
@@ -436,24 +449,6 @@ static bool trans_ANDI(DisasContext *ctx, arg_ANDI *a)
 }
 
 /* arithmetic instructions */
-
-static bool trans_ADDIrd(DisasContext *ctx, arg_ADDIrd *a)
-{
-    if (a->ha == 0) {
-        return true;
-    }
-    tcg_gen_addi_i64(cpu_rd[a->ha], cpu_rd[a->hb], a->imms12);
-    return true;
-}
-
-static bool trans_ADDIrb(DisasContext *ctx, arg_ADDIrb *a)
-{
-    if (a->ha == 0) {
-        return true;
-    }
-    tcg_gen_addi_i64(cpu_rb[a->ha], cpu_rb[a->hb], a->imms12);
-    return true;
-}
 
 static bool trans_ADRP(DisasContext *ctx, arg_ADRP *a)
 {
