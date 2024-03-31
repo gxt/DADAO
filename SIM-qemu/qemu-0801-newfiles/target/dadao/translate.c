@@ -477,8 +477,8 @@ INSN_CMP_ORRR(CMP,   cpu_rb, TCG_COND_GTU)
 		TCGv_i64 temp1 = tcg_temp_new_i64();											\
 		TCGv_i64 temp2 = tcg_temp_new_i64();											\
 		tcg_gen_##op##2_i64(temp1, temp2, cpu_rd[a->hc], cpu_rd[a->hd]);				\
-		if (a->ha == 0)			tcg_gen_mov_i64(cpu_rd[a->ha], temp2);					\
-		if (a->hb == 0)			tcg_gen_mov_i64(cpu_rd[a->hb], temp1);					\
+		if (a->ha != 0)			tcg_gen_mov_i64(cpu_rd[a->ha], temp2);					\
+		if (a->hb != 0)			tcg_gen_mov_i64(cpu_rd[a->hb], temp1);					\
 		return true;																	\
 	}
 
@@ -486,6 +486,25 @@ INSN_MUL_RRRR(MULS, muls)
 INSN_MUL_RRRR(MULU, mulu)
 
 #undef INSN_MUL_RRRR
+
+#define INSN_DIV_RRRR(insn, divop, remop)												\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\
+	{																					\
+		TCGLabel* label_not_zero = gen_new_label();										\
+		tcg_gen_brcond_i64(TCG_COND_NE, cpu_rd[a->hd], cpu_rdzero, label_not_zero);		\
+		gen_exception(DADAO_EXCP_FPER);													\
+		gen_set_label(label_not_zero);													\
+		if (a->hb != 0)																	\
+			tcg_gen_##divop##_i64(cpu_rd[a->hb], cpu_rd[a->hc], cpu_rd[a->hd]);			\
+		if (a->ha != 0)																	\
+			tcg_gen_##remop##_i64(cpu_rd[a->ha], cpu_rd[a->hc], cpu_rd[a->hd]);			\
+		return true;																	\
+	}
+
+INSN_DIV_RRRR(DIVS, div,  rem)
+INSN_DIV_RRRR(DIVU, divu, remu)
+
+#undef INSN_DIV_RRRR
 
 /* logic instructions */
 
@@ -508,46 +527,6 @@ static bool trans_ADRP(DisasContext *ctx, arg_ADRP *a)
     tcg_gen_movi_i64(cpu_rb[a->ha], ctx->base.pc_next);
     tcg_gen_andi_i64(cpu_rb[a->ha], cpu_rb[a->ha], ~(int64_t)0xFFF);
     tcg_gen_addi_i64(cpu_rb[a->ha], cpu_rb[a->ha], a->imms18 << 12);
-    return true;
-}
-
-static bool trans_DIVS(DisasContext *ctx, arg_DIVS *a)
-{
-    TCGLabel* label_not_zero = gen_new_label();
-    TCGv_i64 zero = tcg_constant_i64(0);
-    tcg_gen_brcond_i64(TCG_COND_NE, cpu_rd[a->hd], zero, label_not_zero);
-    gen_exception(DADAO_EXCP_FPER);
-    gen_set_label(label_not_zero);
-    TCGv_i64 temp1 = tcg_temp_new_i64();
-    TCGv_i64 temp2 = tcg_temp_new_i64();
-    tcg_gen_div_i64(temp1, cpu_rd[a->hc], cpu_rd[a->hd]);
-    tcg_gen_rem_i64(temp2, cpu_rd[a->hc], cpu_rd[a->hd]);
-    if (a->hb != 0) {
-        tcg_gen_mov_i64(cpu_rd[a->hb], temp1);
-    }
-    if (a->ha != 0) {
-        tcg_gen_mov_i64(cpu_rd[a->ha], temp2);
-    }
-    return true;
-}
-
-static bool trans_DIVU(DisasContext *ctx, arg_DIVU *a)
-{
-    TCGLabel* label_not_zero = gen_new_label();
-    TCGv_i64 zero = tcg_constant_i64(0);
-    tcg_gen_brcond_i64(TCG_COND_NE, cpu_rd[a->hd], zero, label_not_zero);
-    gen_exception(DADAO_EXCP_FPER);
-    gen_set_label(label_not_zero);
-    TCGv_i64 temp1 = tcg_temp_new_i64();
-    TCGv_i64 temp2 = tcg_temp_new_i64();
-    tcg_gen_divu_i64(temp1, cpu_rd[a->hc], cpu_rd[a->hd]);
-    tcg_gen_remu_i64(temp2, cpu_rd[a->hc], cpu_rd[a->hd]);
-    if (a->hb != 0) {
-        tcg_gen_mov_i64(cpu_rd[a->hb], temp1);
-    }
-    if (a->ha != 0) {
-        tcg_gen_mov_i64(cpu_rd[a->ha], temp2);
-    }
     return true;
 }
 
