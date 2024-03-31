@@ -454,6 +454,23 @@ INSN_CMP_RRII(CMPUi, a->immu12, TCG_COND_GTU)
 
 #undef INSN_CMP_RRII
 
+#define INSN_CMP_ORRR(insn, src_reg, cond)												\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\
+	{																					\
+		if (a->hb == 0)			return true;											\
+		TCGv_i64 neg = tcg_constant_i64(-1);											\
+		TCGv_i64 temp = tcg_temp_new_i64();												\
+		tcg_gen_setcond_i64(cond, temp, src_reg[a->hc], src_reg[a->hd]);				\
+		tcg_gen_movcond_i64(cond, cpu_rd[a->hb], src_reg[a->hd], src_reg[a->hc], neg, temp);	\
+		return true;																	\
+	}
+
+INSN_CMP_ORRR(CMPSr, cpu_rd, TCG_COND_GT)
+INSN_CMP_ORRR(CMPUr, cpu_rd, TCG_COND_GTU)
+INSN_CMP_ORRR(CMP,   cpu_rb, TCG_COND_GTU)
+
+#undef INSN_CMP_ORRR
+
 /* logic instructions */
 
 static bool trans_ANDI(DisasContext *ctx, arg_ANDI *a)
@@ -541,54 +558,6 @@ static bool trans_DIVU(DisasContext *ctx, arg_DIVU *a)
     if (a->ha != 0) {
         tcg_gen_mov_i64(cpu_rd[a->ha], temp2);
     }
-    return true;
-}
-
-static bool trans_CMPSr(DisasContext *ctx, arg_CMPSr *a)
-{
-    if (a->hb == 0) {
-        return true;
-    }
-    TCGv_i64 zero = tcg_constant_i64(0);
-    TCGv_i64 pos = tcg_constant_i64(1);
-    TCGv_i64 neg = tcg_constant_i64(-1);
-    TCGv_i64 temp = tcg_temp_new_i64();
-    tcg_gen_movcond_i64(TCG_COND_GT, temp, cpu_rd[a->hc],
-                        cpu_rd[a->hd], pos, zero);
-    tcg_gen_movcond_i64(TCG_COND_LT, cpu_rd[a->hb], cpu_rd[a->hc],
-                        cpu_rd[a->hd], neg, temp);
-    return true;
-}
-
-static bool trans_CMPUr(DisasContext *ctx, arg_CMPUr *a)
-{
-    if (a->hb == 0) {
-        return true;
-    }
-    TCGv_i64 zero = tcg_constant_i64(0);
-    TCGv_i64 pos = tcg_constant_i64(1);
-    TCGv_i64 neg = tcg_constant_i64(-1);
-    TCGv_i64 temp = tcg_temp_new_i64();
-    tcg_gen_movcond_i64(TCG_COND_GTU, temp, cpu_rd[a->hc],
-                        cpu_rd[a->hd], pos, zero);
-    tcg_gen_movcond_i64(TCG_COND_LTU, cpu_rd[a->hb], cpu_rd[a->hc],
-                        cpu_rd[a->hd], neg, temp);
-    return true;
-}
-
-static bool trans_CMP(DisasContext *ctx, arg_CMP *a)
-{
-    if (a->hb == 0) {
-        return true;
-    }
-    TCGv_i64 zero = tcg_constant_i64(0);
-    TCGv_i64 pos = tcg_constant_i64(1);
-    TCGv_i64 neg = tcg_constant_i64(-1);
-    TCGv_i64 temp = tcg_temp_new_i64();
-    tcg_gen_movcond_i64(TCG_COND_GTU, temp, cpu_rb[a->hc],
-                        cpu_rb[a->hd], pos, zero);
-    tcg_gen_movcond_i64(TCG_COND_LTU, cpu_rd[a->hb], cpu_rb[a->hc],
-                        cpu_rb[a->hd], neg, temp);
     return true;
 }
 
