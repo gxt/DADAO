@@ -437,6 +437,23 @@ INSN_ALG1_RRII(ADDIrb, cpu_rb)
 
 #undef INSN_ALG1_RRII
 
+#define INSN_CMP_RRII(insn, imm12, cond)												\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\
+	{																					\
+		if (a->ha == 0)			return true;											\
+		TCGv_i64 imm = tcg_constant_i64(imm12);											\
+		TCGv_i64 neg = tcg_constant_i64(-1);											\
+		TCGv_i64 temp = tcg_temp_new_i64();												\
+		tcg_gen_setcond_i64(cond, temp, cpu_rd[a->hb], imm);							\
+		tcg_gen_movcond_i64(cond, cpu_rd[a->ha], imm, cpu_rd[a->hb], neg, temp);		\
+		return true;																	\
+	}
+
+INSN_CMP_RRII(CMPSi, a->imms12, TCG_COND_GT)
+INSN_CMP_RRII(CMPUi, a->immu12, TCG_COND_GTU)
+
+#undef INSN_CMP_RRII
+
 /* logic instructions */
 
 static bool trans_ANDI(DisasContext *ctx, arg_ANDI *a)
@@ -524,40 +541,6 @@ static bool trans_DIVU(DisasContext *ctx, arg_DIVU *a)
     if (a->ha != 0) {
         tcg_gen_mov_i64(cpu_rd[a->ha], temp2);
     }
-    return true;
-}
-
-static bool trans_CMPSi(DisasContext *ctx, arg_CMPSi *a)
-{
-    if (a->ha == 0) {
-        return true;
-    }
-    TCGv_i64 imm = tcg_constant_i64(a->imms12);
-    TCGv_i64 zero = tcg_constant_i64(0);
-    TCGv_i64 pos = tcg_constant_i64(1);
-    TCGv_i64 neg = tcg_constant_i64(-1);
-    TCGv_i64 temp = tcg_temp_new_i64();
-    tcg_gen_movcond_i64(TCG_COND_GT, temp, cpu_rd[a->hb], imm,
-                        pos, zero);
-    tcg_gen_movcond_i64(TCG_COND_LT, cpu_rd[a->ha], cpu_rd[a->hb], imm,
-                        neg, temp);
-    return true;
-}
-
-static bool trans_CMPUi(DisasContext *ctx, arg_CMPUi *a)
-{
-    if (a->ha == 0) {
-        return true;
-    }
-    TCGv_i64 imm = tcg_constant_i64(a->immu12);
-    TCGv_i64 zero = tcg_constant_i64(0);
-    TCGv_i64 pos = tcg_constant_i64(1);
-    TCGv_i64 neg = tcg_constant_i64(-1);
-    TCGv_i64 temp = tcg_temp_new_i64();
-    tcg_gen_movcond_i64(TCG_COND_GTU, temp, cpu_rd[a->hb], imm,
-                        pos, zero);
-    tcg_gen_movcond_i64(TCG_COND_LTU, cpu_rd[a->ha], cpu_rd[a->hb], imm,
-                        neg, temp);
     return true;
 }
 
