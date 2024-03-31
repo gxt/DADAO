@@ -411,6 +411,19 @@ INSN_ALG1_RRRR(SUBrd, sub)
 
 #undef INSN_ALG1_RRRR
 
+#define INSN_ALG1_ORRR(insn, op)														\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\
+	{																					\
+		if (a->hb == 0)			return true;											\
+		tcg_gen_##op##_i64(cpu_rb[a->hb], cpu_rb[a->hc], cpu_rd[a->hd]);				\
+		return true;																	\
+	}
+
+INSN_ALG1_ORRR(ADDrb, add)
+INSN_ALG1_ORRR(SUBrb, sub)
+
+#undef INSN_ALG1_ORRR
+
 /* logic instructions */
 
 static bool trans_ANDI(DisasContext *ctx, arg_ANDI *a)
@@ -598,24 +611,6 @@ static bool trans_CMP(DisasContext *ctx, arg_CMP *a)
                         cpu_rb[a->hd], pos, zero);
     tcg_gen_movcond_i64(TCG_COND_LTU, cpu_rd[a->hb], cpu_rb[a->hc],
                         cpu_rb[a->hd], neg, temp);
-    return true;
-}
-
-static bool trans_ADDrb(DisasContext *ctx, arg_ADDrb *a)
-{
-    if (a->hb == 0) {
-        return true;
-    }
-    tcg_gen_add_i64(cpu_rb[a->hb], cpu_rb[a->hc], cpu_rd[a->hd]);
-    return true;
-}
-
-static bool trans_SUBrb(DisasContext *ctx, arg_SUBrb *a)
-{
-    if (a->hb == 0) {
-        return true;
-    }
-    tcg_gen_sub_i64(cpu_rb[a->hb], cpu_rb[a->hc], cpu_rd[a->hd]);
     return true;
 }
 
