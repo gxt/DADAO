@@ -471,6 +471,22 @@ INSN_CMP_ORRR(CMP,   cpu_rb, TCG_COND_GTU)
 
 #undef INSN_CMP_ORRR
 
+#define INSN_MUL_RRRR(insn, op)															\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\
+	{																					\
+		TCGv_i64 temp1 = tcg_temp_new_i64();											\
+		TCGv_i64 temp2 = tcg_temp_new_i64();											\
+		tcg_gen_##op##2_i64(temp1, temp2, cpu_rd[a->hc], cpu_rd[a->hd]);				\
+		if (a->ha == 0)			tcg_gen_mov_i64(cpu_rd[a->ha], temp2);					\
+		if (a->hb == 0)			tcg_gen_mov_i64(cpu_rd[a->hb], temp1);					\
+		return true;																	\
+	}
+
+INSN_MUL_RRRR(MULS, muls)
+INSN_MUL_RRRR(MULU, mulu)
+
+#undef INSN_MUL_RRRR
+
 /* logic instructions */
 
 static bool trans_ANDI(DisasContext *ctx, arg_ANDI *a)
@@ -492,32 +508,6 @@ static bool trans_ADRP(DisasContext *ctx, arg_ADRP *a)
     tcg_gen_movi_i64(cpu_rb[a->ha], ctx->base.pc_next);
     tcg_gen_andi_i64(cpu_rb[a->ha], cpu_rb[a->ha], ~(int64_t)0xFFF);
     tcg_gen_addi_i64(cpu_rb[a->ha], cpu_rb[a->ha], a->imms18 << 12);
-    return true;
-}
-
-static bool trans_MULS(DisasContext *ctx, arg_MULS *a)
-{
-    tcg_gen_muls2_i64(cpu_rd[a->hb], cpu_rd[a->ha],
-                      cpu_rd[a->hc], cpu_rd[a->hd]);
-    if (a->ha == 0) {
-        tcg_gen_movi_i64(cpu_rd[a->ha], 0);
-    }
-    if (a->hb == 0) {
-        tcg_gen_movi_i64(cpu_rd[a->hb], 0);
-    }
-    return true;
-}
-
-static bool trans_MULU(DisasContext *ctx, arg_MULU *a)
-{
-    tcg_gen_mulu2_i64(cpu_rd[a->hb], cpu_rd[a->ha],
-                      cpu_rd[a->hc], cpu_rd[a->hd]);
-    if (a->ha == 0) {
-        tcg_gen_movi_i64(cpu_rd[a->ha], 0);
-    }
-    if (a->hb == 0) {
-        tcg_gen_movi_i64(cpu_rd[a->hb], 0);
-    }
     return true;
 }
 
