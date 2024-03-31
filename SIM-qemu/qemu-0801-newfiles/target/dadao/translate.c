@@ -389,6 +389,28 @@ static bool trans_SETW(DisasContext *ctx, arg_SETW *a)
     return true;
 }
 
+#define INSN_ALG1_RRRR(insn, op)														\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\
+	{																					\
+		if ((a->ha == 0) && (a->hb != 0)) { /* make the common case fast */				\
+			tcg_gen_##op##_i64(cpu_rd[a->hb], cpu_rd[a->hc], cpu_rd[a->hd]);			\
+			return true;																\
+	    }																				\
+	    TCGv_i64 temp1 = tcg_temp_new_i64();											\
+	    TCGv_i64 temp2 = tcg_temp_new_i64();											\
+	    tcg_gen_sari_i64(temp1, cpu_rd[a->hc], 63);										\
+	    tcg_gen_sari_i64(temp2, cpu_rd[a->hd], 63);										\
+	    tcg_gen_##op##2_i64(temp1, temp2, cpu_rd[a->hc], temp1, cpu_rd[a->hd], temp2);	\
+		if (a->hb != 0)			tcg_gen_mov_i64(cpu_rd[a->hb], temp1);					\
+		if (a->ha != 0)			tcg_gen_mov_i64(cpu_rd[a->ha], temp2);					\
+		return true;																	\
+	}
+
+INSN_ALG1_RRRR(ADDrd, add)
+INSN_ALG1_RRRR(SUBrd, sub)
+
+#undef INSN_ALG1_RRRR
+
 /* logic instructions */
 
 static bool trans_ANDI(DisasContext *ctx, arg_ANDI *a)
@@ -428,54 +450,6 @@ static bool trans_ADRP(DisasContext *ctx, arg_ADRP *a)
     tcg_gen_movi_i64(cpu_rb[a->ha], ctx->base.pc_next);
     tcg_gen_andi_i64(cpu_rb[a->ha], cpu_rb[a->ha], ~(int64_t)0xFFF);
     tcg_gen_addi_i64(cpu_rb[a->ha], cpu_rb[a->ha], a->imms18 << 12);
-    return true;
-}
-
-static bool trans_ADDrd(DisasContext *ctx, arg_ADDrd *a)
-{
-    if ((a->ha == 0) && (a->hb != 0)) { /* make the common case fast */
-        tcg_gen_add_i64(cpu_rd[a->hb], cpu_rd[a->hc], cpu_rd[a->hd]);
-        return true;
-    }
-
-    TCGv_i64 temp1 = tcg_temp_new_i64();
-    TCGv_i64 temp2 = tcg_temp_new_i64();
-    TCGv_i64 temp3 = tcg_temp_new_i64();
-    TCGv_i64 temp4 = tcg_temp_new_i64();
-
-    tcg_gen_sari_i64(temp1, cpu_rd[a->hc], 63);
-    tcg_gen_sari_i64(temp2, cpu_rd[a->hd], 63);
-    tcg_gen_add2_i64(temp3, temp4, cpu_rd[a->hc], temp1, cpu_rd[a->hd], temp2);
-    if (a->hb != 0) {
-        tcg_gen_mov_i64(cpu_rd[a->hb], temp3);
-    }
-    if (a->ha != 0) {
-        tcg_gen_mov_i64(cpu_rd[a->ha], temp4);
-    }
-    return true;
-}
-
-static bool trans_SUBrd(DisasContext *ctx, arg_SUBrd *a)
-{
-    if ((a->ha == 0) && (a->hb != 0)) { /* make the common case fast */
-        tcg_gen_sub_i64(cpu_rd[a->hb], cpu_rd[a->hc], cpu_rd[a->hd]);
-        return true;
-    }
-
-    TCGv_i64 temp1 = tcg_temp_new_i64();
-    TCGv_i64 temp2 = tcg_temp_new_i64();
-    TCGv_i64 temp3 = tcg_temp_new_i64();
-    TCGv_i64 temp4 = tcg_temp_new_i64();
-
-    tcg_gen_sari_i64(temp1, cpu_rd[a->hc], 63);
-    tcg_gen_sari_i64(temp2, cpu_rd[a->hd], 63);
-    tcg_gen_sub2_i64(temp3, temp4, cpu_rd[a->hc], temp1, cpu_rd[a->hd], temp2);
-    if (a->hb != 0) {
-        tcg_gen_mov_i64(cpu_rd[a->hb], temp3);
-    }
-    if (a->ha != 0) {
-        tcg_gen_mov_i64(cpu_rd[a->ha], temp4);
-    }
     return true;
 }
 
