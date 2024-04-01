@@ -379,11 +379,11 @@ static bool CC_Dadao32_VarArg(unsigned ValNo, MVT ValVT, MVT LocVT,
     else
       LocInfo = CCValAssign::AExt;
   }
-
-  // VarArgs get passed on stack
-  unsigned Offset = State.AllocateStack(4, Align(4));
-  State.addLoc(CCValAssign::getMem(ValNo, ValVT, Offset, LocVT, LocInfo));
+  unsigned Offset2 = State.AllocateStack(8, Align(8));
+  State.addLoc(CCValAssign::getMem(ValNo, ValVT, Offset2, LocVT, LocInfo));
   return false;
+
+  return true; // CC didn't match.
 }
 
 SDValue DadaoTargetLowering::LowerFormalArguments(
@@ -529,6 +529,7 @@ SDValue DadaoTargetLowering::LowerCCCArguments(
     MVT XLenVT = MVT::i64;
     ArrayRef<MCPhysReg> ArgRegs = ArrayRef(ArgGPRs);
     unsigned Idx = CCInfo.getFirstUnallocated(ArgRegs);
+    Idx = ArgRegs.size();
     const TargetRegisterClass *RC = &Dadao::GPRDRegClass;
 
     // Offset of the first variable argument from stack pointer, and size of
@@ -670,13 +671,19 @@ SDValue DadaoTargetLowering::LowerCCCCallTo(
   GlobalAddressSDNode *G = dyn_cast<GlobalAddressSDNode>(Callee);
 
   NumFixedArgs = 0;
+  bool isPrintf = false;
   if (IsVarArg && G) {
     const Function *CalleeFn = dyn_cast<Function>(G->getGlobal());
+    StringRef Name = CalleeFn->getName();
+    StringRef PrintfName = StringRef("printf", 6);
+    if (Name.equals(PrintfName)) {
+      isPrintf = true;
+    }
     if (CalleeFn)
       NumFixedArgs = CalleeFn->getFunctionType()->getNumParams();
   }
-  if (NumFixedArgs)
-    CCInfo.AnalyzeCallOperands(Outs, CC_Dadao32);
+  if (NumFixedArgs && !isPrintf)
+    CCInfo.AnalyzeCallOperands(Outs, CC_Dadao32_VarArg);
   else {
     if (CallConv == CallingConv::Fast)
       CCInfo.AnalyzeCallOperands(Outs, CC_Dadao32_Fast);
