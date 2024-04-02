@@ -558,29 +558,21 @@ static bool trans_ANDI(DisasContext *ctx, arg_ANDI *a)
     return true;
 }
 
-static bool trans_EXTSr(DisasContext *ctx, arg_EXTSr *a)
-{
-    if (a->hb == 0) {
-        return true;
-    }
-    TCGv_i64 imm = tcg_temp_new_i64();
-    tcg_gen_add_i64(imm, cpu_rd[0], cpu_rd[a->hd]);
-    tcg_gen_shl_i64(cpu_rd[a->hb], cpu_rd[a->hc], imm);
-    tcg_gen_sar_i64(cpu_rd[a->hb], cpu_rd[a->hb], imm);
-    return true;
-}
+#define INSN_EXT_ORRR(insn, op)															\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\
+	{																					\
+		if (a->hb == 0)			return true;											\
+		TCGv_i64 imm = tcg_temp_new_i64(); /* to avoid hb == hd */						\
+		tcg_gen_mov_i64(imm, cpu_rd[a->hd]);											\
+		tcg_gen_shl_i64(cpu_rd[a->hb], cpu_rd[a->hc], imm);								\
+		tcg_gen_##op##_i64(cpu_rd[a->hb], cpu_rd[a->hb], imm);							\
+		return true;																	\
+	}
 
-static bool trans_EXTZr(DisasContext *ctx, arg_EXTZr *a)
-{
-    if (a->hb == 0) {
-        return true;
-    }
-    TCGv_i64 imm = tcg_temp_new_i64();
-    tcg_gen_add_i64(imm, cpu_rd[0], cpu_rd[a->hd]);
-    tcg_gen_shl_i64(cpu_rd[a->hb], cpu_rd[a->hc], imm);
-    tcg_gen_shr_i64(cpu_rd[a->hb], cpu_rd[a->hb], imm);
-    return true;
-}
+INSN_EXT_ORRR(EXTSr, sar)
+INSN_EXT_ORRR(EXTZr, shr)
+
+#undef INSN_EXT_ORRR
 
 static bool trans_SHLUi(DisasContext *ctx, arg_SHLUi *a)
 {
