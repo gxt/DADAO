@@ -389,6 +389,8 @@ static bool trans_SETW(DisasContext *ctx, arg_SETW *a)
     return true;
 }
 
+/* arithmetic instructions */
+
 #define INSN_ALG1_RRRR(insn, op)														\
 	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\
 	{																					\
@@ -506,19 +508,6 @@ INSN_DIV_RRRR(DIVU, divu, remu)
 
 #undef INSN_DIV_RRRR
 
-/* logic instructions */
-
-static bool trans_ANDI(DisasContext *ctx, arg_ANDI *a)
-{
-    if (a->ha == 0) {
-        return true;
-    }
-    tcg_gen_andi_i64(cpu_rd[a->ha], cpu_rd[a->hb], a->immu12);
-    return true;
-}
-
-/* arithmetic instructions */
-
 static bool trans_ADRP(DisasContext *ctx, arg_ADRP *a)
 {
     if (a->ha == 0) {
@@ -530,57 +519,42 @@ static bool trans_ADRP(DisasContext *ctx, arg_ADRP *a)
     return true;
 }
 
-static bool trans_AND(DisasContext *ctx, arg_AND *a)
-{
-    if (a->hb == 0) {
-        return true;
-    }
-    tcg_gen_and_i64(cpu_rd[a->hb], cpu_rd[a->hc], cpu_rd[a->hd]);
-    return true;
-}
+/* logic instructions */
 
-static bool trans_ORR(DisasContext *ctx, arg_ORR *a)
-{
-    if (a->hb == 0) {
-        return true;
-    }
-    tcg_gen_or_i64(cpu_rd[a->hb], cpu_rd[a->hc], cpu_rd[a->hd]);
-    return true;
-}
+#define INSN_LOGIC_ORRR(insn, op)														\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\
+	{																					\
+		if (a->hb != 0)																	\
+			tcg_gen_##op##_i64(cpu_rd[a->hb], cpu_rd[a->hc], cpu_rd[a->hd]);			\
+		return true;																	\
+	}
 
-static bool trans_XOR(DisasContext *ctx, arg_XOR *a)
+INSN_LOGIC_ORRR(AND, and)
+INSN_LOGIC_ORRR(ORR, or)
+INSN_LOGIC_ORRR(XOR, xor)
+
+INSN_LOGIC_ORRR(SHLUr, shl)
+INSN_LOGIC_ORRR(SHRUr, shr)
+INSN_LOGIC_ORRR(SHRSr, sar)
+
+#undef INSN_LOGIC_ORRR
+
+static bool trans_XNOR(DisasContext *ctx, arg_XNOR *a)
 {
     if (a->hb == 0) {
         return true;
     }
     tcg_gen_xor_i64(cpu_rd[a->hb], cpu_rd[a->hc], cpu_rd[a->hd]);
+    tcg_gen_xori_i64(cpu_rd[a->hb], cpu_rd[a->hb], 0xffffffffffffffff);
     return true;
 }
 
-static bool trans_SHLUr(DisasContext *ctx, arg_SHLUr *a)
+static bool trans_ANDI(DisasContext *ctx, arg_ANDI *a)
 {
-    if (a->hb == 0) {
+    if (a->ha == 0) {
         return true;
     }
-    tcg_gen_shl_i64(cpu_rd[a->hb], cpu_rd[a->hc], cpu_rd[a->hd]);
-    return true;
-}
-
-static bool trans_SHRSr(DisasContext *ctx, arg_SHRSr *a)
-{
-    if (a->hb == 0) {
-        return true;
-    }
-    tcg_gen_sar_i64(cpu_rd[a->hb], cpu_rd[a->hc], cpu_rd[a->hd]);
-    return true;
-}
-
-static bool trans_SHRUr(DisasContext *ctx, arg_SHRUr *a)
-{
-    if (a->hb == 0) {
-        return true;
-    }
-    tcg_gen_shr_i64(cpu_rd[a->hb], cpu_rd[a->hc], cpu_rd[a->hd]);
+    tcg_gen_andi_i64(cpu_rd[a->ha], cpu_rd[a->hb], a->immu12);
     return true;
 }
 
@@ -605,16 +579,6 @@ static bool trans_EXTZr(DisasContext *ctx, arg_EXTZr *a)
     tcg_gen_add_i64(imm, cpu_rd[0], cpu_rd[a->hd]);
     tcg_gen_shl_i64(cpu_rd[a->hb], cpu_rd[a->hc], imm);
     tcg_gen_shr_i64(cpu_rd[a->hb], cpu_rd[a->hb], imm);
-    return true;
-}
-
-static bool trans_XNOR(DisasContext *ctx, arg_XNOR *a)
-{
-    if (a->hb == 0) {
-        return true;
-    }
-    tcg_gen_xor_i64(cpu_rd[a->hb], cpu_rd[a->hc], cpu_rd[a->hd]);
-    tcg_gen_xori_i64(cpu_rd[a->hb], cpu_rd[a->hb], 0xffffffffffffffff);
     return true;
 }
 
