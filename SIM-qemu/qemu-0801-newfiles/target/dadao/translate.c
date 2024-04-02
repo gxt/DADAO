@@ -848,6 +848,21 @@ static bool trans_UNIMP(DisasContext *ctx, arg_UNIMP *a)
     return true;
 }
 
+#define INSN_BR_RRII(insn, cond)														\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\
+	{																					\
+		TCGv_i64 next = tcg_constant_i64(ctx->base.pc_next + 4);						\
+		TCGv_i64 dest = tcg_constant_i64(ctx->base.pc_next + a->imms12 * 4);			\
+		tcg_gen_movcond_i64(cond, jmp_pc, cpu_rd[a->ha], cpu_rd[a->hb], dest, next);	\
+		ctx->base.is_jmp = DISAS_JUMP;													\
+		return true;																	\
+	}
+
+INSN_BR_RRII(BREQ, TCG_COND_EQ)
+INSN_BR_RRII(BRNE, TCG_COND_NE)
+
+#undef INSN_EXT_ORRI
+
 static bool trans_JUMPi(DisasContext *ctx, arg_JUMPi *a)
 {
     ctx->base.is_jmp = DISAS_JUMP;
@@ -935,15 +950,6 @@ static bool trans_br_all(DisasContext *ctx, arg_disas_dadao5 *a, TCGCond cond)
     return true;
 }
 
-static bool trans_br_eq_ne(DisasContext* ctx, arg_disas_dadao0* a, TCGCond cond)
-{
-    TCGv_i64 next = tcg_constant_i64(ctx->base.pc_next + 4);
-    TCGv_i64 dest = tcg_constant_i64(ctx->base.pc_next + a->imms12 * 4);
-    tcg_gen_movcond_i64(cond, jmp_pc, cpu_rd[a->ha], cpu_rd[a->hb], dest, next);
-    ctx->base.is_jmp = DISAS_JUMP;
-    return true;
-}
-
 static bool trans_BRN(DisasContext *ctx, arg_BRN *a)
 {
     return trans_br_all(ctx, a, TCG_COND_LT);
@@ -972,16 +978,6 @@ static bool trans_BRP(DisasContext *ctx, arg_BRP *a)
 static bool trans_BRNP(DisasContext *ctx, arg_BRNP *a)
 {
     return trans_br_all(ctx, a, TCG_COND_LE);
-}
-
-static bool trans_BREQ(DisasContext *ctx, arg_BREQ *a)
-{
-    return trans_br_eq_ne(ctx, a, TCG_COND_EQ);
-}
-
-static bool trans_BRNE(DisasContext *ctx, arg_BRNE *a)
-{
-    return trans_br_eq_ne(ctx, a, TCG_COND_NE);
 }
 
 static bool trans_TRAP(DisasContext *ctx, arg_TRAP *a)
