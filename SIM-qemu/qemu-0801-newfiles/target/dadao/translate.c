@@ -574,32 +574,19 @@ INSN_EXT_ORRR(EXTZr, shr)
 
 #undef INSN_EXT_ORRR
 
-static bool trans_SHLUi(DisasContext *ctx, arg_SHLUi *a)
-{
-    if (a->hb == 0) {
-        return true;
-    }
-    tcg_gen_shli_i64(cpu_rd[a->hb], cpu_rd[a->hc], a->immu6);
-    return true;
-}
+#define INSN_LOGIC_ORRI(insn, op)														\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\
+	{																					\
+		if (a->hb != 0)																	\
+			tcg_gen_##op##_i64(cpu_rd[a->hb], cpu_rd[a->hc], a->immu6);					\
+		return true;																	\
+	}
 
-static bool trans_SHRSi(DisasContext *ctx, arg_SHRSi *a)
-{
-    if (a->hb == 0) {
-        return true;
-    }
-    tcg_gen_sari_i64(cpu_rd[a->hb], cpu_rd[a->hc], a->immu6);
-    return true;
-}
+INSN_LOGIC_ORRI(SHLUi, shli)
+INSN_LOGIC_ORRI(SHRUi, shri)
+INSN_LOGIC_ORRI(SHRSi, sari)
 
-static bool trans_SHRUi(DisasContext *ctx, arg_SHRUi *a)
-{
-    if (a->hb == 0) {
-        return true;
-    }
-    tcg_gen_shri_i64(cpu_rd[a->hb], cpu_rd[a->hc], a->immu6);
-    return true;
-}
+#undef INSN_LOGIC_ORRI
 
 static bool trans_EXTSi(DisasContext *ctx, arg_EXTSi *a)
 {
