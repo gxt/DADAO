@@ -861,7 +861,26 @@ static bool trans_UNIMP(DisasContext *ctx, arg_UNIMP *a)
 INSN_BR_RRII(BREQ, TCG_COND_EQ)
 INSN_BR_RRII(BRNE, TCG_COND_NE)
 
-#undef INSN_EXT_ORRI
+#undef INSN_BR_RRII
+
+#define INSN_BR_RIII(insn, cond)														\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\
+	{																					\
+		TCGv_i64 next = tcg_constant_i64(ctx->base.pc_next + 4);						\
+		TCGv_i64 dest = tcg_constant_i64(ctx->base.pc_next + a->imms18 * 4);			\
+		tcg_gen_movcond_i64(cond, jmp_pc, cpu_rd[a->ha], cpu_rdzero, dest, next);		\
+		ctx->base.is_jmp = DISAS_JUMP;													\
+		return true;																	\
+	}
+
+INSN_BR_RIII(BRN,  TCG_COND_LT)
+INSN_BR_RIII(BRNN, TCG_COND_GE)
+INSN_BR_RIII(BRZ,  TCG_COND_EQ)
+INSN_BR_RIII(BRNZ, TCG_COND_NE)
+INSN_BR_RIII(BRP,  TCG_COND_GT)
+INSN_BR_RIII(BRNP, TCG_COND_LE)
+
+#undef INSN_BR_RIII
 
 static bool trans_JUMPi(DisasContext *ctx, arg_JUMPi *a)
 {
@@ -938,46 +957,6 @@ static bool trans_RET(DisasContext *ctx, arg_RET *a)
     pop_return_address(ctx);
     ctx->base.is_jmp = DISAS_JUMP;
     return true;
-}
-
-static bool trans_br_all(DisasContext *ctx, arg_disas_dadao5 *a, TCGCond cond)
-{
-    TCGv_i64 zero = tcg_constant_i64(0);
-    TCGv_i64 next = tcg_constant_i64(ctx->base.pc_next + 4);
-    TCGv_i64 dest = tcg_constant_i64(ctx->base.pc_next + a->imms18 * 4);
-    tcg_gen_movcond_i64(cond, jmp_pc, cpu_rd[a->ha], zero, dest, next);
-    ctx->base.is_jmp = DISAS_JUMP;
-    return true;
-}
-
-static bool trans_BRN(DisasContext *ctx, arg_BRN *a)
-{
-    return trans_br_all(ctx, a, TCG_COND_LT);
-}
-
-static bool trans_BRNN(DisasContext *ctx, arg_BRNN *a)
-{
-    return trans_br_all(ctx, a, TCG_COND_GE);
-}
-
-static bool trans_BRZ(DisasContext *ctx, arg_BRZ *a)
-{
-    return trans_br_all(ctx, a, TCG_COND_EQ);
-}
-
-static bool trans_BRNZ(DisasContext *ctx, arg_BRNZ *a)
-{
-    return trans_br_all(ctx, a, TCG_COND_NE);
-}
-
-static bool trans_BRP(DisasContext *ctx, arg_BRP *a)
-{
-    return trans_br_all(ctx, a, TCG_COND_GT);
-}
-
-static bool trans_BRNP(DisasContext *ctx, arg_BRNP *a)
-{
-    return trans_br_all(ctx, a, TCG_COND_LE);
 }
 
 static bool trans_TRAP(DisasContext *ctx, arg_TRAP *a)
