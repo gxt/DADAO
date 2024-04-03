@@ -204,8 +204,8 @@ INSN_ST_RRII(STFO, cpu_rf, MO_TEUQ)
 #define INSN_LDM_RRRI(insn, dest_reg, memop)									\
 	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)					\
 	{																			\
-		if (a->immu6 == 0)			return false;								\
-		if (a->ha + a->immu6 > 64)	return false;								\
+		if (a->immu6 == 0)			gen_exception_illegal_instruction(ctx);		\
+		if (a->ha + a->immu6 > 64)	gen_exception_illegal_instruction(ctx);		\
 		TCGv_i64 addr = tcg_temp_new_i64();										\
 		TCGv_i64 temp = tcg_temp_new_i64();										\
 		tcg_gen_add_i64(addr, cpu_rb[a->hb], cpu_rd[a->hc]);					\
@@ -239,8 +239,8 @@ INSN_LDM_RRRI(LDMRA, cpu_ra, MO_TEUQ)
 #define INSN_STM_RRRI(insn, src_reg, memop)										\
 	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)					\
 	{																			\
-		if (a->immu6 == 0)			return false;								\
-		if (a->ha + a->immu6 > 64)	return false;								\
+		if (a->immu6 == 0)			gen_exception_illegal_instruction(ctx);		\
+		if (a->ha + a->immu6 > 64)	gen_exception_illegal_instruction(ctx);		\
 		TCGv_i64 addr = tcg_temp_new_i64();										\
 		tcg_gen_add_i64(addr, cpu_rb[a->hb], cpu_rd[a->hc]);					\
 		do {																	\
@@ -269,9 +269,9 @@ INSN_STM_RRRI(STMRA, cpu_ra, MO_TEUQ)
 #define INSN_R2R_ORRI(insn, src_reg, dest_reg)									\
 	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)					\
 	{																			\
-		if (a->immu6 == 0)			return false;								\
-		if (a->hb + a->immu6 > 64)	return false;								\
-		if (a->hc + a->immu6 > 64)	return false;								\
+		if (a->immu6 == 0)			gen_exception_illegal_instruction(ctx);		\
+		if (a->hb + a->immu6 > 64)	gen_exception_illegal_instruction(ctx);		\
+		if (a->hc + a->immu6 > 64)	gen_exception_illegal_instruction(ctx);		\
 		if (a->hb > a->hc) {													\
 			a->hb += a->immu6 - 1;												\
 			a->hc += a->immu6 - 1;												\
@@ -602,36 +602,6 @@ INSN_EXT_ORRI(EXTZi, shri)
 
 #undef INSN_EXT_ORRI
 
-static bool trans_fcvt_all(DisasContext *ctx, arg_disas_dadao2 *a,
-                           TCGv_i64* cpu_hb, TCGv_i64* cpu_hc,
-                           void (*fn)(TCGv_i64, TCGv_env, TCGv_i64))
-{
-    gen_helper_set_rounding_mode(cpu_env);
-    if (a->hb + a->immu6 > 64 || a->hc + a->immu6 > 64 || a->immu6 == 0) {
-        return false;
-    }
-    if (a->hb == 0 && a->immu6 == 1 && cpu_hb != cpu_rf) {
-        return true;
-    }
-    if (a->hb == 0 && cpu_hb != cpu_rf) {
-        a->hb++;
-	a->hc++;
-	a->immu6--;
-    }
-    if (a->hb <= a->hc) {
-        while (a->immu6--) {
-            fn(cpu_hb[a->hb++], cpu_env, cpu_hc[a->hc++]);
-        }
-    } else {
-        a->hb += a->immu6; a->hc += a->immu6;
-	a->hb--; a->hc--;
-        while (a->immu6--) {
-            fn(cpu_hb[a->hb--], cpu_env, cpu_hc[a->hc--]);
-        }
-    }
-    return true;
-}
-
 static bool trans_fop1_all(DisasContext *ctx, arg_disas_dadao2 *a,
                            void (*fn)(TCGv_i64, TCGv_env, TCGv_i64))
 {
@@ -653,36 +623,6 @@ static bool trans_fcmp_all(DisasContext *ctx, arg_disas_dadao7 *a,
 {
     fn(cpu_rd[a->hb], cpu_env, cpu_rf[a->hc], cpu_rf[a->hd]);
     return true;
-}
-
-static bool trans_FT2FO(DisasContext *ctx, arg_FT2FO *a)
-{
-    return trans_fcvt_all(ctx, a, cpu_rf, cpu_rf, gen_helper_ft2fo);
-}
-
-static bool trans_FO2FT(DisasContext *ctx, arg_FO2FT *a)
-{
-    return trans_fcvt_all(ctx, a, cpu_rf, cpu_rf, gen_helper_fo2ft);
-}
-
-static bool trans_FT2RD(DisasContext *ctx, arg_FT2RD *a)
-{
-    return trans_fcvt_all(ctx, a, cpu_rd, cpu_rf, gen_helper_ft2rd);
-}
-
-static bool trans_FO2RD(DisasContext *ctx, arg_FO2RD *a)
-{
-    return trans_fcvt_all(ctx, a, cpu_rd, cpu_rf, gen_helper_fo2rd);
-}
-
-static bool trans_RD2FT(DisasContext *ctx, arg_RD2FT *a)
-{
-    return trans_fcvt_all(ctx, a, cpu_rf, cpu_rd, gen_helper_rd2ft);
-}
-
-static bool trans_RD2FO(DisasContext *ctx, arg_RD2FO *a)
-{
-    return trans_fcvt_all(ctx, a, cpu_rf, cpu_rd, gen_helper_rd2fo);
 }
 
 static bool trans_FTADD(DisasContext *ctx, arg_FTADD *a)
@@ -958,6 +898,38 @@ static bool trans_RET(DisasContext *ctx, arg_RET *a)
     ctx->base.is_jmp = DISAS_JUMP;
     return true;
 }
+
+/* floating point instructions */
+
+#define INSN_FCVT_ORRI(insn, src_reg, dest_reg, fn)										\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\
+	{																					\
+		gen_helper_set_rounding_mode(cpu_env);											\
+		if (a->immu6 == 0)			gen_exception_illegal_instruction(ctx);				\
+		if (a->hb + a->immu6 > 64)	gen_exception_illegal_instruction(ctx);				\
+		if (a->hc + a->immu6 > 64)	gen_exception_illegal_instruction(ctx);				\
+		if (a->hb > a->hc) {															\
+			a->hb += a->immu6 - 1;														\
+			a->hc += a->immu6 - 1;														\
+		}																				\
+		do {																			\
+			if (a->hb != 0)																\
+				fn(dest_reg[a->hb], cpu_env, src_reg[a->hc]);							\
+			if (a->hb > a->hc)		a->hb--, a->hc--;									\
+			else					a->hb++, a->hc++;									\
+			a->immu6--;																	\
+		} while (a->immu6 != 0);														\
+		return true;																	\
+	}
+
+INSN_FCVT_ORRI(FT2FO, cpu_rf, cpu_rf, gen_helper_ft2fo)
+INSN_FCVT_ORRI(FO2FT, cpu_rf, cpu_rf, gen_helper_fo2ft)
+INSN_FCVT_ORRI(FT2RD, cpu_rf, cpu_rd, gen_helper_ft2rd)
+INSN_FCVT_ORRI(FO2RD, cpu_rf, cpu_rd, gen_helper_fo2rd)
+INSN_FCVT_ORRI(RD2FT, cpu_rd, cpu_rf, gen_helper_rd2ft)
+INSN_FCVT_ORRI(RD2FO, cpu_rd, cpu_rf, gen_helper_rd2fo)
+
+#undef INSN_FCVT_ORRI
 
 static bool trans_TRAP(DisasContext *ctx, arg_TRAP *a)
 {
