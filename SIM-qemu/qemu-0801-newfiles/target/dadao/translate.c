@@ -602,131 +602,6 @@ INSN_EXT_ORRI(EXTZi, shri)
 
 #undef INSN_EXT_ORRI
 
-static bool trans_fop1_all(DisasContext *ctx, arg_disas_dadao2 *a,
-                           void (*fn)(TCGv_i64, TCGv_env, TCGv_i64))
-{
-    gen_helper_set_rounding_mode(cpu_env);
-    fn(cpu_rf[a->hb], cpu_env, cpu_rf[a->hc]);
-    return true;
-}
-
-static bool trans_fcmp_all(DisasContext *ctx, arg_disas_dadao7 *a,
-                           void (*fn)(TCGv_i64, TCGv_env, TCGv_i64, TCGv_i64))
-{
-    fn(cpu_rd[a->hb], cpu_env, cpu_rf[a->hc], cpu_rf[a->hd]);
-    return true;
-}
-
-static bool trans_FTABS(DisasContext *ctx, arg_FTABS *a)
-{
-    return trans_fop1_all(ctx, a, gen_helper_ftabs);
-}
-
-static bool trans_FTNEG(DisasContext *ctx, arg_FTNEG *a)
-{
-    return trans_fop1_all(ctx, a, gen_helper_ftneg);
-}
-
-static bool trans_FTSQRT(DisasContext *ctx, arg_FTSQRT *a)
-{
-    return trans_fop1_all(ctx, a, gen_helper_ftsqrt);
-}
-
-static bool trans_FOABS(DisasContext *ctx, arg_FOABS *a)
-{
-    return trans_fop1_all(ctx, a, gen_helper_foabs);
-}
-
-static bool trans_FONEG (DisasContext *ctx, arg_FONEG  *a)
-{
-    return trans_fop1_all(ctx, a, gen_helper_foneg);
-}
-
-static bool trans_FOSQRT(DisasContext *ctx, arg_FOSQRT *a)
-{
-    return trans_fop1_all(ctx, a, gen_helper_fosqrt);
-}
-
-static bool trans_FTCUN(DisasContext *ctx, arg_FTCUN *a)
-{
-    return trans_fcmp_all(ctx, a, gen_helper_ftcun);
-}
-
-static bool trans_FTCOR(DisasContext *ctx, arg_FTCOR *a)
-{
-    return trans_fcmp_all(ctx, a, gen_helper_ftcor);
-}
-
-static bool trans_FTCNE(DisasContext *ctx, arg_FTCNE *a)
-{
-    return trans_fcmp_all(ctx, a, gen_helper_ftcne);
-}
-
-static bool trans_FTCEQ(DisasContext *ctx, arg_FTCEQ *a)
-{
-    return trans_fcmp_all(ctx, a, gen_helper_ftceq);
-}
-
-static bool trans_FTCLT(DisasContext *ctx, arg_FTCLT *a)
-{
-    return trans_fcmp_all(ctx, a, gen_helper_ftclt);
-}
-
-static bool trans_FTCGE(DisasContext *ctx, arg_FTCGE *a)
-{
-    return trans_fcmp_all(ctx, a, gen_helper_ftcge);
-}
-
-static bool trans_FTCGT(DisasContext *ctx, arg_FTCGT *a)
-{
-    return trans_fcmp_all(ctx, a, gen_helper_ftcgt);
-}
-
-static bool trans_FTCLE(DisasContext *ctx, arg_FTCLE *a)
-{
-    return trans_fcmp_all(ctx, a, gen_helper_ftcle);
-}
-
-static bool trans_FOCUN(DisasContext *ctx, arg_FOCUN *a)
-{
-    return trans_fcmp_all(ctx, a, gen_helper_focun);
-}
-
-static bool trans_FOCOR(DisasContext *ctx, arg_FOCOR *a)
-{
-    return trans_fcmp_all(ctx, a, gen_helper_focor);
-}
-
-static bool trans_FOCNE(DisasContext *ctx, arg_FOCNE *a)
-{
-    return trans_fcmp_all(ctx, a, gen_helper_focne);
-}
-
-static bool trans_FOCEQ(DisasContext *ctx, arg_FOCEQ *a)
-{
-    return trans_fcmp_all(ctx, a, gen_helper_foceq);
-}
-
-static bool trans_FOCLT(DisasContext *ctx, arg_FOCLT *a)
-{
-    return trans_fcmp_all(ctx, a, gen_helper_foclt);
-}
-
-static bool trans_FOCGE(DisasContext *ctx, arg_FOCGE *a)
-{
-    return trans_fcmp_all(ctx, a, gen_helper_focge);
-}
-
-static bool trans_FOCGT(DisasContext *ctx, arg_FOCGT *a)
-{
-    return trans_fcmp_all(ctx, a, gen_helper_focgt);
-}
-
-static bool trans_FOCLE(DisasContext *ctx, arg_FOCLE *a)
-{
-    return trans_fcmp_all(ctx, a, gen_helper_focle);
-}
-
 /* control flow instructions */
 
 static bool trans_SWYM(DisasContext *ctx, arg_SWYM *a)
@@ -881,6 +756,13 @@ INSN_FCVT_ORRI(FO2RD, cpu_rf, cpu_rd, gen_helper_fo2rd)
 INSN_FCVT_ORRI(RD2FT, cpu_rd, cpu_rf, gen_helper_rd2ft)
 INSN_FCVT_ORRI(RD2FO, cpu_rd, cpu_rf, gen_helper_rd2fo)
 
+INSN_FCVT_ORRI(FTABS,  cpu_rf, cpu_rf, gen_helper_ftabs)
+INSN_FCVT_ORRI(FTNEG,  cpu_rf, cpu_rf, gen_helper_ftneg)
+INSN_FCVT_ORRI(FTSQRT, cpu_rf, cpu_rf, gen_helper_ftsqrt)
+INSN_FCVT_ORRI(FOABS,  cpu_rf, cpu_rf, gen_helper_foabs)
+INSN_FCVT_ORRI(FONEG,  cpu_rf, cpu_rf, gen_helper_foneg)
+INSN_FCVT_ORRI(FOSQRT, cpu_rf, cpu_rf, gen_helper_fosqrt)
+
 #undef INSN_FCVT_ORRI
 
 #define INSN_FALG_ORRR(insn, fn)														\
@@ -901,6 +783,33 @@ INSN_FALG_ORRR(FOMUL, gen_helper_fomul)
 INSN_FALG_ORRR(FODIV, gen_helper_fodiv)
 
 #undef INSN_FALG_ORRR
+
+#define INSN_FCMP_ORRR(insn, fn)														\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\
+	{																					\
+		fn(cpu_rd[a->hb], cpu_env, cpu_rf[a->hc], cpu_rf[a->hd]);						\
+		return true;																	\
+	}
+
+INSN_FCMP_ORRR(FTCNE, gen_helper_ftcne)
+INSN_FCMP_ORRR(FTCEQ, gen_helper_ftceq)
+INSN_FCMP_ORRR(FTCLT, gen_helper_ftclt)
+INSN_FCMP_ORRR(FTCGE, gen_helper_ftcge)
+INSN_FCMP_ORRR(FTCGT, gen_helper_ftcgt)
+INSN_FCMP_ORRR(FTCLE, gen_helper_ftcle)
+INSN_FCMP_ORRR(FTCOR, gen_helper_ftcor)
+INSN_FCMP_ORRR(FTCUN, gen_helper_ftcun)
+
+INSN_FCMP_ORRR(FOCNE, gen_helper_focne)
+INSN_FCMP_ORRR(FOCEQ, gen_helper_foceq)
+INSN_FCMP_ORRR(FOCLT, gen_helper_foclt)
+INSN_FCMP_ORRR(FOCGE, gen_helper_focge)
+INSN_FCMP_ORRR(FOCGT, gen_helper_focgt)
+INSN_FCMP_ORRR(FOCLE, gen_helper_focle)
+INSN_FCMP_ORRR(FOCOR, gen_helper_focor)
+INSN_FCMP_ORRR(FOCUN, gen_helper_focun)
+
+#undef INSN_FCMP_ORRR
 
 static bool trans_TRAP(DisasContext *ctx, arg_TRAP *a)
 {
