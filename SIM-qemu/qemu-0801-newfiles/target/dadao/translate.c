@@ -610,39 +610,11 @@ static bool trans_fop1_all(DisasContext *ctx, arg_disas_dadao2 *a,
     return true;
 }
 
-static bool trans_fop2_all(DisasContext *ctx, arg_disas_dadao7 *a,
-                           void (*fn)(TCGv_i64, TCGv_env, TCGv_i64, TCGv_i64))
-{
-    gen_helper_set_rounding_mode(cpu_env);
-    fn(cpu_rf[a->hb], cpu_env, cpu_rf[a->hc], cpu_rf[a->hd]);
-    return true;
-}
-
 static bool trans_fcmp_all(DisasContext *ctx, arg_disas_dadao7 *a,
                            void (*fn)(TCGv_i64, TCGv_env, TCGv_i64, TCGv_i64))
 {
     fn(cpu_rd[a->hb], cpu_env, cpu_rf[a->hc], cpu_rf[a->hd]);
     return true;
-}
-
-static bool trans_FTADD(DisasContext *ctx, arg_FTADD *a)
-{
-    return trans_fop2_all(ctx, a, gen_helper_ftadd);
-}
-
-static bool trans_FTSUB(DisasContext *ctx, arg_FTSUB *a)
-{
-    return trans_fop2_all(ctx, a, gen_helper_ftsub);
-}
-
-static bool trans_FTMUL(DisasContext *ctx, arg_FTMUL *a)
-{
-    return trans_fop2_all(ctx, a, gen_helper_ftmul);
-}
-
-static bool trans_FTDIV (DisasContext *ctx, arg_FTDIV *a)
-{
-    return trans_fop2_all(ctx, a, gen_helper_ftdiv);
 }
 
 static bool trans_FTABS(DisasContext *ctx, arg_FTABS *a)
@@ -658,26 +630,6 @@ static bool trans_FTNEG(DisasContext *ctx, arg_FTNEG *a)
 static bool trans_FTSQRT(DisasContext *ctx, arg_FTSQRT *a)
 {
     return trans_fop1_all(ctx, a, gen_helper_ftsqrt);
-}
-
-static bool trans_FOADD(DisasContext *ctx, arg_FOADD *a)
-{
-    return trans_fop2_all(ctx, a, gen_helper_foadd);
-}
-
-static bool trans_FOSUB(DisasContext *ctx, arg_FOSUB *a)
-{
-    return trans_fop2_all(ctx, a, gen_helper_fosub);
-}
-
-static bool trans_FOMUL(DisasContext *ctx, arg_FOMUL *a)
-{
-    return trans_fop2_all(ctx, a, gen_helper_fomul);
-}
-
-static bool trans_FODIV(DisasContext *ctx, arg_FODIV *a)
-{
-    return trans_fop2_all(ctx, a, gen_helper_fodiv);
 }
 
 static bool trans_FOABS(DisasContext *ctx, arg_FOABS *a)
@@ -930,6 +882,25 @@ INSN_FCVT_ORRI(RD2FT, cpu_rd, cpu_rf, gen_helper_rd2ft)
 INSN_FCVT_ORRI(RD2FO, cpu_rd, cpu_rf, gen_helper_rd2fo)
 
 #undef INSN_FCVT_ORRI
+
+#define INSN_FALG_ORRR(insn, fn)														\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\
+	{																					\
+		gen_helper_set_rounding_mode(cpu_env);											\
+		fn(cpu_rf[a->hb], cpu_env, cpu_rf[a->hc], cpu_rf[a->hd]);						\
+		return true;																	\
+	}
+
+INSN_FALG_ORRR(FTADD, gen_helper_ftadd)
+INSN_FALG_ORRR(FTSUB, gen_helper_ftsub)
+INSN_FALG_ORRR(FTMUL, gen_helper_ftmul)
+INSN_FALG_ORRR(FTDIV, gen_helper_ftdiv)
+INSN_FALG_ORRR(FOADD, gen_helper_foadd)
+INSN_FALG_ORRR(FOSUB, gen_helper_fosub)
+INSN_FALG_ORRR(FOMUL, gen_helper_fomul)
+INSN_FALG_ORRR(FODIV, gen_helper_fodiv)
+
+#undef INSN_FALG_ORRR
 
 static bool trans_TRAP(DisasContext *ctx, arg_TRAP *a)
 {
