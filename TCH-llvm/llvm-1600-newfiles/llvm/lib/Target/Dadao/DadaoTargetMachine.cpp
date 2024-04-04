@@ -89,6 +89,7 @@ public:
     return getTM<DadaoTargetMachine>();
   }
 
+  void addIRPasses() override;
   bool addInstSelector() override;
 };
 } // namespace
@@ -96,6 +97,11 @@ public:
 TargetPassConfig *
 DadaoTargetMachine::createPassConfig(PassManagerBase &PassManager) {
   return new DadaoPassConfig(*this, &PassManager);
+}
+
+void DadaoPassConfig::addIRPasses() {
+  addPass(createAtomicExpandPass());
+  TargetPassConfig::addIRPasses();
 }
 
 // Install an instruction selector pass.

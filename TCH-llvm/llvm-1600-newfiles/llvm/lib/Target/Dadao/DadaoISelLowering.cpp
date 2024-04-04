@@ -1394,3 +1394,13 @@ void DadaoTargetLowering::computeKnownBitsForTargetNode(
     break;
   }
 }
+
+TargetLoweringBase::AtomicExpansionKind
+DadaoTargetLowering::shouldExpandAtomicRMWInIR(AtomicRMWInst *AI) const {
+  return AtomicExpansionKind::NotAtomic;
+}
+
+TargetLoweringBase::AtomicExpansionKind
+DadaoTargetLowering::shouldExpandAtomicCmpXchgInIR(AtomicCmpXchgInst *AI) const {
+  return AtomicExpansionKind::NotAtomic;
+}

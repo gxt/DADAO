@@ -105,6 +105,12 @@ public:
                                      const SelectionDAG &DAG,
                                      unsigned Depth = 0) const override;
 
+  TargetLoweringBase::AtomicExpansionKind
+  shouldExpandAtomicRMWInIR(AtomicRMWInst *AI) const override;
+
+  TargetLoweringBase::AtomicExpansionKind
+  shouldExpandAtomicCmpXchgInIR(AtomicCmpXchgInst *AI) const override;
+
 private:
   SDValue LowerCCCCallTo(SDValue Chain, SDValue Callee,
                          CallingConv::ID CallConv, bool IsVarArg,
