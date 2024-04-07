@@ -1,6 +1,7 @@
-#ifndef _ENV_PHYSICAL_SINGLE_CORE_H
-#define _ENV_PHYSICAL_SINGLE_CORE_H
+#ifndef _RUNTIME_BARE_DDTEST_H_
+#define _RUNTIME_BARE_DDTEST_H_
 
+#include "simrisc/ddtest.h"
 #include "simrisc/encoding.h"
 
 //-----------------------------------------------------------------------
@@ -77,7 +78,6 @@ _test_start:
 	setrd	rd16, 0;						\
 	trap	cp0, 0;
 
-#define TESTNUM rd2
 #define DDTEST_FAIL							\
 	fence	0;							\
 1:	breq	rd0, TESTNUM, 1b;					\

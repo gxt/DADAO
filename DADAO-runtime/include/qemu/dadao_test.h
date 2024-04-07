@@ -1,4 +1,8 @@
-#define TESTNUM rd2
+#ifndef _RUNTIME_QEMU_DDTEST_H_
+#define _RUNTIME_QEMU_DDTEST_H_
+
+#include "simrisc/ddtest.h"
+#include "simrisc/encoding.h"
 
 #define DDTEST_DDUII							\
 	.text;								\
@@ -47,3 +51,5 @@ _start:									\
 	setrd    rd16, 0;						\
 	setrd    rd15, 93; /* exit */					\
 	trap    cp0, 0;
+
+#endif
