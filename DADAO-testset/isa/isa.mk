@@ -75,16 +75,16 @@ $(eval $(call compile_template,ddfii, -Xassembler --multiple-to-single ))
 
 tests_dump = $(addsuffix .dump, $(tests))
 tests_hex = $(addsuffix .hex, $(tests))
-tests_bare_out = $(addsuffix .out, $(filter dduii-bare%,$(tests)))
-tests_qemu_out = $(addsuffix .out, $(filter dduii-qemu%,$(tests)))
+dduii_bare_out = $(addsuffix .out, $(filter dduii-bare%,$(tests)))
+dduii_qemu_out = $(addsuffix .out, $(filter dduii-qemu%,$(tests)))
 ddfii_bare_out = $(addsuffix .out, $(filter ddfii-bare%,$(tests)))
 ddfii_qemu_out = $(addsuffix .out, $(filter ddfii-qemu%,$(tests)))
 
-run-bare: $(tests_bare_out) $(ddfii_bare_out)
-run-qemu: $(tests_qemu_out) $(ddfii_qemu_out)
+run-bare: $(dduii_bare_out) $(ddfii_bare_out)
+run-qemu: $(dduii_qemu_out) $(ddfii_qemu_out)
 
 
-junk += $(tests) $(tests_dump) $(tests_hex) $(tests_bare_out) $(tests_qemu_out) $(ddfii_bare_out) $(ddfii_qemu_out)
+junk += $(tests) $(tests_dump) $(tests_hex) $(dduii_bare_out) $(dduii_qemu_out) $(ddfii_bare_out) $(ddfii_qemu_out)
 
 #------------------------------------------------------------
 # Default
