@@ -26,13 +26,20 @@ PASS:									\
 	.globl _start;							\
 	.align 4;							\
 _start:									\
-	swym	0;
+	setrd	RD_FLAG, 0;					\
+	setrd	RD_NUMR, 0;					\
+	setrd	RD_PASS, 0;					\
+	setrd	RD_EXP1, 0;					\
+	setrd	RD_EXP2, 0;					\
+	setrd	RD_RET1, 0;					\
+	setrd	RD_RET2, 0;
 
 #define DDTEST_CODE_END
 #define DDTEST_DATA_BEGIN
 #define DDTEST_DATA_END
 
 #define DDTEST_FAIL							\
+___fail:										\
 	setrd    rd16, 1;						\
 	setrd    rd17, FAIL;						\
 	setrd    rd18, FLEN;						\

@@ -31,6 +31,13 @@
 _start:									\
 	/* reset vector */						\
 	INIT_RD_RB_RF;							\
+	setrd	RD_FLAG, 0;					\
+	setrd	RD_NUMR, 0;					\
+	setrd	RD_PASS, 0;					\
+	setrd	RD_EXP1, 0;					\
+	setrd	RD_EXP2, 0;					\
+	setrd	RD_RET1, 0;					\
+	setrd	RD_RET2, 0;					\
 	CPRD_mhartid(rd8);						\
 1:	brnz	rd8, 1b;						\
 	setrd	TESTNUM, 0;						\
@@ -79,6 +86,7 @@ _test_start:
 	trap	cp0, 0;
 
 #define DDTEST_FAIL							\
+___fail:											\
 	fence	0;							\
 1:	breq	rd0, TESTNUM, 1b;					\
 	shlu	TESTNUM, TESTNUM, 1;					\
