@@ -5,13 +5,13 @@
 # Helper macros
 #-----------------------------------------------------------------------
 
-#define _TEST_CASE( testnum, expect1, code... )		\
-test_ ## testnum:									\
-	setrd	RD_NUMR, testnum;						\
-	code;											\
-	setrd	RD_EXP1, expect1;						\
-	cmpu	RD_FLAG, RD_RET1, RD_EXP1;				\
-	brnz	RD_FLAG, ___fail;						\
+#define __TEST_CASE( testnum, expect1, code... )		\
+test_ ## testnum:										\
+	setrd	RD_NUMR, testnum;							\
+	code;												\
+	setrd	RD_EXP1, expect1;							\
+	cmpu	RD_FLAG, RD_RET1, RD_EXP1;					\
+	brnz	RD_FLAG, ___fail;							\
 	addi	RD_PASS, RD_PASS, 1;
 
 #define TEST_CASE( testnum, testreg, correctval, code... )	\
@@ -47,6 +47,23 @@ test_ ## testnum:												\
 #-----------------------------------------------------------------------
 # DADAO MACROS
 #-----------------------------------------------------------------------
+
+#define _TEST_ORRR( testnum, inst, dest, src1, src2, _RGHB, _RGHC, _RGHD, _DEST, _SRC1, _SRC2 )		\
+	__TEST_CASE(	testnum, dest,																	\
+	set ## _RGHC	_RGHC ## _SRC1, src1;															\
+	set ## _RGHD	_RGHD ## _SRC2, src2;															\
+	inst			_RGHB ## _DEST, _RGHC ## _SRC1, _RGHD ## _SRC2;									\
+	_RGHB ## 2rd	RD_RET1, _RGHB ## _DEST, 1;														\
+	)
+
+#define TEST_ORRR_DDD_123( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd, 16, 17, 18 )
+#define TEST_ORRR_DDD_112( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd, 16, 16, 18 )
+#define TEST_ORRR_DDD_121( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd, 16, 17, 16 )
+#define TEST_ORRR_DDD_111( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd, 16, 16, 16 )
+#define TEST_ORRR_DDD_102( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd, 16,  0, 18 )
+#define TEST_ORRR_DDD_120( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd, 16, 17,  0 )
+#define TEST_ORRR_DDD_100( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd, 16,  0,  0 )
+#define TEST_ORRR_DDD_012( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd,  0, 17, 18 )
 
 #-----------------------------------------------------------------------
 # Tests for an instruction with register-register operands
