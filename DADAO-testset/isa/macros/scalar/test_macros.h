@@ -532,9 +532,9 @@ test_ ## testnum:												\
 
 #define TEST_RRRR_SRC2_EQ_DEST2( testnum, inst, result_1, result_2, val1, val2 )	\
     TEST_CASE_DOUBLE_TESTREG( testnum, rd31, rd17, result_1, result_2,			\
-	setrd	rd1, val1;								\
-	setrd	rd2, val2;								\
-	inst	rd31, rd17, rd1, rd2;							\
+	setrd	rd16, val1;								\
+	setrd	rd17, val2;								\
+	inst	rd31, rd17, rd16, rd17;							\
     )
 	
 #define TEST_RRRR_SRC12_EQ_DEST1( testnum, inst, result_1, result_2, val1  )		\
