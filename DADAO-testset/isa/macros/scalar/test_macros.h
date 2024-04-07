@@ -5,6 +5,15 @@
 # Helper macros
 #-----------------------------------------------------------------------
 
+#define _TEST_CASE( testnum, expect1, code... )		\
+test_ ## testnum:									\
+	setrd	RD_NUMR, testnum;						\
+	code;											\
+	setrd	RD_EXP1, expect1;						\
+	cmpu	RD_FLAG, RD_RET1, RD_EXP1;				\
+	brnz	RD_FLAG, ___fail;						\
+	addi	RD_PASS, RD_PASS, 1;
+
 #define TEST_CASE( testnum, testreg, correctval, code... )	\
 test_ ## testnum:						\
 	setrd	TESTNUM, testnum;				\
