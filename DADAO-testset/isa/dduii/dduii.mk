@@ -40,11 +40,11 @@ dduii_sc_tests = \
 	muls \
 	mulu \
 	sub \
-	csn \
-	csz \
+	rrrr-csn \
+	rrrr-csp \
+	rrrr-csz \
 	rrrr-cseq \
 	rrrr-csne \
-	csp \
 	rd2rd \
 	rb2rb \
 	rd2rb \
