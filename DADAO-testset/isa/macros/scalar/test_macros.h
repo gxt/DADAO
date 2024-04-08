@@ -93,6 +93,21 @@ test_ ## testnum:												\
 #define TEST_RRII_BB_11( testnum, inst, dest, src1, imm12 )		_TEST_RRII( testnum, inst, dest, src1, imm12, rb, rb, 16, 16 )
 
 #-----------------------------------------------------------------------
+# DADAO MACROS for RWII
+#-----------------------------------------------------------------------
+
+#define _TEST_RWII( testnum, inst, wyde, dest, orig, imm16, _RGHA, _DEST )		\
+    __TEST_CASE(	testnum, dest,											\
+		set ## _RGHA	_RGHA ## _DEST, orig;								\
+		inst			_RGHA ## _DEST, wyde, imm16;						\
+		_RGHA ## 2rd	RD_RET1, _RGHA ## _DEST, 1;							\
+    )
+
+#define TEST_RWII_D( testnum, inst, wyde, dest, orig, imm16 )		_TEST_RWII( testnum, inst, wyde, dest, orig, imm16, rd, 16 )
+#define TEST_RWII_B( testnum, inst, wyde, dest, orig, imm16 )		_TEST_RWII( testnum, inst, wyde, dest, orig, imm16, rb, 16 )
+#define TEST_RWII_F( testnum, inst, wyde, dest, orig, imm16 )		_TEST_RWII( testnum, inst, wyde, dest, orig, imm16, rf, 16 )
+
+#-----------------------------------------------------------------------
 # Tests for an instruction with register-register operands
 #-----------------------------------------------------------------------
 
@@ -356,31 +371,6 @@ test_ ## testnum:												\
 	setrd	rd16, val1;						\
 	setrd	rd17, val2;						\
 	inst	rd0, rd16, rd17;					\
-    )
-
-#-----------------------------------------------------------------------
-# Tests for an instruction with register-ww-immu16 operands
-#-----------------------------------------------------------------------
-
-#define TEST_RWII_RD( testnum, inst, result, val1, val2, wyde )		\
-    TEST_CASE( testnum, rd31, result, 					\
-	setrd	rd31, val1;						\
-	inst	rd31, wyde, val2;					\
-    )
-
-#define TEST_RWII_RB( testnum, inst, result, val1, val2, wyde )		\
-    TEST_CASE( testnum, rd31, result, 					\
-	setrb	rb31, val1;						\
-	inst	rb31, wyde, val2;					\
-	rb2rd	rd31, rb31, 1;						\
-    )
-
-#define TEST_RWII_RF( testnum, inst, result, val1, val2 , wyde)		\
-    TEST_CASE( testnum, rd31, result,					\
-	setrd	rd31, val1;						\
-	rd2rf	rf31, rd31, 1;						\
-	inst	rf31, wyde, val2;					\
-	rf2rd	rd31, rf31, 1;						\
     )
 
 #-----------------------------------------------------------------------

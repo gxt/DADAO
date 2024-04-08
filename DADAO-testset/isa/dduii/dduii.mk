@@ -16,10 +16,13 @@ dduii_sc_tests = \
 	rrii-andi \
 	rrii-cmpu \
 	rrii-cmps \
-	setzw \
-	setow \
-	andnw \
-	orw \
+	rwii-setzw-rd \
+	rwii-setzw-rb \
+	rwii-setow \
+	rwii-andnw-rd \
+	rwii-andnw-rb \
+	rwii-orw-rd \
+	rwii-orw-rb \
 	add \
 	adrp \
 	divs \
