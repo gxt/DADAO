@@ -8,6 +8,7 @@ dduii_sc_tests = \
 	orrr-xor \
 	orrr-add \
 	orrr-sub \
+	orrr-cmp \
 	setzw \
 	setow \
 	andnw \
@@ -23,7 +24,6 @@ dduii_sc_tests = \
 	sub \
 	cmpu \
 	cmps \
-	cmp \
 	csn \
 	csz \
 	cseq \

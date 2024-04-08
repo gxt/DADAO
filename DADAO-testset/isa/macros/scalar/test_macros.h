@@ -69,6 +69,10 @@ test_ ## testnum:												\
 #define TEST_ORRR_BBD_112( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rb, rb, rd, 16, 16, 18 )
 #define TEST_ORRR_BBD_120( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rb, rb, rd, 16, 17,  0 )
 
+#define TEST_ORRR_DBB_123( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rb, rb, 16, 17, 18 )
+#define TEST_ORRR_DBB_122( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rb, rb, 16, 17, 17 )
+#define TEST_ORRR_DBB_012( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rb, rb,  0, 16, 17 )
+
 #-----------------------------------------------------------------------
 # Tests for an instruction with register-register operands
 #-----------------------------------------------------------------------
@@ -242,26 +246,11 @@ test_ ## testnum:												\
 	inst	rd31, rd16, rd17;					\
     )
 
-#define TEST_ORRR_OP_RB( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd31, result,					\
-	setrb	rb16, val1;						\
-	setrb	rb17, val2;						\
-	inst	rd31, rb16, rb17;					\
-    )
-
 #define TEST_ORRR_SRC1_EQ_DEST( testnum, inst, result, val1, val2 )	\
     TEST_CASE( testnum, rd31, result,					\
 	setrd	rd31, val1;						\
 	setrd	rd16, val2;						\
 	inst	rd31, rd31, rd16;					\
-    )
-
-#define TEST_ORRR_SRC1_EQ_DEST_RB( testnum, inst, result, val1, val2 )	\
-    TEST_CASE( testnum, rd31, result,					\
-	setrb	rb31, val1;						\
-	setrb	rb17, val2;						\
-	inst	rb31, rb31, rb17;					\
-	rb2rd	rd31, rb31, 1;						\
     )
 
 #define TEST_ORRR_SRC2_EQ_DEST( testnum, inst, result, val1, val2 )	\
@@ -271,23 +260,10 @@ test_ ## testnum:												\
 	inst	rd31, rd16, rd31;					\
     )
 
-#define TEST_ORRR_SRC2_EQ_DEST_RB( testnum, inst, result, val1, val2 )	\
-    TEST_CASE( testnum, rd31, result,					\
-	setrb	rb16, val1;						\
-	setrb	rb31, val2;						\
-	inst	rd31, rb16, rb31;					\
-    )
-
 #define TEST_ORRR_SRC12_EQ_DEST( testnum, inst, result, val1 )		\
     TEST_CASE( testnum, rd31, result,					\
 	setrd	rd31, val1;						\
 	inst	rd31, rd31, rd31;					\
-    )
-
-#define TEST_ORRR_SRC1_EQ_SRC2_RB( testnum, inst, result, val )		\
-    TEST_CASE( testnum, rd31, result,					\
-	setrb	rb31, val;						\
-	inst	rd31, rb31, rb31;					\
     )
 
 #define TEST_ORRR_DEST_BYPASS( testnum, swym_cycles, inst, result, val1, val2 )	\
@@ -361,13 +337,6 @@ test_ ## testnum:												\
 	setrd	rd16, val1;						\
 	setrd	rd17, val2;						\
 	inst	rd0, rd16, rd17;					\
-    )
-
-#define TEST_ORRR_ZERODEST_RB( testnum, inst, val1, val2 )		\
-    TEST_CASE( testnum, rd0, 0,						\
-	setrb	rb16, val1;						\
-	setrb	rb17, val2;						\
-	inst	rd0, rb16, rb17;					\
     )
 
 #-----------------------------------------------------------------------
