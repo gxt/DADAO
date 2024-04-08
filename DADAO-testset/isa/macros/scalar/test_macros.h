@@ -45,7 +45,7 @@ test_ ## testnum:												\
         .endr;
 
 #-----------------------------------------------------------------------
-# DADAO MACROS
+# DADAO MACROS for ORRR
 #-----------------------------------------------------------------------
 
 #define _TEST_ORRR( testnum, inst, dest, src1, src2, _RGHB, _RGHC, _RGHD, _DEST, _SRC1, _SRC2 )		\
@@ -72,6 +72,25 @@ test_ ## testnum:												\
 #define TEST_ORRR_DBB_123( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rb, rb, 16, 17, 18 )
 #define TEST_ORRR_DBB_122( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rb, rb, 16, 17, 17 )
 #define TEST_ORRR_DBB_012( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rb, rb,  0, 16, 17 )
+
+#-----------------------------------------------------------------------
+# DADAO MACROS for RRII
+#-----------------------------------------------------------------------
+
+#define _TEST_RRII( testnum, inst, dest, src1, imm12, _RGHA, _RGHB, _DEST, _SRC1 )		\
+    __TEST_CASE(	testnum, dest,														\
+		set ## _RGHB	_RGHB ## _SRC1, src1;											\
+		inst			_RGHA ## _DEST, _RGHB ## _SRC1, imm12;							\
+		_RGHA ## 2rd	RD_RET1, _RGHA ## _DEST, 1;										\
+    )
+
+#define TEST_RRII_DD_12( testnum, inst, dest, src1, imm12 )		_TEST_RRII( testnum, inst, dest, src1, imm12, rd, rd, 16, 17 )
+#define TEST_RRII_DD_11( testnum, inst, dest, src1, imm12 )		_TEST_RRII( testnum, inst, dest, src1, imm12, rd, rd, 16, 16 )
+#define TEST_RRII_DD_10( testnum, inst, dest, src1, imm12 )		_TEST_RRII( testnum, inst, dest, src1, imm12, rd, rd, 16,  0 )
+#define TEST_RRII_DD_01( testnum, inst, dest, src1, imm12 )		_TEST_RRII( testnum, inst, dest, src1, imm12, rd, rd,  0, 16 )
+
+#define TEST_RRII_BB_12( testnum, inst, dest, src1, imm12 )		_TEST_RRII( testnum, inst, dest, src1, imm12, rb, rb, 16, 17 )
+#define TEST_RRII_BB_11( testnum, inst, dest, src1, imm12 )		_TEST_RRII( testnum, inst, dest, src1, imm12, rb, rb, 16, 16 )
 
 #-----------------------------------------------------------------------
 # Tests for an instruction with register-register operands
@@ -362,74 +381,6 @@ test_ ## testnum:												\
 	rd2rf	rf31, rd31, 1;						\
 	inst	rf31, wyde, val2;					\
 	rf2rd	rd31, rf31, 1;						\
-    )
-
-#-----------------------------------------------------------------------
-# Tests for instructions with register-register-immediate operand
-#-----------------------------------------------------------------------
-
-#define TEST_RRII_OP( testnum, inst, result, val1, imm )		\
-    TEST_CASE( testnum, rd31, result,					\
-	setrd	rd16, val1;						\
-	inst	rd31, rd16, imm;					\
-    )
-
-#define TEST_RRII_OP_RB( testnum, inst, result, val1, imm )		\
-    TEST_CASE( testnum, rd31, result,					\
-	setrb	rb16, val1;						\
-	inst	rb31, rb16, imm;					\
-	rb2rd	rd31, rb31, 1;						\
-    )
-
-#define TEST_RRII_SRC1_EQ_DEST( testnum, inst, result, val1, imm )	\
-    TEST_CASE( testnum, rd31, result,					\
-	setrd	rd31, val1;						\
-	inst	rd31, rd31, imm;					\
-    )
-
-#define TEST_RRII_SRC1_EQ_DEST_RB( testnum, inst, result, val1, imm )	\
-    TEST_CASE( testnum, rd31, result,					\
-	setrb	rb31, val1;						\
-	inst	rb31, rb31, imm;					\
-	rb2rd	rd31, rb31, imm;					\
-    )
-
-#define TEST_RRII_DEST_BYPASS( testnum, swym_cycles, inst, result, val1, imm )	\
-    TEST_CASE( testnum, rd31, result,					\
-	setrd	rd18, 0;						\
-1:	setrd	rd16, val1;						\
-	inst	rd19, rd16, imm;					\
-	.rept	swym_cycles						\
-		swym	0;						\
-	.endr;								\
-	rd2rd	rd31, rd19, 1;						\
-	addi	rd18, rd18, 1;						\
-	cmps	rd20, rd18, 2;						\
-	brnz	rd20, 1b;						\
-    )
-
-#define TEST_RRII_SRC1_BYPASS( testnum, swym_cycles, inst, result, val1, imm )	\
-    TEST_CASE( testnum, rd31, result,					\
-	setrd	rd18, 0;						\
-1:	setrd	rd16, val1;						\
-	.rept	swym_cycles						\
-		swym	0;						\
-	.endr;								\
-	inst	rd31, rd16, imm;					\
-	addi	rd18, rd18, 1;						\
-	cmps	rd19, rd18, 2;						\
-	brnz	rd19, 1b;						\
-    )
-
-#define TEST_RRII_ZEROSRC1( testnum, inst, result, imm )		\
-    TEST_CASE( testnum, rd31, result,					\
-	inst	rd31, rd0, imm;						\
-    )
-
-#define TEST_RRII_ZERODEST( testnum, inst, val1, imm )			\
-    TEST_CASE( testnum, rd0, 0,						\
-	setrd	rd31, val1;						\
-	inst	rd0, rd31, imm;						\
     )
 
 #-----------------------------------------------------------------------

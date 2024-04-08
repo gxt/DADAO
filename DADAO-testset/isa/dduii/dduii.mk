@@ -9,21 +9,24 @@ dduii_sc_tests = \
 	orrr-add \
 	orrr-sub \
 	orrr-cmp \
+	orrr-cmps \
+	orrr-cmpu \
+	rrii-addi-rd \
+	rrii-addi-rb \
+	rrii-andi \
+	rrii-cmpu \
+	rrii-cmps \
 	setzw \
 	setow \
 	andnw \
 	orw \
-	addi \
 	add \
 	adrp \
-	andi \
 	divs \
 	divu \
 	muls \
 	mulu \
 	sub \
-	cmpu \
-	cmps \
 	csn \
 	csz \
 	cseq \
