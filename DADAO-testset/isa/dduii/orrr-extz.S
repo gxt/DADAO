@@ -1,0 +1,40 @@
+#*****************************************************************************
+# extz.S
+#-----------------------------------------------------------------------------
+#
+# Test and instruction.
+#
+
+#include "dadao_test.h"
+#include "test_macros.h"
+
+DDTEST_DDUII
+DDTEST_CODE_BEGIN
+
+	TEST_ORRR_DDD_123( 2, extz, 0x0f0f0f0f0f0f0f0f, 0x0f0f0f0f0f0f0f0f, 0x0000000000000000 )
+	TEST_ORRR_DDD_123( 3, extz, 0xffffffffffffffff, 0xffffffffffffffff, 0x0000000000000000 )
+	TEST_ORRR_DDD_123( 4, extz, 0x0000f0f0f0f0f0f0, 0xf0f0f0f0f0f0f0f0, 0x0000000000000010 )
+	TEST_ORRR_DDD_123( 5, extz, 0x00000000fff00000, 0xf00ffffffff00000, 0x0000000000000020 )
+	TEST_ORRR_DDD_123( 6, extz, 0x000000000000000f, 0xffffffffffffffff, 0x000000000000003c )
+	TEST_ORRR_DDD_123( 7, extz, 0x0000000000000001, 0x0000000000000001, 0x000000000000003f )
+	TEST_ORRR_DDD_123( 8, extz, 0x0000000000000000, 0x0000000000000000, 0x000000000000003f )
+
+	TEST_ORRR_DDD_112( 9, extz, 0x1ff0f0f0f0f0f0ff, 0xfff0f0f0f0f0f0ff, 0x0000000000000003 )
+	TEST_ORRR_DDD_112( 10, extz, 0x0000f0f0f000ffff, 0x00f0f0f0f000ffff, 0x000000000000000f )
+
+	TEST_ORRR_DDD_121( 11, extz, 0x0000000000000000, 0xf0f0f0f0000f0000, 0x000000000000003f )
+	TEST_ORRR_DDD_121( 12, extz, 0x000000000000ffff, 0x00f0f0f0f000ffff, 0x0000000000000030 )
+
+	TEST_ORRR_DDD_102( 13, extz, 0x0000000000000000, 0, 0x0000000000000032 )
+	TEST_ORRR_DDD_120( 14, extz, 0x0f0f0f0f0000f0f0, 0x0f0f0f0f0000f0f0, 0 )
+
+	TEST_PASSFAIL
+
+DDTEST_CODE_END
+
+	.data
+DDTEST_DATA_BEGIN
+
+	TEST_DATA
+
+DDTEST_DATA_END
