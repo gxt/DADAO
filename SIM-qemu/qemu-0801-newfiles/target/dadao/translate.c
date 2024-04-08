@@ -496,10 +496,12 @@ INSN_MUL_RRRR(MULU, mulu)
 		tcg_gen_brcond_i64(TCG_COND_NE, cpu_rd[a->hd], cpu_rdzero, label_not_zero);		\
 		gen_exception(DADAO_EXCP_FPER);													\
 		gen_set_label(label_not_zero);													\
-		if (a->hb != 0)																	\
-			tcg_gen_##divop##_i64(cpu_rd[a->hb], cpu_rd[a->hc], cpu_rd[a->hd]);			\
-		if (a->ha != 0)																	\
-			tcg_gen_##remop##_i64(cpu_rd[a->ha], cpu_rd[a->hc], cpu_rd[a->hd]);			\
+		TCGv_i64 temp1 = tcg_temp_new_i64();											\
+		TCGv_i64 temp2 = tcg_temp_new_i64();											\
+		tcg_gen_##divop##_i64(temp1, cpu_rd[a->hc], cpu_rd[a->hd]);						\
+		tcg_gen_##remop##_i64(temp2, cpu_rd[a->hc], cpu_rd[a->hd]);						\
+		if (a->ha != 0)			tcg_gen_mov_i64(cpu_rd[a->ha], temp2);					\
+		if (a->hb != 0)			tcg_gen_mov_i64(cpu_rd[a->hb], temp1);					\
 		return true;																	\
 	}
 
