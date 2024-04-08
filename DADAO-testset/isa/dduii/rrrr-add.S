@@ -1,0 +1,71 @@
+#*****************************************************************************
+# add.S
+#-----------------------------------------------------------------------------
+#
+# Test add instruction.
+#
+
+#include "dadao_test.h"
+#include "test_macros.h"
+
+DDTEST_DDUII
+DDTEST_CODE_BEGIN
+
+	#-------------------------------------------------------------
+	# Logical tests
+	#-------------------------------------------------------------
+
+	TEST_RRRR_WWRR_1234( 2, add, 0x0, 0x0, 0x0, 0x0 )
+	TEST_RRRR_WWRR_1234( 3, add, 0x0, 0x2, 0x1, 0x1 )
+	TEST_RRRR_WWRR_1234( 4, add, 0x0, 0xa, 0x3, 0x7 )
+
+	TEST_RRRR_WWRR_1234( 5, add, 0xffffffffffffffff, 0xffffffffffff8000, 0x0000000000000000, 0xffffffffffff8000 )
+	TEST_RRRR_WWRR_1234( 6, add, 0xffffffffffffffff, 0xffffffff80000000, 0xffffffff80000000, 0x0000000000000000 )
+	TEST_RRRR_WWRR_1234( 7, add, 0xffffffffffffffff, 0xffffffff7fff8000, 0xffffffff80000000, 0xffffffffffff8000 )
+
+
+	TEST_RRRR_WWRR_1234( 8, add, 0x0000000000000000, 0x0000000000007fff, 0x0000000000000000, 0x0000000000007fff )
+	TEST_RRRR_WWRR_1234( 9, add, 0x0000000000000000, 0x000000007fffffff, 0x000000007fffffff, 0x0000000000000000 )
+	TEST_RRRR_WWRR_1234(10, add, 0x0000000000000000, 0x0000000080007ffe, 0x000000007fffffff, 0x0000000000007fff )
+
+	TEST_RRRR_WWRR_1234(11, add, 0xffffffffffffffff, 0xffffffff80007fff, 0xffffffff80000000, 0x0000000000007fff )
+	TEST_RRRR_WWRR_1234(12, add, 0x0000000000000000, 0x000000007fff7fff, 0x000000007fffffff, 0xffffffffffff8000 )
+
+	TEST_RRRR_WWRR_1234(13, add, 0xffffffffffffffff, 0xffffffffffffffff, 0x0000000000000000, 0xffffffffffffffff )
+	TEST_RRRR_WWRR_1234(14, add, 0x0000000000000000, 0x0000000000000000, 0xffffffffffffffff, 0x0000000000000001 )
+	TEST_RRRR_WWRR_1234(15, add, 0xffffffffffffffff, 0xfffffffffffffffe, 0xffffffffffffffff, 0xffffffffffffffff )
+
+	TEST_RRRR_WWRR_1234(16, add, 0x0000000000000000, 0x0000000080000000, 0x0000000000000001, 0x000000007fffffff )
+
+	
+	#-------------------------------------------------------------
+	# Source/Destination tests
+	#-------------------------------------------------------------
+
+
+	TEST_RRRR_WWRR_1213( 17, add, 0, 24, 13, 11 )
+	TEST_RRRR_WWRR_1223( 18, add, 0, 25, 14, 11 )
+	TEST_RRRR_WWRR_1231( 19, add, 0, 26, 15, 11 )
+	TEST_RRRR_WWRR_1232( 20, add, 0, 27, 16, 11 )
+
+	TEST_RRRR_WWRR_1211( 21, add, 0, 28, 14, 14 )
+	TEST_RRRR_WWRR_1222( 22, add, 0, 30, 15, 15 )
+	
+	TEST_RRRR_WWRR_1203( 26, add, 0, 33,  0, 33 )
+	TEST_RRRR_WWRR_1230( 27, add, 0, 34, 34,  0 )
+	TEST_RRRR_WWRR_1200( 28, add, 0,  0,  0,  0 )
+
+	TEST_RRRR_WWRR_0123( 29, add, 0, 8, 4, 4 )
+	TEST_RRRR_WWRR_1023( 30, add, 0, 0, 5, 5 )
+
+	TEST_PASSFAIL
+
+DDTEST_CODE_END
+
+	.data
+DDTEST_DATA_BEGIN
+
+	TEST_DATA
+
+DDTEST_DATA_END
+

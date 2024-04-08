@@ -22,17 +22,6 @@ test_ ## testnum:						\
 	cmps	rd15, testreg, rd15;				\
 	brnz	rd15, fail;
 
-#define TEST_CASE_DOUBLE_TESTREG( testnum, testreg_1, testreg_2, correctval_1, correctval_2, code... )	\
-test_ ## testnum:											\
-	setrd	TESTNUM, testnum;									\
-	code;												\
-	setrd	rd14, correctval_1;									\
-	setrd	rd15, correctval_2;									\
-	cmps	rd14, testreg_1, rd14;									\
-	brnz	rd14, fail;										\
-	cmps	rd15, testreg_2, rd15;									\
-	brnz    rd15, fail;
-
 #define TEST_CASE_MULTI_REG( testnum, inst, reg1, reg2, imm6, reggroup, correctval, cmpinst, registernum... )	\
 test_ ## testnum:												\
         inst	reg1, reg2, imm6;										\
@@ -158,6 +147,35 @@ test_ ## testnum:												\
 #define TEST_RRRR_RWRR_1203( testnum, inst, dest, cond, src1, src2 )		_TEST_RRRR_RWRR( testnum, inst, dest, cond, src1, src2, 16, 17,  0, 19 )
 #define TEST_RRRR_RWRR_1230( testnum, inst, dest, cond, src1, src2 )		_TEST_RRRR_RWRR( testnum, inst, dest, cond, src1, src2, 16, 17, 18,  0 )
 
+#define _TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2, _DEST1, _DEST2, _SRC1, _SRC2 )			\
+test_ ## testnum:														\
+	setrd	RD_NUMR, testnum;											\
+	setrd	rd ## _SRC1, src1;											\
+	setrd	rd ## _SRC2, src2;											\
+	inst	rd ## _DEST1, rd ## _DEST2, rd ## _SRC1, rd ## _SRC2;		\
+	rd2rd	RD_RET1, rd ## _DEST1, 1;									\
+	rd2rd	RD_RET2, rd ## _DEST2, 1;									\
+	setrd	RD_EXP1, dest1;												\
+	setrd	RD_EXP2, dest2;												\
+	cmpu	RD_FLAG, RD_RET1, RD_EXP1;									\
+	brnz	RD_FLAG, ___fail;											\
+	cmpu	RD_FLAG, RD_RET2, RD_EXP2;									\
+	brnz	RD_FLAG, ___fail;											\
+	addi	RD_PASS, RD_PASS, 1;
+
+#define TEST_RRRR_WWRR_1234( testnum, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2, 16, 17, 18, 19 )
+#define TEST_RRRR_WWRR_1213( testnum, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2, 16, 17, 16, 19 )
+#define TEST_RRRR_WWRR_1223( testnum, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2, 16, 17, 17, 19 )
+#define TEST_RRRR_WWRR_1231( testnum, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2, 16, 17, 18, 16 )
+#define TEST_RRRR_WWRR_1232( testnum, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2, 16, 17, 18, 17 )
+#define TEST_RRRR_WWRR_1211( testnum, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2, 16, 17, 16, 16 )
+#define TEST_RRRR_WWRR_1222( testnum, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2, 16, 17, 17, 17 )
+#define TEST_RRRR_WWRR_1203( testnum, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2, 16, 17,  0, 19 )
+#define TEST_RRRR_WWRR_1230( testnum, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2, 16, 17, 18,  0 )
+#define TEST_RRRR_WWRR_1200( testnum, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2, 16, 17,  0,  0 )
+#define TEST_RRRR_WWRR_0123( testnum, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2,  0, 17, 18, 19 )
+#define TEST_RRRR_WWRR_1023( testnum, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2, 16,  0, 18, 19 )
+
 #-----------------------------------------------------------------------
 # Tests for an instruction with register-register operands
 #-----------------------------------------------------------------------
@@ -268,104 +286,6 @@ test_ ## testnum:												\
 #define TEST_RIII_ZEROSRC1( testnum, inst, result, imm )		\
     TEST_CASE( testnum, rd0, result,					\
 	inst	rd0, imm;						\
-    )
-
-#-----------------------------------------------------------------------
-# Tests for an instruction with register-register-register-register operands
-#-----------------------------------------------------------------------
-
-#define TEST_RRRR_OP( testnum, inst, result_1, result_2, val1, val2 )		\
-    TEST_CASE_DOUBLE_TESTREG( testnum, rd30, rd31, result_1, result_2,		\
-	setrd	rd16, val1;							\
-	setrd	rd17, val2;							\
-	inst	rd30, rd31, rd16, rd17;						\
-    )
-
-#define TEST_RRRR_SRC1_EQ_DEST1( testnum, inst, result_1, result_2, val1, val2 )	\
-    TEST_CASE_DOUBLE_TESTREG( testnum, rd16, rd31, result_1, result_2,			\
-	setrd	rd16, val1;								\
-	setrd	rd17, val2;								\
-	inst	rd16, rd31, rd16, rd17;							\
-    ) 
-
-#define TEST_RRRR_SRC1_EQ_DEST2( testnum, inst, result_1, result_2, val1, val2 )	\
-    TEST_CASE_DOUBLE_TESTREG( testnum, rd31, rd17, result_1, result_2,			\
-	setrd	rd16, val1;								\
-	setrd	rd17, val2;								\
-	inst	rd31, rd17, rd16, rd17;							\
-    )
-
-#define TEST_RRRR_SRC2_EQ_DEST1( testnum, inst, result_1, result_2, val1, val2 )	\
-    TEST_CASE_DOUBLE_TESTREG( testnum, rd17, rd31, result_1, result_2,			\
-	setrd	rd16, val1;								\
-	setrd	rd17, val2;								\
-	inst	rd17, rd31, rd16, rd17;							\
-    )
-
-#define TEST_RRRR_SRC2_EQ_DEST2( testnum, inst, result_1, result_2, val1, val2 )	\
-    TEST_CASE_DOUBLE_TESTREG( testnum, rd31, rd17, result_1, result_2,			\
-	setrd	rd16, val1;								\
-	setrd	rd17, val2;								\
-	inst	rd31, rd17, rd16, rd17;							\
-    )
-	
-#define TEST_RRRR_SRC12_EQ_DEST1( testnum, inst, result_1, result_2, val1  )		\
-    TEST_CASE_DOUBLE_TESTREG( testnum, rd16, rd31, result_1, result_2,			\
-	setrd	rd16, val1;								\
-	inst	rd16, rd31, rd16, rd16;							\
-    )
-
-#define TEST_RRRR_SRC12_EQ_DEST2( testnum, inst, result_1, result_2, val1 )		\
-    TEST_CASE_DOUBLE_TESTREG( testnum, rd31, rd16, result_1, result_2,			\
-	setrd	rd16, val1;								\
-	inst	rd31, rd16, rd16, rd16;							\
-    )
-
-#define TEST_RRRR_DEST_BYPASS( testnum, swym_cycles, inst, result_1, result_2, val1, val2 )	\
-    TEST_CASE_DOUBLE_TESTREG( testnum, rd30, rd31, result_1, result_2,				\
-	setrd	rd18, 0;									\
-1:	setrd	rd16, val1;									\
-	setrd	rd17, val2;									\
-	inst	rd20, rd21, rd16, rd17;								\
-	.rept	swym_cycles									\
-		swym	0;									\
-	.endr;											\
-        rd2rd   rd30, rd20, 1;									\
-	rd2rd	rd31, rd21, 1;									\
-	addi	rd18, rd18, 1;									\
-	cmps	rd19, rd18, 2;									\
-	brnz	rd19, 1b;									\
-    )
-
-#define TEST_RRRR_ZEROSR1( testnum, inst, result_1, result_2, val )	\
-    TEST_CASE_DOUBLE_TESTREG( testnum, rd30, rd31, result_1, result_2,	\
-	setrd	rd16, val;						\
-	inst	rd30, rd31, rd0, rd16;					\
-    )
-
-#define TEST_RRRR_ZEROSR2( testnum, inst, result_1, result_2, val )	\
-    TEST_CASE_DOUBLE_TESTREG( testnum, rd30, rd31, result_1, result_2,	\
-	setrd	rd16, val;						\
-	inst	rd30, rd31, rd16, rd0;					\
-    )
-
-#define TEST_RRRR_ZEROSR12( testnum, inst, result_1, result_2	 )	\
-    TEST_CASE_DOUBLE_TESTREG( testnum, rd30 ,rd31, result_1, result_2,	\
-	inst	rd30, rd31, rd0, rd0;					\
-    )
-
-#define TEST_RRRR_ZERODEST1( testnum, inst, result, val1, val2 )	\
-    TEST_CASE_DOUBLE_TESTREG( testnum, rd0, rd31, 0, result,		\
-	setrd	rd16, val1;						\
-	setrd	rd17, val2;						\
-	inst	rd0, rd31, rd16, rd17;					\
-    )
-
-#define TEST_RRRR_ZERODEST2( testnum, inst, result, val1, val2 )        \
-    TEST_CASE_DOUBLE_TESTREG( testnum, rd31, rd0, result, 0,		\
-	setrd	rd16, val1;						\
-	setrd	rd17, val2;						\
-	inst	rd31, rd0, rd16, rd17;					\
     )
 
 #-----------------------------------------------------------------------
