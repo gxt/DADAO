@@ -42,8 +42,8 @@ dduii_sc_tests = \
 	sub \
 	csn \
 	csz \
-	cseq \
-	csne \
+	rrrr-cseq \
+	rrrr-csne \
 	csp \
 	rd2rd \
 	rb2rb \

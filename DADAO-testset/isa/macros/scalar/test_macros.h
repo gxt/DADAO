@@ -123,6 +123,25 @@ test_ ## testnum:												\
 #define TEST_RWII_F( testnum, inst, wyde, dest, orig, imm16 )		_TEST_RWII( testnum, inst, wyde, dest, orig, imm16, rf, 16 )
 
 #-----------------------------------------------------------------------
+# DADAO MACROS for RRRR
+#-----------------------------------------------------------------------
+
+#define _TEST_RRRR_RRWR( testnum, inst, dest, cond1, cond2, orig, src, _COND1, _COND2, _DEST, _SRC )		\
+	__TEST_CASE(	testnum, dest,																			\
+		setrd		rd ## _COND1, cond1;																	\
+		setrd		rd ## _COND2, cond2;																	\
+		setrd		rd ## _DEST, orig;																		\
+		setrd		rd ## _SRC, src;																		\
+		inst		rd ## _COND1, rd ## _COND2, rd ## _DEST, rd ## _SRC;									\
+		rd2rd		RD_RET1, rd ## _DEST, 1;																\
+	)
+
+#define TEST_RRRR_RRWR_1234( testnum, inst, dest, cond1, cond2, orig, src )		_TEST_RRRR_RRWR( testnum, inst, dest, cond1, cond2, orig, src, 16, 17, 18, 19 )
+#define TEST_RRRR_RRWR_0123( testnum, inst, dest, cond1, cond2, orig, src )		_TEST_RRRR_RRWR( testnum, inst, dest, cond1, cond2, orig, src,  0, 17, 18, 19 )
+#define TEST_RRRR_RRWR_1023( testnum, inst, dest, cond1, cond2, orig, src )		_TEST_RRRR_RRWR( testnum, inst, dest, cond1, cond2, orig, src, 16,  0, 18, 19 )
+#define TEST_RRRR_RRWR_1230( testnum, inst, dest, cond1, cond2, orig, src )		_TEST_RRRR_RRWR( testnum, inst, dest, cond1, cond2, orig, src, 16, 17, 18,  0 )
+
+#-----------------------------------------------------------------------
 # Tests for an instruction with register-register operands
 #-----------------------------------------------------------------------
 
@@ -191,35 +210,6 @@ test_ ## testnum:												\
     set##REG_GROUP REG_GROUP##61, 0x3d;                                   \
     set##REG_GROUP REG_GROUP##62, 0x3e;                                   \
     set##REG_GROUP REG_GROUP##63, 0x3f;                                    
-
-#define TEST_RRRR_RET3_OP( testnum, inst, result, val1, val2, val3)     \
-    TEST_CASE( testnum, rd31, result,                                   \
-        setrd	rd16, val1;                                             \
-        setrd	rd17, val2;                                             \
-        setrd	rd18, val3;                                             \
-        inst    rd16, rd17, rd31, rd18;                                 \
-    )
-
-#define TEST_RRRR_RET3_ZEROSRC1( testnum, inst, result, val2, val3 )    \
-    TEST_CASE( testnum, rd31, result,                                   \
-        setrd	rd16, val2;                                             \
-        setrd	rd17, val3;                                             \
-        inst    rd0, rd16, rd31, rd17                                   \
-    )
-
-#define TEST_RRRR_RET3_ZEROSRC2( testnum, inst, result, val2, val3 )    \
-    TEST_CASE( testnum, rd31, result,                                   \
-        setrd	rd16, val2;                                             \
-        setrd	rd17, val3;                                             \
-        inst    rd16, rd0, rd31, rd17                                   \
-    )
-
-#define TEST_RRRR_RET3_ZEROSRC3( testnum, inst, result, val2, val3 )    \
-    TEST_CASE( testnum, rd31, result,                                   \
-        setrd	rd16, val2;                                             \
-        setrd	rd17, val3;                                             \
-        inst    rd16, rd17, rd31, rd0                                   \
-    )
 
 #define TEST_RRRR_RET1_OP( testnum, inst, result, val1, val2, val3)     \
     TEST_CASE( testnum, rd31, result,                                   \
