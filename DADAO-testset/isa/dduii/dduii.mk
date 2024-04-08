@@ -6,6 +6,8 @@ dduii_sc_tests = \
 	orrr-and \
 	orrr-orr \
 	orrr-xor \
+	orrr-add \
+	orrr-sub \
 	setzw \
 	setow \
 	andnw \

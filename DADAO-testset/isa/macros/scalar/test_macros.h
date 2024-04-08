@@ -65,6 +65,10 @@ test_ ## testnum:												\
 #define TEST_ORRR_DDD_100( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd, 16,  0,  0 )
 #define TEST_ORRR_DDD_012( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd,  0, 17, 18 )
 
+#define TEST_ORRR_BBD_123( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rb, rb, rd, 16, 17, 18 )
+#define TEST_ORRR_BBD_112( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rb, rb, rd, 16, 16, 18 )
+#define TEST_ORRR_BBD_120( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rb, rb, rd, 16, 17,  0 )
+
 #-----------------------------------------------------------------------
 # Tests for an instruction with register-register operands
 #-----------------------------------------------------------------------
@@ -245,14 +249,6 @@ test_ ## testnum:												\
 	inst	rd31, rb16, rb17;					\
     )
 
-#define TEST_ORRR_OP_BBD( testnum, inst, result, val1, val2 )		\
-    TEST_CASE( testnum, rd31, result,					\
-	setrb	rb16, val1;						\
-	setrd	rd31, val2;						\
-	inst	rb31, rb16, rd31;					\
-	rb2rd	rd31, rb31, 1;						\
-    )
-
 #define TEST_ORRR_SRC1_EQ_DEST( testnum, inst, result, val1, val2 )	\
     TEST_CASE( testnum, rd31, result,					\
 	setrd	rd31, val1;						\
@@ -265,14 +261,6 @@ test_ ## testnum:												\
 	setrb	rb31, val1;						\
 	setrb	rb17, val2;						\
 	inst	rb31, rb31, rb17;					\
-	rb2rd	rd31, rb31, 1;						\
-    )
-
-#define TEST_ORRR_SRC1_EQ_DEST_BBD( testnum, inst, result, val1, val2 )	\
-    TEST_CASE( testnum, rd31, result,					\
-	setrb	rb31, val1;						\
-	setrd	rd17, val2;						\
-	inst	rb31, rb31, rd17;					\
 	rb2rd	rd31, rb31, 1;						\
     )
 
@@ -361,13 +349,6 @@ test_ ## testnum:												\
     TEST_CASE( testnum, rd31, result,					\
 	setrd	rd16, val;						\
 	inst	rd31, rd16, rd0;					\
-    )
-
-#define TEST_ORRR_ZEROSRC2_BBD( testnum, inst, result, val )		\
-    TEST_CASE( testnum, rd31, result,					\
-	setrb	rb16, val;						\
-	inst	rb31, rb16, rd0;					\
-	rb2rd	rd31, rb31, 1;						\
     )
 
 #define TEST_ORRR_ZEROSRC12( testnum, inst, result )			\
