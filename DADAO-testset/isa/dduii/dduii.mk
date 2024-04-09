@@ -21,7 +21,7 @@ dduii_sc_tests = \
 	orri-shlu \
 	orri-shru \
 	orri-shrs \
-	adrp \
+	riii-adrp \
 	rrii-addi-rd \
 	rrii-addi-rb \
 	rrii-andi \

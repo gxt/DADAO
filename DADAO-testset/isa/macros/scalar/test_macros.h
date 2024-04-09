@@ -96,6 +96,18 @@ test_ ## testnum:												\
 #define TEST_ORRI_10( testnum, inst, dest, src1, immu6 )	_TEST_ORRI( testnum, inst, dest, src1, immu6, 16,  0 )
 
 #-----------------------------------------------------------------------
+# DADAO MACROS for RIII
+#-----------------------------------------------------------------------
+
+#define _TEST_RIII( testnum, inst, dest, imm18, _DEST )							\
+    __TEST_CASE(	testnum, dest,												\
+		inst		rb ## _DEST, imm18;											\
+		rb2rd		RD_RET1, rb ## _DEST, 1;									\
+    )
+
+#define TEST_RIII( testnum, inst, dest, imm18 )				_TEST_RIII( testnum, inst, dest, imm18, 16 )
+
+#-----------------------------------------------------------------------
 # DADAO MACROS for RRII
 #-----------------------------------------------------------------------
 
@@ -264,48 +276,6 @@ test_ ## testnum:														\
     set##REG_GROUP REG_GROUP##61, 0x3d;                                   \
     set##REG_GROUP REG_GROUP##62, 0x3e;                                   \
     set##REG_GROUP REG_GROUP##63, 0x3f;                                    
-
-#-----------------------------------------------------------------------
-# Tests for instructions with register-immediate operand
-#-----------------------------------------------------------------------
-#define TEST_RIII_OP( testnum, inst, result, val1, imm )		\
-    TEST_CASE( testnum, rd31, result,					\
-	setrb	rb31, val1;						\
-	inst	rb31, imm;						\
-	rb2rd	rd31, rb31, 1;						\
-    )
-
-#define TEST_RIII_DEST_BYPASS( testnum, swym_cycles, inst, result, val1, imm )	\
-    TEST_CASE( testnum, rd31, result,					\
-	setrd	rd18, 0;						\
-1:	setrd	rd16, val1;						\
-	inst	rd16, imm;						\
-	.rept	swym_cycles						\
-		swym	0;						\
-	.endr;								\
-	rd2rd	rd31, rd16, 1;						\
-	addi	rd18, rd18, 1;						\
-	cmps	rd19, rd18, 2;						\
-	brnz	rd19, 1b;						\
-    )
-
-#define TEST_RIII_SRC1_BYPASS( testnum, swym_cycles, inst, result, val1, imm )	\
-    TEST_CASE( testnum, rd31, result,					\
-	setrd	rd18, 0;						\
-1:	setrd	rd31, val1;						\
-	.rept	swym_cycles						\
-		swym	0;						\
-	.endr;								\
-	inst	rd31, imm;						\
-	addi	rd18, rd18, 1;						\
-	cmps	rd19, rd18, 2;						\
-	brnz	rd18, 1b;						\
-    )
-
-#define TEST_RIII_ZEROSRC1( testnum, inst, result, imm )		\
-    TEST_CASE( testnum, rd0, result,					\
-	inst	rd0, imm;						\
-    )
 
 #-----------------------------------------------------------------------
 # Pass and fail code (assumes test num is in TESTNUM)
