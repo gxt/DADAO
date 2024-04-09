@@ -4,9 +4,9 @@
 
 ddfii_sc_tests = \
 	rwii-setw \
-	rf2rf \
-	rf2rd \
-	rd2rf \
+	orri-rf2rf \
+	orri-rf2rd \
+	orri-rd2rf \
 
 #	ft2rd \
 

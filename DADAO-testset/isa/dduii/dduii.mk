@@ -45,10 +45,10 @@ dduii_sc_tests = \
 	rrrr-csz \
 	rrrr-cseq \
 	rrrr-csne \
-	rd2rd \
-	rb2rb \
-	rd2rb \
-	rb2rd \
+	orri-rd2rd \
+	orri-rb2rb \
+	orri-rd2rb \
+	orri-rb2rd \
 
 dduii_bare_tests = $(addprefix dduii-bare-, $(dduii_sc_tests))
 dduii_qemu_tests = $(addprefix dduii-qemu-, $(dduii_sc_tests))

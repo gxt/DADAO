@@ -32,25 +32,6 @@ test_ ## testnum:										\
 	brnz	RD_FLAG, ___fail;							\
 	__TEST_CASE_TAIL__
 
-#define TEST_CASE( testnum, testreg, correctval, code... )	\
-test_ ## testnum:						\
-	setrd	TESTNUM, testnum;				\
-	code;							\
-	setrd	rd15, correctval;				\
-	cmps	rd15, testreg, rd15;				\
-	brnz	rd15, fail;
-
-#define TEST_CASE_MULTI_REG( testnum, inst, reg1, reg2, imm6, reggroup, correctval, cmpinst, registernum... )	\
-test_ ## testnum:												\
-        inst	reg1, reg2, imm6;										\
-        setrd	TESTNUM, testnum;										\
-        set##reggroup	reggroup##62, correctval;								\
-        .irp    param,registernum;										\
-        cmpinst	rd63, reggroup\param, reggroup##62;								\
-        brnz    rd63, fail;											\
-        addi    reggroup##62, reggroup##62, 1;									\
-        .endr;
-
 #-----------------------------------------------------------------------
 # DADAO MACROS for ORRR
 #-----------------------------------------------------------------------
@@ -94,6 +75,45 @@ test_ ## testnum:												\
 #define TEST_ORRI_12( testnum, inst, dest, src1, immu6 )	_TEST_ORRI( testnum, inst, dest, src1, immu6, 16, 17 )
 #define TEST_ORRI_11( testnum, inst, dest, src1, immu6 )	_TEST_ORRI( testnum, inst, dest, src1, immu6, 16, 16 )
 #define TEST_ORRI_10( testnum, inst, dest, src1, immu6 )	_TEST_ORRI( testnum, inst, dest, src1, immu6, 16,  0 )
+
+#-----------------------------------------------------------------------
+# DADAO MACROS for ORRI - multiple regs insns
+#-----------------------------------------------------------------------
+
+#define _TEST_ORRI_R1( testnum, inst, dst, src, _RGHB, _RGHC, _DST, _SRC )		\
+	__TEST_CASE(	testnum, dst,									\
+		set ## _RGHB	_RGHB ## _DST, 0xdead;									\
+		set ## _RGHC	_RGHC ## _SRC, src;										\
+		inst			_RGHB ## _DST, _RGHC ## _SRC, 1;						\
+		_RGHB ## 2rd	RD_RET1, _RGHB ## _DST, 1;								\
+	)
+
+#define TEST_ORRI_R1_12( testnum, inst, dst, src, rgd, rgs )		_TEST_ORRI_R1( testnum, inst, dst, src, rgd, rgs, 16, 17 )
+#define TEST_ORRI_R1_11( testnum, inst, dst, src, rgd, rgs )		_TEST_ORRI_R1( testnum, inst, dst, src, rgd, rgs, 16, 16 )
+#define TEST_ORRI_R1_10( testnum, inst, dst, src, rgd, rgs )		_TEST_ORRI_R1( testnum, inst, dst, src, rgd, rgs, 16,  0 )
+
+#define _TEST_ORRI_R8( testnum, inst, _RGHB, _RGHC, _DST0, _SRC, _DST ... )		\
+test_ ## testnum:																\
+		__TEST_CASE_HEAD__														\
+		setrd			RD_NUMR, testnum;										\
+	.irp	rn, 16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31;				\
+		set ## _RGHC	_RGHC##\rn, \rn;										\
+	.endr;																		\
+		inst			_RGHB ## _DST0, _RGHC ## _SRC, 8;						\
+		setrd			RD_EXP1, _SRC;											\
+	.irp	rn, _DST;															\
+		_RGHB ## 2rd	RD_RET1, _RGHB##\rn, 1;									\
+		cmpu			RD_FLAG, RD_RET1, RD_EXP1;								\
+		brnz			RD_FLAG, ___fail;										\
+		addi			RD_EXP1, RD_EXP1, 1;									\
+	.endr;																		\
+		__TEST_CASE_TAIL__
+
+#define TEST_ORRI_R8_C1( testnum, inst, rgd, rgs )		_TEST_ORRI_R8( testnum, inst, rgd, rgs,  8, 16,  8, 9,10,11,12,13,14,15 )
+#define TEST_ORRI_R8_C2( testnum, inst, rgd, rgs )		_TEST_ORRI_R8( testnum, inst, rgd, rgs, 12, 16, 12,13,14,15,16,17,18,19 )
+#define TEST_ORRI_R8_C3( testnum, inst, rgd, rgs )		_TEST_ORRI_R8( testnum, inst, rgd, rgs, 20, 16, 20,21,22,23,24,25,26,27 )
+#define TEST_ORRI_R8_C4( testnum, inst, rgd, rgs )		_TEST_ORRI_R8( testnum, inst, rgd, rgs, 24, 16, 24,25,26,27,28,29,30,31 )
+#define TEST_ORRI_R8_C5( testnum, inst, rgd, rgs )		_TEST_ORRI_R8( testnum, inst, rgd, rgs, 20, 20, 20,21,22,23,24,25,26,27 )
 
 #-----------------------------------------------------------------------
 # DADAO MACROS for RIII
@@ -206,76 +226,6 @@ test_ ## testnum:														\
 #define TEST_RRRR_WWRR_1200( testnum, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2, 16, 17,  0,  0 )
 #define TEST_RRRR_WWRR_0123( testnum, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2,  0, 17, 18, 19 )
 #define TEST_RRRR_WWRR_1023( testnum, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2, 16,  0, 18, 19 )
-
-#-----------------------------------------------------------------------
-# Tests for an instruction with register-register operands
-#-----------------------------------------------------------------------
-
-#define TEST_ORRI_INIT_REG( REG_GROUP )				\
-    set##REG_GROUP REG_GROUP##0, 0x0;					\
-    set##REG_GROUP REG_GROUP##1, 0x1;                                     \
-    set##REG_GROUP REG_GROUP##2, 0x2;                                     \
-    set##REG_GROUP REG_GROUP##3, 0x3;                                     \
-    set##REG_GROUP REG_GROUP##4, 0x4;                                     \
-    set##REG_GROUP REG_GROUP##5, 0x5;                                     \
-    set##REG_GROUP REG_GROUP##6, 0x6;                                     \
-    set##REG_GROUP REG_GROUP##7, 0x7;                                     \
-    set##REG_GROUP REG_GROUP##8, 0x8;                                     \
-    set##REG_GROUP REG_GROUP##9, 0x9;                                     \
-    set##REG_GROUP REG_GROUP##10, 0xa;                                    \
-    set##REG_GROUP REG_GROUP##11, 0xb;                                    \
-    set##REG_GROUP REG_GROUP##12, 0xc;                                    \
-    set##REG_GROUP REG_GROUP##13, 0xd;                                    \
-    set##REG_GROUP REG_GROUP##14, 0xe;                                    \
-    set##REG_GROUP REG_GROUP##15, 0xf;                                    \
-    set##REG_GROUP REG_GROUP##16, 0x10;                                   \
-    set##REG_GROUP REG_GROUP##17, 0x11;                                   \
-    set##REG_GROUP REG_GROUP##18, 0x12;                                   \
-    set##REG_GROUP REG_GROUP##19, 0x13;                                   \
-    set##REG_GROUP REG_GROUP##20, 0x14;                                   \
-    set##REG_GROUP REG_GROUP##21, 0x15;                                   \
-    set##REG_GROUP REG_GROUP##22, 0x16;                                   \
-    set##REG_GROUP REG_GROUP##23, 0x17;                                   \
-    set##REG_GROUP REG_GROUP##24, 0x18;                                   \
-    set##REG_GROUP REG_GROUP##25, 0x19;                                   \
-    set##REG_GROUP REG_GROUP##26, 0x1a;                                   \
-    set##REG_GROUP REG_GROUP##27, 0x1b;                                   \
-    set##REG_GROUP REG_GROUP##28, 0x1c;                                   \
-    set##REG_GROUP REG_GROUP##29, 0x1d;                                   \
-    set##REG_GROUP REG_GROUP##30, 0x1e;                                   \
-    set##REG_GROUP REG_GROUP##31, 0x1f;                                   \
-    set##REG_GROUP REG_GROUP##32, 0x20;                                   \
-    set##REG_GROUP REG_GROUP##33, 0x21;                                   \
-    set##REG_GROUP REG_GROUP##34, 0x22;                                   \
-    set##REG_GROUP REG_GROUP##35, 0x23;                                   \
-    set##REG_GROUP REG_GROUP##36, 0x24;                                   \
-    set##REG_GROUP REG_GROUP##37, 0x25;                                   \
-    set##REG_GROUP REG_GROUP##38, 0x26;                                   \
-    set##REG_GROUP REG_GROUP##39, 0x27;                                   \
-    set##REG_GROUP REG_GROUP##40, 0x28;                                   \
-    set##REG_GROUP REG_GROUP##41, 0x29;                                   \
-    set##REG_GROUP REG_GROUP##42, 0x2a;                                   \
-    set##REG_GROUP REG_GROUP##43, 0x2b;                                   \
-    set##REG_GROUP REG_GROUP##44, 0x2c;                                   \
-    set##REG_GROUP REG_GROUP##45, 0x2d;                                   \
-    set##REG_GROUP REG_GROUP##46, 0x2e;                                   \
-    set##REG_GROUP REG_GROUP##47, 0x2f;                                   \
-    set##REG_GROUP REG_GROUP##48, 0x30;                                   \
-    set##REG_GROUP REG_GROUP##49, 0x31;                                   \
-    set##REG_GROUP REG_GROUP##50, 0x32;                                   \
-    set##REG_GROUP REG_GROUP##51, 0x33;                                   \
-    set##REG_GROUP REG_GROUP##52, 0x34;                                   \
-    set##REG_GROUP REG_GROUP##53, 0x35;                                   \
-    set##REG_GROUP REG_GROUP##54, 0x36;                                   \
-    set##REG_GROUP REG_GROUP##55, 0x37;                                   \
-    set##REG_GROUP REG_GROUP##56, 0x38;                                   \
-    set##REG_GROUP REG_GROUP##57, 0x39;                                   \
-    set##REG_GROUP REG_GROUP##58, 0x3a;                                   \
-    set##REG_GROUP REG_GROUP##59, 0x3b;                                   \
-    set##REG_GROUP REG_GROUP##60, 0x3c;                                   \
-    set##REG_GROUP REG_GROUP##61, 0x3d;                                   \
-    set##REG_GROUP REG_GROUP##62, 0x3e;                                   \
-    set##REG_GROUP REG_GROUP##63, 0x3f;                                    
 
 #-----------------------------------------------------------------------
 # Pass and fail code (assumes test num is in TESTNUM)
