@@ -555,32 +555,32 @@ static void dd_pseudo_set_register(char *opcodep, int reg_dst_1, int reg_dst_2)
 {
     if (reg_dst_1 < 0x40) { // setrd
 	if (reg_dst_2 < 0x40) { // setrd rd, rd
-	    md_number_to_chars(opcodep, (unsigned int)MATCH_RD2RD | (reg_dst_1 << 12) | (reg_dst_2 << 6) | 0, 4);
+	    md_number_to_chars(opcodep, (unsigned int)MATCH_RD2RD | (reg_dst_1 << 12) | (reg_dst_2 << 6) | 1, 4);
 	}
 	else if (reg_dst_2 >= 0x40 && reg_dst_2 < 0x80) { // setrd rd, rb
-	    md_number_to_chars(opcodep, (unsigned int)MATCH_RB2RD | (reg_dst_1 << 12) | ((reg_dst_2 - 0x40) << 6) | 0, 4);
+	    md_number_to_chars(opcodep, (unsigned int)MATCH_RB2RD | (reg_dst_1 << 12) | ((reg_dst_2 - 0x40) << 6) | 1, 4);
 	}
 	else if (reg_dst_2 >= 0x80 && reg_dst_2 < 0xc0) { // setrd rd, rf
-	    md_number_to_chars(opcodep, (unsigned int)MATCH_RF2RD | (reg_dst_1 << 12) | ((reg_dst_2 - 0x80) << 6) | 0, 4);
+	    md_number_to_chars(opcodep, (unsigned int)MATCH_RF2RD | (reg_dst_1 << 12) | ((reg_dst_2 - 0x80) << 6) | 1, 4);
 	}
 	else { // setrd rd, ra
-	    md_number_to_chars(opcodep, (unsigned int)MATCH_RA2RD | (reg_dst_1 << 12) | ((reg_dst_2 - 0xc0) << 6) | 0, 4);
+	    md_number_to_chars(opcodep, (unsigned int)MATCH_RA2RD | (reg_dst_1 << 12) | ((reg_dst_2 - 0xc0) << 6) | 1, 4);
 	}
     }
     else if (reg_dst_1 >= 0x40 && reg_dst_1 < 0x80) { // setrb
 	if (reg_dst_2 < 0x40) { // setrb rb, rd
-	    md_number_to_chars(opcodep, (unsigned int)MATCH_RD2RB | ((reg_dst_1 - 0x40) << 12) | (reg_dst_2 << 6) | 0, 4);
+	    md_number_to_chars(opcodep, (unsigned int)MATCH_RD2RB | ((reg_dst_1 - 0x40) << 12) | (reg_dst_2 << 6) | 1, 4);
 	}
 	else { // setrb rb, rb
-	    md_number_to_chars(opcodep, (unsigned int)MATCH_RB2RB | ((reg_dst_1 - 0x40) << 12) | ((reg_dst_2 - 0x40) << 6) | 0, 4);
+	    md_number_to_chars(opcodep, (unsigned int)MATCH_RB2RB | ((reg_dst_1 - 0x40) << 12) | ((reg_dst_2 - 0x40) << 6) | 1, 4);
 	}
     }
     else { // setrf
 	if (reg_dst_2 < 0x40) { // setrf rf, rd
-	    md_number_to_chars(opcodep, (unsigned int)MATCH_RD2RF | ((reg_dst_1 - 0x80) << 12) | (reg_dst_2 << 6) | 0, 4);
+	    md_number_to_chars(opcodep, (unsigned int)MATCH_RD2RF | ((reg_dst_1 - 0x80) << 12) | (reg_dst_2 << 6) | 1, 4);
 	}
 	else { //setrf rf, rf
-	    md_number_to_chars(opcodep, (unsigned int)MATCH_RF2RF | ((reg_dst_1 - 0x80) << 12) | ((reg_dst_2 - 0x80) << 6) | 0, 4);
+	    md_number_to_chars(opcodep, (unsigned int)MATCH_RF2RF | ((reg_dst_1 - 0x80) << 12) | ((reg_dst_2 - 0x80) << 6) | 1, 4);
 	}
     }
 }
