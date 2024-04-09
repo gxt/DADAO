@@ -5,14 +5,32 @@
 # Helper macros
 #-----------------------------------------------------------------------
 
+#define __TEST_CASE_HEAD__								\
+	setrd	rd16, 0;									\
+	setrd	rd17, 0;									\
+	setrd	rd18, 0;									\
+	setrd	rd19, 0;									\
+	setrb	rb16, 0;									\
+	setrb	rb17, 0;									\
+	setrb	rb18, 0;									\
+	setrb	rb19, 0;									\
+	setrd	RD_EXP1, 0xBEEF;							\
+	setrd	RD_EXP2, 0xBEEF;							\
+	setrd	RD_RET1, 0xDEAD;							\
+	setrd	RD_RET2, 0xDEAD;							\
+
+#define __TEST_CASE_TAIL__								\
+	addi	RD_PASS, RD_PASS, 1;
+
 #define __TEST_CASE( testnum, expect1, code... )		\
 test_ ## testnum:										\
+	__TEST_CASE_HEAD__									\
 	setrd	RD_NUMR, testnum;							\
 	code;												\
 	setrd	RD_EXP1, expect1;							\
 	cmpu	RD_FLAG, RD_RET1, RD_EXP1;					\
 	brnz	RD_FLAG, ___fail;							\
-	addi	RD_PASS, RD_PASS, 1;
+	__TEST_CASE_TAIL__
 
 #define TEST_CASE( testnum, testreg, correctval, code... )	\
 test_ ## testnum:						\
@@ -149,6 +167,7 @@ test_ ## testnum:												\
 
 #define _TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2, _DEST1, _DEST2, _SRC1, _SRC2 )			\
 test_ ## testnum:														\
+	__TEST_CASE_HEAD__													\
 	setrd	RD_NUMR, testnum;											\
 	setrd	rd ## _SRC1, src1;											\
 	setrd	rd ## _SRC2, src2;											\
@@ -161,7 +180,7 @@ test_ ## testnum:														\
 	brnz	RD_FLAG, ___fail;											\
 	cmpu	RD_FLAG, RD_RET2, RD_EXP2;									\
 	brnz	RD_FLAG, ___fail;											\
-	addi	RD_PASS, RD_PASS, 1;
+	__TEST_CASE_TAIL__
 
 #define TEST_RRRR_WWRR_1234( testnum, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2, 16, 17, 18, 19 )
 #define TEST_RRRR_WWRR_1213( testnum, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2, 16, 17, 16, 19 )
