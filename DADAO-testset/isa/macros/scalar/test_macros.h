@@ -228,17 +228,6 @@ test_ ## testnum:														\
 #define TEST_RRRR_WWRR_1023( testnum, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2, 16,  0, 18, 19 )
 
 #-----------------------------------------------------------------------
-# Pass and fail code (assumes test num is in TESTNUM)
-#-----------------------------------------------------------------------
-
-#define TEST_PASSFAIL						\
-	brnz  TESTNUM, pass;					\
-fail:								\
-	DDTEST_FAIL;						\
-pass:								\
-	DDTEST_PASS;						\
-
-#-----------------------------------------------------------------------
 # Test data section
 #-----------------------------------------------------------------------
 

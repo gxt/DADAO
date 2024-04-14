@@ -28,8 +28,6 @@ DDTEST_CODE_BEGIN
 	TEST_ORRR_DDD_100( 28, cmpu,  0, 0, 0 ) 
 	TEST_ORRR_DDD_012( 29, cmpu,  0, 5, 6 )
  
-	TEST_PASSFAIL
-
 DDTEST_CODE_END
 
 	.data

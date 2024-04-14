@@ -24,8 +24,6 @@ DDTEST_CODE_BEGIN
 	TEST_RRII_DD_10( 15, cmpu, -1, 0, 1 )
 	TEST_RRII_DD_01( 16, cmpu, 0, 4, 5 )
 
-	TEST_PASSFAIL
-
 DDTEST_CODE_END
 
 	.data

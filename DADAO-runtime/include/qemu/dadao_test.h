@@ -34,29 +34,28 @@ _start:									\
 	setrd	RD_RET1, 0;					\
 	setrd	RD_RET2, 0;
 
-#define DDTEST_CODE_END
+#define DDTEST_CODE_END							\
+	brnz	RD_FLAG, ___fail;					\
+	/* SHOULD handle pass first */				\
+	setrd	rd16, 1;							\
+	setrd	rd17, PASS;							\
+	setrd	rd18, PLEN;							\
+	setrd	rd15, 64; /* write */				\
+	trap	cp0, 0;								\
+	setrd	rd16, 0;							\
+	setrd	rd15, 93; /* exit */				\
+	trap	cp0, 0;								\
+___fail:										\
+	setrd	rd16, 1;							\
+	setrd	rd17, FAIL;							\
+	setrd	rd18, FLEN;							\
+	setrd	rd15, 64; /* write */				\
+	trap	cp0, 0;								\
+	rd2rd	rd16, TESTNUM, 1;					\
+	setrd	rd15, 93; /* exit */				\
+	trap	cp0, 0;
+
 #define DDTEST_DATA_BEGIN
 #define DDTEST_DATA_END
-
-#define DDTEST_FAIL							\
-___fail:										\
-	setrd    rd16, 1;						\
-	setrd    rd17, FAIL;						\
-	setrd    rd18, FLEN;						\
-	setrd    rd15, 64; /* write */					\
-	trap    cp0, 0;							\
-	rd2rd   rd16, TESTNUM, 1;					\
-	setrd    rd15, 93; /* exit */					\
-	trap    cp0, 0;
-
-#define DDTEST_PASS							\
-	setrd	rd16, 1;						\
-	setrd	rd17, PASS;						\
-	setrd	rd18, PLEN;						\
-	setrd	rd15, 64; /* write */					\
-	trap	cp0, 0;							\
-	setrd    rd16, 0;						\
-	setrd    rd15, 93; /* exit */					\
-	trap    cp0, 0;
 
 #endif

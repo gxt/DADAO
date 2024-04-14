@@ -20,8 +20,6 @@ DDTEST_CODE_BEGIN
 	TEST_RWII_F( 4, setw, w2, 0x0f0fffff0f0f0f0f, 0x0f0f00000f0f0f0f, 0xffff )
 	TEST_RWII_F( 5, setw, w3, 0xffff0f0f0f0f0f0f, 0x00000f0f0f0f0f0f, 0xffff )
 
-	TEST_PASSFAIL
-
 DDTEST_CODE_END
 
 	.data

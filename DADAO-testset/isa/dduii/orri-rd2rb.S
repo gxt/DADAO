@@ -20,8 +20,6 @@ DDTEST_CODE_BEGIN
 	TEST_ORRI_R8_C4( 14, rd2rb, rb, rd )
 	TEST_ORRI_R8_C5( 15, rd2rb, rb, rd )
 
-	TEST_PASSFAIL
-
 DDTEST_CODE_END
 
   .data

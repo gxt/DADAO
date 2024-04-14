@@ -32,8 +32,6 @@ DDTEST_CODE_BEGIN
 	TEST_RRII_DD_10( 21, cmps, 1, 0, -1 )
 	TEST_RRII_DD_01( 22, cmps, 0, 4, 5 )
 
-	TEST_PASSFAIL
-
 DDTEST_CODE_END
 
 	.data

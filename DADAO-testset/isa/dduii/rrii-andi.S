@@ -21,8 +21,6 @@ DDTEST_CODE_BEGIN
 	TEST_RRII_DD_10( 13, andi, 0, 0, 0xf)
 	TEST_RRII_DD_01( 14, andi, 0, 0xf, 0xf)
 
-	TEST_PASSFAIL
-
 DDTEST_CODE_END
 
 	.data

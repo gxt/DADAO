@@ -71,29 +71,23 @@ _test_start:
 //-----------------------------------------------------------------------
 
 #define DDTEST_CODE_END							\
-	unimp	0;							\
-	/* SHOULD cause illegal instruction */
-
-//-----------------------------------------------------------------------
-// Pass/Fail Macro
-//-----------------------------------------------------------------------
-
-#define DDTEST_PASS							\
-	fence	0;							\
-	setrd	TESTNUM, 1;						\
-	setrd	rd15, 93;						\
-	setrd	rd16, 0;						\
-	trap	cp0, 0;
-
-#define DDTEST_FAIL							\
-___fail:											\
-	fence	0;							\
-1:	breq	rd0, TESTNUM, 1b;					\
-	shlu	TESTNUM, TESTNUM, 1;					\
-	orw	TESTNUM, w0, 1;						\
-	setrd	rd15, 93;						\
+	brnz	RD_FLAG, ___fail;					\
+	/* SHOULD handle pass first */				\
+	fence	0;									\
+	setrd	TESTNUM, 1;							\
+	setrd	rd15, 93;							\
+	setrd	rd16, 0;							\
+	trap	cp0, 0;								\
+	unimp	0;									\
+___fail:										\
+	fence	0;									\
+	shlu	TESTNUM, TESTNUM, 1;				\
+	orw		TESTNUM, w0, 1;						\
+	setrd	rd15, 93;							\
 	rd2rd	rd16, TESTNUM, 1;					\
-	trap	cp0, 0;
+	trap	cp0, 0;								\
+	/* SHOULD cause illegal instruction */		\
+	unimp	0;									\
 
 //-----------------------------------------------------------------------
 // Data Section Macro

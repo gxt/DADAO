@@ -23,8 +23,6 @@ DDTEST_CODE_BEGIN
 
 	TEST_ORRR_BBD_120( 38, add, 0xf0f0f0f0f0f0f0f0, 0xf0f0f0f0f0f0f0f0,                  0 )
 
-	TEST_PASSFAIL
-
 DDTEST_CODE_END
 
 .data

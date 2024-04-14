@@ -27,8 +27,6 @@ DDTEST_CODE_BEGIN
 	TEST_ORRR_DDD_102( 12, shrs, 0x0000000000000000, 0, 0x0000000000000031 )
 	TEST_ORRR_DDD_120( 13, shrs, 0xffffffffffffffff, 0xffffffffffffffff, 0 )
 
-	TEST_PASSFAIL
-
 DDTEST_CODE_END
 
 	.data

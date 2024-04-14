@@ -22,8 +22,6 @@ DDTEST_CODE_BEGIN
 	TEST_ORRR_BBD_112( 36, sub, 0xfffffffe00000001, 0xffffffff00000000, 0x00000000ffffffff )
 	TEST_ORRR_BBD_120( 37, add, 0xf0f0f0f0f0f0f0f0, 0xf0f0f0f0f0f0f0f0,                  0 )
 
-	TEST_PASSFAIL
-
 DDTEST_CODE_END
 
 .data

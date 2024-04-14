@@ -33,8 +33,6 @@ DDTEST_CODE_BEGIN
 	TEST_ORRR_DDD_100( 26, xor,          0,          0,          0 )
 	TEST_ORRR_DDD_012( 27, xor,          0, 0x11111111, 0x22222222 )
 
-	TEST_PASSFAIL
-
 DDTEST_CODE_END
 
 .data
