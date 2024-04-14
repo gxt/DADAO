@@ -227,10 +227,4 @@ test_ ## testnum:														\
 #define TEST_RRRR_WWRR_0123( testnum, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2,  0, 17, 18, 19 )
 #define TEST_RRRR_WWRR_1023( testnum, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2, 16,  0, 18, 19 )
 
-#-----------------------------------------------------------------------
-# Test data section
-#-----------------------------------------------------------------------
-
-#define TEST_DATA
-
 #endif /* __TEST_MACROS_SCALAR_H */
