@@ -4,22 +4,7 @@
 #include "simrisc/ddtest.h"
 #include "simrisc/encoding.h"
 
-#define DDTEST_DDUII							\
-	.text;								\
-FAIL:									\
-	.ascii  "FAIL\n";						\
-	.equ FLEN, .-FAIL;						\
-	.type FAIL, object;						\
-	.size FAIL, FLEN;						\
-	.text;								\
-	.align 4;							\
-PASS:									\
-	.ascii  "PASS";							\
-	.equ PLEN, .-PASS;						\
-	.type PASS, object;						\
-	.size PASS, PLEN;						\
-	.text;								\
-	.align 4;
+#define DDTEST_DDUII
 
 #define DDTEST_CODE_BEGIN						\
 	.text;								\
@@ -38,8 +23,8 @@ _start:									\
 	brnz	RD_FLAG, ___fail;					\
 	/* SHOULD handle pass first */				\
 	setrd	rd16, 1;							\
-	setrd	rd17, PASS;							\
-	setrd	rd18, PLEN;							\
+	setrd	rd17, __passstr;					\
+	setrd	rd18, __passlen;					\
 	setrd	rd15, 64; /* write */				\
 	trap	cp0, 0;								\
 	setrd	rd16, 0;							\
@@ -47,13 +32,23 @@ _start:									\
 	trap	cp0, 0;								\
 ___fail:										\
 	setrd	rd16, 1;							\
-	setrd	rd17, FAIL;							\
-	setrd	rd18, FLEN;							\
+	setrd	rd17, __failstr;					\
+	setrd	rd18, __faillen;					\
 	setrd	rd15, 64; /* write */				\
 	trap	cp0, 0;								\
 	rd2rd	rd16, TESTNUM, 1;					\
 	setrd	rd15, 93; /* exit */				\
-	trap	cp0, 0;
+	trap	cp0, 0;								\
+__passstr:										\
+	.ascii  "PASS";								\
+	.equ __passlen, . - __passstr;				\
+	.type __passstr, object;					\
+	.size __passstr, __passlen;					\
+__failstr:										\
+	.ascii  "FAIL\n";							\
+	.equ __faillen, . - __failstr;				\
+	.type __failstr, object;					\
+	.size __failstr, __faillen;					\
 
 #define DDTEST_DATA_BEGIN						\
 	.section data;								\
