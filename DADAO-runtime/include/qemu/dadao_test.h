@@ -55,7 +55,9 @@ ___fail:										\
 	setrd	rd15, 93; /* exit */				\
 	trap	cp0, 0;
 
-#define DDTEST_DATA_BEGIN
+#define DDTEST_DATA_BEGIN						\
+	.section data;								\
+
 #define DDTEST_DATA_END
 
 #endif

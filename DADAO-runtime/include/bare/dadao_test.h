@@ -94,12 +94,23 @@ ___fail:										\
 //-----------------------------------------------------------------------
 
 #define DDTEST_DATA_BEGIN						\
-	.pushsection .tohost,"aw",@progbits;				\
-	.align 6; .global tohost; tohost: .dd.t32 0;			\
-	.align 6; .global fromhost; fromhost: .dd.t32 0;		\
-	.popsection;							\
-	.align 4; .global begin_signature; begin_signature:
+	.section data;								\
+	.pushsection								\
+	.tohost,"aw",@progbits;						\
+	.align 6;									\
+	.global tohost;								\
+tohost:	.dd.t32 0;								\
+	.align 6;									\
+	.global fromhost;							\
+fromhost: .dd.t32 0;							\
+	.popsection;								\
+	.align 4;									\
+	.global begin_signature;					\
+begin_signature:								\
 
-#define DDTEST_DATA_END .align 4; .global end_signature; end_signature:
+#define DDTEST_DATA_END							\
+	.align 4;									\
+	.global end_signature;						\
+end_signature:									\
 
 #endif
