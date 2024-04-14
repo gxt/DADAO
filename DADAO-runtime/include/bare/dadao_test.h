@@ -26,7 +26,7 @@ _start:									\
 	rd2rf	rf1, rd1, 63;						\
 	CPRD_mhartid(rd8);						\
 1:	brnz	rd8, 1b;						\
-	setrd	TESTNUM, 0;						\
+	setrd	RD_NUMR, 0;						\
 	setrd	rd8, trap_vector;					\
 	CPWR_mtvec(rd8);						\
 	CPWR_mstatus(rd0);						\
@@ -43,10 +43,10 @@ trap_vector:								\
 	setrd	rd9, CAUSE_MACHINE_ECALL;				\
 	breq	rd9, rd8, write_tohost;					\
 	/* some unhandlable exception occurred */			\
-	orw	TESTNUM, w0, 1337;					\
+	orw	RD_NUMR, w0, 1337;					\
 write_tohost:								\
 	setrb	rb8, tohost;						\
-	stt	TESTNUM, rb8, 0;					\
+	stt	RD_NUMR, rb8, 0;					\
 	stt	rd0, rb8, 4;						\
 	jump	write_tohost;						\
 _test_start:							\
@@ -66,17 +66,17 @@ _test_start:							\
 	brnz	RD_FLAG, ___fail;					\
 	/* SHOULD handle pass first */				\
 	fence	0;									\
-	setrd	TESTNUM, 1;							\
+	setrd	RD_NUMR, 1;							\
 	setrd	rd15, 93;							\
 	setrd	rd16, 0;							\
 	trap	cp0, 0;								\
 	unimp	0;									\
 ___fail:										\
 	fence	0;									\
-	shlu	TESTNUM, TESTNUM, 1;				\
-	orw		TESTNUM, w0, 1;						\
+	shlu	RD_NUMR, RD_NUMR, 1;				\
+	orw		RD_NUMR, w0, 1;						\
 	setrd	rd15, 93;							\
-	rd2rd	rd16, TESTNUM, 1;					\
+	rd2rd	rd16, RD_NUMR, 1;					\
 	trap	cp0, 0;								\
 	/* SHOULD cause illegal instruction */		\
 	unimp	0;									\

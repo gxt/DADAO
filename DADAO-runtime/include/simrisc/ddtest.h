@@ -1,8 +1,6 @@
 #ifndef _RUNTIME_SIMRISC_DDTEST_H_
 #define _RUNTIME_SIMRISC_DDTEST_H_
 
-#define TESTNUM				rd2
-
 #define RD_ZERO				rd0
 #define RD_FLAG				rd1
 #define RD_NUMR				rd2

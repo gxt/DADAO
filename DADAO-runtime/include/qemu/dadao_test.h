@@ -34,7 +34,7 @@ ___fail:										\
 	setrd	rd18, __faillen;					\
 	setrd	rd15, 64; /* write */				\
 	trap	cp0, 0;								\
-	rd2rd	rd16, TESTNUM, 1;					\
+	rd2rd	rd16, RD_NUMR, 1;					\
 	setrd	rd15, 93; /* exit */				\
 	trap	cp0, 0;								\
 __passstr:										\
