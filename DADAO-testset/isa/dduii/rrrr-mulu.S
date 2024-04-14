@@ -1,36 +1,18 @@
-#*****************************************************************************
-# mulu.S
-#-----------------------------------------------------------------------------
-#
-# Test mulu instruction.
-#
-
 #include "dadao_test.h"
 #include "test_macros.h"
 
-DDTEST_DDUII
 DDTEST_CODE_BEGIN
-
-	#-------------------------------------------------------------
-	# Logical tests
-	#-------------------------------------------------------------
 
 	TEST_RRRR_WWRR_1234( 2, mulu, 0x0, 0x0000000000000000, 0x0000000000000000, 0x0000000000000000 )
 	TEST_RRRR_WWRR_1234( 3, mulu, 0x0, 0x0000000000000001, 0x0000000000000001, 0x0000000000000001 )
 	TEST_RRRR_WWRR_1234( 4, mulu, 0x0, 0x0000000000000015, 0x0000000000000003, 0x0000000000000007 )
 
-	
 	TEST_RRRR_WWRR_1234( 5, mulu, 0x0, 0x0000000000000000, 0x0000000000000000, 0xffffffffffff8000 )
 	TEST_RRRR_WWRR_1234( 6, mulu, 0x0, 0x0000000000000000, 0xffffffff80000000, 0x00000000 )
 
 	TEST_RRRR_WWRR_1234( 7, mulu, 0xffffffff7fff8000, 0x0000400000000000, 0xffffffff80000000, 0xffffffffffff8000 )
 	TEST_RRRR_WWRR_1234( 8, mulu, 0x0000000000000001, 0xfffffffffffffffe, 0x0000000000000002, 0xffffffffffffffff )
 	TEST_RRRR_WWRR_1234( 9, mulu, 0x000000000001fefe, 0x000000000000ff7f, 0x000000000002fe7d, 0xaaaaaaaaaaaaaaab )
-
-
-	#-------------------------------------------------------------
-	# Source/Destination tests
-	#-------------------------------------------------------------
 
 	TEST_RRRR_WWRR_1213( 15, mulu, 0, 24, 3, 8 )
 	TEST_RRRR_WWRR_1223( 16, mulu, 0, 27, 3, 9 )

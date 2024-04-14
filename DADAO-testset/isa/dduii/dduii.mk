@@ -52,4 +52,3 @@ dduii_sc_tests = \
 
 dduii_bare_tests = $(addprefix dduii-bare-, $(dduii_sc_tests))
 dduii_qemu_tests = $(addprefix dduii-qemu-, $(dduii_sc_tests))
-#dduii_v_tests = $(addprefix dduii-v-, $(dduii_sc_tests))

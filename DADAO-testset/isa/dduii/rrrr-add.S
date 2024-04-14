@@ -1,19 +1,7 @@
-#*****************************************************************************
-# add.S
-#-----------------------------------------------------------------------------
-#
-# Test add instruction.
-#
-
 #include "dadao_test.h"
 #include "test_macros.h"
 
-DDTEST_DDUII
 DDTEST_CODE_BEGIN
-
-	#-------------------------------------------------------------
-	# Logical tests
-	#-------------------------------------------------------------
 
 	TEST_RRRR_WWRR_1234( 2, add, 0x0, 0x0, 0x0, 0x0 )
 	TEST_RRRR_WWRR_1234( 3, add, 0x0, 0x2, 0x1, 0x1 )
@@ -36,12 +24,6 @@ DDTEST_CODE_BEGIN
 	TEST_RRRR_WWRR_1234(15, add, 0xffffffffffffffff, 0xfffffffffffffffe, 0xffffffffffffffff, 0xffffffffffffffff )
 
 	TEST_RRRR_WWRR_1234(16, add, 0x0000000000000000, 0x0000000080000000, 0x0000000000000001, 0x000000007fffffff )
-
-	
-	#-------------------------------------------------------------
-	# Source/Destination tests
-	#-------------------------------------------------------------
-
 
 	TEST_RRRR_WWRR_1213( 17, add, 0, 24, 13, 11 )
 	TEST_RRRR_WWRR_1223( 18, add, 0, 25, 14, 11 )

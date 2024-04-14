@@ -1,14 +1,6 @@
-#*****************************************************************************
-# andi.S
-#-----------------------------------------------------------------------------
-#
-# Test andi instruction.
-#
-
 #include "dadao_test.h"
 #include "test_macros.h"
 
-DDTEST_DDUII
 DDTEST_CODE_BEGIN
 
 	TEST_RRII_DD_12( 2, andi, 0x0000000000000f00, 0xffffffffff00ff00, 0xf0f )

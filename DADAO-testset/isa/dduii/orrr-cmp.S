@@ -1,14 +1,6 @@
-#*****************************************************************************
-# cmp.S
-#-----------------------------------------------------------------------------
-#
-# Test cmp instruction.
-#
-
 #include "dadao_test.h"
 #include "test_macros.h"
 
-DDTEST_DDUII
 DDTEST_CODE_BEGIN
 
 	TEST_ORRR_DBB_123( 2, cmp, 0x00000000, 0x00000000, 0x000 )

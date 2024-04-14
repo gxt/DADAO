@@ -1,14 +1,6 @@
-#*****************************************************************************
-# csp.S
-#-----------------------------------------------------------------------------
-#
-# Test and instruction.
-#
-
 #include "dadao_test.h"
 #include "test_macros.h"
 
-DDTEST_DDUII
 DDTEST_CODE_BEGIN
 
 	TEST_RRRR_RWRR_1234( 2, csp, 0xf0f0f0f0f0f0f0f0, 0xffffffffffffffff, 0x0f0f0f0f0f0f0f0f, 0xf0f0f0f0f0f0f0f0 )

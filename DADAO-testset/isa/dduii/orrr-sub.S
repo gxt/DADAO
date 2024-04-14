@@ -1,14 +1,6 @@
-#*****************************************************************************
-# sub.S
-#-----------------------------------------------------------------------------
-#
-# Test sub instruction.
-#
-
 #include "dadao_test.h"
 #include "test_macros.h"
 
-DDTEST_DDUII
 DDTEST_CODE_BEGIN
 
 	TEST_ORRR_BBD_123( 30, sub, 0x0, 0x0, 0x0 )

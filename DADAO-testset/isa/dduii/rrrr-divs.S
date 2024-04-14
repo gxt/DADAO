@@ -1,19 +1,7 @@
-#*****************************************************************************
-# divs.S
-#-----------------------------------------------------------------------------
-#
-# Test divs instruction.
-#
-
 #include "dadao_test.h"
 #include "test_macros.h"
 
-DDTEST_DDUII
 DDTEST_CODE_BEGIN
-
-	#-------------------------------------------------------------
-	# Logical tests
-	#-------------------------------------------------------------
 
 	TEST_RRRR_WWRR_1234( 2, divs,  2,  3,  20,  6)
 	TEST_RRRR_WWRR_1234( 3, divs, -2, -3, -20,  6)
@@ -22,11 +10,6 @@ DDTEST_CODE_BEGIN
 
 	TEST_RRRR_WWRR_1234( 6, divs, 0, 1, 0xffffffffffffffff, 0xffffffffffffffff)
 	TEST_RRRR_WWRR_1234( 7, divs, 0, 1, 0x7fffffffffffffff, 0x7fffffffffffffff)
-
-
-	#-------------------------------------------------------------
-	# Source/Destination tests
-	#-------------------------------------------------------------
 
 	TEST_RRRR_WWRR_1213( 8, divs, 0, 3, 24, 8 )
 	TEST_RRRR_WWRR_1223( 9, divs, 0, 3, 27, 9 )

@@ -1,19 +1,7 @@
-#*****************************************************************************
-# sub.S
-#-----------------------------------------------------------------------------
-#
-# Test sub instruction.
-#
-
 #include "dadao_test.h"
 #include "test_macros.h"
 
-DDTEST_DDUII
 DDTEST_CODE_BEGIN
-
-	#-------------------------------------------------------------
-	# Logical tests
-	#-------------------------------------------------------------
 
 	TEST_RRRR_WWRR_1234( 2, sub, 0x0, 0x0, 0x0, 0x0 )
 	TEST_RRRR_WWRR_1234( 3, sub, 0x0, 0x1, 0x2, 0x1 )
@@ -35,10 +23,6 @@ DDTEST_CODE_BEGIN
 	TEST_RRRR_WWRR_1234( 13, sub, 0x0000000000000000, 0x0000000000000001, 0x0000000000000000, 0xffffffffffffffff )
 	TEST_RRRR_WWRR_1234( 14, sub, 0xffffffffffffffff, 0xfffffffffffffffe, 0xffffffffffffffff, 0x0000000000000001 )
 	TEST_RRRR_WWRR_1234( 15, sub, 0x0000000000000000, 0x0000000000000000, 0xffffffffffffffff, 0xffffffffffffffff )
-
-	#-------------------------------------------------------------
-	# Source/Destination tests
-	#-------------------------------------------------------------
 
 	TEST_RRRR_WWRR_1213( 16, sub, 0, 13, 24, 11 )
 	TEST_RRRR_WWRR_1223( 17, sub, 0, 14, 25, 11 )

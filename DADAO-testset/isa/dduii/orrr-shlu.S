@@ -1,14 +1,6 @@
-#*****************************************************************************
-# shlu.S
-#-----------------------------------------------------------------------------
-#
-# Test and instruction.
-#
-
 #include "dadao_test.h"
 #include "test_macros.h"
 
-DDTEST_DDUII
 DDTEST_CODE_BEGIN
 
 	TEST_ORRR_DDD_123( 2, shlu, 0xffffffffffffffff, 0xffffffffffffffff, 0x0000000000000000 )

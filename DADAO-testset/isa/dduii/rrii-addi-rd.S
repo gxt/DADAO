@@ -1,14 +1,6 @@
-#*****************************************************************************
-# addi.S
-#-----------------------------------------------------------------------------
-#
-# Test addi instruction.
-#
-
 #include "dadao_test.h"
 #include "test_macros.h"
 
-DDTEST_DDUII
 DDTEST_CODE_BEGIN
 
 	TEST_RRII_DD_12( 2,  addi, 0x00000000, 0x00000000, 0x000 )

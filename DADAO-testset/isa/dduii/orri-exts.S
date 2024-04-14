@@ -1,14 +1,6 @@
-#*****************************************************************************
-# exts.S
-#-----------------------------------------------------------------------------
-#
-# Test and instruction.
-#
-
 #include "dadao_test.h"
 #include "test_macros.h"
 
-DDTEST_DDUII
 DDTEST_CODE_BEGIN
 
 	TEST_ORRI_12( 15, exts, 0xfff0f0f0f0f0000f, 0xfff0f0f0f0f0000f, 0 )

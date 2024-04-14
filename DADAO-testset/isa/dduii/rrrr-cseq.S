@@ -1,14 +1,6 @@
-#*****************************************************************************
-# cseq.S
-#-----------------------------------------------------------------------------
-#
-# Test and instruction.
-#
-
 #include "dadao_test.h"
 #include "test_macros.h"
 
-DDTEST_DDUII
 DDTEST_CODE_BEGIN
 
 	TEST_RRRR_RRWR_1234(  2, cseq, 0xf0f0f0f0f0f0f0f0, 0xffffffffffffffff, 0xffffffffffffffff, 3, 0xf0f0f0f0f0f0f0f0 )

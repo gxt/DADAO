@@ -1,28 +1,12 @@
-#*****************************************************************************
-# orr.S
-#-----------------------------------------------------------------------------
-#
-# Test orr instruction.
-#
-
 #include "dadao_test.h"
 #include "test_macros.h"
 
-DDTEST_DDUII
 DDTEST_CODE_BEGIN
-
-	#-------------------------------------------------------------
-	# Logical tests
-	#-------------------------------------------------------------
 
 	TEST_ORRR_DDD_123( 2, orr, 0xff0fff0f, 0xff00ff00, 0x0f0f0f0f )
 	TEST_ORRR_DDD_123( 3, orr, 0xfff0fff0, 0x0ff00ff0, 0xf0f0f0f0 )
 	TEST_ORRR_DDD_123( 4, orr, 0x0fff0fff, 0x00ff00ff, 0x0f0f0f0f )
 	TEST_ORRR_DDD_123( 5, orr, 0xf0fff0ff, 0xf00ff00f, 0xf0f0f0f0 )
-
-	#-------------------------------------------------------------
-	# Source/Destination tests
-	#-------------------------------------------------------------
 
 	TEST_ORRR_DDD_112( 6, orr, 0xff0fff0f, 0xff00ff00, 0x0f0f0f0f )
 	TEST_ORRR_DDD_121( 7, orr, 0xff0fff0f, 0xff00ff00, 0x0f0f0f0f )

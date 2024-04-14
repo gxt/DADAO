@@ -1,29 +1,12 @@
-#*****************************************************************************
-# divu.S
-#-----------------------------------------------------------------------------
-#
-# Test divu instruction.
-#
-
 #include "dadao_test.h"
 #include "test_macros.h"
 
-DDTEST_DDUII
 DDTEST_CODE_BEGIN
-
-	#-------------------------------------------------------------
-	# Logical tests
-	#-------------------------------------------------------------
 
 	TEST_RRRR_WWRR_1234( 2, divu,  2,  3,  20,  6)
 
 	TEST_RRRR_WWRR_1234( 3, divu, 0, 1, 0xffffffffffffffff, 0xffffffffffffffff)
 	TEST_RRRR_WWRR_1234( 4, divu, 0, 1, 0x7fffffffffffffff, 0x7fffffffffffffff)
-
-
-	#-------------------------------------------------------------
-	# Source/Destination tests
-	#-------------------------------------------------------------
 
 	TEST_RRRR_WWRR_1213( 5, divu, 0, 3, 24, 8 )
 	TEST_RRRR_WWRR_1223( 6, divu, 0, 3, 27, 9 )

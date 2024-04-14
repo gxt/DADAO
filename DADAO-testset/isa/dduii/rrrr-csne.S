@@ -1,14 +1,6 @@
-#*****************************************************************************
-# csne.S
-#-----------------------------------------------------------------------------
-#
-# Test and instruction.
-#
-
 #include "dadao_test.h"
 #include "test_macros.h"
 
-DDTEST_DDUII
 DDTEST_CODE_BEGIN
 
 	TEST_RRRR_RRWR_1234( 2, csne, 0x00f0f0f0fff0000f, 0xffffffffffffffff, 0x0000000000000000, 2, 0x00f0f0f0fff0000f )
