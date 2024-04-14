@@ -8,20 +8,6 @@
 // Begin Macro
 //-----------------------------------------------------------------------
 
-#define DDTEST_DDUII							\
-	.macro init;							\
-	.endm
-
-#define INIT_RD_RB_RF							\
-	rd2rd	rd1, rd0, 1;						\
-	rd2rd	rd2, rd0, 2;						\
-	rd2rd	rd4, rd0, 4;						\
-	rd2rd	rd8, rd0, 8;						\
-	rd2rd	rd16, rd0, 16;						\
-	rd2rd	rd32, rd0, 32;						\
-	rd2rb	rb1, rd1, 63;						\
-	rd2rf	rf1, rd1, 63;
-
 #define DDTEST_CODE_BEGIN						\
 	.section .text.init;						\
 	.align 6;							\
@@ -30,21 +16,20 @@
 	.global _start;							\
 _start:									\
 	/* reset vector */						\
-	INIT_RD_RB_RF;							\
-	setrd	RD_FLAG, 0;					\
-	setrd	RD_NUMR, 0;					\
-	setrd	RD_PASS, 0;					\
-	setrd	RD_EXP1, 0;					\
-	setrd	RD_EXP2, 0;					\
-	setrd	RD_RET1, 0;					\
-	setrd	RD_RET2, 0;					\
+	rd2rd	rd1, rd0, 1;						\
+	rd2rd	rd2, rd0, 2;						\
+	rd2rd	rd4, rd0, 4;						\
+	rd2rd	rd8, rd0, 8;						\
+	rd2rd	rd16, rd0, 16;						\
+	rd2rd	rd32, rd0, 32;						\
+	rd2rb	rb1, rd1, 63;						\
+	rd2rf	rf1, rd1, 63;						\
 	CPRD_mhartid(rd8);						\
 1:	brnz	rd8, 1b;						\
 	setrd	TESTNUM, 0;						\
 	setrd	rd8, trap_vector;					\
 	CPWR_mtvec(rd8);						\
 	CPWR_mstatus(rd0);						\
-	init;								\
 	setrd	rd8, _test_start;					\
 	CPWR_mepc(rd8);							\
 	escape	cp0, 0; /* should goto _test_start */			\
@@ -64,7 +49,14 @@ write_tohost:								\
 	stt	TESTNUM, rb8, 0;					\
 	stt	rd0, rb8, 4;						\
 	jump	write_tohost;						\
-_test_start:
+_test_start:							\
+	setrd	RD_FLAG, 0;					\
+	setrd	RD_NUMR, 0;					\
+	setrd	RD_PASS, 0;					\
+	setrd	RD_EXP1, 0;					\
+	setrd	RD_EXP2, 0;					\
+	setrd	RD_RET1, 0;					\
+	setrd	RD_RET2, 0;					\
 
 //-----------------------------------------------------------------------
 // Pass/Fail Macro

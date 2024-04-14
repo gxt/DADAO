@@ -4,8 +4,6 @@
 #include "simrisc/ddtest.h"
 #include "simrisc/encoding.h"
 
-#define DDTEST_DDUII
-
 #define DDTEST_CODE_BEGIN						\
 	.text;								\
 	.globl _start;							\
