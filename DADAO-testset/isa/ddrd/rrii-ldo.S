@@ -3,17 +3,17 @@
 
 DDTEST_CODE_BEGIN
 
-	TEST_RRII_LD_D_12( 2, ldo, 0x00ff00ff00ff00ff, tdat, 0 )
-	TEST_RRII_LD_D_12( 3, ldo, 0xff00ff00ff00ff00, tdat, 8 )
-	TEST_RRII_LD_D_12( 4, ldo, 0x0ff00ff00ff00ff0, tdat, 16 )
-	TEST_RRII_LD_D_12( 5, ldo, 0xf00ff00ff00ff00f, tdat, 24 )
+	TEST_RRII_LD_D_12( 12, ldo, 0x00ff00ff00ff00ff, tdat, 0 )
+	TEST_RRII_LD_D_12( 13, ldo, 0xff00ff00ff00ff00, tdat, 8 )
+	TEST_RRII_LD_D_12( 14, ldo, 0x0ff00ff00ff00ff0, tdat, 16 )
+	TEST_RRII_LD_D_12( 15, ldo, 0xf00ff00ff00ff00f, tdat, 24 )
 
-	TEST_RRII_LD_D_12( 6, ldo, 0x00ff00ff00ff00ff, tdat4, -24 )
-	TEST_RRII_LD_D_12( 7, ldo, 0xff00ff00ff00ff00, tdat4, -16 )
-	TEST_RRII_LD_D_12( 8, ldo, 0x0ff00ff00ff00ff0, tdat4, -8 )
-	TEST_RRII_LD_D_12( 9, ldo, 0xf00ff00ff00ff00f, tdat4, 0 )
+	TEST_RRII_LD_D_12( 16, ldo, 0x00ff00ff00ff00ff, tdat4, -24 )
+	TEST_RRII_LD_D_12( 17, ldo, 0xff00ff00ff00ff00, tdat4, -16 )
+	TEST_RRII_LD_D_12( 18, ldo, 0x0ff00ff00ff00ff0, tdat4, -8 )
+	TEST_RRII_LD_D_12( 19, ldo, 0xf00ff00ff00ff00f, tdat4, 0 )
 
-	TEST_RRII_LD_D_01( 10, ldo, 0, tdat, 8 )
+	TEST_RRII_LD_D_01( 20, ldo, 0, tdat, 8 )
 
 DDTEST_CODE_END
 
