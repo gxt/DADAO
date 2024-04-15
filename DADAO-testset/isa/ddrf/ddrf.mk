@@ -1,12 +1,12 @@
 #=======================================================================
-# Makefrag for ddfii tests
+# Makefrag for ddrf tests
 #-----------------------------------------------------------------------
 
-ddfii_sc_tests = \
+ddrf_sc_tests = \
 	rwii-setw \
 	orri-rf2rf \
 	orri-rf2rd \
 	orri-rd2rf \
 
-ddfii_bare_tests = $(addprefix ddfii-bare-, $(ddfii_sc_tests))
-ddfii_qemu_tests = $(addprefix ddfii-qemu-, $(ddfii_sc_tests))
+ddrf_bare_tests = $(addprefix ddrf-bare-, $(ddrf_sc_tests))
+ddrf_qemu_tests = $(addprefix ddrf-qemu-, $(ddrf_sc_tests))

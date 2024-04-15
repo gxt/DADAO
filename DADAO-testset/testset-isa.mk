@@ -18,7 +18,7 @@ testset-isa-bare-highfive:	runtime-common-headers
 	@echo "include common.mk"									>> $(TESTSET_ISA_BARE_TARGET)/Makefile
 	@echo "include isa.mk"										>> $(TESTSET_ISA_BARE_TARGET)/Makefile
 	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_BARE_TARGET) dduii-bare	>  $(TESTSET_ISA_BARE_LOG)
-	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_BARE_TARGET) ddfii-bare	>  $(TESTSET_ISA_BARE_LOG)
+	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_BARE_TARGET) ddrf-bare	>  $(TESTSET_ISA_BARE_LOG)
 	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_BARE_TARGET) run-bare	>> $(TESTSET_ISA_BARE_LOG)
 	@ln -s -t $(TESTSET_ISA_BARE_TARGET) $(TESTSET_ISA_BARE_LOG)
 
@@ -35,7 +35,7 @@ testset-isa-qemu-highfive:	runtime-common-headers
 	@echo "include common.mk"									>> $(TESTSET_ISA_QEMU_TARGET)/Makefile
 	@echo "include isa.mk"										>> $(TESTSET_ISA_QEMU_TARGET)/Makefile
 	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_QEMU_TARGET) dduii-qemu	>  $(TESTSET_ISA_QEMU_LOG)
-	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_QEMU_TARGET) ddfii-qemu	>  $(TESTSET_ISA_QEMU_LOG)
+	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_QEMU_TARGET) ddrf-qemu	>  $(TESTSET_ISA_QEMU_LOG)
 	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_QEMU_TARGET) run-qemu	>> $(TESTSET_ISA_QEMU_LOG)
 	@ln -s -t $(TESTSET_ISA_QEMU_TARGET) $(TESTSET_ISA_QEMU_LOG)
 
