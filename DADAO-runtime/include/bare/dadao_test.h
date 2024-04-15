@@ -86,7 +86,7 @@ ___fail:										\
 //-----------------------------------------------------------------------
 
 #define DDTEST_DATA_BEGIN						\
-	.section data;								\
+	.section .data;								\
 	.pushsection								\
 	.tohost,"aw",@progbits;						\
 	.align 6;									\

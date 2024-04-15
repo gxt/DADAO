@@ -49,7 +49,7 @@ __failstr:										\
 	.size __failstr, __faillen;					\
 
 #define DDTEST_DATA_BEGIN						\
-	.section data;								\
+	.section .data;								\
 
 #define DDTEST_DATA_END
 
