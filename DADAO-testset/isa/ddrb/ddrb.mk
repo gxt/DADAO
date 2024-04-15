@@ -11,6 +11,8 @@ ddrb_sc_tests = \
 	orrr-sub \
 	riii-adrp \
 	rrii-addi \
+	rrii-breq \
+	rrii-brne \
 	rwii-andnw \
 	rwii-orw \
 	rwii-setzw \

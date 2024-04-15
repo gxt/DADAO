@@ -149,6 +149,28 @@ test_ ## testnum:																\
 #define TEST_RRII_LD_D_12( testnum, inst, dest, src1, imm12 )		_TEST_RRII( testnum, inst, dest, src1, imm12, rd, rb, 16, 17 )
 #define TEST_RRII_LD_D_01( testnum, inst, dest, src1, imm12 )		_TEST_RRII( testnum, inst, dest, src1, imm12, rd, rb,  0, 17 )
 
+#define _TEST_RRII_BR( testnum, inst, src1, src2, lbl_then, lbl_else, _SRC1, _SRC2 )	\
+test_ ## testnum:														\
+	__TEST_CASE_HEAD__													\
+	setrd	RD_NUMR, testnum;											\
+	setrd	rd ## _SRC1, src1;											\
+	setrd	rd ## _SRC2, src2;											\
+	inst	rd ## _SRC1, rd ## _SRC2, lbl_ ## testnum ## _taken;		\
+	jump	lbl_ ## testnum ## lbl_else;								\
+lbl_ ## testnum ## _taken:												\
+	jump	lbl_ ## testnum ## lbl_then;								\
+lbl_ ## testnum ## _fail:												\
+	jump	___fail;													\
+lbl_ ## testnum ## _pass:												\
+	setrd	RD_FLAG, RD_ZERO;											\
+	__TEST_CASE_TAIL__
+
+#define TEST_RRII_BR_12( testnum, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR( testnum, inst, src1, src2, lbl_then, lbl_else, 16, 17 )
+#define TEST_RRII_BR_11( testnum, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR( testnum, inst, src1, src2, lbl_then, lbl_else, 16, 16 )
+#define TEST_RRII_BR_10( testnum, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR( testnum, inst, src1, src2, lbl_then, lbl_else, 16,  0 )
+#define TEST_RRII_BR_01( testnum, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR( testnum, inst, src1, src2, lbl_then, lbl_else,  0, 16 )
+#define TEST_RRII_BR_00( testnum, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR( testnum, inst, src1, src2, lbl_then, lbl_else,  0,  0 )
+
 #-----------------------------------------------------------------------
 # DADAO MACROS for RWII
 #-----------------------------------------------------------------------
