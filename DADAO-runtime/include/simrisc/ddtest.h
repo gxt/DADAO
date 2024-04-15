@@ -12,5 +12,7 @@
 
 #define RB_IP				rb0
 #define RB_SP				rb1
+#define RB_SRC1				rb4
+#define RB_DST1				rb6
 
 #endif
