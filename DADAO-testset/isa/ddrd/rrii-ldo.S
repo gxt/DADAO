@@ -17,7 +17,7 @@ DDTEST_CODE_BEGIN
 
 	__TEST_CASE( 22, 0xBEE1BEE2BEE3BEE4,
 		ldo	rd16, RB_IP, 8;							\
-		brz	rd0, 1f;								\
+		jump	1f;									\
 		.dd.o64	0xBEE1BEE2BEE3BEE4;					\
 1:		rd2rd	RD_RET1, rd16, 1;					\
 		)
