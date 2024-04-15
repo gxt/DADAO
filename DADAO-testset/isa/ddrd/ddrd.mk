@@ -1,8 +1,8 @@
 #=======================================================================
-# Makefrag for dduii tests
+# Makefrag for ddrd tests
 #-----------------------------------------------------------------------
 
-dduii_sc_tests = \
+ddrd_sc_tests = \
 	orri-exts \
 	orri-extz \
 	orri-rd2rd \
@@ -40,5 +40,5 @@ dduii_sc_tests = \
 	rwii-setow \
 	rwii-setzw \
 
-dduii_bare_tests = $(addprefix dduii-bare-, $(dduii_sc_tests))
-dduii_qemu_tests = $(addprefix dduii-qemu-, $(dduii_sc_tests))
+ddrd_bare_tests = $(addprefix ddrd-bare-, $(ddrd_sc_tests))
+ddrd_qemu_tests = $(addprefix ddrd-qemu-, $(ddrd_sc_tests))
