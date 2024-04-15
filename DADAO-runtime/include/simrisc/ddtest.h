@@ -10,4 +10,7 @@
 #define RD_RET1				rd6
 #define RD_RET2				rd7
 
+#define RB_IP				rb0
+#define RB_SP				rb1
+
 #endif
