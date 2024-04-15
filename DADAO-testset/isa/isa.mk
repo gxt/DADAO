@@ -5,6 +5,7 @@
 src_dir ?= .
 
 include $(src_dir)/dduii/dduii.mk
+include $(src_dir)/ddrb/ddrb.mk
 include $(src_dir)/ddrf/ddrf.mk
 
 default: all
@@ -23,6 +24,16 @@ dduii-bare%.out: dduii-bare%
 	@tail -n 1 $(src_dir)/output/chipyard.TestHarness.$(RUNTIME_BARE_CONFIG)/$@
 
 dduii-qemu%.out: dduii-qemu%
+	@echo -n "	$<  	"
+	$(DADAO_QEMU_USER) $< 2> $@
+	@echo
+
+ddrb-bare%.out: ddrb-bare%
+	@echo -n "	$<  	"
+	@make -C $(DIR_DADAO_TOP) RUNTIME_BARE_BINARY=$(shell pwd)/$< runtime-bare-run-binary   > /dev/null
+	@tail -n 1 $(src_dir)/output/chipyard.TestHarness.$(RUNTIME_BARE_CONFIG)/$@
+
+ddrb-qemu%.out: ddrb-qemu%
 	@echo -n "	$<  	"
 	$(DADAO_QEMU_USER) $< 2> $@
 	@echo
@@ -71,20 +82,23 @@ endif
 endef
 
 $(eval $(call compile_template,dduii, -Xassembler --multiple-to-single ))
+$(eval $(call compile_template,ddrb, -Xassembler --multiple-to-single ))
 $(eval $(call compile_template,ddrf, -Xassembler --multiple-to-single ))
 
 tests_dump = $(addsuffix .dump, $(tests))
 tests_hex = $(addsuffix .hex, $(tests))
 dduii_bare_out = $(addsuffix .out, $(filter dduii-bare%,$(tests)))
 dduii_qemu_out = $(addsuffix .out, $(filter dduii-qemu%,$(tests)))
+ddrb_bare_out = $(addsuffix .out, $(filter ddrb-bare%,$(tests)))
+ddrb_qemu_out = $(addsuffix .out, $(filter ddrb-qemu%,$(tests)))
 ddrf_bare_out = $(addsuffix .out, $(filter ddrf-bare%,$(tests)))
 ddrf_qemu_out = $(addsuffix .out, $(filter ddrf-qemu%,$(tests)))
 
-run-bare: $(dduii_bare_out) $(ddrf_bare_out)
-run-qemu: $(dduii_qemu_out) $(ddrf_qemu_out)
+run-bare: $(dduii_bare_out) $(ddrb_bare_out) $(ddrf_bare_out)
+run-qemu: $(dduii_qemu_out) $(ddrb_qemu_out) $(ddrf_qemu_out)
 
 
-junk += $(tests) $(tests_dump) $(tests_hex) $(dduii_bare_out) $(dduii_qemu_out) $(ddrf_bare_out) $(ddrf_qemu_out)
+junk += $(tests) $(tests_dump) $(tests_hex) $(dduii_bare_out) $(dduii_qemu_out) $(ddrb_bare_out) $(ddrb_qemu_out) $(ddrf_bare_out) $(ddrf_qemu_out)
 
 #------------------------------------------------------------
 # Default

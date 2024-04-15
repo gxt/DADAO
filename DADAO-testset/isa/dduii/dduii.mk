@@ -3,53 +3,42 @@
 #-----------------------------------------------------------------------
 
 dduii_sc_tests = \
+	orri-exts \
+	orri-extz \
+	orri-rd2rd \
+	orri-shlu \
+	orri-shrs \
+	orri-shru \
 	orrr-and \
-	orrr-orr \
-	orrr-xor \
-	orrr-add \
-	orrr-sub \
-	orrr-cmp \
 	orrr-cmps \
 	orrr-cmpu \
 	orrr-exts \
 	orrr-extz \
+	orrr-orr \
 	orrr-shlu \
-	orrr-shru \
 	orrr-shrs \
-	orri-exts \
-	orri-extz \
-	orri-shlu \
-	orri-shru \
-	orri-shrs \
-	riii-adrp \
-	rrii-addi-rd \
-	rrii-addi-rb \
+	orrr-shru \
+	orrr-xor \
+	rrii-addi \
 	rrii-andi \
-	rrii-cmpu \
 	rrii-cmps \
+	rrii-cmpu \
 	rrii-ldo \
-	rwii-setzw-rd \
-	rwii-setzw-rb \
-	rwii-setow \
-	rwii-andnw-rd \
-	rwii-andnw-rb \
-	rwii-orw-rd \
-	rwii-orw-rb \
 	rrrr-add \
+	rrrr-cseq \
+	rrrr-csn \
+	rrrr-csne \
+	rrrr-csp \
+	rrrr-csz \
 	rrrr-divs \
 	rrrr-divu \
 	rrrr-muls \
 	rrrr-mulu \
 	rrrr-sub \
-	rrrr-csn \
-	rrrr-csp \
-	rrrr-csz \
-	rrrr-cseq \
-	rrrr-csne \
-	orri-rd2rd \
-	orri-rb2rb \
-	orri-rd2rb \
-	orri-rb2rd \
+	rwii-andnw \
+	rwii-orw \
+	rwii-setow \
+	rwii-setzw \
 
 dduii_bare_tests = $(addprefix dduii-bare-, $(dduii_sc_tests))
 dduii_qemu_tests = $(addprefix dduii-qemu-, $(dduii_sc_tests))
