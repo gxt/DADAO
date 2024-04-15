@@ -27,6 +27,7 @@ dduii_sc_tests = \
 	rrii-andi \
 	rrii-cmpu \
 	rrii-cmps \
+	rrii-ldo \
 	rwii-setzw-rd \
 	rwii-setzw-rb \
 	rwii-setow \

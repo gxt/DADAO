@@ -146,6 +146,8 @@ test_ ## testnum:																\
 #define TEST_RRII_BB_12( testnum, inst, dest, src1, imm12 )		_TEST_RRII( testnum, inst, dest, src1, imm12, rb, rb, 16, 17 )
 #define TEST_RRII_BB_11( testnum, inst, dest, src1, imm12 )		_TEST_RRII( testnum, inst, dest, src1, imm12, rb, rb, 16, 16 )
 
+#define TEST_RRII_LD_D( testnum, inst, dest, src1, imm12 )		_TEST_RRII( testnum, inst, dest, src1, imm12, rd, rb, 16, 17 )
+
 #-----------------------------------------------------------------------
 # DADAO MACROS for RWII
 #-----------------------------------------------------------------------
