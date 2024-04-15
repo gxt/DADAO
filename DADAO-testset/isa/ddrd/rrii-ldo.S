@@ -13,7 +13,14 @@ DDTEST_CODE_BEGIN
 	TEST_RRII_LD_D_12( 18, ldo, 0x0ff00ff00ff00ff0, tdat4, -8 )
 	TEST_RRII_LD_D_12( 19, ldo, 0xf00ff00ff00ff00f, tdat4, 0 )
 
-	TEST_RRII_LD_D_01( 20, ldo, 0, tdat, 8 )
+	TEST_RRII_LD_D_01( 21, ldo, 0, tdat, 8 )
+
+	__TEST_CASE( 22, 0xBEE1BEE2BEE3BEE4,
+		ldo	rd16, RB_IP, 8;							\
+		brz	rd0, 1f;								\
+		.dd.o64	0xBEE1BEE2BEE3BEE4;					\
+1:		rd2rd	RD_RET1, rd16, 1;					\
+		)
 
 DDTEST_CODE_END
 
