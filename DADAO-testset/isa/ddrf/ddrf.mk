@@ -11,6 +11,8 @@ ddrf_sc_tests = \
 	orri-rd2fo \
 	orri-rd2ft \
 	orri-rd2rf \
+	orrr-foadd \
+	orrr-ftadd \
 
 ddrf_bare_tests = $(addprefix ddrf-bare-, $(ddrf_sc_tests))
 ddrf_qemu_tests = $(addprefix ddrf-qemu-, $(ddrf_sc_tests))

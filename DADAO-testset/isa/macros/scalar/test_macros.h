@@ -152,6 +152,58 @@ lbl_ ## testnum ## _cmp:																		\
 #define TEST_ORRR_DBB_012( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rb, rb,  0, 16, 17 )
 
 #-----------------------------------------------------------------------
+# DADAO MACROS for ORRR - floating pointer insns
+#	TODO: SHOULD watch accured exception
+#-----------------------------------------------------------------------
+
+#define _TEST_FRRR_FFF( testnum, inst, inst_ld, ftype, val_dst, val_src1, val_src2, _DST, _SRC1, _SRC2 )	\
+test_ ## testnum:																				\
+		__TEST_CASE_HEAD__																		\
+		setrd			RD_NUMR, testnum;														\
+		setrb			RB_SRC1, test_ ## testnum ## _src1;										\
+		inst_ld			rf ## _SRC1, RB_SRC1, 0;												\
+		setrb			RB_SRC2, test_ ## testnum ## _src2;										\
+		inst_ld			rf ## _SRC2, RB_SRC2, 0;												\
+		inst			rf ## _DST, rf ## _SRC1, rf ## _SRC2;									\
+		jump			lbl_ ## testnum ## _cmp;												\
+		.balign			8;																		\
+test_ ## testnum ## _dst:																		\
+		ftype			val_dst;																\
+		.balign			8;																		\
+test_ ## testnum ## _src1:																		\
+		ftype			val_src1;																\
+		.balign			8;																		\
+test_ ## testnum ## _src2:																		\
+		ftype			val_src2;																\
+		.balign			4;																		\
+lbl_ ## testnum ## _cmp:																		\
+		rf2rd			RD_RET1, rf ## _DST, 1;													\
+		setrb			RB_DST1, test_ ## testnum ## _dst;										\
+		inst_ld			rf ## _DST, RB_DST1, 0;													\
+		rf2rd			RD_EXP1, rf ## _DST, 1;													\
+		cmpu			RD_FLAG, RD_RET1, RD_EXP1;												\
+		brnz			RD_FLAG, ___fail;														\
+		__TEST_CASE_TAIL__
+
+#define TEST_FRRR_FFF_FT_123( testnum, inst, val_dst, val_src1, val_src2 )	\
+			_TEST_FRRR_FFF(   testnum, inst, ldft, .single, val_dst, val_src1, val_src2, 16, 17, 18 )
+#define TEST_FRRR_FFF_FT_112( testnum, inst, val_dst, val_src1, val_src2 )	\
+			_TEST_FRRR_FFF(   testnum, inst, ldft, .single, val_dst, val_src1, val_src2, 16, 16, 18 )
+#define TEST_FRRR_FFF_FT_121( testnum, inst, val_dst, val_src1, val_src2 )	\
+			_TEST_FRRR_FFF(   testnum, inst, ldft, .single, val_dst, val_src1, val_src2, 16, 17, 16 )
+#define TEST_FRRR_FFF_FT_111( testnum, inst, val_dst, val_src1, val_src2 )	\
+			_TEST_FRRR_FFF(   testnum, inst, ldft, .single, val_dst, val_src1, val_src2, 16, 16, 16 )
+
+#define TEST_FRRR_FFF_FO_123( testnum, inst, val_dst, val_src1, val_src2 )	\
+			_TEST_FRRR_FFF(   testnum, inst, ldfo, .double, val_dst, val_src1, val_src2, 16, 17, 18 )
+#define TEST_FRRR_FFF_FO_112( testnum, inst, val_dst, val_src1, val_src2 )	\
+			_TEST_FRRR_FFF(   testnum, inst, ldfo, .double, val_dst, val_src1, val_src2, 16, 16, 18 )
+#define TEST_FRRR_FFF_FO_121( testnum, inst, val_dst, val_src1, val_src2 )	\
+			_TEST_FRRR_FFF(   testnum, inst, ldfo, .double, val_dst, val_src1, val_src2, 16, 17, 16 )
+#define TEST_FRRR_FFF_FO_111( testnum, inst, val_dst, val_src1, val_src2 )	\
+			_TEST_FRRR_FFF(   testnum, inst, ldfo, .double, val_dst, val_src1, val_src2, 16, 16, 16 )
+
+#-----------------------------------------------------------------------
 # DADAO MACROS for RIII
 #-----------------------------------------------------------------------
 
