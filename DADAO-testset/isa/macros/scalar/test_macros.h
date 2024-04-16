@@ -33,35 +33,6 @@ test_ ## testnum:										\
 	__TEST_CASE_TAIL__
 
 #-----------------------------------------------------------------------
-# DADAO MACROS for ORRR
-#-----------------------------------------------------------------------
-
-#define _TEST_ORRR( testnum, inst, dest, src1, src2, _RGHB, _RGHC, _RGHD, _DEST, _SRC1, _SRC2 )		\
-	__TEST_CASE(	testnum, dest,																	\
-	set ## _RGHC	_RGHC ## _SRC1, src1;															\
-	set ## _RGHD	_RGHD ## _SRC2, src2;															\
-	inst			_RGHB ## _DEST, _RGHC ## _SRC1, _RGHD ## _SRC2;									\
-	_RGHB ## 2rd	RD_RET1, _RGHB ## _DEST, 1;														\
-	)
-
-#define TEST_ORRR_DDD_123( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd, 16, 17, 18 )
-#define TEST_ORRR_DDD_112( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd, 16, 16, 18 )
-#define TEST_ORRR_DDD_121( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd, 16, 17, 16 )
-#define TEST_ORRR_DDD_111( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd, 16, 16, 16 )
-#define TEST_ORRR_DDD_102( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd, 16,  0, 18 )
-#define TEST_ORRR_DDD_120( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd, 16, 17,  0 )
-#define TEST_ORRR_DDD_100( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd, 16,  0,  0 )
-#define TEST_ORRR_DDD_012( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd,  0, 17, 18 )
-
-#define TEST_ORRR_BBD_123( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rb, rb, rd, 16, 17, 18 )
-#define TEST_ORRR_BBD_112( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rb, rb, rd, 16, 16, 18 )
-#define TEST_ORRR_BBD_120( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rb, rb, rd, 16, 17,  0 )
-
-#define TEST_ORRR_DBB_123( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rb, rb, 16, 17, 18 )
-#define TEST_ORRR_DBB_122( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rb, rb, 16, 17, 17 )
-#define TEST_ORRR_DBB_012( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rb, rb,  0, 16, 17 )
-
-#-----------------------------------------------------------------------
 # DADAO MACROS for ORRI - logic insns
 #-----------------------------------------------------------------------
 
@@ -152,6 +123,35 @@ lbl_ ## testnum ## _cmp:																		\
 		_TEST_FRRI_R1(   testnum, inst, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, rgd, rgs, 16,  0 )
  
 #-----------------------------------------------------------------------
+# DADAO MACROS for ORRR
+#-----------------------------------------------------------------------
+
+#define _TEST_ORRR( testnum, inst, dest, src1, src2, _RGHB, _RGHC, _RGHD, _DEST, _SRC1, _SRC2 )		\
+	__TEST_CASE(	testnum, dest,																	\
+	set ## _RGHC	_RGHC ## _SRC1, src1;															\
+	set ## _RGHD	_RGHD ## _SRC2, src2;															\
+	inst			_RGHB ## _DEST, _RGHC ## _SRC1, _RGHD ## _SRC2;									\
+	_RGHB ## 2rd	RD_RET1, _RGHB ## _DEST, 1;														\
+	)
+
+#define TEST_ORRR_DDD_123( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd, 16, 17, 18 )
+#define TEST_ORRR_DDD_112( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd, 16, 16, 18 )
+#define TEST_ORRR_DDD_121( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd, 16, 17, 16 )
+#define TEST_ORRR_DDD_111( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd, 16, 16, 16 )
+#define TEST_ORRR_DDD_102( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd, 16,  0, 18 )
+#define TEST_ORRR_DDD_120( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd, 16, 17,  0 )
+#define TEST_ORRR_DDD_100( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd, 16,  0,  0 )
+#define TEST_ORRR_DDD_012( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rd, rd,  0, 17, 18 )
+
+#define TEST_ORRR_BBD_123( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rb, rb, rd, 16, 17, 18 )
+#define TEST_ORRR_BBD_112( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rb, rb, rd, 16, 16, 18 )
+#define TEST_ORRR_BBD_120( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rb, rb, rd, 16, 17,  0 )
+
+#define TEST_ORRR_DBB_123( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rb, rb, 16, 17, 18 )
+#define TEST_ORRR_DBB_122( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rb, rb, 16, 17, 17 )
+#define TEST_ORRR_DBB_012( testnum, inst, dest, src1, src2 )	_TEST_ORRR( testnum, inst, dest, src1, src2, rd, rb, rb,  0, 16, 17 )
+
+#-----------------------------------------------------------------------
 # DADAO MACROS for RIII
 #-----------------------------------------------------------------------
 
@@ -206,21 +206,6 @@ lbl_ ## testnum ## _pass:												\
 #define TEST_RRII_BR_10( testnum, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR( testnum, inst, src1, src2, lbl_then, lbl_else, 16,  0 )
 #define TEST_RRII_BR_01( testnum, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR( testnum, inst, src1, src2, lbl_then, lbl_else,  0, 16 )
 #define TEST_RRII_BR_00( testnum, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR( testnum, inst, src1, src2, lbl_then, lbl_else,  0,  0 )
-
-#-----------------------------------------------------------------------
-# DADAO MACROS for RWII
-#-----------------------------------------------------------------------
-
-#define _TEST_RWII( testnum, inst, wyde, dest, orig, imm16, _RGHA, _DEST )		\
-    __TEST_CASE(	testnum, dest,											\
-		set ## _RGHA	_RGHA ## _DEST, orig;								\
-		inst			_RGHA ## _DEST, wyde, imm16;						\
-		_RGHA ## 2rd	RD_RET1, _RGHA ## _DEST, 1;							\
-    )
-
-#define TEST_RWII_D( testnum, inst, wyde, dest, orig, imm16 )		_TEST_RWII( testnum, inst, wyde, dest, orig, imm16, rd, 16 )
-#define TEST_RWII_B( testnum, inst, wyde, dest, orig, imm16 )		_TEST_RWII( testnum, inst, wyde, dest, orig, imm16, rb, 16 )
-#define TEST_RWII_F( testnum, inst, wyde, dest, orig, imm16 )		_TEST_RWII( testnum, inst, wyde, dest, orig, imm16, rf, 16 )
 
 #-----------------------------------------------------------------------
 # DADAO MACROS for RRRR
@@ -287,5 +272,20 @@ test_ ## testnum:														\
 #define TEST_RRRR_WWRR_1200( testnum, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2, 16, 17,  0,  0 )
 #define TEST_RRRR_WWRR_0123( testnum, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2,  0, 17, 18, 19 )
 #define TEST_RRRR_WWRR_1023( testnum, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2, 16,  0, 18, 19 )
+
+#-----------------------------------------------------------------------
+# DADAO MACROS for RWII
+#-----------------------------------------------------------------------
+
+#define _TEST_RWII( testnum, inst, wyde, dest, orig, imm16, _RGHA, _DEST )		\
+    __TEST_CASE(	testnum, dest,											\
+		set ## _RGHA	_RGHA ## _DEST, orig;								\
+		inst			_RGHA ## _DEST, wyde, imm16;						\
+		_RGHA ## 2rd	RD_RET1, _RGHA ## _DEST, 1;							\
+    )
+
+#define TEST_RWII_D( testnum, inst, wyde, dest, orig, imm16 )		_TEST_RWII( testnum, inst, wyde, dest, orig, imm16, rd, 16 )
+#define TEST_RWII_B( testnum, inst, wyde, dest, orig, imm16 )		_TEST_RWII( testnum, inst, wyde, dest, orig, imm16, rb, 16 )
+#define TEST_RWII_F( testnum, inst, wyde, dest, orig, imm16 )		_TEST_RWII( testnum, inst, wyde, dest, orig, imm16, rf, 16 )
 
 #endif /* __TEST_MACROS_SCALAR_H */
