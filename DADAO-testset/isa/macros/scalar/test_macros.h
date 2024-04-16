@@ -116,6 +116,42 @@ test_ ## testnum:																\
 #define TEST_ORRI_R8_C5( testnum, inst, rgd, rgs )		_TEST_ORRI_R8( testnum, inst, rgd, rgs, 20, 20, 20,21,22,23,24,25,26,27 )
 
 #-----------------------------------------------------------------------
+# DADAO MACROS for ORRI - floating pointer insns
+#	TODO: SHOULD watch accured exception
+#-----------------------------------------------------------------------
+
+#define _TEST_FRRI_R1( testnum, inst, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, _RGHB, _RGHC, _DST, _SRC )	\
+test_ ## testnum:																				\
+		__TEST_CASE_HEAD__																		\
+		setrd			RD_NUMR, testnum;														\
+		setrb			RB_SRC1, test_ ## testnum ## _src;										\
+		inst_ld_src		_RGHC ## _SRC, RB_SRC1, 0;												\
+		inst			_RGHB ## _DST, _RGHC ## _SRC, 1;										\
+		jump			lbl_ ## testnum ## _cmp;												\
+		.balign			8;																		\
+test_ ## testnum ## _dst:																		\
+		type_dst		val_dst;																\
+		.balign			8;																		\
+test_ ## testnum ## _src:																		\
+		type_src		val_src;																\
+		.balign			4;																		\
+lbl_ ## testnum ## _cmp:																		\
+		_RGHB ## 2rd	RD_RET1, _RGHB ## _DST, 1;												\
+		setrb			RB_DST1, test_ ## testnum ## _dst;										\
+		inst_ld_dst		_RGHB ## _DST, RB_DST1, 0;												\
+		_RGHB ## 2rd	RD_EXP1, _RGHB ## _DST, 1;												\
+		cmpu			RD_FLAG, RD_RET1, RD_EXP1;												\
+		brnz			RD_FLAG, ___fail;														\
+		__TEST_CASE_TAIL__
+ 
+#define TEST_FRRI_R1_12( testnum, inst, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, rgd, rgs )	\
+		_TEST_FRRI_R1(   testnum, inst, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, rgd, rgs, 16, 17 )
+#define TEST_FRRI_R1_11( testnum, inst, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, rgd, rgs )	\
+		_TEST_FRRI_R1(   testnum, inst, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, rgd, rgs, 16, 16 )
+#define TEST_FRRI_R1_10( testnum, inst, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, rgd, rgs )	\
+		_TEST_FRRI_R1(   testnum, inst, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, rgd, rgs, 16,  0 )
+ 
+#-----------------------------------------------------------------------
 # DADAO MACROS for RIII
 #-----------------------------------------------------------------------
 
