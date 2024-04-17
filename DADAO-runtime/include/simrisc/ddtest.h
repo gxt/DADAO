@@ -3,7 +3,7 @@
 
 #define RD_ZERO				rd0
 #define RD_FLAG				rd1
-#define RD_NUMR				rd2
+#define RD_NAME				rd2
 #define RD_PASS				rd3
 #define RD_EXP1				rd4
 #define RD_EXP2				rd5

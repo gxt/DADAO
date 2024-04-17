@@ -19,7 +19,7 @@
 		setrd			RD_RET1, 0xDEAD;				\
 		setrd			RD_RET2, 0xDEAD;				\
 		setrd			RD_FLAG, 0;						\
-		setrd			RD_NUMR, testnum;				\
+		setrd			RD_NAME, testnum;				\
 		addi			RD_PASS, RD_PASS, 1;			\
 
 #define __PASS_FAIL_FCSR__(flags)						\
