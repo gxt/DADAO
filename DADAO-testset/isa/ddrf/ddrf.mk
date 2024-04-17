@@ -6,6 +6,7 @@ ddrf_sc_tests = \
 	rwii-setw \
 	orri-fo2rd \
 	orri-ft2rd \
+	orri-ftsqrt \
 	orri-rf2rf \
 	orri-rf2rd \
 	orri-rd2fo \
