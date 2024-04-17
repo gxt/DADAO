@@ -233,6 +233,15 @@ lbl_ ## tcname ## _cmp:																		\
 #define TEST_RRII_LD_D_12( tcname, inst, dest, src1, imm12 )		_TEST_RRII( tcname, inst, dest, src1, imm12, rd, rb, 16, 17 )
 #define TEST_RRII_LD_D_01( tcname, inst, dest, src1, imm12 )		_TEST_RRII( tcname, inst, dest, src1, imm12, rd, rb,  0, 17 )
 
+#define TEST_RRII_LD_D_10( tcname, inst, type_dest, dest, imm12 )		\
+	__TEST_CASE( tcname, dest,						\
+		inst	rd16, RB_IP, imm12;					\
+		jump	1f;									\
+		type_dest	dest;							\
+		.balign	4;									\
+1:		setrd	RD_RET1, rd16;						\
+		)
+
 #define _TEST_RRII_BR( tcname, inst, src1, src2, lbl_then, lbl_else, _SRC1, _SRC2 )	\
 test_ ## tcname:														\
 	__TEST_CASE_HEAD__(tcname)											\

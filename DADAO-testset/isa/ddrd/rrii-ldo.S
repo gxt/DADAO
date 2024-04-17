@@ -15,12 +15,7 @@ DDTEST_CODE_BEGIN
 
 	TEST_RRII_LD_D_01( 21, ldo, 0, tdat, 8 )
 
-	__TEST_CASE( 22, 0xBEE1BEE2BEE3BEE4,
-		ldo	rd16, RB_IP, 8;							\
-		jump	1f;									\
-		.dd.o64	0xBEE1BEE2BEE3BEE4;					\
-1:		rd2rd	RD_RET1, rd16, 1;					\
-		)
+	TEST_RRII_LD_D_10( 22, ldo, .dd.o64, 0xBEE1BEE2BEE3BEE4, 8 )
 
 DDTEST_CODE_END
 
