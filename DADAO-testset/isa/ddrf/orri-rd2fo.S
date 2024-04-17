@@ -3,9 +3,9 @@
 
 DDTEST_CODE_BEGIN
 
-	TEST_FRRI_R1_12( 2, rd2fo, ldfo, .double,  1.0, ldo, .dd.o64,  1, rf, rd )
-	TEST_FRRI_R1_12( 3, rd2fo, ldfo, .double, -1.0, ldo, .dd.o64, -1, rf, rd )
-	TEST_FRRI_R1_10( 4, rd2fo, ldfo, .double,  0.0, ldo, .dd.o64,  0, rf, rd )
+	TEST_FRRI_R1_12( 2, rd2fo, 0, ldfo, .double,  1.0, ldo, .dd.o64,  1, rf, rd )
+	TEST_FRRI_R1_12( 3, rd2fo, 0, ldfo, .double, -1.0, ldo, .dd.o64, -1, rf, rd )
+	TEST_FRRI_R1_10( 4, rd2fo, 0, ldfo, .double,  0.0, ldo, .dd.o64,  0, rf, rd )
 
 DDTEST_CODE_END
 
