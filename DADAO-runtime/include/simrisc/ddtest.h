@@ -18,4 +18,9 @@
 
 #define RF_FCSR				rf0
 
+#define qNaNf				0f:7fc00000
+#define sNaNf				0f:7f800001
+#define qNaN				0d:7ff8000000000000
+#define sNaN				0d:7ff0000000000001
+
 #endif
