@@ -16,4 +16,6 @@
 #define RB_SRC2				rb5
 #define RB_DST1				rb6
 
+#define RF_FCSR				rf0
+
 #endif
