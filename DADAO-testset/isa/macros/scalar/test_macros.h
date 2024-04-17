@@ -199,6 +199,33 @@ lbl_ ## tcname ## _cmp:																		\
 #define TEST_FRRR_FFF_FO_111( tcname, inst, flags, val_dst, val_src1, val_src2 )	\
 			_TEST_FRRR_FFF(   tcname, inst, flags, ldfo, .double, val_dst, val_src1, val_src2, 16, 16, 16 )
 
+#define _TEST_FRRR_DFF( tcname, inst, flags, inst_ld, ftype, val_dst, val_src1, val_src2, _DST, _SRC1, _SRC2 )	\
+test_ ## tcname:																				\
+		__TEST_CASE_HEAD__(tcname)																\
+		setrb			RB_SRC1, test_ ## tcname ## _src1;										\
+		inst_ld			rf ## _SRC1, RB_SRC1, 0;												\
+		setrb			RB_SRC2, test_ ## tcname ## _src2;										\
+		inst_ld			rf ## _SRC2, RB_SRC2, 0;												\
+		inst			rd ## _DST, rf ## _SRC1, rf ## _SRC2;									\
+		jump			lbl_ ## tcname ## _cmp;													\
+		.balign			8;																		\
+test_ ## tcname ## _src1:																		\
+		ftype			val_src1;																\
+		.balign			8;																		\
+test_ ## tcname ## _src2:																		\
+		ftype			val_src2;																\
+		.balign			4;																		\
+lbl_ ## tcname ## _cmp:																			\
+		setrd			RD_RET1, rd ## _DST;													\
+		setrd			RD_EXP1, val_dst;														\
+		brne			RD_RET1, RD_EXP1, ___fail;												\
+		__PASS_FAIL_FCSR__(flags)																\
+
+#define TEST_FRRR_DFF_FT_123( tcname, inst, flags, val_dst, val_src1, val_src2 )	\
+			_TEST_FRRR_DFF(   tcname, inst, flags, ldft, .single, val_dst, val_src1, val_src2, 16, 17, 18 )
+#define TEST_FRRR_DFF_FT_122( tcname, inst, flags, val_dst, val_src1, val_src2 )	\
+			_TEST_FRRR_DFF(   tcname, inst, flags, ldft, .single, val_dst, val_src1, val_src2, 16, 17, 17 )
+
 #-----------------------------------------------------------------------
 # DADAO MACROS for RIII
 #-----------------------------------------------------------------------
