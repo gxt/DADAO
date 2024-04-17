@@ -5,38 +5,35 @@
 # Helper macros
 #-----------------------------------------------------------------------
 
-#define __TEST_CASE_HEAD__								\
-	setrd	rd16, 0;									\
-	setrd	rd17, 0;									\
-	setrd	rd18, 0;									\
-	setrd	rd19, 0;									\
-	setrb	rb16, 0;									\
-	setrb	rb17, 0;									\
-	setrb	rb18, 0;									\
-	setrb	rb19, 0;									\
-	setrd	RD_EXP1, 0xBEEF;							\
-	setrd	RD_EXP2, 0xBEEF;							\
-	setrd	RD_RET1, 0xDEAD;							\
-	setrd	RD_RET2, 0xDEAD;							\
+#define __TEST_CASE_HEAD__(testnum)						\
+		setrd			rd16, 0;						\
+		setrd			rd17, 0;						\
+		setrd			rd18, 0;						\
+		setrd			rd19, 0;						\
+		setrb			rb16, 0;						\
+		setrb			rb17, 0;						\
+		setrb			rb18, 0;						\
+		setrb			rb19, 0;						\
+		setrd			RD_EXP1, 0xBEEF;				\
+		setrd			RD_EXP2, 0xBEEF;				\
+		setrd			RD_RET1, 0xDEAD;				\
+		setrd			RD_RET2, 0xDEAD;				\
+		setrd			RD_FLAG, 0;						\
+		setrd			RD_NUMR, testnum;				\
+		addi			RD_PASS, RD_PASS, 1;			\
 
-#define __TEST_CASE_TAIL__								\
-	addi	RD_PASS, RD_PASS, 1;
-
-#define __TEST_PASSFAIL_FCSR__(flags)					\
+#define __PASS_FAIL_FCSR__(flags)						\
 		setrd			RD_EXP2, RF_FCSR;				\
 		shlu			RD_EXP2, RD_EXP2, 48;			\
 		setrd			RD_RET2, flags;					\
 		brne			RD_EXP2, RD_RET2, ___fail;		\
 
-#define __TEST_CASE( testnum, expect1, code... )		\
-test_ ## testnum:										\
-	__TEST_CASE_HEAD__									\
-	setrd	RD_NUMR, testnum;							\
-	code;												\
-	setrd	RD_EXP1, expect1;							\
-	cmpu	RD_FLAG, RD_RET1, RD_EXP1;					\
-	brnz	RD_FLAG, ___fail;							\
-	__TEST_CASE_TAIL__
+#define __TEST_CASE( testnum, dest, code... )			\
+	test_ ## testnum:									\
+		__TEST_CASE_HEAD__(testnum)						\
+		code;											\
+		setrd			RD_EXP1, dest;					\
+		brne			RD_EXP1, RD_RET1, ___fail;		\
 
 #-----------------------------------------------------------------------
 # DADAO MACROS for ORRI - logic insns
@@ -71,8 +68,7 @@ test_ ## testnum:										\
 
 #define _TEST_ORRI_R8( testnum, inst, _RGHB, _RGHC, _DST0, _SRC, _DST ... )		\
 test_ ## testnum:																\
-		__TEST_CASE_HEAD__														\
-		setrd			RD_NUMR, testnum;										\
+		__TEST_CASE_HEAD__(testnum)												\
 	.irp	rn, 16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31;				\
 		set ## _RGHC	_RGHC##\rn, \rn;										\
 	.endr;																		\
@@ -80,11 +76,9 @@ test_ ## testnum:																\
 		setrd			RD_EXP1, _SRC;											\
 	.irp	rn, _DST;															\
 		_RGHB ## 2rd	RD_RET1, _RGHB##\rn, 1;									\
-		cmpu			RD_FLAG, RD_RET1, RD_EXP1;								\
-		brnz			RD_FLAG, ___fail;										\
+		brne			RD_RET1, RD_EXP1, ___fail;								\
 		addi			RD_EXP1, RD_EXP1, 1;									\
 	.endr;																		\
-		__TEST_CASE_TAIL__
 
 #define TEST_ORRI_R8_C1( testnum, inst, rgd, rgs )		_TEST_ORRI_R8( testnum, inst, rgd, rgs,  8, 16,  8, 9,10,11,12,13,14,15 )
 #define TEST_ORRI_R8_C2( testnum, inst, rgd, rgs )		_TEST_ORRI_R8( testnum, inst, rgd, rgs, 12, 16, 12,13,14,15,16,17,18,19 )
@@ -99,8 +93,7 @@ test_ ## testnum:																\
 
 #define _TEST_FRRI_R1( testnum, inst, flags, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, _RGHB, _RGHC, _DST, _SRC )	\
 test_ ## testnum:																				\
-		__TEST_CASE_HEAD__																		\
-		setrd			RD_NUMR, testnum;														\
+		__TEST_CASE_HEAD__(testnum)																\
 		setrb			RB_SRC1, test_ ## testnum ## _src;										\
 		inst_ld_src		_RGHC ## _SRC, RB_SRC1, 0;												\
 		inst			_RGHB ## _DST, _RGHC ## _SRC, 1;										\
@@ -117,10 +110,8 @@ lbl_ ## testnum ## _cmp:																		\
 		setrb			RB_DST1, test_ ## testnum ## _dst;										\
 		inst_ld_dst		_RGHB ## _DST, RB_DST1, 0;												\
 		_RGHB ## 2rd	RD_EXP1, _RGHB ## _DST, 1;												\
-		cmpu			RD_FLAG, RD_RET1, RD_EXP1;												\
-		brnz			RD_FLAG, ___fail;														\
-		__TEST_PASSFAIL_FCSR__(flags)															\
-		__TEST_CASE_TAIL__
+		brne			RD_RET1, RD_EXP1, ___fail;												\
+		__PASS_FAIL_FCSR__(flags)																\
  
 #define TEST_FRRI_R1_12( testnum, inst, flags, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, rgd, rgs )	\
 		_TEST_FRRI_R1(   testnum, inst, flags, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, rgd, rgs, 16, 17 )
@@ -165,8 +156,7 @@ lbl_ ## testnum ## _cmp:																		\
 
 #define _TEST_FRRR_FFF( testnum, inst, flags, inst_ld, ftype, val_dst, val_src1, val_src2, _DST, _SRC1, _SRC2 )	\
 test_ ## testnum:																				\
-		__TEST_CASE_HEAD__																		\
-		setrd			RD_NUMR, testnum;														\
+		__TEST_CASE_HEAD__(testnum)																\
 		setrb			RB_SRC1, test_ ## testnum ## _src1;										\
 		inst_ld			rf ## _SRC1, RB_SRC1, 0;												\
 		setrb			RB_SRC2, test_ ## testnum ## _src2;										\
@@ -188,10 +178,8 @@ lbl_ ## testnum ## _cmp:																		\
 		setrb			RB_DST1, test_ ## testnum ## _dst;										\
 		inst_ld			rf ## _DST, RB_DST1, 0;													\
 		rf2rd			RD_EXP1, rf ## _DST, 1;													\
-		cmpu			RD_FLAG, RD_RET1, RD_EXP1;												\
-		brnz			RD_FLAG, ___fail;														\
-		__TEST_PASSFAIL_FCSR__(flags)															\
-		__TEST_CASE_TAIL__
+		brne			RD_RET1, RD_EXP1, ___fail;												\
+		__PASS_FAIL_FCSR__(flags)																\
 
 #define TEST_FRRR_FFF_FT_123( testnum, inst, flags, val_dst, val_src1, val_src2 )	\
 			_TEST_FRRR_FFF(   testnum, inst, flags, ldft, .single, val_dst, val_src1, val_src2, 16, 17, 18 )
@@ -247,8 +235,7 @@ lbl_ ## testnum ## _cmp:																		\
 
 #define _TEST_RRII_BR( testnum, inst, src1, src2, lbl_then, lbl_else, _SRC1, _SRC2 )	\
 test_ ## testnum:														\
-	__TEST_CASE_HEAD__													\
-	setrd	RD_NUMR, testnum;											\
+	__TEST_CASE_HEAD__(testnum)											\
 	setrd	rd ## _SRC1, src1;											\
 	setrd	rd ## _SRC2, src2;											\
 	inst	rd ## _SRC1, rd ## _SRC2, lbl_ ## testnum ## _taken;		\
@@ -259,7 +246,6 @@ lbl_ ## testnum ## _fail:												\
 	jump	___fail;													\
 lbl_ ## testnum ## _pass:												\
 	setrd	RD_FLAG, RD_ZERO;											\
-	__TEST_CASE_TAIL__
 
 #define TEST_RRII_BR_12( testnum, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR( testnum, inst, src1, src2, lbl_then, lbl_else, 16, 17 )
 #define TEST_RRII_BR_11( testnum, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR( testnum, inst, src1, src2, lbl_then, lbl_else, 16, 16 )
@@ -305,8 +291,7 @@ lbl_ ## testnum ## _pass:												\
 
 #define _TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2, _DEST1, _DEST2, _SRC1, _SRC2 )			\
 test_ ## testnum:														\
-	__TEST_CASE_HEAD__													\
-	setrd	RD_NUMR, testnum;											\
+	__TEST_CASE_HEAD__(testnum)											\
 	setrd	rd ## _SRC1, src1;											\
 	setrd	rd ## _SRC2, src2;											\
 	inst	rd ## _DEST1, rd ## _DEST2, rd ## _SRC1, rd ## _SRC2;		\
@@ -314,11 +299,8 @@ test_ ## testnum:														\
 	rd2rd	RD_RET2, rd ## _DEST2, 1;									\
 	setrd	RD_EXP1, dest1;												\
 	setrd	RD_EXP2, dest2;												\
-	cmpu	RD_FLAG, RD_RET1, RD_EXP1;									\
-	brnz	RD_FLAG, ___fail;											\
-	cmpu	RD_FLAG, RD_RET2, RD_EXP2;									\
-	brnz	RD_FLAG, ___fail;											\
-	__TEST_CASE_TAIL__
+	brne	RD_RET1, RD_EXP1, ___fail;									\
+	brne	RD_RET2, RD_EXP2, ___fail;									\
 
 #define TEST_RRRR_WWRR_1234( testnum, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2, 16, 17, 18, 19 )
 #define TEST_RRRR_WWRR_1213( testnum, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( testnum, inst, dest1, dest2, src1, src2, 16, 17, 16, 19 )
