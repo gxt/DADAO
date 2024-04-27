@@ -77,25 +77,31 @@ uint64_t HELPER(fo2ft)(CPUDADAOState* env, uint64_t arg1)
     return float64_to_float32(arg1, &env->fp_status);
 }
 
-uint64_t HELPER(ft2rd)(CPUDADAOState* env, uint64_t arg1)
-{
-    return float32_to_int64(arg1, &env->fp_status);
+#define FCVT_1v1(insn, func)									\
+uint64_t HELPER(insn)(CPUDADAOState* env, uint64_t arg1)		\
+{																\
+    return func(arg1, &env->fp_status);							\
 }
 
-uint64_t HELPER(fo2rd)(CPUDADAOState* env, uint64_t arg1)
-{
-    return float64_to_int64(arg1, &env->fp_status);
-}
+FCVT_1v1(ft2it, float32_to_int32)
+FCVT_1v1(ft2io, float32_to_int64)
+FCVT_1v1(ft2ut, float32_to_uint32)
+FCVT_1v1(ft2uo, float32_to_uint64)
+FCVT_1v1(it2ft, int32_to_float32)
+FCVT_1v1(io2ft, int64_to_float32)
+FCVT_1v1(ut2ft, uint32_to_float32)
+FCVT_1v1(uo2ft, uint64_to_float32)
 
-uint64_t HELPER(rd2ft)(CPUDADAOState* env, uint64_t arg1)
-{
-    return int64_to_float32(arg1, &env->fp_status);
-}
+FCVT_1v1(fo2it, float64_to_int32)
+FCVT_1v1(fo2io, float64_to_int64)
+FCVT_1v1(fo2ut, float64_to_uint32)
+FCVT_1v1(fo2uo, float64_to_uint64)
+FCVT_1v1(it2fo, int32_to_float64)
+FCVT_1v1(io2fo, int64_to_float64)
+FCVT_1v1(ut2fo, uint32_to_float64)
+FCVT_1v1(uo2fo, uint64_to_float64)
 
-uint64_t HELPER(rd2fo)(CPUDADAOState* env, uint64_t arg1)
-{
-    return int64_to_float64(arg1, &env->fp_status);
-}
+#undef FCVT_1v1
 
 uint64_t HELPER(ftadd)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
 {
