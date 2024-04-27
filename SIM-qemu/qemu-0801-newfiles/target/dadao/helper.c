@@ -239,9 +239,3 @@ void HELPER(exception)(CPUDADAOState *env, uint32_t excp)
     cs->exception_index = excp;
     cpu_loop_exit(cs);
 }
-
-target_ulong cpu_asr_read(CPUDADAOState *env)
-{
-    return 0;
-}
-

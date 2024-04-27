@@ -84,11 +84,6 @@ enum {
     DADAO_EXCP_FPER = 9,
 };
 
-/* Return the current ASR value.  */
-target_ulong cpu_asr_read(CPUDADAOState *env1);
-/* Set the ASR.  Note that some bits of mask must be all-set or all-clear.  */
-void cpu_asr_write(CPUDADAOState *env1, target_ulong val, target_ulong mask);
-
 #define cpu_signal_handler dadao_cpu_signal_handler
 
 int dadao_cpu_signal_handler(int host_signum, void *pinfo, void *puc);
