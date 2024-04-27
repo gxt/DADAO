@@ -751,6 +751,9 @@ static bool trans_RET(DisasContext *ctx, arg_RET *a)
 		return true;																	\
 	}
 
+INSN_FCVT_ORRI(FTCLASS, cpu_rf, cpu_rd, gen_helper_ftclass)
+INSN_FCVT_ORRI(FOCLASS, cpu_rf, cpu_rd, gen_helper_foclass)
+
 INSN_FCVT_ORRI(FT2FO, cpu_rf, cpu_rf, gen_helper_ft2fo)
 INSN_FCVT_ORRI(FO2FT, cpu_rf, cpu_rf, gen_helper_fo2ft)
 INSN_FCVT_ORRI(FT2RD, cpu_rf, cpu_rd, gen_helper_ft2rd)

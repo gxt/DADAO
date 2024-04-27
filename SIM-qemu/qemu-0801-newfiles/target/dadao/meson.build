@@ -5,6 +5,7 @@ dadao_ss.add(gen)
 dadao_ss.add(files(
   'cpu.c',
   'helper.c',
+  'helper-fpu.c',
   'softmmu.c',
   'translate.c',
 ))
