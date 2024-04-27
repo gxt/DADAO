@@ -124,10 +124,6 @@ _start:
 	# 0101-0000L MISC-RF
 	ft2fo	rf1, rf2, 3
 	fo2ft	rf1, rf2, 3
-	ft2rd	rd1, rf2, 3
-	fo2rd	rd1, rf2, 3
-	rd2fo	rf1, rd2, 3
-	rd2ft	rf1, rd2, 3
 	ftadd	rf1, rf2, rf3
 	ftsub	rf1, rf2, rf3
 	ftmul	rf1, rf2, rf3
