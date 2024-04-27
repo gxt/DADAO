@@ -4,15 +4,15 @@
 
 ddrf_sc_tests = \
 	rwii-setw \
-	orri-fo2rd \
+	orri-fo2io \
 	orri-foclass \
-	orri-ft2rd \
+	orri-ft2io \
 	orri-ftclass \
 	orri-ftsqrt \
 	orri-rf2rf \
 	orri-rf2rd \
-	orri-rd2fo \
-	orri-rd2ft \
+	orri-io2fo \
+	orri-io2ft \
 	orri-rd2rf \
 	orrr-foadd \
 	orrr-ftadd \
