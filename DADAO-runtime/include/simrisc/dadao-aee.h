@@ -1,0 +1,27 @@
+#ifndef __DADAO_AEE_H__
+#define __DADAO_AEE_H__
+
+#define __DDAEE_FLOAT_FLAG_INVALID__					0
+#define __DDAEE_FLOAT_FLAG_DIVBYZERO__					1
+#define __DDAEE_FLOAT_FLAG_OVERFLOW__					2
+#define __DDAEE_FLOAT_FLAG_UNDERFLOW__					3
+#define __DDAEE_FLOAT_FLAG_INEXACT__					4
+
+
+#define __DDAEE_FLOAT_ROUNDING_MODE_RNE__				0b00	/* Round to Nearest, ties to Even */
+#define __DDAEE_FLOAT_ROUNDING_MODE_RTZ__				0b01	/* Round towards Zero */
+#define __DDAEE_FLOAT_ROUNDING_MODE_RDN__				0b10	/* Round Down */
+#define __DDAEE_FLOAT_ROUNDING_MODE_RUP__				0b11	/* Round Up */
+
+#define __DDAEE_FLOAT_CLASS_SIGNALING_NAN__				9
+#define __DDAEE_FLOAT_CLASS_QUIET_NAN__					8
+#define __DDAEE_FLOAT_CLASS_NEGATIVE_INFINITY__			7
+#define __DDAEE_FLOAT_CLASS_NEGATIVE_NORMAL__			6
+#define __DDAEE_FLOAT_CLASS_NEGATIVE_SUBNORMAL__		5
+#define __DDAEE_FLOAT_CLASS_NEGATIVE_ZERO__				4
+#define __DDAEE_FLOAT_CLASS_POSITIVE_ZERO__				3
+#define __DDAEE_FLOAT_CLASS_POSITIVE_SUBNORMAL__		2
+#define __DDAEE_FLOAT_CLASS_POSITIVE_NORMAL__			1
+#define __DDAEE_FLOAT_CLASS_POSITIVE_INFINITY__			0
+
+#endif
