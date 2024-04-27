@@ -101,27 +101,28 @@ FCVT_1v1(io2fo, int64_to_float64)
 FCVT_1v1(ut2fo, uint32_to_float64)
 FCVT_1v1(uo2fo, uint64_to_float64)
 
+FCVT_1v1(ftsqrt, float32_sqrt)
+FCVT_1v1(fosqrt, float64_sqrt)
+
 #undef FCVT_1v1
 
-uint64_t HELPER(ftadd)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
-{
-    return float32_add(arg1, arg2, &env->fp_status);
+#define FCAL_s2d1(insn, func)												\
+uint64_t HELPER(insn)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)		\
+{																			\
+    return func(arg1, arg2, &env->fp_status);								\
 }
 
-uint64_t HELPER(ftsub)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
-{
-    return float32_sub(arg1, arg2, &env->fp_status);
-}
+FCAL_s2d1(ftadd, float32_add)
+FCAL_s2d1(ftsub, float32_sub)
+FCAL_s2d1(ftmul, float32_mul)
+FCAL_s2d1(ftdiv, float32_div)
 
-uint64_t HELPER(ftmul)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
-{
-    return float32_mul(arg1, arg2, &env->fp_status);
-}
+FCAL_s2d1(foadd, float64_add)
+FCAL_s2d1(fosub, float64_sub)
+FCAL_s2d1(fomul, float64_mul)
+FCAL_s2d1(fodiv, float64_div)
 
-uint64_t HELPER(ftdiv)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
-{
-    return float32_div(arg1, arg2, &env->fp_status);
-}
+#undef FCAL_s2d1
 
 uint64_t HELPER(ftabs)(CPUDADAOState* env, uint64_t arg1)
 {
@@ -133,31 +134,6 @@ uint64_t HELPER(ftneg)(CPUDADAOState* env, uint64_t arg1)
     return float32_sub(0, arg1, &env->fp_status);
 }
 
-uint64_t HELPER(ftsqrt)(CPUDADAOState* env, uint64_t arg1)
-{
-    return float32_sqrt(arg1, &env->fp_status);
-}
-
-uint64_t HELPER(foadd)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
-{
-    return float64_add(arg1, arg2, &env->fp_status);
-}
-
-uint64_t HELPER(fosub)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
-{
-    return float64_sub(arg1, arg2, &env->fp_status);
-}
-
-uint64_t HELPER(fomul)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
-{
-    return float64_mul(arg1, arg2, &env->fp_status);
-}
-
-uint64_t HELPER(fodiv)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
-{
-    return float64_div(arg1, arg2, &env->fp_status);
-}
-
 uint64_t HELPER(foabs)(CPUDADAOState* env, uint64_t arg1)
 {
     return float64_abs(arg1);
@@ -166,11 +142,6 @@ uint64_t HELPER(foabs)(CPUDADAOState* env, uint64_t arg1)
 uint64_t HELPER(foneg)(CPUDADAOState* env, uint64_t arg1)
 {
     return float64_sub(0, arg1, &env->fp_status);
-}
-
-uint64_t HELPER(fosqrt)(CPUDADAOState* env, uint64_t arg1)
-{
-    return float64_sqrt(arg1, &env->fp_status);
 }
 
 uint64_t HELPER(ftcun)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
@@ -185,48 +156,6 @@ uint64_t HELPER(ftcor)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
     return result != float_relation_unordered;
 }
 
-uint64_t HELPER(ftcne)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
-{
-    FloatRelation result = float32_compare(arg1, arg2, &env->fp_status);
-    if (result == float_relation_unordered) { return -1; }
-    return result != float_relation_equal;
-}
-
-uint64_t HELPER(ftceq)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
-{
-    FloatRelation result = float32_compare(arg1, arg2, &env->fp_status);
-    if (result == float_relation_unordered) { return -1; }
-    return result == float_relation_equal;
-}
-
-uint64_t HELPER(ftclt)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
-{
-    FloatRelation result = float32_compare(arg1, arg2, &env->fp_status);
-    if (result == float_relation_unordered) { return -1; }
-    return result == float_relation_less;
-}
-
-uint64_t HELPER(ftcge)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
-{
-    FloatRelation result = float32_compare(arg1, arg2, &env->fp_status);
-    if (result == float_relation_unordered) { return -1; }
-    return result != float_relation_less;
-}
-
-uint64_t HELPER(ftcgt)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
-{
-    FloatRelation result = float32_compare(arg1, arg2, &env->fp_status);
-    if (result == float_relation_unordered) { return -1; }
-    return result == float_relation_greater;
-}
-
-uint64_t HELPER(ftcle)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
-{
-    FloatRelation result = float32_compare(arg1, arg2, &env->fp_status);
-    if (result == float_relation_unordered) { return -1; }
-    return result != float_relation_greater;
-}
-
 uint64_t HELPER(focun)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
 {
     FloatRelation result = float64_compare(arg1, arg2, &env->fp_status);
@@ -239,44 +168,26 @@ uint64_t HELPER(focor)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
     return result != float_relation_unordered;
 }
 
-uint64_t HELPER(focne)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
-{
-    FloatRelation result = float64_compare(arg1, arg2, &env->fp_status);
-    if (result == float_relation_unordered) { return -1; }
-    return result != float_relation_equal;
+#define FCMP_real(insn, cmpfunc, true_or_false)									\
+uint64_t HELPER(insn)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)		\
+{																				\
+	FloatRelation result = cmpfunc(arg1, arg2, &env->fp_status);				\
+	if (result == float_relation_unordered)		return -1;						\
+	return (true_or_false);														\
 }
 
-uint64_t HELPER(foceq)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
-{
-    FloatRelation result = float64_compare(arg1, arg2, &env->fp_status);
-    if (result == float_relation_unordered) { return -1; }
-    return result == float_relation_equal;
-}
+FCMP_real(ftcne, float32_compare, result != float_relation_equal)
+FCMP_real(ftceq, float32_compare, result == float_relation_equal)
+FCMP_real(ftclt, float32_compare, result == float_relation_less)
+FCMP_real(ftcge, float32_compare, result != float_relation_less)
+FCMP_real(ftcgt, float32_compare, result == float_relation_greater)
+FCMP_real(ftcle, float32_compare, result != float_relation_greater)
 
-uint64_t HELPER(foclt)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
-{
-    FloatRelation result = float64_compare(arg1, arg2, &env->fp_status);
-    if (result == float_relation_unordered) { return -1; }
-    return result == float_relation_less;
-}
+FCMP_real(focne, float64_compare, result != float_relation_equal)
+FCMP_real(foceq, float64_compare, result == float_relation_equal)
+FCMP_real(foclt, float64_compare, result == float_relation_less)
+FCMP_real(focge, float64_compare, result != float_relation_less)
+FCMP_real(focgt, float64_compare, result == float_relation_greater)
+FCMP_real(focle, float64_compare, result != float_relation_greater)
 
-uint64_t HELPER(focge)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
-{
-    FloatRelation result = float64_compare(arg1, arg2, &env->fp_status);
-    if (result == float_relation_unordered) { return -1; }
-    return result != float_relation_less;
-}
-
-uint64_t HELPER(focgt)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
-{
-    FloatRelation result = float64_compare(arg1, arg2, &env->fp_status);
-    if (result == float_relation_unordered) { return -1; }
-    return result == float_relation_greater;
-}
-
-uint64_t HELPER(focle)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
-{
-    FloatRelation result = float64_compare(arg1, arg2, &env->fp_status);
-    if (result == float_relation_unordered) { return -1; }
-    return result != float_relation_greater;
-}
+#undef FCMP_real
