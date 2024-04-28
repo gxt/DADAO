@@ -810,23 +810,11 @@ INSN_FALG_ORRR(FODIV, gen_helper_fodiv)
 		return true;																	\
 	}
 
-INSN_FCMP_ORRR(FTCNE, gen_helper_ftcne)
-INSN_FCMP_ORRR(FTCEQ, gen_helper_ftceq)
-INSN_FCMP_ORRR(FTCLT, gen_helper_ftclt)
-INSN_FCMP_ORRR(FTCGE, gen_helper_ftcge)
-INSN_FCMP_ORRR(FTCGT, gen_helper_ftcgt)
-INSN_FCMP_ORRR(FTCLE, gen_helper_ftcle)
-INSN_FCMP_ORRR(FTCOR, gen_helper_ftcor)
-INSN_FCMP_ORRR(FTCUN, gen_helper_ftcun)
+INSN_FCMP_ORRR(FTQCMP, gen_helper_ftqcmp)
+INSN_FCMP_ORRR(FTSCMP, gen_helper_ftscmp)
 
-INSN_FCMP_ORRR(FOCNE, gen_helper_focne)
-INSN_FCMP_ORRR(FOCEQ, gen_helper_foceq)
-INSN_FCMP_ORRR(FOCLT, gen_helper_foclt)
-INSN_FCMP_ORRR(FOCGE, gen_helper_focge)
-INSN_FCMP_ORRR(FOCGT, gen_helper_focgt)
-INSN_FCMP_ORRR(FOCLE, gen_helper_focle)
-INSN_FCMP_ORRR(FOCOR, gen_helper_focor)
-INSN_FCMP_ORRR(FOCUN, gen_helper_focun)
+INSN_FCMP_ORRR(FOQCMP, gen_helper_foqcmp)
+INSN_FCMP_ORRR(FOSCMP, gen_helper_foscmp)
 
 #undef INSN_FCMP_ORRR
 

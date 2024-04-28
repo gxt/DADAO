@@ -77,6 +77,7 @@ qemu-0801-build-new:
 		$(QEMU_0801_SOURCE)/configure				\
 			--target-list=$(QEMU_0801_TARGETS)		\
 			--prefix=$(QEMU_0801_INSTALL)			\
+			--extra-cflags=-I$(DIR_DADAO_TARGET)/include		\
 			--disable-sdl					\
 			--disable-capstone				\
 			--disable-slirp					\

@@ -4,6 +4,7 @@
 #include "exec/exec-all.h"
 #include "exec/helper-proto.h"
 #include "fpu/softfloat.h"
+#include <simrisc/dadao-aee.h>
 
 void HELPER(set_rounding_mode)(CPUDADAOState *env)
 {
@@ -144,50 +145,23 @@ uint64_t HELPER(foneg)(CPUDADAOState* env, uint64_t arg1)
     return float64_sub(0, arg1, &env->fp_status);
 }
 
-uint64_t HELPER(ftcun)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
-{
-    FloatRelation result = float32_compare(arg1, arg2, &env->fp_status);
-    return result == float_relation_unordered;
-}
-
-uint64_t HELPER(ftcor)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
-{
-    FloatRelation result = float32_compare(arg1, arg2, &env->fp_status);
-    return result != float_relation_unordered;
-}
-
-uint64_t HELPER(focun)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
-{
-    FloatRelation result = float64_compare(arg1, arg2, &env->fp_status);
-    return result == float_relation_unordered;
-}
-
-uint64_t HELPER(focor)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)
-{
-    FloatRelation result = float64_compare(arg1, arg2, &env->fp_status);
-    return result != float_relation_unordered;
-}
-
-#define FCMP_real(insn, cmpfunc, true_or_false)									\
-uint64_t HELPER(insn)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)		\
+#define FCMP_real(insn, cmpfunc, nanval)										\
+uint64_t HELPER(insn)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)			\
 {																				\
 	FloatRelation result = cmpfunc(arg1, arg2, &env->fp_status);				\
-	if (result == float_relation_unordered)		return -1;						\
-	return (true_or_false);														\
+	switch (result) {															\
+		case float_relation_greater:		return 1;							\
+		case float_relation_equal:			return 0;							\
+		case float_relation_less:			return -1;							\
+		case float_relation_unordered:		return nanval;						\
+		default:							g_assert_not_reached();				\
+	}																			\
 }
 
-FCMP_real(ftcne, float32_compare, result != float_relation_equal)
-FCMP_real(ftceq, float32_compare, result == float_relation_equal)
-FCMP_real(ftclt, float32_compare, result == float_relation_less)
-FCMP_real(ftcge, float32_compare, result != float_relation_less)
-FCMP_real(ftcgt, float32_compare, result == float_relation_greater)
-FCMP_real(ftcle, float32_compare, result != float_relation_greater)
+FCMP_real(ftqcmp, float32_compare_quiet, __DDAEE_FLOAT_TETRA_QNAN__)
+FCMP_real(ftscmp, float32_compare,       __DDAEE_FLOAT_TETRA_SNAN__)
 
-FCMP_real(focne, float64_compare, result != float_relation_equal)
-FCMP_real(foceq, float64_compare, result == float_relation_equal)
-FCMP_real(foclt, float64_compare, result == float_relation_less)
-FCMP_real(focge, float64_compare, result != float_relation_less)
-FCMP_real(focgt, float64_compare, result == float_relation_greater)
-FCMP_real(focle, float64_compare, result != float_relation_greater)
+FCMP_real(foqcmp, float64_compare_quiet, __DDAEE_FLOAT_OCTA_QNAN__)
+FCMP_real(foscmp, float64_compare,       __DDAEE_FLOAT_OCTA_SNAN__)
 
 #undef FCMP_real
