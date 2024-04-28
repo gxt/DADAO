@@ -1,6 +1,8 @@
 #ifndef _RUNTIME_SIMRISC_DDTEST_H_
 #define _RUNTIME_SIMRISC_DDTEST_H_
 
+#include "simrisc/dadao-aee.h"
+
 #define RD_ZERO				rd0
 #define RD_FLAG				rd1
 #define RD_NAME				rd2
@@ -18,9 +20,9 @@
 
 #define RF_FCSR				rf0
 
-#define qNaNf				0f:7fc00000
-#define sNaNf				0f:7f800001
-#define qNaN				0d:7ff8000000000000
-#define sNaN				0d:7ff0000000000001
+#define ft_qNaN				__DDAEE_FLOAT_TETRA_QNAN__
+#define ft_sNaN				__DDAEE_FLOAT_TETRA_SNAN__
+#define fo_qNaN				__DDAEE_FLOAT_OCTA_QNAN__
+#define fo_sNaN				__DDAEE_FLOAT_OCTA_SNAN__
 
 #endif
