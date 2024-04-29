@@ -94,8 +94,8 @@ test_ ## tcname:																\
 #define _TEST_FRRI_R1( tcname, inst, flags, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, _RGHB, _RGHC, _DST, _SRC )	\
 test_ ## tcname:																				\
 		__TEST_CASE_HEAD__(tcname)																\
-		setrb			RB_SRC1, test_ ## tcname ## _src;										\
-		inst_ld_src		_RGHC ## _SRC, RB_SRC1, 0;												\
+		setrb			RB_SRC, test_ ## tcname ## _src;										\
+		inst_ld_src		_RGHC ## _SRC, RB_SRC, 0;												\
 		inst			_RGHB ## _DST, _RGHC ## _SRC, 1;										\
 		jump			lbl_ ## tcname ## _cmp;												\
 		.balign			8;																		\
@@ -107,8 +107,8 @@ test_ ## tcname ## _src:																		\
 		.balign			4;																		\
 lbl_ ## tcname ## _cmp:																		\
 		_RGHB ## 2rd	RD_RET1, _RGHB ## _DST, 1;												\
-		setrb			RB_DST1, test_ ## tcname ## _dst;										\
-		inst_ld_dst		_RGHB ## _DST, RB_DST1, 0;												\
+		setrb			RB_DST, test_ ## tcname ## _dst;										\
+		inst_ld_dst		_RGHB ## _DST, RB_DST, 0;												\
 		_RGHB ## 2rd	RD_EXP1, _RGHB ## _DST, 1;												\
 		brne			RD_RET1, RD_EXP1, ___fail;												\
 		__PASS_FAIL_FCSR__(flags)																\
@@ -157,10 +157,10 @@ lbl_ ## tcname ## _cmp:																		\
 #define _TEST_FRRR_FFF( tcname, inst, flags, inst_ld, ftype, val_dst, val_src1, val_src2, _DST, _SRC1, _SRC2 )	\
 test_ ## tcname:																				\
 		__TEST_CASE_HEAD__(tcname)																\
-		setrb			RB_SRC1, test_ ## tcname ## _src1;										\
-		inst_ld			rf ## _SRC1, RB_SRC1, 0;												\
-		setrb			RB_SRC2, test_ ## tcname ## _src2;										\
-		inst_ld			rf ## _SRC2, RB_SRC2, 0;												\
+		setrb			RB_SRC, test_ ## tcname ## _src1;										\
+		inst_ld			rf ## _SRC1, RB_SRC, 0;												\
+		setrb			RB_SRC, test_ ## tcname ## _src2;										\
+		inst_ld			rf ## _SRC2, RB_SRC, 0;												\
 		inst			rf ## _DST, rf ## _SRC1, rf ## _SRC2;									\
 		jump			lbl_ ## tcname ## _cmp;												\
 		.balign			8;																		\
@@ -175,8 +175,8 @@ test_ ## tcname ## _src2:																		\
 		.balign			4;																		\
 lbl_ ## tcname ## _cmp:																		\
 		rf2rd			RD_RET1, rf ## _DST, 1;													\
-		setrb			RB_DST1, test_ ## tcname ## _dst;										\
-		inst_ld			rf ## _DST, RB_DST1, 0;													\
+		setrb			RB_DST, test_ ## tcname ## _dst;										\
+		inst_ld			rf ## _DST, RB_DST, 0;													\
 		rf2rd			RD_EXP1, rf ## _DST, 1;													\
 		brne			RD_RET1, RD_EXP1, ___fail;												\
 		__PASS_FAIL_FCSR__(flags)																\
@@ -202,10 +202,10 @@ lbl_ ## tcname ## _cmp:																		\
 #define _TEST_FRRR_DFF( tcname, inst, flags, inst_ld, ftype, val_dst, val_src1, val_src2, _DST, _SRC1, _SRC2 )	\
 test_ ## tcname:																				\
 		__TEST_CASE_HEAD__(tcname)																\
-		setrb			RB_SRC1, test_ ## tcname ## _src1;										\
-		inst_ld			rf ## _SRC1, RB_SRC1, 0;												\
-		setrb			RB_SRC2, test_ ## tcname ## _src2;										\
-		inst_ld			rf ## _SRC2, RB_SRC2, 0;												\
+		setrb			RB_SRC, test_ ## tcname ## _src1;										\
+		inst_ld			rf ## _SRC1, RB_SRC, 0;												\
+		setrb			RB_SRC, test_ ## tcname ## _src2;										\
+		inst_ld			rf ## _SRC2, RB_SRC, 0;												\
 		inst			rd ## _DST, rf ## _SRC1, rf ## _SRC2;									\
 		jump			lbl_ ## tcname ## _cmp;													\
 		.balign			8;																		\
@@ -354,12 +354,12 @@ test_ ## tcname:														\
 #define _TEST_RRRR_WRRR( tcname, inst, flags, inst_ld, ftype, val_dst, val_src1, val_src2, val_src3, _DST, _SRC1, _SRC2, _SRC3 )	\
 test_ ## tcname:																				\
 		__TEST_CASE_HEAD__(tcname)																\
-		setrb			RB_SRC1, test_ ## tcname ## _src1;										\
-		inst_ld			rf ## _SRC1, RB_SRC1, 0;												\
-		setrb			RB_SRC2, test_ ## tcname ## _src2;										\
-		inst_ld			rf ## _SRC2, RB_SRC2, 0;												\
-		setrb			RB_SRC2, test_ ## tcname ## _src3;										\
-		inst_ld			rf ## _SRC3, RB_SRC2, 0;												\
+		setrb			RB_SRC, test_ ## tcname ## _src1;										\
+		inst_ld			rf ## _SRC1, RB_SRC, 0;												\
+		setrb			RB_SRC, test_ ## tcname ## _src2;										\
+		inst_ld			rf ## _SRC2, RB_SRC, 0;												\
+		setrb			RB_SRC, test_ ## tcname ## _src3;										\
+		inst_ld			rf ## _SRC3, RB_SRC, 0;												\
 		inst			rf ## _DST, rf ## _SRC1, rf ## _SRC2, rf ## _SRC3;						\
 		jump			lbl_ ## tcname ## _cmp;													\
 		.balign			8;																		\
@@ -377,8 +377,8 @@ test_ ## tcname ## _src3:																		\
 		.balign			4;																		\
 lbl_ ## tcname ## _cmp:																			\
 		rf2rd			RD_RET1, rf ## _DST, 1;													\
-		setrb			RB_DST1, test_ ## tcname ## _dst;										\
-		inst_ld			rf ## _DST, RB_DST1, 0;													\
+		setrb			RB_DST, test_ ## tcname ## _dst;										\
+		inst_ld			rf ## _DST, RB_DST, 0;													\
 		rf2rd			RD_EXP1, rf ## _DST, 1;													\
 		brne			RD_RET1, RD_EXP1, ___fail;												\
 		__PASS_FAIL_FCSR__(flags)																\
