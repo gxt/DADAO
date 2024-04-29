@@ -733,7 +733,6 @@ static bool trans_RET(DisasContext *ctx, arg_RET *a)
 #define INSN_FCVT_ORRI(insn, src_reg, dest_reg, fn)										\
 	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\
 	{																					\
-		gen_helper_set_rounding_mode(cpu_env);											\
 		if (a->immu6 == 0)			gen_exception_illegal_instruction(ctx);				\
 		if (a->hb + a->immu6 > 64)	gen_exception_illegal_instruction(ctx);				\
 		if (a->hc + a->immu6 > 64)	gen_exception_illegal_instruction(ctx);				\
@@ -787,7 +786,6 @@ INSN_FCVT_ORRI(FOSQRT, cpu_rf, cpu_rf, gen_helper_fosqrt)
 #define INSN_FALG_ORRR(insn, fn)														\
 	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\
 	{																					\
-		gen_helper_set_rounding_mode(cpu_env);											\
 		fn(cpu_rf[a->hb], cpu_env, cpu_rf[a->hc], cpu_rf[a->hd]);						\
 		return true;																	\
 	}
@@ -806,7 +804,6 @@ INSN_FALG_ORRR(FODIV, gen_helper_fodiv)
 #define INSN_FALG_RRRR(insn, fn)														\
 	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\
 	{																					\
-		gen_helper_set_rounding_mode(cpu_env);											\
 		fn(cpu_rf[a->ha], cpu_env, cpu_rf[a->hb], cpu_rf[a->hc], cpu_rf[a->hd]);		\
 		return true;																	\
 	}

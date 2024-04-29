@@ -6,28 +6,28 @@
 #include "fpu/softfloat.h"
 #include <simrisc/dadao-aee.h>
 
-void HELPER(set_rounding_mode)(CPUDADAOState *env)
+static void dadao_fpu_head(CPUDADAOState *env)
 {
-    int softrm;
+	int softrm;
 
-    env->frm = env->rf[0] >> 16;
+	env->frm = (env->rf[0] >> 16) & 0x3;
 
-    switch (env->frm) {
-    case 0:
-	softrm = float_round_nearest_even;
-	break;
-    case 1:
-	softrm = float_round_to_zero;
-	break;
-    case 2:
-	softrm = float_round_down;
-	break;
-    case 3:
-	softrm = float_round_up;
-	break;
+	switch (env->frm) {
+	case 0: softrm = float_round_nearest_even;	break;
+    case 1: softrm = float_round_to_zero;		break;
+    case 2: softrm = float_round_down;			break;
+    case 3: softrm = float_round_up;			break;
     }
 
     set_float_rounding_mode(softrm, &env->fp_status);
+    set_float_exception_flags(0, &env->fp_status);
+}
+
+static void dadao_fpu_tail(CPUDADAOState *env)
+{
+	int soft = get_float_exception_flags(&env->fp_status);
+
+	env->rf[0] = (env->rf[0] & ~0x1F) | (soft & 0x1F);
 }
 
 target_ulong HELPER(ftclass)(CPUDADAOState *env, uint64_t arg1)
@@ -68,21 +68,18 @@ target_ulong HELPER(foclass)(CPUDADAOState *env, uint64_t arg1)
     }
 }
 
-uint64_t HELPER(ft2fo)(CPUDADAOState* env, uint64_t arg1)
-{
-    return float32_to_float64(arg1, &env->fp_status);
-}
-
-uint64_t HELPER(fo2ft)(CPUDADAOState* env, uint64_t arg1)
-{
-    return float64_to_float32(arg1, &env->fp_status);
-}
-
 #define FCVT_1v1(insn, func)									\
 uint64_t HELPER(insn)(CPUDADAOState* env, uint64_t arg1)		\
 {																\
-    return func(arg1, &env->fp_status);							\
+	uint64_t ret;												\
+	dadao_fpu_head(env);										\
+    ret = func(arg1, &env->fp_status);							\
+	dadao_fpu_tail(env);										\
+	return ret;													\
 }
+
+FCVT_1v1(ft2fo, float32_to_float64)
+FCVT_1v1(fo2ft, float64_to_float32)
 
 FCVT_1v1(ft2it, float32_to_int32)
 FCVT_1v1(ft2io, float32_to_int64)
@@ -110,7 +107,11 @@ FCVT_1v1(fosqrt, float64_sqrt)
 #define FCAL_s2d1(insn, func)												\
 uint64_t HELPER(insn)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)		\
 {																			\
-    return func(arg1, arg2, &env->fp_status);								\
+	uint64_t ret;															\
+	dadao_fpu_head(env);													\
+    ret = func(arg1, arg2, &env->fp_status);								\
+	dadao_fpu_tail(env);													\
+	return ret;																\
 }
 
 FCAL_s2d1(ftadd, float32_add)
@@ -128,7 +129,11 @@ FCAL_s2d1(fodiv, float64_div)
 #define FCAL_s3d1(insn, func)															\
 uint64_t HELPER(insn)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2, uint64_t arg3)	\
 {																						\
-    return func(arg1, arg2, arg3, 0, &env->fp_status);									\
+	uint64_t ret;																		\
+	dadao_fpu_head(env);																\
+    ret = func(arg1, arg2, arg3, 0, &env->fp_status);									\
+	dadao_fpu_tail(env);																\
+	return ret;																			\
 }
 
 FCAL_s3d1(ftmadd, float32_muladd)
