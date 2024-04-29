@@ -351,6 +351,43 @@ test_ ## tcname:														\
 #define TEST_RRRR_WWRR_0123( tcname, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( tcname, inst, dest1, dest2, src1, src2,  0, 17, 18, 19 )
 #define TEST_RRRR_WWRR_1023( tcname, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( tcname, inst, dest1, dest2, src1, src2, 16,  0, 18, 19 )
 
+#define _TEST_RRRR_WRRR( tcname, inst, flags, inst_ld, ftype, val_dst, val_src1, val_src2, val_src3, _DST, _SRC1, _SRC2, _SRC3 )	\
+test_ ## tcname:																				\
+		__TEST_CASE_HEAD__(tcname)																\
+		setrb			RB_SRC1, test_ ## tcname ## _src1;										\
+		inst_ld			rf ## _SRC1, RB_SRC1, 0;												\
+		setrb			RB_SRC2, test_ ## tcname ## _src2;										\
+		inst_ld			rf ## _SRC2, RB_SRC2, 0;												\
+		setrb			RB_SRC2, test_ ## tcname ## _src3;										\
+		inst_ld			rf ## _SRC3, RB_SRC2, 0;												\
+		inst			rf ## _DST, rf ## _SRC1, rf ## _SRC2, rf ## _SRC3;						\
+		jump			lbl_ ## tcname ## _cmp;													\
+		.balign			8;																		\
+test_ ## tcname ## _dst:																		\
+		ftype			val_dst;																\
+		.balign			8;																		\
+test_ ## tcname ## _src1:																		\
+		ftype			val_src1;																\
+		.balign			8;																		\
+test_ ## tcname ## _src2:																		\
+		ftype			val_src2;																\
+		.balign			8;																		\
+test_ ## tcname ## _src3:																		\
+		ftype			val_src3;																\
+		.balign			4;																		\
+lbl_ ## tcname ## _cmp:																			\
+		rf2rd			RD_RET1, rf ## _DST, 1;													\
+		setrb			RB_DST1, test_ ## tcname ## _dst;										\
+		inst_ld			rf ## _DST, RB_DST1, 0;													\
+		rf2rd			RD_EXP1, rf ## _DST, 1;													\
+		brne			RD_RET1, RD_EXP1, ___fail;												\
+		__PASS_FAIL_FCSR__(flags)																\
+
+#define TEST_RRRR_WRRR_FT_1234( tcname, inst, flags, val_dst, val_src1, val_src2, val_src3 )	\
+			_TEST_RRRR_WRRR(    tcname, inst, flags, ldft, .single, val_dst, val_src1, val_src2, val_src3, 16, 17, 18, 19 )
+#define TEST_RRRR_WRRR_FO_1234( tcname, inst, flags, val_dst, val_src1, val_src2, val_src3 )	\
+			_TEST_RRRR_WRRR(    tcname, inst, flags, ldfo, .double, val_dst, val_src1, val_src2, val_src3, 16, 17, 18, 19 )
+
 #-----------------------------------------------------------------------
 # DADAO MACROS for RWII
 #-----------------------------------------------------------------------
