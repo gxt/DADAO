@@ -803,6 +803,19 @@ INSN_FALG_ORRR(FODIV, gen_helper_fodiv)
 
 #undef INSN_FALG_ORRR
 
+#define INSN_FALG_RRRR(insn, fn)														\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\
+	{																					\
+		gen_helper_set_rounding_mode(cpu_env);											\
+		fn(cpu_rf[a->ha], cpu_env, cpu_rf[a->hb], cpu_rf[a->hc], cpu_rf[a->hd]);		\
+		return true;																	\
+	}
+
+INSN_FALG_RRRR(FTMADD, gen_helper_ftmadd)
+INSN_FALG_RRRR(FOMADD, gen_helper_fomadd)
+
+#undef INSN_FALG_RRRR
+
 #define INSN_FCMP_ORRR(insn, fn)														\
 	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\
 	{																					\

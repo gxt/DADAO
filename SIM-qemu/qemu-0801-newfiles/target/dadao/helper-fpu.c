@@ -125,6 +125,17 @@ FCAL_s2d1(fodiv, float64_div)
 
 #undef FCAL_s2d1
 
+#define FCAL_s3d1(insn, func)															\
+uint64_t HELPER(insn)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2, uint64_t arg3)	\
+{																						\
+    return func(arg1, arg2, arg3, 0, &env->fp_status);									\
+}
+
+FCAL_s3d1(ftmadd, float32_muladd)
+FCAL_s3d1(fomadd, float64_muladd)
+
+#undef FCAL_s3d1
+
 uint64_t HELPER(ftabs)(CPUDADAOState* env, uint64_t arg1)
 {
     return float32_abs(arg1);

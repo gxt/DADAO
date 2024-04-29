@@ -65,3 +65,5 @@ DEF_HELPER_2(io2fo, i64, env, i64)
 DEF_HELPER_2(ut2fo, i64, env, i64)
 DEF_HELPER_2(uo2fo, i64, env, i64)
 
+DEF_HELPER_4(ftmadd, i64, env, i64, i64, i64)
+DEF_HELPER_4(fomadd, i64, env, i64, i64, i64)
