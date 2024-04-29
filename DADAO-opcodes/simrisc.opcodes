@@ -216,6 +216,11 @@ ftscmp	01010000 100001
 foqcmp	01010000 101000
 foscmp	01010000 101001
 
+[ rrrr	op:8	ha:6	hb:6	hc:6	hd:6 ]
+& rf@ha rf@hb rf@hc rf@hd
+ftmadd	01011000
+fomadd	01011001
+
 #
 # Control Flow Instructions
 #
