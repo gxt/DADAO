@@ -1,11 +1,11 @@
 #ifndef __DADAO_AEE_H__
 #define __DADAO_AEE_H__
 
-#define __DDAEE_FLOAT_FLAG_INVALID__					4
-#define __DDAEE_FLOAT_FLAG_DIVBYZERO__					3
+#define __DDAEE_FLOAT_FLAG_INVALID__					0
+#define __DDAEE_FLOAT_FLAG_DIVBYZERO__					1
 #define __DDAEE_FLOAT_FLAG_OVERFLOW__					2
-#define __DDAEE_FLOAT_FLAG_UNDERFLOW__					1
-#define __DDAEE_FLOAT_FLAG_INEXACT__					0
+#define __DDAEE_FLOAT_FLAG_UNDERFLOW__					3
+#define __DDAEE_FLOAT_FLAG_INEXACT__					4
 
 
 #define __DDAEE_FLOAT_ROUNDING_MODE_RNE__				0b00	/* Round to Nearest, ties to Even */
