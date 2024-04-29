@@ -14,9 +14,8 @@
 
 #define RB_IP				rb0
 #define RB_SP				rb1
-#define RB_SRC1				rb4
-#define RB_SRC2				rb5
-#define RB_DST1				rb6
+#define RB_SRC				rb5
+#define RB_DST				rb6
 
 #define RF_FCSR				rf0
 
