@@ -4,8 +4,8 @@
 DDTEST_CODE_BEGIN
 
 	TEST_FRRR_FFF_FO_123( 11, foadd, 0, 3.5, 2.5, 1.0 )
-	TEST_FRRR_FFF_FO_123( 12, foadd, 0, -1234, -1235.1, 1.1 )	/* inexact */
-	TEST_FRRR_FFF_FO_123( 13, foadd, 0, 3.14159266, 3.14159265, 0.00000001 )	/* inexact */
+	TEST_FRRR_FFF_FO_123( 12, foadd, fflag_NX, -1234, -1235.1, 1.1 )
+	TEST_FRRR_FFF_FO_123( 13, foadd, fflag_NX, 3.14159266, 3.14159265, 0.00000001 )
 
 	TEST_FRRR_FFF_FO_112( 21, foadd, 0, 3.5, 2.5, 1.0 )
 	TEST_FRRR_FFF_FO_121( 22, foadd, 0, 3.5, 2.5, 1.0 )
