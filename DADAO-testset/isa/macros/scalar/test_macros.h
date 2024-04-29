@@ -23,9 +23,9 @@
 		addi			RD_PASS, RD_PASS, 1;			\
 
 #define __PASS_FAIL_FCSR__(flags)						\
-		setrd			RD_EXP2, RF_FCSR;				\
-		shlu			RD_EXP2, RD_EXP2, 48;			\
-		setrd			RD_RET2, flags;					\
+		setrd			RD_RET2, RF_FCSR;				\
+		andi			RD_RET2, RD_RET2, 0x1F;			\
+		setrd			RD_EXP2, flags;					\
 		brne			RD_EXP2, RD_RET2, ___fail;		\
 
 #define __TEST_CASE( tcname, dest, code... )			\
