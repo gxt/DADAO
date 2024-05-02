@@ -20,14 +20,13 @@ static void dadao_fpu_head(CPUDADAOState *env)
     }
 
     set_float_rounding_mode(softrm, &env->fp_status);
-    set_float_exception_flags(0, &env->fp_status);
 }
 
 static void dadao_fpu_tail(CPUDADAOState *env)
 {
 	int soft = get_float_exception_flags(&env->fp_status);
 
-	env->rf[0] = (env->rf[0] & ~0x1F) | (soft & 0x1F);
+	env->rf[0] = env->rf[0] | (soft & 0x1F);
 }
 
 target_ulong HELPER(ftclass)(CPUDADAOState *env, uint64_t arg1)
