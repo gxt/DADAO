@@ -10,9 +10,7 @@
 #define __DDABI_RBGP_NR__								3
 #define __DDABI_RBTP_NR__								4
 
-#define __DDABI_RFCSR_NR__								0
-#define __DDABI_RFTEPS_NR__								0
-#define __DDABI_RFOEPS_NR__								1
+#define __DDABI_RFFCSR_NR__								0
 
 #define __DDABI_RASP_NR__								63
 
