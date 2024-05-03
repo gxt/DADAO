@@ -14,6 +14,7 @@
 		setrb			rb17, 0;						\
 		setrb			rb18, 0;						\
 		setrb			rb19, 0;						\
+		setw			RF_FCSR, w0, 0;					\
 		setrd			RD_EXP1, 0xBEEF;				\
 		setrd			RD_EXP2, 0xBEEF;				\
 		setrd			RD_RET1, 0xDEAD;				\
