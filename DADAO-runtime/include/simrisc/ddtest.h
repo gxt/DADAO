@@ -24,10 +24,10 @@
 #define fo_qNaN				__DDAEE_FLOAT_OCTA_QNAN__
 #define fo_sNaN				__DDAEE_FLOAT_OCTA_SNAN__
 
-#define fflag_NV			(1 << __DDAEE_FLOAT_FLAG_INVALID__)
-#define fflag_DZ			(1 << __DDAEE_FLOAT_FLAG_DIVBYZERO__)
-#define fflag_OF			(1 << __DDAEE_FLOAT_FLAG_OVERFLOW__)
-#define fflag_UF			(1 << __DDAEE_FLOAT_FLAG_UNDERFLOW__)
-#define fflag_NX			(1 << __DDAEE_FLOAT_FLAG_INEXACT__)
+#define fflag_NV			__DDAEE_FCSR_FFLAG_INVALID__
+#define fflag_DZ			__DDAEE_FCSR_FFLAG_DIVBYZERO__
+#define fflag_OF			__DDAEE_FCSR_FFLAG_OVERFLOW__
+#define fflag_UF			__DDAEE_FCSR_FFLAG_UNDERFLOW__
+#define fflag_NX			__DDAEE_FCSR_FFLAG_INEXACT__
 
 #endif

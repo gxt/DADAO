@@ -1,17 +1,19 @@
 #ifndef __DADAO_AEE_H__
 #define __DADAO_AEE_H__
 
-#define __DDAEE_FLOAT_FLAG_INVALID__					0
-#define __DDAEE_FLOAT_FLAG_DIVBYZERO__					1
-#define __DDAEE_FLOAT_FLAG_OVERFLOW__					2
-#define __DDAEE_FLOAT_FLAG_UNDERFLOW__					3
-#define __DDAEE_FLOAT_FLAG_INEXACT__					4
+#define __DDAEE_FCSR_MASK_RDMODE__						0x30000
+#define __DDAEE_FCSR_MASK_FFLAGS__						0x1f
 
+#define __DDAEE_FCSR_FFLAG_INVALID__					(1 << 0)
+#define __DDAEE_FCSR_FFLAG_DIVBYZERO__					(1 << 1)
+#define __DDAEE_FCSR_FFLAG_OVERFLOW__					(1 << 2)
+#define __DDAEE_FCSR_FFLAG_UNDERFLOW__					(1 << 3)
+#define __DDAEE_FCSR_FFLAG_INEXACT__					(1 << 4)
 
-#define __DDAEE_FLOAT_ROUNDING_MODE_RNE__				0b00	/* Round to Nearest, ties to Even */
-#define __DDAEE_FLOAT_ROUNDING_MODE_RTZ__				0b01	/* Round towards Zero */
-#define __DDAEE_FLOAT_ROUNDING_MODE_RDN__				0b10	/* Round Down */
-#define __DDAEE_FLOAT_ROUNDING_MODE_RUP__				0b11	/* Round Up */
+#define __DDAEE_FCSR_RDMODE_RNE__						0b00	/* Round to Nearest, ties to Even */
+#define __DDAEE_FCSR_RDMODE_RTZ__						0b01	/* Round towards Zero */
+#define __DDAEE_FCSR_RDMODE_RDN__						0b10	/* Round Down */
+#define __DDAEE_FCSR_RDMODE_RUP__						0b11	/* Round Up */
 
 #define __DDAEE_FLOAT_CLASS_SIGNALING_NAN__				9
 #define __DDAEE_FLOAT_CLASS_QUIET_NAN__					8
