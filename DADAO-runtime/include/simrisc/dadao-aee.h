@@ -1,6 +1,11 @@
 #ifndef __DADAO_AEE_H__
 #define __DADAO_AEE_H__
 
+#define __DDAEE_RD_ZERO__								0
+#define __DDAEE_RB_NEXT__								0
+#define __DDAEE_RA_MRAS__								0
+#define __DDAEE_RF_FCSR__								0
+
 #define __DDAEE_FLOAT_CLASS_SIGNALING_NAN__				9
 #define __DDAEE_FLOAT_CLASS_QUIET_NAN__					8
 #define __DDAEE_FLOAT_CLASS_NEGATIVE_INFINITY__			7
