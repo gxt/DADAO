@@ -63,7 +63,6 @@ static TCGv_i64 load_val;
 
 #define cpu_pc			cpu_rb[0]
 #define cpu_rasp		cpu_ra[0]
-#define cpu_rdzero		cpu_rd[0]
 
 static const char *regnames[] = {
     "rd00", "rd01", "rd02", "rd03", "rd04", "rd05", "rd06", "rd07",
@@ -304,7 +303,7 @@ INSN_R2R_ORRI(RA2RD, cpu_ra, cpu_rd)
 	{																			\
 		if (a->hb == 0)				return true;								\
 		tcg_gen_movcond_i64(cond, cpu_rd[a->hb], cpu_rd[a->ha],					\
-				cpu_rdzero, cpu_rd[a->hc], cpu_rd[a->hd]);						\
+				cpu_rd[0], cpu_rd[a->hc], cpu_rd[a->hd]);						\
 		return true;															\
 	}
 
@@ -494,7 +493,7 @@ INSN_MUL_RRRR(MULU, mulu)
 	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\
 	{																					\
 		TCGLabel* label_not_zero = gen_new_label();										\
-		tcg_gen_brcond_i64(TCG_COND_NE, cpu_rd[a->hd], cpu_rdzero, label_not_zero);		\
+		tcg_gen_brcond_i64(TCG_COND_NE, cpu_rd[a->hd], cpu_rd[0], label_not_zero);		\
 		gen_exception(DADAO_EXCP_FPER);													\
 		gen_set_label(label_not_zero);													\
 		TCGv_i64 temp1 = tcg_temp_new_i64();											\
@@ -638,7 +637,7 @@ INSN_BR_RRII(BRNE, TCG_COND_NE)
 	{																					\
 		TCGv_i64 next = tcg_constant_i64(ctx->base.pc_next + 4);						\
 		TCGv_i64 dest = tcg_constant_i64(ctx->base.pc_next + a->imms18 * 4);			\
-		tcg_gen_movcond_i64(cond, jmp_pc, cpu_rd[a->ha], cpu_rdzero, dest, next);		\
+		tcg_gen_movcond_i64(cond, jmp_pc, cpu_rd[a->ha], cpu_rd[0], dest, next);		\
 		ctx->base.is_jmp = DISAS_JUMP;													\
 		return true;																	\
 	}
