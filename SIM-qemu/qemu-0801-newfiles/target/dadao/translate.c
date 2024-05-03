@@ -1085,6 +1085,11 @@ static void dadao_tr_translate_insn(DisasContextBase *dcbase, CPUState *cs)
     DADAOCPU *cpu = DADAO_CPU(cs);
     uint32_t insn = translator_ldl(&cpu->env, &ctx->base, ctx->base.pc_next);
 
+	tcg_gen_movi_i64(cpu_rd[0], 0);
+//	tcg_gen_movi_i64(cpu_rb[0], ctx->base.pc_next + 4);
+	tcg_gen_andi_i64(cpu_rf[0], cpu_rf[0], 0x3001f);
+	tcg_gen_ori_i64( cpu_rf[0], cpu_rf[0], 0x7ff800007fc00000);
+
     if (!disas_dadao(ctx, insn)) {
         gen_exception_illegal_instruction(ctx);
         return;

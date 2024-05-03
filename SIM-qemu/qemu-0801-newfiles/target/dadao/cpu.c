@@ -117,6 +117,8 @@ static void dadao_cpu_initfn(Object *obj)
 #else
     env->REG_PC = 0x03000000;
 #endif
+	env->rd[0] = 0;
+	env->rf[0] = 0x7ff800007fc00000;
 }
 
 static const VMStateDescription vmstate_dadao_cpu = {
