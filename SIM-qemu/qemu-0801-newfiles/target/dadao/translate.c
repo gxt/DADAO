@@ -36,6 +36,7 @@
 #include "exec/helper-gen.h"
 
 #include "exec/log.h"
+#include <simrisc/dadao-aee.h>
 
 #define HELPER_H "helper.h"
 #include "exec/helper-info.c.inc"
@@ -1087,8 +1088,8 @@ static void dadao_tr_translate_insn(DisasContextBase *dcbase, CPUState *cs)
 
 	tcg_gen_movi_i64(cpu_rd[0], 0);
 //	tcg_gen_movi_i64(cpu_rb[0], ctx->base.pc_next + 4);
-	tcg_gen_andi_i64(cpu_rf[0], cpu_rf[0], 0x3001f);
-	tcg_gen_ori_i64( cpu_rf[0], cpu_rf[0], 0x7ff800007fc00000);
+	tcg_gen_andi_i64(cpu_rf[0], cpu_rf[0], __DDAEE_FCSR_MASK_RDMODE__ | __DDAEE_FCSR_MASK_FFLAGS__);
+	tcg_gen_ori_i64( cpu_rf[0], cpu_rf[0], __DDAEE_FCSR_DEFAULT__);
 
     if (!disas_dadao(ctx, insn)) {
         gen_exception_illegal_instruction(ctx);

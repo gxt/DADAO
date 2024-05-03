@@ -15,6 +15,7 @@
 #include "migration/vmstate.h"
 #include "qapi/error.h"
 #include "tcg/tcg.h"
+#include <simrisc/dadao-aee.h>
 
 static void dadao_cpu_set_pc(CPUState *cs, vaddr value)
 {
@@ -118,7 +119,7 @@ static void dadao_cpu_initfn(Object *obj)
     env->REG_PC = 0x03000000;
 #endif
 	env->rd[0] = 0;
-	env->rf[0] = 0x7ff800007fc00000;
+	env->rf[0] = __DDAEE_FCSR_DEFAULT__;
 }
 
 static const VMStateDescription vmstate_dadao_cpu = {
