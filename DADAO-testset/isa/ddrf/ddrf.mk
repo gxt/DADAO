@@ -17,6 +17,7 @@ ddrf_sc_tests = \
 	orrr-foadd \
 	orrr-ftadd \
 	orrr-ftqcmp \
+	orrr-fxsgnj \
 	rrrr-ftmadd \
 
 ddrf_bare_tests = $(addprefix ddrf-bare-, $(ddrf_sc_tests))
