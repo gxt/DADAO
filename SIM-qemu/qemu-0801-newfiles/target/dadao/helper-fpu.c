@@ -20,6 +20,8 @@ static void dadao_fpu_head(CPUDADAOState *env)
     }
 
     set_float_rounding_mode(softrm, &env->fp_status);
+
+	set_float_exception_flags((env->rf[0] & 0x1F), &env->fp_status);
 }
 
 static void dadao_fpu_tail(CPUDADAOState *env)
