@@ -774,11 +774,7 @@ INSN_FCVT_ORRI(IO2FO, cpu_rd, cpu_rf, gen_helper_io2fo)
 INSN_FCVT_ORRI(UT2FO, cpu_rd, cpu_rf, gen_helper_ut2fo)
 INSN_FCVT_ORRI(UO2FO, cpu_rd, cpu_rf, gen_helper_uo2fo)
 
-INSN_FCVT_ORRI(FTABS,  cpu_rf, cpu_rf, gen_helper_ftabs)
-INSN_FCVT_ORRI(FTNEG,  cpu_rf, cpu_rf, gen_helper_ftneg)
 INSN_FCVT_ORRI(FTSQRT, cpu_rf, cpu_rf, gen_helper_ftsqrt)
-INSN_FCVT_ORRI(FOABS,  cpu_rf, cpu_rf, gen_helper_foabs)
-INSN_FCVT_ORRI(FONEG,  cpu_rf, cpu_rf, gen_helper_foneg)
 INSN_FCVT_ORRI(FOSQRT, cpu_rf, cpu_rf, gen_helper_fosqrt)
 
 #undef INSN_FCVT_ORRI
@@ -798,6 +794,10 @@ INSN_FALG_ORRR(FOADD, gen_helper_foadd)
 INSN_FALG_ORRR(FOSUB, gen_helper_fosub)
 INSN_FALG_ORRR(FOMUL, gen_helper_fomul)
 INSN_FALG_ORRR(FODIV, gen_helper_fodiv)
+INSN_FALG_ORRR(FTSGNJ,  gen_helper_ftsgnj)
+INSN_FALG_ORRR(FTSGNJN, gen_helper_ftsgnjn)
+INSN_FALG_ORRR(FOSGNJ,  gen_helper_fosgnj)
+INSN_FALG_ORRR(FOSGNJN, gen_helper_fosgnjn)
 
 #undef INSN_FALG_ORRR
 

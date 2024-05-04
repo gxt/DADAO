@@ -142,25 +142,19 @@ FCAL_s3d1(fomadd, float64_muladd)
 
 #undef FCAL_s3d1
 
-uint64_t HELPER(ftabs)(CPUDADAOState* env, uint64_t arg1)
-{
-    return float32_abs(arg1);
+#define FSGN_s2d1(insn, func, signbit)										\
+uint64_t HELPER(insn)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)		\
+{																			\
+    return func(arg1, signbit);												\
 }
 
-uint64_t HELPER(ftneg)(CPUDADAOState* env, uint64_t arg1)
-{
-    return float32_sub(0, arg1, &env->fp_status);
-}
+FSGN_s2d1(ftsgnj,  float32_set_sign, (arg2 >> 31))
+FSGN_s2d1(ftsgnjn, float32_set_sign, (arg2 >> 31) ^ 1)
 
-uint64_t HELPER(foabs)(CPUDADAOState* env, uint64_t arg1)
-{
-    return float64_abs(arg1);
-}
+FSGN_s2d1(fosgnj,  float64_set_sign, (arg2 >> 63))
+FSGN_s2d1(fosgnjn, float64_set_sign, (arg2 >> 63) ^ 1)
 
-uint64_t HELPER(foneg)(CPUDADAOState* env, uint64_t arg1)
-{
-    return float64_sub(0, arg1, &env->fp_status);
-}
+#undef FSGN_s2d1
 
 #define FCMP_real(insn, cmpfunc, nanval)										\
 uint64_t HELPER(insn)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)			\
