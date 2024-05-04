@@ -24,6 +24,7 @@
 #define fo_qNaN				__DDAEE_FLOAT_OCTA_QNAN__
 #define fo_sNaN				__DDAEE_FLOAT_OCTA_SNAN__
 
+#define fflags_Z			0
 #define fflag_NV			__DDAEE_FCSR_FFLAG_INVALID__
 #define fflag_DZ			__DDAEE_FCSR_FFLAG_DIVBYZERO__
 #define fflag_OF			__DDAEE_FCSR_FFLAG_OVERFLOW__
