@@ -190,6 +190,8 @@ lbl_ ## tcname ## _cmp:													\
 			_TEST_FRRR_FFF(   tcname, inst, flags, ldft, .single, val_dst, val_src1, val_src2, 16, 17, 16 )
 #define TEST_FRRR_FFF_FT_111( tcname, inst, flags, val_dst, val_src1, val_src2 )	\
 			_TEST_FRRR_FFF(   tcname, inst, flags, ldft, .single, val_dst, val_src1, val_src2, 16, 16, 16 )
+#define TEST_FRRR_FFF_FT_120( tcname, inst, flags, val_dst, val_src1, val_src2 )	\
+			_TEST_FRRR_FFF(   tcname, inst, flags, ldft, .single, val_dst, val_src1, val_src2, 16, 17,  0 )
 
 #define TEST_FRRR_FFF_FO_123( tcname, inst, flags, val_dst, val_src1, val_src2 )	\
 			_TEST_FRRR_FFF(   tcname, inst, flags, ldfo, .double, val_dst, val_src1, val_src2, 16, 17, 18 )
@@ -199,6 +201,8 @@ lbl_ ## tcname ## _cmp:													\
 			_TEST_FRRR_FFF(   tcname, inst, flags, ldfo, .double, val_dst, val_src1, val_src2, 16, 17, 16 )
 #define TEST_FRRR_FFF_FO_111( tcname, inst, flags, val_dst, val_src1, val_src2 )	\
 			_TEST_FRRR_FFF(   tcname, inst, flags, ldfo, .double, val_dst, val_src1, val_src2, 16, 16, 16 )
+#define TEST_FRRR_FFF_FO_120( tcname, inst, flags, val_dst, val_src1, val_src2 )	\
+			_TEST_FRRR_FFF(   tcname, inst, flags, ldfo, .double, val_dst, val_src1, val_src2, 16, 17,  0 )
 
 #define _TEST_FRRR_DFF( tcname, inst, flags, inst_ld, ftype, val_dst, val_src1, val_src2, _DST, _SRC1, _SRC2 )	\
 test_ ## tcname:														\
