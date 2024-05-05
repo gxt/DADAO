@@ -18,8 +18,8 @@ DDTEST_CODE_BEGIN
 	TEST_FRRR_FFF_FT_112( 133, ftsgnj, fflags_Z,  3.14, -3.14,  6.25 )
 	TEST_FRRR_FFF_FT_112( 134, ftsgnj, fflags_Z, -3.14, -3.14, -6.25 )
 
-	TEST_FRRR_FFF_FT_120( 141, ftsgnj, fflags_Z,  3.14,  3.14,  -0.0 )
-	TEST_FRRR_FFF_FT_120( 142, ftsgnj, fflags_Z,  3.14, -3.14,  -0.0 )
+	TEST_FRRR_FFF_FT_120( 141, ftsgnj, fflags_Z,  3.14,  3.14,   0.0 )
+	TEST_FRRR_FFF_FT_120( 142, ftsgnj, fflags_Z,  3.14, -3.14,   0.0 )
 
 	TEST_FRRR_FFF_FO_123( 211, fosgnj, fflags_Z,  3.14,  3.14,  6.25 )
 	TEST_FRRR_FFF_FO_123( 212, fosgnj, fflags_Z, -3.14,  3.14, -6.25 )
@@ -36,8 +36,8 @@ DDTEST_CODE_BEGIN
 	TEST_FRRR_FFF_FO_112( 233, fosgnj, fflags_Z,  3.14, -3.14,  6.25 )
 	TEST_FRRR_FFF_FO_112( 234, fosgnj, fflags_Z, -3.14, -3.14, -6.25 )
 
-	TEST_FRRR_FFF_FO_120( 241, fosgnj, fflags_Z,  3.14,  3.14,  -0.0 )
-	TEST_FRRR_FFF_FO_120( 242, fosgnj, fflags_Z,  3.14, -3.14,  -0.0 )
+	TEST_FRRR_FFF_FO_120( 241, fosgnj, fflags_Z,  3.14,  3.14,   0.0 )
+	TEST_FRRR_FFF_FO_120( 242, fosgnj, fflags_Z,  3.14, -3.14,   0.0 )
 
 DDTEST_CODE_END
 
