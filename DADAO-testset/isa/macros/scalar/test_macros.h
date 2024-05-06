@@ -228,8 +228,9 @@ lbl_ ## tcname ## _cmp:													\
 
 #define TEST_FRRR_DFF_FT_123( tcname, inst, flags, val_dst, val_src1, val_src2 )	\
 			_TEST_FRRR_DFF(   tcname, inst, flags, ldft, .single, val_dst, val_src1, val_src2, 16, 17, 18 )
-#define TEST_FRRR_DFF_FT_122( tcname, inst, flags, val_dst, val_src1, val_src2 )	\
-			_TEST_FRRR_DFF(   tcname, inst, flags, ldft, .single, val_dst, val_src1, val_src2, 16, 17, 17 )
+
+#define TEST_FRRR_DFF_FO_123( tcname, inst, flags, val_dst, val_src1, val_src2 )	\
+			_TEST_FRRR_DFF(   tcname, inst, flags, ldfo, .double, val_dst, val_src1, val_src2, 16, 17, 18 )
 
 #-----------------------------------------------------------------------
 # DADAO MACROS for RIII
