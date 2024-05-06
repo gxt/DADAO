@@ -14,6 +14,8 @@ DDTEST_CODE_BEGIN
 	TEST_FRRI_R1_12( 119, ftclass, fflags_Z, ldo, .dd.o64, 1 << 8, ldft, .dd.t32, 0x7f800001, rd, rf )
 	TEST_FRRI_R1_12( 120, ftclass, fflags_Z, ldo, .dd.o64, 1 << 9, ldft, .dd.t32, 0x7fc00000, rd, rf )
 
+	TEST_FRRI_R1_10( 121, ftclass, fflags_Z, ldo, .dd.o64, 1 << 9, ldft, .dd.t32, 0, rd, rf )
+
 	TEST_FRRI_R1_12( 211, foclass, fflags_Z, ldo, .dd.o64, 1 << 0, ldfo, .dd.o64, 0xfff0000000000000, rd, rf )
 	TEST_FRRI_R1_12( 212, foclass, fflags_Z, ldo, .dd.o64, 1 << 1, ldfo, .dd.o64, 0xbff0000000000000, rd, rf )
 	TEST_FRRI_R1_12( 213, foclass, fflags_Z, ldo, .dd.o64, 1 << 2, ldfo, .dd.o64, 0x800fffffffffffff, rd, rf )
@@ -24,6 +26,8 @@ DDTEST_CODE_BEGIN
 	TEST_FRRI_R1_12( 218, foclass, fflags_Z, ldo, .dd.o64, 1 << 7, ldfo, .dd.o64, 0x7ff0000000000000, rd, rf )
 	TEST_FRRI_R1_12( 219, foclass, fflags_Z, ldo, .dd.o64, 1 << 8, ldfo, .dd.o64, 0x7ff0000000000001, rd, rf )
 	TEST_FRRI_R1_12( 220, foclass, fflags_Z, ldo, .dd.o64, 1 << 9, ldfo, .dd.o64, 0x7ff8000000000000, rd, rf )
+
+	TEST_FRRI_R1_10( 221, foclass, fflags_Z, ldo, .dd.o64, 1 << 9, ldfo, .dd.o64, 0, rd, rf )
 
 DDTEST_CODE_END
 
