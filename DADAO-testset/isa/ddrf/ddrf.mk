@@ -14,6 +14,7 @@ ddrf_sc_tests = \
 	orri-io2ft \
 	orri-rd2rf \
 	orrr-fxadd \
+	orrr-fxsub \
 	orrr-ftqcmp \
 	orrr-fxsgnj \
 	orrr-fxsgnjn \
