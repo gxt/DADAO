@@ -37,6 +37,9 @@
 #define io_min				0x8000000000000000
 #define io_max				0x7fffffffffffffff
 
+#define ut_max				0xffffffff
+#define uo_max				0xffffffffffffffff
+
 #define fflags_Z			0
 #define fflag_NV			__DDAEE_FCSR_FFLAG_INVALID__
 #define fflag_DZ			__DDAEE_FCSR_FFLAG_DIVBYZERO__
