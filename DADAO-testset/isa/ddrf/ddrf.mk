@@ -4,8 +4,7 @@
 
 ddrf_sc_tests = \
 	rwii-setw \
-	orri-fo2io \
-	orri-ft2io \
+	orri-fx2ix \
 	orri-fxclass \
 	orri-fxsqrt \
 	orri-rf2rf \

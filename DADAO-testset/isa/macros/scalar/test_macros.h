@@ -36,6 +36,9 @@
 		setrd			RD_EXP1, dest;					\
 		brne			RD_EXP1, RD_RET1, ___fail;		\
 
+#define __TEST_FCSR_SET_RMODE( rmode )					\
+		setw			RF_FCSR, w1, rmode;				\
+
 #-----------------------------------------------------------------------
 # DADAO MACROS for ORRI - logic insns
 #-----------------------------------------------------------------------

@@ -29,6 +29,14 @@
 #define io_qNaN				__DDAEE_FLOAT_OCTA_QNAN__
 #define io_sNaN				__DDAEE_FLOAT_OCTA_SNAN__
 
+#define ft_minus_qNaN		0f:ffc00000
+#define fo_minus_qNaN		0d:fff8000000000000
+
+#define it_min				0x80000000
+#define it_max				0x7fffffff
+#define io_min				0x8000000000000000
+#define io_max				0x7fffffffffffffff
+
 #define fflags_Z			0
 #define fflag_NV			__DDAEE_FCSR_FFLAG_INVALID__
 #define fflag_DZ			__DDAEE_FCSR_FFLAG_DIVBYZERO__
