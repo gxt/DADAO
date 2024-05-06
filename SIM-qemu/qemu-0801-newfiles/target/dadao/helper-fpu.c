@@ -159,7 +159,9 @@ FSGN_s2d1(fosgnjn, float64_set_sign, (arg2 >> 63) ^ 1)
 #define FCMP_real(insn, cmpfunc, nanval)										\
 uint64_t HELPER(insn)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)			\
 {																				\
+	dadao_fpu_head(env);														\
 	FloatRelation result = cmpfunc(arg1, arg2, &env->fp_status);				\
+	dadao_fpu_tail(env);														\
 	switch (result) {															\
 		case float_relation_greater:		return 1;							\
 		case float_relation_equal:			return 0;							\
