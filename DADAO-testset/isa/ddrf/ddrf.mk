@@ -17,6 +17,7 @@ ddrf_sc_tests = \
 	orrr-fxdiv \
 	orrr-fxmul \
 	orrr-fxqcmp \
+	orrr-fxscmp \
 	orrr-fxsgnj \
 	orrr-fxsgnjn \
 	orrr-fxsub \

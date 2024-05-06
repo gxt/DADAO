@@ -12,8 +12,8 @@ DDTEST_CODE_BEGIN
 
 	TEST_FRRR_DFF_FT_123( 121, ftqcmp, fflags_Z, it_qNaN, ft_qNaN, 0 )
 	TEST_FRRR_DFF_FT_123( 122, ftqcmp, fflags_Z, it_qNaN, ft_qNaN, ft_qNaN )
-	TEST_FRRR_DFF_FT_123( 123, ftqcmp, fflags_Z, it_qNaN, ft_sNaN, 0 )
-	TEST_FRRR_DFF_FT_123( 124, ftqcmp, fflags_Z, it_qNaN, ft_sNaN, ft_sNaN )
+	TEST_FRRR_DFF_FT_123( 123, ftqcmp, fflag_NV, it_qNaN, ft_sNaN, 0 )
+	TEST_FRRR_DFF_FT_123( 124, ftqcmp, fflag_NV, it_qNaN, ft_sNaN, ft_sNaN )
 
 	TEST_FRRR_DFF_FO_123( 211, foqcmp, fflags_Z,  1,   2.5,   1.0 )
 	TEST_FRRR_DFF_FO_123( 212, foqcmp, fflags_Z,  0,   2.5,   2.5 )
@@ -24,8 +24,8 @@ DDTEST_CODE_BEGIN
 
 	TEST_FRRR_DFF_FO_123( 221, foqcmp, fflags_Z, io_qNaN, fo_qNaN, 0 )
 	TEST_FRRR_DFF_FO_123( 222, foqcmp, fflags_Z, io_qNaN, fo_qNaN, fo_qNaN )
-	TEST_FRRR_DFF_FO_123( 223, foqcmp, fflags_Z, io_qNaN, fo_sNaN, 0 )
-	TEST_FRRR_DFF_FO_123( 224, foqcmp, fflags_Z, io_qNaN, fo_sNaN, fo_sNaN )
+	TEST_FRRR_DFF_FO_123( 223, foqcmp, fflag_NV, io_qNaN, fo_sNaN, 0 )
+	TEST_FRRR_DFF_FO_123( 224, foqcmp, fflag_NV, io_qNaN, fo_sNaN, fo_sNaN )
 
 DDTEST_CODE_END
 
