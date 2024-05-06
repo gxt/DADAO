@@ -1,0 +1,25 @@
+#include "dadao_test.h"
+#include "test_macros.h"
+
+DDTEST_CODE_BEGIN
+
+	TEST_FRRR_FFF_FT_123( 111, ftdiv, fflags_Z,          3.14159265, 3.14159265,        1.0 )
+	TEST_FRRR_FFF_FT_123( 112, ftdiv, fflag_NX,  1.1557273520668288, 3.14159265, 2.71828182 )
+	TEST_FRRR_FFF_FT_123( 113, ftdiv, fflag_NX, -0.9991093838555584,      -1234,     1235.1 )
+
+	TEST_FRRR_FFF_FT_112( 121, ftdiv, fflags_Z, 3.14159265, 3.14159265,        1.0 )
+	TEST_FRRR_FFF_FT_121( 122, ftdiv, fflags_Z, 3.14159265, 3.14159265,        1.0 )
+	TEST_FRRR_FFF_FT_111( 123, ftdiv, fflags_Z,        1.0, 3.14159265, 3.14159265 )
+
+	TEST_FRRR_FFF_FO_123( 211, fodiv, fflags_Z,          3.14159265, 3.14159265,        1.0 )
+	TEST_FRRR_FFF_FO_123( 212, fodiv, fflag_NX,  1.1557273520668288, 3.14159265, 2.71828182 )
+	TEST_FRRR_FFF_FO_123( 213, fodiv, fflag_NX, -0.9991093838555584,      -1234,     1235.1 )
+
+	TEST_FRRR_FFF_FO_112( 221, fodiv, fflags_Z, 3.14159265, 3.14159265,        1.0 )
+	TEST_FRRR_FFF_FO_121( 222, fodiv, fflags_Z, 3.14159265, 3.14159265,        1.0 )
+	TEST_FRRR_FFF_FO_111( 223, fodiv, fflags_Z,        1.0, 3.14159265, 3.14159265 )
+
+DDTEST_CODE_END
+
+DDTEST_DATA_BEGIN
+DDTEST_DATA_END
