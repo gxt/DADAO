@@ -14,10 +14,11 @@ ddrf_sc_tests = \
 	orri-io2ft \
 	orri-rd2rf \
 	orrr-fxadd \
-	orrr-fxsub \
-	orrr-ftqcmp \
+	orrr-fxmul \
 	orrr-fxsgnj \
 	orrr-fxsgnjn \
+	orrr-fxsub \
+	orrr-ftqcmp \
 	rrrr-ftmadd \
 
 ddrf_bare_tests = $(addprefix ddrf-bare-, $(ddrf_sc_tests))
