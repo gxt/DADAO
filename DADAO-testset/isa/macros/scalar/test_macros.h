@@ -267,6 +267,7 @@ lbl_ ## tcname ## _cmp:													\
 #define TEST_RRII_BB_11( tcname, inst, dest, src1, imm12 )		_TEST_RRII( tcname, inst, dest, src1, imm12, rb, rb, 16, 16 )
 
 #define TEST_RRII_LD_D_12( tcname, inst, dest, src1, imm12 )		_TEST_RRII( tcname, inst, dest, src1, imm12, rd, rb, 16, 17 )
+#define TEST_RRII_LD_F_12( tcname, inst, dest, src1, imm12 )		_TEST_RRII( tcname, inst, dest, src1, imm12, rf, rb, 16, 17 )
 #define TEST_RRII_LD_D_01( tcname, inst, dest, src1, imm12 )		_TEST_RRII( tcname, inst, dest, src1, imm12, rd, rb,  0, 17 )
 
 #define TEST_RRII_LD_D_10( tcname, inst, type_dest, dest, imm12 )		\
