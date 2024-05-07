@@ -8,10 +8,9 @@ ddrf_sc_tests = \
 	orri-fx2ux \
 	orri-fxclass \
 	orri-fxsqrt \
+	orri-ix2fx \
 	orri-rf2rf \
 	orri-rf2rd \
-	orri-io2fo \
-	orri-io2ft \
 	orri-rd2rf \
 	orrr-fxadd \
 	orrr-fxdiv \
