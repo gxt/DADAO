@@ -25,11 +25,7 @@ ddrd_sc_tests = \
 	rrii-cmpu \
 	rrii-ldo \
 	rrrr-add \
-	rrrr-cseq \
-	rrrr-csn \
-	rrrr-csne \
-	rrrr-csp \
-	rrrr-csz \
+	rrrr-csx rrrr-csxx \
 	rrrr-divs \
 	rrrr-divu \
 	rrrr-muls \
