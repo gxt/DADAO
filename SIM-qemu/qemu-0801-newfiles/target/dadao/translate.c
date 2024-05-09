@@ -307,9 +307,9 @@ INSN_R2R_ORRI(RA2RD, cpu_ra, cpu_rd)
 		return true;															\
 	}
 
-INSN_CSET1_RRRR(CSN, TCG_COND_LT)
-INSN_CSET1_RRRR(CSZ, TCG_COND_EQ)
-INSN_CSET1_RRRR(CSP, TCG_COND_GT)
+INSN_CSET1_RRRR(CSNrd, TCG_COND_LT)
+INSN_CSET1_RRRR(CSZrd, TCG_COND_EQ)
+INSN_CSET1_RRRR(CSPrd, TCG_COND_GT)
 
 #undef INSN_CSET1_RRRR
 
@@ -827,6 +827,34 @@ INSN_FCMP_ORRR(FOQCMP, gen_helper_foqcmp)
 INSN_FCMP_ORRR(FOSCMP, gen_helper_foscmp)
 
 #undef INSN_FCMP_ORRR
+
+#define INSN_FCSET_RRRR(insn, cond)														\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\
+	{																					\
+		tcg_gen_movcond_i64(cond, cpu_rf[a->hb], cpu_rd[a->ha],							\
+				cpu_rd[0], cpu_rf[a->hc], cpu_rf[a->hd]);								\
+		return true;																	\
+	}
+
+INSN_FCSET_RRRR(CSNrf, TCG_COND_LT)
+INSN_FCSET_RRRR(CSZrf, TCG_COND_EQ)
+INSN_FCSET_RRRR(CSPrf, TCG_COND_GT)
+
+#undef INSN_FCSET_RRRR
+
+#define INSN_FCSET_ORRR(insn, cond)														\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\
+	{																					\
+		TCGv_i64 one = tcg_constant_i64(1);												\
+		tcg_gen_movcond_i64(cond, cpu_rf[a->hc], cpu_rd[a->hb],							\
+				one, cpu_rf[a->hd], cpu_rf[a->hc]);										\
+		return true;																	\
+	}
+
+INSN_FCSET_ORRR(CSP1,  TCG_COND_EQ)
+INSN_FCSET_ORRR(CSNP1, TCG_COND_NE)
+
+#undef INSN_FCSET_ORRR
 
 static bool trans_TRAP(DisasContext *ctx, arg_TRAP *a)
 {
