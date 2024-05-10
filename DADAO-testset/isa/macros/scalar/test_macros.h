@@ -239,13 +239,19 @@ lbl_ ## tcname ## _cmp:													\
 # DADAO MACROS for RIII
 #-----------------------------------------------------------------------
 
-#define _TEST_RIII( tcname, inst, dest, imm18, _DEST )					\
-    __TEST_CASE(	tcname, dest,										\
-		inst		rb ## _DEST, imm18;									\
-		rb2rd		RD_RET1, rb ## _DEST, 1;							\
-    )
+#define _TEST_RIII( tcname, inst, imm18, _DEST )						\
+test_ ## tcname:														\
+	__TEST_CASE_HEAD__(tcname)											\
+	setrd	RD_EXP1, RB_NEXT;											\
+	inst	rb ## _DEST, imm18;											\
+	setrd	RD_RET1, rb ## _DEST;										\
+	shru	RD_EXP1, RD_EXP1, 12;										\
+	setrd	RD_EXP2, imm18;												\
+	add		RD_ZERO, RD_EXP1, RD_EXP1, RD_EXP2;							\
+	shlu	RD_EXP1, RD_EXP1, 12;										\
+	brne	RD_RET1, RD_EXP1, ___fail;									\
 
-#define TEST_RIII( tcname, inst, dest, imm18 )				_TEST_RIII( tcname, inst, dest, imm18, 16 )
+#define TEST_RIII( tcname, inst, imm18 )				_TEST_RIII( tcname, inst, imm18, 16 )
 
 #-----------------------------------------------------------------------
 # DADAO MACROS for RRII
@@ -272,7 +278,7 @@ lbl_ ## tcname ## _cmp:													\
 
 #define TEST_RRII_LD_D_10( tcname, inst, type_dest, dest, imm12 )		\
 	__TEST_CASE( tcname, dest,											\
-		inst	rd16, RB_IP, imm12;										\
+		inst	rd16, RB_NEXT, imm12;									\
 		jump	1f;														\
 		type_dest	dest;												\
 		.balign	4;														\
