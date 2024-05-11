@@ -7,9 +7,7 @@ ddrf_sc_tests = \
 	orri-fx2ix orri-fx2ux orri-ix2fx orri-ux2fx orri-fx2fx \
 	orri-fxclass \
 	orri-fxsqrt \
-	orri-rf2rf \
-	orri-rf2rd \
-	orri-rd2rf \
+	orri-rx2rx \
 	orrr-fxadd orrr-fxsub orrr-fxmul orrr-fxdiv \
 	orrr-fxqcmp orrr-fxscmp \
 	orrr-fxsgnj orrr-fxsgnjn \
