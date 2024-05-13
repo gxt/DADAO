@@ -253,6 +253,38 @@ test_ ## tcname:														\
 
 #define TEST_RIII( tcname, inst, imm18 )				_TEST_RIII( tcname, inst, imm18, 16 )
 
+#define _TEST_RIII_BR_HIGH( tcname, inst, src1, lbl_then, lbl_else, _SRC1 )	\
+test_ ## tcname:														\
+	__TEST_CASE_HEAD__(tcname)											\
+	setrd	rd ## _SRC1, src1;											\
+	inst	rd ## _SRC1, lbl_ ## tcname ## _taken;						\
+	jump	lbl_ ## tcname ## lbl_else;									\
+lbl_ ## tcname ## _taken:												\
+	jump	lbl_ ## tcname ## lbl_then;									\
+lbl_ ## tcname ## _fail:												\
+	jump	___fail;													\
+lbl_ ## tcname ## _pass:												\
+	setrd	RD_FLAG, RD_ZERO;											\
+
+#define TEST_RIII_BR_H( tcname, inst, src1, lbl_then, lbl_else )		_TEST_RIII_BR_HIGH( tcname, inst, src1, lbl_then, lbl_else, 16 )
+
+#define _TEST_RIII_BR_LOW( tcname, inst, src1, lbl_then, lbl_else, _SRC1 )	\
+test_ ## tcname:														\
+	__TEST_CASE_HEAD__(tcname)											\
+	jump	lbl_ ## tcname ## _test;									\
+lbl_ ## tcname ## _taken:												\
+	jump	lbl_ ## tcname ## lbl_then;									\
+lbl_ ## tcname ## _test:												\
+	setrd	rd ## _SRC1, src1;											\
+	inst	rd ## _SRC1, lbl_ ## tcname ## _taken;						\
+	jump	lbl_ ## tcname ## lbl_else;									\
+lbl_ ## tcname ## _fail:												\
+	jump	___fail;													\
+lbl_ ## tcname ## _pass:												\
+	setrd	RD_FLAG, RD_ZERO;											\
+
+#define TEST_RIII_BR_L( tcname, inst, src1, lbl_then, lbl_else )		_TEST_RIII_BR_LOW( tcname, inst, src1, lbl_then, lbl_else, 16 )
+
 #-----------------------------------------------------------------------
 # DADAO MACROS for RRII
 #-----------------------------------------------------------------------
@@ -304,6 +336,28 @@ lbl_ ## tcname ## _pass:												\
 #define TEST_RRII_BR_H_10( tcname, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR_HIGH( tcname, inst, src1, src2, lbl_then, lbl_else, 16,  0 )
 #define TEST_RRII_BR_H_01( tcname, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR_HIGH( tcname, inst, src1, src2, lbl_then, lbl_else,  0, 16 )
 #define TEST_RRII_BR_H_00( tcname, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR_HIGH( tcname, inst, src1, src2, lbl_then, lbl_else,  0,  0 )
+
+#define _TEST_RRII_BR_LOW( tcname, inst, src1, src2, lbl_then, lbl_else, _SRC1, _SRC2 )	\
+test_ ## tcname:														\
+	__TEST_CASE_HEAD__(tcname)											\
+	jump	lbl_ ## tcname ## _test;									\
+lbl_ ## tcname ## _taken:												\
+	jump	lbl_ ## tcname ## lbl_then;									\
+lbl_ ## tcname ## _test:												\
+	setrd	rd ## _SRC1, src1;											\
+	setrd	rd ## _SRC2, src2;											\
+	inst	rd ## _SRC1, rd ## _SRC2, lbl_ ## tcname ## _taken;			\
+	jump	lbl_ ## tcname ## lbl_else;									\
+lbl_ ## tcname ## _fail:												\
+	jump	___fail;													\
+lbl_ ## tcname ## _pass:												\
+	setrd	RD_FLAG, RD_ZERO;											\
+
+#define TEST_RRII_BR_L_12( tcname, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR_LOW( tcname, inst, src1, src2, lbl_then, lbl_else, 16, 17 )
+#define TEST_RRII_BR_L_11( tcname, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR_LOW( tcname, inst, src1, src2, lbl_then, lbl_else, 16, 16 )
+#define TEST_RRII_BR_L_10( tcname, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR_LOW( tcname, inst, src1, src2, lbl_then, lbl_else, 16,  0 )
+#define TEST_RRII_BR_L_01( tcname, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR_LOW( tcname, inst, src1, src2, lbl_then, lbl_else,  0, 16 )
+#define TEST_RRII_BR_L_00( tcname, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR_LOW( tcname, inst, src1, src2, lbl_then, lbl_else,  0,  0 )
 
 #-----------------------------------------------------------------------
 # DADAO MACROS for RRRR

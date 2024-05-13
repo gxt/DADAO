@@ -10,6 +10,7 @@ ddrb_sc_tests = \
 	orrr-cmp \
 	orrr-sub \
 	riii-adrp \
+	riii-brxx \
 	rrii-addi \
 	rrii-brxx \
 	rwii-andnw \
