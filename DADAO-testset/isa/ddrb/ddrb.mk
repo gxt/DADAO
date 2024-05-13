@@ -3,9 +3,7 @@
 #-----------------------------------------------------------------------
 
 ddrb_sc_tests = \
-	orri-rb2rb \
-	orri-rb2rd \
-	orri-rd2rb \
+	orri-rx2rx \
 	orrr-add \
 	orrr-cmp \
 	orrr-sub \
