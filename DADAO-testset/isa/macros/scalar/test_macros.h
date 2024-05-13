@@ -285,7 +285,7 @@ test_ ## tcname:														\
 1:		setrd	RD_RET1, rd16;											\
 		)
 
-#define _TEST_RRII_BR( tcname, inst, src1, src2, lbl_then, lbl_else, _SRC1, _SRC2 )	\
+#define _TEST_RRII_BR_HIGH( tcname, inst, src1, src2, lbl_then, lbl_else, _SRC1, _SRC2 )	\
 test_ ## tcname:														\
 	__TEST_CASE_HEAD__(tcname)											\
 	setrd	rd ## _SRC1, src1;											\
@@ -299,11 +299,11 @@ lbl_ ## tcname ## _fail:												\
 lbl_ ## tcname ## _pass:												\
 	setrd	RD_FLAG, RD_ZERO;											\
 
-#define TEST_RRII_BR_12( tcname, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR( tcname, inst, src1, src2, lbl_then, lbl_else, 16, 17 )
-#define TEST_RRII_BR_11( tcname, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR( tcname, inst, src1, src2, lbl_then, lbl_else, 16, 16 )
-#define TEST_RRII_BR_10( tcname, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR( tcname, inst, src1, src2, lbl_then, lbl_else, 16,  0 )
-#define TEST_RRII_BR_01( tcname, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR( tcname, inst, src1, src2, lbl_then, lbl_else,  0, 16 )
-#define TEST_RRII_BR_00( tcname, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR( tcname, inst, src1, src2, lbl_then, lbl_else,  0,  0 )
+#define TEST_RRII_BR_H_12( tcname, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR_HIGH( tcname, inst, src1, src2, lbl_then, lbl_else, 16, 17 )
+#define TEST_RRII_BR_H_11( tcname, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR_HIGH( tcname, inst, src1, src2, lbl_then, lbl_else, 16, 16 )
+#define TEST_RRII_BR_H_10( tcname, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR_HIGH( tcname, inst, src1, src2, lbl_then, lbl_else, 16,  0 )
+#define TEST_RRII_BR_H_01( tcname, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR_HIGH( tcname, inst, src1, src2, lbl_then, lbl_else,  0, 16 )
+#define TEST_RRII_BR_H_00( tcname, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR_HIGH( tcname, inst, src1, src2, lbl_then, lbl_else,  0,  0 )
 
 #-----------------------------------------------------------------------
 # DADAO MACROS for RRRR
