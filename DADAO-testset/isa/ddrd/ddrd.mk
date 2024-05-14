@@ -3,6 +3,7 @@
 #-----------------------------------------------------------------------
 
 ddrd_sc_tests = \
+	rrii-ldxx \
 	orri-exts \
 	orri-extz \
 	orri-rd2rd \
@@ -23,7 +24,6 @@ ddrd_sc_tests = \
 	rrii-andi \
 	rrii-cmps \
 	rrii-cmpu \
-	rrii-ldo \
 	rrrr-add \
 	rrrr-csx rrrr-csxx \
 	rrrr-divs \
