@@ -361,10 +361,10 @@ lbl_ ## tcname ## _pass:												\
 #define TEST_RRII_BR_L_00( tcname, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR_LOW( tcname, inst, src1, src2, lbl_then, lbl_else,  0,  0 )
 
 #-----------------------------------------------------------------------
-# DADAO MACROS for RRII
+# DADAO MACROS for RRRI
 #-----------------------------------------------------------------------
 
-#define _TEST_RRRI( tcname, inst, dest, src1, src2, imm6, _RGHA, _RGHB, _RGHC, _DEST, _SRC1, _SRC2 )		\
+#define _TEST_RRRI_M1( tcname, inst, dest, src1, src2, imm6, _RGHA, _RGHB, _RGHC, _DEST, _SRC1, _SRC2 )		\
     __TEST_CASE(	tcname, dest,												\
 		set ## _RGHB	_RGHB ## _SRC1, src1;									\
 		set ## _RGHC	_RGHC ## _SRC2, src2;									\
@@ -372,7 +372,24 @@ lbl_ ## tcname ## _pass:												\
 		setrd			RD_RET1, _RGHA ## _DEST;								\
     )
 
-#define TEST_RRRI_DBD_123( tcname, inst, dest, src1, src2, imm6 )		_TEST_RRRI( tcname, inst, dest, src1, src2, imm6, rd, rb, rd, 16, 17, 18 )
+#define TEST_RRRI_DBD_123( tcname, inst, dest, src1, src2, imm6 )		_TEST_RRRI_M1( tcname, inst, dest, src1, src2, imm6, rd, rb, rd, 16, 17, 18 )
+
+#define _TEST_RRRI_LDM_M8( tcname, inst, _src1, _src2, _stride, _RGHA )		\
+		__TEST_CASE_HEAD__(tcname)									\
+	.irp	rn, 16,17,18,19,20,21,22,23;							\
+		set ## _RGHA	_RGHA##\rn, \rn;							\
+	.endr;															\
+		setrb			RB_SRC, _src1;								\
+		setrd			RD_TMP, _src2;								\
+		inst			_RGHA ## 16, RB_SRC, RD_TMP, 8;				\
+	.irp	rn, 16,17,18,19,20,21,22,23;							\
+		inst			RD_EXP1, RB_SRC, RD_TMP, 1;					\
+		_RGHA ## 2rd	RD_RET1, _RGHA##\rn, 1;						\
+		brne			RD_RET1, RD_EXP1, ___fail;					\
+		addi			RD_TMP, RD_TMP, _stride;					\
+	.endr;															\
+
+#define TEST_RRRI_LDM_M8( tcname, inst, _src1, _src2, _stride )		_TEST_RRRI_LDM_M8( tcname, inst, _src1, _src2, _stride, rd )
 
 #-----------------------------------------------------------------------
 # DADAO MACROS for RRRR
