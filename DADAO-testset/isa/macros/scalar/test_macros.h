@@ -374,6 +374,17 @@ lbl_ ## tcname ## _pass:												\
 
 #define TEST_RRRI_DBD_123( tcname, inst, dest, src1, src2, imm6 )		_TEST_RRRI_M1( tcname, inst, dest, src1, src2, imm6, rd, rb, rd, 16, 17, 18 )
 
+#define _TEST_RRRI_STM_M1( tcname, inst, ld_inst, dest, src1, src2, imm6, _RGHA, _RGHB, _RGHC, _DEST, _SRC1, _SRC2 )		\
+	__TEST_CASE(	tcname, dest,												\
+		set ## _RGHA	_RGHA ## _DEST, dest;									\
+		set ## _RGHB	_RGHB ## _SRC1, src1;									\
+		set ## _RGHC	_RGHC ## _SRC2, src2;									\
+		inst			_RGHA ## _DEST, _RGHB ## _SRC1, _RGHC ## _SRC2, imm6;	\
+		ld_inst			RD_RET1, _RGHB ## _SRC1, _RGHC ## _SRC2, imm6;			\
+	)
+
+#define TEST_RRRI_STM_M1( tcname, inst, ld_inst, dest, src1, src2, imm6 )		_TEST_RRRI_STM_M1( tcname, inst, ld_inst, dest, src1, src2, imm6, rd, rb, rd, 16, 17, 18 )
+
 #define _TEST_RRRI_LDM_M8( tcname, inst, _src1, _src2, _stride, _RGHA )		\
 		__TEST_CASE_HEAD__(tcname)									\
 	.irp	rn, 16,17,18,19,20,21,22,23;							\
@@ -390,6 +401,23 @@ lbl_ ## tcname ## _pass:												\
 	.endr;															\
 
 #define TEST_RRRI_LDM_M8( tcname, inst, _src1, _src2, _stride )		_TEST_RRRI_LDM_M8( tcname, inst, _src1, _src2, _stride, rd )
+
+#define _TEST_RRRI_STM_M8( tcname, inst, ld_inst, _src1, _src2, _stride, _RGHA )		\
+		__TEST_CASE_HEAD__(tcname)									\
+	.irp	rn, 16,17,18,19,20,21,22,23;							\
+		set ## _RGHA	_RGHA##\rn, \rn;							\
+	.endr;															\
+		setrb			RB_SRC, _src1;								\
+		setrd			RD_TMP, _src2;								\
+		inst			_RGHA ## 16, RB_SRC, RD_TMP, 8;				\
+	.irp	rn, 16,17,18,19,20,21,22,23;							\
+		ld_inst			RD_EXP1, RB_SRC, RD_TMP, 1;					\
+		setrd			RD_RET1, \rn;								\
+		brne			RD_RET1, RD_EXP1, ___fail;					\
+		addi			RD_TMP, RD_TMP, _stride;					\
+	.endr;															\
+
+#define TEST_RRRI_STM_M8( tcname, inst, ld_inst, _src1, _src2, _stride )		_TEST_RRRI_STM_M8( tcname, inst, ld_inst, _src1, _src2, _stride, rd )
 
 #-----------------------------------------------------------------------
 # DADAO MACROS for RRRR
