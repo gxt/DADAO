@@ -370,6 +370,20 @@ lbl_ ## tcname ## _pass:												\
 #define TEST_RRII_BR_L_00( tcname, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR_LOW( tcname, inst, src1, src2, lbl_then, lbl_else,  0,  0 )
 
 #-----------------------------------------------------------------------
+# DADAO MACROS for RRII
+#-----------------------------------------------------------------------
+
+#define _TEST_RRRI( tcname, inst, dest, src1, src2, imm6, _RGHA, _RGHB, _RGHC, _DEST, _SRC1, _SRC2 )		\
+    __TEST_CASE(	tcname, dest,												\
+		set ## _RGHB	_RGHB ## _SRC1, src1;									\
+		set ## _RGHC	_RGHC ## _SRC2, src2;									\
+		inst			_RGHA ## _DEST, _RGHB ## _SRC1, _RGHC ## _SRC2, imm6;	\
+		setrd			RD_RET1, _RGHA ## _DEST;								\
+    )
+
+#define TEST_RRRI_DBD_123( tcname, inst, dest, src1, src2, imm6 )		_TEST_RRRI( tcname, inst, dest, src1, src2, imm6, rd, rb, rd, 16, 17, 18 )
+
+#-----------------------------------------------------------------------
 # DADAO MACROS for RRRR
 #-----------------------------------------------------------------------
 

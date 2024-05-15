@@ -4,6 +4,7 @@
 
 ddrd_sc_tests = \
 	rrii-ldxx rrii-stxx \
+	rrri-ldmxx  \
 	orri-exts \
 	orri-extz \
 	orri-rd2rd \
