@@ -6,6 +6,7 @@
 #-----------------------------------------------------------------------
 
 #define __TEST_CASE_HEAD__(tcname)						\
+	test_ ## tcname:									\
 		setrd			rd16, 0;						\
 		setrd			rd17, 0;						\
 		setrd			rd18, 0;						\
@@ -30,7 +31,6 @@
 		brne			RD_EXP2, RD_RET2, ___fail;		\
 
 #define __TEST_CASE( tcname, dest, code... )			\
-	test_ ## tcname:									\
 		__TEST_CASE_HEAD__(tcname)						\
 		code;											\
 		setrd			RD_EXP1, dest;					\
@@ -71,7 +71,6 @@
 #define TEST_ORRI_M1_10( tcname, inst, dst, src, rgd, rgs )		_TEST_ORRI_M1( tcname, inst, dst, src, rgd, rgs, 16,  0 )
 
 #define _TEST_ORRI_M8( tcname, inst, _RGHB, _RGHC, _DST0, _SRC, _DST ... )		\
-test_ ## tcname:													\
 		__TEST_CASE_HEAD__(tcname)									\
 	.irp	rn, 16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31;	\
 		set ## _RGHC	_RGHC##\rn, \rn;							\
@@ -96,7 +95,6 @@ test_ ## tcname:													\
 #-----------------------------------------------------------------------
 
 #define _TEST_FRRI_M1( tcname, inst, flags, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, _RGHB, _RGHC, _DST, _SRC )	\
-test_ ## tcname:													\
 		__TEST_CASE_HEAD__(tcname)									\
 		setrb			RB_SRC, test_ ## tcname ## _src;			\
 		inst_ld_src		_RGHC ## _SRC, RB_SRC, 0;					\
@@ -159,7 +157,6 @@ lbl_ ## tcname ## _cmp:												\
 #-----------------------------------------------------------------------
 
 #define _TEST_FRRR_FFF( tcname, inst, flags, inst_ld, ftype, val_dst, val_src1, val_src2, _DST, _SRC1, _SRC2 )	\
-test_ ## tcname:														\
 		__TEST_CASE_HEAD__(tcname)										\
 		setrb			RB_SRC, test_ ## tcname ## _src1;				\
 		inst_ld			rf ## _SRC1, RB_SRC, 0;							\
@@ -208,7 +205,6 @@ lbl_ ## tcname ## _cmp:													\
 			_TEST_FRRR_FFF(   tcname, inst, flags, ldfo, .double, val_dst, val_src1, val_src2, 16, 17,  0 )
 
 #define _TEST_FRRR_DFF( tcname, inst, flags, inst_ld, ftype, val_dst, val_src1, val_src2, _DST, _SRC1, _SRC2 )	\
-test_ ## tcname:														\
 		__TEST_CASE_HEAD__(tcname)										\
 		setrb			RB_SRC, test_ ## tcname ## _src1;				\
 		inst_ld			rf ## _SRC1, RB_SRC, 0;							\
@@ -240,7 +236,6 @@ lbl_ ## tcname ## _cmp:													\
 #-----------------------------------------------------------------------
 
 #define _TEST_RIII( tcname, inst, imm18, _DEST )						\
-test_ ## tcname:														\
 	__TEST_CASE_HEAD__(tcname)											\
 	setrd	RD_EXP1, RB_NEXT;											\
 	inst	rb ## _DEST, imm18;											\
@@ -254,7 +249,6 @@ test_ ## tcname:														\
 #define TEST_RIII( tcname, inst, imm18 )				_TEST_RIII( tcname, inst, imm18, 16 )
 
 #define _TEST_RIII_BR_HIGH( tcname, inst, src1, lbl_then, lbl_else, _SRC1 )	\
-test_ ## tcname:														\
 	__TEST_CASE_HEAD__(tcname)											\
 	setrd	rd ## _SRC1, src1;											\
 	inst	rd ## _SRC1, lbl_ ## tcname ## _taken;						\
@@ -269,7 +263,6 @@ lbl_ ## tcname ## _pass:												\
 #define TEST_RIII_BR_H( tcname, inst, src1, lbl_then, lbl_else )		_TEST_RIII_BR_HIGH( tcname, inst, src1, lbl_then, lbl_else, 16 )
 
 #define _TEST_RIII_BR_LOW( tcname, inst, src1, lbl_then, lbl_else, _SRC1 )	\
-test_ ## tcname:														\
 	__TEST_CASE_HEAD__(tcname)											\
 	jump	lbl_ ## tcname ## _test;									\
 lbl_ ## tcname ## _taken:												\
@@ -328,7 +321,6 @@ lbl_ ## tcname ## _pass:												\
 #define TEST_RRII_ST_D_12( tcname, st_inst, ld_inst, dest, src1, src2, imm12 )		_TEST_RRII_ST( tcname, st_inst, ld_inst, dest, src1, src2, imm12, rd, rb, 16, 17 )
 
 #define _TEST_RRII_BR_HIGH( tcname, inst, src1, src2, lbl_then, lbl_else, _SRC1, _SRC2 )	\
-test_ ## tcname:														\
 	__TEST_CASE_HEAD__(tcname)											\
 	setrd	rd ## _SRC1, src1;											\
 	setrd	rd ## _SRC2, src2;											\
@@ -348,7 +340,6 @@ lbl_ ## tcname ## _pass:												\
 #define TEST_RRII_BR_H_00( tcname, inst, src1, src2, lbl_then, lbl_else )		_TEST_RRII_BR_HIGH( tcname, inst, src1, src2, lbl_then, lbl_else,  0,  0 )
 
 #define _TEST_RRII_BR_LOW( tcname, inst, src1, src2, lbl_then, lbl_else, _SRC1, _SRC2 )	\
-test_ ## tcname:														\
 	__TEST_CASE_HEAD__(tcname)											\
 	jump	lbl_ ## tcname ## _test;									\
 lbl_ ## tcname ## _taken:												\
@@ -420,7 +411,6 @@ lbl_ ## tcname ## _pass:												\
 #define TEST_RRRR_RWRR_1230( tcname, inst, dest, cond, src1, src2 )		_TEST_RRRR_RWRR( tcname, inst, dest, cond, src1, src2, 16, 17, 18,  0 )
 
 #define _TEST_RRRR_WWRR( tcname, inst, dest1, dest2, src1, src2, _DEST1, _DEST2, _SRC1, _SRC2 )			\
-test_ ## tcname:															\
 	__TEST_CASE_HEAD__(tcname)												\
 	setrd	rd ## _SRC1, src1;												\
 	setrd	rd ## _SRC2, src2;												\
@@ -446,7 +436,6 @@ test_ ## tcname:															\
 #define TEST_RRRR_WWRR_1023( tcname, inst, dest1, dest2, src1, src2 )		_TEST_RRRR_WWRR( tcname, inst, dest1, dest2, src1, src2, 16,  0, 18, 19 )
 
 #define _TEST_RRRR_WRRR( tcname, inst, flags, inst_ld, ftype, val_dst, val_src1, val_src2, val_src3, _DST, _SRC1, _SRC2, _SRC3 )	\
-test_ ## tcname:															\
 		__TEST_CASE_HEAD__(tcname)											\
 		setrb			RB_SRC, test_ ## tcname ## _src1;					\
 		inst_ld			rf ## _SRC1, RB_SRC, 0;								\
