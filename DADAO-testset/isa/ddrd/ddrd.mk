@@ -7,14 +7,14 @@ ddrd_sc_tests = \
 	rrri-ldmxx rrri-stmxx \
 	orri-rd2rd \
 	rwii-setxw rwii-andnw rwii-orw \
+	rrrr-add rrrr-sub rrii-addi \
+	rrii-cmpx orrr-cmpx \
 	orri-exts \
 	orri-extz \
 	orri-shlu \
 	orri-shrs \
 	orri-shru \
 	orrr-and \
-	orrr-cmps \
-	orrr-cmpu \
 	orrr-exts \
 	orrr-extz \
 	orrr-orr \
@@ -22,17 +22,12 @@ ddrd_sc_tests = \
 	orrr-shrs \
 	orrr-shru \
 	orrr-xor \
-	rrii-addi \
 	rrii-andi \
-	rrii-cmps \
-	rrii-cmpu \
-	rrrr-add \
 	rrrr-csx rrrr-csxx \
 	rrrr-divs \
 	rrrr-divu \
 	rrrr-muls \
 	rrrr-mulu \
-	rrrr-sub \
 
 ddrd_bare_tests = $(addprefix ddrd-bare-, $(ddrd_sc_tests))
 ddrd_qemu_tests = $(addprefix ddrd-qemu-, $(ddrd_sc_tests))
