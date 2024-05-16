@@ -11,19 +11,17 @@ ddrd_sc_tests = \
 	rrrr-add rrrr-sub rrii-addi \
 	rrii-cmpx orrr-cmpx \
 	rrrr-mulx rrrr-divx \
+	orrr-and orrr-orr orrr-xor orrr-xnor \
 	orri-exts \
 	orri-extz \
 	orri-shlu \
 	orri-shrs \
 	orri-shru \
-	orrr-and \
 	orrr-exts \
 	orrr-extz \
-	orrr-orr \
 	orrr-shlu \
 	orrr-shrs \
 	orrr-shru \
-	orrr-xor \
 	rrii-andi \
 
 ddrd_bare_tests = $(addprefix ddrd-bare-, $(ddrd_sc_tests))
