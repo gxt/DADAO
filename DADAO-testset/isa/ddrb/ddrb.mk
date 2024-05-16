@@ -13,6 +13,7 @@ ddrb_sc_tests = \
 	riii-adrp \
 	riii-brxx \
 	rrii-brxx \
+	iiii-jump rrii-jump \
 
 ddrb_bare_tests = $(addprefix ddrb-bare-, $(ddrb_sc_tests))
 ddrb_qemu_tests = $(addprefix ddrb-qemu-, $(ddrb_sc_tests))
