@@ -3,6 +3,7 @@
 #-----------------------------------------------------------------------
 
 ddrb_sc_tests = \
+	rrii-ldrb rrii-strb \
 	orri-rx2rx \
 	rwii-andnw rwii-orw rwii-setzw \
 	orrr-add orrr-sub \

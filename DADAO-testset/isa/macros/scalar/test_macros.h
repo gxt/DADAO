@@ -298,16 +298,17 @@ lbl_ ## tcname ## _pass:												\
 #define TEST_RRII_BB_11( tcname, inst, dest, src1, imm12 )		_TEST_RRII( tcname, inst, dest, src1, imm12, rb, rb, 16, 16 )
 
 #define TEST_RRII_LD_D_12( tcname, inst, dest, src1, imm12 )		_TEST_RRII( tcname, inst, dest, src1, imm12, rd, rb, 16, 17 )
+#define TEST_RRII_LD_B_12( tcname, inst, dest, src1, imm12 )		_TEST_RRII( tcname, inst, dest, src1, imm12, rb, rb, 16, 17 )
 #define TEST_RRII_LD_F_12( tcname, inst, dest, src1, imm12 )		_TEST_RRII( tcname, inst, dest, src1, imm12, rf, rb, 16, 17 )
 #define TEST_RRII_LD_D_01( tcname, inst, dest, src1, imm12 )		_TEST_RRII( tcname, inst, dest, src1, imm12, rd, rb,  0, 17 )
 
 #define TEST_RRII_LD_D_10( tcname, inst, type_dest, dest, imm12 )		\
 	__TEST_CASE( tcname, dest,											\
-		inst	rd16, RB_NEXT, imm12;									\
+		inst	RD_TMP, RB_NEXT, imm12;									\
 		jump	1f;														\
 		type_dest	dest;												\
 		.balign	4;														\
-1:		setrd	RD_RET1, rd16;											\
+1:		setrd	RD_RET1, RD_TMP;										\
 		)
 
 #define _TEST_RRII_ST( tcname, st_inst, ld_inst, dest, src1, src2, imm12, _RGHA, _RGHB, _SRC1, _SRC2 )		\
@@ -319,6 +320,7 @@ lbl_ ## tcname ## _pass:												\
 		)
 
 #define TEST_RRII_ST_D_12( tcname, st_inst, ld_inst, dest, src1, src2, imm12 )		_TEST_RRII_ST( tcname, st_inst, ld_inst, dest, src1, src2, imm12, rd, rb, 16, 17 )
+#define TEST_RRII_ST_B_12( tcname, st_inst, ld_inst, dest, src1, src2, imm12 )		_TEST_RRII_ST( tcname, st_inst, ld_inst, dest, src1, src2, imm12, rb, rb, 16, 17 )
 
 #define _TEST_RRII_BR_HIGH( tcname, inst, src1, src2, lbl_then, lbl_else, _SRC1, _SRC2 )	\
 	__TEST_CASE_HEAD__(tcname)											\
