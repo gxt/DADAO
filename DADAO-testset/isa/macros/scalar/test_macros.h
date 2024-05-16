@@ -374,18 +374,23 @@ lbl_ ## tcname ## _pass:												\
 		setrd			RD_RET1, _RGHA ## _DEST;								\
     )
 
-#define TEST_RRRI_DBD_123( tcname, inst, dest, src1, src2, imm6 )		_TEST_RRRI_M1( tcname, inst, dest, src1, src2, imm6, rd, rb, rd, 16, 17, 18 )
+#define TEST_RRRI_LDMRD_123( tcname, inst, dest, src1, src2, imm6 )		_TEST_RRRI_M1( tcname, inst, dest, src1, src2, imm6, rd, rb, rd, 16, 17, 18 )
+#define TEST_RRRI_LDMRB_123( tcname, inst, dest, src1, src2, imm6 )		_TEST_RRRI_M1( tcname, inst, dest, src1, src2, imm6, rb, rb, rd, 16, 17, 18 )
+#define TEST_RRRI_LDMRA_123( tcname, inst, dest, src1, src2, imm6 )		_TEST_RRRI_M1( tcname, inst, dest, src1, src2, imm6, ra, rb, rd, 16, 17, 18 )
 
 #define _TEST_RRRI_STM_M1( tcname, inst, ld_inst, dest, src1, src2, imm6, _RGHA, _RGHB, _RGHC, _DEST, _SRC1, _SRC2 )		\
 	__TEST_CASE(	tcname, dest,												\
-		set ## _RGHA	_RGHA ## _DEST, dest;									\
+		setrd			RD_TMP, dest;											\
+		rd2 ## _RGHA	_RGHA ## _DEST, RD_TMP, 1;								\
 		set ## _RGHB	_RGHB ## _SRC1, src1;									\
 		set ## _RGHC	_RGHC ## _SRC2, src2;									\
 		inst			_RGHA ## _DEST, _RGHB ## _SRC1, _RGHC ## _SRC2, imm6;	\
 		ld_inst			RD_RET1, _RGHB ## _SRC1, _RGHC ## _SRC2, imm6;			\
 	)
 
-#define TEST_RRRI_STM_M1( tcname, inst, ld_inst, dest, src1, src2, imm6 )		_TEST_RRRI_STM_M1( tcname, inst, ld_inst, dest, src1, src2, imm6, rd, rb, rd, 16, 17, 18 )
+#define TEST_RRRI_STMRD_M1( tcname, inst, ld_inst, dest, src1, src2, imm6 )		_TEST_RRRI_STM_M1( tcname, inst, ld_inst, dest, src1, src2, imm6, rd, rb, rd, 16, 17, 18 )
+#define TEST_RRRI_STMRB_M1( tcname, inst, ld_inst, dest, src1, src2, imm6 )		_TEST_RRRI_STM_M1( tcname, inst, ld_inst, dest, src1, src2, imm6, rb, rb, rd, 16, 17, 18 )
+#define TEST_RRRI_STMRA_M1( tcname, inst, ld_inst, dest, src1, src2, imm6 )		_TEST_RRRI_STM_M1( tcname, inst, ld_inst, dest, src1, src2, imm6, ra, rb, rd, 16, 17, 18 )
 
 #define _TEST_RRRI_LDM_M8( tcname, inst, _src1, _src2, _stride, _RGHA )		\
 		__TEST_CASE_HEAD__(tcname)									\
@@ -396,13 +401,15 @@ lbl_ ## tcname ## _pass:												\
 		setrd			RD_TMP, _src2;								\
 		inst			_RGHA ## 16, RB_SRC, RD_TMP, 8;				\
 	.irp	rn, 16,17,18,19,20,21,22,23;							\
-		inst			RD_EXP1, RB_SRC, RD_TMP, 1;					\
+		inst			_RGHA##15, RB_SRC, RD_TMP, 1;				\
+		_RGHA ## 2rd	RD_EXP1, _RGHA##15, 1;						\
 		_RGHA ## 2rd	RD_RET1, _RGHA##\rn, 1;						\
 		brne			RD_RET1, RD_EXP1, ___fail;					\
 		addi			RD_TMP, RD_TMP, _stride;					\
 	.endr;															\
 
-#define TEST_RRRI_LDM_M8( tcname, inst, _src1, _src2, _stride )		_TEST_RRRI_LDM_M8( tcname, inst, _src1, _src2, _stride, rd )
+#define TEST_RRRI_LDMRD_M8( tcname, inst, _src1, _src2, _stride )		_TEST_RRRI_LDM_M8( tcname, inst, _src1, _src2, _stride, rd )
+#define TEST_RRRI_LDMRB_M8( tcname, inst, _src1, _src2, _stride )		_TEST_RRRI_LDM_M8( tcname, inst, _src1, _src2, _stride, rb )
 
 #define _TEST_RRRI_STM_M8( tcname, inst, ld_inst, _src1, _src2, _stride, _RGHA )		\
 		__TEST_CASE_HEAD__(tcname)									\
@@ -419,7 +426,8 @@ lbl_ ## tcname ## _pass:												\
 		addi			RD_TMP, RD_TMP, _stride;					\
 	.endr;															\
 
-#define TEST_RRRI_STM_M8( tcname, inst, ld_inst, _src1, _src2, _stride )		_TEST_RRRI_STM_M8( tcname, inst, ld_inst, _src1, _src2, _stride, rd )
+#define TEST_RRRI_STMRD_M8( tcname, inst, ld_inst, _src1, _src2, _stride )		_TEST_RRRI_STM_M8( tcname, inst, ld_inst, _src1, _src2, _stride, rd )
+#define TEST_RRRI_STMRB_M8( tcname, inst, ld_inst, _src1, _src2, _stride )		_TEST_RRRI_STM_M8( tcname, inst, ld_inst, _src1, _src2, _stride, rb )
 
 #-----------------------------------------------------------------------
 # DADAO MACROS for RRRR
