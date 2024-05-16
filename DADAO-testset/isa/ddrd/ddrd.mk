@@ -12,17 +12,13 @@ ddrd_sc_tests = \
 	rrii-cmpx orrr-cmpx \
 	rrrr-mulx rrrr-divx \
 	orrr-and orrr-orr orrr-xor orrr-xnor \
+	rrii-andi \
 	orri-exts \
 	orri-extz \
-	orri-shlu \
-	orri-shrs \
-	orri-shru \
+	orri-shxx \
 	orrr-exts \
 	orrr-extz \
-	orrr-shlu \
-	orrr-shrs \
-	orrr-shru \
-	rrii-andi \
+	orrr-shxx \
 
 ddrd_bare_tests = $(addprefix ddrd-bare-, $(ddrd_sc_tests))
 ddrd_qemu_tests = $(addprefix ddrd-qemu-, $(ddrd_sc_tests))
