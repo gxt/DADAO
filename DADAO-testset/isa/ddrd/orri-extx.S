@@ -1,0 +1,33 @@
+#include "dadao_test.h"
+#include "test_macros.h"
+
+DDTEST_CODE_BEGIN
+
+	TEST_ORRI_12( 115, exts, 0xfff0f0f0f0f0000f, 0xfff0f0f0f0f0000f, 0 )
+	TEST_ORRI_12( 116, exts, 0xffffffffffffffff, 0xfff0f0f0f0f0000f, 63 )
+	TEST_ORRI_12( 117, exts, 0x000000000f0000ff, 0xff0f0f0f0f0000ff, 32 )
+	TEST_ORRI_12( 118, exts, 0x0000000000000000, 0x0000000000000000, 63 )
+	TEST_ORRI_12( 119, exts, 0xffffffffffffff00, 0xfff0f0f0f0ffff00, 47 )
+	TEST_ORRI_12( 120, exts, 0xffffffffffffffff, 0xfff0000f0f0f0f0f, 60 )
+
+	TEST_ORRI_11( 121, exts, 0xfff0f000f0f0ffff, 0xfff0f000f0f0ffff, 3 )
+	TEST_ORRI_11( 122, exts, 0x00000000000000f0, 0x0000f0f0f00000f0, 48 )
+
+	TEST_ORRI_10( 123, exts, 0x0000000000000000, 0, 31 )
+
+	TEST_ORRI_12( 215, extz, 0xfff0f0f0f0f0000f, 0xfff0f0f0f0f0000f, 0 )
+	TEST_ORRI_12( 216, extz, 0x0000000000000001, 0xfff0f0f0f0f0000f, 63 )
+	TEST_ORRI_12( 217, extz, 0x000000000f0000ff, 0xff0f0f0f0f0000ff, 32 )
+	TEST_ORRI_12( 218, extz, 0x0000000000000000, 0x0000000000000000, 63 )
+	TEST_ORRI_12( 219, extz, 0x000000000001ff00, 0xfff0f0f0f0ffff00, 47 )
+	TEST_ORRI_12( 220, extz, 0x000000000000000f, 0xfff0000f0f0f0f0f, 60 )
+
+	TEST_ORRI_11( 221, extz, 0x1ff0f000f0f0ffff, 0xfff0f000f0f0ffff, 3 )
+	TEST_ORRI_11( 222, extz, 0x00000000000000f0, 0x0000f0f0f00000f0, 48 )
+
+	TEST_ORRI_10( 223, extz, 0x0000000000000000, 0, 31 )
+
+DDTEST_CODE_END
+
+DDTEST_DATA_BEGIN
+DDTEST_DATA_END
