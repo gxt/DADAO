@@ -321,6 +321,7 @@ lbl_ ## tcname ## _pass:												\
 
 #define TEST_RRII_ST_D_12( tcname, st_inst, ld_inst, dest, src1, src2, imm12 )		_TEST_RRII_ST( tcname, st_inst, ld_inst, dest, src1, src2, imm12, rd, rb, 16, 17 )
 #define TEST_RRII_ST_B_12( tcname, st_inst, ld_inst, dest, src1, src2, imm12 )		_TEST_RRII_ST( tcname, st_inst, ld_inst, dest, src1, src2, imm12, rb, rb, 16, 17 )
+#define TEST_RRII_ST_F_12( tcname, st_inst, ld_inst, dest, src1, src2, imm12 )		_TEST_RRII_ST( tcname, st_inst, ld_inst, dest, src1, src2, imm12, rf, rb, 16, 17 )
 
 #define _TEST_RRII_BR_HIGH( tcname, inst, src1, src2, lbl_then, lbl_else, _SRC1, _SRC2 )	\
 	__TEST_CASE_HEAD__(tcname)											\
