@@ -13,6 +13,7 @@ ddrf_sc_tests =				\
 	orri-fxsqrt				\
 	orrr-fxsgnj	orrr-fxsgnjn	\
 	orrr-fxqcmp	orrr-fxscmp		\
+	rrrr-csx	orrr-csxx		\
 	orri-fxclass			\
 
 ddrf_bare_tests = $(addprefix ddrf-bare-, $(ddrf_sc_tests))

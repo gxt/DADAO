@@ -231,6 +231,18 @@ lbl_ ## tcname ## _cmp:													\
 #define TEST_FRRR_DFF_FO_123( tcname, inst, flags, val_dst, val_src1, val_src2 )	\
 			_TEST_FRRR_DFF(   tcname, inst, flags, ldfo, .double, val_dst, val_src1, val_src2, 16, 17, 18 )
 
+#define _TEST_FRRR_RWR( tcname, inst, dest, cond, orig, src, _COND, _DEST, _SRC )		\
+	__TEST_CASE(	tcname, dest,											\
+		setrd		rd ## _COND, cond;										\
+		setrf		rf ## _DEST, orig;										\
+		setrf		rf ## _SRC, src;										\
+		inst		rd ## _COND, rf ## _DEST, rf ## _SRC;					\
+		rf2rd		RD_RET1, rf ## _DEST, 1;								\
+	)
+
+#define TEST_FRRR_RWR_123( tcname, inst, dest, cond, orig, src )		_TEST_FRRR_RWR( tcname, inst, dest, cond, orig, src, 16, 17, 18 )
+#define TEST_FRRR_RWR_012( tcname, inst, dest, cond, orig, src )		_TEST_FRRR_RWR( tcname, inst, dest, cond, orig, src,  0, 17, 18 )
+
 #-----------------------------------------------------------------------
 # DADAO MACROS for RIII
 #-----------------------------------------------------------------------
@@ -453,22 +465,27 @@ lbl_ ## tcname ## _pass:												\
 #define TEST_RRRR_RRWR_1023( tcname, inst, dest, cond1, cond2, orig, src )		_TEST_RRRR_RRWR( tcname, inst, dest, cond1, cond2, orig, src, 16,  0, 18, 19 )
 #define TEST_RRRR_RRWR_1230( tcname, inst, dest, cond1, cond2, orig, src )		_TEST_RRRR_RRWR( tcname, inst, dest, cond1, cond2, orig, src, 16, 17, 18,  0 )
 
-#define _TEST_RRRR_RWRR( tcname, inst, dest, cond, src1, src2, _COND, _DEST, _SRC1, _SRC2 )				\
-	__TEST_CASE(	tcname, dest,											\
-		setrd		rd ## _COND, cond;										\
-		setrd		rd ## _SRC1, src1;										\
-		setrd		rd ## _SRC2, src2;										\
-		inst		rd ## _COND, rd ## _DEST, rd ## _SRC1, rd ## _SRC2;		\
-		rd2rd		RD_RET1, rd ## _DEST, 1;								\
+#define _TEST_RRRR_RWRR( tcname, inst, dest, cond, src1, src2, _RGHBCD, _COND, _DEST, _SRC1, _SRC2 )	\
+	__TEST_CASE(	tcname, dest,														\
+		setrd		rd ## _COND, cond;													\
+		setrd		_RGHBCD ## _SRC1, src1;												\
+		setrd		_RGHBCD ## _SRC2, src2;												\
+		inst		rd ## _COND, _RGHBCD ## _DEST, _RGHBCD ## _SRC1, _RGHBCD ## _SRC2;	\
+		rd2rd		RD_RET1, _RGHBCD ## _DEST, 1;										\
 	)
 
-#define TEST_RRRR_RWRR_1234( tcname, inst, dest, cond, src1, src2 )		_TEST_RRRR_RWRR( tcname, inst, dest, cond, src1, src2, 16, 17, 18, 19 )
-#define TEST_RRRR_RWRR_1123( tcname, inst, dest, cond, src1, src2 )		_TEST_RRRR_RWRR( tcname, inst, dest, cond, src1, src2, 16, 16, 18, 19 )
-#define TEST_RRRR_RWRR_1223( tcname, inst, dest, cond, src1, src2 )		_TEST_RRRR_RWRR( tcname, inst, dest, cond, src1, src2, 16, 18, 18, 19 )
-#define TEST_RRRR_RWRR_1232( tcname, inst, dest, cond, src1, src2 )		_TEST_RRRR_RWRR( tcname, inst, dest, cond, src1, src2, 16, 17, 18, 17 )
-#define TEST_RRRR_RWRR_0123( tcname, inst, dest, cond, src1, src2 )		_TEST_RRRR_RWRR( tcname, inst, dest, cond, src1, src2,  0, 17, 18, 19 )
-#define TEST_RRRR_RWRR_1203( tcname, inst, dest, cond, src1, src2 )		_TEST_RRRR_RWRR( tcname, inst, dest, cond, src1, src2, 16, 17,  0, 19 )
-#define TEST_RRRR_RWRR_1230( tcname, inst, dest, cond, src1, src2 )		_TEST_RRRR_RWRR( tcname, inst, dest, cond, src1, src2, 16, 17, 18,  0 )
+#define TEST_RRRR_RWRR_1234( tcname, inst, dest, cond, src1, src2 )		_TEST_RRRR_RWRR( tcname, inst, dest, cond, src1, src2, rd, 16, 17, 18, 19 )
+#define TEST_RRRR_RWRR_1123( tcname, inst, dest, cond, src1, src2 )		_TEST_RRRR_RWRR( tcname, inst, dest, cond, src1, src2, rd, 16, 16, 18, 19 )
+#define TEST_RRRR_RWRR_1223( tcname, inst, dest, cond, src1, src2 )		_TEST_RRRR_RWRR( tcname, inst, dest, cond, src1, src2, rd, 16, 18, 18, 19 )
+#define TEST_RRRR_RWRR_1232( tcname, inst, dest, cond, src1, src2 )		_TEST_RRRR_RWRR( tcname, inst, dest, cond, src1, src2, rd, 16, 17, 18, 17 )
+#define TEST_RRRR_RWRR_0123( tcname, inst, dest, cond, src1, src2 )		_TEST_RRRR_RWRR( tcname, inst, dest, cond, src1, src2, rd,  0, 17, 18, 19 )
+#define TEST_RRRR_RWRR_1203( tcname, inst, dest, cond, src1, src2 )		_TEST_RRRR_RWRR( tcname, inst, dest, cond, src1, src2, rd, 16, 17,  0, 19 )
+#define TEST_RRRR_RWRR_1230( tcname, inst, dest, cond, src1, src2 )		_TEST_RRRR_RWRR( tcname, inst, dest, cond, src1, src2, rd, 16, 17, 18,  0 )
+
+#define TEST_RRRR_RWFF_1234( tcname, inst, dest, cond, src1, src2 )		_TEST_RRRR_RWRR( tcname, inst, dest, cond, src1, src2, rd, 16, 17, 18, 19 )
+#define TEST_RRRR_RWFF_1223( tcname, inst, dest, cond, src1, src2 )		_TEST_RRRR_RWRR( tcname, inst, dest, cond, src1, src2, rd, 16, 18, 18, 19 )
+#define TEST_RRRR_RWFF_1232( tcname, inst, dest, cond, src1, src2 )		_TEST_RRRR_RWRR( tcname, inst, dest, cond, src1, src2, rd, 16, 17, 18, 17 )
+#define TEST_RRRR_RWFF_0123( tcname, inst, dest, cond, src1, src2 )		_TEST_RRRR_RWRR( tcname, inst, dest, cond, src1, src2, rd,  0, 17, 18, 19 )
 
 #define _TEST_RRRR_WWRR( tcname, inst, dest1, dest2, src1, src2, _DEST1, _DEST2, _SRC1, _SRC2 )			\
 	__TEST_CASE_HEAD__(tcname)												\
