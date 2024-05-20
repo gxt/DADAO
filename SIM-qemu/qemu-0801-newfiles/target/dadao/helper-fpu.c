@@ -31,7 +31,7 @@ static void dadao_fpu_tail(CPUDADAOState *env)
 	env->rf[0] = env->rf[0] | (soft & 0x1F);
 }
 
-target_ulong HELPER(ftclass)(CPUDADAOState *env, uint64_t arg1)
+target_ulong HELPER(ftcls)(CPUDADAOState *env, uint64_t arg1)
 {
     float32 f = arg1;
     bool sign = float32_is_neg(f);
@@ -50,7 +50,7 @@ target_ulong HELPER(ftclass)(CPUDADAOState *env, uint64_t arg1)
     }
 }
 
-target_ulong HELPER(foclass)(CPUDADAOState *env, uint64_t arg1)
+target_ulong HELPER(focls)(CPUDADAOState *env, uint64_t arg1)
 {
     float64 f = arg1;
     bool sign = float64_is_neg(f);

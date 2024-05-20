@@ -18,8 +18,8 @@ DEF_HELPER_1(cp1_putc, void, i64)
 
 DEF_HELPER_2(exception, void, env, i32)
 
-DEF_HELPER_2(ftclass, i64, env, i64)
-DEF_HELPER_2(foclass, i64, env, i64)
+DEF_HELPER_2(ftcls, i64, env, i64)
+DEF_HELPER_2(focls, i64, env, i64)
 DEF_HELPER_2(ft2fo, i64, env, i64)
 DEF_HELPER_2(fo2ft, i64, env, i64)
 
