@@ -169,8 +169,8 @@ extz	00010000 011101
 #
 [ orri	op:14	hb:6	hc:6	immu:6 ]
 & @reg rd@hb rf@hc (hb!=000000)
-ftclass	01010000 000000
-foclass 01010000 001000
+ftcls	01010000 000000
+focls	01010000 001000
 
 & @reg rf@hb rf@hc
 ft2fo	01010000 000001
