@@ -148,11 +148,11 @@ uint64_t HELPER(insn)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)		\
     return func(arg1, signbit);												\
 }
 
-FSGN_s2d1(ftsgnj,  float32_set_sign, (arg2 >> 31))
-FSGN_s2d1(ftsgnjn, float32_set_sign, (arg2 >> 31) ^ 1)
+FSGN_s2d1(ftsgnj, float32_set_sign, (arg2 >> 31))
+FSGN_s2d1(ftsgnn, float32_set_sign, (arg2 >> 31) ^ 1)
 
-FSGN_s2d1(fosgnj,  float64_set_sign, (arg2 >> 63))
-FSGN_s2d1(fosgnjn, float64_set_sign, (arg2 >> 63) ^ 1)
+FSGN_s2d1(fosgnj, float64_set_sign, (arg2 >> 63))
+FSGN_s2d1(fosgnn, float64_set_sign, (arg2 >> 63) ^ 1)
 
 #undef FSGN_s2d1
 

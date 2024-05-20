@@ -794,10 +794,10 @@ INSN_FALG_ORRR(FOADD, gen_helper_foadd)
 INSN_FALG_ORRR(FOSUB, gen_helper_fosub)
 INSN_FALG_ORRR(FOMUL, gen_helper_fomul)
 INSN_FALG_ORRR(FODIV, gen_helper_fodiv)
-INSN_FALG_ORRR(FTSGNJ,  gen_helper_ftsgnj)
-INSN_FALG_ORRR(FTSGNJN, gen_helper_ftsgnjn)
-INSN_FALG_ORRR(FOSGNJ,  gen_helper_fosgnj)
-INSN_FALG_ORRR(FOSGNJN, gen_helper_fosgnjn)
+INSN_FALG_ORRR(FTSGNJ, gen_helper_ftsgnj)
+INSN_FALG_ORRR(FTSGNN, gen_helper_ftsgnn)
+INSN_FALG_ORRR(FOSGNJ, gen_helper_fosgnj)
+INSN_FALG_ORRR(FOSGNN, gen_helper_fosgnn)
 
 #undef INSN_FALG_ORRR
 
