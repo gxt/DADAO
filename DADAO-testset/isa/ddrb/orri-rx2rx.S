@@ -36,7 +36,7 @@ DDTEST_CODE_BEGIN
 	TEST_ORRI_M8_C3( 313, rb2rd, rd, rb )
 	TEST_ORRI_M8_C4( 314, rb2rd, rd, rb )
 	TEST_ORRI_M8_C5( 315, rb2rd, rd, rb )
-/*
+
 	TEST_ORRI_M1_12( 401, rd2ra, 4444, 4444, ra, rd )
 	TEST_ORRI_M1_12( 402, rd2ra, 8888, 8888, ra, rd )
 	TEST_ORRI_M1_11( 403, rd2ra, 4444, 4444, ra, rd )
@@ -53,6 +53,9 @@ DDTEST_CODE_BEGIN
 	TEST_ORRI_M1_12( 502, ra2rd, 8888, 8888, rd, ra )
 	TEST_ORRI_M1_11( 503, ra2rd, 4444, 4444, rd, ra )
 	TEST_ORRI_M1_11( 504, ra2rd, 8888, 8888, rd, ra )
+
+/*
+	TODO: SOMETHING WRONG!
 
 	TEST_ORRI_M8_C1( 511, ra2rd, rd, ra )
 	TEST_ORRI_M8_C2( 512, ra2rd, rd, ra )

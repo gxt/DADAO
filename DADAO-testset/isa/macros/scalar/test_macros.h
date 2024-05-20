@@ -60,8 +60,8 @@
 
 #define _TEST_ORRI_M1( tcname, inst, dst, src, _RGHB, _RGHC, _DST, _SRC )		\
 	__TEST_CASE(	tcname, dst,									\
-		set ## _RGHB	_RGHB ## _DST, 0xdead;						\
-		set ## _RGHC	_RGHC ## _SRC, src;							\
+		setrd			RD_TMP, src;								\
+		rd2 ## _RGHC	_RGHC ## _SRC, RD_TMP, 1;					\
 		inst			_RGHB ## _DST, _RGHC ## _SRC, 1;			\
 		_RGHB ## 2rd	RD_RET1, _RGHB ## _DST, 1;					\
 	)
