@@ -14,7 +14,7 @@ ddrf_sc_tests =				\
 	orrr-fxsgnj	orrr-fxsgnjn	\
 	orrr-fxqcmp	orrr-fxscmp		\
 	rrrr-csx	orrr-csxx		\
-	orri-fxclass			\
+	orri-fxcls				\
 
 ddrf_bare_tests = $(addprefix ddrf-bare-, $(ddrf_sc_tests))
 ddrf_qemu_tests = $(addprefix ddrf-qemu-, $(ddrf_sc_tests))
