@@ -1,0 +1,103 @@
+From f5ae8a78dc85b5d8fd6ed3647443d9511a483984 Mon Sep 17 00:00:00 2001
+From: Guorui Wen <grwen@stu.pku.edu.cn>
+Date: Wed, 22 May 2024 12:11:27 +0800
+Subject: [PATCH 07/11] DADAO:
+ llvm/lib/CodeGen/SelectionDAG/SelectionDAGBuilder.cpp
+
+Signed-off-by: Guorui Wen <grwen@stu.pku.edu.cn>
+---
+ .../SelectionDAG/SelectionDAGBuilder.cpp      | 39 +++++++++++++++----
+ 1 file changed, 31 insertions(+), 8 deletions(-)
+
+diff --git a/llvm/lib/CodeGen/SelectionDAG/SelectionDAGBuilder.cpp b/llvm/lib/CodeGen/SelectionDAG/SelectionDAGBuilder.cpp
+index 0bdfdac6a65f..a391aed7815c 100644
+--- a/llvm/lib/CodeGen/SelectionDAG/SelectionDAGBuilder.cpp
++++ b/llvm/lib/CodeGen/SelectionDAG/SelectionDAGBuilder.cpp
+@@ -3905,6 +3905,15 @@ void SelectionDAGBuilder::visitGetElementPtr(const User &I) {
+   SDLoc dl = getCurSDLoc();
+   auto &TLI = DAG.getTargetLoweringInfo();
+ 
++  // FIXME: This does not work on GEPs with vectors and fat pointers, but dadao
++  // currently doesn't have a vector unit so that is probably not a problem.
++  bool BP64 = N.getValueType().isBP64();
++  SDValue OrigN = N;
++
++  if (BP64) {
++    N = DAG.getConstant(0, dl, MVT::i64);
++  }
++
+   // Normalize Vector GEP - all scalar operands should be converted to the
+   // splat vector.
+   bool IsVectorGEP = I.getType()->isVectorTy();
+@@ -3915,7 +3924,10 @@ void SelectionDAGBuilder::visitGetElementPtr(const User &I) {
+   if (IsVectorGEP && !N.getValueType().isVector()) {
+     LLVMContext &Context = *DAG.getContext();
+     EVT VT = EVT::getVectorVT(Context, N.getValueType(), VectorElementCount);
+-    N = DAG.getSplat(VT, dl, N);
++    if (VectorElementCount.isScalable())
++      N = DAG.getSplatVector(VT, dl, N);
++    else
++      N = DAG.getSplatBuildVector(VT, dl, N);
+   }
+ 
+   for (gep_type_iterator GTI = gep_type_begin(&I), E = gep_type_end(&I);
+@@ -3975,7 +3987,8 @@ void SelectionDAGBuilder::visitGetElementPtr(const User &I) {
+         if (Offs.isNonNegative() && cast<GEPOperator>(I).isInBounds())
+           Flags.setNoUnsignedWrap(true);
+ 
+-        OffsVal = DAG.getSExtOrTrunc(OffsVal, dl, N.getValueType());
++        if (!(IdxTy == MVT::i64 && N.getValueType() == MVT::bp64))
++          OffsVal = DAG.getSExtOrTrunc(OffsVal, dl, N.getValueType());
+ 
+         N = DAG.getNode(ISD::ADD, dl, N.getValueType(), N, OffsVal, Flags);
+         continue;
+@@ -3987,12 +4000,16 @@ void SelectionDAGBuilder::visitGetElementPtr(const User &I) {
+       if (!IdxN.getValueType().isVector() && IsVectorGEP) {
+         EVT VT = EVT::getVectorVT(*Context, IdxN.getValueType(),
+                                   VectorElementCount);
+-        IdxN = DAG.getSplat(VT, dl, IdxN);
++        if (VectorElementCount.isScalable())
++          IdxN = DAG.getSplatVector(VT, dl, IdxN);
++        else
++          IdxN = DAG.getSplatBuildVector(VT, dl, IdxN);
+       }
+ 
+       // If the index is smaller or larger than intptr_t, truncate or extend
+       // it.
+-      IdxN = DAG.getSExtOrTrunc(IdxN, dl, N.getValueType());
++      if (!(IdxN.getValueType() == MVT::i64 && N.getValueType() == MVT::bp64))
++        IdxN = DAG.getSExtOrTrunc(IdxN, dl, N.getValueType());
+ 
+       if (ElementScalable) {
+         EVT VScaleTy = N.getValueType().getScalarType();
+@@ -4032,6 +4049,10 @@ void SelectionDAGBuilder::visitGetElementPtr(const User &I) {
+     PtrMemTy = MVT::getVectorVT(PtrMemTy, VectorElementCount);
+   }
+ 
++  if (BP64)
++    N = DAG.getNode(ISD::PTRADD, getCurSDLoc(), OrigN.getValueType(), OrigN,
++        N);
++
+   if (PtrMemTy != PtrTy && !cast<GEPOperator>(I).isInBounds())
+     N = DAG.getPtrExtendInReg(N, dl, PtrMemTy);
+ 
+@@ -4185,10 +4206,12 @@ void SelectionDAGBuilder::visitLoad(const LoadInst &I) {
+       Root = Chain;
+       ChainI = 0;
+     }
+-    SDValue A = DAG.getNode(ISD::ADD, dl,
+-                            PtrVT, Ptr,
+-                            DAG.getConstant(Offsets[i], dl, PtrVT),
+-                            Flags);
++    // SDValue A = DAG.getNode(ISD::ADD, dl,
++    //                         PtrVT, Ptr,
++    //                         DAG.getConstant(Offsets[i], dl, PtrVT),
++    //                         Flags);
++    SDValue A =
++        DAG.getMemBasePlusOffset(Ptr, TypeSize::Fixed(Offsets[i]), dl, Flags);
+ 
+     SDValue L = DAG.getLoad(MemVTs[i], dl, Root, A,
+                             MachinePointerInfo(SV, Offsets[i]), Alignment,
+-- 
+2.34.1
+

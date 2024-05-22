@@ -1,0 +1,76 @@
+From 8685ad9144e24857d362e1d9f8b56b6a6f41ca2c Mon Sep 17 00:00:00 2001
+From: Guorui Wen <grwen@stu.pku.edu.cn>
+Date: Wed, 22 May 2024 12:11:27 +0800
+Subject: [PATCH 06/11] DADAO: llvm/lib/CodeGen/SelectionDAG/SelectionDAG.cpp
+
+Signed-off-by: Guorui Wen <grwen@stu.pku.edu.cn>
+---
+ .../lib/CodeGen/SelectionDAG/SelectionDAG.cpp | 24 ++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
+
+diff --git a/llvm/lib/CodeGen/SelectionDAG/SelectionDAG.cpp b/llvm/lib/CodeGen/SelectionDAG/SelectionDAG.cpp
+index 9a3609bc183b..52de61293078 100644
+--- a/llvm/lib/CodeGen/SelectionDAG/SelectionDAG.cpp
++++ b/llvm/lib/CodeGen/SelectionDAG/SelectionDAG.cpp
+@@ -4785,7 +4785,7 @@ bool SelectionDAG::canCreateUndefOrPoison(SDValue Op, const APInt &DemandedElts,
+ }
+ 
+ bool SelectionDAG::isBaseWithConstantOffset(SDValue Op) const {
+-  if ((Op.getOpcode() != ISD::ADD && Op.getOpcode() != ISD::OR) ||
++  if ((Op.getOpcode() != ISD::ADD && Op.getOpcode() != ISD::OR && Op.getOpcode() != ISD::PTRADD) ||
+       !isa<ConstantSDNode>(Op.getOperand(1)))
+     return false;
+ 
+@@ -6156,6 +6156,16 @@ SDValue SelectionDAG::getNode(unsigned Opcode, const SDLoc &DL, EVT VT,
+       return V;
+     break;
+   }
++  case ISD::PTRADD:
++    assert(VT.isBP64() && "PTRADD result must be of bp64 type!");
++    assert(N1.getValueType().isBP64() &&
++           "First PTRADD argument must be of bp64 type!");
++    assert(N2.getValueType().isInteger() &&
++           "Second PTRADD argument must be an integer type!");
++    // ptradd(X, 0) -> X.
++    if (N2C && N2C->isNullValue())
++      return N1;
++    break;
+   case ISD::AND:
+     assert(VT.isInteger() && "This operator does not apply to FP types!");
+     assert(N1.getValueType() == N2.getValueType() &&
+@@ -6899,14 +6909,15 @@ SDValue SelectionDAG::getMemBasePlusOffset(SDValue Base, TypeSize Offset,
+                                            const SDLoc &DL,
+                                            const SDNodeFlags Flags) {
+   EVT VT = Base.getValueType();
++  EVT IndexVT = VT.isBP64() ? MVT::i64 : VT;
+   SDValue Index;
+ 
+   if (Offset.isScalable())
+-    Index = getVScale(DL, Base.getValueType(),
++    Index = getVScale(DL, IndexVT,
+                       APInt(Base.getValueSizeInBits().getFixedValue(),
+                             Offset.getKnownMinValue()));
+   else
+-    Index = getConstant(Offset.getFixedValue(), DL, VT);
++    Index = getConstant(Offset.getFixedValue(), DL, IndexVT);
+ 
+   return getMemBasePlusOffset(Base, Index, DL, Flags);
+ }
+@@ -6915,7 +6926,14 @@ SDValue SelectionDAG::getMemBasePlusOffset(SDValue Ptr, SDValue Offset,
+                                            const SDLoc &DL,
+                                            const SDNodeFlags Flags) {
+   assert(Offset.getValueType().isInteger());
++  if (auto *Constant = dyn_cast<ConstantSDNode>(Offset.getNode())) {
++    if (Constant->isNullValue())
++      return Ptr;
++  }
+   EVT BasePtrVT = Ptr.getValueType();
++  if (BasePtrVT.isBP64()) {
++    return getNode(ISD::PTRADD, DL, BasePtrVT, Ptr, Offset, Flags);
++  }
+   return getNode(ISD::ADD, DL, BasePtrVT, Ptr, Offset, Flags);
+ }
+ 
+-- 
+2.34.1
+

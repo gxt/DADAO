@@ -534,7 +534,7 @@ void DadaoDAGToDAGISel::selectGlobalAddress(SDNode *Node) {
   const GlobalValue *GV = cast<GlobalAddressSDNode>(Node)->getGlobal();
   int64_t Offset = cast<GlobalAddressSDNode>(Node)->getOffset();
   SDValue tga = CurDAG->getTargetGlobalAddress(GV, DL, MVT::i64, Offset);
-  ReplaceNode(Node, CurDAG->getMachineNode(Dadao::RD2RD_ORRI, DL, MVT::i64, tga));
+  ReplaceNode(Node, CurDAG->getMachineNode(Dadao::RD2RD_ORRI, DL, MVT::bp64, tga));
 }
 
 void DadaoDAGToDAGISel::selectConstantPool(SDNode *Node) {
@@ -542,7 +542,7 @@ void DadaoDAGToDAGISel::selectConstantPool(SDNode *Node) {
   ConstantPoolSDNode *N = cast<ConstantPoolSDNode>(Node);
   const Constant *C = N->getConstVal();
   SDValue tcp = CurDAG->getTargetConstantPool(C, MVT::i64, N->getAlign(), N->getOffset());
-  ReplaceNode(Node, CurDAG->getMachineNode(Dadao::RD2RD_ORRI, DL, MVT::i64, tcp));
+  ReplaceNode(Node, CurDAG->getMachineNode(Dadao::RD2RD_ORRI, DL, MVT::bp64, tcp));
 }
 
 // createDadaoISelDag - This pass converts a legalized DAG into a

@@ -79,8 +79,8 @@ DadaoTargetLowering::DadaoTargetLowering(const TargetMachine &TM,
                                          const DadaoSubtarget &STI)
     : TargetLowering(TM) {
   // Set up the register classes.
-  addRegisterClass(MVT::i64, &Dadao::GPRBRegClass);
   addRegisterClass(MVT::i64, &Dadao::GPRDRegClass);
+  addRegisterClass(MVT::bp64, &Dadao::GPRBRegClass);
 
   // Compute derived properties from the register classes
   TRI = STI.getRegisterInfo();
@@ -89,11 +89,14 @@ DadaoTargetLowering::DadaoTargetLowering(const TargetMachine &TM,
   setStackPointerRegisterToSaveRestore(Dadao::RBSP);
 
   setOperationAction(ISD::BR_CC, MVT::i64, Custom);
+  setOperationAction(ISD::BR_CC, MVT::bp64, Custom);
   setOperationAction(ISD::BR_JT, MVT::Other, Expand);
   setOperationAction(ISD::BRCOND, MVT::Other, Expand);
   setOperationAction(ISD::SETCC, MVT::i64, Custom);
+  setOperationAction(ISD::SETCC, MVT::bp64, Custom);
   setOperationAction(ISD::SELECT, MVT::i64, Expand);
   setOperationAction(ISD::SELECT_CC, MVT::i64, Custom);
+  setOperationAction(ISD::SELECT_CC, MVT::bp64, Custom);
 
   setOperationAction(ISD::GlobalAddress, MVT::i64, Legal);
   setOperationAction(ISD::BlockAddress, MVT::i64, Custom);
@@ -457,10 +460,12 @@ SDValue DadaoTargetLowering::LowerCCCArguments(
 
   for (unsigned i = 0, e = ArgLocs.size(); i != e; ++i) {
     CCValAssign &VA = ArgLocs[i];
+    // Currently Flags.setInReg() is always called. See DadaoTargetLowering::LowerCall above.
     if (VA.isRegLoc()) {
       // Arguments passed in registers
       EVT RegVT = VA.getLocVT();
       switch (RegVT.getSimpleVT().SimpleTy) {
+      case MVT::bp64:
       case MVT::i64: {
         Register VReg = RegInfo.createVirtualRegister(&Dadao::GPRDRegClass);
         RegInfo.addLiveIn(VA.getLocReg(), VReg);
@@ -493,6 +498,7 @@ SDValue DadaoTargetLowering::LowerCCCArguments(
       // Load the argument to a virtual register
       unsigned ObjSize = VA.getLocVT().getSizeInBits() / 8;
       // Check that the argument fits in stack slot
+      // TODO: Should be changed to if (ObjSize > 8) ?
       if (ObjSize > 4) {
         errs() << "LowerFormalArguments Unhandled argument type: "
                << EVT(VA.getLocVT()).getEVTString() << "\n";
@@ -502,7 +508,8 @@ SDValue DadaoTargetLowering::LowerCCCArguments(
 
       // Create the SelectionDAG nodes corresponding to a load
       // from this parameter
-      SDValue FIN = DAG.getFrameIndex(FI, MVT::i64);
+      EVT PtrTy = getPointerTy(DAG.getDataLayout());
+      SDValue FIN = DAG.getFrameIndex(FI, PtrTy);
       InVals.push_back(DAG.getLoad(
           VA.getLocVT(), DL, Chain, FIN,
           MachinePointerInfo::getFixedStack(DAG.getMachineFunction(), FI)));
@@ -851,8 +858,13 @@ SDValue DadaoTargetLowering::LowerCallResult(
   // Copy all of the result registers out of their specified physreg.
   for (unsigned I = 0; I != RVLocs.size(); ++I) {
     Chain = DAG.getCopyFromReg(Chain, DL, RVLocs[I].getLocReg(),
-                               RVLocs[I].getValVT(), InFlag)
+                               MVT::i64, InFlag)
                 .getValue(1);
+    if (RVLocs[I].getValVT() != MVT::i64) {
+      assert(RVLocs[I].getValVT() == MVT::bp64 && "Unsupported retval type conversion");
+      Chain = SDValue(DAG.getMachineNode(Dadao::RD2RB_ORRI, DL, MVT::bp64, MVT::Other, MVT::Glue,
+       {Chain.getValue(0), Chain, Chain.getValue(2)}), 1);
+    }
     InFlag = Chain.getValue(2);
     InVals.push_back(Chain.getValue(0));
   }

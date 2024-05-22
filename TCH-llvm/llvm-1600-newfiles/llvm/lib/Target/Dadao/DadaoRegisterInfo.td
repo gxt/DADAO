@@ -64,7 +64,7 @@ def GPRD : RegisterClass<"Dadao", [i64], 64,
      RD0, RDZERO                    // constant 0
     )>;
 
-def GPRB : RegisterClass<"Dadao", [i64], 64,
+def GPRB : RegisterClass<"Dadao", [i64, bp64], 64,
     (add
      (sequence "RB%i", 16, 31),     // temporary registers
      (sequence "RB%i", 32, 63),     // callee saved registers

@@ -1,0 +1,30 @@
+From fb433f3917a61660301d1139182326e4878f1582 Mon Sep 17 00:00:00 2001
+From: Guorui Wen <grwen@stu.pku.edu.cn>
+Date: Wed, 22 May 2024 12:11:27 +0800
+Subject: [PATCH 09/11] DADAO: llvm/lib/CodeGen/SelectionDAG/TargetLowering.cpp
+
+Signed-off-by: Guorui Wen <grwen@stu.pku.edu.cn>
+---
+ llvm/lib/CodeGen/SelectionDAG/TargetLowering.cpp | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/llvm/lib/CodeGen/SelectionDAG/TargetLowering.cpp b/llvm/lib/CodeGen/SelectionDAG/TargetLowering.cpp
+index 8d4c8802f71c..190a5bebd212 100644
+--- a/llvm/lib/CodeGen/SelectionDAG/TargetLowering.cpp
++++ b/llvm/lib/CodeGen/SelectionDAG/TargetLowering.cpp
+@@ -8515,12 +8515,6 @@ SDValue TargetLowering::expandCTTZ(SDNode *Node, SelectionDAG &DAG) const {
+                         !isOperationLegalOrCustomOrPromote(ISD::XOR, VT)))
+     return SDValue();
+ 
+-  // Emit Table Lookup if ISD::CTLZ and ISD::CTPOP are not legal.
+-  if (!VT.isVector() && isOperationExpand(ISD::CTPOP, VT) &&
+-      !isOperationLegal(ISD::CTLZ, VT))
+-    if (SDValue V = CTTZTableLookup(Node, DAG, dl, VT, Op, NumBitsPerElt))
+-      return V;
+-
+   // for now, we use: { return popcount(~x & (x - 1)); }
+   // unless the target has ctlz but not ctpop, in which case we use:
+   // { return 32 - nlz(~x & (x-1)); }
+-- 
+2.34.1
+

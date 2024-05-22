@@ -1,0 +1,59 @@
+From f52de1168a4a539c90a87313ea7aaf35f78e83d3 Mon Sep 17 00:00:00 2001
+From: Guorui Wen <grwen@stu.pku.edu.cn>
+Date: Wed, 22 May 2024 12:06:26 +0800
+Subject: [PATCH 04/11] DADAO: llvm/include/llvm/Support/MachineValueType.h
+
+Signed-off-by: Guorui Wen <grwen@stu.pku.edu.cn>
+---
+ llvm/include/llvm/Support/MachineValueType.h | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/llvm/include/llvm/Support/MachineValueType.h b/llvm/include/llvm/Support/MachineValueType.h
+index d7ad32737a45..d10726ca48a0 100644
+--- a/llvm/include/llvm/Support/MachineValueType.h
++++ b/llvm/include/llvm/Support/MachineValueType.h
+@@ -292,8 +292,10 @@ namespace llvm {
+       x86amx         = 194,    // This is an X86 AMX value
+       i64x8          = 195,    // 8 Consecutive GPRs (AArch64)
+ 
++      bp64       = 196,    // Dadao's pointer type
++
+       FIRST_VALUETYPE =  1,    // This is always the beginning of the list.
+-      LAST_VALUETYPE = i64x8,  // This always remains at the end of the list.
++      LAST_VALUETYPE = bp64,  // This always remains at the end of the list.
+       VALUETYPE_SIZE = LAST_VALUETYPE + 1,
+ 
+       // This is the current maximum for LAST_VALUETYPE.
+@@ -373,13 +375,19 @@ namespace llvm {
+               (SimpleTy >= MVT::FIRST_INTEGER_FIXEDLEN_VECTOR_VALUETYPE &&
+                SimpleTy <= MVT::LAST_INTEGER_FIXEDLEN_VECTOR_VALUETYPE) ||
+               (SimpleTy >= MVT::FIRST_INTEGER_SCALABLE_VECTOR_VALUETYPE &&
+-               SimpleTy <= MVT::LAST_INTEGER_SCALABLE_VECTOR_VALUETYPE));
++               SimpleTy <= MVT::LAST_INTEGER_SCALABLE_VECTOR_VALUETYPE) ||
++               SimpleTy == MVT::bp64);
++    }
++
++    bool isBP64() const {
++      return SimpleTy == MVT::bp64;
+     }
+ 
+     /// Return true if this is an integer, not including vectors.
+     bool isScalarInteger() const {
+       return (SimpleTy >= MVT::FIRST_INTEGER_VALUETYPE &&
+-              SimpleTy <= MVT::LAST_INTEGER_VALUETYPE);
++              SimpleTy <= MVT::LAST_INTEGER_VALUETYPE) ||
++              SimpleTy == MVT::bp64;
+     }
+ 
+     /// Return true if this is a vector value type.
+@@ -1126,6 +1134,7 @@ namespace llvm {
+       case v2048f32:  return TypeSize::Fixed(65536);
+       case funcref:
+       case externref: return TypeSize::Fixed(0); // opaque type
++      case bp64:  return TypeSize::Fixed(64);
+       }
+     }
+ 
+-- 
+2.34.1
+

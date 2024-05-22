@@ -1,0 +1,26 @@
+From 2a2de9804d885ad8768d52ef66425e0f92fa4090 Mon Sep 17 00:00:00 2001
+From: Guorui Wen <grwen@stu.pku.edu.cn>
+Date: Wed, 22 May 2024 12:05:00 +0800
+Subject: [PATCH 01/11] DADAO: llvm/include/llvm/CodeGen/ISDOpcodes.h
+
+Signed-off-by: Guorui Wen <grwen@stu.pku.edu.cn>
+---
+ llvm/include/llvm/CodeGen/ISDOpcodes.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/llvm/include/llvm/CodeGen/ISDOpcodes.h b/llvm/include/llvm/CodeGen/ISDOpcodes.h
+index 157247dfba98..261a232756c4 100644
+--- a/llvm/include/llvm/CodeGen/ISDOpcodes.h
++++ b/llvm/include/llvm/CodeGen/ISDOpcodes.h
+@@ -1228,6 +1228,8 @@ enum NodeType {
+   LIFETIME_START,
+   LIFETIME_END,
+ 
++  PTRADD,
++
+   /// GC_TRANSITION_START/GC_TRANSITION_END - These operators mark the
+   /// beginning and end of GC transition  sequence, and carry arbitrary
+   /// information that target might need for lowering.  The first operand is
+-- 
+2.34.1
+

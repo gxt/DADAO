@@ -100,6 +100,19 @@ public:
 
   SDValue PerformDAGCombine(SDNode *N, DAGCombinerInfo &DCI) const override;
 
+  MVT getPointerTy(const DataLayout &DL, uint32_t AS = 0) const override {
+    return MVT::bp64;
+  }
+
+  MVT getPointerMemTy(const DataLayout &DL, uint32_t AS = 0) const override {
+    return MVT::bp64;
+  }
+
+  EVT getSetCCResultType(const DataLayout &DL, LLVMContext &,
+                                             EVT VT) const override {
+    return MVT::i64;
+  }
+
   void computeKnownBitsForTargetNode(const SDValue Op, KnownBits &Known,
                                      const APInt &DemandedElts,
                                      const SelectionDAG &DAG,

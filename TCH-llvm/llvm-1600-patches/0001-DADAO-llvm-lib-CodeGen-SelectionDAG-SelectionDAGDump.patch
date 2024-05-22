@@ -1,0 +1,26 @@
+From aab299df703cd75e52afc9fac1ec0b623c87ab87 Mon Sep 17 00:00:00 2001
+From: Guorui Wen <grwen@stu.pku.edu.cn>
+Date: Wed, 22 May 2024 12:11:27 +0800
+Subject: [PATCH 08/11] DADAO:
+ llvm/lib/CodeGen/SelectionDAG/SelectionDAGDumper.cpp
+
+Signed-off-by: Guorui Wen <grwen@stu.pku.edu.cn>
+---
+ llvm/lib/CodeGen/SelectionDAG/SelectionDAGDumper.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/llvm/lib/CodeGen/SelectionDAG/SelectionDAGDumper.cpp b/llvm/lib/CodeGen/SelectionDAG/SelectionDAGDumper.cpp
+index fe4261291fc5..ac6ceb5efda4 100644
+--- a/llvm/lib/CodeGen/SelectionDAG/SelectionDAGDumper.cpp
++++ b/llvm/lib/CodeGen/SelectionDAG/SelectionDAGDumper.cpp
+@@ -143,6 +143,7 @@ std::string SDNode::getOperationName(const SelectionDAG *G) const {
+   case ISD::TargetIndex:                return "TargetIndex";
+   case ISD::ExternalSymbol:             return "ExternalSymbol";
+   case ISD::BlockAddress:               return "BlockAddress";
++  case ISD::PTRADD:                     return "PTRADD";
+   case ISD::INTRINSIC_WO_CHAIN:
+   case ISD::INTRINSIC_VOID:
+   case ISD::INTRINSIC_W_CHAIN: {
+-- 
+2.34.1
+

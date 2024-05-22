@@ -1,0 +1,25 @@
+From a92f4094a4edfca0c688f6e2c598f12530d77467 Mon Sep 17 00:00:00 2001
+From: Guorui Wen <grwen@stu.pku.edu.cn>
+Date: Wed, 22 May 2024 12:05:57 +0800
+Subject: [PATCH 03/11] DADAO: llvm/include/llvm/CodeGen/ValueTypes.td
+
+Signed-off-by: Guorui Wen <grwen@stu.pku.edu.cn>
+---
+ llvm/include/llvm/CodeGen/ValueTypes.td | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/llvm/include/llvm/CodeGen/ValueTypes.td b/llvm/include/llvm/CodeGen/ValueTypes.td
+index c22553855c55..aa9e17af1de5 100644
+--- a/llvm/include/llvm/CodeGen/ValueTypes.td
++++ b/llvm/include/llvm/CodeGen/ValueTypes.td
+@@ -236,6 +236,7 @@ def funcref   : ValueType<0,    192>;  // WebAssembly's funcref type
+ def externref : ValueType<0,    193>;  // WebAssembly's externref type
+ def x86amx    : ValueType<8192, 194>;  // X86 AMX value
+ def i64x8     : ValueType<512,  195>;  // 8 Consecutive GPRs (AArch64)
++def bp64  : ValueType<64,   196>;  // Dadao's pointer type
+ 
+ def token      : ValueType<0, 248>;  // TokenTy
+ def MetadataVT : ValueType<0, 249>;  // Metadata
+-- 
+2.34.1
+

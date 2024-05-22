@@ -1,0 +1,26 @@
+From bf9d921b5d2e0de8e205fbc0aa060d2412095117 Mon Sep 17 00:00:00 2001
+From: Guorui Wen <grwen@stu.pku.edu.cn>
+Date: Wed, 22 May 2024 12:11:27 +0800
+Subject: [PATCH 05/11] DADAO: llvm/include/llvm/Target/TargetSelectionDAG.td
+
+Signed-off-by: Guorui Wen <grwen@stu.pku.edu.cn>
+---
+ llvm/include/llvm/Target/TargetSelectionDAG.td | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/llvm/include/llvm/Target/TargetSelectionDAG.td b/llvm/include/llvm/Target/TargetSelectionDAG.td
+index a841cf7eb070..03a757fc3145 100644
+--- a/llvm/include/llvm/Target/TargetSelectionDAG.td
++++ b/llvm/include/llvm/Target/TargetSelectionDAG.td
+@@ -375,7 +375,7 @@ def tblockaddress: SDNode<"ISD::TargetBlockAddress",  SDTPtrLeaf, [],
+ 
+ def add        : SDNode<"ISD::ADD"       , SDTIntBinOp   ,
+                         [SDNPCommutative, SDNPAssociative]>;
+-def ptradd     : SDNode<"ISD::ADD"       , SDTPtrAddOp, []>;
++def ptradd     : SDNode<"ISD::PTRADD"       , SDTPtrAddOp, []>;
+ def sub        : SDNode<"ISD::SUB"       , SDTIntBinOp>;
+ def mul        : SDNode<"ISD::MUL"       , SDTIntBinOp,
+                         [SDNPCommutative, SDNPAssociative]>;
+-- 
+2.34.1
+

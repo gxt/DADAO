@@ -1,0 +1,25 @@
+From c3dc43f4e78cd24caaa2db3ba41d9399a14000dd Mon Sep 17 00:00:00 2001
+From: Guorui Wen <grwen@stu.pku.edu.cn>
+Date: Wed, 22 May 2024 12:11:27 +0800
+Subject: [PATCH 11/11] DADAO: llvm/utils/TableGen/CodeGenTarget.cpp
+
+Signed-off-by: Guorui Wen <grwen@stu.pku.edu.cn>
+---
+ llvm/utils/TableGen/CodeGenTarget.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/llvm/utils/TableGen/CodeGenTarget.cpp b/llvm/utils/TableGen/CodeGenTarget.cpp
+index b7240f01300c..d4e68392081a 100644
+--- a/llvm/utils/TableGen/CodeGenTarget.cpp
++++ b/llvm/utils/TableGen/CodeGenTarget.cpp
+@@ -258,6 +258,7 @@ StringRef llvm::getEnumName(MVT::SimpleValueType T) {
+   case MVT::Untyped:   return "MVT::Untyped";
+   case MVT::funcref:   return "MVT::funcref";
+   case MVT::externref: return "MVT::externref";
++  case MVT::bp64: return "MVT::bp64";
+   default: llvm_unreachable("ILLEGAL VALUE TYPE!");
+   }
+   // clang-format on
+-- 
+2.34.1
+

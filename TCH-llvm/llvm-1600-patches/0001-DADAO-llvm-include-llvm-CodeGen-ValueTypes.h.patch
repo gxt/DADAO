@@ -1,0 +1,28 @@
+From 995565b995cc761fe88d2bb3d2aea7229118f359 Mon Sep 17 00:00:00 2001
+From: Guorui Wen <grwen@stu.pku.edu.cn>
+Date: Wed, 22 May 2024 12:05:27 +0800
+Subject: [PATCH 02/11] DADAO: llvm/include/llvm/CodeGen/ValueTypes.h
+
+Signed-off-by: Guorui Wen <grwen@stu.pku.edu.cn>
+---
+ llvm/include/llvm/CodeGen/ValueTypes.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/llvm/include/llvm/CodeGen/ValueTypes.h b/llvm/include/llvm/CodeGen/ValueTypes.h
+index af4c8ab40e82..f1b56c1055bb 100644
+--- a/llvm/include/llvm/CodeGen/ValueTypes.h
++++ b/llvm/include/llvm/CodeGen/ValueTypes.h
+@@ -145,6 +145,10 @@ namespace llvm {
+       return isSimple() ? V.isInteger() : isExtendedInteger();
+     }
+ 
++    bool isBP64() const {
++      return isSimple() && V.isBP64();
++    }
++
+     /// Return true if this is an integer, but not a vector.
+     bool isScalarInteger() const {
+       return isSimple() ? V.isScalarInteger() : isExtendedScalarInteger();
+-- 
+2.34.1
+
