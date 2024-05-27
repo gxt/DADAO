@@ -81,9 +81,12 @@ endif
 
 endef
 
-$(eval $(call compile_template,ddrd, -Xassembler --multiple-to-single ))
-$(eval $(call compile_template,ddrb, -Xassembler --multiple-to-single ))
-$(eval $(call compile_template,ddrf, -Xassembler --multiple-to-single ))
+#$(eval $(call compile_template,ddrd, -Xassembler --multiple-to-single ))
+#$(eval $(call compile_template,ddrb, -Xassembler --multiple-to-single ))
+#$(eval $(call compile_template,ddrf, -Xassembler --multiple-to-single ))
+$(eval $(call compile_template,ddrd, ))
+$(eval $(call compile_template,ddrb, ))
+$(eval $(call compile_template,ddrf, ))
 
 tests_dump = $(addsuffix .dump, $(tests))
 tests_hex = $(addsuffix .hex, $(tests))
