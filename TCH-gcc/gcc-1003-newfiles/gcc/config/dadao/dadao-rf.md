@@ -57,19 +57,19 @@
   [(set       (match_operand:SFDF 0 "rf_class_operand" "= Rf")
     (abs:SFDF (match_operand:SFDF 1 "rf_class_operand" "  Rf")))]
 	""
-	"<ftfo>abs	%0, %1, 0")
+	"<ftfo>sgnj	%0, %1, rf0")
 
 (define_insn "neg<mode>2"
   [(set       (match_operand:SFDF 0 "rf_class_operand" "= Rf")
     (neg:SFDF (match_operand:SFDF 1 "rf_class_operand" "  Rf")))]
 	""
-	"<ftfo>neg	%0, %1, 0")
+	"<ftfo>sgnn	%0, %1, %1")
 
 (define_insn "sqrt<mode>2"
   [(set        (match_operand:SFDF 0 "rf_class_operand" "= Rf")
     (sqrt:SFDF (match_operand:SFDF 1 "rf_class_operand" "  Rf")))]
 	""
-	"<ftfo>sqrt	%0, %1, 0")
+	"<ftfo>sqrt	%0, %1, 1")
 
 ;; TODO
 ;; Floating-point <--> Fixed-point converting insn pattern
@@ -80,32 +80,32 @@
     (float:SFDF (match_operand:DI   1 "register_operand" " Rd,Rd")))]
 	""
 	"@
-	rd2<ftfo>\trf7, %1, 1\t\;rf2rd\t%0, rf7, 1
-	rd2<ftfo>\t%0, %1, 1")
+	io2<ftfo>\trf7, %1, 1\t\;rf2rd\t%0, rf7, 1
+	io2<ftfo>\t%0, %1, 1")
 
 (define_insn "floatunsdi<mode>2"
   [(set                  (match_operand:SFDF 0 "register_operand" "=Rd,Rf")
     (unsigned_float:SFDF (match_operand:DI   1 "register_operand" " Rd,Rd")))]
 	""
 	"@
-	rd2<ftfo>\trf7, %1, 1\t\;rf2rd\t%0, rf7, 1
-	rd2<ftfo>\t%0, %1, 1")
+	io2<ftfo>\trf7, %1, 1\t\;rf2rd\t%0, rf7, 1
+	io2<ftfo>\t%0, %1, 1")
 
 (define_insn "fix_trunc<mode>di2"
   [(set     (match_operand:DI   0 "register_operand" "=Rd,Rd")
     (fix:DI (match_operand:SFDF 1 "register_operand" " Rf,Rd")))]
 	""
 	"@
-	<ftfo>2rd\t%0, %1, 1
-	rd2<ftfo>\trf7, %1, 1\t\;rf2rd\t%0, rf7, 1")
+	<ftfo>2io\t%0, %1, 1
+	io2<ftfo>\trf7, %1, 1\t\;rf2rd\t%0, rf7, 1")
 
 (define_insn "fixuns_trunc<mode>di2"
   [(set              (match_operand:DI   0 "register_operand" "=Rd,Rd")
     (unsigned_fix:DI (match_operand:SFDF 1 "register_operand" " Rf,Rd")))]
 	""
 	"@
-	<ftfo>2rd\t%0, %1, 1
-	rd2<ftfo>\trf7, %1, 1\t\;rf2rd\t%0, rf7, 1")
+	<ftfo>2io\t%0, %1, 1
+	io2<ftfo>\trf7, %1, 1\t\;rf2rd\t%0, rf7, 1")
 
 (define_insn "truncdfsf2"
   [(set                (match_operand:SF 0 "rf_class_operand" "= Rf")
@@ -119,12 +119,12 @@
 	""
 	"ft2fo	%0, %1, 1")
 
-(define_insn "*fcmp_<ccff_type_insn>_<mode>"
+(define_insn "*fcmp_<mode>"
   [(set             (match_operand:CCFF 0 "rd_class_operand" "= Rd")
     (CCFF_TYPE:CCFF (match_operand:SFDF 1 "rf_class_operand" "  Rf")
                     (match_operand:SFDF 2 "rf_class_operand" "  Rf")))]
 	""
-	"<ftfo>c<ccff_type_insn>	%0, %1, %2")
+	"<ftfo>qcmp	%0, %1, %2")
 
 (define_insn "*br_ccff"
   [(set (pc)

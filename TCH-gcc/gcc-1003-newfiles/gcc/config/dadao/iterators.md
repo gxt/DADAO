@@ -26,4 +26,4 @@
 (define_code_attr	ccuu_type_insn	[(eq "z") (ne "nz") (ltu "n") (leu "np") (gtu "p") (geu "nn")])
 
 (define_code_iterator	CCFF_TYPE	[eq ne lt le gt ge ordered unordered])
-(define_code_attr	ccff_type_insn	[(eq "eq") (ne "ne") (lt "lt") (le "le") (gt "gt") (ge "ge") (ordered "or") (unordered "un")])
+(define_code_attr	ccff_type_insn	[(eq "nz") (ne "z") (lt "nn") (le "p") (gt "np") (ge "n") (ordered "or") (unordered "un")])
