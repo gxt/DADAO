@@ -499,7 +499,7 @@ def LDO_RRII  : LOAD_RRII<0b00110011, "ldo",  GPRD, load, i64>;
 def LDBU_RRII : LOAD_RRII<0b01000000, "ldbu", GPRD, zextloadi8,  i64>;
 def LDWU_RRII : LOAD_RRII<0b01000001, "ldwu", GPRD, zextloadi16, i64>;
 def LDTU_RRII : LOAD_RRII<0b01000010, "ldtu", GPRD, zextloadi32, i64>;
-def LDRB_RRII : LOAD_RRII<0b01000011, "ldrb", GPRB, load, bp64>;
+def LDO_RB_RRII : LOAD_RRII<0b01000011, "ldo", GPRB, load, bp64>;
 
 class LOAD_RRRI<bits<8> majorop, string OpcString, RegisterClass GPRx, PatFrag OpNode, ValueType Ty>
   : Inst_RRRI<majorop, (outs GPRx:$RxHa), (ins MEM_RRRI:$src),
@@ -543,7 +543,7 @@ def STB_RRII  : STORE_RRII<0b00111000, "stb",  GPRD, truncstorei8,  i64>;
 def STW_RRII  : STORE_RRII<0b00111001, "stw",  GPRD, truncstorei16, i64>;
 def STT_RRII  : STORE_RRII<0b00111010, "stt",  GPRD, truncstorei32, i64>;
 def STO_RRII  : STORE_RRII<0b00111011, "sto",  GPRD, store, i64>;
-def STRB_RRII : STORE_RRII<0b01001011, "strb", GPRB, store, bp64>;
+def STO_RB_RRII : STORE_RRII<0b01001011, "sto", GPRB, store, bp64>;
 
 class STORE_RRRI<bits<8> majorop, string OpcString, RegisterClass GPRx, PatFrag OpNode, ValueType Ty>
   : Inst_RRRI<majorop, (outs), (ins GPRx:$RxHa, MEM_RRRI:$dst),

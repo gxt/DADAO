@@ -6,8 +6,8 @@ setjmp:
 	setzw	rd16, w0, 0
 
 	#stmrb	rb1, rb8, rd16, 2
-	strb	rb1, rb8, 0
-	strb	rb2, rb8, 8
+	sto	rb1, rb8, 0
+	sto	rb2, rb8, 8
 	addi	rd16, rd16, 2*8
 
 	stmo	rd32, rb8, rd16, 32
@@ -30,8 +30,8 @@ longjmp:
 	setzw	rd16, w0, 0
 
 	#ldmrb	rb1, rb8, rd16, 2
-	ldrb	rb1, rb8, 0
-	ldrb	rb2, rb8, 8
+	ldo	rb1, rb8, 0
+	ldo	rb2, rb8, 8
 	addi	rd16, rd16, 2*8
 
 	ldmo	rd32, rb8, rd16, 32

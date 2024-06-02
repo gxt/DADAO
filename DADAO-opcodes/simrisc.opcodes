@@ -21,8 +21,8 @@ stt	00111010
 sto	00111011
 
 & @mem rb@ha rb@hb
-ldrb	01000011		&& (ha!=000000)
-strb	01001011
+ldo	01000011		&& (ha!=000000)
+sto	01001011
 
 & @mem rf@ha rb@hb
 ldft	01010010

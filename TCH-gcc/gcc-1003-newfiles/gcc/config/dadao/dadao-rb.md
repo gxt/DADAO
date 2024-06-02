@@ -84,7 +84,7 @@
 	""
 	"@
 	ldmrb	%0, %1, 1
-	ldrb	%0, %1")
+	ldo	%0, %1")
 
 (define_insn "dd_st_rb"
   [(set (match_operand:DI 0 "memory_operand"  "=Wg, m")
@@ -92,7 +92,7 @@
 	""
 	"@
 	stmrb	%1, %0, 1
-	strb	%1, %0")
+	sto	%1, %0")
 
 (define_insn "dd_ldrbimm"
   [(set (match_operand:DI 0 "rb_class_operand" "=Rb")

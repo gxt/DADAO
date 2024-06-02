@@ -38,10 +38,10 @@ Disassembly of section .text:
   78:	3d00107f 	stmw	rd0, rb1, rd1, 0x3f
   7c:	3e00107f 	stmt	rd0, rb1, rd1, 0x3f
   80:	3f00107f 	stmo	rd0, rb1, rd1, 0x3f
-  84:	430427ff 	ldrb	rb1, rb2, 2047
-  88:	43042800 	ldrb	rb1, rb2, -2048
-  8c:	4b0427ff 	strb	rb1, rb2, 2047
-  90:	4b042800 	strb	rb1, rb2, -2048
+  84:	430427ff 	ldo	rb1, rb2, 2047
+  88:	43042800 	ldo	rb1, rb2, -2048
+  8c:	4b0427ff 	sto	rb1, rb2, 2047
+  90:	4b042800 	sto	rb1, rb2, -2048
   94:	4700107f 	ldmrb	rb0, rb1, rd1, 0x3f
   98:	4f00107f 	stmrb	rb0, rb1, rd1, 0x3f
   9c:	520417ff 	ldft	rf1, rb1, 2047

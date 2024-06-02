@@ -5,7 +5,7 @@
 	.global _start
 _start:
 	addi	rb1, rb1, -8
-	strb	rb2, rb1, 0
+	sto	rb2, rb1, 0
 	rb2rb	rb2, rb1, 1
 	addi	rb2, rb2, 8
 
@@ -25,7 +25,7 @@ _start:
 
 	call	_fini
 
-	ldrb    rb2, rb1, 0
+	ldo    rb2, rb1, 0
 	addi	rb1, rb1, 8
 
 	# across the procedure call of _fini

@@ -65,12 +65,12 @@ static unsigned getRRRIOpcodeVariant(unsigned Opcode) {
   case Dadao::LDTS_RRII: return Dadao::LDMTS_RRRI;
   case Dadao::LDTU_RRII: return Dadao::LDMTU_RRRI;
   case Dadao::LDO_RRII:  return Dadao::LDMO_RRRI;
-  case Dadao::LDRB_RRII: return Dadao::LDMRB_RRRI;
+  case Dadao::LDO_RB_RRII: return Dadao::LDMRB_RRRI;
   case Dadao::STB_RRII:  return Dadao::STMB_RRRI;
   case Dadao::STW_RRII:  return Dadao::STMW_RRRI;
   case Dadao::STT_RRII:  return Dadao::STMT_RRRI;
   case Dadao::STO_RRII:  return Dadao::STMO_RRRI;
-  case Dadao::STRB_RRII: return Dadao::STMRB_RRRI;
+  case Dadao::STO_RB_RRII: return Dadao::STMRB_RRRI;
   default:
     llvm_unreachable("Opcode has no RRRI variant");
   }

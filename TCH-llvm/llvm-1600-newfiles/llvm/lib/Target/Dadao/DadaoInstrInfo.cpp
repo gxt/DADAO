@@ -80,7 +80,7 @@ void DadaoInstrInfo::storeRegToStackSlot(
     Opcode = Dadao::STO_RRII;
   }
   else if (Dadao::GPRBRegClass.hasSubClassEq(RegisterClass)) {
-    Opcode = Dadao::STRB_RRII;
+    Opcode = Dadao::STO_RB_RRII;
   }
   else {
     llvm_unreachable("Can't store this register to stack slot");
@@ -106,7 +106,7 @@ void DadaoInstrInfo::loadRegFromStackSlot(
     Opcode = Dadao::LDO_RRII;
   }
   else if (Dadao::GPRBRegClass.hasSubClassEq(RegisterClass)) {
-    Opcode = Dadao::LDRB_RRII;
+    Opcode = Dadao::LDO_RB_RRII;
   }
   else {
     llvm_unreachable("Can't load this register from stack slot");

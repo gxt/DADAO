@@ -162,7 +162,7 @@ void DadaoAsmPrinter::emitCallInstruction(const MachineInstr *MI) {
 
 //   // Push rbca onto the stack.
 //   //   st %rbca, [--%rbsp]
-//   OutStreamer->emitInstruction(MCInstBuilder(Dadao::STRB_RRII)
+//   OutStreamer->emitInstruction(MCInstBuilder(Dadao::STO_RB_RRII)
 //                                    .addReg(Dadao::RBCA)
 //                                    .addReg(Dadao::RBSP)
 //                                    .addImm(-8),

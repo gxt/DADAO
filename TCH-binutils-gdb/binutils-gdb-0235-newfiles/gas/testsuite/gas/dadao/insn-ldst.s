@@ -39,10 +39,10 @@ _start:
 	stmt	rd0, rb1, rd1, 63
 	stmo	rd0, rb1, rd1, 63
 
-	ldrb	rb1, rb2, 2047
-	ldrb	rb1, rb2, -2048
-	strb	rb1, rb2, 2047
-	strb	rb1, rb2, -2048
+	ldo	rb1, rb2, 2047
+	ldo	rb1, rb2, -2048
+	sto	rb1, rb2, 2047
+	sto	rb1, rb2, -2048
 
 	ldmrb	rb0, rb1, rd1, 63
 	stmrb	rb0, rb1, rd1, 63
