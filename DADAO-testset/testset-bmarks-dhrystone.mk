@@ -5,7 +5,7 @@ TESTSET_DHRYSTONE_QEMU_TARGET	:= $(DIR_DADAO_TARGET)/testset-dhrystone-qemu/
 TESTSET_DHRYSTONE_BARE_LOG		:= $(DIR_DADAO_LOG)/testset-dhrystone-bare.log
 TESTSET_DHRYSTONE_QEMU_LOG		:= $(DIR_DADAO_LOG)/testset-dhrystone-qemu.log
 
-testset-dhrystone-bare-highfive:	runtime-common-headers
+testset-dhrystone-bare-highfive:
 	#
 	# TARGET DIR: $(TESTSET_DHRYSTONE_BARE_TARGET)
 	# NOTE: ONLY dhrystone here

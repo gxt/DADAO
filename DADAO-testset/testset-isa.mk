@@ -4,7 +4,7 @@ TESTSET_ISA_QEMU_TARGET		:= $(DIR_DADAO_TARGET)/testset-isa-qemu
 TESTSET_ISA_BARE_LOG		:= $(DIR_DADAO_LOG)/testset-isa-bare.log
 TESTSET_ISA_QEMU_LOG		:= $(DIR_DADAO_LOG)/testset-isa-qemu.log
 
-testset-isa-bare-highfive:	runtime-common-headers
+testset-isa-bare-highfive:
 	#
 	# TARGET DIR: $(TESTSET_ISA_BARE_TARGET)
 	# NOTE: CAN ONLY RUN ONE BY ONE, so add j1 option for make
@@ -23,7 +23,7 @@ testset-isa-bare-highfive:	runtime-common-headers
 	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_BARE_TARGET) run-bare	>> $(TESTSET_ISA_BARE_LOG)
 	@ln -s -t $(TESTSET_ISA_BARE_TARGET) $(TESTSET_ISA_BARE_LOG)
 
-testset-isa-qemu-highfive:	runtime-common-headers
+testset-isa-qemu-highfive:
 	#
 	# TARGET DIR: $(TESTSET_ISA_QEMU_TARGET)
 	# NOTE: CAN ONLY RUN ONE BY ONE, so add j1 option for make

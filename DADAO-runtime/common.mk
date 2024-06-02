@@ -42,7 +42,3 @@ DADAO_LLVM_READOBJ		:= $(DIR_DADAO_BUILD)/llvm-1600/bin/llvm-readobj
 DADAO_LLVM_OBJDUMP		:= $(DIR_DADAO_BUILD)/llvm-1600/bin/llvm-objdump
 DADAO_LLVM_LLD			:= $(DIR_DADAO_BUILD)/llvm-1600/bin/ld.lld
 
-runtime-common-headers:
-	@test -d $(DIR_DADAO_TARGET)/include/ || mkdir --parents $(DIR_DADAO_TARGET)/include/
-	@ln -sf -t $(DIR_DADAO_TARGET)/include/ $(DIR_DADAO_TOP)/DADAO-runtime/include/*
-

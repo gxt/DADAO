@@ -2,7 +2,7 @@
 RUNTIME_BOOTROM_SOURCE		:= $(DIR_DADAO_TOP)/DADAO-runtime/bootrom/
 RUNTIME_BOOTROM_TARGET		:= $(DIR_DADAO_TARGET)/bootrom/
 
-runtime-bootrom-highfive:	runtime-common-headers
+runtime-bootrom-highfive:
 	#
 	# TARGET DIR: $(RUNTIME_BOOTROM_TARGET)
 	#
