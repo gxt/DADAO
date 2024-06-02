@@ -64,26 +64,20 @@ env-highfive:
 	@make -s linux-$(VER_LINUX)-highfive
 	@echo "=== BUILD Run-Time Environment DONE! ==="
 
-sim-highfive:
-	@echo "=== BUILD Simulators BEGIN ==="
-	@make -s qemu-$(VER_QEMU)-highfive
-	@echo "=== BUILD Simulators DONE! ==="
-
-soc-highfive:
-	@echo "=== BUILD SoC BEGIN ==="
-	@make -s chipyard-$(VER_CHIPYARD)-highfive
-	@echo "=== BUILD SoC DONE! ==="
-
-dadao-highfive:
+dadao-qemu-highfive:
 	@echo "=== BUILD BEGIN ==="
-	@make --silent tch-elf-highfive
-	@make --silent sim-highfive
-	@make --silent soc-highfive
+	@make --silent qemu-$(VER_QEMU)-highfive
 	@echo "=== BUILD DONE! ==="
 	@echo "=== TEST@qemu  BEGIN ==="
 	@make --silent testset-isa-qemu-highfive
 	@make --silent testset-dhrystone-qemu-highfive
+	@make --silent testset-embench-qemu-highfive
 	@echo "=== TEST@qemu DONE! ==="
+
+dadao-bare-highfive:
+	@echo "=== BUILD BEGIN ==="
+	@make --silent chipyard-$(VER_CHIPYARD)-highfive
+	@echo "=== BUILD DONE! ==="
 	@echo "=== TEST@bare BEGIN ==="
 	@make --silent testset-isa-bare-highfive
 	@make --silent testset-dhrystone-bare-highfive
