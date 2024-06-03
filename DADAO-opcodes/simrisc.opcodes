@@ -25,10 +25,10 @@ ldo	01000011		&& (ha!=000000)
 sto	01001011
 
 & @mem rf@ha rb@hb
-ldft	01010010
-ldfo	01010011
-stft	01011010
-stfo	01011011
+ldt	01010010
+ldo	01010011
+stt	01011010
+sto	01011011
 
 [ rrri	op:8	ha:6	hb:6	hc:6	immu:6 ]
 & @mem @reg rd@ha rb@hb rd@hc (ha!=000000) (ha+immu<111111)

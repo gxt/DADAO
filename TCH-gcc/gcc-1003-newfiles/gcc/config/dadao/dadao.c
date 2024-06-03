@@ -1401,7 +1401,7 @@ dadao_print_fldst_operand (machine_mode mode,
 		  && (REGNO_REG_CLASS(REGNO(OP0)) == GENERAL_REGS)	\
 		  && (REGNO_REG_CLASS(REGNO(OP1)) == POINTER_REGS))
 
-  const char *suffix = (mode == E_SFmode) ? "ft" : "fo";
+  const char *suffix = (mode == E_SFmode) ? "t" : "o";
   if (strict) /* float load: SET (REG_OP 0) with (MEM_OP 1) */
   {
     rtx addr = XEXP (src, 0);
@@ -1443,7 +1443,7 @@ dadao_print_fldst_operand (machine_mode mode,
 
 	      /* Fall through */
 	    case REG:
-	      asm_fprintf (stream, "\tldm%s", suffix);
+	      asm_fprintf (stream, "\tldmf%s", suffix);
 	      if (!strict)
 		{
 		  asm_fprintf (stream, "\t%s, %s, rd7, 1",
@@ -1498,7 +1498,7 @@ dadao_print_fldst_operand (machine_mode mode,
 
 	      /* Fall through */
             case REG:
-	      asm_fprintf (stream, "\tstm%s", suffix);
+	      asm_fprintf (stream, "\tstmf%s", suffix);
 	      if (strict)       /* indirect memory access storing */
 		{		/* dest: rd (strict = 1 -> store) */
 		  asm_fprintf (stream, "\t%s, %s, rd7, 1\n",

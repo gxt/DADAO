@@ -3,7 +3,7 @@
 #-----------------------------------------------------------------------
 
 ddrf_sc_tests =				\
-	rrii-ldfx	rrii-stfx	\
+	rrii-ldx	rrii-stx	\
 	rrri-ldmfx	rrri-stmfx	\
 	orri-rx2rx				\
 	rwii-setw				\

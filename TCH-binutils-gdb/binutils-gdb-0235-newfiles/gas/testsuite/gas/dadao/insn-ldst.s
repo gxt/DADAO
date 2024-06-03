@@ -47,14 +47,14 @@ _start:
 	ldmrb	rb0, rb1, rd1, 63
 	stmrb	rb0, rb1, rd1, 63
 
-	ldft	rf1, rb1, 2047
-	ldft	rf1, rb1, -2048
-	ldfo	rf1, rb1, 2047
-	ldfo	rf1, rb1, -2048
-	stft	rf1, rb1, 2047
-	stft	rf1, rb1, -2048
-	stfo	rf1, rb1, 2047
-	stfo	rf1, rb1, -2048
+	ldt	rf1, rb1, 2047
+	ldt	rf1, rb1, -2048
+	ldo	rf1, rb1, 2047
+	ldo	rf1, rb1, -2048
+	stt	rf1, rb1, 2047
+	stt	rf1, rb1, -2048
+	sto	rf1, rb1, 2047
+	sto	rf1, rb1, -2048
 
 	ldmft	rf0, rb1, rd1, 63
 	ldmfo	rf0, rb1, rd1, 63

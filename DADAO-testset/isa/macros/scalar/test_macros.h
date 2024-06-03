@@ -183,26 +183,26 @@ lbl_ ## tcname ## _cmp:													\
 		__PASS_FAIL_FCSR__(flags)										\
 
 #define TEST_FRRR_FFF_FT_123( tcname, inst, flags, val_dst, val_src1, val_src2 )	\
-			_TEST_FRRR_FFF(   tcname, inst, flags, ldft, .single, val_dst, val_src1, val_src2, 16, 17, 18 )
+			_TEST_FRRR_FFF(   tcname, inst, flags, ldt, .single, val_dst, val_src1, val_src2, 16, 17, 18 )
 #define TEST_FRRR_FFF_FT_112( tcname, inst, flags, val_dst, val_src1, val_src2 )	\
-			_TEST_FRRR_FFF(   tcname, inst, flags, ldft, .single, val_dst, val_src1, val_src2, 16, 16, 18 )
+			_TEST_FRRR_FFF(   tcname, inst, flags, ldt, .single, val_dst, val_src1, val_src2, 16, 16, 18 )
 #define TEST_FRRR_FFF_FT_121( tcname, inst, flags, val_dst, val_src1, val_src2 )	\
-			_TEST_FRRR_FFF(   tcname, inst, flags, ldft, .single, val_dst, val_src1, val_src2, 16, 17, 16 )
+			_TEST_FRRR_FFF(   tcname, inst, flags, ldt, .single, val_dst, val_src1, val_src2, 16, 17, 16 )
 #define TEST_FRRR_FFF_FT_111( tcname, inst, flags, val_dst, val_src1, val_src2 )	\
-			_TEST_FRRR_FFF(   tcname, inst, flags, ldft, .single, val_dst, val_src1, val_src2, 16, 16, 16 )
+			_TEST_FRRR_FFF(   tcname, inst, flags, ldt, .single, val_dst, val_src1, val_src2, 16, 16, 16 )
 #define TEST_FRRR_FFF_FT_120( tcname, inst, flags, val_dst, val_src1, val_src2 )	\
-			_TEST_FRRR_FFF(   tcname, inst, flags, ldft, .single, val_dst, val_src1, val_src2, 16, 17,  0 )
+			_TEST_FRRR_FFF(   tcname, inst, flags, ldt, .single, val_dst, val_src1, val_src2, 16, 17,  0 )
 
 #define TEST_FRRR_FFF_FO_123( tcname, inst, flags, val_dst, val_src1, val_src2 )	\
-			_TEST_FRRR_FFF(   tcname, inst, flags, ldfo, .double, val_dst, val_src1, val_src2, 16, 17, 18 )
+			_TEST_FRRR_FFF(   tcname, inst, flags, ldo, .double, val_dst, val_src1, val_src2, 16, 17, 18 )
 #define TEST_FRRR_FFF_FO_112( tcname, inst, flags, val_dst, val_src1, val_src2 )	\
-			_TEST_FRRR_FFF(   tcname, inst, flags, ldfo, .double, val_dst, val_src1, val_src2, 16, 16, 18 )
+			_TEST_FRRR_FFF(   tcname, inst, flags, ldo, .double, val_dst, val_src1, val_src2, 16, 16, 18 )
 #define TEST_FRRR_FFF_FO_121( tcname, inst, flags, val_dst, val_src1, val_src2 )	\
-			_TEST_FRRR_FFF(   tcname, inst, flags, ldfo, .double, val_dst, val_src1, val_src2, 16, 17, 16 )
+			_TEST_FRRR_FFF(   tcname, inst, flags, ldo, .double, val_dst, val_src1, val_src2, 16, 17, 16 )
 #define TEST_FRRR_FFF_FO_111( tcname, inst, flags, val_dst, val_src1, val_src2 )	\
-			_TEST_FRRR_FFF(   tcname, inst, flags, ldfo, .double, val_dst, val_src1, val_src2, 16, 16, 16 )
+			_TEST_FRRR_FFF(   tcname, inst, flags, ldo, .double, val_dst, val_src1, val_src2, 16, 16, 16 )
 #define TEST_FRRR_FFF_FO_120( tcname, inst, flags, val_dst, val_src1, val_src2 )	\
-			_TEST_FRRR_FFF(   tcname, inst, flags, ldfo, .double, val_dst, val_src1, val_src2, 16, 17,  0 )
+			_TEST_FRRR_FFF(   tcname, inst, flags, ldo, .double, val_dst, val_src1, val_src2, 16, 17,  0 )
 
 #define _TEST_FRRR_DFF( tcname, inst, flags, inst_ld, ftype, val_dst, val_src1, val_src2, _DST, _SRC1, _SRC2 )	\
 		__TEST_CASE_HEAD__(tcname)										\
@@ -226,10 +226,10 @@ lbl_ ## tcname ## _cmp:													\
 		__PASS_FAIL_FCSR__(flags)										\
 
 #define TEST_FRRR_DFF_FT_123( tcname, inst, flags, val_dst, val_src1, val_src2 )	\
-			_TEST_FRRR_DFF(   tcname, inst, flags, ldft, .single, val_dst, val_src1, val_src2, 16, 17, 18 )
+			_TEST_FRRR_DFF(   tcname, inst, flags, ldt, .single, val_dst, val_src1, val_src2, 16, 17, 18 )
 
 #define TEST_FRRR_DFF_FO_123( tcname, inst, flags, val_dst, val_src1, val_src2 )	\
-			_TEST_FRRR_DFF(   tcname, inst, flags, ldfo, .double, val_dst, val_src1, val_src2, 16, 17, 18 )
+			_TEST_FRRR_DFF(   tcname, inst, flags, ldo, .double, val_dst, val_src1, val_src2, 16, 17, 18 )
 
 #define _TEST_FRRR_RWR( tcname, inst, dest, cond, orig, src, _COND, _DEST, _SRC )		\
 	__TEST_CASE(	tcname, dest,											\
@@ -544,9 +544,9 @@ lbl_ ## tcname ## _cmp:														\
 		__PASS_FAIL_FCSR__(flags)											\
 
 #define TEST_RRRR_WRRR_FT_1234( tcname, inst, flags, val_dst, val_src1, val_src2, val_src3 )	\
-			_TEST_RRRR_WRRR(    tcname, inst, flags, ldft, .single, val_dst, val_src1, val_src2, val_src3, 16, 17, 18, 19 )
+			_TEST_RRRR_WRRR(    tcname, inst, flags, ldt, .single, val_dst, val_src1, val_src2, val_src3, 16, 17, 18, 19 )
 #define TEST_RRRR_WRRR_FO_1234( tcname, inst, flags, val_dst, val_src1, val_src2, val_src3 )	\
-			_TEST_RRRR_WRRR(    tcname, inst, flags, ldfo, .double, val_dst, val_src1, val_src2, val_src3, 16, 17, 18, 19 )
+			_TEST_RRRR_WRRR(    tcname, inst, flags, ldo, .double, val_dst, val_src1, val_src2, val_src3, 16, 17, 18, 19 )
 
 #-----------------------------------------------------------------------
 # DADAO MACROS for RWII

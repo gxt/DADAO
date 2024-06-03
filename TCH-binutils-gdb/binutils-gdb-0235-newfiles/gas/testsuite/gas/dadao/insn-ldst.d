@@ -44,14 +44,14 @@ Disassembly of section .text:
   90:	4b042800 	sto	rb1, rb2, -2048
   94:	4700107f 	ldmrb	rb0, rb1, rd1, 0x3f
   98:	4f00107f 	stmrb	rb0, rb1, rd1, 0x3f
-  9c:	520417ff 	ldft	rf1, rb1, 2047
-  a0:	52041800 	ldft	rf1, rb1, -2048
-  a4:	530417ff 	ldfo	rf1, rb1, 2047
-  a8:	53041800 	ldfo	rf1, rb1, -2048
-  ac:	5a0417ff 	stft	rf1, rb1, 2047
-  b0:	5a041800 	stft	rf1, rb1, -2048
-  b4:	5b0417ff 	stfo	rf1, rb1, 2047
-  b8:	5b041800 	stfo	rf1, rb1, -2048
+  9c:	520417ff 	ldt	rf1, rb1, 2047
+  a0:	52041800 	ldt	rf1, rb1, -2048
+  a4:	530417ff 	ldo	rf1, rb1, 2047
+  a8:	53041800 	ldo	rf1, rb1, -2048
+  ac:	5a0417ff 	stt	rf1, rb1, 2047
+  b0:	5a041800 	stt	rf1, rb1, -2048
+  b4:	5b0417ff 	sto	rf1, rb1, 2047
+  b8:	5b041800 	sto	rf1, rb1, -2048
   bc:	5600107f 	ldmft	rf0, rb1, rd1, 0x3f
   c0:	5700107f 	ldmfo	rf0, rb1, rd1, 0x3f
   c4:	5e00107f 	stmft	rf0, rb1, rd1, 0x3f
