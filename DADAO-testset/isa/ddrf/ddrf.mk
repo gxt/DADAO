@@ -4,7 +4,7 @@
 
 ddrf_sc_tests =				\
 	rrii-ldx	rrii-stx	\
-	rrri-ldmfx	rrri-stmfx	\
+	rrri-ldmx	rrri-stmx	\
 	orri-rx2rx				\
 	rwii-setw				\
 	orri-fx2fx	orri-fx2ix	orri-fx2ux	orri-ix2fx	orri-ux2fx	\

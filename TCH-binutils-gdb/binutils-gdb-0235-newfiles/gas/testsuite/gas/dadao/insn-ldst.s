@@ -56,10 +56,10 @@ _start:
 	sto	rf1, rb1, 2047
 	sto	rf1, rb1, -2048
 
-	ldmft	rf0, rb1, rd1, 63
-	ldmfo	rf0, rb1, rd1, 63
-	stmft	rf0, rb1, rd1, 63
-	stmfo	rf0, rb1, rd1, 63
+	ldmt	rf0, rb1, rd1, 63
+	ldmo	rf0, rb1, rd1, 63
+	stmt	rf0, rb1, rd1, 63
+	stmo	rf0, rb1, rd1, 63
 
 	ldmra	ra0, rb1, rd1, 63
 	stmra	ra0, rb1, rd1, 63

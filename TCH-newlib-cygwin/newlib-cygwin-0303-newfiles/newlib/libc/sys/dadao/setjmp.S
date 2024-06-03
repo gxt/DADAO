@@ -14,7 +14,7 @@ setjmp:
 	addi	rd16, rd16, 32*8
 	stmrb	rb32, rb8, rd16, 32
 	addi	rd16, rd16, 32*8
-	stmfo	rf32, rb8, rd16, 32
+	stmo	rf32, rb8, rd16, 32
 	addi	rd16, rd16, 32*8
 
 	stmra	ra1, rb8, rd16, 63
@@ -38,7 +38,7 @@ longjmp:
 	addi	rd16, rd16, 32*8
 	ldmrb	rb32, rb8, rd16, 32
 	addi	rd16, rd16, 32*8
-	ldmfo	rf32, rb8, rd16, 32
+	ldmo	rf32, rb8, rd16, 32
 	addi	rd16, rd16, 32*8
 
 	ldmra	ra1, rb8, rd16, 63

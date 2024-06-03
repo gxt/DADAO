@@ -51,10 +51,10 @@ ldmrb	01000111		&& (ha!=000000) (ha+immu<111111)
 stmrb	01001111
 
 & @mem @reg rf@ha rb@hb rd@hc (ha+immu<=111111)
-ldmft	01010110
-ldmfo	01010111
-stmft	01011110
-stmfo	01011111
+ldmt	01010110
+ldmo	01010111
+stmt	01011110
+stmo	01011111
 
 & @mem @reg ra@ha rb@hb rd@hc (ha+immu<=111111)
 ldmra	01100111

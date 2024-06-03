@@ -13,10 +13,10 @@ _start:
  stmo rd2, rb2, rd1, 63;	# { dg-error "the number of registers exceeds the limit" "" }
  ldmrb rb2, rb1, rd2, 63;	# { dg-error "the number of registers exceeds the limit" "" }
  stmrb rb2, rb1, rd2, 63;	# { dg-error "the number of registers exceeds the limit" "" }
- ldmft rf2, rb2, rd2, 63;	# { dg-error "the number of registers exceeds the limit" "" }
- ldmfo rf2, rb2, rd2, 63;	# { dg-error "the number of registers exceeds the limit" "" }
- stmft rf2, rb2, rd2, 63;	# { dg-error "the number of registers exceeds the limit" "" }
- stmfo rf2, rb2, rd2, 63;	# { dg-error "the number of registers exceeds the limit" "" }
+ ldmt rf2, rb2, rd2, 63;	# { dg-error "the number of registers exceeds the limit" "" }
+ ldmo rf2, rb2, rd2, 63;	# { dg-error "the number of registers exceeds the limit" "" }
+ stmt rf2, rb2, rd2, 63;	# { dg-error "the number of registers exceeds the limit" "" }
+ stmo rf2, rb2, rd2, 63;	# { dg-error "the number of registers exceeds the limit" "" }
  ldmra ra2, rb2, rd2, 63;	# { dg-error "the number of registers exceeds the limit" "" }
  stmra ra2, rb2, rd2, 63;	# { dg-error "the number of registers exceeds the limit" "" }
 

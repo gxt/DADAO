@@ -1443,7 +1443,7 @@ dadao_print_fldst_operand (machine_mode mode,
 
 	      /* Fall through */
 	    case REG:
-	      asm_fprintf (stream, "\tldmf%s", suffix);
+	      asm_fprintf (stream, "\tldm%s", suffix);
 	      if (!strict)
 		{
 		  asm_fprintf (stream, "\t%s, %s, rd7, 1",
@@ -1498,7 +1498,7 @@ dadao_print_fldst_operand (machine_mode mode,
 
 	      /* Fall through */
             case REG:
-	      asm_fprintf (stream, "\tstmf%s", suffix);
+	      asm_fprintf (stream, "\tstm%s", suffix);
 	      if (strict)       /* indirect memory access storing */
 		{		/* dest: rd (strict = 1 -> store) */
 		  asm_fprintf (stream, "\t%s, %s, rd7, 1\n",

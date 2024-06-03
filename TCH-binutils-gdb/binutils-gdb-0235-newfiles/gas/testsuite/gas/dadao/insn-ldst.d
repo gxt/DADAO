@@ -52,9 +52,9 @@ Disassembly of section .text:
   b0:	5a041800 	stt	rf1, rb1, -2048
   b4:	5b0417ff 	sto	rf1, rb1, 2047
   b8:	5b041800 	sto	rf1, rb1, -2048
-  bc:	5600107f 	ldmft	rf0, rb1, rd1, 0x3f
-  c0:	5700107f 	ldmfo	rf0, rb1, rd1, 0x3f
-  c4:	5e00107f 	stmft	rf0, rb1, rd1, 0x3f
-  c8:	5f00107f 	stmfo	rf0, rb1, rd1, 0x3f
+  bc:	5600107f 	ldmt	rf0, rb1, rd1, 0x3f
+  c0:	5700107f 	ldmo	rf0, rb1, rd1, 0x3f
+  c4:	5e00107f 	stmt	rf0, rb1, rd1, 0x3f
+  c8:	5f00107f 	stmo	rf0, rb1, rd1, 0x3f
   cc:	6700107f 	ldmra	ra0, rb1, rd1, 0x3f
   d0:	6f00107f 	stmra	ra0, rb1, rd1, 0x3f
