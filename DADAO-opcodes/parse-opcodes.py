@@ -139,8 +139,17 @@ def read_opcodes(file_name: str):
                     else:
                         regfile_restrictions[key] = value
                 cond_restrictions += now_cond_restrictions
+
                 if inst_name in insts.keys():
-                    inst_name = '_' + inst_name
+                    inst_next = '_' + '1' + inst_name
+                    if inst_next in insts.keys():
+                        inst_next = '_' + '2' + inst_name
+                        if inst_next in insts.keys():
+                            inst_next = '_' + '3' + inst_name
+                            if inst_next in insts.keys():
+                                print("ONLY tolerate four identical mnemonics!")
+                                sys.exit(1)
+                    inst_name = inst_next
 
                 if 'mem' in resources:
                     if 'jmp' in resources:
@@ -227,7 +236,7 @@ def gen_opc_file(insts: dict, output_file: str):
             else:
                 exop = 0
             if inst_name[0] == '_':
-                inst_name = inst_name[1:]
+                inst_name = inst_name[2:]
             line = '   {{ "{}", {}, {}, {}, dadao_operand_{}, dadao_operand_{}, dadao_operand_{}, dadao_operand_{}, dadao_type_{}}},'\
                 .format(inst_name, len(fields) - exop, majop, minop,
                 operands[0], operands[1], operands[2], operands[3], inst_description['insn_type'])
@@ -287,7 +296,7 @@ def gen_disassemble_file(insts: dict, output_file: str):
             operands = fields + ['none'] * (4 - len(fields))
             operands = [regfile_fillin(operands[i], regfile_restrictions) for i in range(len(operands))]
             if inst_name[0] == '_':
-                inst_name = inst_name[1:]
+                inst_name = inst_name[2:]
             inst_disassemble_format = inst_name + '\t'
             first_operand = 1
             for i in range(exop,4):
@@ -360,7 +369,7 @@ def get_upper_insts_dict( insts: dict):
     upper_dict = {}
     for inst_name, inst_description in insts.items():
         if inst_name[0] == '_':
-            search_inst = inst_name[1:]
+            search_inst = inst_name[2:]
             instruction = search_inst.upper()
             if search_inst in insts.keys():
                 if insts[inst_name]['optype'] == insts[search_inst]['optype']:
@@ -392,7 +401,8 @@ def get_upper_insts_dict( insts: dict):
             key2 = instruction + add_description2
             upper_dict[key1] = inst_description
             upper_dict[key2] = insts[search_inst]
-            del upper_dict[instruction]
+            if inst_name[1] == '1':
+                del upper_dict[instruction]
         else:
             upper_dict[inst_name.upper()] = inst_description
     return upper_dict
@@ -406,7 +416,7 @@ def trans_dict(insts: dict):
             fields = list(inst_description['fields'].keys())
         regfile_restrictions = inst_description['regfile_restrictions']
         if inst_name[0] == '_':
-            inst_name = inst_name[1:]
+            inst_name = inst_name[2:]
         dasm_dict[inst_description['opcode']] = {
             'inst_name': inst_name,
             'fields': fields,
