@@ -517,12 +517,12 @@ let Imm6 = 0b000000 in {
   def LDMBS_RRRI : LOAD_RRRI<0b00110100, "ldmbs", GPRD, sextloadi8,  i64>;
   def LDMWS_RRRI : LOAD_RRRI<0b00110101, "ldmws", GPRD, sextloadi16, i64>;
   def LDMTS_RRRI : LOAD_RRRI<0b00110110, "ldmts", GPRD, sextloadi32, i64>;
-  def LDMO_RRRI  : LOAD_RRRI<0b00110111, "ldmo",  GPRD, load, i64>;
+  def LDMO_RD_RRRI  : LOAD_RRRI<0b00110111, "ldmo",  GPRD, load, i64>;
 
   def LDMBU_RRRI : LOAD_RRRI<0b01000100, "ldmbu", GPRD, zextloadi8,  i64>;
   def LDMWU_RRRI : LOAD_RRRI<0b01000101, "ldmwu", GPRD, zextloadi16, i64>;
   def LDMTU_RRRI : LOAD_RRRI<0b01000110, "ldmtu", GPRD, zextloadi32, i64>;
-  def LDMRB_RRRI : LOAD_RRRI<0b01000111, "ldmrb", GPRB, load, i64>;
+  def LDMO_RB_RRRI : LOAD_RRRI<0b01000111, "ldmo", GPRB, load, i64>;
 }
 
 // -------------------------------------------------- //
@@ -561,8 +561,8 @@ let Imm6 = 0b000000 in {
   def STMB_RRRI  : STORE_RRRI<0b00111100, "stmb",  GPRD, truncstorei8,  i64>;
   def STMW_RRRI  : STORE_RRRI<0b00111101, "stmw",  GPRD, truncstorei16, i64>;
   def STMT_RRRI  : STORE_RRRI<0b00111110, "stmt",  GPRD, truncstorei32, i64>;
-  def STMO_RRRI  : STORE_RRRI<0b00111111, "stmo",  GPRD, store, i64>;
-  def STMRB_RRRI : STORE_RRRI<0b01001111, "stmrb", GPRB, store, i64>;
+  def STMO_RD_RRRI : STORE_RRRI<0b00111111, "stmo", GPRD, store, i64>;
+  def STMO_RB_RRRI : STORE_RRRI<0b01001111, "stmo", GPRB, store, i64>;
 }
 
 // -------------------------------------------------- //

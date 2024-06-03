@@ -5,14 +5,14 @@ setjmp:
 	rd2rb	rb8, rd16, 1
 	setzw	rd16, w0, 0
 
-	#stmrb	rb1, rb8, rd16, 2
+	#stmo	rb1, rb8, rd16, 2
 	sto	rb1, rb8, 0
 	sto	rb2, rb8, 8
 	addi	rd16, rd16, 2*8
 
 	stmo	rd32, rb8, rd16, 32
 	addi	rd16, rd16, 32*8
-	stmrb	rb32, rb8, rd16, 32
+	stmo	rb32, rb8, rd16, 32
 	addi	rd16, rd16, 32*8
 	stmo	rf32, rb8, rd16, 32
 	addi	rd16, rd16, 32*8
@@ -29,14 +29,14 @@ longjmp:
 	rd2rb	rb8, rd16, 1
 	setzw	rd16, w0, 0
 
-	#ldmrb	rb1, rb8, rd16, 2
+	#ldmo	rb1, rb8, rd16, 2
 	ldo	rb1, rb8, 0
 	ldo	rb2, rb8, 8
 	addi	rd16, rd16, 2*8
 
 	ldmo	rd32, rb8, rd16, 32
 	addi	rd16, rd16, 32*8
-	ldmrb	rb32, rb8, rd16, 32
+	ldmo	rb32, rb8, rd16, 32
 	addi	rd16, rd16, 32*8
 	ldmo	rf32, rb8, rd16, 32
 	addi	rd16, rd16, 32*8

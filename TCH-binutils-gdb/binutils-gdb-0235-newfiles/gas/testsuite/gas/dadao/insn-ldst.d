@@ -42,8 +42,8 @@ Disassembly of section .text:
   88:	43042800 	ldo	rb1, rb2, -2048
   8c:	4b0427ff 	sto	rb1, rb2, 2047
   90:	4b042800 	sto	rb1, rb2, -2048
-  94:	4700107f 	ldmrb	rb0, rb1, rd1, 0x3f
-  98:	4f00107f 	stmrb	rb0, rb1, rd1, 0x3f
+  94:	4700107f 	ldmo	rb0, rb1, rd1, 0x3f
+  98:	4f00107f 	stmo	rb0, rb1, rd1, 0x3f
   9c:	520417ff 	ldt	rf1, rb1, 2047
   a0:	52041800 	ldt	rf1, rb1, -2048
   a4:	530417ff 	ldo	rf1, rb1, 2047

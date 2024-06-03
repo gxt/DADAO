@@ -44,8 +44,8 @@ _start:
 	sto	rb1, rb2, 2047
 	sto	rb1, rb2, -2048
 
-	ldmrb	rb0, rb1, rd1, 63
-	stmrb	rb0, rb1, rd1, 63
+	ldmo	rb0, rb1, rd1, 63
+	stmo	rb0, rb1, rd1, 63
 
 	ldt	rf1, rb1, 2047
 	ldt	rf1, rb1, -2048

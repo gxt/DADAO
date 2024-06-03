@@ -790,9 +790,9 @@ bool DadaoInstrInfo::getMemOperandWithOffsetWidth(
   switch (LdSt.getOpcode()) {
   default:
     return false;
-  case Dadao::LDMO_RRRI:
+  case Dadao::LDMO_RD_RRRI:
   case Dadao::LDO_RRII:
-  case Dadao::STMO_RRRI:
+  case Dadao::STMO_RD_RRRI:
   case Dadao::STO_RRII:
     Width = 8;
     break;
@@ -838,8 +838,8 @@ bool DadaoInstrInfo::getMemOperandsWithOffsetWidth(
   switch (LdSt.getOpcode()) {
   default:
     return false;
-  case Dadao::LDMO_RRRI:
-  case Dadao::STMO_RRRI:
+  case Dadao::LDMO_RD_RRRI:
+  case Dadao::STMO_RD_RRRI:
   case Dadao::LDO_RRII:
   case Dadao::STO_RRII:
   case Dadao::LDTU_RRII:

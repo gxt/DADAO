@@ -388,7 +388,7 @@ lbl_ ## tcname ## _pass:												\
     )
 
 #define TEST_RRRI_LDMRD_123( tcname, inst, dest, src1, src2, imm6 )		_TEST_RRRI_M1( tcname, inst, dest, src1, src2, imm6, rd, rb, rd, 16, 17, 18 )
-#define TEST_RRRI_LDMRB_123( tcname, inst, dest, src1, src2, imm6 )		_TEST_RRRI_M1( tcname, inst, dest, src1, src2, imm6, rb, rb, rd, 16, 17, 18 )
+#define TEST_RRRI_LDMO_RB_123( tcname, inst, dest, src1, src2, imm6 )		_TEST_RRRI_M1( tcname, inst, dest, src1, src2, imm6, rb, rb, rd, 16, 17, 18 )
 #define TEST_RRRI_LDMRA_123( tcname, inst, dest, src1, src2, imm6 )		_TEST_RRRI_M1( tcname, inst, dest, src1, src2, imm6, ra, rb, rd, 16, 17, 18 )
 #define TEST_RRRI_LDMRF_123( tcname, inst, dest, src1, src2, imm6 )		_TEST_RRRI_M1( tcname, inst, dest, src1, src2, imm6, rf, rb, rd, 16, 17, 18 )
 
@@ -403,7 +403,7 @@ lbl_ ## tcname ## _pass:												\
 	)
 
 #define TEST_RRRI_STMRD_M1( tcname, inst, ld_inst, dest, src1, src2, imm6 )		_TEST_RRRI_STM_M1( tcname, inst, ld_inst, dest, src1, src2, imm6, rd, rb, rd, 16, 17, 18 )
-#define TEST_RRRI_STMRB_M1( tcname, inst, ld_inst, dest, src1, src2, imm6 )		_TEST_RRRI_STM_M1( tcname, inst, ld_inst, dest, src1, src2, imm6, rb, rb, rd, 16, 17, 18 )
+#define TEST_RRRI_STMO_RB_M1( tcname, inst, ld_inst, dest, src1, src2, imm6 )		_TEST_RRRI_STM_M1( tcname, inst, ld_inst, dest, src1, src2, imm6, rb, rb, rd, 16, 17, 18 )
 #define TEST_RRRI_STMRA_M1( tcname, inst, ld_inst, dest, src1, src2, imm6 )		_TEST_RRRI_STM_M1( tcname, inst, ld_inst, dest, src1, src2, imm6, ra, rb, rd, 16, 17, 18 )
 #define TEST_RRRI_STMRF_M1( tcname, inst, ld_inst, dest, src1, src2, imm6 )		_TEST_RRRI_STM_M1( tcname, inst, ld_inst, dest, src1, src2, imm6, rf, rb, rd, 16, 17, 18 )
 
@@ -424,7 +424,7 @@ lbl_ ## tcname ## _pass:												\
 	.endr;															\
 
 #define TEST_RRRI_LDMRD_M8( tcname, inst, _src1, _src2, _stride )		_TEST_RRRI_LDM_M8( tcname, inst, _src1, _src2, _stride, rd )
-#define TEST_RRRI_LDMRB_M8( tcname, inst, _src1, _src2, _stride )		_TEST_RRRI_LDM_M8( tcname, inst, _src1, _src2, _stride, rb )
+#define TEST_RRRI_LDMO_RB_M8( tcname, inst, _src1, _src2, _stride )		_TEST_RRRI_LDM_M8( tcname, inst, _src1, _src2, _stride, rb )
 #define TEST_RRRI_LDMRF_M8( tcname, inst, _src1, _src2, _stride )		_TEST_RRRI_LDM_M8( tcname, inst, _src1, _src2, _stride, rf )
 
 #define _TEST_RRRI_STM_M8( tcname, inst, ld_inst, _src1, _src2, _stride, _RGHA )		\
@@ -443,7 +443,7 @@ lbl_ ## tcname ## _pass:												\
 	.endr;															\
 
 #define TEST_RRRI_STMRD_M8( tcname, inst, ld_inst, _src1, _src2, _stride )		_TEST_RRRI_STM_M8( tcname, inst, ld_inst, _src1, _src2, _stride, rd )
-#define TEST_RRRI_STMRB_M8( tcname, inst, ld_inst, _src1, _src2, _stride )		_TEST_RRRI_STM_M8( tcname, inst, ld_inst, _src1, _src2, _stride, rb )
+#define TEST_RRRI_STMO_RB_M8( tcname, inst, ld_inst, _src1, _src2, _stride )		_TEST_RRRI_STM_M8( tcname, inst, ld_inst, _src1, _src2, _stride, rb )
 #define TEST_RRRI_STMRF_M8( tcname, inst, ld_inst, _src1, _src2, _stride )		_TEST_RRRI_STM_M8( tcname, inst, ld_inst, _src1, _src2, _stride, rf )
 
 #-----------------------------------------------------------------------

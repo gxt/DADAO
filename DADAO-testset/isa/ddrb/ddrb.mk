@@ -4,7 +4,7 @@
 
 ddrb_sc_tests =				\
 	rrii-ldo	rrii-sto	\
-	rrri-ldmrx	rrri-stmrx	\
+	rrri-ldmo	rrri-stmo	\
 	orri-rx2rx				\
 	rwii-andnw	rwii-orw	rwii-setzw	\
 	orrr-add	orrr-sub	\

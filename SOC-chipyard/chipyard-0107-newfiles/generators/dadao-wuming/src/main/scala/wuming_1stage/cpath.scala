@@ -106,7 +106,7 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                   LDMBS   -> List(Y, CF_X     , COND_X  , REG_MRD  , OP1_RBHB , OP2_RDHC  , ALU_ADD   , WB_RDMM , REN_1, MEN_1, M_XRD, MT_B   , CSR.N),
                   LDMWS   -> List(Y, CF_X     , COND_X  , REG_MRD  , OP1_RBHB , OP2_RDHC  , ALU_ADD   , WB_RDMM , REN_1, MEN_1, M_XRD, MT_W   , CSR.N),
                   LDMTS   -> List(Y, CF_X     , COND_X  , REG_MRD  , OP1_RBHB , OP2_RDHC  , ALU_ADD   , WB_RDMM , REN_1, MEN_1, M_XRD, MT_T   , CSR.N),
-                  LDMO    -> List(Y, CF_X     , COND_X  , REG_MRD  , OP1_RBHB , OP2_RDHC  , ALU_ADD   , WB_RDMM , REN_1, MEN_1, M_XRD, MT_O   , CSR.N),
+                  LDMOrd  -> List(Y, CF_X     , COND_X  , REG_MRD  , OP1_RBHB , OP2_RDHC  , ALU_ADD   , WB_RDMM , REN_1, MEN_1, M_XRD, MT_O   , CSR.N),
                   LDMBU   -> List(Y, CF_X     , COND_X  , REG_MRD  , OP1_RBHB , OP2_RDHC  , ALU_ADD   , WB_RDMM , REN_1, MEN_1, M_XRD, MT_BU  , CSR.N),
                   LDMWU   -> List(Y, CF_X     , COND_X  , REG_MRD  , OP1_RBHB , OP2_RDHC  , ALU_ADD   , WB_RDMM , REN_1, MEN_1, M_XRD, MT_WU  , CSR.N),
                   LDMTU   -> List(Y, CF_X     , COND_X  , REG_MRD  , OP1_RBHB , OP2_RDHC  , ALU_ADD   , WB_RDMM , REN_1, MEN_1, M_XRD, MT_TU  , CSR.N),
@@ -119,13 +119,13 @@ class CtlPath(implicit val conf: WumingCoreParams) extends Module
                   STMB    -> List(Y, CF_X     , COND_X  , REG_MRD  , OP1_RBHB , OP2_RDHC  , ALU_ADD   , WB_X    , REN_0, MEN_1, M_XWR, MT_B   , CSR.N),
                   STMW    -> List(Y, CF_X     , COND_X  , REG_MRD  , OP1_RBHB , OP2_RDHC  , ALU_ADD   , WB_X    , REN_0, MEN_1, M_XWR, MT_W   , CSR.N),
                   STMT    -> List(Y, CF_X     , COND_X  , REG_MRD  , OP1_RBHB , OP2_RDHC  , ALU_ADD   , WB_X    , REN_0, MEN_1, M_XWR, MT_T   , CSR.N),
-                  STMO    -> List(Y, CF_X     , COND_X  , REG_MRD  , OP1_RBHB , OP2_RDHC  , ALU_ADD   , WB_X    , REN_0, MEN_1, M_XWR, MT_O   , CSR.N),
+                  STMOrd  -> List(Y, CF_X     , COND_X  , REG_MRD  , OP1_RBHB , OP2_RDHC  , ALU_ADD   , WB_X    , REN_0, MEN_1, M_XWR, MT_O   , CSR.N),
 
                   LDOrb   -> List(Y, CF_X     , COND_X  , REG_RB   , OP1_RBHB , OP2_IMMS12, ALU_ADD   , WB_RBMM , REN_1, MEN_1, M_XRD, MT_O   , CSR.N),
                   STOrb   -> List(Y, CF_X     , COND_X  , REG_RB   , OP1_RBHB , OP2_IMMS12, ALU_ADD   , WB_X    , REN_0, MEN_1, M_XWR, MT_O   , CSR.N),
 
-                  LDMRB   -> List(Y, CF_X     , COND_X  , REG_MRB  , OP1_RBHB , OP2_RDHC  , ALU_ADD   , WB_RBMM , REN_1, MEN_1, M_XRD, MT_O   , CSR.N),
-                  STMRB   -> List(Y, CF_X     , COND_X  , REG_MRB  , OP1_RBHB , OP2_RDHC  , ALU_ADD   , WB_X    , REN_0, MEN_1, M_XWR, MT_O   , CSR.N),
+                  LDMOrb  -> List(Y, CF_X     , COND_X  , REG_MRB  , OP1_RBHB , OP2_RDHC  , ALU_ADD   , WB_RBMM , REN_1, MEN_1, M_XRD, MT_O   , CSR.N),
+                  STMOrb  -> List(Y, CF_X     , COND_X  , REG_MRB  , OP1_RBHB , OP2_RDHC  , ALU_ADD   , WB_X    , REN_0, MEN_1, M_XWR, MT_O   , CSR.N),
 
                   CMPSi   -> List(Y, CF_X     , COND_X  , REG_RD   , OP1_RDHB , OP2_IMMS12, ALU_CMPS  , WB_RDHA , REN_1, MEN_0, M_X  , MT_X   , CSR.N),
                   CMPSr   -> List(Y, CF_X     , COND_X  , REG_RD   , OP1_RDHC , OP2_RDHD  , ALU_CMPS  , WB_RDHB , REN_1, MEN_0, M_X  , MT_X   , CSR.N),

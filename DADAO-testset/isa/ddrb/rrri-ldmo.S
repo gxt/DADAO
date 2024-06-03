@@ -3,17 +3,17 @@
 
 DDTEST_CODE_BEGIN
 
-	TEST_RRRI_LDMRB_123( 112,  ldmrb, 0x00ff00ff00ff00ff, tdat_b,   0, 1 )
-	TEST_RRRI_LDMRB_123( 113,  ldmrb, 0xff00ff00ff00ff00, tdat_b,   8, 1 )
-	TEST_RRRI_LDMRB_123( 114,  ldmrb, 0x0ff00ff00ff00ff0, tdat_b,  16, 1 )
-	TEST_RRRI_LDMRB_123( 115,  ldmrb, 0xf00ff00ff00ff00f, tdat_b,  24, 1 )
+	TEST_RRRI_LDMO_RB_123( 112,  ldmo, 0x00ff00ff00ff00ff, tdat_b,   0, 1 )
+	TEST_RRRI_LDMO_RB_123( 113,  ldmo, 0xff00ff00ff00ff00, tdat_b,   8, 1 )
+	TEST_RRRI_LDMO_RB_123( 114,  ldmo, 0x0ff00ff00ff00ff0, tdat_b,  16, 1 )
+	TEST_RRRI_LDMO_RB_123( 115,  ldmo, 0xf00ff00ff00ff00f, tdat_b,  24, 1 )
 
-	TEST_RRRI_LDMRB_123( 116,  ldmrb, 0x00ff00ff00ff00ff, tdat_e, -32, 1 )
-	TEST_RRRI_LDMRB_123( 117,  ldmrb, 0xff00ff00ff00ff00, tdat_e, -24, 1 )
-	TEST_RRRI_LDMRB_123( 118,  ldmrb, 0x0ff00ff00ff00ff0, tdat_e, -16, 1 )
-	TEST_RRRI_LDMRB_123( 119,  ldmrb, 0xf00ff00ff00ff00f, tdat_e,  -8, 1 )
+	TEST_RRRI_LDMO_RB_123( 116,  ldmo, 0x00ff00ff00ff00ff, tdat_e, -32, 1 )
+	TEST_RRRI_LDMO_RB_123( 117,  ldmo, 0xff00ff00ff00ff00, tdat_e, -24, 1 )
+	TEST_RRRI_LDMO_RB_123( 118,  ldmo, 0x0ff00ff00ff00ff0, tdat_e, -16, 1 )
+	TEST_RRRI_LDMO_RB_123( 119,  ldmo, 0xf00ff00ff00ff00f, tdat_e,  -8, 1 )
 
-	TEST_RRRI_LDMRB_M8( 121,  ldmrb, tdat_b, 0, 8 )
+	TEST_RRRI_LDMO_RB_M8( 121,  ldmo, tdat_b, 0, 8 )
 
 	TEST_RRRI_LDMRA_123( 212,  ldmra, 0x00ff00ff00ff00ff, tdat_b,   0, 1 )
 	TEST_RRRI_LDMRA_123( 213,  ldmra, 0xff00ff00ff00ff00, tdat_b,   8, 1 )

@@ -47,8 +47,8 @@ stmt	00111110
 stmo	00111111
 
 & @mem @reg rb@ha rb@hb rd@hc
-ldmrb	01000111		&& (ha!=000000) (ha+immu<111111)
-stmrb	01001111
+ldmo	01000111		&& (ha!=000000) (ha+immu<111111)
+stmo	01001111
 
 & @mem @reg rf@ha rb@hb rd@hc (ha+immu<=111111)
 ldmt	01010110

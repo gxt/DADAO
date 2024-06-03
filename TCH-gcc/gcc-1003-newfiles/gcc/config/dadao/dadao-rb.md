@@ -83,7 +83,7 @@
         (match_operand:DI 1 "memory_operand"    "Wg, m"))]
 	""
 	"@
-	ldmrb	%0, %1, 1
+	ldmo	%0, %1, 1
 	ldo	%0, %1")
 
 (define_insn "dd_st_rb"
@@ -91,7 +91,7 @@
         (match_operand:DI 1 "rb_class_operand" "Rb,Rb"))]
 	""
 	"@
-	stmrb	%1, %0, 1
+	stmo	%1, %0, 1
 	sto	%1, %0")
 
 (define_insn "dd_ldrbimm"
