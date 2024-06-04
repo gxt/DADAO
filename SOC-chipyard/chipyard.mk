@@ -7,8 +7,7 @@ CHIPYARD_0107_BRANCH		:= dadao
 
 CHIPYARD_0107_SOURCE		:= $(DIR_DADAO_SOURCE)/chipyard-0107
 CHIPYARD_0107_BUILD			:= $(DIR_DADAO_BUILD)/chipyard-0107
-CHIPYARD_0107_LOG_STDOUT	:= $(DIR_DADAO_LOG)/chipyard-0107.out
-CHIPYARD_0107_LOG_STDERR	:= $(DIR_DADAO_LOG)/chipyard-0107.err
+CHIPYARD_0107_LOG			:= $(DIR_DADAO_LOG)/chipyard-0107.log
 
 CHIPYARD_0107_NEWFILES		:= $(DIR_DADAO_TOP)/SOC-chipyard/chipyard-0107-newfiles
 CHIPYARD_0107_PATCHES		:= $(DIR_DADAO_TOP)/SOC-chipyard/chipyard-0107-patches
@@ -30,7 +29,6 @@ chipyard-0107-update-instructions:
 	@cat $(DIR_DADAO_TOP)/SOC-chipyard/instructions.scala-tail		>> $(CHIPYARD_0107_INSTRUCTIONS)
 
 chipyard-0107-source:
-	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@rm -fr $(CHIPYARD_0107_SOURCE)
 	# Clone github repo
 	@git clone -q $(CHIPYARD_0107_GITHUB) -- $(CHIPYARD_0107_SOURCE)
@@ -66,21 +64,17 @@ chipyard-0107-build:
 			BOOTROM_FILES_DIR=$(RUNTIME_BOOTROM_TARGET)				\
 			sim_dir=$(CHIPYARD_0107_BUILD)
 
-chipyard-0107-highfive:
-	@echo "BEGIN TO BUILD chipyard                          at `date +%T`"
-	@echo "0. Remove old logfiles                           at `date +%T`"
-	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
-	@rm -fr $(CHIPYARD_0107_LOG_STDOUT) $(CHIPYARD_0107_LOG_STDERR)
-	@echo "1. Clean old dirs                                at `date +%T`"
-	@make -s chipyard-0107-clean			1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
-	@echo "2. Prepare                                       at `date +%T`"
-	@make -s chipyard-0107-update-instructions				1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
-	@echo "3. New source                                    at `date +%T`"
-	@make -s chipyard-0107-source			1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
-	@echo "4. Configure                                     at `date +%T`"
-	@make -s chipyard-0107-prepare		1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
-	@echo "5. Build                                         at `date +%T`"
-	@make -s chipyard-0107-build			1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
-	# No installation needed
-	@echo "BUILD chipyard DONE!                             at `date +%T`"
-
+chipyard-0107-highfive:	dadao-before-highfive
+	@test ! -f $(CHIPYARD_0107_LOG) || mv --force $(CHIPYARD_0107_LOG) $(CHIPYARD_0107_LOG).last
+	@echo "=== chipyard-0107-highfive log file: $(CHIPYARD_0107_LOG)"		| tee -a $(CHIPYARD_0107_LOG)
+	@echo "--- 1. Clean                                     at `date +%T`"	| tee -a $(CHIPYARD_0107_LOG)
+	@make chipyard-0107-clean								>> $(CHIPYARD_0107_LOG) 2>&1
+	@echo "--- 2. Source                                    at `date +%T`"	| tee -a $(CHIPYARD_0107_LOG)
+	@make chipyard-0107-source								>> $(CHIPYARD_0107_LOG) 2>&1
+	@echo "--- 3. Prepare                                   at `date +%T`"	| tee -a $(CHIPYARD_0107_LOG)
+	@make chipyard-0107-prepare								>> $(CHIPYARD_0107_LOG) 2>&1
+	@echo "--- 4. Build                                     at `date +%T`"	| tee -a $(CHIPYARD_0107_LOG)
+	@make chipyard-0107-build								>> $(CHIPYARD_0107_LOG) 2>&1
+	@echo "--- 5. Install                                   at `date +%T`"	| tee -a $(CHIPYARD_0107_LOG)
+#	@make chipyard-0107-install								>> $(CHIPYARD_0107_LOG) 2>&1
+	@echo "--- chipyard-0107-highfive DONE! ===             at `date +%T`"	| tee -a $(CHIPYARD_0107_LOG)
