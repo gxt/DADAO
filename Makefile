@@ -31,19 +31,18 @@ all:
 
 include DADAO-runtime/common.mk
 
-include TCH-binutils-gdb/Makefrag
-include TCH-gcc/Makefrag
-include TCH-glibc/Makefrag
-include TCH-newlib-cygwin/Makefrag
-include TCH-llvm/Makefrag
-include ENV-linux/Makefrag
-include SIM-qemu/*.mk
-include SOC-chipyard/*.mk
-
 include DADAO-opcodes/*.mk
 include DADAO-runtime/runtime-*.mk
 include DADAO-testset/testset-*.mk
-include ENV-proxylinux/Makefrag
+
+include TCH-binutils-gdb/*.mk
+include TCH-gcc/*.mk
+include TCH-newlib-cygwin/*.mk
+include TCH-llvm/*.mk
+include SIM-qemu/*.mk
+include SOC-chipyard/*.mk
+include ENV-linux/*.mk
+include ENV-proxylinux/*.mk
 
 tch-gnu-highfive:
 	@echo "=== BUILD Toolchain dadao-linux-gnu BEGIN ==="
