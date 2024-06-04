@@ -19,8 +19,7 @@ LINUX_0504_FIXUPS		:= $(DIR_DADAO_TOP)/ENV-linux/linux-0504-fixups
 LINUX_0504_SOURCE		:= $(DIR_DADAO_SOURCE)/linux-0504
 LINUX_0504_BUILD		:= $(DIR_DADAO_BUILD)/linux-0504
 LINUX_0504_TARGET		?= $(DIR_DADAO_TARGET)
-LINUX_0504_LOG_STDOUT		:= $(DIR_DADAO_LOG)/linux-0504.out
-LINUX_0504_LOG_STDERR		:= $(DIR_DADAO_LOG)/linux-0504.err
+LINUX_0504_LOG			:= $(DIR_DADAO_LOG)/linux-0504.log
 
 linux-0504-clean:
 	# Remove old linux source dir ...
@@ -84,27 +83,20 @@ linux-0504-install:
 		INSTALL_PATH=$(LINUX_0504_TARGET)				\
 		install
 
-linux-0504-highfive:
-	# BEGIN TO BUILD linux-0504!
-	# 0. Remove old logfiles
-	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
-	@rm -fr $(LINUX_0504_LOG_STDOUT) $(LINUX_0504_LOG_STDERR)
-	# 1. Clean old linux ...
-	@make -s linux-0504-clean				1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
-	# 2. Clone and patch new linux ...
-	@make -s linux-0504-source				1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
-	# 3. Configure linux ...
-	@make -s linux-0504-prepare				1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
-	# 4. Make linux ...
-	@make -s linux-0504-build				1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
-	# 5. Install linux images ...
-#	@make -s linux-0504-install				1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
-	# BUILD linux-0504 DONE!
-	# 8. Check headers ...
-	@make -s linux-0504-headers-check			1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
-	# 9. Install headers ...
-	@make -s linux-0504-headers-install			1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
-	# BUILD linux-0504-headers DONE!
+linux-0504-highfive:	dadao-before-highfive
+	@test ! -f $(LINUX_0504_LOG) || mv --force $(LINUX_0504_LOG) $(LINUX_0504_LOG).last
+	@echo "=== linux-0504-highfive log file: $(LINUX_0504_LOG)"				| tee -a $(LINUX_0504_LOG)
+	@echo "--- 1. Clean                                     at `date +%T`"	| tee -a $(LINUX_0504_LOG)
+	@make linux-0504-clean									>> $(LINUX_0504_LOG) 2>&1
+	@echo "--- 2. Source                                    at `date +%T`"	| tee -a $(LINUX_0504_LOG)
+	@make linux-0504-source									>> $(LINUX_0504_LOG) 2>&1
+	@echo "--- 3. Prepare                                   at `date +%T`"	| tee -a $(LINUX_0504_LOG)
+	@make linux-0504-prepare								>> $(LINUX_0504_LOG) 2>&1
+	@echo "--- 4. Build                                     at `date +%T`"	| tee -a $(LINUX_0504_LOG)
+	@make linux-0504-build									>> $(LINUX_0504_LOG) 2>&1
+	@echo "--- 5. Install                                   at `date +%T`"	| tee -a $(LINUX_0504_LOG)
+	@make linux-0504-install								>> $(LINUX_0504_LOG) 2>&1
+	@echo "--- linux-0504-highfive DONE! ===                at `date +%T`"	| tee -a $(LINUX_0504_LOG)
 
 linux-0504-headers-check:
 	# Headers check ...
