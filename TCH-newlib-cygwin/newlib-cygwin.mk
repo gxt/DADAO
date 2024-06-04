@@ -14,8 +14,7 @@ NEWLIB_CYGWIN_0303_FIXUP	:= $(DIR_DADAO_TOP)/TCH-newlib-cygwin/newlib-cygwin-030
 NEWLIB_CYGWIN_0303_SOURCE	:= $(DIR_DADAO_SOURCE)/newlib-cygwin-0303
 NEWLIB_CYGWIN_0303_BUILD	:= $(DIR_DADAO_BUILD)/newlib-cygwin-0303
 NEWLIB_CYGWIN_0303_INSTALL	?= $(DIR_DADAO_INSTALL)
-NEWLIB_CYGWIN_0303_LOG_STDOUT	:= $(DIR_DADAO_LOG)/newlib-cygwin-0303.out
-NEWLIB_CYGWIN_0303_LOG_STDERR	:= $(DIR_DADAO_LOG)/newlib-cygwin-0303.err
+NEWLIB_CYGWIN_0303_LOG		:= $(DIR_DADAO_LOG)/newlib-cygwin-0303.log
 
 newlib-cygwin-0303-clean:
 	@echo "Remove old newlib-cygwin source dir ..."
@@ -28,7 +27,6 @@ ifneq ($(NEWLIB_CYGWIN_0303_INSTALL), $(DIR_DADAO_INSTALL))
 endif
 
 newlib-cygwin-0303-source:
-	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@rm -fr $(NEWLIB_CYGWIN_0303_SOURCE)
 ifeq ($(wildcard $(NEWLIB_CYGWIN_0303_LOCAL)),)
 	# Clone remote repo
@@ -107,20 +105,17 @@ newlib-cygwin-0303-build:
 newlib-cygwin-0303-install:
 	@PATH=$(DADAO_PATH) make -C $(NEWLIB_CYGWIN_0303_BUILD) install
 
-newlib-cygwin-0303-highfive:
-	@echo "--- BUILD newlib-cygwin-0303 $(NEWLIB_CYGWIN_0303_TARGET) BEGIN ---"
-	# 0. Remove old newlib-cygwin logfiles
-	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
-	@rm -fr $(NEWLIB_CYGWIN_0303_LOG_STDOUT) $(NEWLIB_CYGWIN_0303_LOG_STDERR)
-	# 1. Clean old newlib-cygwin ...
-	@make -s newlib-cygwin-0303-clean			1>> $(NEWLIB_CYGWIN_0303_LOG_STDOUT) 2>> $(NEWLIB_CYGWIN_0303_LOG_STDERR)
-	# 2. Clone and patch new newlib-cygwin ...
-	@make -s newlib-cygwin-0303-source			1>> $(NEWLIB_CYGWIN_0303_LOG_STDOUT) 2>> $(NEWLIB_CYGWIN_0303_LOG_STDERR)
-	# 3. Configure newlib-cygwin ...
-	@make -s newlib-cygwin-0303-prepare			1>> $(NEWLIB_CYGWIN_0303_LOG_STDOUT) 2>> $(NEWLIB_CYGWIN_0303_LOG_STDERR)
-	# 4. Make all-newlib-cygwin ...
-	@make -s newlib-cygwin-0303-build			1>> $(NEWLIB_CYGWIN_0303_LOG_STDOUT) 2>> $(NEWLIB_CYGWIN_0303_LOG_STDERR)
-	# 5. Install newlib-cygwin ...
-	@make -s newlib-cygwin-0303-install			1>> $(NEWLIB_CYGWIN_0303_LOG_STDOUT) 2>> $(NEWLIB_CYGWIN_0303_LOG_STDERR)
-	@echo "--- BUILD newlib-cygwin-0303 $(NEWLIB_CYGWIN_0303_TARGET) DONE! ---"
-
+newlib-cygwin-0303-highfive:	dadao-before-highfive
+	@test ! -f $(NEWLIB_CYGWIN_0303_LOG) || mv --force $(NEWLIB_CYGWIN_0303_LOG) $(NEWLIB_CYGWIN_0303_LOG).last
+	@echo "=== newlib-cygwin-0303-highfive log file: $(NEWLIB_CYGWIN_0303_LOG)"	| tee -a $(NEWLIB_CYGWIN_0303_LOG)
+	@echo "--- 1. Clean                                     at `date +%T`"		| tee -a $(NEWLIB_CYGWIN_0303_LOG)
+	@make newlib-cygwin-0303-clean							>> $(NEWLIB_CYGWIN_0303_LOG) 2>&1
+	@echo "--- 2. Source                                    at `date +%T`"		| tee -a $(NEWLIB_CYGWIN_0303_LOG)
+	@make newlib-cygwin-0303-source							>> $(NEWLIB_CYGWIN_0303_LOG) 2>&1
+	@echo "--- 3. Prepare                                   at `date +%T`"		| tee -a $(NEWLIB_CYGWIN_0303_LOG)
+	@make newlib-cygwin-0303-prepare						>> $(NEWLIB_CYGWIN_0303_LOG) 2>&1
+	@echo "--- 4. Build                                     at `date +%T`"		| tee -a $(NEWLIB_CYGWIN_0303_LOG)
+	@make newlib-cygwin-0303-build							>> $(NEWLIB_CYGWIN_0303_LOG) 2>&1
+	@echo "--- 5. Install                                   at `date +%T`"		| tee -a $(NEWLIB_CYGWIN_0303_LOG)
+	@make newlib-cygwin-0303-install						>> $(NEWLIB_CYGWIN_0303_LOG) 2>&1
+	@echo "--- newlib-cygwin-0303-highfive DONE! ===        at `date +%T`"		| tee -a $(NEWLIB_CYGWIN_0303_LOG)
