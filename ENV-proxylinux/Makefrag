@@ -38,7 +38,7 @@ endif
 		test ! -d $(PROXYLINUX_PATCHES) ||				\
 		git am $(PROXYLINUX_PATCHES)/*.patch
 
-proxylinux-build-new:
+proxylinux-prepare:
 	# Remove old proxylinux build dir ...
 	@rm -fr $(PROXYLINUX_BUILD)
 	@mkdir -p $(PROXYLINUX_BUILD)
@@ -64,7 +64,7 @@ proxylinux-highfive:
 	# 2. Clone proxylinux ...
 	@make -s proxylinux-source			1>> $(PROXYLINUX_LOG_STDOUT) 2>> $(PROXYLINUX_LOG_STDERR)
 	# 3. Configure proxylinux ...
-	@make -s proxylinux-build-new			1>> $(PROXYLINUX_LOG_STDOUT) 2>> $(PROXYLINUX_LOG_STDERR)
+	@make -s proxylinux-prepare			1>> $(PROXYLINUX_LOG_STDOUT) 2>> $(PROXYLINUX_LOG_STDERR)
 	# 4. Make proxylinux ...
 	@make -s proxylinux-build			1>> $(PROXYLINUX_LOG_STDOUT) 2>> $(PROXYLINUX_LOG_STDERR)
 	# 5. Install proxylinux ...

@@ -89,7 +89,7 @@ endif
 	#@echo "FIXUP: Apply fixup ..."
 	#@cd $(NEWLIB_CYGWIN_0303_SOURCE); git am $(NEWLIB_CYGWIN_0303_FIXUP)/*.patch
 
-newlib-cygwin-0303-build-new:
+newlib-cygwin-0303-prepare:
 	@rm -fr $(NEWLIB_CYGWIN_0303_BUILD)
 	@mkdir -p $(NEWLIB_CYGWIN_0303_BUILD)
 	@test -d $(DIR_DADAO_INSTALL)/include/linux || make -s -C $(DIR_DADAO_TOP) linux-$(VER_LINUX)-headers-highfive
@@ -117,7 +117,7 @@ newlib-cygwin-0303-highfive:
 	# 2. Clone and patch new newlib-cygwin ...
 	@make -s newlib-cygwin-0303-source			1>> $(NEWLIB_CYGWIN_0303_LOG_STDOUT) 2>> $(NEWLIB_CYGWIN_0303_LOG_STDERR)
 	# 3. Configure newlib-cygwin ...
-	@make -s newlib-cygwin-0303-build-new			1>> $(NEWLIB_CYGWIN_0303_LOG_STDOUT) 2>> $(NEWLIB_CYGWIN_0303_LOG_STDERR)
+	@make -s newlib-cygwin-0303-prepare			1>> $(NEWLIB_CYGWIN_0303_LOG_STDOUT) 2>> $(NEWLIB_CYGWIN_0303_LOG_STDERR)
 	# 4. Make all-newlib-cygwin ...
 	@make -s newlib-cygwin-0303-build			1>> $(NEWLIB_CYGWIN_0303_LOG_STDOUT) 2>> $(NEWLIB_CYGWIN_0303_LOG_STDERR)
 	# 5. Install newlib-cygwin ...

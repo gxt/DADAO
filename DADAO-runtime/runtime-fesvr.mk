@@ -35,7 +35,7 @@ runtime-fesvr-source:
 	# Apply patches
 	@cd $(RUNTIME_FESVR_SOURCE); git am $(RUNTIME_FESVR_PATCHES)/*.patch
 
-runtime-fesvr-build-new:
+runtime-fesvr-prepare:
 	# Remove old runtime-fesvr build dir ...
 	@rm -fr $(RUNTIME_FESVR_BUILD)
 	@mkdir -p $(RUNTIME_FESVR_BUILD)
@@ -66,7 +66,7 @@ runtime-fesvr-highfive:
 	@echo "2. New source                                    at `date +%T`"
 	@make -s runtime-fesvr-source							1>> $(RUNTIME_FESVR_LOG_STDOUT) 2>> $(RUNTIME_FESVR_LOG_STDERR)
 	@echo "3. Configure                                     at `date +%T`"
-	@make -s runtime-fesvr-build-new						1>> $(RUNTIME_FESVR_LOG_STDOUT) 2>> $(RUNTIME_FESVR_LOG_STDERR)
+	@make -s runtime-fesvr-prepare						1>> $(RUNTIME_FESVR_LOG_STDOUT) 2>> $(RUNTIME_FESVR_LOG_STDERR)
 	@echo "4. Build                                         at `date +%T`"
 	@make -s runtime-fesvr-build							1>> $(RUNTIME_FESVR_LOG_STDOUT) 2>> $(RUNTIME_FESVR_LOG_STDERR)
 	@echo "5. Install                                       at `date +%T`"

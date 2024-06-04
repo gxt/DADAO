@@ -32,7 +32,7 @@ testset-llvm-testsuite-source:
 	# Patches
 	@cd $(LLVM_TESTSUITE_SOURCE); test ! -d $(LLVM_TESTSUITE_PATCHES) || git am $(LLVM_TESTSUITE_PATCHES)/*.patch
 
-testset-llvm-testsuite-build-new:
+testset-llvm-testsuite-prepare:
 	@rm -fr $(LLVM_TESTSUITE_BUILD)
 	@mkdir -p $(LLVM_TESTSUITE_BUILD)
 	# NOTE: $(LLVM_TESTSUITE_SOURCE)/build is softlink to $(LLVM_TESTSUITE_BUILD)
@@ -67,7 +67,7 @@ testset-llvm-testsuite-highfive:
 	@echo "2. New source                                    at `date +%T`"
 	@make -s testset-llvm-testsuite-source					1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
 	@echo "3. Configure                                     at `date +%T`"
-	@make -s testset-llvm-testsuite-build-new				1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
+	@make -s testset-llvm-testsuite-prepare				1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
 	@echo "4. Build                                         at `date +%T`"
 	@make -s testset-llvm-testsuite-build					1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
 	@echo "5. Runtest                                       at `date +%T`"

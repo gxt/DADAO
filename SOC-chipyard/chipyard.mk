@@ -50,7 +50,7 @@ chipyard-0107-source:
 		git commit -asm"DADAO: add chipyard-config";					\
 		git am $(CHIPYARD_0107_PATCHES)/*
 
-chipyard-0107-build-new:
+chipyard-0107-prepare:
 	@rm -fr $(CHIPYARD_0107_BUILD)
 	@mkdir -p $(CHIPYARD_0107_BUILD)
 	@make -s -C $(DIR_DADAO_TOP) runtime-bootrom-highfive
@@ -78,7 +78,7 @@ chipyard-0107-highfive:
 	@echo "3. New source                                    at `date +%T`"
 	@make -s chipyard-0107-source			1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
 	@echo "4. Configure                                     at `date +%T`"
-	@make -s chipyard-0107-build-new		1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
+	@make -s chipyard-0107-prepare		1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
 	@echo "5. Build                                         at `date +%T`"
 	@make -s chipyard-0107-build			1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
 	# No installation needed

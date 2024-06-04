@@ -68,7 +68,7 @@ endif
 		git add .;						\
 		git commit -sm"DADAO: re-generate root configure"
 
-gcc-1003-build-new:
+gcc-1003-prepare:
 	@rm -fr $(GCC_1003_BUILD)
 	@mkdir -p $(GCC_1003_BUILD)
 	# FIXME: add -Wno-format to remove a heap of compiling warnings
@@ -113,7 +113,7 @@ gcc-1003-highfive:
 	# 2. Clone and patch new gcc ...
 	@make -s gcc-1003-source			1>> $(GCC_1003_LOG_STDOUT) 2>> $(GCC_1003_LOG_STDERR)
 	# 3. Configure gcc ...
-	@make -s gcc-1003-build-new			1>> $(GCC_1003_LOG_STDOUT) 2>> $(GCC_1003_LOG_STDERR)
+	@make -s gcc-1003-prepare			1>> $(GCC_1003_LOG_STDOUT) 2>> $(GCC_1003_LOG_STDERR)
 	# 4. Make all-gcc ...
 	@make -s gcc-1003-build				1>> $(GCC_1003_LOG_STDOUT) 2>> $(GCC_1003_LOG_STDERR)
 	# 5. Install gcc ...

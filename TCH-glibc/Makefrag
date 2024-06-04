@@ -55,7 +55,7 @@ endif
 	# FIXUP: Apply fixups ...
 	@cd $(GLIBC_0231_SOURCE); git am $(GLIBC_0231_FIXUPS)/*.patch
 
-glibc-0231-build-new:
+glibc-0231-prepare:
 	# Remove old glibc build dir ...
 	@rm -fr $(GLIBC_0231_BUILD)
 	@mkdir -p $(GLIBC_0231_BUILD)
@@ -94,7 +94,7 @@ glibc-0231-highfive:
 	# 2. Clone and patch new glibc ...
 	@make -s glibc-0231-source			1>> $(GLIBC_0231_LOG_STDOUT) 2>> $(GLIBC_0231_LOG_STDERR)
 	# 3. Configure glibc ...
-	@make -s glibc-0231-build-new			1>> $(GLIBC_0231_LOG_STDOUT) 2>> $(GLIBC_0231_LOG_STDERR)
+	@make -s glibc-0231-prepare			1>> $(GLIBC_0231_LOG_STDOUT) 2>> $(GLIBC_0231_LOG_STDERR)
 	# 4. Make all-glibc ...
 	@make -s glibc-0231-build			1>> $(GLIBC_0231_LOG_STDOUT) 2>> $(GLIBC_0231_LOG_STDERR)
 	# 5. Install glibc ...
@@ -103,7 +103,7 @@ glibc-0231-highfive:
 
 glibc-0231-update-syscall-lists:
 	# @touch $(GLIBC_0231_SOURCE)/sysdeps/unix/sysv/linux/dadao/arch-syscall.h
-	@test -f $(GLIBC_0231_BUILD)/Makefile || make -s -C $(DIR_DADAO_TOP) glibc-$(VER_GLIBC)-build-new
+	@test -f $(GLIBC_0231_BUILD)/Makefile || make -s -C $(DIR_DADAO_TOP) glibc-$(VER_GLIBC)-prepare
 	@PATH=$(DADAO_PATH) make -C $(GLIBC_0231_BUILD) update-syscall-lists
 	@cd $(GLIBC_0231_SOURCE);						\
 		git diff

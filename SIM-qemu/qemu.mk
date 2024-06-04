@@ -70,7 +70,7 @@ qemu-0801-source:
 	# Fixups
 	@cd $(QEMU_0801_SOURCE); test ! -d $(QEMU_0801_FIXUPS) || git am $(QEMU_0801_FIXUPS)/*.patch
 	
-qemu-0801-build-new:
+qemu-0801-prepare:
 	@rm -fr $(QEMU_0801_BUILD)
 	@mkdir -p $(QEMU_0801_BUILD)
 	@cd $(QEMU_0801_BUILD) &&					\
@@ -102,7 +102,7 @@ qemu-0801-highfive:
 	@echo "2. New source                                    at `date +%T`"
 	@make -s qemu-0801-source				1>> $(QEMU_0801_LOG_STDOUT) 2>> $(QEMU_0801_LOG_STDERR)
 	@echo "3. Configure                                     at `date +%T`"
-	@make -s qemu-0801-build-new				1>> $(QEMU_0801_LOG_STDOUT) 2>> $(QEMU_0801_LOG_STDERR)
+	@make -s qemu-0801-prepare				1>> $(QEMU_0801_LOG_STDOUT) 2>> $(QEMU_0801_LOG_STDERR)
 	@echo "4. Build                                         at `date +%T`"
 	@make -s qemu-0801-build				1>> $(QEMU_0801_LOG_STDOUT) 2>> $(QEMU_0801_LOG_STDERR)
 	@echo "5. Install                                       at `date +%T`"
