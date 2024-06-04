@@ -17,8 +17,7 @@ BINUTILS_GDB_0235_ENCODING		:= $(BINUTILS_GDB_0235_SOURCE)/include/opcode/encodi
 BINUTILS_GDB_0235_BUILD			:= $(DIR_DADAO_BUILD)/binutils-gdb-0235
 BINUTILS_GDB_0235_INSTALL		?= $(DIR_DADAO_INSTALL)
 #BINUTILS_GDB_0235_INSTALL		?= $(DIR_DADAO_BUILD)/__binutils-gdb-0235
-BINUTILS_GDB_0235_LOG_STDOUT		:= $(DIR_DADAO_LOG)/binutils-gdb-0235.out
-BINUTILS_GDB_0235_LOG_STDERR		:= $(DIR_DADAO_LOG)/binutils-gdb-0235.err
+BINUTILS_GDB_0235_LOG			:= $(DIR_DADAO_LOG)/binutils-gdb-0235.log
 BINUTILS_GDB_0235_LOG_CHECK		:= $(DIR_DADAO_LOG)/binutils-gdb-0235.check
 
 binutils-gdb-0235-clean:
@@ -32,7 +31,6 @@ ifneq ($(BINUTILS_GDB_0235_INSTALL), $(DIR_DADAO_INSTALL))
 endif
 
 binutils-gdb-0235-source:
-	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@rm -fr $(BINUTILS_GDB_0235_SOURCE)
 ifeq ($(wildcard $(BINUTILS_GDB_0235_LOCAL)),)
 	# Clone remote repo
@@ -142,22 +140,20 @@ binutils-gdb-0235-build:
 binutils-gdb-0235-install:
 	@make -C $(BINUTILS_GDB_0235_BUILD) install
 
-binutils-gdb-0235-highfive:
-	@echo "--- BUILD binutils-gdb-0235 $(BINUTILS_GDB_0235_TARGET) BEGIN ---"
-	# 0. Remove old binutils logfiles
-	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
-	@rm -fr $(BINUTILS_GDB_0235_LOG_STDOUT) $(BINUTILS_GDB_0235_LOG_STDERR)
-	# 1. Clean old binutils-gdb ...
-	@make -s binutils-gdb-0235-clean			1>> $(BINUTILS_GDB_0235_LOG_STDOUT) 2>> $(BINUTILS_GDB_0235_LOG_STDERR)
-	# 2. Clone and patch new binutils-gdb ...
-	@make -s binutils-gdb-0235-source			1>> $(BINUTILS_GDB_0235_LOG_STDOUT) 2>> $(BINUTILS_GDB_0235_LOG_STDERR)
-	# 3. Configure binutils-gdb ...
-	@make -s binutils-gdb-0235-prepare			1>> $(BINUTILS_GDB_0235_LOG_STDOUT) 2>> $(BINUTILS_GDB_0235_LOG_STDERR)
-	# 4. Make binutils-gdb ...
-	@make -s binutils-gdb-0235-build			1>> $(BINUTILS_GDB_0235_LOG_STDOUT) 2>> $(BINUTILS_GDB_0235_LOG_STDERR)
-	# 5. Install binutils-gdb ...
-	@make -s binutils-gdb-0235-install			1>> $(BINUTILS_GDB_0235_LOG_STDOUT) 2>> $(BINUTILS_GDB_0235_LOG_STDERR)
-	@echo "--- BUILD binutils-gdb-0235 $(BINUTILS_GDB_0235_TARGET) DONE! ---"
+binutils-gdb-0235-highfive:	dadao-before-highfive
+	@test ! -f $(BINUTILS_GDB_0235_LOG) || mv --force $(BINUTILS_GDB_0235_LOG) $(BINUTILS_GDB_0235_LOG).last
+	@echo "=== binutils-gdb-0235-highfive log file: $(BINUTILS_GDB_0235_LOG)"	| tee -a $(BINUTILS_GDB_0235_LOG)
+	@echo "--- 1. Clean                                     at `date +%T`"		| tee -a $(BINUTILS_GDB_0235_LOG)
+	@make binutils-gdb-0235-clean							>> $(BINUTILS_GDB_0235_LOG) 2>&1
+	@echo "--- 2. Source                                    at `date +%T`"		| tee -a $(BINUTILS_GDB_0235_LOG)
+	@make binutils-gdb-0235-source							>> $(BINUTILS_GDB_0235_LOG) 2>&1
+	@echo "--- 3. Prepare                                   at `date +%T`"		| tee -a $(BINUTILS_GDB_0235_LOG)
+	@make binutils-gdb-0235-prepare							>> $(BINUTILS_GDB_0235_LOG) 2>&1
+	@echo "--- 4. Build                                     at `date +%T`"		| tee -a $(BINUTILS_GDB_0235_LOG)
+	@make binutils-gdb-0235-build							>> $(BINUTILS_GDB_0235_LOG) 2>&1
+	@echo "--- 5. Install                                   at `date +%T`"		| tee -a $(BINUTILS_GDB_0235_LOG)
+	@make binutils-gdb-0235-install							>> $(BINUTILS_GDB_0235_LOG) 2>&1
+	@echo "--- binutils-gdb-0235-highfive DONE! ===         at `date +%T`"		| tee -a $(BINUTILS_GDB_0235_LOG)
 
 binutils-gdb-0235-check:
 	@rm -fr $(BINUTILS_GDB_0235_LOG_CHECK)
