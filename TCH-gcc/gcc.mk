@@ -15,8 +15,7 @@ GCC_1003_SOURCE		:= $(DIR_DADAO_SOURCE)/gcc-1003
 GCC_1003_BUILD		:= $(DIR_DADAO_BUILD)/gcc-1003
 GCC_1003_INSTALL	?= $(DIR_DADAO_INSTALL)
 #GCC_1003_INSTALL	?= $(DIR_DADAO_BUILD)/__gcc-1003
-GCC_1003_LOG_STDOUT	:= $(DIR_DADAO_LOG)/gcc-1003.out
-GCC_1003_LOG_STDERR	:= $(DIR_DADAO_LOG)/gcc-1003.err
+GCC_1003_LOG		:= $(DIR_DADAO_LOG)/gcc-1003.log
 
 gcc-1003-clean:
 	@echo "Remove old gcc source dir ..."
@@ -29,7 +28,6 @@ ifneq ($(GCC_1003_INSTALL), $(DIR_DADAO_INSTALL))
 endif
 
 gcc-1003-source:
-	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@rm -fr $(GCC_1003_SOURCE)
 ifeq ($(wildcard $(GCC_1003_LOCAL)),)
 	# Clone remote repo
@@ -103,22 +101,20 @@ gcc-1003-install:
 	@$(DADAO_MAKE) -C $(GCC_1003_BUILD) install
 #	@$(DADAO_MAKE) -C $(GCC_1003_BUILD) install-gcc		; if ONLY gcc required, no libgcc and others
 
-gcc-1003-highfive:
-	@echo "--- BUILD gcc-1003 $(GCC_1003_TARGET) BEGIN ---"
-	# 0. Remove old gcc logfiles
-	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
-	@rm -fr $(GCC_1003_LOG_STDOUT) $(GCC_1003_LOG_STDERR)
-	# 1. Clean old gcc ...
-	@make -s gcc-1003-clean				1>> $(GCC_1003_LOG_STDOUT) 2>> $(GCC_1003_LOG_STDERR)
-	# 2. Clone and patch new gcc ...
-	@make -s gcc-1003-source			1>> $(GCC_1003_LOG_STDOUT) 2>> $(GCC_1003_LOG_STDERR)
-	# 3. Configure gcc ...
-	@make -s gcc-1003-prepare			1>> $(GCC_1003_LOG_STDOUT) 2>> $(GCC_1003_LOG_STDERR)
-	# 4. Make all-gcc ...
-	@make -s gcc-1003-build				1>> $(GCC_1003_LOG_STDOUT) 2>> $(GCC_1003_LOG_STDERR)
-	# 5. Install gcc ...
-	@make -s gcc-1003-install			1>> $(GCC_1003_LOG_STDOUT) 2>> $(GCC_1003_LOG_STDERR)
-	@echo "--- BUILD gcc-1003 $(GCC_1003_TARGET) DONE! ---"
+gcc-1003-highfive:	dadao-before-highfive
+	@test ! -f $(GCC_1003_LOG) || mv --force $(GCC_1003_LOG) $(GCC_1003_LOG).last
+	@echo "=== gcc-1003-highfive log file: $(GCC_1003_LOG)"					| tee -a $(GCC_1003_LOG)
+	@echo "--- 1. Clean                                     at `date +%T`"	| tee -a $(GCC_1003_LOG)
+	@make gcc-1003-clean									>> $(GCC_1003_LOG) 2>&1
+	@echo "--- 2. Source                                    at `date +%T`"	| tee -a $(GCC_1003_LOG)
+	@make gcc-1003-source									>> $(GCC_1003_LOG) 2>&1
+	@echo "--- 3. Prepare                                   at `date +%T`"	| tee -a $(GCC_1003_LOG)
+	@make gcc-1003-prepare									>> $(GCC_1003_LOG) 2>&1
+	@echo "--- 4. Build                                     at `date +%T`"	| tee -a $(GCC_1003_LOG)
+	@make gcc-1003-build									>> $(GCC_1003_LOG) 2>&1
+	@echo "--- 5. Install                                   at `date +%T`"	| tee -a $(GCC_1003_LOG)
+	@make gcc-1003-install									>> $(GCC_1003_LOG) 2>&1
+	@echo "--- gcc-1003-highfive DONE! ===                  at `date +%T`"	| tee -a $(GCC_1003_LOG)
 
 gcc-1003-check:
 	@echo "Run gcc-testsuite with qemu simulator"
