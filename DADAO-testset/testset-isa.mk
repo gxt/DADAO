@@ -23,21 +23,40 @@ testset-isa-bare-highfive:
 	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_BARE_TARGET) run-bare	>> $(TESTSET_ISA_BARE_LOG)
 	@ln -s -t $(TESTSET_ISA_BARE_TARGET) $(TESTSET_ISA_BARE_LOG)
 
-testset-isa-qemu-highfive:
+testset-isa-qemu-clean:
 	#
 	# TARGET DIR: $(TESTSET_ISA_QEMU_TARGET)
 	# NOTE: CAN ONLY RUN ONE BY ONE, so add j1 option for make
 	#
 	@rm -fr $(TESTSET_ISA_QEMU_TARGET)
+
+testset-isa-qemu-source:
 	@mkdir -p $(TESTSET_ISA_QEMU_TARGET)
 	@ln -s -t $(TESTSET_ISA_QEMU_TARGET) $(RUNTIME_COMMON_MK)
 	@ln -s -t $(TESTSET_ISA_QEMU_TARGET) $(TESTSET_ISA_SOURCE)/*
 	@echo "DIR_DADAO_TOP\t\t\t:= $(DIR_DADAO_TOP)"				>  $(TESTSET_ISA_QEMU_TARGET)/Makefile
 	@echo "include common.mk"									>> $(TESTSET_ISA_QEMU_TARGET)/Makefile
 	@echo "include isa.mk"										>> $(TESTSET_ISA_QEMU_TARGET)/Makefile
-	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_QEMU_TARGET) ddrd-qemu	>  $(TESTSET_ISA_QEMU_LOG)
-	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_QEMU_TARGET) ddrb-qemu	>  $(TESTSET_ISA_QEMU_LOG)
-	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_QEMU_TARGET) ddrf-qemu	>  $(TESTSET_ISA_QEMU_LOG)
-	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_QEMU_TARGET) run-qemu	>> $(TESTSET_ISA_QEMU_LOG)
-	@ln -s -t $(TESTSET_ISA_QEMU_TARGET) $(TESTSET_ISA_QEMU_LOG)
 
+testset-isa-qemu-build:
+	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_QEMU_TARGET) ddrd-qemu
+	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_QEMU_TARGET) ddrb-qemu
+	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_QEMU_TARGET) ddrf-qemu
+
+testset-isa-qemu-runtest:
+	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_QEMU_TARGET) run-qemu
+
+testset-isa-qemu-highfive:	dadao-before-highfive
+	@test ! -f $(TESTSET_ISA_QEMU_LOG) || mv --force $(TESTSET_ISA_QEMU_LOG) $(TESTSET_ISA_QEMU_LOG).last
+	@echo "=== testset-isa-qemu-highfive log file: $(TESTSET_ISA_QEMU_LOG)"	| tee -a $(TESTSET_ISA_QEMU_LOG)
+	@echo "--- 1. Clean                                     at `date +%T`"	| tee -a $(TESTSET_ISA_QEMU_LOG)
+	@make testset-isa-qemu-clean							>> $(TESTSET_ISA_QEMU_LOG) 2>&1
+	@echo "--- 2. Source                                    at `date +%T`"	| tee -a $(TESTSET_ISA_QEMU_LOG)
+	@make testset-isa-qemu-source							>> $(TESTSET_ISA_QEMU_LOG) 2>&1
+	@echo "--- 3. Prepare                                   at `date +%T`"	| tee -a $(TESTSET_ISA_QEMU_LOG)
+#	@make testset-isa-qemu-prepare							>> $(TESTSET_ISA_QEMU_LOG) 2>&1
+	@echo "--- 4. Build                                     at `date +%T`"	| tee -a $(TESTSET_ISA_QEMU_LOG)
+	@make testset-isa-qemu-build							>> $(TESTSET_ISA_QEMU_LOG) 2>&1
+	@echo "--- 5. Runtest                                   at `date +%T`"	| tee -a $(TESTSET_ISA_QEMU_LOG)
+	@make testset-isa-qemu-runtest							>> $(TESTSET_ISA_QEMU_LOG) 2>&1
+	@echo "--- testset-isa-qemu-highfive DONE! ===          at `date +%T`"	| tee -a $(TESTSET_ISA_QEMU_LOG)
