@@ -11,8 +11,7 @@ RUNTIME_FESVR_BRANCH		:= dadao
 
 RUNTIME_FESVR_PATCHES		:= $(DIR_DADAO_TOP)/DADAO-runtime/fesvr-patches
 
-RUNTIME_FESVR_LOG_STDOUT	:= $(DIR_DADAO_LOG)/runtime-fesvr.out
-RUNTIME_FESVR_LOG_STDERR	:= $(DIR_DADAO_LOG)/runtime-fesvr.err
+RUNTIME_FESVR_LOG			:= $(DIR_DADAO_LOG)/runtime-fesvr.log
 
 runtime-fesvr-clean:
 	# Remove old runtime-fesvr source dir ...
@@ -27,7 +26,6 @@ runtime-fesvr-clean:
 runtime-fesvr-source:
 	# Remove old runtime-fesvr source dir ...
 	@rm -fr $(RUNTIME_FESVR_SOURCE)
-	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	# Clone remote repo
 	@git clone -q $(RUNTIME_FESVR_GITHUB) -- $(RUNTIME_FESVR_SOURCE)
 	# Checkout specified version
@@ -56,20 +54,17 @@ runtime-fesvr-install:
 	@cp -a $(RUNTIME_FESVR_SOURCE)/fesvr/*.h $(RUNTIME_FESVR_INSTALL)/include/fesvr
 #	@make -C $(RUNTIME_FESVR_BUILD) install
 
-runtime-fesvr-highfive:
-	@echo "BUILD runtime-fesvr BEGIN                        at `date +%T`"
-	@echo "0. Remove old logfiles                           at `date +%T`"
-	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
-	@rm -fr $(RUNTIME_FESVR_LOG_STDOUT) $(RUNTIME_FESVR_LOG_STDERR)
-	@echo "1. Clean old dirs                                at `date +%T`"
-	@make -s runtime-fesvr-clean							1>> $(RUNTIME_FESVR_LOG_STDOUT) 2>> $(RUNTIME_FESVR_LOG_STDERR)
-	@echo "2. New source                                    at `date +%T`"
-	@make -s runtime-fesvr-source							1>> $(RUNTIME_FESVR_LOG_STDOUT) 2>> $(RUNTIME_FESVR_LOG_STDERR)
-	@echo "3. Configure                                     at `date +%T`"
-	@make -s runtime-fesvr-prepare						1>> $(RUNTIME_FESVR_LOG_STDOUT) 2>> $(RUNTIME_FESVR_LOG_STDERR)
-	@echo "4. Build                                         at `date +%T`"
-	@make -s runtime-fesvr-build							1>> $(RUNTIME_FESVR_LOG_STDOUT) 2>> $(RUNTIME_FESVR_LOG_STDERR)
-	@echo "5. Install                                       at `date +%T`"
-	@make -s runtime-fesvr-install							1>> $(RUNTIME_FESVR_LOG_STDOUT) 2>> $(RUNTIME_FESVR_LOG_STDERR)
-	@echo "BUILD runtime-fesvr DONE!                        at `date +%T`"
-
+runtime-fesvr-highfive:	dadao-before-highfive
+	@test ! -f $(RUNTIME_FESVR_LOG) || mv --force $(RUNTIME_FESVR_LOG) $(RUNTIME_FESVR_LOG).last
+	@echo "=== runtime-fesvr-highfive log file: $(RUNTIME_FESVR_LOG)"		| tee -a $(RUNTIME_FESVR_LOG)
+	@echo "--- 1. Clean                                     at `date +%T`"	| tee -a $(RUNTIME_FESVR_LOG)
+	@make runtime-fesvr-clean								>> $(RUNTIME_FESVR_LOG) 2>&1
+	@echo "--- 2. Source                                    at `date +%T`"	| tee -a $(RUNTIME_FESVR_LOG)
+	@make runtime-fesvr-source								>> $(RUNTIME_FESVR_LOG) 2>&1
+	@echo "--- 3. Prepare                                   at `date +%T`"	| tee -a $(RUNTIME_FESVR_LOG)
+	@make runtime-fesvr-prepare								>> $(RUNTIME_FESVR_LOG) 2>&1
+	@echo "--- 4. Build                                     at `date +%T`"	| tee -a $(RUNTIME_FESVR_LOG)
+	@make runtime-fesvr-build								>> $(RUNTIME_FESVR_LOG) 2>&1
+	@echo "--- 5. Install                                   at `date +%T`"	| tee -a $(RUNTIME_FESVR_LOG)
+	@make runtime-fesvr-install								>> $(RUNTIME_FESVR_LOG) 2>&1
+	@echo "--- runtime-fesvr-highfive DONE! ===             at `date +%T`"	| tee -a $(RUNTIME_FESVR_LOG)
