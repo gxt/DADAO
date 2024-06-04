@@ -25,8 +25,10 @@ testset-dhrystone-bare-highfive:
 		runtime-bare-run-binary									>> $(TESTSET_DHRYSTONE_BARE_LOG) 2>&1
 	@ln -s -t $(TESTSET_DHRYSTONE_BARE_TARGET) $(TESTSET_DHRYSTONE_BARE_LOG)
 
-testset-dhrystone-qemu-highfive:
+testset-dhrystone-qemu-clean:
 	@rm -fr $(TESTSET_DHRYSTONE_QEMU_TARGET)
+
+testset-dhrystone-qemu-build:
 	@mkdir -p $(TESTSET_DHRYSTONE_QEMU_TARGET)
 	@cd $(TESTSET_DHRYSTONE_QEMU_TARGET) ;								\
 		$(DADAO_ELF_GCC)												\
@@ -36,12 +38,27 @@ testset-dhrystone-qemu-highfive:
 			-DTIME														\
 			-o $(TESTSET_DHRYSTONE_QEMU_TARGET)/dhry					\
 			$(TESTSET_DHRYSTONE_QEMU_SOURCE)/dhry_1.c					\
-			$(TESTSET_DHRYSTONE_QEMU_SOURCE)/dhry_2.c					> $(TESTSET_DHRYSTONE_QEMU_LOG) 2>&1
+			$(TESTSET_DHRYSTONE_QEMU_SOURCE)/dhry_2.c
 	@$(DADAO_ELF_READELF) -a $(TESTSET_DHRYSTONE_QEMU_TARGET)/dhry		> $(TESTSET_DHRYSTONE_QEMU_TARGET)/dhry.elf
 	@$(DADAO_ELF_OBJDUMP) -lDS $(TESTSET_DHRYSTONE_QEMU_TARGET)/dhry	> $(TESTSET_DHRYSTONE_QEMU_TARGET)/dhry.dump
+
+testset-dhrystone-qemu-runtest:
 	@echo 10 | $(DADAO_QEMU_USER)										\
 		-singlestep -strace												\
 		-D $(TESTSET_DHRYSTONE_QEMU_TARGET)/dhrystone.qemulog			\
-		$(TESTSET_DHRYSTONE_QEMU_TARGET)/dhry							>> $(TESTSET_DHRYSTONE_QEMU_LOG) 2>&1
-	@ln -s -t $(TESTSET_DHRYSTONE_QEMU_TARGET) $(TESTSET_DHRYSTONE_QEMU_LOG)
+		$(TESTSET_DHRYSTONE_QEMU_TARGET)/dhry
 
+testset-dhrystone-qemu-highfive:	dadao-before-highfive
+	@test ! -f $(TESTSET_DHRYSTONE_QEMU_LOG) || mv --force $(TESTSET_DHRYSTONE_QEMU_LOG) $(TESTSET_DHRYSTONE_QEMU_LOG).last
+	@echo "=== testset-dhrystone-qemu-highfive log file: $(TESTSET_DHRYSTONE_QEMU_LOG)"	| tee -a $(TESTSET_DHRYSTONE_QEMU_LOG)
+	@echo "--- 1. Clean                                     at `date +%T`"	| tee -a $(TESTSET_DHRYSTONE_QEMU_LOG)
+	@make testset-dhrystone-qemu-clean						>> $(TESTSET_DHRYSTONE_QEMU_LOG) 2>&1
+	@echo "--- 2. Source                                    at `date +%T`"	| tee -a $(TESTSET_DHRYSTONE_QEMU_LOG)
+#	@make testset-dhrystone-qemu-source						>> $(TESTSET_DHRYSTONE_QEMU_LOG) 2>&1
+	@echo "--- 3. Prepare                                   at `date +%T`"	| tee -a $(TESTSET_DHRYSTONE_QEMU_LOG)
+#	@make testset-dhrystone-qemu-prepare					>> $(TESTSET_DHRYSTONE_QEMU_LOG) 2>&1
+	@echo "--- 4. Build                                     at `date +%T`"	| tee -a $(TESTSET_DHRYSTONE_QEMU_LOG)
+	@make testset-dhrystone-qemu-build						>> $(TESTSET_DHRYSTONE_QEMU_LOG) 2>&1
+	@echo "--- 5. Runtest                                   at `date +%T`"	| tee -a $(TESTSET_DHRYSTONE_QEMU_LOG)
+	@make testset-dhrystone-qemu-runtest					>> $(TESTSET_DHRYSTONE_QEMU_LOG) 2>&1
+	@echo "--- testset-dhrystone-qemu-highfive DONE! ===    at `date +%T`"	| tee -a $(TESTSET_DHRYSTONE_QEMU_LOG)
