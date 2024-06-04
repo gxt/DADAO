@@ -16,8 +16,7 @@ QEMU_0801_DISASFILE	:= $(QEMU_0801_SOURCE)/disas/dadao.h
 QEMU_0801_BUILD		:= $(DIR_DADAO_BUILD)/qemu-0801
 QEMU_0801_INSTALL	?= $(DIR_DADAO_INSTALL)
 #QEMU_0801_INSTALL	?= $(DIR_DADAO_BUILD)/__qemu-0801
-QEMU_0801_LOG_STDOUT	:= $(DIR_DADAO_LOG)/qemu-0801.out
-QEMU_0801_LOG_STDERR	:= $(DIR_DADAO_LOG)/qemu-0801.err
+QEMU_0801_LOG		:= $(DIR_DADAO_LOG)/qemu-0801.log
 
 qemu-0801-clean:
 	@echo "Remove old qemu source dir ..."
@@ -30,7 +29,6 @@ ifneq ($(QEMU_0801_INSTALL), $(DIR_DADAO_INSTALL))
 endif
 
 qemu-0801-source:
-	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@rm -fr $(QEMU_0801_SOURCE)
 	# Clone source repo
 	@git clone -q $(QEMU_0801_GITLAB) -- $(QEMU_0801_SOURCE)
@@ -89,25 +87,22 @@ qemu-0801-build:
 	@make -C $(QEMU_0801_BUILD) -j8
 
 qemu-0801-install:
-	@echo "Make install ..."
 	@make -C $(QEMU_0801_BUILD) install
 
-qemu-0801-highfive:
-	@echo "BEGIN TO BUILD qemu-0801                         at `date +%T`"
-	@echo "0. Remove old logfiles                           at `date +%T`"
-	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
-	@rm -fr $(QEMU_0801_LOG_STDOUT) $(QEMU_0801_LOG_STDERR)
-	@echo "1. Clean old dirs                                at `date +%T`"
-	@make -s qemu-0801-clean				1>> $(QEMU_0801_LOG_STDOUT) 2>> $(QEMU_0801_LOG_STDERR)
-	@echo "2. New source                                    at `date +%T`"
-	@make -s qemu-0801-source				1>> $(QEMU_0801_LOG_STDOUT) 2>> $(QEMU_0801_LOG_STDERR)
-	@echo "3. Configure                                     at `date +%T`"
-	@make -s qemu-0801-prepare				1>> $(QEMU_0801_LOG_STDOUT) 2>> $(QEMU_0801_LOG_STDERR)
-	@echo "4. Build                                         at `date +%T`"
-	@make -s qemu-0801-build				1>> $(QEMU_0801_LOG_STDOUT) 2>> $(QEMU_0801_LOG_STDERR)
-	@echo "5. Install                                       at `date +%T`"
-	@make -s qemu-0801-install				1>> $(QEMU_0801_LOG_STDOUT) 2>> $(QEMU_0801_LOG_STDERR)
-	@echo "BUILD qemu-0801 DONE!                            at `date +%T`"
+qemu-0801-highfive:	dadao-before-highfive
+	@test ! -f $(QEMU_0801_LOG) || mv --force $(QEMU_0801_LOG) $(QEMU_0801_LOG).last
+	@echo "=== qemu-0801-highfive log file: $(QEMU_0801_LOG)"				| tee -a $(QEMU_0801_LOG)
+	@echo "--- 1. Clean                                     at `date +%T`"	| tee -a $(QEMU_0801_LOG)
+	@make qemu-0801-clean									>> $(QEMU_0801_LOG) 2>&1
+	@echo "--- 2. Source                                    at `date +%T`"	| tee -a $(QEMU_0801_LOG)
+	@make qemu-0801-source									>> $(QEMU_0801_LOG) 2>&1
+	@echo "--- 3. Prepare                                   at `date +%T`"	| tee -a $(QEMU_0801_LOG)
+	@make qemu-0801-prepare									>> $(QEMU_0801_LOG) 2>&1
+	@echo "--- 4. Build                                     at `date +%T`"	| tee -a $(QEMU_0801_LOG)
+	@make qemu-0801-build									>> $(QEMU_0801_LOG) 2>&1
+	@echo "--- 5. Install                                   at `date +%T`"	| tee -a $(QEMU_0801_LOG)
+	@make qemu-0801-install									>> $(QEMU_0801_LOG) 2>&1
+	@echo "--- qemu-0801-highfive DONE! ===                 at `date +%T`"	| tee -a $(QEMU_0801_LOG)
 
 qemu-0801-tags:
 	@make -C $(QEMU_0801_SOURCE) ctags
