@@ -362,7 +362,7 @@ void dadao_md_begin(void)
     dadao_opcode_hash_4 = hash_new();
     dadao_opcode_hash_5 = hash_new();
 
-    /* Use three hash tables to avoid having the same name for different entries */
+    /* Use five hash tables to avoid having the same name for different entries */
     for (opcode = dadao_opcodes; opcode->name; opcode++)
     {
         opcode_1 = (struct dadao_opcode *)hash_find(dadao_opcode_hash_1, opcode->name);
@@ -1160,9 +1160,23 @@ void dadao_md_assemble(char *str)
 
     if (ret_code == -1)
     {
+        instruction = (struct dadao_opcode *)hash_find(dadao_opcode_hash_3, insn_alt);
+        if (instruction != NULL)
+            ret_code = dd_get_insn_code(instruction, exp, n_operands, &insn_code);
+    }
+
+    if (ret_code == -1)
+    {
+        instruction = (struct dadao_opcode *)hash_find(dadao_opcode_hash_4, insn_alt);
+        if (instruction != NULL)
+            ret_code = dd_get_insn_code(instruction, exp, n_operands, &insn_code);
+    }
+
+    if (ret_code == -1)
+    {
         /* as far, no insn in this hash table except pseudo */
 
-        instruction = (struct dadao_opcode *)hash_find(dadao_opcode_hash_3, insn_alt);
+        instruction = (struct dadao_opcode *)hash_find(dadao_opcode_hash_5, insn_alt);
         if (instruction != NULL)
             ret_code = dd_get_insn_code(instruction, exp, n_operands, &insn_code);
     }
