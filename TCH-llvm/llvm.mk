@@ -13,8 +13,7 @@ LLVM_1600_FIXUPS	:= $(DIR_DADAO_TOP)/TCH-llvm/llvm-1600-fixups
 LLVM_1600_SOURCE	:= $(DIR_DADAO_SOURCE)/llvm-1600
 LLVM_1600_BUILD		:= $(DIR_DADAO_BUILD)/llvm-1600
 LLVM_1600_INSTALL	?= $(DIR_DADAO_INSTALL)
-LLVM_1600_LOG_STDOUT	:= $(DIR_DADAO_LOG)/llvm-1600.out
-LLVM_1600_LOG_STDERR	:= $(DIR_DADAO_LOG)/llvm-1600.err
+LLVM_1600_LOG		:= $(DIR_DADAO_LOG)/llvm-1600.log
 
 llvm-1600-clean:
 	@echo "Remove old llvm source dir ..."
@@ -23,7 +22,6 @@ llvm-1600-clean:
 	@rm -fr $(LLVM_1600_BUILD)
 
 llvm-1600-source:
-	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@rm -fr $(LLVM_1600_SOURCE)
 ifeq ($(wildcard $(LLVM_1600_LOCAL)),)
 	# Clone remote repo
@@ -75,22 +73,20 @@ llvm-1600-build:
 llvm-1600-install:
 	@cd $(LLVM_1600_BUILD); cmake --install .
 
-llvm-1600-highfive:
-	@echo "BEGIN TO BUILD llvm-1600                         at `date +%T`"
-	@echo "0. Remove old logfiles                           at `date +%T`"
-	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
-	@rm -fr $(LLVM_1600_LOG_STDOUT) $(LLVM_1600_LOG_STDERR)
-	@echo "1. Clean old dirs                                at `date +%T`"
-	@make -s llvm-1600-clean				1>> $(LLVM_1600_LOG_STDOUT) 2>> $(LLVM_1600_LOG_STDERR)
-	@echo "2. New source                                    at `date +%T`"
-	@make -s llvm-1600-source				1>> $(LLVM_1600_LOG_STDOUT) 2>> $(LLVM_1600_LOG_STDERR)
-	@echo "3. Configure                                     at `date +%T`"
-	@make -s llvm-1600-prepare				1>> $(LLVM_1600_LOG_STDOUT) 2>> $(LLVM_1600_LOG_STDERR)
-	@echo "4. Build                                         at `date +%T`"
-	@make -s llvm-1600-build				1>> $(LLVM_1600_LOG_STDOUT) 2>> $(LLVM_1600_LOG_STDERR)
-	@echo "5. Install                                       at `date +%T`"
-	@make -s llvm-1600-install				1>> $(LLVM_1600_LOG_STDOUT) 2>> $(LLVM_1600_LOG_STDERR)
-	@echo "BUILD llvm-1600 DONE!                            at `date +%T`"
+llvm-1600-highfive:	dadao-before-highfive
+	@test ! -f $(LLVM_1600_LOG) || mv --force $(LLVM_1600_LOG) $(LLVM_1600_LOG).last
+	@echo "=== llvm-1600-highfive log file: $(LLVM_1600_LOG)"				| tee -a $(LLVM_1600_LOG)
+	@echo "--- 1. Clean                                     at `date +%T`"	| tee -a $(LLVM_1600_LOG)
+	@make llvm-1600-clean									>> $(LLVM_1600_LOG) 2>&1
+	@echo "--- 2. Source                                    at `date +%T`"	| tee -a $(LLVM_1600_LOG)
+	@make llvm-1600-source									>> $(LLVM_1600_LOG) 2>&1
+	@echo "--- 3. Prepare                                   at `date +%T`"	| tee -a $(LLVM_1600_LOG)
+	@make llvm-1600-prepare									>> $(LLVM_1600_LOG) 2>&1
+	@echo "--- 4. Build                                     at `date +%T`"	| tee -a $(LLVM_1600_LOG)
+	@make llvm-1600-build									>> $(LLVM_1600_LOG) 2>&1
+	@echo "--- 5. Install                                   at `date +%T`"	| tee -a $(LLVM_1600_LOG)
+	@make llvm-1600-install									>> $(LLVM_1600_LOG) 2>&1
+	@echo "--- llvm-1600-highfive DONE! ===                 at `date +%T`"	| tee -a $(LLVM_1600_LOG)
 
 llvm-1600-check-llvm:
 	@ninja -C $(LLVM_1600_BUILD) check-llvm
