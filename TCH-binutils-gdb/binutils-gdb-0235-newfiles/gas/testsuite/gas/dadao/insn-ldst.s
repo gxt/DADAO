@@ -61,5 +61,5 @@ _start:
 	stmt	rf0, rb1, rd1, 63
 	stmo	rf0, rb1, rd1, 63
 
-	ldmra	ra0, rb1, rd1, 63
-	stmra	ra0, rb1, rd1, 63
+	ldmo	ra0, rb1, rd1, 63
+	stmo	ra0, rb1, rd1, 63

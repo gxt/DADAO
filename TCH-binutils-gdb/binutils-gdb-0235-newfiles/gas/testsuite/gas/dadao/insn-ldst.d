@@ -56,5 +56,5 @@ Disassembly of section .text:
   c0:	5700107f 	ldmo	rf0, rb1, rd1, 0x3f
   c4:	5e00107f 	stmt	rf0, rb1, rd1, 0x3f
   c8:	5f00107f 	stmo	rf0, rb1, rd1, 0x3f
-  cc:	6700107f 	ldmra	ra0, rb1, rd1, 0x3f
-  d0:	6f00107f 	stmra	ra0, rb1, rd1, 0x3f
+  cc:	6700107f 	ldmo	ra0, rb1, rd1, 0x3f
+  d0:	6f00107f 	stmo	ra0, rb1, rd1, 0x3f

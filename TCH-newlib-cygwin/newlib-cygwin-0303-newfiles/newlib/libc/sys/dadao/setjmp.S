@@ -17,7 +17,7 @@ setjmp:
 	stmo	rf32, rb8, rd16, 32
 	addi	rd16, rd16, 32*8
 
-	stmra	ra1, rb8, rd16, 63
+	stmo	ra1, rb8, rd16, 63
 	addi	rd16, rd16, 64*8
 
 	ret		rd31, 0
@@ -41,7 +41,7 @@ longjmp:
 	ldmo	rf32, rb8, rd16, 32
 	addi	rd16, rd16, 32*8
 
-	ldmra	ra1, rb8, rd16, 63
+	ldmo	ra1, rb8, rd16, 63
 	addi	rd16, rd16, 64*8
 
 	# rd31 = (rd17 == 0) ? 1 : rd17

@@ -57,8 +57,8 @@ stmt	01011110
 stmo	01011111
 
 & @mem @reg ra@ha rb@hb rd@hc (ha+immu<=111111)
-ldmra	01100111
-stmra	01101111
+ldmo	01100111
+stmo	01101111
 
 #
 # Register Assignment Instructions
