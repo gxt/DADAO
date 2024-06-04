@@ -12,8 +12,7 @@ PROXYLINUX_BRANCH		:= dadao
 
 PROXYLINUX_PATCHES		:= $(DIR_DADAO_TOP)/ENV-proxylinux/proxylinux-patches
 
-PROXYLINUX_LOG_STDOUT		:= $(DIR_DADAO_LOG)/proxylinux.out
-PROXYLINUX_LOG_STDERR		:= $(DIR_DADAO_LOG)/proxylinux.err
+PROXYLINUX_LOG			:= $(DIR_DADAO_LOG)/proxylinux.log
 
 proxylinux-clean:
 	# Remove old proxylinux source dir ...
@@ -24,7 +23,6 @@ proxylinux-clean:
 proxylinux-source:
 	# Remove old proxylinux source dir ...
 	@rm -fr $(PROXYLINUX_SOURCE)
-	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 ifeq ($(wildcard $(PROXYLINUX_LOCAL)),)
 	# Clone remote repo
 	@git clone -q $(PROXYLINUX_GITHUB) -- $(PROXYLINUX_SOURCE)
@@ -54,20 +52,17 @@ proxylinux-build:
 proxylinux-install:
 	@$(DADAO_MAKE) -C $(PROXYLINUX_BUILD) install
 
-proxylinux-highfive:
-	@echo "--- BUILD proxylinux BEGIN ---"
-	# 0. Remove old proxylinux logfiles
-	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
-	@rm -fr $(PROXYLINUX_LOG_STDOUT) $(PROXYLINUX_LOG_STDERR)
-	# 1. Clean old proxylinux ...
-	@make -s proxylinux-clean			1>> $(PROXYLINUX_LOG_STDOUT) 2>> $(PROXYLINUX_LOG_STDERR)
-	# 2. Clone proxylinux ...
-	@make -s proxylinux-source			1>> $(PROXYLINUX_LOG_STDOUT) 2>> $(PROXYLINUX_LOG_STDERR)
-	# 3. Configure proxylinux ...
-	@make -s proxylinux-prepare			1>> $(PROXYLINUX_LOG_STDOUT) 2>> $(PROXYLINUX_LOG_STDERR)
-	# 4. Make proxylinux ...
-	@make -s proxylinux-build			1>> $(PROXYLINUX_LOG_STDOUT) 2>> $(PROXYLINUX_LOG_STDERR)
-	# 5. Install proxylinux ...
-	@make -s proxylinux-install			1>> $(PROXYLINUX_LOG_STDOUT) 2>> $(PROXYLINUX_LOG_STDERR)
-	@echo "--- BUILD proxylinux DONE! ---"
-
+proxylinux-highfive:	dadao-before-highfive
+	@test ! -f $(PROXYLINUX_LOG) || mv --force $(PROXYLINUX_LOG) $(PROXYLINUX_LOG).last
+	@echo "=== proxylinux-highfive log file: $(PROXYLINUX_LOG)"				| tee -a $(PROXYLINUX_LOG)
+	@echo "--- 1. Clean                                     at `date +%T`"	| tee -a $(PROXYLINUX_LOG)
+	@make proxylinux-clean									>> $(PROXYLINUX_LOG) 2>&1
+	@echo "--- 2. Source                                    at `date +%T`"	| tee -a $(PROXYLINUX_LOG)
+	@make proxylinux-source									>> $(PROXYLINUX_LOG) 2>&1
+	@echo "--- 3. Prepare                                   at `date +%T`"	| tee -a $(PROXYLINUX_LOG)
+	@make proxylinux-prepare								>> $(PROXYLINUX_LOG) 2>&1
+	@echo "--- 4. Build                                     at `date +%T`"	| tee -a $(PROXYLINUX_LOG)
+	@make proxylinux-build									>> $(PROXYLINUX_LOG) 2>&1
+	@echo "--- 5. Install                                   at `date +%T`"	| tee -a $(PROXYLINUX_LOG)
+	@make proxylinux-install								>> $(PROXYLINUX_LOG) 2>&1
+	@echo "--- proxylinux-highfive DONE! ===                at `date +%T`"	| tee -a $(PROXYLINUX_LOG)
