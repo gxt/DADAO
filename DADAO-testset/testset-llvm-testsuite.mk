@@ -9,10 +9,9 @@ LLVM_TESTSUITE_BRANCH		:= dadao-1600
 LLVM_TESTSUITE_NEWFILES		:= $(DIR_DADAO_TOP)/DADAO-testset/llvm-testsuite-newfiles
 LLVM_TESTSUITE_PATCHES		:= $(DIR_DADAO_TOP)/DADAO-testset/llvm-testsuite-patches
 
-LLVM_TESTSUITE_SOURCE		:= $(DIR_DADAO_SOURCE)/llvm-testsuite
-LLVM_TESTSUITE_BUILD		:= $(DIR_DADAO_BUILD)/llvm-testsuite
-LLVM_TESTSUITE_LOG_STDOUT	:= $(DIR_DADAO_LOG)/llvm-testsuite.out
-LLVM_TESTSUITE_LOG_STDERR	:= $(DIR_DADAO_LOG)/llvm-testsuite.err
+LLVM_TESTSUITE_SOURCE		:= $(DIR_DADAO_SOURCE)/testset-llvm-testsuite
+LLVM_TESTSUITE_BUILD		:= $(DIR_DADAO_BUILD)/testset-llvm-testsuite
+LLVM_TESTSUITE_LOG			:= $(DIR_DADAO_LOG)/testset-llvm-testsuite.log
 
 testset-llvm-testsuite-clean:
 	# Remove old llvm-testsuite source dir ...
@@ -21,7 +20,6 @@ testset-llvm-testsuite-clean:
 	@rm -fr $(LLVM_TESTSUITE_BUILD)
 
 testset-llvm-testsuite-source:
-	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@rm -fr $(LLVM_TESTSUITE_SOURCE)
 	# Clone local repo
 	@git clone -q $(LLVM_TESTSUITE_GITHUB) -- $(LLVM_TESTSUITE_SOURCE)
@@ -57,19 +55,17 @@ testset-llvm-testsuite-runtest:
 	@cd $(LLVM_TESTSUITE_SOURCE); DIR_DADAO_TOP=$(DIR_DADAO_TOP) ./run-testsuite.py
 
 
-testset-llvm-testsuite-highfive:
-	@echo "BEGIN TO BUILD llvm-testsuite                    at `date +%T`"
-	@echo "0. Remove old logfiles                           at `date +%T`"
-	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
-	@rm -fr $(LLVM_TESTSUITE_LOG_STDOUT) $(LLVM_TESTSUITE_LOG_STDERR)
-	@echo "1. Clean old dirs                                at `date +%T`"
-	@make -s testset-llvm-testsuite-clean					1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
-	@echo "2. New source                                    at `date +%T`"
-	@make -s testset-llvm-testsuite-source					1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
-	@echo "3. Configure                                     at `date +%T`"
-	@make -s testset-llvm-testsuite-prepare				1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
-	@echo "4. Build                                         at `date +%T`"
-	@make -s testset-llvm-testsuite-build					1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
-	@echo "5. Runtest                                       at `date +%T`"
-	@make -s testset-llvm-testsuite-runtest					1>> $(LLVM_TESTSUITE_LOG_STDOUT) 2>> $(LLVM_TESTSUITE_LOG_STDERR)
-	@echo "BUILD llvm-testsuite DONE!                       at `date +%T`"
+testset-llvm-testsuite-highfive:	dadao-before-highfive
+	@test ! -f $(LLVM_TESTSUITE_LOG) || mv --force $(LLVM_TESTSUITE_LOG) $(LLVM_TESTSUITE_LOG).last
+	@echo "=== llvm-testsuite highfive log file: $(LLVM_TESTSUITE_LOG)"		| tee -a $(LLVM_TESTSUITE_LOG)
+	@echo "--- 1. Clean                                     at `date +%T`"	| tee -a $(LLVM_TESTSUITE_LOG)
+	@make testset-llvm-testsuite-clean						>> $(LLVM_TESTSUITE_LOG) 2>&1
+	@echo "--- 2. Source                                    at `date +%T`"	| tee -a $(LLVM_TESTSUITE_LOG)
+	@make testset-llvm-testsuite-source						>> $(LLVM_TESTSUITE_LOG) 2>&1
+	@echo "--- 3. Prepare                                   at `date +%T`"	| tee -a $(LLVM_TESTSUITE_LOG)
+	@make testset-llvm-testsuite-prepare					>> $(LLVM_TESTSUITE_LOG) 2>&1
+	@echo "--- 4. Build                                     at `date +%T`"	| tee -a $(LLVM_TESTSUITE_LOG)
+	@make testset-llvm-testsuite-build						>> $(LLVM_TESTSUITE_LOG) 2>&1
+	@echo "--- 5. Runtest                                   at `date +%T`"	| tee -a $(LLVM_TESTSUITE_LOG)
+	@make testset-llvm-testsuite-runtest					>> $(LLVM_TESTSUITE_LOG) 2>&1
+	@echo "--- llvm-testsuite highfive DONE! ===            at `date +%T`"	| tee -a $(LLVM_TESTSUITE_LOG)
