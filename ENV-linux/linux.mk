@@ -20,6 +20,7 @@ LINUX_0504_SOURCE		:= $(DIR_DADAO_SOURCE)/linux-0504
 LINUX_0504_BUILD		:= $(DIR_DADAO_BUILD)/linux-0504
 LINUX_0504_TARGET		?= $(DIR_DADAO_TARGET)
 LINUX_0504_LOG			:= $(DIR_DADAO_LOG)/linux-0504.log
+LINUX_0504_HEADERS_LOG	:= $(DIR_DADAO_LOG)/linux-0504-headers.log
 
 linux-0504-clean:
 	# Remove old linux source dir ...
@@ -112,19 +113,16 @@ linux-0504-headers-install:
 		headers_install
 
 linux-0504-headers-highfive:
-	# BEGIN TO BUILD linux-0504-headers!
-	# 0. Remove old logfiles
-	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
-	@rm -fr $(LINUX_0504_LOG_STDOUT) $(LINUX_0504_LOG_STDERR)
-	# 1. Remove old linux header dir ...
-	@rm -fr $(LINUX_0504_TARGET)/usr/include
-	# 2. Check source dir ...
-	@test -d $(LINUX_0504_SOURCE) || make -s linux-0504-source	1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
-	# 3. Check build dir ...
-	@test -d $(LINUX_0504_BUILD) || make -s linux-0504-prepare	1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
-	# 4. Check headers ...
-	@make -s linux-0504-headers-check				1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
-	# 5. Install headers ...
-	@make -s linux-0504-headers-install				1>> $(LINUX_0504_LOG_STDOUT) 2>> $(LINUX_0504_LOG_STDERR)
-	# BUILD linux-0504-headers DONE!
-
+	@test ! -f $(LINUX_0504_HEADERS_LOG) || mv --force $(LINUX_0504_HEADERS_LOG) $(LINUX_0504_HEADERS_LOG).last
+	@echo "=== linux-0504-headers-highfive log file: $(LINUX_0504_HEADERS_LOG)"	| tee -a $(LINUX_0504_HEADERS_LOG)
+	@echo "--- 1. Clean                                     at `date +%T`"		| tee -a $(LINUX_0504_HEADERS_LOG)
+	@rm -fr $(LINUX_0504_TARGET)/usr/include				>> $(LINUX_0504_HEADERS_LOG) 2>&1
+	@echo "--- 2. Source                                    at `date +%T`"		| tee -a $(LINUX_0504_HEADERS_LOG)
+	@test -d $(LINUX_0504_SOURCE) || make linux-0504-source	>> $(LINUX_0504_HEADERS_LOG) 2>&1
+	@echo "--- 3. Prepare                                   at `date +%T`"		| tee -a $(LINUX_0504_HEADERS_LOG)
+	@test -d $(LINUX_0504_BUILD) || make linux-0504-prepare	>> $(LINUX_0504_HEADERS_LOG) 2>&1
+	@echo "--- 4. Check                                     at `date +%T`"		| tee -a $(LINUX_0504_HEADERS_LOG)
+	@make linux-0504-headers-check							>> $(LINUX_0504_HEADERS_LOG) 2>&1
+	@echo "--- 5. Install                                   at `date +%T`"		| tee -a $(LINUX_0504_HEADERS_LOG)
+	@make linux-0504-headers-install						>> $(LINUX_0504_HEADERS_LOG) 2>&1
+	@echo "--- linux-0504-headers-highfive DONE! ===        at `date +%T`"		| tee -a $(LINUX_0504_HEADERS_LOG)
