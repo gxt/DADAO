@@ -22,15 +22,11 @@ chipyard-0107-clean:
 	@echo "Remove old dadao-wuming build dir ..."
 	@rm -fr $(CHIPYARD_0107_NEWFILES)/generators/dadao-wuming/target
 
-chipyard-0107-prepare:
-	@make -s -C $(DIR_DADAO_TOP) opcodes-highfive
-	@make -s -C $(DIR_DADAO_TOP) runtime-bootrom-highfive
-	# Check necessary fesvr headers
-	@test -d $(DIR_DADAO_TARGET)/include/fesvr || make -s -C $(DIR_DADAO_TOP) runtime-fesvr-highfive
+chipyard-0107-update-instructions:
 	# Generate instructions.scala
 	@make -s -C $(DIR_DADAO_TOP) opcodes-bitpat
 	@cat $(DIR_DADAO_TOP)/SOC-chipyard/instructions.scala-head		>  $(CHIPYARD_0107_INSTRUCTIONS)
-	@cat $(OPCODES_OUTPUT_BITPAT)						>> $(CHIPYARD_0107_INSTRUCTIONS)
+	@cat $(OPCODES_OUTPUT_BITPAT)									>> $(CHIPYARD_0107_INSTRUCTIONS)
 	@cat $(DIR_DADAO_TOP)/SOC-chipyard/instructions.scala-tail		>> $(CHIPYARD_0107_INSTRUCTIONS)
 
 chipyard-0107-source:
@@ -57,6 +53,9 @@ chipyard-0107-source:
 chipyard-0107-build-new:
 	@rm -fr $(CHIPYARD_0107_BUILD)
 	@mkdir -p $(CHIPYARD_0107_BUILD)
+	@make -s -C $(DIR_DADAO_TOP) runtime-bootrom-highfive
+	# Check necessary fesvr headers
+	@test -d $(DIR_DADAO_TARGET)/include/fesvr || make -s -C $(DIR_DADAO_TOP) runtime-fesvr-highfive
 
 chipyard-0107-build:
 	@cd $(CHIPYARD_0107_SOURCE)/sims/verilator;						\
@@ -75,7 +74,7 @@ chipyard-0107-highfive:
 	@echo "1. Clean old dirs                                at `date +%T`"
 	@make -s chipyard-0107-clean			1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
 	@echo "2. Prepare                                       at `date +%T`"
-	@make -s chipyard-0107-prepare			1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
+	@make -s chipyard-0107-update-instructions				1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
 	@echo "3. New source                                    at `date +%T`"
 	@make -s chipyard-0107-source			1>> $(CHIPYARD_0107_LOG_STDOUT) 2>> $(CHIPYARD_0107_LOG_STDERR)
 	@echo "4. Configure                                     at `date +%T`"
