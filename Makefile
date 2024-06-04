@@ -83,7 +83,7 @@ dadao-bare-highfive:
 	@make --silent testset-dhrystone-bare-highfive
 	@echo "=== TEST@bare DONE! ==="
 
-dadao-prepare:
+dadao-before-highfive:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
 	@test -d $(DIR_DADAO_TARGET)/include/ || mkdir --parents $(DIR_DADAO_TARGET)/include/
