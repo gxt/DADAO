@@ -1,7 +1,6 @@
 #
 # Makefile for linux-0504
 #
-LINUX_0504_LOCAL		:= /pub/GITHUB/torvalds/linux.git
 LINUX_0504_GITHUB		:= https://github.com/torvalds/linux.git
 LINUX_0504_VERSION		:= v5.4
 # official download site :	https://mirrors.edge.kernel.org/pub/linux/kernel/v5.x/
@@ -34,13 +33,8 @@ linux-0504-source:
 	# Remove old source dir
 	@rm -fr $(LINUX_0504_SOURCE)
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
-ifeq ($(wildcard $(LINUX_0504_LOCAL)),)
 	# Clone remote repo
-	@git clone -q $(LINUX_0504_GITHUB) -- $(LINUX_0504_SOURCE)
-else
-	# Clone local repo
-	@git clone -q $(LINUX_0504_LOCAL) -- $(LINUX_0504_SOURCE)
-endif
+	@$(__VAR_L__) git clone -q $(LINUX_0504_GITHUB) -- $(LINUX_0504_SOURCE)
 	@cd $(LINUX_0504_SOURCE);						\
 		git checkout -qb $(LINUX_0504_BRANCH) $(LINUX_0504_VERSION)
 	# Add official patch
@@ -67,21 +61,21 @@ linux-0504-prepare:
 	@rm -fr $(LINUX_0504_BUILD)
 	# Make defconfig
 	@mkdir -p $(LINUX_0504_BUILD)
-	@$(DADAO_MAKE) -C $(LINUX_0504_SOURCE)					\
+	@make $(__MAKE_J__) -C $(LINUX_0504_SOURCE)	\
 		O=$(LINUX_0504_BUILD)						\
 		ARCH=$(LINUX_0504_ARCH)						\
 		$(LINUX_0504_DEFCONFIG)
 
 linux-0504-build:
 	# Making (in several minutes) ...
-	@$(DADAO_MAKE) -C $(LINUX_0504_BUILD)					\
+	@make $(__MAKE_J__) -C $(LINUX_0504_BUILD)		\
 		ARCH=$(LINUX_0504_ARCH)
 
 linux-0504-install:
 	# Make install ...
-	@$(DADAO_MAKE) -C $(LINUX_0504_BUILD)					\
+	@make $(__MAKE_J__) -C $(LINUX_0504_BUILD)		\
 		ARCH=$(LINUX_0504_ARCH)						\
-		INSTALL_PATH=$(LINUX_0504_TARGET)				\
+		INSTALL_PATH=$(LINUX_0504_TARGET)			\
 		install
 
 linux-0504-highfive:	dadao-before-highfive
@@ -94,22 +88,22 @@ linux-0504-highfive:	dadao-before-highfive
 	@echo "--- 3. Prepare                                   at `date +%T`"	| tee -a $(LINUX_0504_LOG)
 	@make linux-0504-prepare								>> $(LINUX_0504_LOG) 2>&1
 	@echo "--- 4. Build                                     at `date +%T`"	| tee -a $(LINUX_0504_LOG)
-	@make linux-0504-build									>> $(LINUX_0504_LOG) 2>&1
+#	@make linux-0504-build									>> $(LINUX_0504_LOG) 2>&1
 	@echo "--- 5. Install                                   at `date +%T`"	| tee -a $(LINUX_0504_LOG)
-	@make linux-0504-install								>> $(LINUX_0504_LOG) 2>&1
+#	@make linux-0504-install								>> $(LINUX_0504_LOG) 2>&1
 	@echo "--- linux-0504-highfive DONE! ===                at `date +%T`"	| tee -a $(LINUX_0504_LOG)
 
 linux-0504-headers-check:
 	# Headers check ...
-	@$(DADAO_MAKE) -C $(LINUX_0504_BUILD)					\
+	@make $(__MAKE_J__) -C $(LINUX_0504_BUILD)		\
 		ARCH=$(LINUX_0504_ARCH)						\
 		headers_check
 
 linux-0504-headers-install:
 	# Headers install ...
-	@$(DADAO_MAKE) -C $(LINUX_0504_BUILD)					\
+	@make $(__MAKE_J__) -C $(LINUX_0504_BUILD)		\
 		ARCH=$(LINUX_0504_ARCH)						\
-		INSTALL_HDR_PATH=$(LINUX_0504_TARGET)/usr			\
+		INSTALL_HDR_PATH=$(LINUX_0504_TARGET)/usr	\
 		headers_install
 
 linux-0504-headers-highfive:
