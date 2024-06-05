@@ -1,7 +1,6 @@
 #
 # Makefrag for proxylinux
 #
-PROXYLINUX_LOCAL		:= /pub/GITHUB/riscv/riscv-pk.git
 PROXYLINUX_GITHUB		:= https://github.com/riscv/riscv-pk.git
 
 PROXYLINUX_SOURCE		:= $(DIR_DADAO_SOURCE)/proxylinux
@@ -23,13 +22,8 @@ proxylinux-clean:
 proxylinux-source:
 	# Remove old proxylinux source dir ...
 	@rm -fr $(PROXYLINUX_SOURCE)
-ifeq ($(wildcard $(PROXYLINUX_LOCAL)),)
 	# Clone remote repo
-	@git clone -q $(PROXYLINUX_GITHUB) -- $(PROXYLINUX_SOURCE)
-else
-	# Clone local repo
-	@git clone -q $(PROXYLINUX_LOCAL) -- $(PROXYLINUX_SOURCE)
-endif
+	@$(__VAR_L__) git clone -q $(PROXYLINUX_GITHUB) -- $(PROXYLINUX_SOURCE)
 	# Checkout specified version
 	@cd $(PROXYLINUX_SOURCE);						\
 		git checkout -qb $(PROXYLINUX_BRANCH) $(PROXYLINUX_VERSION);	\
@@ -41,16 +35,16 @@ proxylinux-prepare:
 	@rm -fr $(PROXYLINUX_BUILD)
 	@mkdir -p $(PROXYLINUX_BUILD)
 	# Configure
-	@cd $(PROXYLINUX_BUILD);						\
-		PATH=$(DADAO_PATH) $(PROXYLINUX_SOURCE)/configure		\
+	@cd $(PROXYLINUX_BUILD);							\
+		$(__VAR_P__) $(PROXYLINUX_SOURCE)/configure		\
 			--prefix=$(PROXYLINUX_INSTALL)				\
 			--host=dadao-unknown-elf
 
 proxylinux-build:
-	@$(DADAO_MAKE) -C $(PROXYLINUX_BUILD)
+	@make $(__VAR_P__) $(__MAKE_J__) -C $(PROXYLINUX_BUILD)
 
 proxylinux-install:
-	@$(DADAO_MAKE) -C $(PROXYLINUX_BUILD) install
+	@make $(__VAR_P__) $(__MAKE_J__) -C $(PROXYLINUX_BUILD) install
 
 proxylinux-highfive:	dadao-before-highfive
 	@test ! -f $(PROXYLINUX_LOG) || mv --force $(PROXYLINUX_LOG) $(PROXYLINUX_LOG).last
