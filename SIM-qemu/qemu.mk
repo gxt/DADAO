@@ -31,7 +31,7 @@ endif
 qemu-0801-source:
 	@rm -fr $(QEMU_0801_SOURCE)
 	# Clone source repo
-	@git clone -q $(QEMU_0801_GITLAB) -- $(QEMU_0801_SOURCE)
+	@$(__VAR_L__) git clone -q $(QEMU_0801_GITLAB) -- $(QEMU_0801_SOURCE)
 	@cd $(QEMU_0801_SOURCE); git checkout -qb $(QEMU_0801_BRANCH) $(QEMU_0801_VERSION)
 	# linux-user
 	@cp -a $(QEMU_0801_NEWFILES)/linux-user/* $(QEMU_0801_SOURCE)/linux-user/
@@ -71,11 +71,11 @@ qemu-0801-source:
 qemu-0801-prepare:
 	@rm -fr $(QEMU_0801_BUILD)
 	@mkdir -p $(QEMU_0801_BUILD)
-	@cd $(QEMU_0801_BUILD) &&					\
-		$(QEMU_0801_SOURCE)/configure				\
-			--target-list=$(QEMU_0801_TARGETS)		\
-			--prefix=$(QEMU_0801_INSTALL)			\
-			--extra-cflags=-I$(DIR_DADAO_TARGET)/include		\
+	@cd $(QEMU_0801_BUILD) &&								\
+		$(__VAR_L__) $(QEMU_0801_SOURCE)/configure			\
+			--target-list=$(QEMU_0801_TARGETS)				\
+			--prefix=$(QEMU_0801_INSTALL)					\
+			--extra-cflags=-I$(DIR_DADAO_TARGET)/include	\
 			--disable-sdl					\
 			--disable-capstone				\
 			--disable-slirp					\
@@ -84,10 +84,10 @@ qemu-0801-prepare:
 			--enable-curses
 
 qemu-0801-build:
-	@make -C $(QEMU_0801_BUILD) -j8
+	@make $(__MAKE_J__) -C $(QEMU_0801_BUILD)
 
 qemu-0801-install:
-	@make -C $(QEMU_0801_BUILD) install
+	@make $(__MAKE_J__) -C $(QEMU_0801_BUILD) install
 
 qemu-0801-highfive:	dadao-before-highfive
 	@test ! -f $(QEMU_0801_LOG) || mv --force $(QEMU_0801_LOG) $(QEMU_0801_LOG).last
@@ -105,5 +105,5 @@ qemu-0801-highfive:	dadao-before-highfive
 	@echo "--- qemu-0801-highfive DONE! ===                 at `date +%T`"	| tee -a $(QEMU_0801_LOG)
 
 qemu-0801-tags:
-	@make -C $(QEMU_0801_SOURCE) ctags
+	@make $(__MAKE_J__) -C $(QEMU_0801_SOURCE) ctags
 
