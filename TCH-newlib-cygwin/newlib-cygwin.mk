@@ -1,7 +1,6 @@
 #
 # Makefile for newlib-cygwin in toolchain
 #
-NEWLIB_CYGWIN_0303_LOCAL	:= /pub/GITHUB/mirror/newlib-cygwin.git
 NEWLIB_CYGWIN_0303_GITHUB	:= https://github.com/mirror/newlib-cygwin.git
 NEWLIB_CYGWIN_0303_VERSION	:= newlib-3.3.0
 NEWLIB_CYGWIN_0303_BRANCH	:= dadao-0303
@@ -28,13 +27,8 @@ endif
 
 newlib-cygwin-0303-source:
 	@rm -fr $(NEWLIB_CYGWIN_0303_SOURCE)
-ifeq ($(wildcard $(NEWLIB_CYGWIN_0303_LOCAL)),)
 	# Clone remote repo
-	@git clone -q $(NEWLIB_CYGWIN_0303_GITHUB) -- $(NEWLIB_CYGWIN_0303_SOURCE)
-else
-	# Clone local repo
-	@git clone -q $(NEWLIB_CYGWIN_0303_LOCAL) -- $(NEWLIB_CYGWIN_0303_SOURCE)
-endif
+	@$(__VAR_L__) git clone -q $(NEWLIB_CYGWIN_0303_GITHUB) -- $(NEWLIB_CYGWIN_0303_SOURCE)
 	@cd $(NEWLIB_CYGWIN_0303_SOURCE); git checkout -qb $(NEWLIB_CYGWIN_0303_BRANCH) $(NEWLIB_CYGWIN_0303_VERSION)
 	# include
 	@echo "INCLUDE: Copy include dir from binutils-gdb (elf/dadao.h and opcode/dadao.h)"
@@ -92,18 +86,18 @@ newlib-cygwin-0303-prepare:
 	@mkdir -p $(NEWLIB_CYGWIN_0303_BUILD)
 	@test -d $(DIR_DADAO_INSTALL)/include/linux || make -s -C $(DIR_DADAO_TOP) linux-$(VER_LINUX)-headers-highfive
 	# CFLAGS_FOR_TARGET="-g -Os" can be added before configure to modify default CFLAGS
-	@cd $(NEWLIB_CYGWIN_0303_BUILD) && PATH=$(DADAO_PATH)			\
-		$(NEWLIB_CYGWIN_0303_SOURCE)/configure				\
+	@cd $(NEWLIB_CYGWIN_0303_BUILD) &&						\
+		$(__VAR_P__) $(NEWLIB_CYGWIN_0303_SOURCE)/configure	\
 			--target=$(NEWLIB_CYGWIN_0303_TARGET)			\
 			--srcdir=$(NEWLIB_CYGWIN_0303_SOURCE)			\
 			--prefix=$(NEWLIB_CYGWIN_0303_INSTALL)			\
 			--with-build-time-tools=$(DIR_DADAO_INSTALL)/bin
 
 newlib-cygwin-0303-build:
-	@PATH=$(DADAO_PATH) make -C $(NEWLIB_CYGWIN_0303_BUILD) -j8 all
+	@make $(__VAR_P__) $(__MAKE_J__) -C $(NEWLIB_CYGWIN_0303_BUILD) all
 
 newlib-cygwin-0303-install:
-	@PATH=$(DADAO_PATH) make -C $(NEWLIB_CYGWIN_0303_BUILD) install
+	@make $(__VAR_P__) $(__MAKE_J__) -C $(NEWLIB_CYGWIN_0303_BUILD) install
 
 newlib-cygwin-0303-highfive:	dadao-before-highfive
 	@test ! -f $(NEWLIB_CYGWIN_0303_LOG) || mv --force $(NEWLIB_CYGWIN_0303_LOG) $(NEWLIB_CYGWIN_0303_LOG).last
