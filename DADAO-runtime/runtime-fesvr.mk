@@ -27,7 +27,7 @@ runtime-fesvr-source:
 	# Remove old runtime-fesvr source dir ...
 	@rm -fr $(RUNTIME_FESVR_SOURCE)
 	# Clone remote repo
-	@git clone -q $(RUNTIME_FESVR_GITHUB) -- $(RUNTIME_FESVR_SOURCE)
+	@$(__VAR_L__) git clone -q $(RUNTIME_FESVR_GITHUB) -- $(RUNTIME_FESVR_SOURCE)
 	# Checkout specified version
 	@cd $(RUNTIME_FESVR_SOURCE); git checkout -qb $(RUNTIME_FESVR_BRANCH) $(RUNTIME_FESVR_VERSION)
 	# Apply patches
@@ -44,7 +44,7 @@ runtime-fesvr-prepare:
 			--prefix=$(RUNTIME_FESVR_INSTALL)
 
 runtime-fesvr-build:
-	@make -C $(RUNTIME_FESVR_BUILD) -j8 libfesvr.a libfesvr.so
+	@make $(__MAKE_J__) -C $(RUNTIME_FESVR_BUILD) libfesvr.a libfesvr.so
 
 runtime-fesvr-install:
 	@mkdir -p $(RUNTIME_FESVR_INSTALL)/lib
