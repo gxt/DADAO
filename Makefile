@@ -20,6 +20,7 @@ VER_CHIPYARD		:= 0107
 _DADAO_CORES_		:= $(shell expr `nproc` / 2)
 DADAO_PATH		:= $(DIR_DADAO_INSTALL)/bin/:$(DIR_DADAO_INSTALL)/usr/bin:/bin:/usr/bin
 DADAO_MAKE		:= make --silent DIR_DADAO_TOP=$(DIR_DADAO_TOP) PATH=$(DADAO_PATH) --jobs=$(_DADAO_CORES_)
+__MAKE_J__			:= --jobs=$(_DADAO_CORES_)
 # P: PATH, L: LOCAL
 __VAR_P__			:= PATH=$(DIR_DADAO_INSTALL)/bin/:$(DIR_DADAO_INSTALL)/usr/bin:/bin:/usr/bin
 __VAR_L__			:= GIT_CONFIG_SYSTEM=$(DIR_DADAO_TOP)/gitconfig.local
