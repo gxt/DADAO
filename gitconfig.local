@@ -1,0 +1,6 @@
+[protocol]
+	allow = always
+[url "file:///pub/GITHUB/"]
+	insteadOf = https://github.com/
+[url "file:///pub/GITLAB/"]
+	insteadOf = https://gitlab.com/
