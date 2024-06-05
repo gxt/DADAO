@@ -1,7 +1,6 @@
 #
 # Makefile for binutils-gdb in toolchain
 #
-BINUTILS_GDB_0235_LOCAL			:= /pub/GITHUB/bminor/binutils-gdb.git
 BINUTILS_GDB_0235_GITHUB		:= https://github.com/bminor/binutils-gdb.git
 BINUTILS_GDB_0235_VERSION		:= binutils-2_35_2
 BINUTILS_GDB_0235_BRANCH		:= dadao-0235
@@ -32,13 +31,8 @@ endif
 
 binutils-gdb-0235-source:
 	@rm -fr $(BINUTILS_GDB_0235_SOURCE)
-ifeq ($(wildcard $(BINUTILS_GDB_0235_LOCAL)),)
 	# Clone remote repo
-	@git clone -q $(BINUTILS_GDB_0235_GITHUB) -- $(BINUTILS_GDB_0235_SOURCE)
-else
-	# Clone local repo
-	@git clone -q $(BINUTILS_GDB_0235_LOCAL) -- $(BINUTILS_GDB_0235_SOURCE)
-endif
+	@$(__VAR_L__) git clone -q $(BINUTILS_GDB_0235_GITHUB) -- $(BINUTILS_GDB_0235_SOURCE)
 	@cd $(BINUTILS_GDB_0235_SOURCE);				\
 		git checkout -qb $(BINUTILS_GDB_0235_BRANCH) $(BINUTILS_GDB_0235_VERSION)
 	# replace cru with crUu
@@ -135,10 +129,10 @@ binutils-gdb-0235-prepare:
 			--disable-dependency-tracking
 
 binutils-gdb-0235-build:
-	@make -C $(BINUTILS_GDB_0235_BUILD) -j8
+	@make $(__MAKE_J__) -C $(BINUTILS_GDB_0235_BUILD)
 
 binutils-gdb-0235-install:
-	@make -C $(BINUTILS_GDB_0235_BUILD) install
+	@make $(__MAKE_J__) -C $(BINUTILS_GDB_0235_BUILD) install
 
 binutils-gdb-0235-highfive:	dadao-before-highfive
 	@test ! -f $(BINUTILS_GDB_0235_LOG) || mv --force $(BINUTILS_GDB_0235_LOG) $(BINUTILS_GDB_0235_LOG).last
@@ -163,7 +157,7 @@ binutils-gdb-0235-check:
 	@echo "RESULTS: binutils/binutils.sum gas/testsuite/gas.sum ld/ld.sum"
 
 binutils-gdb-0235-TAGS:
-	@make -C $(BINUTILS_GDB_0235_BUILD) -j8 TAGS
+	@make $(__MAKE_J__) -C $(BINUTILS_GDB_0235_BUILD) TAGS
 	@etags -f $(BINUTILS_GDB_0235_SOURCE)/include/TAGS --recurse $(BINUTILS_GDB_0235_SOURCE)/include
 	@etags -f $(BINUTILS_GDB_0235_SOURCE)/TAGS --etags-include=$(BINUTILS_GDB_0235_SOURCE)/include/TAGS
 	@find $(BINUTILS_GDB_0235_BUILD) -name TAGS -exec		\
