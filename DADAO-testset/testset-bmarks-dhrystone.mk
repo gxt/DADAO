@@ -18,9 +18,9 @@ testset-dhrystone-bare-highfive:
 	@echo "DIR_DADAO_TOP\t\t\t:= $(DIR_DADAO_TOP)"				>> $(TESTSET_DHRYSTONE_BARE_TARGET)/Makefile
 	@echo "include common.mk"									>> $(TESTSET_DHRYSTONE_BARE_TARGET)/Makefile
 	@echo "include dhrystone.mk"								>> $(TESTSET_DHRYSTONE_BARE_TARGET)/Makefile
-	@$(DADAO_MAKE) -C $(TESTSET_DHRYSTONE_BARE_TARGET) default	>  $(TESTSET_DHRYSTONE_BARE_LOG) 2>&1
+	@make $(__VAR_P__) -C $(TESTSET_DHRYSTONE_BARE_TARGET) default	>  $(TESTSET_DHRYSTONE_BARE_LOG) 2>&1
 	# dhrystone run on bare DO output error, could be ignored
-	@$(DADAO_MAKE) -C $(DIR_DADAO_TOP)											\
+	@make $(__VAR_P__) -C $(DIR_DADAO_TOP)											\
 		RUNTIME_BARE_BINARY=$(TESTSET_DHRYSTONE_BARE_TARGET)/dhrystone.dadao	\
 		runtime-bare-run-binary									>> $(TESTSET_DHRYSTONE_BARE_LOG) 2>&1
 	@ln -s -t $(TESTSET_DHRYSTONE_BARE_TARGET) $(TESTSET_DHRYSTONE_BARE_LOG)

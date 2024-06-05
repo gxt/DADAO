@@ -14,7 +14,7 @@ testset-mibench-qemu-source:
 	# Remove old mibench source dir ...
 	@test -d $(TESTSET_MIBENCH_TARGET) || mkdir -p $(TESTSET_MIBENCH_TARGET)
 	# Clone official repo
-	@git clone -q $(TESTSET_MIBENCH_GITHUB) -- $(TESTSET_MIBENCH_TARGET)
+	@$(__VAR_L__) git clone -q $(TESTSET_MIBENCH_GITHUB) -- $(TESTSET_MIBENCH_TARGET)
 	@cd $(TESTSET_MIBENCH_TARGET); git checkout -qb $(TESTSET_MIBENCH_BRANCH)
 	# Apply patches
 	@cd $(TESTSET_MIBENCH_TARGET); git am $(TESTSET_MIBENCH_PATCHES)/*.patch

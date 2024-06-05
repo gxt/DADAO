@@ -7,7 +7,6 @@ TESTSET_ISA_QEMU_LOG		:= $(DIR_DADAO_LOG)/testset-isa-qemu.log
 testset-isa-bare-highfive:
 	#
 	# TARGET DIR: $(TESTSET_ISA_BARE_TARGET)
-	# NOTE: CAN ONLY RUN ONE BY ONE, so add j1 option for make
 	#
 	@rm -fr $(TESTSET_ISA_BARE_TARGET)
 	@mkdir -p $(TESTSET_ISA_BARE_TARGET)
@@ -17,16 +16,15 @@ testset-isa-bare-highfive:
 	@echo "DIR_DADAO_TOP\t\t\t:= $(DIR_DADAO_TOP)"				>  $(TESTSET_ISA_BARE_TARGET)/Makefile
 	@echo "include common.mk"									>> $(TESTSET_ISA_BARE_TARGET)/Makefile
 	@echo "include isa.mk"										>> $(TESTSET_ISA_BARE_TARGET)/Makefile
-	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_BARE_TARGET) ddrd-bare	>  $(TESTSET_ISA_BARE_LOG)
-	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_BARE_TARGET) ddrb-bare	>  $(TESTSET_ISA_BARE_LOG)
-	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_BARE_TARGET) ddrf-bare	>  $(TESTSET_ISA_BARE_LOG)
-	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_BARE_TARGET) run-bare	>> $(TESTSET_ISA_BARE_LOG)
+	@make $(__VAR_P__) -C $(TESTSET_ISA_BARE_TARGET) ddrd-bare	>  $(TESTSET_ISA_BARE_LOG)
+	@make $(__VAR_P__) -C $(TESTSET_ISA_BARE_TARGET) ddrb-bare	>  $(TESTSET_ISA_BARE_LOG)
+	@make $(__VAR_P__) -C $(TESTSET_ISA_BARE_TARGET) ddrf-bare	>  $(TESTSET_ISA_BARE_LOG)
+	@make $(__VAR_P__) -C $(TESTSET_ISA_BARE_TARGET) run-bare	>> $(TESTSET_ISA_BARE_LOG)
 	@ln -s -t $(TESTSET_ISA_BARE_TARGET) $(TESTSET_ISA_BARE_LOG)
 
 testset-isa-qemu-clean:
 	#
 	# TARGET DIR: $(TESTSET_ISA_QEMU_TARGET)
-	# NOTE: CAN ONLY RUN ONE BY ONE, so add j1 option for make
 	#
 	@rm -fr $(TESTSET_ISA_QEMU_TARGET)
 
@@ -39,12 +37,12 @@ testset-isa-qemu-source:
 	@echo "include isa.mk"										>> $(TESTSET_ISA_QEMU_TARGET)/Makefile
 
 testset-isa-qemu-build:
-	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_QEMU_TARGET) ddrd-qemu
-	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_QEMU_TARGET) ddrb-qemu
-	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_QEMU_TARGET) ddrf-qemu
+	@make $(__VAR_P__) -C $(TESTSET_ISA_QEMU_TARGET) ddrd-qemu
+	@make $(__VAR_P__) -C $(TESTSET_ISA_QEMU_TARGET) ddrb-qemu
+	@make $(__VAR_P__) -C $(TESTSET_ISA_QEMU_TARGET) ddrf-qemu
 
 testset-isa-qemu-runtest:
-	@$(DADAO_MAKE) -j1 -C $(TESTSET_ISA_QEMU_TARGET) run-qemu
+	@make $(__VAR_P__) -C $(TESTSET_ISA_QEMU_TARGET) run-qemu
 
 testset-isa-qemu-highfive:	dadao-before-highfive
 	@test ! -f $(TESTSET_ISA_QEMU_LOG) || mv --force $(TESTSET_ISA_QEMU_LOG) $(TESTSET_ISA_QEMU_LOG).last

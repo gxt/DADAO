@@ -18,7 +18,7 @@ testset-embench-qemu-clean:
 
 testset-embench-qemu-source:
 	# Clone official repo
-	@git clone -q $(TESTSET_EMBENCH_GITHUB) -- $(TESTSET_EMBENCH_SOURCE)
+	@$(__VAR_L__) git clone -q $(TESTSET_EMBENCH_GITHUB) -- $(TESTSET_EMBENCH_SOURCE)
 	# Add dadao support
 	@cp -a $(TESTSET_EMBENCH_NEWFILES)/config/dadao $(TESTSET_EMBENCH_SOURCE)/config
 	@cd $(TESTSET_EMBENCH_SOURCE);				\
