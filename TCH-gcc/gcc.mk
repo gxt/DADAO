@@ -1,7 +1,6 @@
 #
 # Makefile for gcc in toolchain
 #
-GCC_1003_LOCAL		:= /pub/GITHUB/gcc-mirror/gcc.git
 GCC_1003_GITHUB		:= https://github.com/gcc-mirror/gcc.git
 GCC_1003_VERSION	:= releases/gcc-10.3.0
 GCC_1003_BRANCH		:= dadao-1003
@@ -29,13 +28,8 @@ endif
 
 gcc-1003-source:
 	@rm -fr $(GCC_1003_SOURCE)
-ifeq ($(wildcard $(GCC_1003_LOCAL)),)
 	# Clone remote repo
-	@git clone -q $(GCC_1003_GITHUB) -- $(GCC_1003_SOURCE)
-else
-	# Clone local repo
-	@git clone -q $(GCC_1003_LOCAL) -- $(GCC_1003_SOURCE)
-endif
+	@$(__VAR_L__) git clone -q $(GCC_1003_GITHUB) -- $(GCC_1003_SOURCE)
 	@cd $(GCC_1003_SOURCE); git checkout -qb $(GCC_1003_BRANCH) $(GCC_1003_VERSION)
 	# gcc/config
 	@cp -a $(GCC_1003_NEWFILES)/gcc/config/* $(GCC_1003_SOURCE)/gcc/config/
@@ -94,12 +88,12 @@ gcc-1003-prepare:
 			--with-newlib
 
 gcc-1003-build:
-	@$(DADAO_MAKE) -C $(GCC_1003_BUILD) all
-#	@$(DADAO_MAKE) -C $(GCC_1003_BUILD) all-gcc		; if ONLY gcc required, no libgcc and others
+	@make $(__VAR_P__) $(__MAKE_J__) -C $(GCC_1003_BUILD) all
+#	@make $(__VAR_P__) $(__MAKE_J__) -C $(GCC_1003_BUILD) all-gcc		; if ONLY gcc required, no libgcc and others
 
 gcc-1003-install:
-	@$(DADAO_MAKE) -C $(GCC_1003_BUILD) install
-#	@$(DADAO_MAKE) -C $(GCC_1003_BUILD) install-gcc		; if ONLY gcc required, no libgcc and others
+	@make $(__VAR_P__) $(__MAKE_J__) -C $(GCC_1003_BUILD) install
+#	@make $(__VAR_P__) $(__MAKE_J__) -C $(GCC_1003_BUILD) install-gcc		; if ONLY gcc required, no libgcc and others
 
 gcc-1003-highfive:	dadao-before-highfive
 	@test ! -f $(GCC_1003_LOG) || mv --force $(GCC_1003_LOG) $(GCC_1003_LOG).last
@@ -118,8 +112,8 @@ gcc-1003-highfive:	dadao-before-highfive
 
 gcc-1003-check:
 	@echo "Run gcc-testsuite with qemu simulator"
-	@test -f $(DIR_DADAO_INSTALL)/usr/bin/runtest || $(DADAO_MAKE) -C $(DIR_DADAO_TOP) runtime-qemu-dejagnu-prepare
-	@$(DADAO_MAKE) -C $(GCC_1003_BUILD) check-gcc-c				\
+	@test -f $(DIR_DADAO_INSTALL)/usr/bin/runtest || make $(__VAR_P__) -C $(DIR_DADAO_TOP) runtime-qemu-dejagnu-prepare
+	@make $(__VAR_P__) $(__MAKE_J__) -C $(GCC_1003_BUILD) check-gcc-c				\
 		RUNTESTFLAGS="--target_board=qemu-dadao"
 
 gcc-1003-tags:
