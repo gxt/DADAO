@@ -1,7 +1,6 @@
 #
 # Makefile for llvm-project
 #
-LLVM_1600_LOCAL		:= /pub/GITHUB/llvm/llvm-project.git
 LLVM_1600_GITHUB	:= https://github.com/llvm/llvm-project.git
 LLVM_1600_VERSION	:= llvmorg-16.0.0
 LLVM_1600_BRANCH	:= dadao-1600
@@ -23,13 +22,8 @@ llvm-1600-clean:
 
 llvm-1600-source:
 	@rm -fr $(LLVM_1600_SOURCE)
-ifeq ($(wildcard $(LLVM_1600_LOCAL)),)
 	# Clone remote repo
-	@git clone -q $(LLVM_1600_GITHUB) -- $(LLVM_1600_SOURCE)
-else
-	# Clone local repo
-	@git clone -q $(LLVM_1600_LOCAL) -- $(LLVM_1600_SOURCE)
-endif
+	@$(__VAR_L__) git clone -q $(LLVM_1600_GITHUB) -- $(LLVM_1600_SOURCE)
 	# Specify version
 	@cd $(LLVM_1600_SOURCE); git checkout -qb $(LLVM_1600_BRANCH) $(LLVM_1600_VERSION)
 	# clang newfiles
@@ -64,7 +58,7 @@ llvm-1600-prepare:
 		-DLLVM_ENABLE_ASSERTIONS=ON					\
 		-DLLVM_OPTIMIZED_TABLEGEN=ON					\
 		-DLLVM_USE_SPLIT_DWARF=ON					\
-		-DLLVM_PARALLEL_COMPILE_JOBS=$(_DADAO_CORES_)			\
+		-DLLVM_PARALLEL_COMPILE_JOBS=$(shell expr `nproc` / 2)		\
 		-DLLVM_USE_LINKER=mold
 
 llvm-1600-build:
