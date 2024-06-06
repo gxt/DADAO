@@ -67,6 +67,7 @@ dadao-bare-highfive:
 dadao-before-highfive:
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	@test -d $(DIR_DADAO_LOG) || mkdir -p $(DIR_DADAO_LOG)
+	@test -d $(DIR_DADAO_INSTALL) || mkdir -p $(DIR_DADAO_INSTALL)/bin
 	@test -d $(DIR_DADAO_TARGET)/include/ || mkdir --parents $(DIR_DADAO_TARGET)/include/
 	@ln -sf -t $(DIR_DADAO_TARGET)/include/ $(DIR_DADAO_TOP)/DADAO-runtime/include/*
 
