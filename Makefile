@@ -53,11 +53,6 @@ tch-elf-highfive:
 	@make -s gcc-$(VER_GCC)-highfive
 	@make -s newlib-cygwin-$(VER_NEWLIB_CYGWIN)-highfive
 
-env-highfive:
-	@echo "=== BUILD Run-Time Environment BEGIN ==="
-	@make -s linux-$(VER_LINUX)-highfive
-	@echo "=== BUILD Run-Time Environment DONE! ==="
-
 dadao-qemu-highfive:
 	@make --silent qemu-$(VER_QEMU)-highfive
 	@make --silent testset-isa-qemu-highfive
