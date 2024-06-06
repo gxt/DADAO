@@ -14,19 +14,13 @@ QEMU_0801_SOURCE	:= $(DIR_DADAO_SOURCE)/qemu-0801
 QEMU_0801_DECODEFILE	:= $(QEMU_0801_SOURCE)/target/dadao/insns.decode
 QEMU_0801_DISASFILE	:= $(QEMU_0801_SOURCE)/disas/dadao.h
 QEMU_0801_BUILD		:= $(DIR_DADAO_BUILD)/qemu-0801
-QEMU_0801_INSTALL	?= $(DIR_DADAO_INSTALL)
-#QEMU_0801_INSTALL	?= $(DIR_DADAO_BUILD)/__qemu-0801
+QEMU_0801_INSTALL	?= $(DIR_DADAO_INSTALL)/__qemu-0801
 QEMU_0801_LOG		:= $(DIR_DADAO_LOG)/qemu-0801.log
 
 qemu-0801-clean:
-	@echo "Remove old qemu source dir ..."
 	@rm -fr $(QEMU_0801_SOURCE)
-	@echo "Remove old qemu build dir ..."
 	@rm -fr $(QEMU_0801_BUILD)
-ifneq ($(QEMU_0801_INSTALL), $(DIR_DADAO_INSTALL))
-	@echo "Remove old qemu install dir ..."
 	@rm -fr $(QEMU_0801_INSTALL)
-endif
 
 qemu-0801-source:
 	@rm -fr $(QEMU_0801_SOURCE)
@@ -87,7 +81,9 @@ qemu-0801-build:
 	@make $(__MAKE_J__) -C $(QEMU_0801_BUILD)
 
 qemu-0801-install:
+	@rm -fr $(QEMU_0801_INSTALL)
 	@make $(__MAKE_J__) -C $(QEMU_0801_BUILD) install
+	@ln -sf -t $(DIR_DADAO_INSTALL)/bin $(QEMU_0801_INSTALL)/bin/*
 
 qemu-0801-highfive:	dadao-before-highfive
 	@test ! -f $(QEMU_0801_LOG) || mv --force $(QEMU_0801_LOG) $(QEMU_0801_LOG).last
