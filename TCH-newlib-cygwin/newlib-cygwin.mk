@@ -12,18 +12,11 @@ NEWLIB_CYGWIN_0303_FIXUP	:= $(DIR_DADAO_TOP)/TCH-newlib-cygwin/newlib-cygwin-030
 
 NEWLIB_CYGWIN_0303_SOURCE	:= $(DIR_DADAO_SOURCE)/newlib-cygwin-0303
 NEWLIB_CYGWIN_0303_BUILD	:= $(DIR_DADAO_BUILD)/newlib-cygwin-0303
-NEWLIB_CYGWIN_0303_INSTALL	?= $(DIR_DADAO_INSTALL)
 NEWLIB_CYGWIN_0303_LOG		:= $(DIR_DADAO_LOG)/newlib-cygwin-0303.log
 
 newlib-cygwin-0303-clean:
-	@echo "Remove old newlib-cygwin source dir ..."
 	@rm -fr $(NEWLIB_CYGWIN_0303_SOURCE)
-	@echo "Remove old newlib-cygwin build dir ..."
 	@rm -fr $(NEWLIB_CYGWIN_0303_BUILD)
-ifneq ($(NEWLIB_CYGWIN_0303_INSTALL), $(DIR_DADAO_INSTALL))
-	@echo "Remove old newlib-cygwin install dir ..."
-	@rm -fr $(NEWLIB_CYGWIN_0303_INSTALL)
-endif
 
 newlib-cygwin-0303-source:
 	@rm -fr $(NEWLIB_CYGWIN_0303_SOURCE)
@@ -84,13 +77,12 @@ newlib-cygwin-0303-source:
 newlib-cygwin-0303-prepare:
 	@rm -fr $(NEWLIB_CYGWIN_0303_BUILD)
 	@mkdir -p $(NEWLIB_CYGWIN_0303_BUILD)
-	@test -d $(DIR_DADAO_INSTALL)/include/linux || make -s -C $(DIR_DADAO_TOP) linux-$(VER_LINUX)-headers-highfive
 	# CFLAGS_FOR_TARGET="-g -Os" can be added before configure to modify default CFLAGS
 	@cd $(NEWLIB_CYGWIN_0303_BUILD) &&						\
 		$(__VAR_P__) $(NEWLIB_CYGWIN_0303_SOURCE)/configure	\
 			--target=$(NEWLIB_CYGWIN_0303_TARGET)			\
 			--srcdir=$(NEWLIB_CYGWIN_0303_SOURCE)			\
-			--prefix=$(NEWLIB_CYGWIN_0303_INSTALL)			\
+			--prefix=$(DIR_DADAO_TCH_ELF)					\
 			--with-build-time-tools=$(DIR_DADAO_INSTALL)/bin
 
 newlib-cygwin-0303-build:

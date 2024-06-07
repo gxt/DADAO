@@ -8,6 +8,8 @@ DIR_DADAO_INSTALL	:= $(DIR_DADAO_TOP)/__install
 DIR_DADAO_TARGET	:= $(DIR_DADAO_TOP)/__dadao
 DIR_DADAO_LOG		:= $(DIR_DADAO_TOP)/__log
 
+DIR_DADAO_TCH_ELF	:= $(DIR_DADAO_INSTALL)/__tch_elf
+
 VER_BINUTILS_GDB	:= 0235
 VER_GCC			:= 1003
 VER_GLIBC		:= 0231
@@ -19,7 +21,7 @@ VER_CHIPYARD		:= 0107
 
 __MAKE_J__			:= --jobs=$(shell expr `nproc` / 2)
 # P: PATH, L: LOCAL
-__VAR_P__			:= PATH=$(DIR_DADAO_INSTALL)/bin/:$(DIR_DADAO_INSTALL)/usr/bin:/bin:/usr/bin
+__VAR_P__			:= PATH=$(DIR_DADAO_INSTALL)/bin/:$(DIR_DADAO_TCH_ELF)/bin:/bin:/usr/bin
 __VAR_L__			:= GIT_CONFIG_SYSTEM=$(DIR_DADAO_TOP)/gitconfig.local
 
 all:
@@ -49,9 +51,12 @@ tch-gnu-highfive:
 	@make -s glibc-$(VER_GLIBC)-highfive
 
 tch-elf-highfive:
+	@rm -rf $(DIR_DADAO_TCH_ELF)
 	@make -s binutils-gdb-$(VER_BINUTILS_GDB)-highfive
 	@make -s gcc-$(VER_GCC)-highfive
+	@make -s linux-$(VER_LINUX)-headers-highfive
 	@make -s newlib-cygwin-$(VER_NEWLIB_CYGWIN)-highfive
+	@ln -sf -t $(DIR_DADAO_INSTALL)/bin $(DIR_DADAO_TCH_ELF)/bin/*
 
 dadao-qemu-highfive:
 	@make --silent qemu-$(VER_QEMU)-highfive

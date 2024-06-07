@@ -12,19 +12,11 @@ GCC_1003_FIXUP		:= $(DIR_DADAO_TOP)/TCH-gcc/gcc-1003-fixups
 
 GCC_1003_SOURCE		:= $(DIR_DADAO_SOURCE)/gcc-1003
 GCC_1003_BUILD		:= $(DIR_DADAO_BUILD)/gcc-1003
-GCC_1003_INSTALL	?= $(DIR_DADAO_INSTALL)
-#GCC_1003_INSTALL	?= $(DIR_DADAO_BUILD)/__gcc-1003
 GCC_1003_LOG		:= $(DIR_DADAO_LOG)/gcc-1003.log
 
 gcc-1003-clean:
-	@echo "Remove old gcc source dir ..."
 	@rm -fr $(GCC_1003_SOURCE)
-	@echo "Remove old gcc build dir ..."
 	@rm -fr $(GCC_1003_BUILD)
-ifneq ($(GCC_1003_INSTALL), $(DIR_DADAO_INSTALL))
-	@echo "Remove old gcc install dir ..."
-	@rm -fr $(GCC_1003_INSTALL)
-endif
 
 gcc-1003-source:
 	@rm -fr $(GCC_1003_SOURCE)
@@ -71,7 +63,7 @@ gcc-1003-prepare:
 		$(GCC_1003_SOURCE)/configure				\
 			--target=$(GCC_1003_TARGET)			\
 			--srcdir=$(GCC_1003_SOURCE)			\
-			--prefix=$(GCC_1003_INSTALL)			\
+			--prefix=$(DIR_DADAO_TCH_ELF)		\
 			--disable-libssp				\
 			--disable-libcilkrts				\
 			--enable-languages=c				\

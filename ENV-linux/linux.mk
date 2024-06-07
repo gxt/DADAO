@@ -103,7 +103,7 @@ linux-0504-headers-install:
 	# Headers install ...
 	@make $(__MAKE_J__) -C $(LINUX_0504_BUILD)		\
 		ARCH=$(LINUX_0504_ARCH)						\
-		INSTALL_HDR_PATH=$(LINUX_0504_TARGET)/usr	\
+		INSTALL_HDR_PATH=$(DIR_DADAO_TCH_ELF)		\
 		headers_install
 
 linux-0504-headers-highfive:

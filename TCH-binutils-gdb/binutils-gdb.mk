@@ -14,20 +14,12 @@ BINUTILS_GDB_0235_OPCODES		:= $(BINUTILS_GDB_0235_SOURCE)/opcodes/dadao-insn.opc
 BINUTILS_GDB_0235_DISASSEMBLE		:= $(BINUTILS_GDB_0235_SOURCE)/opcodes/dadao-dis.h
 BINUTILS_GDB_0235_ENCODING		:= $(BINUTILS_GDB_0235_SOURCE)/include/opcode/encoding.h
 BINUTILS_GDB_0235_BUILD			:= $(DIR_DADAO_BUILD)/binutils-gdb-0235
-BINUTILS_GDB_0235_INSTALL		?= $(DIR_DADAO_INSTALL)
-#BINUTILS_GDB_0235_INSTALL		?= $(DIR_DADAO_BUILD)/__binutils-gdb-0235
 BINUTILS_GDB_0235_LOG			:= $(DIR_DADAO_LOG)/binutils-gdb-0235.log
 BINUTILS_GDB_0235_LOG_CHECK		:= $(DIR_DADAO_LOG)/binutils-gdb-0235.check
 
 binutils-gdb-0235-clean:
-	@echo "Remove old binutils-gdb source dir ..."
 	@rm -fr $(BINUTILS_GDB_0235_SOURCE)
-	@echo "Remove old binutils-gdb build dir ..."
 	@rm -fr $(BINUTILS_GDB_0235_BUILD)
-ifneq ($(BINUTILS_GDB_0235_INSTALL), $(DIR_DADAO_INSTALL))
-	@echo "Remove old binutils-gdb install dir ..."
-	@rm -fr $(BINUTILS_GDB_0235_INSTALL)
-endif
 
 binutils-gdb-0235-source:
 	@rm -fr $(BINUTILS_GDB_0235_SOURCE)
@@ -125,7 +117,7 @@ binutils-gdb-0235-prepare:
 			--disable-nls					\
 			--target=$(BINUTILS_GDB_0235_TARGET)		\
 			--srcdir=$(BINUTILS_GDB_0235_SOURCE)		\
-			--prefix=$(BINUTILS_GDB_0235_INSTALL)		\
+			--prefix=$(DIR_DADAO_TCH_ELF)		\
 			--disable-dependency-tracking
 
 binutils-gdb-0235-build:
