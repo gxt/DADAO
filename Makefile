@@ -19,10 +19,12 @@ VER_LINUX		:= 0504
 VER_QEMU		:= 0801
 VER_CHIPYARD		:= 0107
 
-__MAKE_J__			:= --jobs=$(shell expr `nproc` / 2)
-# P: PATH, L: LOCAL
+# C: CORES, P: PATH, L: LOCAL
+__VAR_C__			:= $(shell expr `nproc` / 2)
 __VAR_P__			:= PATH=$(DIR_DADAO_INSTALL)/bin/:$(DIR_DADAO_TCH_ELF)/bin:/bin:/usr/bin
 __VAR_L__			:= GIT_CONFIG_SYSTEM=$(DIR_DADAO_TOP)/gitconfig.local
+
+__MAKE_J__			:= --jobs=$(__VAR_C__)
 
 all:
 	@echo ""

@@ -58,7 +58,7 @@ chipyard-0107-prepare:
 chipyard-0107-build:
 	@cd $(CHIPYARD_0107_SOURCE)/sims/verilator;						\
 		RISCV=$(DIR_DADAO_TARGET)							\
-		make -j16 VERILATOR_THREADS=8							\
+		make $(__MAKE_J__) VERILATOR_THREADS=$(__VAR_C__)		\
 			CONFIG=$(RUNTIME_BARE_CONFIG)						\
 			BOOTROM_FILES=bootrom.dadao.img						\
 			BOOTROM_FILES_DIR=$(RUNTIME_BOOTROM_TARGET)				\

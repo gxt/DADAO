@@ -58,7 +58,7 @@ llvm-1600-prepare:
 		-DLLVM_ENABLE_ASSERTIONS=ON					\
 		-DLLVM_OPTIMIZED_TABLEGEN=ON					\
 		-DLLVM_USE_SPLIT_DWARF=ON					\
-		-DLLVM_PARALLEL_COMPILE_JOBS=$(shell expr `nproc` / 2)		\
+		-DLLVM_PARALLEL_COMPILE_JOBS=$(__VAR_C__)		\
 		-DLLVM_USE_LINKER=mold
 
 llvm-1600-build:
