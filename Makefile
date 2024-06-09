@@ -47,11 +47,6 @@ include SOC-chipyard/*.mk
 include ENV-linux/*.mk
 include ENV-proxylinux/*.mk
 
-tch-gnu-highfive:
-	@make -s BINUTILS_GDB_$(VER_BINUTILS_GDB)_TARGET=dadao-linux-gnu binutils-gdb-$(VER_BINUTILS_GDB)-highfive
-	@make -s GCC_$(VER_GCC)_TARGET=dadao-linux-gnu gcc-$(VER_GCC)-highfive
-	@make -s glibc-$(VER_GLIBC)-highfive
-
 tch-elf-highfive:
 	@rm -rf $(DIR_DADAO_TCH_ELF)
 	@make -s binutils-gdb-$(VER_BINUTILS_GDB)-highfive
