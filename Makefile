@@ -29,7 +29,7 @@ __MAKE_J__			:= --jobs=$(__VAR_C__)
 all:
 	@echo ""
 	@echo "DA DAO ZHI JIAN!"
-	@echo "- VERSION 0.4 -"
+	@echo "- VERSION 202406 -"
 	@echo ""
 
 include DADAO-runtime/common.mk
