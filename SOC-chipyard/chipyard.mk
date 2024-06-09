@@ -36,13 +36,13 @@ chipyard-0107-source:
 	# Setup submodules by terribly downloading git repos from github.com
 	@cd $(CHIPYARD_0107_SOURCE); $(__VAR_L__) ./scripts/init-submodules-no-riscv-tools.sh
 	# Add dadao generators into chipyard
-	@ln --symbolic --target-directory=$(CHIPYARD_0107_SOURCE)/generators/ $(CHIPYARD_0107_NEWFILES)/generators/dadao-wuming
+	@cp -a $(CHIPYARD_0107_NEWFILES)/generators/dadao-wuming $(CHIPYARD_0107_SOURCE)/generators/
 	@cd $(CHIPYARD_0107_SOURCE);								\
 		git add generators/dadao-wuming;						\
 		git commit -asm"DADAO: add dadao-wuming"
 	# Add dadao configs and patches
-	@ln --symbolic --target-directory=$(CHIPYARD_0107_SOURCE)/generators/chipyard/src/main/scala/config/	\
-			$(CHIPYARD_0107_NEWFILES)/generators/chipyard/src/main/scala/config/*
+	@cp -a $(CHIPYARD_0107_NEWFILES)/generators/chipyard/src/main/scala/config/*	\
+		$(CHIPYARD_0107_SOURCE)/generators/chipyard/src/main/scala/config/
 	@cd $(CHIPYARD_0107_SOURCE);								\
 		git add generators/chipyard/src/main/scala/config/;				\
 		git commit -asm"DADAO: add chipyard-config";					\
