@@ -51,7 +51,7 @@ chipyard-0107-source:
 chipyard-0107-prepare:
 	@rm -fr $(CHIPYARD_0107_BUILD)
 	@mkdir -p $(CHIPYARD_0107_BUILD)
-	@make -s -C $(DIR_DADAO_TOP) runtime-bootrom-highfive
+	@test -d $(RUNTIME_BOOTROM_TARGET) || make -s -C $(DIR_DADAO_TOP) runtime-bootrom-highfive
 	# Check necessary fesvr headers
 	@test -d $(DIR_DADAO_TARGET)/include/fesvr || make -s -C $(DIR_DADAO_TOP) runtime-fesvr-highfive
 
