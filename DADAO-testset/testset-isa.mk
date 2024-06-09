@@ -20,7 +20,7 @@ testset-isa-bare-source:
 testset-isa-bare-build:
 	@make $(__VAR_P__) -C $(TESTSET_ISA_BARE_TARGET) ddrd-bare
 	@make $(__VAR_P__) -C $(TESTSET_ISA_BARE_TARGET) ddrb-bare
-#	@make $(__VAR_P__) -C $(TESTSET_ISA_BARE_TARGET) ddrf-bare
+	@make $(__VAR_P__) -C $(TESTSET_ISA_BARE_TARGET) ddrf-bare
 
 testset-isa-bare-runtest:
 	@make $(__VAR_P__) -C $(TESTSET_ISA_BARE_TARGET) run-bare

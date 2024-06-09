@@ -2,9 +2,7 @@
 # Makefrag for ddrd tests
 #-----------------------------------------------------------------------
 
-ddrd_sc_tests =				\
-	rrii-ldxx	rrii-stxx	\
-	rrri-ldmxx	rrri-stmxx	\
+ddrd_pass2_tests =				\
 	orri-rd2rd				\
 	rwii-setxw	rwii-andnw	rwii-orw	\
 	rrrr-csx	rrrr-csxx	\
@@ -16,5 +14,9 @@ ddrd_sc_tests =				\
 	orri-shxx	orrr-shxx	\
 	orri-extx	orrr-extx	\
 
-ddrd_bare_tests = $(addprefix ddrd-bare-, $(ddrd_sc_tests))
-ddrd_qemu_tests = $(addprefix ddrd-qemu-, $(ddrd_sc_tests))
+ddrd_passqemu_tests =		\
+	rrii-ldxx	rrii-stxx	\
+	rrri-ldmxx	rrri-stmxx	\
+
+ddrd_bare_tests = $(addprefix ddrd-bare-, $(ddrd_pass2_tests))
+ddrd_qemu_tests = $(addprefix ddrd-qemu-, $(ddrd_pass2_tests) $(ddrd_passqemu_tests))

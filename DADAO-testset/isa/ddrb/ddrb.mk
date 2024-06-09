@@ -2,10 +2,7 @@
 # Makefrag for ddrb tests
 #-----------------------------------------------------------------------
 
-ddrb_sc_tests =				\
-	rrii-ldo	rrii-sto	\
-	rrri-ldmo	rrri-stmo	\
-	orri-rx2rx				\
+ddrb_pass2_tests =			\
 	rwii-andnw	rwii-orw	rwii-setzw	\
 	orrr-add	orrr-sub	\
 	rrii-addi				\
@@ -16,5 +13,10 @@ ddrb_sc_tests =				\
 	iiii-call	rrii-call	\
 	riii-ret				\
 
-ddrb_bare_tests = $(addprefix ddrb-bare-, $(ddrb_sc_tests))
-ddrb_qemu_tests = $(addprefix ddrb-qemu-, $(ddrb_sc_tests))
+ddrb_passqemu_tests =		\
+	rrii-ldo	rrii-sto	\
+	rrri-ldmo	rrri-stmo	\
+	orri-rx2rx				\
+
+ddrb_bare_tests = $(addprefix ddrb-bare-, $(ddrb_pass2_tests))
+ddrb_qemu_tests = $(addprefix ddrb-qemu-, $(ddrb_pass2_tests) $(ddrb_passqemu_tests))

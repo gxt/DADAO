@@ -52,7 +52,7 @@ ddrf-qemu%.out: ddrf-qemu%
 define compile_template
 
 $$($(1)_bare_tests): $(1)-bare-%: $(1)/%.S
-	$$(DADAO_ELF_GCC) $(2) $$(DADAO_ELF_GCC_FLAGS) -I$(DIR_DADAO_TARGET)/include -I$(DIR_DADAO_TARGET)/include/bare -I$(src_dir)/macros/scalar -T$(DIR_DADAO_TARGET)/include/bare/link.ld $$< -o $$@
+	$$(DADAO_ELF_GCC) $(2) -Xassembler --multiple-to-single $$(DADAO_ELF_GCC_FLAGS) -I$(DIR_DADAO_TARGET)/include -I$(DIR_DADAO_TARGET)/include/bare -I$(src_dir)/macros/scalar -T$(DIR_DADAO_TARGET)/include/bare/link.ld $$< -o $$@
 $(1)_tests += $$($(1)_bare_tests)
 
 $$($(1)_qemu_tests): $(1)-qemu-%: $(1)/%.S
