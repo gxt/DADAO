@@ -36,15 +36,15 @@ proxylinux-prepare:
 	@mkdir -p $(PROXYLINUX_BUILD)
 	# Configure
 	@cd $(PROXYLINUX_BUILD);							\
-		$(__VAR_P__) $(PROXYLINUX_SOURCE)/configure		\
+		$(__VAR_DADAO_PATH__) $(PROXYLINUX_SOURCE)/configure		\
 			--prefix=$(PROXYLINUX_INSTALL)				\
 			--host=dadao-unknown-elf
 
 proxylinux-build:
-	@make $(__VAR_P__) $(__MAKE_J__) -C $(PROXYLINUX_BUILD)
+	@make $(__VAR_DADAO_PATH__) $(__MAKE_J__) -C $(PROXYLINUX_BUILD)
 
 proxylinux-install:
-	@make $(__VAR_P__) $(__MAKE_J__) -C $(PROXYLINUX_BUILD) install
+	@make $(__VAR_DADAO_PATH__) $(__MAKE_J__) -C $(PROXYLINUX_BUILD) install
 
 proxylinux-highfive:	dadao-before-highfive
 	@test ! -f $(PROXYLINUX_LOG) || mv --force $(PROXYLINUX_LOG) $(PROXYLINUX_LOG).last

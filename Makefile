@@ -21,7 +21,7 @@ VER_CHIPYARD		:= 0107
 
 # C: CORES, P: PATH, L: LOCAL
 __VAR_C__			:= $(shell expr `nproc` / 2)
-__VAR_P__			:= PATH=$(DIR_DADAO_INSTALL)/bin/:$(DIR_DADAO_TCH_ELF)/bin:/bin:/usr/bin
+__VAR_DADAO_PATH__			:= PATH=$(DIR_DADAO_INSTALL)/bin/:$(DIR_DADAO_TCH_ELF)/bin:/bin:/usr/bin
 __VAR_LOCAL_GIT__			:= GIT_CONFIG_SYSTEM=$(DIR_DADAO_TOP)/gitconfig.local
 __VAR_STAGE1__		:= RUNTIME_BARE_CONFIG=Wuming1StageConfig
 __VAR_STAGE5__		:= RUNTIME_BARE_CONFIG=Wuming5StageConfig

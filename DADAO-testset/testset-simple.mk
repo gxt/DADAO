@@ -18,8 +18,8 @@ testset-simple-llvm-highfive:
 	@echo "include common.mk"									>> $(TESTSET_SIMPLE_TARGET_LLVM)/Makefile
 	@echo "include simple-llvm.mk"								>> $(TESTSET_SIMPLE_TARGET_LLVM)/Makefile
 	@echo "include simple-qemu.mk"								>> $(TESTSET_SIMPLE_TARGET_LLVM)/Makefile
-	@make $(__VAR_P__) -C $(TESTSET_SIMPLE_TARGET_LLVM) default
-	@make $(__VAR_P__) -C $(TESTSET_SIMPLE_TARGET_LLVM) test.qemulog
+	@make $(__VAR_DADAO_PATH__) -C $(TESTSET_SIMPLE_TARGET_LLVM) default
+	@make $(__VAR_DADAO_PATH__) -C $(TESTSET_SIMPLE_TARGET_LLVM) test.qemulog
 
 testset-simple-gcc-elf-highfive:
 	#
@@ -33,6 +33,6 @@ testset-simple-gcc-elf-highfive:
 	@echo "include common.mk"									>> $(TESTSET_SIMPLE_TARGET_GCC_ELF)/Makefile
 	@echo "include simple-gcc-elf.mk"							>> $(TESTSET_SIMPLE_TARGET_GCC_ELF)/Makefile
 	@echo "include simple-qemu.mk"								>> $(TESTSET_SIMPLE_TARGET_GCC_ELF)/Makefile
-	@make $(__VAR_P__) -C $(TESTSET_SIMPLE_TARGET_GCC_ELF) default
-	@make $(__VAR_P__) -C $(TESTSET_SIMPLE_TARGET_GCC_ELF) test.qemulog
+	@make $(__VAR_DADAO_PATH__) -C $(TESTSET_SIMPLE_TARGET_GCC_ELF) default
+	@make $(__VAR_DADAO_PATH__) -C $(TESTSET_SIMPLE_TARGET_GCC_ELF) test.qemulog
 

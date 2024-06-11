@@ -16,7 +16,7 @@ runtime-bootrom-prepare:
 	@echo "include bootrom.mk"									>> $(RUNTIME_BOOTROM_TARGET)/Makefile
 
 runtime-bootrom-build:
-	@make $(__VAR_P__) -C $(RUNTIME_BOOTROM_TARGET) default
+	@make $(__VAR_DADAO_PATH__) -C $(RUNTIME_BOOTROM_TARGET) default
 
 runtime-bootrom-highfive:	dadao-before-highfive
 	@test ! -f $(RUNTIME_BOOTROM_LOG) || mv --force $(RUNTIME_BOOTROM_LOG) $(RUNTIME_BOOTROM_LOG).last

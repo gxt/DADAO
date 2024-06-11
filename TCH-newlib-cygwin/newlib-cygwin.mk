@@ -79,17 +79,17 @@ newlib-cygwin-0303-prepare:
 	@mkdir -p $(NEWLIB_CYGWIN_0303_BUILD)
 	# CFLAGS_FOR_TARGET="-g -Os" can be added before configure to modify default CFLAGS
 	@cd $(NEWLIB_CYGWIN_0303_BUILD) &&						\
-		$(__VAR_P__) $(NEWLIB_CYGWIN_0303_SOURCE)/configure	\
+		$(__VAR_DADAO_PATH__) $(NEWLIB_CYGWIN_0303_SOURCE)/configure	\
 			--target=$(NEWLIB_CYGWIN_0303_TARGET)			\
 			--srcdir=$(NEWLIB_CYGWIN_0303_SOURCE)			\
 			--prefix=$(DIR_DADAO_TCH_ELF)					\
 			--with-build-time-tools=$(DIR_DADAO_INSTALL)/bin
 
 newlib-cygwin-0303-build:
-	@make $(__VAR_P__) $(__MAKE_J__) -C $(NEWLIB_CYGWIN_0303_BUILD) all
+	@make $(__VAR_DADAO_PATH__) $(__MAKE_J__) -C $(NEWLIB_CYGWIN_0303_BUILD) all
 
 newlib-cygwin-0303-install:
-	@make $(__VAR_P__) $(__MAKE_J__) -C $(NEWLIB_CYGWIN_0303_BUILD) install
+	@make $(__VAR_DADAO_PATH__) $(__MAKE_J__) -C $(NEWLIB_CYGWIN_0303_BUILD) install
 
 newlib-cygwin-0303-highfive:	dadao-before-highfive
 	@test ! -f $(NEWLIB_CYGWIN_0303_LOG) || mv --force $(NEWLIB_CYGWIN_0303_LOG) $(NEWLIB_CYGWIN_0303_LOG).last

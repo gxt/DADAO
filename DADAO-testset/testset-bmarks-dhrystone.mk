@@ -15,17 +15,17 @@ testset-dhrystone-bare-source:
 	@echo "include dhrystone.mk"								>> $(TESTSET_DHRYSTONE_BARE_TARGET)/Makefile
 
 testset-dhrystone-bare-build:
-	@make $(__VAR_P__) -C $(TESTSET_DHRYSTONE_BARE_TARGET) default
+	@make $(__VAR_DADAO_PATH__) -C $(TESTSET_DHRYSTONE_BARE_TARGET) default
 
 testset-dhrystone-bare-runtest-stage1:
 	# dhrystone run on bare DO output error, could be ignored
-	@-make $(__VAR_P__) $(__VAR__STAGE1__) -C $(DIR_DADAO_TOP)						\
+	@-make $(__VAR_DADAO_PATH__) $(__VAR__STAGE1__) -C $(DIR_DADAO_TOP)						\
 		RUNTIME_BARE_BINARY=$(TESTSET_DHRYSTONE_BARE_TARGET)/dhrystone.dadao		\
 		runtime-bare-run-binary
 
 testset-dhrystone-bare-runtest-stage5:
 	# dhrystone run on bare DO output error, could be ignored
-	@-make $(__VAR_P__) $(__VAR_STAGE5__) -C $(DIR_DADAO_TOP)						\
+	@-make $(__VAR_DADAO_PATH__) $(__VAR_STAGE5__) -C $(DIR_DADAO_TOP)						\
 		RUNTIME_BARE_BINARY=$(TESTSET_DHRYSTONE_BARE_TARGET)/dhrystone.dadao		\
 		runtime-bare-run-binary
 
