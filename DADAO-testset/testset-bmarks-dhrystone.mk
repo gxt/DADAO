@@ -19,13 +19,13 @@ testset-dhrystone-bare-build:
 
 testset-dhrystone-bare-runtest-stage1:
 	# dhrystone run on bare DO output error, could be ignored
-	@-make $(__VAR_DADAO_PATH__) $(__VAR__STAGE1__) -C $(DIR_DADAO_TOP)						\
+	@-make $(__VAR_DADAO_PATH__) $(__VAR_BARE_STAGE1__) -C $(DIR_DADAO_TOP)						\
 		RUNTIME_BARE_BINARY=$(TESTSET_DHRYSTONE_BARE_TARGET)/dhrystone.dadao		\
 		runtime-bare-run-binary
 
 testset-dhrystone-bare-runtest-stage5:
 	# dhrystone run on bare DO output error, could be ignored
-	@-make $(__VAR_DADAO_PATH__) $(__VAR_STAGE5__) -C $(DIR_DADAO_TOP)						\
+	@-make $(__VAR_DADAO_PATH__) $(__VAR_BARE_STAGE5__) -C $(DIR_DADAO_TOP)						\
 		RUNTIME_BARE_BINARY=$(TESTSET_DHRYSTONE_BARE_TARGET)/dhrystone.dadao		\
 		runtime-bare-run-binary
 

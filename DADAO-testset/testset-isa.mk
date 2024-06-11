@@ -23,10 +23,10 @@ testset-isa-bare-build:
 	@make $(__VAR_DADAO_PATH__) -C $(TESTSET_ISA_BARE_TARGET) ddrf-bare
 
 testset-isa-bare-runtest-stage1:
-	@make $(__VAR_DADAO_PATH__) $(__VAR_STAGE1__) -C $(TESTSET_ISA_BARE_TARGET) run-bare
+	@make $(__VAR_DADAO_PATH__) $(__VAR_BARE_STAGE1__) -C $(TESTSET_ISA_BARE_TARGET) run-bare
 
 testset-isa-bare-runtest-stage5:
-	@make $(__VAR_DADAO_PATH__) $(__VAR_STAGE5__) -C $(TESTSET_ISA_BARE_TARGET) run-bare
+	@make $(__VAR_DADAO_PATH__) $(__VAR_BARE_STAGE5__) -C $(TESTSET_ISA_BARE_TARGET) run-bare
 
 testset-isa-bare-highfive:	dadao-before-highfive
 	@test ! -f $(TESTSET_ISA_BARE_LOG) || mv --force $(TESTSET_ISA_BARE_LOG) $(TESTSET_ISA_BARE_LOG).last
