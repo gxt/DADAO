@@ -21,7 +21,7 @@ newlib-cygwin-0303-clean:
 newlib-cygwin-0303-source:
 	@rm -fr $(NEWLIB_CYGWIN_0303_SOURCE)
 	# Clone remote repo
-	@$(__VAR_L__) git clone -q $(NEWLIB_CYGWIN_0303_GITHUB) -- $(NEWLIB_CYGWIN_0303_SOURCE)
+	@$(__VAR_LOCAL_GIT__) git clone -q $(NEWLIB_CYGWIN_0303_GITHUB) -- $(NEWLIB_CYGWIN_0303_SOURCE)
 	@cd $(NEWLIB_CYGWIN_0303_SOURCE); git checkout -qb $(NEWLIB_CYGWIN_0303_BRANCH) $(NEWLIB_CYGWIN_0303_VERSION)
 	# include
 	@echo "INCLUDE: Copy include dir from binutils-gdb (elf/dadao.h and opcode/dadao.h)"

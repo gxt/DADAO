@@ -24,7 +24,7 @@ binutils-gdb-0235-clean:
 binutils-gdb-0235-source:
 	@rm -fr $(BINUTILS_GDB_0235_SOURCE)
 	# Clone remote repo
-	@$(__VAR_L__) git clone -q $(BINUTILS_GDB_0235_GITHUB) -- $(BINUTILS_GDB_0235_SOURCE)
+	@$(__VAR_LOCAL_GIT__) git clone -q $(BINUTILS_GDB_0235_GITHUB) -- $(BINUTILS_GDB_0235_SOURCE)
 	@cd $(BINUTILS_GDB_0235_SOURCE);				\
 		git checkout -qb $(BINUTILS_GDB_0235_BRANCH) $(BINUTILS_GDB_0235_VERSION)
 	# replace cru with crUu

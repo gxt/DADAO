@@ -23,7 +23,7 @@ proxylinux-source:
 	# Remove old proxylinux source dir ...
 	@rm -fr $(PROXYLINUX_SOURCE)
 	# Clone remote repo
-	@$(__VAR_L__) git clone -q $(PROXYLINUX_GITHUB) -- $(PROXYLINUX_SOURCE)
+	@$(__VAR_LOCAL_GIT__) git clone -q $(PROXYLINUX_GITHUB) -- $(PROXYLINUX_SOURCE)
 	# Checkout specified version
 	@cd $(PROXYLINUX_SOURCE);						\
 		git checkout -qb $(PROXYLINUX_BRANCH) $(PROXYLINUX_VERSION);	\

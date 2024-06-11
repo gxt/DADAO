@@ -22,7 +22,7 @@ testset-llvm-testsuite-clean:
 testset-llvm-testsuite-source:
 	@rm -fr $(LLVM_TESTSUITE_SOURCE)
 	# Clone local repo
-	@$(__VAR_L__) git clone -q $(LLVM_TESTSUITE_GITHUB) -- $(LLVM_TESTSUITE_SOURCE)
+	@$(__VAR_LOCAL_GIT__) git clone -q $(LLVM_TESTSUITE_GITHUB) -- $(LLVM_TESTSUITE_SOURCE)
 	# Specify version
 	@cd $(LLVM_TESTSUITE_SOURCE); git checkout -qb $(LLVM_TESTSUITE_BRANCH) $(LLVM_TESTSUITE_VERSION)
 	# New files

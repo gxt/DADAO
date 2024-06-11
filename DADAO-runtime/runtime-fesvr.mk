@@ -27,7 +27,7 @@ runtime-fesvr-source:
 	# Remove old runtime-fesvr source dir ...
 	@rm -fr $(RUNTIME_FESVR_SOURCE)
 	# Clone remote repo
-	@$(__VAR_L__) git clone -q $(RUNTIME_FESVR_GITHUB) -- $(RUNTIME_FESVR_SOURCE)
+	@$(__VAR_LOCAL_GIT__) git clone -q $(RUNTIME_FESVR_GITHUB) -- $(RUNTIME_FESVR_SOURCE)
 	# Checkout specified version
 	@cd $(RUNTIME_FESVR_SOURCE); git checkout -qb $(RUNTIME_FESVR_BRANCH) $(RUNTIME_FESVR_VERSION)
 	# Apply patches

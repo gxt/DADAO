@@ -23,7 +23,7 @@ llvm-1600-clean:
 llvm-1600-source:
 	@rm -fr $(LLVM_1600_SOURCE)
 	# Clone remote repo
-	@$(__VAR_L__) git clone -q $(LLVM_1600_GITHUB) -- $(LLVM_1600_SOURCE)
+	@$(__VAR_LOCAL_GIT__) git clone -q $(LLVM_1600_GITHUB) -- $(LLVM_1600_SOURCE)
 	# Specify version
 	@cd $(LLVM_1600_SOURCE); git checkout -qb $(LLVM_1600_BRANCH) $(LLVM_1600_VERSION)
 	# clang newfiles

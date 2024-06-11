@@ -24,10 +24,10 @@ chipyard-0107-clean:
 chipyard-0107-source:
 	@rm -fr $(CHIPYARD_0107_SOURCE)
 	# Clone github repo
-	@$(__VAR_L__) git clone -q $(CHIPYARD_0107_GITHUB) -- $(CHIPYARD_0107_SOURCE)
+	@$(__VAR_LOCAL_GIT__) git clone -q $(CHIPYARD_0107_GITHUB) -- $(CHIPYARD_0107_SOURCE)
 	@cd $(CHIPYARD_0107_SOURCE); git checkout -qb $(CHIPYARD_0107_BRANCH) $(CHIPYARD_0107_VERSION)
 	# Setup submodules by terribly downloading git repos from github.com
-	@cd $(CHIPYARD_0107_SOURCE); $(__VAR_L__) ./scripts/init-submodules-no-riscv-tools.sh
+	@cd $(CHIPYARD_0107_SOURCE); $(__VAR_LOCAL_GIT__) ./scripts/init-submodules-no-riscv-tools.sh
 	# Add dadao generators into chipyard
 	@cp -a $(CHIPYARD_0107_NEWFILES)/generators/dadao-wuming $(CHIPYARD_0107_SOURCE)/generators/
 	@cd $(CHIPYARD_0107_SOURCE);										\

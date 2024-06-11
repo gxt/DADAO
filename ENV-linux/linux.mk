@@ -34,7 +34,7 @@ linux-0504-source:
 	@rm -fr $(LINUX_0504_SOURCE)
 	@test -d $(DIR_DADAO_SOURCE) || mkdir -p $(DIR_DADAO_SOURCE)
 	# Clone remote repo
-	@$(__VAR_L__) git clone -q $(LINUX_0504_GITHUB) -- $(LINUX_0504_SOURCE)
+	@$(__VAR_LOCAL_GIT__) git clone -q $(LINUX_0504_GITHUB) -- $(LINUX_0504_SOURCE)
 	@cd $(LINUX_0504_SOURCE);						\
 		git checkout -qb $(LINUX_0504_BRANCH) $(LINUX_0504_VERSION)
 	# Add official patch

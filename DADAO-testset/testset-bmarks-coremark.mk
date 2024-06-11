@@ -10,7 +10,7 @@ testset-coremark-qemu-clean:
 
 testset-coremark-qemu-source:
 	# Clone official repo
-	@$(__VAR_L__) git clone -q $(TESTSET_COREMARK_GITHUB) -- $(TESTSET_COREMARK_TARGET)
+	@$(__VAR_LOCAL_GIT__) git clone -q $(TESTSET_COREMARK_GITHUB) -- $(TESTSET_COREMARK_TARGET)
 
 testset-coremark-qemu-build:
 	@cd $(TESTSET_COREMARK_TARGET);							\

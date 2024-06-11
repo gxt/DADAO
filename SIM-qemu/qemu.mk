@@ -25,7 +25,7 @@ qemu-0801-clean:
 qemu-0801-source:
 	@rm -fr $(QEMU_0801_SOURCE)
 	# Clone source repo
-	@$(__VAR_L__) git clone -q $(QEMU_0801_GITLAB) -- $(QEMU_0801_SOURCE)
+	@$(__VAR_LOCAL_GIT__) git clone -q $(QEMU_0801_GITLAB) -- $(QEMU_0801_SOURCE)
 	@cd $(QEMU_0801_SOURCE); git checkout -qb $(QEMU_0801_BRANCH) $(QEMU_0801_VERSION)
 	# linux-user
 	@cp -a $(QEMU_0801_NEWFILES)/linux-user/* $(QEMU_0801_SOURCE)/linux-user/
@@ -66,7 +66,7 @@ qemu-0801-prepare:
 	@rm -fr $(QEMU_0801_BUILD)
 	@mkdir -p $(QEMU_0801_BUILD)
 	@cd $(QEMU_0801_BUILD) &&								\
-		$(__VAR_L__) $(QEMU_0801_SOURCE)/configure			\
+		$(__VAR_LOCAL_GIT__) $(QEMU_0801_SOURCE)/configure			\
 			--target-list=$(QEMU_0801_TARGETS)				\
 			--prefix=$(QEMU_0801_INSTALL)					\
 			--extra-cflags=-I$(DIR_DADAO_TARGET)/include	\

@@ -21,7 +21,7 @@ gcc-1003-clean:
 gcc-1003-source:
 	@rm -fr $(GCC_1003_SOURCE)
 	# Clone remote repo
-	@$(__VAR_L__) git clone -q $(GCC_1003_GITHUB) -- $(GCC_1003_SOURCE)
+	@$(__VAR_LOCAL_GIT__) git clone -q $(GCC_1003_GITHUB) -- $(GCC_1003_SOURCE)
 	@cd $(GCC_1003_SOURCE); git checkout -qb $(GCC_1003_BRANCH) $(GCC_1003_VERSION)
 	# gcc/config
 	@cp -a $(GCC_1003_NEWFILES)/gcc/config/* $(GCC_1003_SOURCE)/gcc/config/
