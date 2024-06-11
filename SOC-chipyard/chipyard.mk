@@ -48,11 +48,20 @@ chipyard-0107-prepare:
 	# Check necessary fesvr headers
 	@test -d $(DIR_DADAO_TARGET)/include/fesvr || make -s -C $(DIR_DADAO_TOP) runtime-fesvr-highfive
 
-chipyard-0107-build:
+chipyard-0107-build-stage1:
 	@cd $(CHIPYARD_0107_SOURCE)/sims/verilator;							\
 		RISCV=$(DIR_DADAO_TARGET)										\
 		make $(__MAKE_J__) VERILATOR_THREADS=$(__VAR_C__)				\
-			CONFIG=$(RUNTIME_BARE_CONFIG)								\
+			CONFIG=Wuming1StageConfig									\
+			BOOTROM_FILES=bootrom.dadao.img								\
+			BOOTROM_FILES_DIR=$(RUNTIME_BOOTROM_TARGET)					\
+			sim_dir=$(CHIPYARD_0107_BUILD)
+
+chipyard-0107-build-stage5:
+	@cd $(CHIPYARD_0107_SOURCE)/sims/verilator;							\
+		RISCV=$(DIR_DADAO_TARGET)										\
+		make $(__MAKE_J__) VERILATOR_THREADS=$(__VAR_C__)				\
+			CONFIG=Wuming5StageConfig									\
 			BOOTROM_FILES=bootrom.dadao.img								\
 			BOOTROM_FILES_DIR=$(RUNTIME_BOOTROM_TARGET)					\
 			sim_dir=$(CHIPYARD_0107_BUILD)
@@ -66,8 +75,10 @@ chipyard-0107-highfive:	dadao-before-highfive
 	@make chipyard-0107-source								>> $(CHIPYARD_0107_LOG) 2>&1
 	@echo "--- 3. Prepare                                   at `date +%T`"	| tee -a $(CHIPYARD_0107_LOG)
 	@make chipyard-0107-prepare								>> $(CHIPYARD_0107_LOG) 2>&1
-	@echo "--- 4. Build                                     at `date +%T`"	| tee -a $(CHIPYARD_0107_LOG)
-	@make chipyard-0107-build								>> $(CHIPYARD_0107_LOG) 2>&1
+	@echo "--- 4.1. Build stage1                            at `date +%T`"	| tee -a $(CHIPYARD_0107_LOG)
+	@make chipyard-0107-build-stage1						>> $(CHIPYARD_0107_LOG) 2>&1
+	@echo "--- 4.2. Build stage5                            at `date +%T`"	| tee -a $(CHIPYARD_0107_LOG)
+	@make chipyard-0107-build-stage5						>> $(CHIPYARD_0107_LOG) 2>&1
 	@echo "--- 5. Install                                   at `date +%T`"	| tee -a $(CHIPYARD_0107_LOG)
 #	@make chipyard-0107-install								>> $(CHIPYARD_0107_LOG) 2>&1
 	@echo "--- chipyard-0107-highfive DONE! ===             at `date +%T`"	| tee -a $(CHIPYARD_0107_LOG)
