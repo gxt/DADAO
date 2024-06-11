@@ -21,13 +21,6 @@ chipyard-0107-clean:
 	@echo "Remove old dadao-wuming build dir ..."
 	@rm -fr $(CHIPYARD_0107_NEWFILES)/generators/dadao-wuming/target
 
-chipyard-0107-update-instructions:
-	# Generate instructions.scala
-	@make -s -C $(DIR_DADAO_TOP) opcodes-bitpat
-	@cat $(DIR_DADAO_TOP)/SOC-chipyard/instructions.scala-head		>  $(CHIPYARD_0107_INSTRUCTIONS)
-	@cat $(OPCODES_OUTPUT_BITPAT)									>> $(CHIPYARD_0107_INSTRUCTIONS)
-	@cat $(DIR_DADAO_TOP)/SOC-chipyard/instructions.scala-tail		>> $(CHIPYARD_0107_INSTRUCTIONS)
-
 chipyard-0107-source:
 	@rm -fr $(CHIPYARD_0107_SOURCE)
 	# Clone github repo
@@ -37,13 +30,13 @@ chipyard-0107-source:
 	@cd $(CHIPYARD_0107_SOURCE); $(__VAR_L__) ./scripts/init-submodules-no-riscv-tools.sh
 	# Add dadao generators into chipyard
 	@cp -a $(CHIPYARD_0107_NEWFILES)/generators/dadao-wuming $(CHIPYARD_0107_SOURCE)/generators/
-	@cd $(CHIPYARD_0107_SOURCE);								\
-		git add generators/dadao-wuming;						\
+	@cd $(CHIPYARD_0107_SOURCE);										\
+		git add generators/dadao-wuming;								\
 		git commit -asm"DADAO: add dadao-wuming"
 	# Add dadao configs and patches
 	@cp -a $(CHIPYARD_0107_NEWFILES)/generators/chipyard/src/main/scala/config/*	\
 		$(CHIPYARD_0107_SOURCE)/generators/chipyard/src/main/scala/config/
-	@cd $(CHIPYARD_0107_SOURCE);								\
+	@cd $(CHIPYARD_0107_SOURCE);										\
 		git add generators/chipyard/src/main/scala/config/;				\
 		git commit -asm"DADAO: add chipyard-config";					\
 		git am $(CHIPYARD_0107_PATCHES)/*
@@ -56,12 +49,12 @@ chipyard-0107-prepare:
 	@test -d $(DIR_DADAO_TARGET)/include/fesvr || make -s -C $(DIR_DADAO_TOP) runtime-fesvr-highfive
 
 chipyard-0107-build:
-	@cd $(CHIPYARD_0107_SOURCE)/sims/verilator;						\
-		RISCV=$(DIR_DADAO_TARGET)							\
-		make $(__MAKE_J__) VERILATOR_THREADS=$(__VAR_C__)		\
-			CONFIG=$(RUNTIME_BARE_CONFIG)						\
-			BOOTROM_FILES=bootrom.dadao.img						\
-			BOOTROM_FILES_DIR=$(RUNTIME_BOOTROM_TARGET)				\
+	@cd $(CHIPYARD_0107_SOURCE)/sims/verilator;							\
+		RISCV=$(DIR_DADAO_TARGET)										\
+		make $(__MAKE_J__) VERILATOR_THREADS=$(__VAR_C__)				\
+			CONFIG=$(RUNTIME_BARE_CONFIG)								\
+			BOOTROM_FILES=bootrom.dadao.img								\
+			BOOTROM_FILES_DIR=$(RUNTIME_BOOTROM_TARGET)					\
 			sim_dir=$(CHIPYARD_0107_BUILD)
 
 chipyard-0107-highfive:	dadao-before-highfive
@@ -78,3 +71,10 @@ chipyard-0107-highfive:	dadao-before-highfive
 	@echo "--- 5. Install                                   at `date +%T`"	| tee -a $(CHIPYARD_0107_LOG)
 #	@make chipyard-0107-install								>> $(CHIPYARD_0107_LOG) 2>&1
 	@echo "--- chipyard-0107-highfive DONE! ===             at `date +%T`"	| tee -a $(CHIPYARD_0107_LOG)
+
+chipyard-0107-update-instructions:
+	# Generate instructions.scala
+	@make -s -C $(DIR_DADAO_TOP) opcodes-bitpat
+	@cat $(DIR_DADAO_TOP)/SOC-chipyard/instructions.scala-head		>  $(CHIPYARD_0107_INSTRUCTIONS)
+	@cat $(OPCODES_OUTPUT_BITPAT)									>> $(CHIPYARD_0107_INSTRUCTIONS)
+	@cat $(DIR_DADAO_TOP)/SOC-chipyard/instructions.scala-tail		>> $(CHIPYARD_0107_INSTRUCTIONS)
