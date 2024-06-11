@@ -7,7 +7,6 @@ ddrb_pass2_tests =			\
 	orrr-add	orrr-sub	\
 	rrii-addi				\
 	orrr-cmp				\
-	riii-adrp				\
 	riii-brxx	rrii-brxx	\
 	iiii-jump	rrii-jump	\
 	iiii-call	rrii-call	\
@@ -17,6 +16,7 @@ ddrb_passqemu_tests =		\
 	rrii-ldo	rrii-sto	\
 	rrri-ldmo	rrri-stmo	\
 	orri-rx2rx				\
+	riii-adrp				\
 
 ddrb_bare_tests = $(addprefix ddrb-bare-, $(ddrb_pass2_tests))
 ddrb_qemu_tests = $(addprefix ddrb-qemu-, $(ddrb_pass2_tests) $(ddrb_passqemu_tests))

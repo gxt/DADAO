@@ -22,8 +22,11 @@ testset-isa-bare-build:
 	@make $(__VAR_P__) -C $(TESTSET_ISA_BARE_TARGET) ddrb-bare
 	@make $(__VAR_P__) -C $(TESTSET_ISA_BARE_TARGET) ddrf-bare
 
-testset-isa-bare-runtest:
-	@make $(__VAR_P__) -C $(TESTSET_ISA_BARE_TARGET) run-bare
+testset-isa-bare-runtest-stage1:
+	@make $(__VAR_P__) $(__VAR_STAGE1__) -C $(TESTSET_ISA_BARE_TARGET) run-bare
+
+testset-isa-bare-runtest-stage5:
+	@make $(__VAR_P__) $(__VAR_STAGE5__) -C $(TESTSET_ISA_BARE_TARGET) run-bare
 
 testset-isa-bare-highfive:	dadao-before-highfive
 	@test ! -f $(TESTSET_ISA_BARE_LOG) || mv --force $(TESTSET_ISA_BARE_LOG) $(TESTSET_ISA_BARE_LOG).last
@@ -36,8 +39,10 @@ testset-isa-bare-highfive:	dadao-before-highfive
 #	@make testset-isa-bare-prepare							>> $(TESTSET_ISA_BARE_LOG) 2>&1
 	@echo "--- 4. Build                                     at `date +%T`"	| tee -a $(TESTSET_ISA_BARE_LOG)
 	@make testset-isa-bare-build							>> $(TESTSET_ISA_BARE_LOG) 2>&1
-	@echo "--- 5. Runtest                                   at `date +%T`"	| tee -a $(TESTSET_ISA_BARE_LOG)
-	@make testset-isa-bare-runtest							>> $(TESTSET_ISA_BARE_LOG) 2>&1
+	@echo "--- 5.1. Runtest stage1                          at `date +%T`"	| tee -a $(TESTSET_ISA_BARE_LOG)
+	@make testset-isa-bare-runtest-stage1					>> $(TESTSET_ISA_BARE_LOG) 2>&1
+	@echo "--- 5.2. Runtest stage5                          at `date +%T`"	| tee -a $(TESTSET_ISA_BARE_LOG)
+	@make testset-isa-bare-runtest-stage5					>> $(TESTSET_ISA_BARE_LOG) 2>&1
 	@echo "--- testset-isa-bare-highfive DONE! ===          at `date +%T`"	| tee -a $(TESTSET_ISA_BARE_LOG)
 
 TESTSET_ISA_QEMU_TARGET		:= $(DIR_DADAO_TARGET)/testset-isa-qemu

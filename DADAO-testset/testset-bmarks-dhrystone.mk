@@ -17,9 +17,15 @@ testset-dhrystone-bare-source:
 testset-dhrystone-bare-build:
 	@make $(__VAR_P__) -C $(TESTSET_DHRYSTONE_BARE_TARGET) default
 
-testset-dhrystone-bare-runtest:
+testset-dhrystone-bare-runtest-stage1:
 	# dhrystone run on bare DO output error, could be ignored
-	@-make $(__VAR_P__) -C $(DIR_DADAO_TOP)											\
+	@-make $(__VAR_P__) $(__VAR__STAGE1__) -C $(DIR_DADAO_TOP)						\
+		RUNTIME_BARE_BINARY=$(TESTSET_DHRYSTONE_BARE_TARGET)/dhrystone.dadao		\
+		runtime-bare-run-binary
+
+testset-dhrystone-bare-runtest-stage5:
+	# dhrystone run on bare DO output error, could be ignored
+	@-make $(__VAR_P__) $(__VAR_STAGE5__) -C $(DIR_DADAO_TOP)						\
 		RUNTIME_BARE_BINARY=$(TESTSET_DHRYSTONE_BARE_TARGET)/dhrystone.dadao		\
 		runtime-bare-run-binary
 
@@ -34,8 +40,10 @@ testset-dhrystone-bare-highfive:	dadao-before-highfive
 #	@make testset-dhrystone-bare-prepare					>> $(TESTSET_DHRYSTONE_BARE_LOG) 2>&1
 	@echo "--- 4. Build                                     at `date +%T`"	| tee -a $(TESTSET_DHRYSTONE_BARE_LOG)
 	@make testset-dhrystone-bare-build						>> $(TESTSET_DHRYSTONE_BARE_LOG) 2>&1
-	@echo "--- 5. Runtest                                   at `date +%T`"	| tee -a $(TESTSET_DHRYSTONE_BARE_LOG)
-	@make testset-dhrystone-bare-runtest					>> $(TESTSET_DHRYSTONE_BARE_LOG) 2>&1
+	@echo "--- 5.1. Runtest stage1                          at `date +%T`"	| tee -a $(TESTSET_DHRYSTONE_BARE_LOG)
+	@make testset-dhrystone-bare-runtest-stage1				>> $(TESTSET_DHRYSTONE_BARE_LOG) 2>&1
+	@echo "--- 5.2. Runtest stage5                          at `date +%T`"	| tee -a $(TESTSET_DHRYSTONE_BARE_LOG)
+	@make testset-dhrystone-bare-runtest-stage5				>> $(TESTSET_DHRYSTONE_BARE_LOG) 2>&1
 	@echo "--- testset-dhrystone-bare-highfive DONE! ===    at `date +%T`"	| tee -a $(TESTSET_DHRYSTONE_BARE_LOG)
 
 TESTSET_DHRYSTONE_QEMU_SOURCE	:= $(DIR_DADAO_TOP)/DADAO-testset/dhrystone-qemu/
