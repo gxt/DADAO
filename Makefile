@@ -17,7 +17,7 @@ VER_NEWLIB_CYGWIN	:= 0303
 VER_LLVM			:= 1600
 VER_LINUX			:= 0504
 VER_QEMU			:= 0801
-VER_CHIPYARD		:= 0107
+VER_CHIPYARD		:= 0111
 
 __VAR_CORES_HALF__			:= $(shell expr `nproc` / 2)
 __VAR_DADAO_PATH__			:= PATH=$(DIR_DADAO_INSTALL)/bin/:$(DIR_DADAO_TCH_ELF)/bin:/bin:/usr/bin
