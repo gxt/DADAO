@@ -16,7 +16,7 @@ import freechips.rocketchip.config.Parameters
 import freechips.rocketchip.rocket.{CSR, CSRFile, Causes}
 import freechips.rocketchip.tile.CoreInterrupts
 
-import Constants._
+import wuming.stage5.Constants._
 import wuming.common._
 
 class DatToCtlIo(implicit val conf: WumingCoreParams) extends Bundle()

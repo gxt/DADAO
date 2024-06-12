@@ -15,7 +15,7 @@ import chisel3.util._
 
 import freechips.rocketchip.rocket.{CSR, Causes}
 
-import Constants._
+import wuming.stage5.Constants._
 import wuming.common._
 import wuming.common.Instructions._
 

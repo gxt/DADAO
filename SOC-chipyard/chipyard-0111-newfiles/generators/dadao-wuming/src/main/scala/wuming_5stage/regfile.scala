@@ -9,7 +9,7 @@ import chisel3._
 import chisel3.util._
 
 
-import Constants._
+import wuming.stage5.Constants._
 import wuming.common._
 
 class RFileIo(implicit val conf: WumingCoreParams) extends Bundle()
