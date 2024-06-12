@@ -211,7 +211,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    val imms18 = Cat(Fill(46, inst(HB_MSB)), inst(HB_MSB, HD_LSB))
    val imms24 = Cat(Fill(40, inst(HA_MSB)), inst(HA_MSB, HD_LSB))
 
-   val wydeposition = inst(WP_MSB, WP_LSB).asUInt() << 4
+   val wydeposition = inst(WP_MSB, WP_LSB).asUInt << 4
    val wyde16       = inst(WYDE_MSB, WYDE_LSB)
    val wydemask     = Fill(64, 1.U) & ~(Fill(16, 1.U) << wydeposition)
 
@@ -227,7 +227,7 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                (io.ctl.op1_sel === OP1_RBHC) -> rbhc_data,
                (io.ctl.op1_sel === OP1_RFHA) -> rfha_data,
                (io.ctl.op1_sel === OP1_PC)  -> pc_reg,
-               )).asUInt()
+               )).asUInt
 
    alu_op2 := MuxCase(0.U, Array(
                (io.ctl.op2_sel === OP2_RDHC) -> rdhc_data,
@@ -240,14 +240,14 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                (io.ctl.op2_sel === OP2_IMMS12) -> imms12,
                (io.ctl.op2_sel === OP2_IMMS18) -> imms18,
                (io.ctl.op2_sel === OP2_WYDE) -> (wyde16 << wydeposition),
-               )).asUInt()
+               )).asUInt
 
 
 
    // ALU
    val alu_out   = Wire(UInt(BITS_OCTA.W))
 
-   val alu_shamt = alu_op2(BITS_HEXA-1,0).asUInt()
+   val alu_shamt = alu_op2(BITS_HEXA-1,0).asUInt
 
    // Condition Logic
    val cond_yes   =           Mux(io.ctl.cnd_fun === COND_N ,  Mux( io.dat.cond_n ,  Y, N),
@@ -257,39 +257,39 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
                               Mux(io.ctl.cnd_fun === COND_NE,  Mux(!io.dat.cond_eq,  Y, N), N)))))
 
    alu_out := MuxCase(0.U, Array(
-                  (io.ctl.alu_fun === ALU_ADD)  -> (alu_op1 + alu_op2).asUInt(),
-                  (io.ctl.alu_fun === ALU_SUB)  -> (alu_op1 - alu_op2).asUInt(),
-                  (io.ctl.alu_fun === ALU_AND)  -> (alu_op1 & alu_op2).asUInt(),
-                  (io.ctl.alu_fun === ALU_OR)   -> (alu_op1 | alu_op2).asUInt(),
-                  (io.ctl.alu_fun === ALU_XOR)  -> (alu_op1 ^ alu_op2).asUInt(),
-                  (io.ctl.alu_fun === ALU_XNOR) -> (alu_op1 ^ ~alu_op2).asUInt(),
-                  (io.ctl.alu_fun === ALU_CMPS) -> Mux(alu_op1 === alu_op2, 0.U, Mux(alu_op1.asSInt() < alu_op2.asSInt(), ~0.U(BITS_OCTA.W), 1.U(BITS_OCTA.W))).asUInt(),
-                  (io.ctl.alu_fun === ALU_CMPU) -> Mux(alu_op1 === alu_op2, 0.U, Mux(alu_op1.asUInt() < alu_op2.asUInt(), ~0.U(BITS_OCTA.W), 1.U(BITS_OCTA.W))).asUInt(),
-                  (io.ctl.alu_fun === ALU_SLL)  -> ((alu_op1 << alu_shamt)(BITS_OCTA-1, 0)).asUInt(),
-                  (io.ctl.alu_fun === ALU_SRA)  -> (alu_op1.asSInt() >> alu_shamt).asUInt(),
-                  (io.ctl.alu_fun === ALU_SRL)  -> (alu_op1 >> alu_shamt).asUInt(),
-                  (io.ctl.alu_fun === ALU_EXTS)   -> ((alu_op1 << alu_shamt)(BITS_OCTA-1, 0).asSInt() >> alu_shamt).asUInt(),
-                  (io.ctl.alu_fun === ALU_EXTZ)   -> ((alu_op1 << alu_shamt)(BITS_OCTA-1, 0).asUInt() >> alu_shamt).asUInt(),
-                  (io.ctl.alu_fun === ALU_SETOW)  -> (alu_op2 | wydemask).asUInt(),
-                  (io.ctl.alu_fun === ALU_SETW)   -> ((alu_op1 & wydemask) | alu_op2).asUInt(),
-                  (io.ctl.alu_fun === ALU_ANDNW)  -> (alu_op1 & ~alu_op2).asUInt(),
-                  (io.ctl.alu_fun === ALU_ADRP)   -> ((((alu_op1 >> 12.U) + alu_op2) << 12.U)).asUInt(),
-                  (io.ctl.alu_fun === ALU_COPY2)  -> alu_op2.asUInt(),
-                  (io.ctl.alu_fun === ALU_CSET)   -> Mux(cond_yes, alu_op1, alu_op2).asUInt(),
-                  (io.ctl.alu_fun === ALU_MULS)   -> ((alu_op1.asSInt() * alu_op2.asSInt())(BITS_OCTA-1, 0)).asUInt(),
-                  (io.ctl.alu_fun === ALU_MULU)   -> ((alu_op1.asUInt() * alu_op2.asUInt())(BITS_OCTA-1, 0)).asUInt(),
-                  (io.ctl.alu_fun === ALU_DIVS)   -> (alu_op1.asSInt() / alu_op2.asSInt()).asUInt(),
-                  (io.ctl.alu_fun === ALU_DIVU)   -> (alu_op1.asUInt() / alu_op2.asUInt()).asUInt(),
+                  (io.ctl.alu_fun === ALU_ADD)  -> (alu_op1 + alu_op2).asUInt,
+                  (io.ctl.alu_fun === ALU_SUB)  -> (alu_op1 - alu_op2).asUInt,
+                  (io.ctl.alu_fun === ALU_AND)  -> (alu_op1 & alu_op2).asUInt,
+                  (io.ctl.alu_fun === ALU_OR)   -> (alu_op1 | alu_op2).asUInt,
+                  (io.ctl.alu_fun === ALU_XOR)  -> (alu_op1 ^ alu_op2).asUInt,
+                  (io.ctl.alu_fun === ALU_XNOR) -> (alu_op1 ^ ~alu_op2).asUInt,
+                  (io.ctl.alu_fun === ALU_CMPS) -> Mux(alu_op1 === alu_op2, 0.U, Mux(alu_op1.asSInt < alu_op2.asSInt, ~0.U(BITS_OCTA.W), 1.U(BITS_OCTA.W))).asUInt,
+                  (io.ctl.alu_fun === ALU_CMPU) -> Mux(alu_op1 === alu_op2, 0.U, Mux(alu_op1.asUInt < alu_op2.asUInt, ~0.U(BITS_OCTA.W), 1.U(BITS_OCTA.W))).asUInt,
+                  (io.ctl.alu_fun === ALU_SLL)  -> ((alu_op1 << alu_shamt)(BITS_OCTA-1, 0)).asUInt,
+                  (io.ctl.alu_fun === ALU_SRA)  -> (alu_op1.asSInt >> alu_shamt).asUInt,
+                  (io.ctl.alu_fun === ALU_SRL)  -> (alu_op1 >> alu_shamt).asUInt,
+                  (io.ctl.alu_fun === ALU_EXTS)   -> ((alu_op1 << alu_shamt)(BITS_OCTA-1, 0).asSInt >> alu_shamt).asUInt,
+                  (io.ctl.alu_fun === ALU_EXTZ)   -> ((alu_op1 << alu_shamt)(BITS_OCTA-1, 0).asUInt >> alu_shamt).asUInt,
+                  (io.ctl.alu_fun === ALU_SETOW)  -> (alu_op2 | wydemask).asUInt,
+                  (io.ctl.alu_fun === ALU_SETW)   -> ((alu_op1 & wydemask) | alu_op2).asUInt,
+                  (io.ctl.alu_fun === ALU_ANDNW)  -> (alu_op1 & ~alu_op2).asUInt,
+                  (io.ctl.alu_fun === ALU_ADRP)   -> ((((alu_op1 >> 12.U) + alu_op2) << 12.U)).asUInt,
+                  (io.ctl.alu_fun === ALU_COPY2)  -> alu_op2.asUInt,
+                  (io.ctl.alu_fun === ALU_CSET)   -> Mux(cond_yes, alu_op1, alu_op2).asUInt,
+                  (io.ctl.alu_fun === ALU_MULS)   -> ((alu_op1.asSInt * alu_op2.asSInt)(BITS_OCTA-1, 0)).asUInt,
+                  (io.ctl.alu_fun === ALU_MULU)   -> ((alu_op1.asUInt * alu_op2.asUInt)(BITS_OCTA-1, 0)).asUInt,
+                  (io.ctl.alu_fun === ALU_DIVS)   -> (alu_op1.asSInt / alu_op2.asSInt).asUInt,
+                  (io.ctl.alu_fun === ALU_DIVU)   -> (alu_op1.asUInt / alu_op2.asUInt).asUInt,
                   ))
 
    val alu_out2 = Wire(UInt(BITS_OCTA.W))
    alu_out2    := MuxCase(0.U, Array(
-                  (io.ctl.alu_fun === ALU_ADD)    -> (Cat(Fill(64, alu_op1(63)), alu_op1) + Cat(Fill(64, alu_op2(63)), alu_op2))(127, 64).asUInt(),
-                  (io.ctl.alu_fun === ALU_SUB)    -> (Cat(Fill(64, alu_op1(63)), alu_op1) - Cat(Fill(64, alu_op2(63)), alu_op2))(127, 64).asUInt(),
-                  (io.ctl.alu_fun === ALU_MULS)   -> ((alu_op1.asSInt() * alu_op2.asSInt())(127, 64)).asUInt(),
-                  (io.ctl.alu_fun === ALU_MULU)   -> ((alu_op1.asUInt() * alu_op2.asUInt())(127, 64)).asUInt(),
-                  (io.ctl.alu_fun === ALU_DIVS)   -> (alu_op1.asSInt() % alu_op2.asSInt()).asUInt(),
-                  (io.ctl.alu_fun === ALU_DIVU)   -> (alu_op1.asUInt() % alu_op2.asUInt()).asUInt(),
+                  (io.ctl.alu_fun === ALU_ADD)    -> (Cat(Fill(64, alu_op1(63)), alu_op1) + Cat(Fill(64, alu_op2(63)), alu_op2))(127, 64).asUInt,
+                  (io.ctl.alu_fun === ALU_SUB)    -> (Cat(Fill(64, alu_op1(63)), alu_op1) - Cat(Fill(64, alu_op2(63)), alu_op2))(127, 64).asUInt,
+                  (io.ctl.alu_fun === ALU_MULS)   -> ((alu_op1.asSInt * alu_op2.asSInt)(127, 64)).asUInt,
+                  (io.ctl.alu_fun === ALU_MULU)   -> ((alu_op1.asUInt * alu_op2.asUInt)(127, 64)).asUInt,
+                  (io.ctl.alu_fun === ALU_DIVS)   -> (alu_op1.asSInt % alu_op2.asSInt).asUInt,
+                  (io.ctl.alu_fun === ALU_DIVU)   -> (alu_op1.asUInt % alu_op2.asUInt).asUInt,
                   ))
 
    // Branch/Jump Target Calculation
@@ -358,9 +358,9 @@ class DatPath(implicit val p: Parameters, val conf: WumingCoreParams) extends Mo
    // datapath to controlpath outputs
    io.dat.inst   := inst
    io.dat.cond_eq  := (rdha_data === rdhb_data)
-   io.dat.cond_n   := (rdha_data.asSInt() < 0.S)
+   io.dat.cond_n   := (rdha_data.asSInt < 0.S)
    io.dat.cond_z   := (rdha_data === 0.U)
-   io.dat.cond_p   := (rdha_data.asSInt() > 0.S)
+   io.dat.cond_p   := (rdha_data.asSInt > 0.S)
 
    // datapath to data memory outputs
    io.dmem.req.bits.addr := alu_out
