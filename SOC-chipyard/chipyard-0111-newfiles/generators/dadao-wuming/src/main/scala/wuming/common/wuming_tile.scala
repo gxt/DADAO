@@ -116,7 +116,7 @@ class WumingTile(
     this(params, crossing.crossingType, lookup, p)
 
   // Require TileLink nodes
-  val intOutwardNode = Some(IntIdentityNode())
+  val intOutwardNode = None
   val masterNode = visibilityNode
   val slaveNode = TLIdentityNode()
 
