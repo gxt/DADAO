@@ -1,18 +1,18 @@
-From fd45622ea55775702d059ca772e207b446111d40 Mon Sep 17 00:00:00 2001
+From c7001a70bcb0c6d851ba09aed1ea9fbfc74be9e8 Mon Sep 17 00:00:00 2001
 From: Guan Xuetao <gxt@pku.edu.cn>
-Date: Wed, 18 Jan 2023 10:40:44 +0800
+Date: Wed, 12 Jun 2024 15:35:47 +0800
 Subject: [PATCH] DADAO: common.mk
 
 Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
 ---
- common.mk | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ common.mk | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/common.mk b/common.mk
-index 1993c475..0872005b 100644
+index 462f1945..2b3a42f0 100644
 --- a/common.mk
 +++ b/common.mk
-@@ -95,7 +95,7 @@ endif
+@@ -115,7 +115,7 @@ endif
  $(build_dir):
  	mkdir -p $@
  
@@ -21,15 +21,16 @@ index 1993c475..0872005b 100644
  	cp -f $< $@
  
  #########################################################################################
-@@ -203,7 +203,7 @@ endif
+@@ -369,7 +369,8 @@ run-binary: check-binary $(BINARY).run
+ run-binaries: check-binaries $(addsuffix .run,$(BINARIES))
  
- # run normal binary with hardware-logged insn dissassembly
- run-binary: $(output_dir) $(SIM_PREREQ) check-binary
--	(set -o pipefail && $(NUMA_PREFIX) $(sim) $(PERMISSIVE_ON) $(SIM_FLAGS) $(EXTRA_SIM_FLAGS) $(SEED_FLAG) $(VERBOSE_FLAGS) $(PERMISSIVE_OFF) $(BINARY) </dev/null 2> >(spike-dasm > $(sim_out_name).out) | tee $(sim_out_name).log)
-+	(set -o pipefail && $(NUMA_PREFIX) $(sim) $(PERMISSIVE_ON) $(SIM_FLAGS) $(EXTRA_SIM_FLAGS) $(SEED_FLAG) $(VERBOSE_FLAGS) $(PERMISSIVE_OFF) $(BINARY) </dev/null 2> >($(RISCV)/__opcodes/parse-opcodes.py --input $(RISCV)/__opcodes/simrisc.opcodes --dasm dadao > $(sim_out_name).out) | tee $(sim_out_name).log)
+ %.run: %.check-exists $(SIM_PREREQ) | $(output_dir)
+-	(set -o pipefail && $(NUMA_PREFIX) $(sim) $(PERMISSIVE_ON) $(call get_common_sim_flags,$*) $(VERBOSE_FLAGS) $(PERMISSIVE_OFF) $* </dev/null 2> >(spike-dasm > $(call get_sim_out_name,$*).out) | tee $(call get_sim_out_name,$*).log)
++	(set -o pipefail && $(NUMA_PREFIX) $(sim) $(PERMISSIVE_ON) $(call get_common_sim_flags,$*) $(VERBOSE_FLAGS) $(PERMISSIVE_OFF) $* </dev/null 2> >($(RISCV)/__opcodes/parse-opcodes.py --input $(RISCV)/__opcodes/simrisc.opcodes --dasm dadao > $(call get_sim_out_name,$*).out) | tee $(call get_sim_out_name,$*).log)
++
  
  # run simulator as fast as possible (no insn disassembly)
- run-binary-fast: $(output_dir) $(SIM_PREREQ) check-binary
+ run-binary-fast: check-binary $(BINARY).run.fast
 -- 
 2.34.1
 
