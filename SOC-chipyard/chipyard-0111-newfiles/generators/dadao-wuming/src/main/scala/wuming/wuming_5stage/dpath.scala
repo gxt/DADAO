@@ -14,7 +14,7 @@ import chisel3.util._
 
 import org.chipsalliance.cde.config.Parameters
 import freechips.rocketchip.rocket.{CSR, CSRFile, Causes}
-import freechips.rocketchip.tile.CoreInterrupts
+import freechips.rocketchip.rocket.CoreInterrupts
 
 import wuming.stage5.Constants._
 import wuming.common._
@@ -48,7 +48,7 @@ class DpathIo(implicit val p: Parameters, val conf: WumingCoreParams) extends Bu
    val dmem = new MemPortIo(conf.xprlen)
    val ctl  = Flipped(new CtlToDatIo())
    val dat  = new DatToCtlIo()
-   val interrupt = Input(new CoreInterrupts())
+   val interrupt = Input(new CoreInterrupts(false))
    val hartid = Input(UInt())
    val reset_vector = Input(UInt())
 }

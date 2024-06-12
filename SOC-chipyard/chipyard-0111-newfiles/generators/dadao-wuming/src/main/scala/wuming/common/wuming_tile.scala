@@ -82,7 +82,7 @@ case class WumingTileAttachParams(
 
 case class WumingTileParams(
   name: Option[String] = Some("wuming_tile"),
-  hartId: Int = 0,
+  tileId: Int = 0,
   trace: Boolean = false,
   val core: WumingCoreParams = WumingCoreParams(),
   val scratchpad: DCacheParams = DCacheParams()
@@ -95,9 +95,11 @@ case class WumingTileParams(
   val dcache: Option[DCacheParams] = Some(scratchpad)
   val icache: Option[ICacheParams] = None
   val clockSinkParams: ClockSinkParameters = ClockSinkParameters()
-  def instantiate(crossing: TileCrossingParamsLike, lookup: LookupByHartIdImpl)(implicit p: Parameters): WumingTile = {
+  def instantiate(crossing: HierarchicalElementCrossingParamsLike, lookup: LookupByHartIdImpl)(implicit p: Parameters): WumingTile = {
     new WumingTile(this, crossing, lookup)
   }
+  val baseName = name.getOrElse("wuming_tile")
+  val uniqueName = s"${baseName}_$tileId"
 }
 
 class WumingTile(
@@ -110,11 +112,11 @@ class WumingTile(
   with SourcesExternalNotifications
 {
   // Private constructor ensures altered LazyModule.p is used implicitly
-  def this(params: WumingTileParams, crossing: TileCrossingParamsLike, lookup: LookupByHartIdImpl)(implicit p: Parameters) =
+  def this(params: WumingTileParams, crossing: HierarchicalElementCrossingParamsLike, lookup: LookupByHartIdImpl)(implicit p: Parameters) =
     this(params, crossing.crossingType, lookup, p)
 
   // Require TileLink nodes
-  val intOutwardNode = IntIdentityNode()
+  val intOutwardNode = Some(IntIdentityNode())
   val masterNode = visibilityNode
   val slaveNode = TLIdentityNode()
 
@@ -162,7 +164,7 @@ class WumingTile(
   }
 
   ResourceBinding {
-    Resource(cpuDevice, "reg").bind(ResourceAddress(staticIdForMetadataUseOnly))
+    Resource(cpuDevice, "reg").bind(ResourceAddress(tileId))
   }
 
   override def makeMasterBoundaryBuffers(crossing: ClockCrossingType)(implicit p: Parameters) = {
@@ -210,19 +212,18 @@ class WumingTileModuleImp(outer: WumingTile) extends BaseTileModuleImp(outer){
 
 class WithNWumingCores(
   n: Int = 1,
-  overrideIdOffset: Option[Int] = None,
   internalTile: WumingInternalTileFactory = Stage5Factory
 ) extends Config((site, here, up) => {
   case TilesLocated(InSubsystem) => {
     // Calculate the next available hart ID (since hart ID cannot be duplicated)
     val prev = up(TilesLocated(InSubsystem), site)
     require(prev.length == 0, "Wuming doesn't support multiple core.")
-    val idOffset = overrideIdOffset.getOrElse(prev.size)
+    val idOffset = up(NumTiles)
     // Create TileAttachParams for every core to be instantiated
     (0 until n).map { i =>
       WumingTileAttachParams(
         tileParams = WumingTileParams(
-          hartId = i + idOffset,
+          tileId = i + idOffset,
           scratchpad = DCacheParams(
             nSets = 4096, // Very large so we have enough SPAD for bmark tests
             nWays = 1,
@@ -242,6 +243,7 @@ class WithNWumingCores(
   case SystemBusKey => up(SystemBusKey, site).copy(beatBytes = 4)
   // The # of instruction bits. Use maximum # of bits if your core supports both 32 and 64 bits.
   case XLen => 32
+  case NumTiles => up(NumTiles) + n
 }) {
   require(n == 1, "Wuming doesn't support multiple core.")
 }
