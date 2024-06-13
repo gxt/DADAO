@@ -5,7 +5,7 @@ RUNTIME_VERILATOR_GITHUB		:= https://github.com/verilator/verilator.git
 
 RUNTIME_VERILATOR_SOURCE		:= $(DIR_DADAO_SOURCE)/runtime-verilator
 RUNTIME_VERILATOR_BUILD			:= $(DIR_DADAO_BUILD)/runtime-verilator
-RUNTIME_VERILATOR_INSTALL		?= $(DIR_DADAO_INSTALL)
+RUNTIME_VERILATOR_INSTALL		?= $(DIR_DADAO_INSTALL)/verilator-v5.020
 # See chipyard/conda-reqs/chipyard-base.yaml for verilator version requirement
 RUNTIME_VERILATOR_VERSION		:= v5.020
 RUNTIME_VERILATOR_BRANCH		:= dadao
@@ -19,6 +19,8 @@ runtime-verilator-clean:
 	@rm -fr $(RUNTIME_VERILATOR_SOURCE)
 	# Remove old runtime-verilator build dir ...
 	@rm -fr $(RUNTIME_VERILATOR_BUILD)
+	# Remove old runtime-verilator install dir ...
+	@rm -fr $(RUNTIME_VERILATOR_INSTALL)
 
 runtime-verilator-source:
 	# Remove old runtime-verilator source dir ...
@@ -47,7 +49,10 @@ runtime-verilator-build:
 	@make $(__MAKE_J__) -C $(RUNTIME_VERILATOR_BUILD)
 
 runtime-verilator-install:
+	# Remove old runtime-verilator install dir ...
+	@rm -fr $(RUNTIME_VERILATOR_INSTALL)
 	@make -C $(RUNTIME_VERILATOR_BUILD) install
+	@ln -sf -t $(DIR_DADAO_INSTALL)/bin/ $(RUNTIME_VERILATOR_INSTALL)/bin/*
 
 runtime-verilator-highfive:	dadao-before-highfive
 	@test ! -f $(RUNTIME_VERILATOR_LOG) || mv --force $(RUNTIME_VERILATOR_LOG) $(RUNTIME_VERILATOR_LOG).last
