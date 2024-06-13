@@ -66,6 +66,7 @@ dadao-bare-highfive:
 	@make --silent runtime-bootrom-highfive
 	@make --silent runtime-riscv-isa-sim-highfive
 	@make --silent runtime-verilator-highfive
+	@make --silent runtime-bare-firtool-prepare
 	@make --silent chipyard-$(VER_CHIPYARD)-highfive
 	@make --silent testset-isa-bare-highfive
 	@make --silent testset-dhrystone-bare-highfive

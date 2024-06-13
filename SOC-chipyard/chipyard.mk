@@ -47,6 +47,7 @@ chipyard-0111-prepare:
 	@test -d $(RUNTIME_BOOTROM_TARGET) || make -s -C $(DIR_DADAO_TOP) runtime-bootrom-highfive
 	@test -f $(DIR_DADAO_TARGET)/lib/libfesvr.so || make -s -C $(DIR_DADAO_TOP) runtime-riscv-isa-sim-highfive
 	@test -f $(DIR_DADAO_INSTALL)/bin/verilator || make -s -C $(DIR_DADAO_TOP) runtime-verilator-highfive
+	@test -f $(DIR_DADAO_INSTALL)/bin/firtool || make -s -C $(DIR_DADAO_TOP) runtime-bare-firtool-prepare
 
 chipyard-0111-build-stage1:
 	@cd $(CHIPYARD_0111_SOURCE)/sims/verilator;							\
