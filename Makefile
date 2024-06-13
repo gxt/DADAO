@@ -65,6 +65,7 @@ dadao-qemu-highfive:
 dadao-bare-highfive:
 	@make --silent runtime-bootrom-highfive
 	@make --silent runtime-fesvr-highfive
+	@make --silent runtime-verilator-highfive
 	@make --silent chipyard-$(VER_CHIPYARD)-highfive
 	@make --silent testset-isa-bare-highfive
 	@make --silent testset-dhrystone-bare-highfive
