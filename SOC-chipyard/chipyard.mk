@@ -51,7 +51,8 @@ chipyard-0111-prepare:
 chipyard-0111-build-stage1:
 	@cd $(CHIPYARD_0111_SOURCE)/sims/verilator;							\
 		RISCV=$(DIR_DADAO_TARGET)										\
-		make $(__MAKE_J__) VERILATOR_THREADS=$(__VAR_CORES_HALF__)				\
+		make $(__MAKE_J__) $(__VAR_DADAO_PATH__)						\
+			VERILATOR_THREADS=$(__VAR_CORES_HALF__)						\
 			CONFIG=Wuming1StageConfig									\
 			BOOTROM_FILES=bootrom.dadao.img								\
 			BOOTROM_FILES_DIR=$(RUNTIME_BOOTROM_TARGET)					\
@@ -60,7 +61,8 @@ chipyard-0111-build-stage1:
 chipyard-0111-build-stage5:
 	@cd $(CHIPYARD_0111_SOURCE)/sims/verilator;							\
 		RISCV=$(DIR_DADAO_TARGET)										\
-		make $(__MAKE_J__) VERILATOR_THREADS=$(__VAR_CORES_HALF__)				\
+		make $(__MAKE_J__) $(__VAR_DADAO_PATH__)						\
+			VERILATOR_THREADS=$(__VAR_CORES_HALF__)						\
 			CONFIG=Wuming5StageConfig									\
 			BOOTROM_FILES=bootrom.dadao.img								\
 			BOOTROM_FILES_DIR=$(RUNTIME_BOOTROM_TARGET)					\
