@@ -9,7 +9,7 @@ testset-dhrystone-bare-source:
 	@mkdir -p $(TESTSET_DHRYSTONE_BARE_TARGET)
 	@ln -s -t $(TESTSET_DHRYSTONE_BARE_TARGET) $(RUNTIME_COMMON_MK)
 	@ln -s -t $(TESTSET_DHRYSTONE_BARE_TARGET) $(TESTSET_DHRYSTONE_BARE_SOURCE)/*
-	@ln -s -t $(TESTSET_DHRYSTONE_BARE_TARGET) $(CHIPYARD_0107_BUILD)/output
+	@ln -s -t $(TESTSET_DHRYSTONE_BARE_TARGET) $(CHIPYARD_0111_BUILD)/output
 	@echo "DIR_DADAO_TOP\t\t\t:= $(DIR_DADAO_TOP)"				>> $(TESTSET_DHRYSTONE_BARE_TARGET)/Makefile
 	@echo "include common.mk"									>> $(TESTSET_DHRYSTONE_BARE_TARGET)/Makefile
 	@echo "include dhrystone.mk"								>> $(TESTSET_DHRYSTONE_BARE_TARGET)/Makefile
