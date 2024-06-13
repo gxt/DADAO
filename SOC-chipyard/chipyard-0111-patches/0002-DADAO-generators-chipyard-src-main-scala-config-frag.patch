@@ -1,0 +1,35 @@
+From 7c9de1ed64f120b2f8180a0384cdb8ad417a73d9 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Thu, 13 Jun 2024 09:34:10 +0800
+Subject: [PATCH] DADAO:
+ generators/chipyard/src/main/scala/config/fragments/TileFragments.scala
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ .../src/main/scala/config/fragments/TileFragments.scala        | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/generators/chipyard/src/main/scala/config/fragments/TileFragments.scala b/generators/chipyard/src/main/scala/config/fragments/TileFragments.scala
+index 392f1508..ef2d40aa 100644
+--- a/generators/chipyard/src/main/scala/config/fragments/TileFragments.scala
++++ b/generators/chipyard/src/main/scala/config/fragments/TileFragments.scala
+@@ -10,6 +10,7 @@ import freechips.rocketchip.rocket.{RocketCoreParams, MulDivParams, DCacheParams
+ import boom.common.{BoomTileAttachParams}
+ import cva6.{CVA6TileAttachParams}
+ import sodor.common.{SodorTileAttachParams}
++import wuming.common.{WumingTileAttachParams}
+ import ibex.{IbexTileAttachParams}
+ import testchipip.cosim.{TracePortKey, TracePortParams}
+ import barf.{TilePrefetchingMasterPortParams}
+@@ -99,6 +100,8 @@ class WithTilePrefetchers extends Config((site, here, up) => {
+       master = TilePrefetchingMasterPortParams(tp.tileParams.tileId, tp.crossingParams.master)))
+     case tp: SodorTileAttachParams => tp.copy(crossingParams = tp.crossingParams.copy(
+       master = TilePrefetchingMasterPortParams(tp.tileParams.tileId, tp.crossingParams.master)))
++    case tp: WumingTileAttachParams => tp.copy(crossingParams = tp.crossingParams.copy(
++      master = TilePrefetchingMasterPortParams(tp.tileParams.tileId, tp.crossingParams.master)))
+     case tp: IbexTileAttachParams => tp.copy(crossingParams = tp.crossingParams.copy(
+       master = TilePrefetchingMasterPortParams(tp.tileParams.tileId, tp.crossingParams.master)))
+     case tp: CVA6TileAttachParams => tp.copy(crossingParams = tp.crossingParams.copy(
+-- 
+2.34.1
+
