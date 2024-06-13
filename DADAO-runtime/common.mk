@@ -4,7 +4,7 @@ RUNTIME_COMMON_MK		:= $(DIR_DADAO_TOP)/DADAO-runtime/common.mk
 
 RUNTIME_BARE_CONFIG		?= Wuming1StageConfig
 RUNTIME_BARE_BINARY		?= $(DIR_DADAO_TARGET)/testset-dhrystone-bare/dhrystone.dadao
-#RUNTIME_BARE_BINARY	?= $(CHIPYARD_0107_SOURCE)/generators/riscv-sodor/riscv-bmarks/dhrystone.riscv
+#RUNTIME_BARE_BINARY	?= $(CHIPYARD_0111_SOURCE)/generators/riscv-sodor/riscv-bmarks/dhrystone.riscv
 
 DIR_DADAO_BUILD			?= $(DIR_DADAO_TOP)/__build/
 DIR_DADAO_TARGET		?= $(DIR_DADAO_TOP)/__dadao/
