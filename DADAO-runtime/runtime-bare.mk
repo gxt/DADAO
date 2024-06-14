@@ -15,6 +15,7 @@ runtime-bare-tracer:
 		$(CHIPYARD_0111_BUILD)/output/chipyard.TestHarness.$(RUNTIME_BARE_CONFIG)/dhrystone.out
 
 # See chipyard/conda-reqs/circt.json for firtool version requirement
+# Download site: https://github.com/llvm/circt/releases/tag/firtool-1.61.0
 RUNTIME_FIRTOOL_VERSION			:= firtool-1.61.0
 RUNTIME_FIRTOOL_VERSION_LOCAL	:= /pub/firtool/
 
