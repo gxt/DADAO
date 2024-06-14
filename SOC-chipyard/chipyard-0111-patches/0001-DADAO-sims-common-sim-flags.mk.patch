@@ -1,0 +1,25 @@
+From ea6f8d78a92b8cf50b1e51c01a53907637d4f551 Mon Sep 17 00:00:00 2001
+From: Guan Xuetao <gxt@pku.edu.cn>
+Date: Fri, 14 Jun 2024 09:26:16 +0800
+Subject: [PATCH] DADAO: sims/common-sim-flags.mk
+
+Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
+---
+ sims/common-sim-flags.mk | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/sims/common-sim-flags.mk b/sims/common-sim-flags.mk
+index c2ae022c..92492426 100644
+--- a/sims/common-sim-flags.mk
++++ b/sims/common-sim-flags.mk
+@@ -8,7 +8,6 @@ SIM_OPT_CXXFLAGS := -O3
+ # potentially breaks some configs
+ 
+ ifeq (,$(wildcard $(RISCV)/lib/libriscv.so))
+-$(warning libriscv not found)
+ LRISCV=
+ else
+ LRISCV=-lriscv
+-- 
+2.34.1
+
