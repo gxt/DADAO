@@ -100,9 +100,6 @@ FCVT_1v1(io2fo, int64_to_float64)
 FCVT_1v1(ut2fo, uint32_to_float64)
 FCVT_1v1(uo2fo, uint64_to_float64)
 
-FCVT_1v1(ftsqrt, float32_sqrt)
-FCVT_1v1(fosqrt, float64_sqrt)
-
 #undef FCVT_1v1
 
 #define FCAL_s2d1(insn, func)												\
@@ -141,6 +138,24 @@ FCAL_s3d1(ftmadd, float32_muladd)
 FCAL_s3d1(fomadd, float64_muladd)
 
 #undef FCAL_s3d1
+
+#define FCAL_s1d1(insn, func)												\
+uint64_t HELPER(insn)(CPUDADAOState* env, uint64_t arg1)					\
+{																			\
+	uint64_t ret;															\
+	dadao_fpu_head(env);													\
+	ret = func(arg1, &env->fp_status);										\
+	dadao_fpu_tail(env);													\
+	return ret;																\
+}
+
+FCAL_s1d1(ftroot, float32_sqrt)
+FCAL_s1d1(foroot, float64_sqrt)
+
+FCAL_s1d1(ftlog, float32_log2)
+FCAL_s1d1(folog, float64_log2)
+
+#undef FCAL_s1d1
 
 #define FSGN_s2d1(insn, func, signbit)										\
 uint64_t HELPER(insn)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)		\

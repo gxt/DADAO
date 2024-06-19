@@ -69,7 +69,7 @@
   [(set        (match_operand:SFDF 0 "rf_class_operand" "= Rf")
     (sqrt:SFDF (match_operand:SFDF 1 "rf_class_operand" "  Rf")))]
 	""
-	"<ftfo>sqrt	%0, %1, 1")
+	"<ftfo>root	%0, %1, 2")
 
 ;; TODO
 ;; Floating-point <--> Fixed-point converting insn pattern

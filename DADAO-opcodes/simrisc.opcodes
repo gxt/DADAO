@@ -200,8 +200,11 @@ uo2fo	01010000 111111
 
 [ orri	op:14	hb:6	hc:6	immu:6 ]
 & @reg rf@hb rf@hc
-ftsqrt	01010000 000110
-fosqrt	01010000 001110
+ftroot	01010000 000110
+foroot	01010000 001110
+
+ftlog	01010000 000111
+folog	01010000 001111
 
 [ orrr	op:14	hb:6	hc:6	hd:6 ]
 & rf@hb rf@hc rf@hd

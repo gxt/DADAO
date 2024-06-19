@@ -774,9 +774,6 @@ INSN_FCVT_ORRI(IO2FO, cpu_rd, cpu_rf, gen_helper_io2fo)
 INSN_FCVT_ORRI(UT2FO, cpu_rd, cpu_rf, gen_helper_ut2fo)
 INSN_FCVT_ORRI(UO2FO, cpu_rd, cpu_rf, gen_helper_uo2fo)
 
-INSN_FCVT_ORRI(FTSQRT, cpu_rf, cpu_rf, gen_helper_ftsqrt)
-INSN_FCVT_ORRI(FOSQRT, cpu_rf, cpu_rf, gen_helper_fosqrt)
-
 #undef INSN_FCVT_ORRI
 
 #define INSN_FALG_ORRR(insn, fn)														\
@@ -812,6 +809,22 @@ INSN_FALG_RRRR(FTMADD, gen_helper_ftmadd)
 INSN_FALG_RRRR(FOMADD, gen_helper_fomadd)
 
 #undef INSN_FALG_RRRR
+
+#define INSN_FALG_ORRI(insn, fn)														\
+	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\
+	{																					\
+		if (a->immu6 != 2)			gen_exception_illegal_instruction(ctx);				\
+		fn(cpu_rf[a->hb], cpu_env, cpu_rf[a->hc]);										\
+		return true;																	\
+	}
+
+INSN_FALG_ORRI(FTROOT, gen_helper_ftroot)
+INSN_FALG_ORRI(FOROOT, gen_helper_foroot)
+
+INSN_FALG_ORRI(FTLOG, gen_helper_ftlog)
+INSN_FALG_ORRI(FOLOG, gen_helper_folog)
+
+#undef INSN_FALG_ORRI
 
 #define INSN_FCMP_ORRR(insn, fn)														\
 	static bool trans_##insn(DisasContext *ctx, arg_##insn *a)							\

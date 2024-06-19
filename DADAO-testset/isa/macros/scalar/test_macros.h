@@ -94,11 +94,11 @@
 #	TODO: SHOULD watch accured exception
 #-----------------------------------------------------------------------
 
-#define _TEST_FRRI_M1( tcname, inst, flags, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, _RGHB, _RGHC, _DST, _SRC )	\
+#define _TEST_FRRI_IMM( tcname, inst, flags, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, _RGHB, _RGHC, _DST, _SRC, _IMM )	\
 		__TEST_CASE_HEAD__(tcname)									\
 		setrb			RB_SRC, test_ ## tcname ## _src;			\
 		inst_ld_src		_RGHC ## _SRC, RB_SRC, 0;					\
-		inst			_RGHB ## _DST, _RGHC ## _SRC, 1;			\
+		inst			_RGHB ## _DST, _RGHC ## _SRC, _IMM;			\
 		jump			lbl_ ## tcname ## _cmp;						\
 		.balign			8;											\
 test_ ## tcname ## _dst:											\
@@ -116,12 +116,19 @@ lbl_ ## tcname ## _cmp:												\
 		__PASS_FAIL_FCSR__(flags)									\
  
 #define TEST_FRRI_M1_12( tcname, inst, flags, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, rgd, rgs )	\
-		_TEST_FRRI_M1(   tcname, inst, flags, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, rgd, rgs, 16, 17 )
+		_TEST_FRRI_IMM(  tcname, inst, flags, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, rgd, rgs, 16, 17, 1 )
 #define TEST_FRRI_M1_11( tcname, inst, flags, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, rgd, rgs )	\
-		_TEST_FRRI_M1(   tcname, inst, flags, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, rgd, rgs, 16, 16 )
+		_TEST_FRRI_IMM(  tcname, inst, flags, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, rgd, rgs, 16, 16, 1 )
 #define TEST_FRRI_M1_10( tcname, inst, flags, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, rgd, rgs )	\
-		_TEST_FRRI_M1(   tcname, inst, flags, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, rgd, rgs, 16,  0 )
+		_TEST_FRRI_IMM(  tcname, inst, flags, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, rgd, rgs, 16,  0, 1 )
  
+#define TEST_FRRI_B2_12( tcname, inst, flags, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, rgd, rgs )	\
+		_TEST_FRRI_IMM(  tcname, inst, flags, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, rgd, rgs, 16, 17, 2 )
+#define TEST_FRRI_B2_11( tcname, inst, flags, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, rgd, rgs )	\
+		_TEST_FRRI_IMM(  tcname, inst, flags, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, rgd, rgs, 16, 16, 2 )
+#define TEST_FRRI_B2_10( tcname, inst, flags, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, rgd, rgs )	\
+		_TEST_FRRI_IMM(  tcname, inst, flags, inst_ld_dst, type_dst, val_dst, inst_ld_src, type_src, val_src, rgd, rgs, 16,  0, 2 )
+
 #-----------------------------------------------------------------------
 # DADAO MACROS for ORRR
 #-----------------------------------------------------------------------
