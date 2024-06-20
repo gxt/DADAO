@@ -69,7 +69,7 @@ target_ulong HELPER(focls)(CPUDADAOState *env, uint64_t arg1)
     }
 }
 
-#define FCVT_1v1(insn, func)									\
+#define FCVT_s1d1(insn, func)									\
 uint64_t HELPER(insn)(CPUDADAOState* env, uint64_t arg1)		\
 {																\
 	uint64_t ret;												\
@@ -79,30 +79,30 @@ uint64_t HELPER(insn)(CPUDADAOState* env, uint64_t arg1)		\
 	return ret;													\
 }
 
-FCVT_1v1(ft2fo, float32_to_float64)
-FCVT_1v1(fo2ft, float64_to_float32)
+FCVT_s1d1(ft2fo, float32_to_float64)
+FCVT_s1d1(fo2ft, float64_to_float32)
 
-FCVT_1v1(ft2it, float32_to_int32)
-FCVT_1v1(ft2io, float32_to_int64)
-FCVT_1v1(ft2ut, float32_to_uint32)
-FCVT_1v1(ft2uo, float32_to_uint64)
-FCVT_1v1(it2ft, int32_to_float32)
-FCVT_1v1(io2ft, int64_to_float32)
-FCVT_1v1(ut2ft, uint32_to_float32)
-FCVT_1v1(uo2ft, uint64_to_float32)
+FCVT_s1d1(ft2it, float32_to_int32)
+FCVT_s1d1(ft2io, float32_to_int64)
+FCVT_s1d1(ft2ut, float32_to_uint32)
+FCVT_s1d1(ft2uo, float32_to_uint64)
+FCVT_s1d1(it2ft, int32_to_float32)
+FCVT_s1d1(io2ft, int64_to_float32)
+FCVT_s1d1(ut2ft, uint32_to_float32)
+FCVT_s1d1(uo2ft, uint64_to_float32)
 
-FCVT_1v1(fo2it, float64_to_int32)
-FCVT_1v1(fo2io, float64_to_int64)
-FCVT_1v1(fo2ut, float64_to_uint32)
-FCVT_1v1(fo2uo, float64_to_uint64)
-FCVT_1v1(it2fo, int32_to_float64)
-FCVT_1v1(io2fo, int64_to_float64)
-FCVT_1v1(ut2fo, uint32_to_float64)
-FCVT_1v1(uo2fo, uint64_to_float64)
+FCVT_s1d1(fo2it, float64_to_int32)
+FCVT_s1d1(fo2io, float64_to_int64)
+FCVT_s1d1(fo2ut, float64_to_uint32)
+FCVT_s1d1(fo2uo, float64_to_uint64)
+FCVT_s1d1(it2fo, int32_to_float64)
+FCVT_s1d1(io2fo, int64_to_float64)
+FCVT_s1d1(ut2fo, uint32_to_float64)
+FCVT_s1d1(uo2fo, uint64_to_float64)
 
-#undef FCVT_1v1
+#undef FCVT_s1d1
 
-#define FCAL_s2d1(insn, func)												\
+#define FALG_s2d1(insn, func)												\
 uint64_t HELPER(insn)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)		\
 {																			\
 	uint64_t ret;															\
@@ -112,19 +112,19 @@ uint64_t HELPER(insn)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)		\
 	return ret;																\
 }
 
-FCAL_s2d1(ftadd, float32_add)
-FCAL_s2d1(ftsub, float32_sub)
-FCAL_s2d1(ftmul, float32_mul)
-FCAL_s2d1(ftdiv, float32_div)
+FALG_s2d1(ftadd, float32_add)
+FALG_s2d1(ftsub, float32_sub)
+FALG_s2d1(ftmul, float32_mul)
+FALG_s2d1(ftdiv, float32_div)
 
-FCAL_s2d1(foadd, float64_add)
-FCAL_s2d1(fosub, float64_sub)
-FCAL_s2d1(fomul, float64_mul)
-FCAL_s2d1(fodiv, float64_div)
+FALG_s2d1(foadd, float64_add)
+FALG_s2d1(fosub, float64_sub)
+FALG_s2d1(fomul, float64_mul)
+FALG_s2d1(fodiv, float64_div)
 
-#undef FCAL_s2d1
+#undef FALG_s2d1
 
-#define FCAL_s3d1(insn, func)															\
+#define FALG_s3d1(insn, func)															\
 uint64_t HELPER(insn)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2, uint64_t arg3)	\
 {																						\
 	uint64_t ret;																		\
@@ -134,12 +134,12 @@ uint64_t HELPER(insn)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2, uint64_t
 	return ret;																			\
 }
 
-FCAL_s3d1(ftmadd, float32_muladd)
-FCAL_s3d1(fomadd, float64_muladd)
+FALG_s3d1(ftmadd, float32_muladd)
+FALG_s3d1(fomadd, float64_muladd)
 
-#undef FCAL_s3d1
+#undef FALG_s3d1
 
-#define FCAL_s1d1(insn, func)												\
+#define FALG_s1d1(insn, func)												\
 uint64_t HELPER(insn)(CPUDADAOState* env, uint64_t arg1)					\
 {																			\
 	uint64_t ret;															\
@@ -149,13 +149,13 @@ uint64_t HELPER(insn)(CPUDADAOState* env, uint64_t arg1)					\
 	return ret;																\
 }
 
-FCAL_s1d1(ftroot, float32_sqrt)
-FCAL_s1d1(foroot, float64_sqrt)
+FALG_s1d1(ftroot, float32_sqrt)
+FALG_s1d1(foroot, float64_sqrt)
 
-FCAL_s1d1(ftlog, float32_log2)
-FCAL_s1d1(folog, float64_log2)
+FALG_s1d1(ftlog, float32_log2)
+FALG_s1d1(folog, float64_log2)
 
-#undef FCAL_s1d1
+#undef FALG_s1d1
 
 #define FSGN_s2d1(insn, func, signbit)										\
 uint64_t HELPER(insn)(CPUDADAOState* env, uint64_t arg1, uint64_t arg2)		\
