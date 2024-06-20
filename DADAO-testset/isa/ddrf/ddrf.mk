@@ -6,7 +6,7 @@ ddrf_passqemu_tests =		\
 	rrii-ldx	rrii-stx	\
 	rrri-ldmx	rrri-stmx	\
 	orri-fx2fx	orri-fx2ix	orri-fx2ux	orri-ix2fx	orri-ux2fx	\
-	orrr-fxadd	orrr-fxsub	orrr-fxmul	orrr-fxdiv				\
+	orrr-fxadd	orrr-fxsub	orrr-fxmul	orrr-fxdiv	orrr-fxrem	\
 	rrrr-fxmadd				\
 	orri-fxroot				\
 	orrr-fxsgnj	orrr-fxsgnn	\
