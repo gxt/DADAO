@@ -116,11 +116,13 @@ FALG_s2d1(ftadd, float32_add)
 FALG_s2d1(ftsub, float32_sub)
 FALG_s2d1(ftmul, float32_mul)
 FALG_s2d1(ftdiv, float32_div)
+FALG_s2d1(ftrem, float32_rem)
 
 FALG_s2d1(foadd, float64_add)
 FALG_s2d1(fosub, float64_sub)
 FALG_s2d1(fomul, float64_mul)
 FALG_s2d1(fodiv, float64_div)
+FALG_s2d1(forem, float64_rem)
 
 #undef FALG_s2d1
 
