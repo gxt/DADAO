@@ -1236,7 +1236,11 @@ void dadao_cpu_dump_state(CPUState *cs, FILE *f, int flags)
     if (j % 4 != 0)           qemu_log("\n");
 
     for (i = 0, j = 0; i < 64; i ++) {
-        if (env->rf[i]) {
+		if ((i == 0) && (env->rf[0] != 0x7ff800007fc00000ULL)) {
+	        qemu_log("[RF%02d]=%016lx ", i, env->rf[i]);
+            j++;
+        }
+        if ((i != 0) && (env->rf[i])) {
             qemu_log("[RF%02d]=%016lx ", i, env->rf[i]);
             j++;
             if (j % 4 == 0)   qemu_log("\n");
@@ -1244,9 +1248,9 @@ void dadao_cpu_dump_state(CPUState *cs, FILE *f, int flags)
     }
     if (j % 4 != 0)           qemu_log("\n");
 
-    qemu_log("[RA Stack]:");
     for (i = 63, j = 0; i > 0; i --) {
         if (env->ra[i]) {
+            if (j == 0)       qemu_log("[RA Stack]:");
             qemu_log(" %016lx", env->ra[i]);
             j++;
             if (j % 4 == 0)   qemu_log("\n           ");
