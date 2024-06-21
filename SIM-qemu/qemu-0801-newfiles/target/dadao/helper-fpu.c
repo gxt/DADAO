@@ -6,9 +6,14 @@
 #include "fpu/softfloat.h"
 #include <simrisc/dadao-aee.h>
 
+/* ONLY fp assigning insns can modify fcsr directly */
+static uint64_t rf0_fcsr;
+
 static void dadao_fpu_head(CPUDADAOState *env)
 {
 	int softrm;
+
+	rf0_fcsr = env->rf[0];
 
 	env->frm = (env->rf[0] >> 16) & 0x3;
 
@@ -28,7 +33,7 @@ static void dadao_fpu_tail(CPUDADAOState *env)
 {
 	int soft = get_float_exception_flags(&env->fp_status);
 
-	env->rf[0] = env->rf[0] | (soft & 0x1F);
+	env->rf[0] = rf0_fcsr | (soft & 0x1F);
 }
 
 target_ulong HELPER(ftcls)(CPUDADAOState *env, uint64_t arg1)
