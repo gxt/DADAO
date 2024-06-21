@@ -8,7 +8,7 @@ ddrf_passqemu_tests =		\
 	orri-fx2fx	orri-fx2ix	orri-fx2ux	orri-ix2fx	orri-ux2fx	\
 	orrr-fxadd	orrr-fxsub	orrr-fxmul	orrr-fxdiv	orrr-fxrem	\
 	rrrr-fxmadd				\
-	orri-fxroot				\
+	orri-fxroot	orri-fxlog	\
 	orrr-fxsgnj	orrr-fxsgnn	\
 	orrr-fxqcmp	orrr-fxscmp	\
 	rrrr-csx	orrr-csxx	\
